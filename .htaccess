@@ -1,0 +1,12 @@
+# BEGIN ShortURL
+RewriteEngine On
+#RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9a-z]+)/?$ go.php?id=$1 [L]
+# END ShortURL
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization},L]
+</IfModule>

@@ -1,0 +1,92 @@
+body {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #595441;
+}
+div, p, td {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+}
+a, a:link, a:active, a:visited {
+	color: #4a8797;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+h1 a {float:right;}
+h1 a:hover{text-decoration:none;}
+h1 a:hover span{text-decoration:underline;color:#8dbdd8}
+input {
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+}
+Input.text, select, textarea {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #595441;
+	background-color: #FFFFFF;
+	border: 1px solid #8dbdd8;
+	margin:1px;
+}
+input.button {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #595441;
+	font-weight: bold;
+	background-color: #FFFFFF;
+	border: 1px solid #8dbdd8;
+	cursor:pointer;
+}
+input.primary {
+	border:2px solid #aaccaa;
+	background:#fafafe;
+}
+input.disabled {
+	border:1px solid #333;
+	background:#ccc;
+}
+input.loading {
+	background:#cc7 url(../images/loading.gif) center center no-repeat;
+	color:#cc7;
+}
+input:focus {
+	border:2px solid #AACCAA;
+	margin:0px;
+}
+tr.edit-row  td {
+	background:#fdf !important;
+}
+#new_url {
+	text-align:center;
+	padding:1px;
+	border:1px solid #CDCDCD;
+	background:#fff;
+}
+#new_url div {
+	background:#E6EEEE;
+	padding:4px;
+}
+#new_url_form {
+	padding:4px;
+}
+#new_url #feedback {
+	background:#ff8;
+	color:#8DBDD8;
+	width:50%;
+	margin:0px 25%;
+	padding:2px;
+	border:1px solid #ff8;
+}
+#new_url #feedback .fail {
+	color:#f55;
+}
+td.actions input{
+	visibility:hidden;
+}
+td.actions input.disabled, td.actions input.loading{
+	visibility:visible;
+}
+tr:hover td.actions input{
+	visibility:visible;
+}
