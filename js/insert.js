@@ -22,7 +22,7 @@ function add() {
 	var keyword = $("#add-keyword").val();
 	add_loading("#add-button");
 	$.getJSON(
-		"admin/index_ajax.php",
+		"index_ajax.php",
 		{mode:'add', url: newurl, keyword: keyword},
 		function(data){
 			if(data.status == 'success') {
@@ -44,7 +44,7 @@ function edit(id) {
 	add_loading("#edit-button-" + id);
 	add_loading("#delete-button-" + id);
 	$.getJSON(
-		"admin/index_ajax.php",
+		"index_ajax.php",
 		{ mode: "edit_display", id: id },
 		function(data){
 			$("#id-" + id).after( data.html );
@@ -61,7 +61,7 @@ function remove(id) {
 		return;
 	}
 	$.getJSON(
-		"admin/index_ajax.php",
+		"index_ajax.php",
 		{ mode: "delete", id: id },
 		function(data){
 			if (data.success == 1) {
@@ -87,7 +87,7 @@ function edit_save(id) {
 	var newurl = $("#edit-url-" + id).val();
 	var newid = $("#edit-id-" + id).val();
 	$.getJSON(
-		"admin/index_ajax.php",
+		"index_ajax.php",
 		{mode:'edit_save', url: newurl, id: id, newid: newid },
 		function(data){
 			if(data.status == 'success') {
@@ -112,7 +112,7 @@ function edit_save(id) {
 function logout() {
 	$.ajax({
 		type: "POST",
-		url: "admin/index_ajax.php",
+		url: "index_ajax.php",
 		data: {mode:'logout'},
 		success: function() {
 			window.parent.location.href = window.parent.location.href;
