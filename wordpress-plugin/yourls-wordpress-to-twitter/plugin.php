@@ -104,13 +104,11 @@ function wp_ozh_yourls_url() {
 	global $id;
 	$short = wp_ozh_yourls_geturl( $id );
 	if ($short)
-		echo "<a href=\"$short\" rel=\"alternate shorter\" rel=\"nofollow\" title=\"short URL\">$short</a>";
+		echo "<a href=\"$short\" rel=\"nofollow alternate shorter\" title=\"short URL\">$short</a>";
 }
 
 // Template tag: echo short URL alternate link in <head> for current post. See http://revcanonical.appspot.com/ && http://shorturl.appjet.net/
 function wp_ozh_yourls_head_linkrel() {
-	//if ( (is_single() or is_page()) )
-
 	global $id;
 	$short = wp_ozh_yourls_geturl( $id );
 	if ($short)
