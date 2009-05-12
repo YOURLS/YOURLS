@@ -38,7 +38,7 @@ $yourls_user_passwords = array(
 * URL shortening method: 36 or 62.
 *
 * 36: generates case insentitive lowercase keywords (ie: 13jkm)
-* 64: generate case sensitive keywords (ie: 13jKm or 13JKm)
+* 62: generate case sensitive keywords (ie: 13jKm or 13JKm)
 * Stick to one setting, don't change after you've created links as it will change all your short URLs!
 * Base 36 should be picked. Use 62 only if you understand what it implies.
 * Using base 62 means you *need* PHP extension BCCOMP
