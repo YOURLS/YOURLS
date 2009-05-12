@@ -38,7 +38,7 @@ function yourls_http_digest_parse($txt) {
 function yourls_auth_headers($realm = '') {
 	header('HTTP/1.1 401 Unauthorized');
 	header('WWW-Authenticate: Digest realm="'.$realm.'",qop="auth",nonce="'.uniqid().'",opaque="'.md5($realm).'"');
-	die('Sorry! <a href="'.YOURLS_SITE.'/insert.php">Retry</a>.');
+	die('Sorry! <a href="'.YOURLS_SITE.'/admin.php">Retry</a>.');
 }
 
 // Make sure a link id (site.com/1fv) is valid.

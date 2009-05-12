@@ -29,7 +29,7 @@ if ( $link_limit != '' ) {
 } else {
 	$link_filter = '';
 }
-$base_page = 'insert.php';
+$base_page = 'admin.php';
 
 ### Searching
 if(!empty($search) && !empty($_GET['s_in'])) {
@@ -172,7 +172,7 @@ $total_pages = ceil($total_items / $perpage);
 							<div style="float:right;">
 								<input type="submit" id="submit-sort" value="Filter" class="button primary" />
 								&nbsp;
-								<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'insert.php'" />
+								<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'admin.php'" />
 							</div>
 
 							Search&nbsp;for&nbsp;

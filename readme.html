@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>	
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>YOURLS: Your Own URL Shortener Readme</title>
+	<style type="text/css" media="screen">
+		/* Default Style */
+		BODY {
+			font-family: Verdana, Arial;
+			font-size: 12px;
+			color: #000000;
+			background: #FFFFFF;
+		}
+		P {
+			padding-left: 10px;
+		}
+		BLOCKQUOTE {
+			margin: 10px 20px 0px 20px;
+			padding: 10px;
+			border: 1px solid #8d8d8d;
+			background-color: #f5f5f5;
+		}
+		LI {
+			margin-top: 20px;
+		}
+		UL LI UL LI {
+			margin-top: 10px;
+		}
+		A, A:active, A:link, A:visited {
+			color: #2d3a4c;
+			text-decoration: none;
+		}
+		A:hover {
+			color: #5577a5;
+			text-decoration: underline;
+		}
+		/* Place Holder Style */
+		#Container {
+			width: 780px;
+			margin-left: auto;
+			margin-right: auto; 
+		}
+		#Content {
+			background-color: #fafafa;
+			border: 1px solid #a2b6cb;
+			padding: 10px;
+			margin-top: -13px;
+		}
+		/* Title Style */
+		#Title {
+			font-family: Verdana, Arial;
+			font-size: 22px;
+			font-weight: bold;
+			color: #389aff;
+			border-bottom: 1px solid #389aff;
+			margin-bottom: 10px;
+		}
+		.SubTitle {
+			font-family: Verdana, Arial;
+			font-size: 18px;
+			font-weight: bold;
+			color: #5b87b4;
+		}
+		.SubSubTitle {
+			font-family: Verdana, Arial;
+			font-size: 14px;
+			font-weight: bold;
+			color: #73a4d6;
+		}
+		/* Tabs */
+		UL#Tabs {
+			font-family: Verdana, Arial;
+			font-size: 12px;
+			font-weight: bold;
+			list-style-type: none;
+			padding-bottom: 28px;
+			border-bottom: 1px solid #a2b6cb;
+			margin-bottom: 12px;
+			z-index: 1;
+		}
+		#Tabs LI.Tab {
+			float: right;
+			height: 25px;
+			background-color: #deedfb;
+			margin: 2px 0px 0px 5px;
+			border: 1px solid #a2b6cb;
+		}
+		#Tabs LI.Tab A {
+			float: left;
+			display: block;
+			color: #666666;
+			text-decoration: none;
+			padding: 5px;
+		}
+		#Tabs LI.Tab A:hover {
+			background-color: #bfe0fe;
+			border-bottom: 1px solid #bfe0fe;
+		}
+		/* Selected Tab */
+		#Tabs LI.SelectedTab {
+			float: right;
+			height: 25px;
+			background-color: #fafafa;
+			margin: 2px 0px 0px 5px;
+			border-top: 1px solid #a2b6cb;
+			border-right: 1px solid #a2b6cb;
+			border-bottom: 1px solid #fafafa;
+			border-left: 1px solid #a2b6cb;
+		}
+		#Tabs LI.SelectedTab A {
+			float: left;
+			display: block;
+			color: #666666;
+			text-decoration: none;
+			padding: 5px;
+			cursor: default;
+		}
+		/* Copyright */
+		#Copyright {
+			text-align: center;
+		}
+	</style>
+	<script type="text/javascript">
+	/* <![CDATA[*/
+		// Index Page
+		function index() {
+			// Tab
+			document.getElementById('IndexTab').className = 'SelectedTab';
+			document.getElementById('ChangelogTab').className = 'Tab';
+			document.getElementById('InstallTab').className = 'Tab';
+			document.getElementById('ConfigTab').className = 'Tab';
+			document.getElementById('FAQTab').className = 'Tab';
+			// Page
+			document.getElementById('Index').style.display= 'block';
+			document.getElementById('Changelog').style.display = 'none';
+			document.getElementById('Install').style.display = 'none';
+			document.getElementById('Config').style.display = 'none';
+			document.getElementById('Faq').style.display = 'none';
+		}
+		// Changelog Page
+		function changelog() {
+			// Tab
+			document.getElementById('IndexTab').className = 'Tab';
+			document.getElementById('ChangelogTab').className = 'SelectedTab';
+			document.getElementById('InstallTab').className = 'Tab';
+			document.getElementById('ConfigTab').className = 'Tab';
+			document.getElementById('FAQTab').className = 'Tab';
+			// Page
+			document.getElementById('Index').style.display = 'none';
+			document.getElementById('Changelog').style.display = 'block';
+			document.getElementById('Install').style.display = 'none';
+			document.getElementById('Config').style.display = 'none';
+			document.getElementById('Faq').style.display = 'none';
+		}
+		// Installation Page
+		function install() {
+			// Tab
+			document.getElementById('IndexTab').className = 'Tab';
+			document.getElementById('ChangelogTab').className = 'Tab';
+			document.getElementById('InstallTab').className = 'SelectedTab';
+			document.getElementById('ConfigTab').className = 'Tab';
+			document.getElementById('FAQTab').className = 'Tab';
+			// Page
+			document.getElementById('Index').style.display= 'none';
+			document.getElementById('Changelog').style.display = 'none';
+			document.getElementById('Install').style.display = 'block';
+			document.getElementById('Config').style.display = 'none';
+			document.getElementById('Faq').style.display = 'none';
+		}
+		// Config Page
+		function config() {
+			// Tab
+			document.getElementById('IndexTab').className = 'Tab';
+			document.getElementById('ChangelogTab').className = 'Tab';
+			document.getElementById('InstallTab').className = 'Tab';
+			document.getElementById('ConfigTab').className = 'SelectedTab';
+			document.getElementById('FAQTab').className = 'Tab';
+			// Page
+			document.getElementById('Index').style.display= 'none';
+			document.getElementById('Changelog').style.display = 'none';
+			document.getElementById('Install').style.display = 'none';
+			document.getElementById('Config').style.display = 'block';
+			document.getElementById('Faq').style.display = 'none';
+		}
+		// FAQ Page
+		function faq() {
+			// Tab
+			document.getElementById('IndexTab').className = 'Tab';
+			document.getElementById('ChangelogTab').className = 'Tab';
+			document.getElementById('InstallTab').className = 'Tab';
+			document.getElementById('ConfigTab').className = 'Tab';
+			document.getElementById('FAQTab').className = 'SelectedTab';
+			// Page
+			document.getElementById('Index').style.display= 'none';
+			document.getElementById('Changelog').style.display = 'none';
+			document.getElementById('Install').style.display = 'none';
+			document.getElementById('Config').style.display = 'none';
+			document.getElementById('Faq').style.display = 'block';
+		}
+	/* ]]> */
+	</script>
+</head>
+<body>
+<div id="Container">
+	<!-- Title -->
+	<div id="Title">YOURLS: Your Own URL Shortener&nbsp;&nbsp;&nbsp;<span style="color: #aaaaaa;">Readme</span></div>
+
+	<!-- Tabs -->
+	<ul id="Tabs">
+		<li id="FAQTab" class="Tab"><a href="#Usage" onclick="faq(); return false;" title="Usage Instructions">FAQ</a></li>
+		<li id="ConfigTab" class="Tab"><a href="#Upgrade" onclick="config(); return false;" title="Upgrade Instructions">Configuration</a></li>
+		<li id="InstallTab" class="Tab"><a href="#Installation" onclick="install(); return false;" title="Installation Instructions">Installation</a></li>
+		<li id="ChangelogTab" class="Tab"><a href="#Changelog" onclick="changelog(); return false;" title="Changelog">Changelog</a></li>
+		<li id="IndexTab" class="SelectedTab"><a href="#Index" onclick="index(); return false;" title="Index Instructions">Index</a></li>
+	</ul>
+
+	<!-- Content -->
+	<div id="Content">
+		<!-- Index -->
+		<div id="Index">
+			<div class="SubTitle">&raquo; Index</div>
+			<div class="SubSubTitle">Plugin Information</div>
+			<p>
+				<strong>Author:</strong><br />
+				<strong>&raquo;</strong> Richard Ozh, Lester Chan
+			</p>
+			<p>
+				<strong>Website:</strong><br /><strong>&raquo;</strong> <a href="http://planetozh.com/" title="http://planetozh.com/">http://planetozh.com/</a>, <a href="http://lesterchan.net/" title="http://lesterchan.net/">http://lesterchan.net/</a>
+			</p>
+			<p>
+				<strong>Features:</strong><br />
+				<strong>&raquo;</strong> YOURLS is a PHP script that will allow you to run your own URL shortener, a la TinyURL. You can make it private or public, and a WordPress plugin makes integration with your WordPress blog a snap.
+			</p>
+			<p>
+				<strong>Download:</strong><br />
+				<strong>&raquo;</strong> <a href="http://code.google.com/p/yourls/downloads/list" title="http://code.google.com/p/yourls/downloads/list">YOURLS 1.0.0 Beta 1</a><br />
+			</p>
+			<p>
+				<strong>Demo:</strong><br /><strong>&raquo;</strong> <a href="http://yourls.org" title="http://yourls.org">yourls.org</a>, <a href="http://lc.sg" title="http://lc.sg">lc.sg</a>, <a href="http://ozh.in" title="http://ozh.in">ozh.in</a>
+			</p>
+			<p>
+				<strong>Development:</strong><br />
+				<strong>&raquo;</strong> <a href="http://code.google.com/p/yourls/" title="http://code.google.com/p/yourls/">http://code.google.com/p/yourls/</a>
+			</p>
+			<p>
+				<strong>Bugs Reporting:</strong><br />
+				<strong>&raquo;</strong> <a href="http://code.google.com/p/yourls/issues/list" title="http://code.google.com/p/yourls/issues/list">http://code.google.com/p/yourls/issues/list</a>
+			</p>
+			<p>
+				<strong>Credits:</strong><br />
+				<strong>&raquo;</strong> Blah Blah
+			</p>
+			<p>
+				<strong>Note:</strong><br />
+				<strong>&raquo;</strong> The <strong>Changelog</strong>, <strong>Installation</strong>, <strong>Upgrade</strong>, <strong>Usage</strong> Tab at the top of the page.
+			</p>
+		</div>
+
+		<!-- Changelog -->
+		<div id="Changelog" style="display: none;">
+			<div class="SubTitle">Changelog</div>
+			<ul>
+				<li>
+					<strong>Version 1.0.0 (01-07-2009)</strong>
+					<ul>
+						<li>NEW: Initial Release</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Installation Instructions -->
+		<div id="Install" style="display: none;">
+			<div class="SubTitle">&raquo; Installation Instructions</div>
+			<ol>
+				<li>
+					Unzip <strong>yourls1.0.0.zip</strong>
+				</li>
+				<li>
+					Rename includes/config-sample.php to <strong>includes/config.php</strong>
+				</li>
+				<li>
+					Open up <strong>includes/config.php</strong> and fill in the required settings
+				</li>
+				<li>
+					 Upload the unzipped files to your domain <strong>public_html</strong> or <strong>www</strong> folder
+				</li>
+				<li>
+					Point your browser to <strong>http://yoursite.com/install.php</strong>
+				</li>
+			</ol>
+		</div>
+
+		<!-- Configuration Instructions -->	
+		<div id="Config" style="display: none;">
+			<div class="SubTitle">&raquo; Configuration</div>
+			<div class="SubSubTitle">In includes/config.php</div>
+			<ol>
+				<li>
+					<strong>YOURLS_DB_USER</strong>
+				</li>
+				<li>
+					<strong>YOURLS_DB_PASS</strong>
+				</li>
+				<li>
+					<strong>YOURLS_DB_NAME</strong>
+				</li>
+				<li>
+					<strong>YOURLS_DB_HOST</strong>
+				</li>
+				<li>
+					<strong>YOURLS_DB_TABLE_URL</strong>
+				</li>
+				<li>
+					<strong>YOURLS_DB_TABLE_NEXTDEC</strong>
+				</li>
+				<li>
+					<strong>YOURLS_SITE</strong>
+				</li>
+				<li>
+					<strong>YOURLS_HOURS_OFFSET</strong>
+				</li>
+				<li>
+					<strong>YOURLS_PRIVATE</strong>
+				</li>
+				<li>
+					<strong>YOURLS_PRIVATE</strong>
+				</li>
+			</ol>
+		</div>
+
+		<!-- FAQ Instructions -->	
+		<div id="Faq" style="display: none;">
+			<div class="SubTitle">&raquo; FAQ</div>
+			<div class="SubSubTitle">Requirements</div>
+			<ol>
+				<li>At least PHP 4.3</li>
+				<li>At least MYSQL 4.1</li>
+				<li>PHP <a href="http://www.php.net/curl" title="http://www.php.net/curl">CURL extension</a> installed</li>
+				<li>PHP <a href="http://www.php.net/bccomp" title="http://www.php.net/bccomp">BCCOMP extension</a> for handling large integers</li>	
+			</ol>
+			<div class="SubSubTitle">Limitations</div>
+			<ol>
+				<li>Maximum length of custom keyword is <strong>12 characters</strong></li>
+				<li><strong>4,738,381,338,321,617,846</strong> available URLs</li>
+			</ol>
+			<div class="SubSubTitle">Difference Between Base 36 And Vase 62 Encoding</div>
+			<ol>
+				<li>Base 36 encoding uses 0123456789abcdefghijklmnopqrstuvwxyz</li>
+				<li>Base 62 encoding uses 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</li>
+			</ol>
+		</div>
+	</div>
+</div>
+<p id="Copyright">YOURLS: Your Own URL Shortener<br />Copyright &copy; 2009 YOURLS. All Rights Reserved.</p>
+</body>
+</html>
