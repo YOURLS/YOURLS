@@ -25,10 +25,3 @@ function wp_ozh_yourls_tweet_it($username, $password, $message){
 	return ($resultArray['http_code'] == "200");
 
 }
-
-// Debug function
-function wp_ozh_yourls_tweet_log($username, $password, $message) {
-	$f = fopen('/DONNEES/I07143/MES_DOCUMENTS/utils/xampp/xampp/htdocs/wordpress/wp-content/plugins/ozh-plc-bridge/tweet.log', 'a');
-	fputs($f, "$username: $message\n");
-	fclose($f);
-}

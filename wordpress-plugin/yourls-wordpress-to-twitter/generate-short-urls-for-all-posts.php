@@ -1,14 +1,14 @@
 <?php
 /*
- * NOTE: you're supposed to load this file directly in your browser,
- * ie http://site.com/wp-content/plugins/ozh-plc-bridge/generate-short-urls-for-all-posts.php
+ * NOTE: you're supposed to load this file directly in your browser
  */
 
 // Load the WordPress Environment
 require('../../../wp-blog-header.php');
 ?>
-<h1>Ozh's PLC - WP - Twitter Bridge</h1>
+<h1>Ozh's YOURLS - WP - Twitter Bridge</h1>
 <h2>This file generates a short link for all your blog posts (from older to latest)</h2>
+<h2>Totally experimental, not clean, wacked out. Do not use :)</h2>
 <ol>
 <?php
 add_filter('posts_orderby', create_function('', 'return "post_date ASC";') );
