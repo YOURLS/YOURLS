@@ -100,10 +100,9 @@ tr:hover td.actions input{
 	width: 210px;
 	margin: 200px auto 0px auto;
 }
-#login P{
+#login p{
 	font-weight: bold;
 }
 #login .text {
-	margin-top: 5px;
 	width: 100%;
 }
