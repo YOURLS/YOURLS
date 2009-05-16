@@ -90,3 +90,20 @@ td.actions input.disabled, td.actions input.loading{
 tr:hover td.actions input{
 	visibility:visible;
 }
+.error {
+	color: red;
+}
+#footer {
+	text-align: center;
+}
+#login {
+	width: 210px;
+	margin: 200px auto 0px auto;
+}
+#login P{
+	font-weight: bold;
+}
+#login .text {
+	margin-top: 5px;
+	width: 100%;
+}

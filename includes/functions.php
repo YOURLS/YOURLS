@@ -21,25 +21,6 @@ function yourls_string2int( $str ) {
 		$str = strtolower($str);
 	return yourls_base2base(trim($str), YOURLS_URL_CONVERT, 10);
 }
- 
-// Function: Parse HTTP Auth Header
-function yourls_http_digest_parse($txt) {
-    $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
-    $data = array();
-    preg_match_all('@(\w+)=(?:([\'"])([^$2]+)$2|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);   
-    foreach ($matches as $m) {
-        $data[$m[1]] = $m[3] ? trim($m[3],"\",'") : trim($m[4],"\",'");
-        unset($needed_parts[$m[1]]);
-    }   
-    return $needed_parts ? false : $data;
-}
-
-// Prompt for Authentication
-function yourls_auth_headers($realm = '') {
-	header('HTTP/1.1 401 Unauthorized');
-	header('WWW-Authenticate: Digest realm="'.$realm.'",qop="auth",nonce="'.uniqid().'",opaque="'.md5($realm).'"');
-	die('Sorry! <a href="'.YOURLS_SITE.'/admin/">Retry</a>.');
-}
 
 // Make sure a link id (site.com/1fv) is valid.
 function yourls_sanitize_string ($in) {
@@ -343,4 +324,20 @@ function yourls_json_encode($array) {
 function yourls_xml_encode($array) {
 	require_once(dirname(__FILE__).'/functions-xml.php');
 	return yourls_array_to_xml($array);
+}
+
+
+// Check for valid user
+function yourls_is_valid_user() {
+	global $yourls_user_passwords;
+	$is_valid_user = false;
+	if(isset($_COOKIE['yourls_username'])) {
+		foreach($yourls_user_passwords as $user => $password) {
+			if($user == $_COOKIE['yourls_username']) {
+				$is_valid_user = true;
+				break;
+			}
+		}
+	}
+	return $is_valid_user;
 }

@@ -124,8 +124,8 @@ $total_pages = ceil($total_items / $perpage);
 <head>
 	<title>Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="copyright" content="Copyright &copy; 2002-<?php echo date('Y'); ?> Lester 'GaMerZ' Chan" />
-	<meta name="author" content="Lester 'GaMerZ' Chan" />
+	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
+	<meta name="author" content="Richard Ozh, Lester Chan" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
 	<link rel="stylesheet" href="../css/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="../css/tablesorter.css" type="text/css" media="screen" />
@@ -134,8 +134,9 @@ $total_pages = ceil($total_items / $perpage);
 	<script src="../js/jquery.tablesorter.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<h1><a href="<?php echo $base_page; ?>"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
-	<p>Your are logged in as: <strong><?php echo $data['username']; ?></strong>. <a href='#' onclick="alert('Not implement yet, that is kind of lame :P\nFor now, just close (quit) your browser.')">Logout</a></p>
+	<p style="text-align: right;"><a href="<?php echo $base_page; ?>" title="YOURLS"><img src="../images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a></p>
+	<h1><a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
+	<p>Your are logged in as: <strong><?php echo $_COOKIE['yourls_username']; ?></strong>. <a href="login.php?mode=logout" title="Logout">Logout</a></p>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
 	   <?php echo $search_display; ?>
 	   Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!
@@ -259,7 +260,6 @@ $total_pages = ceil($total_items / $perpage);
 			?>
 		</tbody>
 	</table>
-
-
+	<div id="footer">Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></div>
 </body>
 </html>
