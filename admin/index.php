@@ -136,7 +136,7 @@ $total_pages = ceil($total_items / $perpage);
 <body>
 	<p style="text-align: right;"><a href="<?php echo $base_page; ?>" title="YOURLS"><img src="../images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a></p>
 	<h1><a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
-	<p>Your are logged in as: <strong><?php echo $_COOKIE['yourls_username']; ?></strong>. <a href="login.php?mode=logout" title="Logout">Logout</a></p>
+	<p>Your are logged in as: <strong><?php echo $_COOKIE['yourls_username']; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
 	   <?php echo $search_display; ?>
 	   Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!

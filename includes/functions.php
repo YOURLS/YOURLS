@@ -326,18 +326,23 @@ function yourls_xml_encode($array) {
 	return yourls_array_to_xml($array);
 }
 
-
-// Check for valid user
-function yourls_is_valid_user() {
-	global $yourls_user_passwords;
-	$is_valid_user = false;
-	if(isset($_COOKIE['yourls_username'])) {
-		foreach($yourls_user_passwords as $user => $password) {
-			if($user == $_COOKIE['yourls_username']) {
-				$is_valid_user = true;
-				break;
-			}
-		}
+// Return output as per API request. Nothing past this point.
+function yourls_api_output( $mode, $return ) {
+	switch ( $mode ) {
+		case 'json':
+			header('Content-type: application/json');
+			echo yourls_json_encode($return);
+			break;
+		
+		case 'xml':
+			header('Content-type: application/xml');
+			echo yourls_xml_encode($return);
+			break;
+			
+		case 'simple':
+		default:
+			echo $return['shorturl'];
+			break;
 	}
-	return $is_valid_user;
+	die();
 }

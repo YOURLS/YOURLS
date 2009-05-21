@@ -1,5 +1,18 @@
 <?php
-if(!yourls_is_valid_user()) {
-	header('Location: '.YOURLS_SITE.'/admin/login.php');
-	exit();
+require(dirname(__FILE__).'/functions-auth.php');
+
+$auth = yourls_is_valid_user();
+
+if( $auth !== true ) {
+
+	// API mode, 
+	if ( defined('YOURLS_API') && YOURLS_API == true ) {
+		yourls_api_output( $_REQUEST['format'], array('shorturl' => $auth) );
+
+	// Regular mode
+	} else {
+		yourls_login_screen( $auth );
+	}
+	
+	die();
 }
