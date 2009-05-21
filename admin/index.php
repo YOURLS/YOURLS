@@ -134,8 +134,10 @@ $total_pages = ceil($total_items / $perpage);
 	<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<p style="text-align: right;"><a href="<?php echo $base_page; ?>" title="YOURLS"><img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a></p>
-	<h1><a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
+	<h1>
+		<a href="<?php echo YOURLS_SITE; ?>/<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
+	</h1>
 	<?php if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) { ?>
 		<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
 	<?php } ?>

@@ -14,7 +14,8 @@ a, a:link, a:active, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-h1 a {float:right;}
+h1 {height:50px;}
+h1 a {float:right;text-align:right;}
 h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#8dbdd8}
 input {
@@ -62,6 +63,7 @@ tr.edit-row  td {
 	padding:1px;
 	border:1px solid #CDCDCD;
 	background:#fff;
+	clear:both;
 }
 #new_url div {
 	background:#E6EEEE;
