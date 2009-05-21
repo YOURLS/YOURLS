@@ -2,30 +2,52 @@
 // Check for valid user. Returns true or an error message
 function yourls_is_valid_user() {
 
-	### Logout request
+	// Logout request
 	if($_GET['mode'] == 'logout') {
 		setcookie('yourls_username', null, time() - 3600);
 		setcookie('yourls_password', null, time() - 3600);
-		return 'Logout successfully';
+		return 'Logged out successfully';
 	}
-
+	
 	// Check cookies or login request. Login form has precedence.
-	$login = isset($_POST['username']) ? $_POST['username'] : ( isset($_COOKIE['yourls_username']) ? $_COOKIE['yourls_username'] : '' ) ;
-	$password = isset($_POST['password']) ? $_POST['password'] : ( isset($_COOKIE['yourls_password']) ? $_COOKIE['yourls_password'] : '' ) ;
-	
-	if (!$login && !$password)
-		return 'Please fill this form';
-	
 	global $yourls_user_passwords;
 	foreach($yourls_user_passwords as $valid_user => $valid_password) {
-		if( $valid_user == $login && $valid_password == $password ) {
-			setcookie('yourls_username', $login, time() + (60*60*24*7));
-			setcookie('yourls_password', $password, time() + (60*60*24*7));
+		if ( 
+			// Checking against POST data
+			( 	isset($_POST['username'])
+				&& $valid_user == $_POST['username']
+				&& isset($_POST['password'])
+				&& $valid_password == $_POST['password']
+			)
+			or
+			// Checking against encrypted COOKIE data
+			( 	isset($_COOKIE['yourls_username'])
+				&& yourls_salt($valid_user) == $_COOKIE['yourls_username']
+				&& isset($_COOKIE['yourls_password'])
+				&& yourls_salt($valid_password) == $_COOKIE['yourls_password'] 
+			)
+		) {
+			// (Re)store encrypted cookie and tell it's ok
+			setcookie('yourls_username', yourls_salt( $valid_user ), time() + (60*60*24*7));
+			setcookie('yourls_password', yourls_salt( $valid_password ), time() + (60*60*24*7));
+			define('YOURLS_USER', $valid_user);
 			return true;
+			
 		}
 	}
 	
-	return 'Invalid username or password';
+	if ( isset($_POST['username']) || isset($_POST['password']) ) {
+		return 'Invalid username or password';
+	} else {
+		return 'Fill this form';
+	}
+}
+
+
+// Return salted string
+function yourls_salt( $string ) {
+	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+	return md5 ($string . YOURLS_COOKIEKEY);
 }
 
 // Display the login screen. Nothing past this point.

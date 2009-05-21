@@ -127,16 +127,18 @@ $total_pages = ceil($total_items / $perpage);
 	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
 	<meta name="author" content="Richard Ozh, Lester Chan" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<link rel="stylesheet" href="../css/style.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="../css/tablesorter.css" type="text/css" media="screen" />
-	<script src="../js/jquery-1.3.1.min.js" type="text/javascript"></script>
-	<script src="../js/insert.js" type="text/javascript"></script>
-	<script src="../js/jquery.tablesorter.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css" type="text/css" media="screen" />
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo YOURLS_SITE; ?>/js/insert.js" type="text/javascript"></script>
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<p style="text-align: right;"><a href="<?php echo $base_page; ?>" title="YOURLS"><img src="../images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a></p>
+	<p style="text-align: right;"><a href="<?php echo $base_page; ?>" title="YOURLS"><img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a></p>
 	<h1><a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
-	<p>Your are logged in as: <strong><?php echo $_COOKIE['yourls_username']; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
+	<?php if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) { ?>
+		<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
+	<?php } ?>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
 	   <?php echo $search_display; ?>
 	   Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!
