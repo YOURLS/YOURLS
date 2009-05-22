@@ -14,10 +14,10 @@ function yourls_is_valid_user() {
 	foreach($yourls_user_passwords as $valid_user => $valid_password) {
 		if ( 
 			// Checking against POST data
-			( 	isset($_POST['username'])
-				&& $valid_user == $_POST['username']
-				&& isset($_POST['password'])
-				&& $valid_password == $_POST['password']
+			( 	isset($_REQUEST['username'])
+				&& $valid_user == $_REQUEST['username']
+				&& isset($_REQUEST['password'])
+				&& $valid_password == $_REQUEST['password']
 			)
 			or
 			// Checking against encrypted COOKIE data
@@ -36,7 +36,7 @@ function yourls_is_valid_user() {
 		}
 	}
 	
-	if ( isset($_POST['username']) || isset($_POST['password']) ) {
+	if ( isset($_REQUEST['username']) || isset($_REQUEST['password']) ) {
 		return 'Invalid username or password';
 	} else {
 		return 'Please log in';
