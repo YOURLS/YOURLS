@@ -39,7 +39,7 @@ function yourls_is_valid_user() {
 	if ( isset($_POST['username']) || isset($_POST['password']) ) {
 		return 'Invalid username or password';
 	} else {
-		return 'Fill this form';
+		return 'Please log in';
 	}
 }
 
