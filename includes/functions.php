@@ -323,11 +323,14 @@ function yourls_json_encode($array) {
 // Return XML output.
 function yourls_xml_encode($array) {
 	require_once(dirname(__FILE__).'/functions-xml.php');
-	return yourls_array_to_xml($array);
+	$converter= new yourls_array2xml;
+	return $converter->array2xml($array);
+
 }
 
 // Return output as per API request. Nothing past this point.
 function yourls_api_output( $mode, $return ) {
+	unset($return['html']); // in API mode, no need for our internal HTML output
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
