@@ -95,6 +95,9 @@ tr:hover td.actions input{
 .error {
 	color: red;
 }
+.success {
+	color: green;
+}
 #footer {
 	text-align: center;
 }
