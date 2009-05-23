@@ -8,7 +8,7 @@ $success_msg = array();
 
 ### Create Table Query
 $create_tables = array();
-$create_tables['url'] = 'CREATE TABLE IF NOT EXISTS `url` ('.
+$create_tables[YOURLS_DB_TABLE_URL] = 'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
 							 '`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,'.
 							 '`url` VARCHAR(200) NOT NULL,'.
 							 '`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
@@ -16,14 +16,14 @@ $create_tables['url'] = 'CREATE TABLE IF NOT EXISTS `url` ('.
 							 '`clicks` INT(10) UNSIGNED NOT NULL,'.
 							 'PRIMARY KEY  (`id`)'.
 							') ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-$create_tables['next_id'] = 'CREATE TABLE `next_id` ('.
+$create_tables[YOURLS_DB_TABLE_NEXTDEC] = 'CREATE TABLE `'.YOURLS_DB_TABLE_NEXTDEC.'` ('.
 									'`next_id` BIGINT NOT NULL ,'.
 									'PRIMARY KEY (`next_id`)'.
 									') ENGINE = MYISAM ;';
 
 ### Insert Initial Records
 $insert_queries = array();
-$insert_queries[] = 'INSERT INTO next_id VALUES (1)';
+$insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_NEXTDEC.' VALUES (1)';
 
 ### Connect To Database
 $db = yourls_db_connect();
