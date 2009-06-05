@@ -313,10 +313,10 @@ function yourls_db_connect() {
 // Return JSON output. Compatible with PHP prior to 5.2
 function yourls_json_encode($array) {
 	if (function_exists('json_encode')) {
-		return '('.json_encode($array).')';
+		return json_encode($array);
 	} else {
 		require_once(dirname(__FILE__).'/functions-json.php');
-		return '('.yourls_array_to_json($array).')';
+		return yourls_array_to_json($array);
 	}
 }
 
