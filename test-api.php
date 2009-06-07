@@ -9,12 +9,12 @@ $username = 'joe';
 $password = '123456';
 
 // EDIT THIS: the query parameters
-$url = 'http://planetozh.com/caca'; // URL to shrink
-$keyword = 'caca';				// optional keyword
+$url = 'http://planetozh.com/blog/'; // URL to shrink
+$keyword = 'ozh';				// optional keyword
 $format = 'json';				// output format: 'json', 'xml' or 'simple'
 
 // EDIT THIS: the URL of the API file
-$api_url = 'http://127.0.0.1/ozh.in/yourls-api.php';
+$api_url = 'http://yoursite/yourls-api.php';
 
 // Init the CURL session
 $ch = curl_init();
