@@ -34,7 +34,7 @@ define('YOURLS_HOURS_OFFSET', 0);
 /** Private means protected with login/pass as defined below. Set to false for public usage. */
 define('YOURLS_PRIVATE', true);
 
-/** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated **/
+/** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookiekey.php **/
 define('YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm');
 
 /**  Username(s) and password(s) allowed to access the site */
