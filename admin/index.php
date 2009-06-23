@@ -8,6 +8,8 @@ if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
 $db = yourls_db_connect();
 
 ### Variables
+$table_url = YOURLS_DB_TABLE_URL;
+
 $where = '';
 $search_display = '';
 $search_text = '';
@@ -91,8 +93,8 @@ if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
 }
 
 ## Get URLs Count for current filter, total links in DB & total clicks
-$total_items = $db->get_var("SELECT COUNT(id) FROM url WHERE 1=1 $where");
-$totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM url WHERE 1=1");
+$total_items = $db->get_var("SELECT COUNT(id) FROM $table_url WHERE 1=1 $where");
+$totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
 
 ### Checking $page, $offset, $perpage
 if(empty($page) || $page == 0) { $page = 1; }
@@ -246,7 +248,7 @@ $total_pages = ceil($total_items / $perpage);
 		<tbody>
 			<?php
 			### Main Query
-			$url_results = $db->get_results("SELECT * FROM url WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
+			$url_results = $db->get_results("SELECT * FROM $table_url WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
 			if($url_results) {
 				foreach( $url_results as $url_result ) {
 					$base36 = yourls_int2string($url_result->id);
