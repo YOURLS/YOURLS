@@ -13,9 +13,9 @@ class yourls_array2xml {
 	/*Converts an array to an xml string*/
 	function array2xml($array) {
 	//global $text;
-	$this->text="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><array>";
+	$this->text="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><result>";
 	$this->text.= $this->array_transform($array);
-	$this->text .="</array>";
+	$this->text .="</result>";
 	return $this->text;
 	}
 

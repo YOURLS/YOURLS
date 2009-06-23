@@ -325,12 +325,51 @@ function yourls_xml_encode($array) {
 	require_once(dirname(__FILE__).'/functions-xml.php');
 	$converter= new yourls_array2xml;
 	return $converter->array2xml($array);
-
 }
 
-// Return output as per API request. Nothing past this point.
+// Return array for API stat requests
+function yourls_api_stats( $filter, $limit, $db ) {
+	switch( $filter ) {
+		case 'bottom':
+			$sort_by = 'clicks';
+			$sort_order = 'asc';
+			break;
+		case 'last':
+			$sort_by = 'timestamp';
+			$sort_order = 'desc';
+			break;
+		case 'top':
+		default:
+			$sort_by = 'clicks';
+			$sort_order = 'desc';
+			break;
+	}
+	
+	$limit = intval( $limit );
+	$table_url = YOURLS_DB_TABLE_URL;
+	$results = $db->get_results("SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT 0, $limit;");
+
+	$return = array();
+	$i = 1;
+
+	foreach ($results as $res) {
+		$return['links']['link_'.$i++] = array(
+			'shorturl' => YOURLS_SITE .'/'. yourls_int2string($res->id),
+			'url' => $res->url,
+			'timestamp' => $res->timestamp,
+			'ip' => $res->ip,
+			'clicks' => $res->clicks
+		);
+	}
+
+	$totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
+	$return['stats'] = array( 'total_links' => $totals->c, 'total_clicks' => $totals->s );
+
+	return $return;
+}
+
+// Return API result. Dies after this
 function yourls_api_output( $mode, $return ) {
-	unset($return['html']); // in API mode, no need for our internal HTML output
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
