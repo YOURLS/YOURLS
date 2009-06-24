@@ -131,7 +131,7 @@ $total_pages = ceil($total_items / $perpage);
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
 	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css" type="text/css" media="screen" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
 	<script src="<?php echo YOURLS_SITE; ?>/js/insert.js" type="text/javascript"></script>
 	<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 </head>
