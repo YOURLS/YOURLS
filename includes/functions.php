@@ -104,7 +104,7 @@ RETURN;
 
 // Add a link row
 function yourls_table_add_row( $id, $keyword, $url, $ip, $clicks, $timestamp ) {
-	$date = date( 'Y M d H:i', $timestamp+( yourls_HOURS_OFFSET * 3600) );
+	$date = date( 'M d, Y H:i', $timestamp+( yourls_HOURS_OFFSET * 3600) );
 	$clicks = number_format($clicks);
 	$www = YOURLS_SITE;
 	
