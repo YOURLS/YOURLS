@@ -26,7 +26,7 @@ function yourls_string2int( $str ) {
 function yourls_sanitize_string ($in) {
 	if (YOURLS_URL_CONVERT <= 37)
 		$in = strtolower($in);
-	return substr(preg_replace('/[^a-zAZ0-9]/', '', $in), 0, 12);
+	return substr(preg_replace('/[^a-zA-Z0-9]/', '', $in), 0, 12);
 }
 
 // make sure there's one and only one 'http://' at the beginning (prevents omitting or pasting a URL right after the default 'http://')
