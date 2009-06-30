@@ -5,7 +5,7 @@
  */
  
 // Bump this when updating the SVN repo
-define('YOURLS_VERSION', '1.0');
+define('YOURLS_VERSION', '1.0.1');
 
 // function to convert an integer (1337) to a string (3jk). Input integer processed as a string to beat PHP's int max value
 function yourls_int2string( $id ) {
