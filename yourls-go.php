@@ -1,17 +1,26 @@
 <?php
-### Require Files
+// Require Files
 require_once( dirname(__FILE__).'/includes/config.php' );
 
-### Connect To Database
+// Connect To Database
 $db = yourls_db_connect();
 
-### Variables
+// Variables
 $keyword = yourls_sanitize_string($_GET['id']);
+
+// First possible exit:
+if ( !$keyword ) {
+	header ('Location: '. YOURLS_SITE);
+	exit();
+}
+
 $id = yourls_sanitize_int( yourls_string2int($keyword) );
 
-### Get URL From Database
+// Get URL From Database
 $table = YOURLS_DB_TABLE_URL;
 $url = stripslashes($db->get_var("SELECT `url` FROM `$table` WHERE id = $id"));
+
+var_dump($url); die();
 
 // URL found
 if(!empty($url)) {
@@ -29,7 +38,7 @@ if(!empty($url)) {
 	// Either reserved id, or no such id
 	} else {
 		header ('HTTP/1.1 307 Temporary Redirect'); // no 404 to tell browser this might change, and also to not pollute logs
-		header ('Location: '. yourls_SITE);
+		header ('Location: '. YOURLS_SITE);
 	}
 }
 exit();
