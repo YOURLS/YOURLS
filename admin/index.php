@@ -137,7 +137,7 @@ $total_pages = ceil($total_items / $perpage);
 </head>
 <body>
 	<h1>
-		<a href="<?php echo YOURLS_SITE; ?>/<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
 	</h1>
 	<?php if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) { ?>
@@ -239,7 +239,7 @@ $total_pages = ceil($total_items / $perpage);
 							echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;page='.($page+1).'" title="Go to Page '.($page+1).' &raquo;">&raquo;</a></b> ';
 						}
 						if (($page+2) < $total_pages) {
-							echo ' ... <b><a href="'.$base_page.'s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;?page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></b>';
+							echo ' ... <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;?page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></b>';
 						}
 					?>
 				</th>
