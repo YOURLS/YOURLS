@@ -192,7 +192,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 			$timestamp = date('Y-m-d H:i:s');
 			$id = yourls_get_next_decimal($db);
 			do {
-				$add_url = yourls_insert_link_in_db($url, $id, $db);
+				$add_url = @yourls_insert_link_in_db($url, $id, $db);
 				$free = !yourls_is_reserved_id( $id );
 				$ok = ($free && $add_url);
 				if ( $ok === false && $add_url === 1 ) {
@@ -210,7 +210,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 				}
 				$id++;
 			} while (!$ok);
-			yourls_update_next_decimal($id, $db);
+			@yourls_update_next_decimal($id, $db);
 		}
 	} else {
 		// URL was already stored
