@@ -20,8 +20,6 @@ $id = yourls_sanitize_int( yourls_string2int($keyword) );
 $table = YOURLS_DB_TABLE_URL;
 $url = stripslashes($db->get_var("SELECT `url` FROM `$table` WHERE id = $id"));
 
-var_dump($url); die();
-
 // URL found
 if(!empty($url)) {
 	$update_clicks = $db->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `id` = $id");
