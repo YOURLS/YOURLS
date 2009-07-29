@@ -15,7 +15,7 @@ $(document).ready(function(){
 // Create new link and add to table
 function add() {
 	var newurl = $("#add-url").val();
-	if ( !newurl || newurl == 'http://' ) {
+	if ( !newurl || newurl == 'http://' || newurl == 'https://' ) {
 		alert('no URL ?');
 		return;
 	}

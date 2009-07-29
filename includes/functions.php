@@ -31,7 +31,11 @@ function yourls_sanitize_string ($in) {
 
 // make sure there's one and only one 'http://' at the beginning (prevents omitting or pasting a URL right after the default 'http://')
 function yourls_sanitize_url($url) {
-	return preg_replace('#^(http://)+#', 'http://', 'http://'.$url);
+	if(substr($url, 0, 5) == 'https') {
+		return preg_replace('#^(https://)+#', 'https://', 'https://'.$url);
+	} else {
+		return preg_replace('#^(http://)+#', 'http://', 'http://'.$url);
+	}
 }
 
 // Make sure an id link is a valid integer (PHP's intval() limits to too small numbers)
@@ -153,7 +157,7 @@ function yourls_insert_link_in_db($url, $id, $db) {
 
 // Add a new link in the DB, either with custom keyword, or find one
 function yourls_add_new_link($url, $keyword = '', $db) {
-	if ( !$url or $url == 'http://' ) {
+	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status'] = 'fail';
 		$return['message'] = 'Missing URL input';
 		return $return;
