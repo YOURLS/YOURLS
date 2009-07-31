@@ -29,13 +29,16 @@ function yourls_sanitize_string ($in) {
 	return substr(preg_replace('/[^a-zA-Z0-9]/', '', $in), 0, 12);
 }
 
-// make sure there's one and only one 'http://' at the beginning (prevents omitting or pasting a URL right after the default 'http://')
+// A few sanity checks on the URL
 function yourls_sanitize_url($url) {
-	if(substr($url, 0, 5) == 'https') {
-		return preg_replace('#^(https://)+#', 'https://', 'https://'.$url);
-	} else {
-		return preg_replace('#^(http://)+#', 'http://', 'http://'.$url);
-	}
+	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
+	$url = preg_replace('|http://([^:]+://)|', '$1', $url);
+
+	// make sure there's a protocol, add http:// if not
+	if ( !preg_match('|[^:]+://|', $url ) )
+		$url = 'http://'.$url;
+		
+	return $url;
 }
 
 // Make sure an id link is a valid integer (PHP's intval() limits to too small numbers)
