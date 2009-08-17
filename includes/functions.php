@@ -32,7 +32,7 @@ function yourls_sanitize_string ($in) {
 // A few sanity checks on the URL
 function yourls_sanitize_url($url) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
-	$url = preg_replace('|http://([^:]+://)|', '$1', $url);
+	$url = str_replace('http://http://', 'http://', $url);
 
 	// make sure there's a protocol, add http:// if not
 	if ( !preg_match('|[^:]+://|', $url ) )
