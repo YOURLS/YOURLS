@@ -69,6 +69,7 @@ $yourls_reserved_URL = array(
 /******************** DO NOT EDIT ANYTHING ELSE ********************/
 
 // Include everything except auth functions
+require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
 require_once (dirname(__FILE__).'/functions-baseconvert.php');
 require_once (dirname(__FILE__).'/class-mysql.php');
