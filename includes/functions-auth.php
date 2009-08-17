@@ -91,6 +91,7 @@ function yourls_login_screen($error_msg = '') {
 	</form>
 	<script type="text/javascript">$('#username').focus();</script>
 </div>
+<div id="footer">Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></div>
 </body>
 </html>
 <?php
