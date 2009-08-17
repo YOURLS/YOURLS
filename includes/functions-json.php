@@ -31,7 +31,7 @@ function yourls_array_to_json( $array ){
 
             // Format the value:
             if( is_array( $value )){
-                $value = array_to_json( $value );
+                $value = yourls_array_to_json( $value );
             } else if( !is_numeric( $value ) || is_string( $value ) ){
                 $value = "'".addslashes($value)."'";
             }
@@ -50,7 +50,7 @@ function yourls_array_to_json( $array ){
 
             // Format the value:
             if( is_array( $value )){
-                $value = array_to_json( $value );
+                $value = yourls_array_to_json( $value );
             } else if( !is_numeric( $value ) || is_string( $value ) ){
                 $value = "'".addslashes($value)."'";
             }
