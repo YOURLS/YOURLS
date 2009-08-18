@@ -391,6 +391,13 @@
 				<li>Unless you plan on making it public, any shared hosting should be fine</li>
 				<li><a href="http://domai.nr/">Domainr</a> is a fun search tool that might inspire and help you</li>
 				<li>Aim for exotic top level domains (.in, .im, .li ...), they're often cheap and a lot are still available. <a href="https://www.gandi.net/domain/buy/search/">Gandi</a> is a pretty comprehensive registrar, for instance.</li>
+
+			<h3>YOURLS needs its own .htaccess</h3>
+			<ul>
+				<li>You cannot install YOURLS and, say, WordPress, in the same directory. Both of them need to handle URLs differently</li>
+				<li>If you want to install YOURLS on the same domain than your blog, give it its own (short) subdirectory, such as yourblog.com/s/ (for "short") or yourblog.com/x/ (for "exit")</li>
+			</ul>
+
 		</div>
 	</div>
 </div>
