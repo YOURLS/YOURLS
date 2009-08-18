@@ -26,6 +26,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, array(     // Data to POST
 		'url'      => $url,
 		'keyword'  => $keyword,
 		'format'   => $format,
+		'action'   => 'shorturl',
 		'username' => $username,
 		'password' => $password
 	));
