@@ -395,3 +395,52 @@ function yourls_api_output( $mode, $return ) {
 	}
 	die();
 }
+
+// Display HTML head and <body> tag
+function yourls_html_head( $context = 'index' ) {
+	// Load components as needed
+	switch ( $context ) {
+		case 'index':
+			$insert = true;
+			$tablesorter = true;
+			break;
+		
+		case 'install':
+		case 'login':
+		case 'new':
+			$insert = false;
+			$tablesorter = false;
+			break;
+	}
+	
+	?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
+	<meta name="author" content="Richard Ozh, Lester Chan" />
+	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
+	<?php if ($tablesorter) { ?>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+	<?php } ?>
+	<?php if ($insert) { ?>
+		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js" type="text/javascript"></script>
+	<?php } ?>
+</head>
+<body class="<?php echo $context; ?>">
+	<?php
+}
+
+// Display HTML footer (including closing body & html tags)
+function yourls_html_footer() {
+	?>
+	<div id="footer">Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></div>	
+	</body>
+	</html>
+	<?php
+}

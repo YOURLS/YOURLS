@@ -53,20 +53,9 @@ function yourls_salt( $string ) {
 }
 
 // Display the login screen. Nothing past this point.
-function yourls_login_screen($error_msg = '') {
+function yourls_login_screen( $error_msg = '' ) {
+	yourls_html_head( 'login' );
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<title>Login &laquo; YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
-	<meta name="author" content="Ozh RICHARD, Lester Chan" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-</head>
-<body>
 <div id="login">
 	<form method="post" action="?"> <?php // reset any QUERY parameters ?>
 		<p>
@@ -91,9 +80,7 @@ function yourls_login_screen($error_msg = '') {
 	</form>
 	<script type="text/javascript">$('#username').focus();</script>
 </div>
-<div id="footer">Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></div>
-</body>
-</html>
 <?php
+yourls_html_footer();
 die();
 }

@@ -28,8 +28,13 @@ $insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_NEXTDEC.' VALUES (1)';
 ### Connect To Database
 $db = yourls_db_connect();
 
+// Check Whether YOURLS Is Installed
+$db->show_errors = false;
+$is_installed = $db->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
+
+
 ## Install YOURLS
-if(isset($_REQUEST['install'])) {
+if ( isset($_REQUEST['install']) && !$is_installed ) {
 	$create_table_count = 0;
 	$insert_query_count = 0;
 	foreach($create_tables as $table_name => $table_query) {
@@ -57,26 +62,14 @@ if(isset($_REQUEST['install'])) {
 		$error_msg[] = "Error installing YOURLS."; 
 	}
 } else {
-	// Check Whether YOURLS Is Installed
-	$db->show_errors = false;
-	$is_installed = $db->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
-	if($is_installed != NULL) {
+	if( $is_installed != NULL ) {
 		$error_msg[] = 'YOURLS has already been installed.';
 	}
 }
+
+yourls_html_head( 'install' );
+
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<title>Install &laquo; YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
-	<meta name="author" content="Ozh RICHARD, Lester Chan" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-</head>
-<body>
 <div id="login">
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>
 		<p>
@@ -108,5 +101,4 @@ if(isset($_REQUEST['install'])) {
 		?>
 	</form>
 </div>
-</body>
-</html>
+<?php yourls_html_footer(); ?>
