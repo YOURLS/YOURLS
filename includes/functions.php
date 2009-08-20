@@ -4,9 +4,6 @@
  * Function library
  */
  
-// Bump this when updating the SVN repo
-define('YOURLS_VERSION', '1.2');
-
 // function to convert an integer (1337) to a string (3jk). Input integer processed as a string to beat PHP's int max value
 function yourls_int2string( $id ) {
 	$str = yourls_base2base(trim(strval($id)), 10, YOURLS_URL_CONVERT);
@@ -94,13 +91,8 @@ function yourls_table_edit_row($id, $db) {
 	$safe_url = stripslashes($url->url);
 	$keyword = yourls_int2string($id);
 	if($url) {
-		$return = <<<RETURN
-		<tr id="edit-$id" class="edit-row">
-		<td colspan="6">Edit: <strong>original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="100" />
-			<strong>short URL</strong>:<input type="text" id="edit-id-$id" name="edit-id-$id" value="$keyword" class="text" size="10" />
-		</td>
-		<td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /></td>
-		</tr>
+	$return = <<<RETURN
+<tr id="edit-$id" class="edit-row"><td colspan="6">Edit: <strong>original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="100" /><strong>short URL</strong>:<input type="text" id="edit-id-$id" name="edit-id-$id" value="$keyword" class="text" size="10" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="7">Invalid URL ID</td></tr>';
@@ -116,17 +108,7 @@ function yourls_table_add_row( $id, $keyword, $url, $ip, $clicks, $timestamp ) {
 	$www = YOURLS_SITE;
 	
 	return <<<ROW
-	<tr id="id-$id">
-		<td id="keyword-$id">$keyword</td>
-		<td id="url-$id"><a href="$url" title="$url">$url</a></td>
-		<td id="shorturl-$id"><a href="$www/$keyword" title="$www/$keyword">$www/$keyword</a></td>
-		<td id="timestamp-$id">$date</td>
-		<td>$ip</td>
-		<td>$clicks</td>
-		<td class="actions">
-		<input type="button" id="edit-button-$id" name="edit-button" value="Edit" class="button" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="Del" class="button" onclick="remove('$id');" />
-		</td>
-	</tr>
+<tr id="id-$id"><td id="keyword-$id">$keyword</td><td id="url-$id"><a href="$url" title="$url">$url</a></td><td id="shorturl-$id"><a href="$www/$keyword" title="$www/$keyword">$www/$keyword</a></td><td id="timestamp-$id">$date</td><td>$ip</td>		<td>$clicks</td><td class="actions"><input type="button" id="edit-button-$id" name="edit-button" value="Edit" class="button" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="Del" class="button" onclick="remove('$id');" /></td></tr>
 ROW;
 }
 
