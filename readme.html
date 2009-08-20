@@ -384,6 +384,7 @@
 				<li>Stick to one setting, don't change after you've created links as it will change all your short URLs!</li>
 				<li>Base 36 should be picked. Use 62 only if you understand what it implies.</li>
 				<li>Using base 62 means you *need* PHP extension BCMath</li>
+				<li>Consider Base 62 encoding a beta feature</li>
 			</ul>
 			
 			<h3>Getting a short domain name for your YOURLS install</h3>
@@ -396,6 +397,12 @@
 			<ul>
 				<li>You cannot install YOURLS and, say, WordPress, in the same directory. Both of them need to handle URLs differently</li>
 				<li>If you want to install YOURLS on the same domain than your blog, give it its own (short) subdirectory, such as yourblog.com/s/ (for "short") or yourblog.com/x/ (for "exit")</li>
+			</ul>
+			
+			<h3>If YOURLS generates 404 for your short URLs</h3>
+			<ul>
+				<li>Make sure <strong>mod_rewrite</strong> is enabled with your Apache server</li>
+				<li>Some crappy hosts such as GoDaddy need <a href="http://code.google.com/p/yourls/issues/detail?id=25">a small fix</a> to .htaccess:</li>
 			</ul>
 
 		</div>
