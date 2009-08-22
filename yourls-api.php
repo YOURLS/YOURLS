@@ -8,16 +8,22 @@ if ( !isset($_REQUEST['action']) )
 	die( 'Missing parameter "action"' );
 
 $db = yourls_db_connect();
+
+$action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );
 	
-switch( $_REQUEST['action'] ) {
+switch( $action ) {
 
 	case 'shorturl':
-		$return = yourls_add_new_link( $_REQUEST['url'], $_REQUEST['keyword'], $db );
+		$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
+		$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
+		$return = yourls_add_new_link( $url, $keyword, $db );
 		unset($return['html']); // in API mode, no need for our internal HTML output
 		break;
 	
 	case 'stats':
-		$return = yourls_api_stats( $_REQUEST['filter'], $_REQUEST['limit'], $db );
+		$filter = ( isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : '' );
+		$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
+		$return = yourls_api_stats( $filter, $limit, $db );
 		break;
 		
 	default:
@@ -25,6 +31,8 @@ switch( $_REQUEST['action'] ) {
 
 }
 
-yourls_api_output( $_REQUEST['format'], $return );
+$format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : 'xml' );
+
+yourls_api_output( $format, $return );
 
 die();

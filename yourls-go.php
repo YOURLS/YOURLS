@@ -6,7 +6,8 @@ require_once( dirname(__FILE__).'/includes/config.php' );
 $db = yourls_db_connect();
 
 // Variables
-$keyword = yourls_sanitize_string($_GET['id']);
+$id = ( isset( $_GET['id'] ) ? $_GET['id'] : '' );
+$keyword = yourls_sanitize_string( $id );
 
 // First possible exit:
 if ( !$keyword ) {
