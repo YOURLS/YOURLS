@@ -1,16 +1,16 @@
 <?php
-### Require Files
+// Require Files
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
 	require_once '../includes/auth.php';
 
-### This file will output a JSON string
-header('Content-type: application/json');
+// This file will output a JSON string
+//header('Content-type: application/json');
 
-### Connect To Database
+// Connect To Database
 $db = yourls_db_connect();
 
-### Pick action
+// Pick action
 switch( stripslashes($_REQUEST['mode']) ) {
 
 	case 'add':

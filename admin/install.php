@@ -1,12 +1,12 @@
 <?php
-### Require Files
+// Require Files
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 
-### Variables
+// Variables
 $error_msg = array();
 $success_msg = array();
 
-### Create Table Query
+// Create Table Query
 $create_tables = array();
 $create_tables[YOURLS_DB_TABLE_URL] = 'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
 							 '`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,'.
@@ -21,11 +21,11 @@ $create_tables[YOURLS_DB_TABLE_NEXTDEC] = 'CREATE TABLE `'.YOURLS_DB_TABLE_NEXTD
 									'PRIMARY KEY (`next_id`)'.
 									') ENGINE = MYISAM ;';
 
-### Insert Initial Records
+// Insert Initial Records
 $insert_queries = array();
 $insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_NEXTDEC.' VALUES (1)';
 
-### Connect To Database
+// Connect To Database
 $db = yourls_db_connect();
 
 // Check Whether YOURLS Is Installed

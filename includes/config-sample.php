@@ -25,6 +25,9 @@ define('YOURLS_DB_TABLE_NEXTDEC', 'next_id');
  ** Site options
  */
 
+/** Turn this on to enable error reporting. Recommended value is false **/
+define('YOURLS_DEBUG', false);
+ 
 /** Short domain URL, no trailing slash */
 define('YOURLS_SITE', 'http://site.com'); //
 

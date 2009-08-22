@@ -1,31 +1,28 @@
 <?php
-### Require Files
+// Require Files
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
 	require_once( dirname(dirname(__FILE__)).'/includes/auth.php' );
 
-### Connect To Database
+// Connect To Database
 $db = yourls_db_connect();
 
-### Variables
+// Variables
 $table_url = YOURLS_DB_TABLE_URL;
 
-$where = '';
-$search_display = '';
-$search_text = '';
-$search_url = '';
+$where = $search_display = $search_text = $search_url = $url = $keyword = '';
 $search_in_text = 'URL';
 $search_in_sql = 'url';
 $sort_by_text = 'ID';
 $sort_by_sql = 'id';
 $sort_order_text = 'Descending Order';
 $sort_order_sql = 'desc';
-$page = intval($_GET['page']);
-$search = mysql_real_escape_string(trim($_GET['s_search']));
-$perpage = ( intval($_GET['perpage']) ? intval($_GET['perpage']) : 20 );
-$link_limit = ( intval($_GET['link_limit']) ? intval($_GET['link_limit']) : '' );
+$page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
+$search = ( isset( $_GET['s_search'] ) ? mysql_real_escape_string(trim($_GET['s_search'])) : '' );
+$perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 10 );
+$link_limit = ( isset( $_GET['link_limit'] ) && intval($_GET['link_limit']) ? intval($_GET['link_limit']) : '' );
 if ( $link_limit != '' ) {
-	$link_filter = ( $_GET['link_filter'] == 'more' ? 'more' : 'less' ) ;
+	$link_filter = ( isset( $_GET['link_filter'] ) && $_GET['link_filter'] == 'more' ? 'more' : 'less' ) ;
 	$link_moreless = ( $link_filter == 'more' ? '>=' : '<=' );
 	$where = " AND clicks $link_moreless $link_limit";
 } else {
@@ -33,7 +30,7 @@ if ( $link_limit != '' ) {
 }
 $base_page = YOURLS_SITE . '/admin/index.php';
 
-### Searching
+// Searching
 if(!empty($search) && !empty($_GET['s_in'])) {
 	switch($_GET['s_in']) {
 		case 'id':
@@ -56,7 +53,7 @@ if(!empty($search) && !empty($_GET['s_in'])) {
 	$where .= " AND $search_in_sql LIKE ('$search')";
 }
 
-### Sorting
+// Sorting
 if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
 	switch($_GET['s_by']) {
 		case 'id':
@@ -92,60 +89,91 @@ if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
 	}
 }
 
-## Get URLs Count for current filter, total links in DB & total clicks
+// Get URLs Count for current filter, total links in DB & total clicks
 $total_items = $db->get_var("SELECT COUNT(id) FROM $table_url WHERE 1=1 $where");
 $totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
 
-### Checking $page, $offset, $perpage
-if(empty($page) || $page == 0) { $page = 1; }
-if(empty($offset)) { $offset = 0; }
-if(empty($perpage) || $perpage == 0) { $perpage = 50; }
+// This is a bookmarklet
+if ( isset( $_GET['u'] ) ) {
+	$is_bookmark = true;
 
-### Determine $offset
-$offset = ($page-1) * $perpage;
+	$url = $_GET['u'];
+	$keyword = ( isset( $_GET['k'] ) ? $_GET['k'] : '' );
+	$return = yourls_add_new_link( $url, $keyword, $db );
+	
+	// If fails because keyword already exist, retry with no keyword
+	if ( $return['status'] == 'fail' && $return['code'] == 'error:keyword' ) {
+		$msg = $return['message'];
+		$return = yourls_add_new_link( $url, '', $db );
+		$return['message'] .= ' ('.$msg.')';
+	}
+	
+	$s_url = stripslashes( $url );
+	$where = " AND url LIKE '$s_url' ";
+	
+	$page = $total_pages = $perpage = 1;
+	$offset = 0;
+	
+	$text = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
+	$title = ( isset( $_GET['t'] ) ? stripslashes( $_GET['t'] ) : '' );
 
-### Determine Max Number Of Items To Display On Page
-if(($offset + $perpage) > $total_items) { 
-	$max_on_page = $total_items; 
-} else { 
-	$max_on_page = ($offset + $perpage); 
+// This is not a bookmarklet
+} else {
+	$is_bookmark = false;
+	
+	// Checking $page, $offset, $perpage
+	if(empty($page) || $page == 0) { $page = 1; }
+	if(empty($offset)) { $offset = 0; }
+	if(empty($perpage) || $perpage == 0) { $perpage = 50; }
+
+	// Determine $offset
+	$offset = ($page-1) * $perpage;
+
+	// Determine Max Number Of Items To Display On Page
+	if(($offset + $perpage) > $total_items) { 
+		$max_on_page = $total_items; 
+	} else { 
+		$max_on_page = ($offset + $perpage); 
+	}
+
+	// Determine Number Of Items To Display On Page
+	if (($offset + 1) > ($total_items)) { 
+		$display_on_page = $total_items; 
+	} else { 
+		$display_on_page = ($offset + 1); 
+	}
+
+	// Determing Total Amount Of Pages
+	$total_pages = ceil($total_items / $perpage);
+
 }
 
-### Determine Number Of Items To Display On Page
-if (($offset + 1) > ($total_items)) { 
-	$display_on_page = $total_items; 
-} else { 
-	$display_on_page = ($offset + 1); 
-}
 
-### Determing Total Amount Of Pages
-$total_pages = ceil($total_items / $perpage);
-
-
-yourls_html_head( 'index' );
+// Begin output of the page
+$context = ( $is_bookmark ? 'bookmark' : 'index' );
+yourls_html_head( $context );
 ?>
 	<h1>
 		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
 	</h1>
 	<?php if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) { ?>
-		<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
+		<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a>. Check the <a href="tools.php">Tools</a>.</p>
 	<?php } ?>
-	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
-	   <?php echo $search_display; ?>
-	   Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!
+	<p><?php if ( !$is_bookmark ) {
+	?>
+	Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
+		<?php echo $search_display; ?>
+	<?php } ?>
+		Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!
 	</p>
 
-	<div id="new_url">
-		<div>
-			<form id="new_url_form" action="" method="get">
-				<strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="http://" class="text" size="90" />
-				Optional: <strong>Custom short URL</strong>:<input type="text" id="add-keyword" name="keyword" value="" maxlength="12" class="text" size="8" />
-				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" />
-			</form>
-			<div id="feedback" style="display:none"></div>
-		</div>
-	</div>
+	<?php yourls_html_addnew(); ?>
+	
+	<?php if ( $is_bookmark ) {
+		echo '<h2 class="bookmark_result">' . $return['message'] . '</h2>';
+	
+	} ?>
 	
 	<table id="tblUrl" class="tblSorter" cellpadding="0" cellspacing="1">
 		<thead>
@@ -159,83 +187,29 @@ yourls_html_head( 'index' );
 				<th>Actions</th>
 			</tr>
 		</thead>
-		<tfoot>
-			<tr>
-				<th colspan="4" style="text-align: left;">
-					<form action="" method="get">
-						<div>
-							<div style="float:right;">
-								<input type="submit" id="submit-sort" value="Filter" class="button primary" />
-								&nbsp;
-								<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'index.php'" />
-							</div>
 
-							Search&nbsp;for&nbsp;
-							<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
-							&nbsp;in&nbsp;
-							<select name="s_in" size="1">
-								<!-- <option value="id"<?php if($search_in_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option> -->
-								<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-								<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
-							</select>
-							&ndash;&nbsp;Order&nbsp;by&nbsp;
-							<select name="s_by" size="1">
-								<option value="id"<?php if($sort_by_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option>
-								<option value="url"<?php if($sort_by_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-								<option value="timestamp"<?php if($sort_by_sql == 'timestamp') { echo ' selected="selected"'; } ?>>Date</option>
-								<option value="ip"<?php if($sort_by_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
-								<option value="clicks"<?php if($sort_by_sql == 'clicks') { echo ' selected="selected"'; } ?>>Clicks</option>
-							</select>
-							<select name="s_order" size="1">
-								<option value="asc"<?php if($sort_order_sql == 'asc') { echo ' selected="selected"'; } ?>>Ascending</option>
-								<option value="desc"<?php if($sort_order_sql == 'desc') { echo ' selected="selected"'; } ?>>Descending</option>
-							</select>
-							&ndash;&nbsp;Show&nbsp;
-							<input type="text" name="perpage" class="text" size="2" value="<?php echo $perpage; ?>" />&nbsp;rows<br/>
-							
-							Show links with
-							<select name="link_filter" size="1">
-								<option value="more"<?php if($link_filter === 'more') { echo ' selected="selected"'; } ?>>more</option>
-								<option value="less"<?php if($link_filter === 'less') { echo ' selected="selected"'; } ?>>less</option>
-							</select>
-							than
-							<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" />clicks
+		<?php
+		if ( !$is_bookmark ) {
+			$params = array(
+				'search_text'    => $search_text,
+				'search_in_sql'  => $search_in_sql,
+				'sort_by_sql'    => $sort_by_sql,
+				'sort_order_sql' => $sort_order_sql,
+				'page'           => $page,
+				'perpage'        => $perpage,
+				'link_filter'    => $link_filter,
+				'link_limit'     => $link_limit,
+				'total_pages'    => $total_pages,
+				'base_page'      => $base_page,
+				'search_url'     => $search_url,
+			);
+			yourls_html_tfooter( $params );
+		}
+		?>
 
-							
-						</div>
-					</form>
-				</th>
-				<th colspan="3" style="text-align: right;">
-					Pages (<?php echo $total_pages; ?>):
-					<?php
-						if ($page >= 4) {
-							echo '<b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page=1'.'" title="Go to First Page">&laquo; First</a></b> ... ';
-						}
-						if($page > 1) {
-							echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page-1).'" title="&laquo; Go to Page '.($page-1).'">&laquo;</a></b> ';
-						}
-						for($i = $page - 2 ; $i  <= $page +2; $i++) {
-							if ($i >= 1 && $i <= $total_pages) {
-								if($i == $page) {
-									echo "<strong>[$i]</strong> ";
-								} else {
-									echo '<a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($i).'" title="Page '.$i.'">'.$i.'</a> ';
-								}
-							}
-						}
-						if($page < $total_pages) {
-							echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page+1).'" title="Go to Page '.($page+1).' &raquo;">&raquo;</a></b> ';
-						}
-						if (($page+2) < $total_pages) {
-							echo ' ... <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></b>';
-						}
-					?>
-				</th>
-			</tr>
-		</tfoot>
 		<tbody>
 			<?php
-			### Main Query
+			// Main Query
 			$url_results = $db->get_results("SELECT * FROM $table_url WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
 			if($url_results) {
 				foreach( $url_results as $url_result ) {
@@ -254,4 +228,9 @@ yourls_html_head( 'index' );
 			?>
 		</tbody>
 	</table>
+	
+	<?php if ( $is_bookmark )
+		yourls_share_box( $url, $return['shorturl'], $title, $text );
+	?>
+	
 <?php yourls_html_footer(); ?>
