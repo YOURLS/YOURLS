@@ -14,6 +14,7 @@ h2 {border-bottom:1px solid white}
 <h1>YOURLS: Your Own URL Shortener</h1>
 
 <?php
+require_once( dirname(__FILE__).'/includes/config.php' );
 
 // Part to be executed if FORM has been submitted
 if ( isset($_REQUEST['url']) ) {
@@ -21,7 +22,6 @@ if ( isset($_REQUEST['url']) ) {
 	$url = $_REQUEST['url'];
 	$keyword = isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' ;
 
-	require_once( dirname(__FILE__).'/includes/config.php' );
 	$db = yourls_db_connect();
 
 	$return = yourls_add_new_link( $url, $keyword, $db );
@@ -53,6 +53,6 @@ HTML;
 
 ?>
 
-<p id="credits">Powered by <a href="http://yourls.org/" title="YOURLS: Your Own URL Shortener">YOURLS</a></p>
+<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></p></div>
 </body>
 </html>
