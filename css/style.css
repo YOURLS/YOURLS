@@ -117,6 +117,7 @@ tr:hover td.actions input{
 }
 div.share {
 	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
 	border:2px solid #8DBDD8;
 	background:#fff;
 	margin-right:1em;
@@ -167,6 +168,7 @@ div.share {
 #tools_desc .bookmarklet {
 	border:2px solid #2A85B3;
 	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.gif) 2px center no-repeat;
 }
