@@ -38,11 +38,39 @@ function yourls_sanitize_url($url) {
 	$url = str_replace('http://http://', 'http://', $url);
 
 	// make sure there's a protocol, add http:// if not
-	if ( !preg_match('|[^:]+://|', $url ) )
+	if ( !preg_match('!^([a-zA-Z]+://)!', $url ) )
 		$url = 'http://'.$url;
 		
-	return htmlspecialchars($url);
+	return yourls_clean_url($url);
 }
+
+// Function to filter all invalid characters from a URL. Stolen from WP's clean_url()
+function yourls_clean_url( $url ) {
+	$url = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', $url);
+	$strip = array('%0d', '%0a', '%0D', '%0A');
+	$url = yourls_deep_replace($strip, $url);
+	$url = str_replace(';//', '://', $url);
+	
+	return $url;
+}
+
+// Perform a replacement while a string is found, eg $subject = '%0%0%0DDD', $search ='%0D' -> $result =''
+// Stolen from WP's _deep_replace
+function yourls_deep_replace($search, $subject){
+	$found = true;
+	while($found) {
+		$found = false;
+		foreach( (array) $search as $val ) {
+			while(strpos($subject, $val) !== false) {
+				$found = true;
+				$subject = str_replace($val, '', $subject);
+			}
+		}
+	}
+	
+	return $subject;
+}
+
 
 // Make sure an id link is a valid integer (PHP's intval() limits to too small numbers)
 function yourls_sanitize_int($in) {
