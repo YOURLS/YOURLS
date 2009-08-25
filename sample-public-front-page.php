@@ -53,6 +53,9 @@ HTML;
 
 ?>
 
+<!-- Example bookmarklet. Be sure to rename the link target from "sample-public-front-page.php" to whatever you'll use (probably index.php) -->
+<p><a href="javascript:void(location.href='<?php echo YOURLS_SITE; ?>/sample-public-front-page.php?format=simple&action=shorturl&url='+escape(location.href))">bookmarklet</a>
+
 <div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></p></div>
 </body>
 </html>
