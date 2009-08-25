@@ -488,9 +488,9 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="90" />
+				<div><strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="90" />
 				Optional: <strong>Custom short URL</strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" maxlength="12" class="text" size="8" />
-				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" />
+				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" /></div>
 			</form>
 			<div id="feedback" style="display:none"></div>
 		</div>
