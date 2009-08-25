@@ -233,4 +233,4 @@ yourls_html_head( $context );
 		yourls_share_box( $url, $return['shorturl'], $title, $text );
 	?>
 	
-<?php yourls_html_footer(); ?>
+<?php yourls_html_footer( $db ); ?>

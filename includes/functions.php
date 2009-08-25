@@ -368,6 +368,11 @@ function yourls_api_stats( $filter, $limit, $db ) {
 			$sort_by = 'timestamp';
 			$sort_order = 'desc';
 			break;
+		case 'rand':
+		case 'random':
+			$sort_by = 'RAND()';
+			$sort_order = '';
+			break;
 		case 'top':
 		default:
 			$sort_by = 'clicks';
@@ -473,9 +478,10 @@ function yourls_html_head( $context = 'index' ) {
 }
 
 // Display HTML footer (including closing body & html tags)
-function yourls_html_footer() {
+function yourls_html_footer( $db = null ) {
+	$num_queries = ( $db && $db->num_queries  ? ' &ndash; '.$db->num_queries.' queries' : '' );
 	?>
-	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; ?></p></div>	
+	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo $num_queries; ?></p></div>
 	</body>
 	</html>
 	<?php
@@ -580,6 +586,7 @@ function yourls_html_tfooter( $params = array() ) {
 	<?php
 }
 
+// Display the Quick Share box of the tools.php page
 function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
 	$text = ( $text ? '"'.$text.'" ' : '' );
 	$title = ( $title ? "$title " : '' );
@@ -614,4 +621,9 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
 	</div>
 	
 	<?php
+}
+
+// Get number of SQL queries performed
+function yourls_get_num_queries( $db ) {
+	return $db->num_queries;
 }
