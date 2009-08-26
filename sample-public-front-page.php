@@ -36,6 +36,12 @@ if ( isset($_REQUEST['url']) ) {
 	<p>$message</p>
 RESULT;
 
+/*
+If you want to add the Quick Share box like on the private bookmarklet, simply use this PHP function:
+<?php yourls_share_box( $url, $shorturl ); ?>
+For all the special stuff to work you need to include js/share.js in the <head> of your page
+*/
+
 
 // Part to be executed when no form has been submitted
 } else {
