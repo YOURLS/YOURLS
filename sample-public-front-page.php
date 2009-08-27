@@ -22,9 +22,7 @@ if ( isset($_REQUEST['url']) ) {
 	$url = $_REQUEST['url'];
 	$keyword = isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' ;
 
-	$db = yourls_db_connect();
-
-	$return = yourls_add_new_link( $url, $keyword, $db );
+	$return = yourls_add_new_link( $url, $keyword );
 	
 	$shorturl = $return['shorturl'];
 	$message = $return['message'];

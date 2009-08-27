@@ -7,8 +7,6 @@ if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true )
 if ( !isset($_REQUEST['action']) )
 	die( 'Missing parameter "action"' );
 
-$db = yourls_db_connect();
-
 $action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );
 	
 switch( $action ) {
@@ -16,14 +14,14 @@ switch( $action ) {
 	case 'shorturl':
 		$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
 		$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
-		$return = yourls_add_new_link( $url, $keyword, $db );
+		$return = yourls_add_new_link( $url, $keyword );
 		unset($return['html']); // in API mode, no need for our internal HTML output
 		break;
 	
 	case 'stats':
 		$filter = ( isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : '' );
 		$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
-		$return = yourls_api_stats( $filter, $limit, $db );
+		$return = yourls_api_stats( $filter, $limit );
 		break;
 		
 	default:

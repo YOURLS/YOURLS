@@ -2,9 +2,6 @@
 // Require Files
 require_once( dirname(__FILE__).'/includes/config.php' );
 
-// Connect To Database
-$db = yourls_db_connect();
-
 // Variables
 $id = ( isset( $_GET['id'] ) ? $_GET['id'] : '' );
 $keyword = yourls_sanitize_string( $id );
@@ -19,15 +16,16 @@ $id = yourls_sanitize_int( yourls_string2int($keyword) );
 
 // Get URL From Database
 $table = YOURLS_DB_TABLE_URL;
-$url = stripslashes($db->get_var("SELECT `url` FROM `$table` WHERE id = $id"));
+$url = stripslashes($ydb->get_var("SELECT `url` FROM `$table` WHERE id = $id"));
 
 $protocol = $_SERVER["SERVER_PROTOCOL"];
 if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
 	$protocol = 'HTTP/1.0';
 
+
 // URL found
 if(!empty($url)) {
-	$update_clicks = $db->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `id` = $id");
+	$update_clicks = $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `id` = $id");
 	header ($protocol.' 301 Moved Permanently');
 	header ('Location: '. $url);
 

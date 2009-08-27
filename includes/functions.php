@@ -118,10 +118,12 @@ function yourls_get_IP() {
 }
 
 // Add the "Edit" row
-function yourls_table_edit_row($id, $db) {
+function yourls_table_edit_row($id) {
+	global $ydb;
+	
 	$id = yourls_intval($id);
 	$table = YOURLS_DB_TABLE_URL;
-	$url = $db->get_row("SELECT `url` FROM `$table` WHERE `id` = '$id';");
+	$url = $ydb->get_row("SELECT `url` FROM `$table` WHERE `id` = '$id';");
 	$safe_url = stripslashes($url->url);
 	$keyword = yourls_int2string($id);
 	if($url) {
@@ -147,35 +149,45 @@ ROW;
 }
 
 // Get next id a new link will have if no custom keyword provided
-function yourls_get_next_decimal($db) {
+function yourls_get_next_decimal() {
+	global $ydb;
+
 	$table = YOURLS_DB_TABLE_NEXTDEC;
-	return $db->get_var("SELECT `next_id` FROM `$table`");
+	return $ydb->get_var("SELECT `next_id` FROM `$table`");
 }
 
 // Update id for next link with no custom keyword
-function yourls_update_next_decimal($int = '', $db) {
+function yourls_update_next_decimal($int = '') {
+	global $ydb;
+
 	$int = ( $int == '' ) ? 'next+1' : (int)$int ;
 	$table = YOURLS_DB_TABLE_NEXTDEC;
-	return $db->query("UPDATE `$table` set next_id=$int");
+	return $ydb->query("UPDATE `$table` set next_id=$int");
 }
 
 // Delete a link in the DB
-function yourls_delete_link_by_id($id, $db) {
+function yourls_delete_link_by_id($id) {
+	global $ydb;
+
 	$table = YOURLS_DB_TABLE_URL;
 	$id = yourls_intval($id);
-	return $db->query("DELETE FROM `$table` WHERE `id` = $id;");
+	return $ydb->query("DELETE FROM `$table` WHERE `id` = $id;");
 }
 
 // SQL query to insert a new link in the DB. Needs sanitized data. Returns boolean for success or failure of the inserting
-function yourls_insert_link_in_db($url, $id, $db) {
+function yourls_insert_link_in_db($url, $id) {
+	global $ydb;
+
 	$table = YOURLS_DB_TABLE_URL;
 	$timestamp = date('Y-m-d H:i:s');
 	$ip = yourls_get_IP();
-	return $db->query("INSERT INTO `$table` VALUES($id, '$url', '$timestamp', '$ip', 0);");
+	return $ydb->query("INSERT INTO `$table` VALUES($id, '$url', '$timestamp', '$ip', 0);");
 }
 
 // Add a new link in the DB, either with custom keyword, or find one
-function yourls_add_new_link($url, $keyword = '', $db) {
+function yourls_add_new_link($url, $keyword = '') {
+	global $ydb;
+
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status'] = 'fail';
 		$return['code'] = 'error:nourl';
@@ -186,7 +198,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 	$table = YOURLS_DB_TABLE_URL;
 	$url = mysql_real_escape_string(yourls_sanitize_url($url));
 	$strip_url = stripslashes($url);
-	$url_exists = $db->get_row("SELECT id,url FROM `$table` WHERE `url` = '".$strip_url."';");
+	$url_exists = $ydb->get_row("SELECT id,url FROM `$table` WHERE `url` = '".$strip_url."';");
 	$ip = yourls_get_IP();
 	$return = array();
 
@@ -196,7 +208,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 		// Custom keyword provided
 		if ($keyword) {
 			$keyword = mysql_real_escape_string(yourls_sanitize_string($keyword));
-			if (!yourls_keyword_is_free($keyword, $db)) {
+			if (!yourls_keyword_is_free($keyword, $ydb)) {
 				// This id either reserved or taken already
 				$return['status'] = 'fail';
 				$return['code'] = 'error:keyword';
@@ -204,7 +216,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 			} else {
 				// all clear, store !
 				$id = yourls_string2int($keyword);
-				yourls_insert_link_in_db($url, $id, $db);
+				yourls_insert_link_in_db($url, $id, $ydb);
 				$return['url'] = array('id' => $id, 'keyword' => $keyword, 'url' => $strip_url, 'date' => date('Y-m-d H:i:s'), 'ip' => yourls_get_IP() );
 				$return['status'] = 'success';
 				$return['message'] = $strip_url.' added to database';
@@ -215,14 +227,14 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 		// Create random keyword	
 		} else {
 			$timestamp = date('Y-m-d H:i:s');
-			$id = yourls_get_next_decimal($db);
+			$id = yourls_get_next_decimal($ydb);
 			do {
-				$add_url = @yourls_insert_link_in_db($url, $id, $db);
+				$add_url = @yourls_insert_link_in_db($url, $id, $ydb);
 				$free = !yourls_is_reserved_id( $id );
 				$ok = ($free && $add_url);
 				if ( $ok === false && $add_url === 1 ) {
 					// we stored something, but shouldn't have (ie reserved id)
-					$delete = yourls_delete_link_by_id( $id, $db );
+					$delete = yourls_delete_link_by_id( $id, $ydb );
 					$return['extra_info'] .= '(deleted '.$id.')';
 				} else {
 					// everything ok, populate needed vars
@@ -235,7 +247,7 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 				}
 				$id++;
 			} while (!$ok);
-			@yourls_update_next_decimal($id, $db);
+			@yourls_update_next_decimal($id, $ydb);
 		}
 	} else {
 		// URL was already stored
@@ -250,17 +262,19 @@ function yourls_add_new_link($url, $keyword = '', $db) {
 
 
 // Edit a link
-function yourls_edit_link($url, $id, $keyword='', $db) {
+function yourls_edit_link($url, $id, $keyword='') {
+	global $ydb;
+
 	$table = YOURLS_DB_TABLE_URL;
 	$url = mysql_real_escape_string(yourls_sanitize_url($url));
 	$id = yourls_intval($id);
 	$strip_url = stripslashes($url);
-	$old_url = $db->get_var("SELECT `url` FROM `$table` WHERE `id` = '".$id."';");
+	$old_url = $ydb->get_var("SELECT `url` FROM `$table` WHERE `id` = '".$id."';");
 	
 	
 	// Check if new URL is not here already
 	if ($old_url != $url) {
-		$url_exists = intval($db->get_var("SELECT id FROM `$table` WHERE `url` = '".$strip_url."';"));
+		$url_exists = intval($ydb->get_var("SELECT id FROM `$table` WHERE `url` = '".$strip_url."';"));
 	} else {
 		$url_exists = false;
 	}
@@ -268,8 +282,8 @@ function yourls_edit_link($url, $id, $keyword='', $db) {
 	// Check if the new keyword is not here already
 	$newid = ( $keyword ? yourls_string2int($keyword) : $id );
 	if ($newid != $id) {
-		$id_exists = intval($db->get_var("SELECT id FROM `$table` WHERE `id` = '".$newid."';"));
-		$id_free = yourls_keyword_is_free($keyword, $db);
+		$id_exists = intval($ydb->get_var("SELECT id FROM `$table` WHERE `id` = '".$newid."';"));
+		$id_free = yourls_keyword_is_free($keyword, $ydb);
 		$id_is_ok = ($id_exists == 0) && $id_free;
 	} else {
 		$id_is_ok = true;
@@ -279,7 +293,7 @@ function yourls_edit_link($url, $id, $keyword='', $db) {
 	if($url_exists == 0 && $id_is_ok ) {
 		$timestamp4screen = date( 'Y M d H:i', time()+( yourls_HOURS_OFFSET * 3600) );
 		$timestamp4db = date('Y-m-d H:i:s', time()+( yourls_HOURS_OFFSET * 3600) );
-		$update_url = $db->query("UPDATE `$table` SET `url` = '$url', `timestamp` = '$timestamp4db', `id` = '$newid' WHERE `id` = $id;");
+		$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `timestamp` = '$timestamp4db', `id` = '$newid' WHERE `id` = $id;");
 		if($update_url) {
 			$return['url'] = array('id' => $newid, 'keyword' => $keyword, 'shorturl' => YOURLS_SITE.'/'.$keyword, 'url' => $strip_url, 'date' => $timestamp4screen);
 			$return['status'] = 'success';
@@ -300,13 +314,15 @@ function yourls_edit_link($url, $id, $keyword='', $db) {
 
 
 // Check if keyword id is free (ie not already taken, and not reserved)
-function yourls_keyword_is_free($str, $db) {
+function yourls_keyword_is_free($str) {
+	global $ydb;
+
 	$table = YOURLS_DB_TABLE_URL;
 	$id = yourls_string2int($str);
 	if ( yourls_is_reserved_id($id) )
 		return false;
 		
-	$already_exists = intval($db->get_var("SELECT `id` FROM `$table` WHERE `id` = '".$id."';"));
+	$already_exists = intval($ydb->get_var("SELECT `id` FROM `$table` WHERE `id` = '".$id."';"));
 	if ( $already_exists )
 		return false;
 
@@ -326,6 +342,8 @@ function yourls_page($page) {
 
 // Connect to DB
 function yourls_db_connect() {
+	global $ydb;
+
 	if (!defined('YOURLS_DB_USER')
 		or !defined('YOURLS_DB_PASS')
 		or !defined('YOURLS_DB_NAME')
@@ -333,11 +351,11 @@ function yourls_db_connect() {
 		or !class_exists('ezSQL_mysql')
 	) die ('DB config/class missing');
 	
-	$db =  new ezSQL_mysql(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
-	if ( $db->last_error )
-		die( $db->last_error );
+	$ydb =  new ezSQL_mysql(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
+	if ( $ydb->last_error )
+		die( $ydb->last_error );
 	
-	return $db;
+	// return $ydb;
 }
 
 // Return JSON output. Compatible with PHP prior to 5.2
@@ -358,7 +376,9 @@ function yourls_xml_encode($array) {
 }
 
 // Return array for API stat requests
-function yourls_api_stats( $filter, $limit, $db ) {
+function yourls_api_stats( $filter, $limit ) {
+	global $ydb;
+
 	switch( $filter ) {
 		case 'bottom':
 			$sort_by = 'clicks';
@@ -382,7 +402,7 @@ function yourls_api_stats( $filter, $limit, $db ) {
 	
 	$limit = intval( $limit );
 	$table_url = YOURLS_DB_TABLE_URL;
-	$results = $db->get_results("SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT 0, $limit;");
+	$results = $ydb->get_results("SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT 0, $limit;");
 
 	$return = array();
 	$i = 1;
@@ -397,7 +417,7 @@ function yourls_api_stats( $filter, $limit, $db ) {
 		);
 	}
 
-	$totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
+	$totals = $ydb->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
 	$return['stats'] = array( 'total_links' => $totals->c, 'total_clicks' => $totals->s );
 
 	return $return;
@@ -478,8 +498,10 @@ function yourls_html_head( $context = 'index' ) {
 }
 
 // Display HTML footer (including closing body & html tags)
-function yourls_html_footer( $db = null ) {
-	$num_queries = ( $db && $db->num_queries  ? ' &ndash; '.$db->num_queries.' queries' : '' );
+function yourls_html_footer() {
+	global $ydb;
+
+	$num_queries = ( $ydb && $ydb->num_queries  ? ' &ndash; '.$ydb->num_queries.' queries' : '' );
 	?>
 	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo $num_queries; ?></p></div>
 	</body>
@@ -624,6 +646,45 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
 }
 
 // Get number of SQL queries performed
-function yourls_get_num_queries( $db ) {
-	return $db->num_queries;
+function yourls_get_num_queries() {
+	global $ydb;
+
+	return $ydb->num_queries;
+}
+
+// Compat http_build_query for PHP4
+if (!function_exists('http_build_query')) {
+	function http_build_query($data, $prefix=null, $sep=null) {
+		return _http_build_query($data, $prefix, $sep);
+	}
+}
+
+// from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
+function _http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
+	$ret = array();
+
+	foreach ( (array) $data as $k => $v ) {
+		if ( $urlencode)
+			$k = urlencode($k);
+		if ( is_int($k) && $prefix != null )
+			$k = $prefix.$k;
+		if ( !empty($key) )
+			$k = $key . '%5B' . $k . '%5D';
+		if ( $v === NULL )
+			continue;
+		elseif ( $v === FALSE )
+			$v = '0';
+
+		if ( is_array($v) || is_object($v) )
+			array_push($ret,_http_build_query($v, '', $sep, $k, $urlencode));
+		elseif ( $urlencode )
+			array_push($ret, $k.'='.urlencode($v));
+		else
+			array_push($ret, $k.'='.$v);
+	}
+
+	if ( NULL === $sep )
+		$sep = ini_get('arg_separator.output');
+
+	return implode($sep, $ret);
 }

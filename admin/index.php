@@ -4,9 +4,6 @@ require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
 	require_once( dirname(dirname(__FILE__)).'/includes/auth.php' );
 
-// Connect To Database
-$db = yourls_db_connect();
-
 // Variables
 $table_url = YOURLS_DB_TABLE_URL;
 
@@ -90,8 +87,8 @@ if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
 }
 
 // Get URLs Count for current filter, total links in DB & total clicks
-$total_items = $db->get_var("SELECT COUNT(id) FROM $table_url WHERE 1=1 $where");
-$totals = $db->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
+$total_items = $ydb->get_var("SELECT COUNT(id) FROM $table_url WHERE 1=1 $where");
+$totals = $ydb->get_row("SELECT COUNT(id) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
 
 // This is a bookmarklet
 if ( isset( $_GET['u'] ) ) {
@@ -99,12 +96,12 @@ if ( isset( $_GET['u'] ) ) {
 
 	$url = $_GET['u'];
 	$keyword = ( isset( $_GET['k'] ) ? $_GET['k'] : '' );
-	$return = yourls_add_new_link( $url, $keyword, $db );
+	$return = yourls_add_new_link( $url, $keyword, $ydb );
 	
 	// If fails because keyword already exist, retry with no keyword
 	if ( $return['status'] == 'fail' && $return['code'] == 'error:keyword' ) {
 		$msg = $return['message'];
-		$return = yourls_add_new_link( $url, '', $db );
+		$return = yourls_add_new_link( $url, '', $ydb );
 		$return['message'] .= ' ('.$msg.')';
 	}
 	
@@ -210,7 +207,7 @@ yourls_html_head( $context );
 		<tbody>
 			<?php
 			// Main Query
-			$url_results = $db->get_results("SELECT * FROM $table_url WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
+			$url_results = $ydb->get_results("SELECT * FROM $table_url WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
 			if($url_results) {
 				foreach( $url_results as $url_result ) {
 					$base36 = yourls_int2string($url_result->id);
@@ -233,4 +230,4 @@ yourls_html_head( $context );
 		yourls_share_box( $url, $return['shorturl'], $title, $text );
 	?>
 	
-<?php yourls_html_footer( $db ); ?>
+<?php yourls_html_footer( ); ?>

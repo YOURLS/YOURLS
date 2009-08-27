@@ -25,12 +25,9 @@ $create_tables[YOURLS_DB_TABLE_NEXTDEC] = 'CREATE TABLE `'.YOURLS_DB_TABLE_NEXTD
 $insert_queries = array();
 $insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_NEXTDEC.' VALUES (1)';
 
-// Connect To Database
-$db = yourls_db_connect();
-
 // Check Whether YOURLS Is Installed
-$db->show_errors = false;
-$is_installed = $db->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
+$ydb->show_errors = false;
+$is_installed = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
 
 
 ## Install YOURLS
@@ -38,8 +35,8 @@ if ( isset($_REQUEST['install']) && !$is_installed ) {
 	$create_table_count = 0;
 	$insert_query_count = 0;
 	foreach($create_tables as $table_name => $table_query) {
-		$db->query($table_query);
-		$create_success = $db->query("SHOW TABLES LIKE '$table_name'");
+		$ydb->query($table_query);
+		$create_success = $ydb->query("SHOW TABLES LIKE '$table_name'");
 		if($create_success) {
 			$create_table_count++;
 			$success_msg[] = "Table '$table_name' created."; 
@@ -48,7 +45,7 @@ if ( isset($_REQUEST['install']) && !$is_installed ) {
 		}
 	}
 	foreach($insert_queries as $insert_query) {
-		$insert_success = $db->query($insert_query);
+		$insert_success = $ydb->query($insert_query);
 		if($insert_success) {
 			$insert_query_count++;
 			$success_msg[] = 'Query '.$insert_query_count.'/'.sizeof($insert_queries).' executed successfully.'; 
