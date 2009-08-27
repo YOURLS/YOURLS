@@ -10,16 +10,16 @@ define('YOURLS_DB_USER', 'dbuser');
 define('YOURLS_DB_PASS', 'dbpassword');
 
 /** The name of the database for YOURLS */
-define('YOURLS_DB_NAME', 'shorturl');
+define('YOURLS_DB_NAME', 'yourls');
 
 /** MySQL hostname */
 define('YOURLS_DB_HOST', 'localhost');
 
 /** MySQL URL table name. Don't change this if in doubt. */
-define('YOURLS_DB_TABLE_URL', 'url');
+define('YOURLS_DB_TABLE_URL', 'yourls_url');
 
 /** MySQL Next ID table name. Don't change this if in doubt. */
-define('YOURLS_DB_TABLE_NEXTDEC', 'next_id');
+define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
 
 /*
  ** Site options
