@@ -389,5 +389,9 @@ class ezSQL_mysql extends ezSQLcore {
 		$this->trace || $this->debug_all ? $this->debug() : null ;
 		return $return_val;
 	}
+	
+	function mysql_version() {
+		return  mysql_get_server_info( $this->dbh ) ;
+	}
 }
 ?>
