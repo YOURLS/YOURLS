@@ -1,7 +1,7 @@
-# BEGIN ShortURL
+# BEGIN YOURLS
 RewriteEngine On
 #RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([0-9A-Za-z]+)/?$ yourls-go.php?id=$1 [L]
-# END ShortURL
+# END YOURLS
