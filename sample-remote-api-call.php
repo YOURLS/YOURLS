@@ -2,6 +2,7 @@
 
 /*
  * YOURLS : sample file showing how to use the API
+ * This shows how to tap into your YOURLS install API from *another* server, not from a file hosted on the same server
  */
 
 // EDIT THIS: your auth parameters
