@@ -95,6 +95,9 @@ tr:hover td.actions input{
 .error {
 	color: red;
 }
+.warning {
+	color: orange;
+}
 .success {
 	color: green;
 }
@@ -103,14 +106,34 @@ tr:hover td.actions input{
 	text-align: center;
 }
 #login {
-	width: 210px;
+	width: 300px;
 	margin: 200px auto 0px auto;
+}
+#login img {
+	margin-left:50px;
 }
 #login p{
 	font-weight: bold;
 }
 #login .text {
 	width: 100%;
+}
+#login ul {
+	padding-left:0px;
+	list-style-type:none;
+	text-indent:0;
+}
+#login ul li {
+	padding:0 0 5px 20px;
+}
+#login ul.error li {
+	background:transparent url(../images/cancel.png) top left no-repeat;
+}
+#login ul.warning li {
+	background:transparent url(../images/error.png) top left no-repeat;
+}
+#login ul.success li {
+	background:transparent url(../images/accept.png) top left no-repeat;
 }
 #shareboxes, #tweet {
 	overflow:hidden;
