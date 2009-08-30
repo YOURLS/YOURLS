@@ -655,12 +655,12 @@ function yourls_get_num_queries() {
 // Compat http_build_query for PHP4
 if (!function_exists('http_build_query')) {
 	function http_build_query($data, $prefix=null, $sep=null) {
-		return _http_build_query($data, $prefix, $sep);
+		return yourls_http_build_query($data, $prefix, $sep);
 	}
 }
 
 // from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
-function _http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
+function yourls_http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
 	$ret = array();
 
 	foreach ( (array) $data as $k => $v ) {
@@ -676,7 +676,7 @@ function _http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=t
 			$v = '0';
 
 		if ( is_array($v) || is_object($v) )
-			array_push($ret,_http_build_query($v, '', $sep, $k, $urlencode));
+			array_push($ret,yourls_http_build_query($v, '', $sep, $k, $urlencode));
 		elseif ( $urlencode )
 			array_push($ret, $k.'='.urlencode($v));
 		else
@@ -688,3 +688,5 @@ function _http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=t
 
 	return implode($sep, $ret);
 }
+
+//
