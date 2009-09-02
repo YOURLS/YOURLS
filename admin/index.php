@@ -6,12 +6,12 @@ if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
 
 // Variables
 $table_url = YOURLS_DB_TABLE_URL;
-
+// Default SQL behavior
 $where = $search_display = $search_text = $search_url = $url = $keyword = '';
 $search_in_text = 'URL';
 $search_in_sql = 'url';
 $sort_by_text = 'Short URL';
-$sort_by_sql = 'keyword';
+$sort_by_sql = 'timestamp';
 $sort_order_text = 'Descending Order';
 $sort_order_sql = 'desc';
 $page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
