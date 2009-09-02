@@ -849,14 +849,14 @@ function yourls_get_HTTP_status( $code ) {
 function yourls_log_redirect( $keyword ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
-
+	
 	$keyword = yourls_sanitize_string( $keyword );
 	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) : 'direct' );
 	$ua = yourls_get_user_agent();
 	$ip = yourls_get_IP();
 	$location = yourls_get_location( $ip );
 	
-	return $ydb->query( "INSERT INTO `$table` VALUES ('', NOW(), '$url', '$referrer', '$ua', '$ip', '$location')" );
+	return $ydb->query( "INSERT INTO `$table` VALUES ('', NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
 
 // Converts an IP to a 2 letter country code, using GeoIP database if available in includes/geo/
