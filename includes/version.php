@@ -1,5 +1,5 @@
 <?php
 // Bump this when updating the zip package
-define('YOURLS_VERSION', '1.3-RC1');
-
+define('YOURLS_VERSION', '1.4-alpha');
+define('YOURLS_DB_VERSION', '200');
 ?>

@@ -15,17 +15,23 @@ define('YOURLS_DB_NAME', 'yourls');
 /** MySQL hostname */
 define('YOURLS_DB_HOST', 'localhost');
 
-/** MySQL URL table name. Don't change this if in doubt. */
+/** MySQL table name to store URLs. Don't change this if in doubt. */
 define('YOURLS_DB_TABLE_URL', 'yourls_url');
 
 /** MySQL Next ID table name. Don't change this if in doubt. */
 define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
 
+/** MySQL table name to store a few options. Don't change this if in doubt. */
+define('YOURLS_DB_TABLE_OPTIONS', 'yourls_options');
+
+/** MySQL table name to log redirects (for stats). Don't change this if in doubt. */
+define('YOURLS_DB_TABLE_LOG', 'yourls_log');
+
 /*
  ** Site options
  */
 
-/** Turn this on to enable error reporting. Recommended value is false **/
+/** Turn this on to enable error reporting. Leave this to false **/
 define('YOURLS_DEBUG', false);
  
 /** Short domain URL, no trailing slash */
@@ -70,9 +76,4 @@ $yourls_reserved_URL = array(
 
 
 /******************** DO NOT EDIT ANYTHING ELSE ********************/
-
-// Include everything except auth functions
-require_once (dirname(__FILE__).'/version.php');
-require_once (dirname(__FILE__).'/functions.php');
-require_once (dirname(__FILE__).'/functions-baseconvert.php');
-require_once (dirname(__FILE__).'/class-mysql.php');
+require_once (dirname(__FILE__).'/load-yourls.php');

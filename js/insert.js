@@ -5,8 +5,8 @@ $(document).ready(function(){
 	$('#new_url_form').attr('action', 'javascript:add();');
 	if ($("#tblUrl tr.nourl_found").length != 1) {
 		$("#tblUrl").tablesorter({
-			sortList:[[3,1]], // Sort on column #3 (numbering starts at 0)
-			headers: { 6: {sorter: false} }, // no sorter on column #6
+			sortList:[[2,1]], // Sort on column #3 (numbering starts at 0)
+			headers: { 5: {sorter: false} }, // no sorter on column #6
 			widgets: ['zebra'] // prettify
 		});
 	}
@@ -43,9 +43,10 @@ function add() {
 function edit(id) {
 	add_loading("#edit-button-" + id);
 	add_loading("#delete-button-" + id);
+	var keyword = $('#keyword_'+id).val();
 	$.getJSON(
 		"index_ajax.php",
-		{ mode: "edit_display", id: id },
+		{ mode: "edit_display", keyword: keyword },
 		function(data){
 			$("#id-" + id).after( data.html );
 			$("#edit-url-"+ id).focus();
@@ -60,9 +61,10 @@ function remove(id) {
 	if (!confirm('Really delete?')) {
 		return;
 	}
+	var keyword = $('#keyword_'+id).val();
 	$.getJSON(
 		"index_ajax.php",
-		{ mode: "delete", id: id },
+		{ mode: "delete", keyword: keyword },
 		function(data){
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){$(this).remove();zebra_table();});
@@ -85,15 +87,16 @@ function hide_edit(id) {
 function edit_save(id) {
 	add_loading("#edit-close-" + id);
 	var newurl = $("#edit-url-" + id).val();
-	var newid = $("#edit-id-" + id).val();
+	var newkeyword = $("#edit-keyword-" + id).val();
+	var keyword = $('#old_keyword_'+id).val();
+	var www = $('#yourls-site').val();
 	$.getJSON(
 		"index_ajax.php",
-		{mode:'edit_save', url: newurl, id: id, newid: newid },
+		{mode:'edit_save', url: newurl, keyword: keyword, newkeyword: newkeyword },
 		function(data){
 			if(data.status == 'success') {
 				$("#url-" + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.url + '</a>');
-				$("#keyword-" + id).html(data.url.keyword);
-				$("#shorturl-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.shorturl + '</a>');
+				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.shorturl + '</a>');
 				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
 					$('#tblUrl tbody').trigger("update");

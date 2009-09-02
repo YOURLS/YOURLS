@@ -394,11 +394,4 @@ class ezSQL_mysql extends ezSQLcore {
 		return  mysql_get_server_info( $this->dbh ) ;
 	}
 }
-
-// Create the YOURLS DB object
-if ( function_exists( 'yourls_db_connect' ) ) {
-	global $ydb;
-	yourls_db_connect();
-}
-
 ?>

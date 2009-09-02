@@ -16,17 +16,17 @@ switch( stripslashes($_REQUEST['mode']) ) {
 		break;
 		
 	case 'edit_display':
-		$row = yourls_table_edit_row ( $_REQUEST['id'] );
+		$row = yourls_table_edit_row ( $_REQUEST['keyword'] );
 		echo yourls_json_encode( array('html' => $row) );
 		break;
 
 	case 'edit_save':
-		$return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['id'], $_REQUEST['newid'] );
+		$return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'] );
 		echo yourls_json_encode($return);
 		break;
 		
 	case 'delete':
-		$query = yourls_delete_link_by_id( $_REQUEST['id'] );
+		$query = yourls_delete_link_by_keyword( $_REQUEST['keyword'] );
 		echo yourls_json_encode(array('success'=>$query));
 		break;
 		

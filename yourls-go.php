@@ -12,22 +12,17 @@ if ( !$keyword ) {
 	exit();
 }
 
-$id = yourls_sanitize_int( yourls_string2int($keyword) );
-
 // Get URL From Database
-$table = YOURLS_DB_TABLE_URL;
-$url = stripslashes($ydb->get_var("SELECT `url` FROM `$table` WHERE id = $id"));
-
-$protocol = $_SERVER["SERVER_PROTOCOL"];
-if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
-	$protocol = 'HTTP/1.0';
-
+$url = yourls_get_longurl( $keyword );
 
 // URL found
-if(!empty($url)) {
-	$update_clicks = $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `id` = $id");
-	header ($protocol.' 301 Moved Permanently');
-	header ('Location: '. $url);
+if( !empty($url) ) {
+	// Update click count in main table
+	$update_clicks = yourls_update_clicks( $keyword );
+	// Update detailed log for stats
+	$log_redirect = yourls_log_redirect( $keyword );
+
+	yourls_redirect( $url, 301 );
 
 // URL not found. Either reserved, or page, or doesn't exist
 } else {
@@ -38,8 +33,7 @@ if(!empty($url)) {
 
 	// Either reserved id, or no such id
 	} else {
-		header ($protocol.' 307 Temporary Redirect'); // no 404 to tell browser this might change, and also to not pollute logs
-		header ('Location: '. YOURLS_SITE);
+		yourls_redirect( YOURLS_SITE, 307 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
 }
 exit();

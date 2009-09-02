@@ -1,0 +1,32 @@
+*** YOURLS Changelog ***
+
+This file attempts to list the major changes through all versions of YOURLS. For a much more detailed
+list, simply refer to the commit messages: http://code.google.com/p/yourls/source/list
+
+1.0
+- initial release
+
+1.0.1
+- don't remember. Trivial stuff probably.
+
+1.1
+- don't remember. Some little bugs I guess.
+
+1.2
+- don't remember. A few tiny stuff for sure.
+
+1.3-RC1
+- added bookmarklet and tools page
+- improved XSS filter when adding new URL
+- code cleanup in admin/index.php to separate code and display
+- added favicon
+- stricter coding to prevent notices with undefined indexes
+- hide PHP notices & SQL errors & warnings, unless YOURLS_DEBUG constant set to true
+
+1.4
+- now using a global object $ydb for everything related to DB and other globally needed stuff
+- change in DB schema: now storing URLs with their keyword as used in shorturl, allowing for any keyword length
+- change in DB schema: new table for storing various options including next_id, dropping table of the same name
+- change in DB schema: new table for storing hits (for stats)
+- added an upgrader from 1.3 to 1.4
+- improved the installer, with .htaccess file creation

@@ -30,7 +30,7 @@ class yourls_array2xml {
 	 $this->text.="</$key>";
 	 }
 	}
-	return $array_text;
+	//return $array_text;
 
 	}
 	/*Transform an XML string to associative array "XML Parser Functions"*/

@@ -142,23 +142,42 @@ function yourls_create_sql_tables() {
 	$create_tables = array();
 	$create_tables[YOURLS_DB_TABLE_URL] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
-		'`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,'.
+		'`keyword` varchar(200) NOT NULL,'.
 		'`url` VARCHAR(200) NOT NULL,'.
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
-		'PRIMARY KEY  (`id`)'.
-		') ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+		'PRIMARY KEY  (`keyword`)'.
+		') ENGINE=MyISAM DEFAULT CHARSET=utf8 ;';
 
-	$create_tables[YOURLS_DB_TABLE_NEXTDEC] =
-		'CREATE TABLE `'.YOURLS_DB_TABLE_NEXTDEC.'` ('.
-		'`next_id` BIGINT NOT NULL ,'.
-		'PRIMARY KEY (`next_id`)'.
-		') ENGINE = MYISAM ;';
+	$create_tables[YOURLS_DB_TABLE_OPTIONS] = 
+		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_OPTIONS.'` ('.
+		'`option_id` bigint(20) unsigned NOT NULL auto_increment,'.
+		'`option_name` varchar(64) NOT NULL default "",'.
+		'`option_value` longtext NOT NULL,'.
+		'PRIMARY KEY  (`option_id`,`option_name`),'.
+		'KEY `option_name` (`option_name`)'.
+		') ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+		
+	$create_tables[YOURLS_DB_TABLE_LOG] = 
+		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
+		'`click_id` int(11) NOT NULL auto_increment,'.
+		'`click_time` datetime NOT NULL,'.
+		'`shorturl` varchar(200) NOT NULL,'.
+		'`referrer` varchar(200) NOT NULL,'.
+		'`user_agent` varchar(255) NOT NULL,'.
+		'`ip_address` varchar(41) NOT NULL,'.
+		'`country_code` char(2) NOT NULL,'.
+		'PRIMARY KEY  (`click_id`),'.
+		'KEY `shorturl` (`shorturl`,`referrer`,`country_code`)'.
+		') ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+
 
 	// Insert Initial Records
 	$insert_queries = array();
-	$insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_NEXTDEC.' VALUES (1)';
+	$insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_OPTIONS.' VALUES (1, "next_id", 1)';
+	$insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_OPTIONS.' VALUES (2, "version", '.YOURLS_VERSION.')';
+	$insert_queries[] = 'INSERT INTO '.YOURLS_DB_TABLE_OPTIONS.' VALUES (3, "db_version", '.YOURLS_DB_VERSION.')';
 
 	$create_table_count = 0;
 	$insert_query_count = 0;
@@ -197,5 +216,4 @@ function yourls_create_sql_tables() {
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );
 }
-
 ?>
