@@ -883,13 +883,8 @@ function yourls_upgrade_is_needed() {
 
 // Get current version & db version as stored in the options DB
 function yourls_get_current_version_from_sql() {
-	if( !defined('YOURLS_DB_TABLE_OPTIONS') )
-		die('<p>Your <tt>config.php</tt> does not contain all the required constant definitions. Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
-	
-	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	$currentver = @$ydb->get_var("SELECT `option_value` FROM $table WHERE `option_name` = 'version'");
-	$currentsql = @$ydb->get_var("SELECT `option_value` FROM $table WHERE `option_name` = 'db_version'");
+	$currentver = yourls_get_option( 'version' );
+	$currentsql = yourls_get_option( 'db_version' );
 	if( !$currentver )
 		$currentver = '1.3';
 	if( !$currentsql )
@@ -900,8 +895,8 @@ function yourls_get_current_version_from_sql() {
 
 // Read an option from DB (or from cache if available). Return value or $default if not found
 function yourls_get_option( $option_name, $default = false ) {
+	global $ydb;
 	if ( !isset( $ydb->option[$option_name] ) ) {
-		global $ydb;
 		$table = YOURLS_DB_TABLE_OPTIONS;
 		$option_name = yourls_escape( $option_name );
 		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
@@ -914,6 +909,18 @@ function yourls_get_option( $option_name, $default = false ) {
 	}
 
 	return $ydb->option[$option_name];
+}
+
+// Read all options from DB at once
+function yourls_get_all_options() {
+	global $ydb;
+	$table = YOURLS_DB_TABLE_OPTIONS;
+	
+	$allopt = $ydb->get_results("SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1");
+	
+	foreach( $allopt as $option ) {
+		$ydb->option[$option->option_name] = yourls_maybe_unserialize( $option->option_value );
+	}
 }
 
 // Update (add if doesn't exist) an option to DB
