@@ -171,7 +171,7 @@ function yourls_get_next_decimal() {
 // Update id for next link with no custom keyword
 function yourls_update_next_decimal( $int = '' ) {
 	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;
-	return yourls_update_option( 'newt_id', $int );
+	return yourls_update_option( 'next_id', $int );
 }
 
 // Delete a link in the DB
