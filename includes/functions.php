@@ -928,7 +928,6 @@ function yourls_update_option( $option_name, $newvalue ) {
 	$table = YOURLS_DB_TABLE_OPTIONS;
 
 	$safe_option_name = yourls_escape( $option_name );
-	$newvalue = yourls_escape( $newvalue );
 
 	$oldvalue = yourls_get_option( $safe_option_name );
 
@@ -941,7 +940,7 @@ function yourls_update_option( $option_name, $newvalue ) {
 		return true;
 	}
 
-	$_newvalue = yourls_maybe_serialize( $newvalue );
+	$_newvalue = yourls_escape( yourls_maybe_serialize( $newvalue ) );
 
 	$ydb->query( "UPDATE `$table` SET `option_value` = '$_newvalue' WHERE `option_name` = '$option_name'");
 
@@ -957,13 +956,12 @@ function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
 	$safe_name = yourls_escape( $name );
-	$value = yourls_escape( $value );
 
 	// Make sure the option doesn't already exist. We can check the 'notoptions' cache before we ask for a db query
 	if ( false !== yourls_get_option( $safe_name ) )
 		return;
 
-	$_value = yourls_maybe_serialize( $value );
+	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
 
 	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
 	$ydb->option[$name] = $value;
