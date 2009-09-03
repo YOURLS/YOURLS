@@ -165,19 +165,13 @@ ROW;
 
 // Get next id a new link will have if no custom keyword provided
 function yourls_get_next_decimal() {
-	global $ydb;
-
-	$table = YOURLS_DB_TABLE_NEXTDEC;
-	return $ydb->get_var("SELECT `next_id` FROM `$table`");
+	return (int)yourls_get_option( 'next_id' );
 }
 
 // Update id for next link with no custom keyword
-function yourls_update_next_decimal($int = '') {
-	global $ydb;
-
-	$int = ( $int == '' ) ? 'next_id+1' : (int)$int ;
-	$table = YOURLS_DB_TABLE_NEXTDEC;
-	return $ydb->query("UPDATE `$table` set next_id=$int");
+function yourls_update_next_decimal( $int = '' ) {
+	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;
+	return yourls_update_option( 'newt_id', $int );
 }
 
 // Delete a link in the DB
