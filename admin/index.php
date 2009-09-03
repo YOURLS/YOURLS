@@ -87,8 +87,12 @@ if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
 }
 
 // Get URLs Count for current filter, total links in DB & total clicks
-$total_items = $ydb->get_var("SELECT COUNT(keyword) FROM $table_url WHERE 1=1 $where");
-$totals = $ydb->get_row("SELECT COUNT(keyword) as c, SUM(clicks) as s FROM $table_url WHERE 1=1");
+list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
+if ( $where ) {
+	list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
+} else {
+	$total_items = $total_urls;
+}
 
 // This is a bookmarklet
 if ( isset( $_GET['u'] ) ) {
@@ -162,7 +166,7 @@ yourls_html_head( $context );
 	Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
 		<?php echo $search_display; ?>
 	<?php } ?>
-		Overall, tracking <strong class='increment'><?php echo number_format($totals->c); ?></strong> links, <strong><?php echo number_format($totals->s); ?></strong> clicks, and counting!
+		Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!
 	</p>
 
 	<?php yourls_html_addnew(); ?>
