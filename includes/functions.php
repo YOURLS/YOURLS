@@ -99,7 +99,7 @@ function yourls_keyword_is_reserved( $keyword ) {
 	
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists(dirname(dirname(__FILE__))."/pages/$keyword.php")
-		or is_dir(dirname(dirname(__FILE__))."$keyword")
+		or is_dir(dirname(dirname(__FILE__))."/$keyword")
 	)
 		return true;
 	
