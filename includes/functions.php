@@ -547,6 +547,9 @@ function yourls_html_footer() {
 	$num_queries = ( $ydb && $ydb->num_queries  ? ' &ndash; '.$ydb->num_queries.' queries' : '' );
 	?>
 	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo $num_queries; ?></p></div>
+	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
+		echo '<p>'. $ydb->all_queries .'<p>';	
+	} ?>
 	</body>
 	</html>
 	<?php
@@ -655,7 +658,7 @@ function yourls_html_tfooter( $params = array() ) {
 function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
 	$text = ( $text ? '"'.$text.'" ' : '' );
 	$title = ( $title ? "$title " : '' );
-	$share = htmlentities( $title.$text.$shorturl );
+	$share = htmlspecialchars_decode( $title.$text.$shorturl );
 	$_share = rawurlencode( $share );
 	$_url = rawurlencode( $shorturl );
 	$count = 140 - strlen( $share );
