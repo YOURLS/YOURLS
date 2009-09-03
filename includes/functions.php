@@ -543,10 +543,10 @@ function yourls_html_head( $context = 'index' ) {
 // Display HTML footer (including closing body & html tags)
 function yourls_html_footer() {
 	global $ydb;
-
-	$num_queries = ( $ydb && $ydb->num_queries  ? ' &ndash; '.$ydb->num_queries.' queries' : '' );
+	
+	$num_queries = $ydb->num_queries > 1 ? $ydb->num_queries.' queries' : $ydb->num_queries.' query';
 	?>
-	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo $num_queries; ?></p></div>
+	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
 	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';	
 	} ?>
