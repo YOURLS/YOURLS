@@ -1,6 +1,6 @@
 <?php
 // Require Files
-define( 'YOURLS_NO_VERSION_CHECK', true ); // Bypass version checking to prevent loop
+define( 'YOURLS_NO_UPGRADE_CHECK', true ); // Bypass version checking to prevent loop
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-upgrade.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-install.php' );
