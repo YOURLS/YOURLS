@@ -16,8 +16,10 @@ function yourls_upgrade_to_14( $step ) {
 	case 1:
 		// create table log & table options
 		// update table url structure
+		// update .htaccess
 		yourls_create_tables_for_14();
 		yourls_alter_url_table_to_14();
+		yourls_create_htaccess();
 		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
 		break;
 		
