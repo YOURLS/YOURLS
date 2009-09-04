@@ -30,8 +30,8 @@ function yourls_is_valid_user() {
 			// (Re)store encrypted cookie and tell it's ok
 			if ( !defined('YOURLS_API') or YOURLS_API != true ) {
 				// No need to store a cookie when used in API mode.
-				setcookie('yourls_username', yourls_salt( $valid_user ), time() + (60*60*24*7));
-				setcookie('yourls_password', yourls_salt( $valid_password ), time() + (60*60*24*7));
+				setcookie('yourls_username', yourls_salt( $valid_user ), time() + (60*60*24*7), '/' );
+				setcookie('yourls_password', yourls_salt( $valid_password ), time() + (60*60*24*7), '/' );
 			}
 			define('YOURLS_USER', $valid_user);
 			return true;
