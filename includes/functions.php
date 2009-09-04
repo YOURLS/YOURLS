@@ -491,6 +491,7 @@ function yourls_html_head( $context = 'index' ) {
 	// Load components as needed
 	switch ( $context ) {
 		case 'bookmark':
+		case 'infos':
 			$share = true;
 			$insert = true;
 			$tablesorter = true;
@@ -548,7 +549,7 @@ function yourls_html_footer() {
 	?>
 	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
 	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
-		echo '<p>'. $ydb->all_queries .'<p>';	
+		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
 	</body>
 	</html>
