@@ -1035,8 +1035,36 @@ function yourls_maybe_unserialize( $original ) {
 	return $original;
 }
 
-// Determines if the page needs to be admin eyes only and show login form if applicable
+// Determine if the current page is private
+function yourls_is_private() {
+	if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true) {
+
+		// Allow overruling of particular pages
+		$current = basename( $_SERVER["SCRIPT_NAME"] );
+
+		switch( $current ) {
+		
+		case 'yourls-api.php':
+			if( !defined('YOURLS_PRIVATE_API') || YOURLS_PRIVATE_API != false )
+				return true;
+			break;
+				
+		case 'yourls-infos.php':
+			if( !defined('YOURLS_PRIVATE_INFOS') || YOURLS_PRIVATE_INFOS !== false )
+				return true;
+			break;
+		
+		default:
+			return true;
+			break;
+		}
+	}
+	
+	return false;
+}
+
+// Show login form if required
 function yourls_maybe_require_auth() {
-	if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
+	if( yourls_is_private() )
 		require_once( dirname(__FILE__).'/auth.php' );
 }

@@ -9,7 +9,7 @@ yourls_html_head( 'tools' );
 		<a href="<?php echo YOURLS_SITE; ?>/admin/index.php" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
 	</h1>
-	<?php if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) { ?>
+	<?php if ( yourls_is_private() ) { ?>
 	<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
 	<?php } ?>
 
