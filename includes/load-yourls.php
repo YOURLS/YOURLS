@@ -28,9 +28,6 @@ if ( function_exists( 'yourls_db_connect' ) ) {
 // Read option right from start
 yourls_get_all_options();
 
-
-
-
 // Check if upgrade is needed. Note: this is bypassable with define('YOURLS_NO_UPGRADE_CHECK', true)
 if ( !defined('YOURLS_NO_UPGRADE_CHECK') || YOURLS_NO_UPGRADE_CHECK != true ) {
 	if ( yourls_upgrade_is_needed() ) {
