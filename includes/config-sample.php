@@ -15,17 +15,19 @@ define('YOURLS_DB_NAME', 'yourls');
 /** MySQL hostname */
 define('YOURLS_DB_HOST', 'localhost');
 
+/** MySQL tables prefix */
+define('YOURLS_DB_PREFIX', 'yourls_');
+
 /** MySQL table name to store URLs. Don't change this if in doubt. */
+/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version
+ ** You can remove this if installing from scratch, or once properly upgraded **/
 define('YOURLS_DB_TABLE_URL', 'yourls_url');
 
 /** MySQL Next ID table name. Don't change this if in doubt. */
+/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version
+ ** You can remove this if installing from scratch, or once properly upgraded **/
 define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
 
-/** MySQL table name to store a few options. Don't change this if in doubt. */
-define('YOURLS_DB_TABLE_OPTIONS', 'yourls_options');
-
-/** MySQL table name to log redirects (for stats). Don't change this if in doubt. */
-define('YOURLS_DB_TABLE_LOG', 'yourls_log');
 
 /*
  ** Site options
