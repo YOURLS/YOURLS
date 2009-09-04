@@ -4,8 +4,8 @@ function yourls_is_valid_user() {
 
 	// Logout request
 	if( isset( $_GET['mode'] ) && $_GET['mode'] == 'logout') {
-		setcookie('yourls_username', null, time() - 3600);
-		setcookie('yourls_password', null, time() - 3600);
+		setcookie('yourls_username', null, time() - 3600, '/');
+		setcookie('yourls_password', null, time() - 3600, '/');
 		return 'Logged out successfully';
 	}
 	
