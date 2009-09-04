@@ -1,8 +1,7 @@
 <?php
 define('YOURLS_API', true);
 require_once( dirname(__FILE__).'/includes/config.php' );
-if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true )
-	require_once( dirname(__FILE__).'/includes/auth.php' );
+yourls_maybe_require_auth();
 
 if ( !isset($_REQUEST['action']) )
 	die( 'Missing parameter "action"' );

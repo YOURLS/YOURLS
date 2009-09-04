@@ -1,8 +1,7 @@
 <?php
 // Require Files
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
-if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
-	require_once '../includes/auth.php';
+yourls_maybe_require_auth();
 
 // This file will output a JSON string
 header('Content-type: application/json');

@@ -1034,3 +1034,9 @@ function yourls_maybe_unserialize( $original ) {
 		return @unserialize( $original );
 	return $original;
 }
+
+// Determines if the page needs to be admin eyes only and show login form if applicable
+function yourls_maybe_require_auth() {
+	if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
+		require_once( dirname(__FILE__).'/auth.php' );
+}

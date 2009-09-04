@@ -1,8 +1,7 @@
 <?php
 // Require Files
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
-if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true)
-	require_once( dirname(dirname(__FILE__)).'/includes/auth.php' );
+yourls_maybe_require_auth();
 
 // Variables
 $table_url = YOURLS_DB_TABLE_URL;
