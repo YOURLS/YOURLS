@@ -3,7 +3,7 @@ $(document).ready(function(){
 	$('#add-url, #add-keyword').keyup(function(e){ if (e.keyCode == 13) {add();} } );
 	reset_url();
 	$('#new_url_form').attr('action', 'javascript:add();');
-	if ($("#tblUrl tr.nourl_found").length != 1) {
+	if ($("#tblUrl").tablesorter && $("#tblUrl tr.nourl_found").length != 1) {
 		$("#tblUrl").tablesorter({
 			sortList:[[2,1]], // Sort on column #3 (numbering starts at 0)
 			headers: { 5: {sorter: false} }, // no sorter on column #6
