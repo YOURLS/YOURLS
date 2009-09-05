@@ -862,7 +862,7 @@ function yourls_get_location( $ip = '', $default = '' ) {
 	if ( !file_exists( dirname(__FILE__).'/geo/GeoIP.dat') || !file_exists( dirname(__FILE__).'/geo/geoip.inc') )
 		return $default;
 
-	if ( $ip = '' )
+	if ( $ip == '' )
 		$ip = yourls_get_IP();
 		
 	require_once( dirname(__FILE__).'/geo/geoip.inc') ;
