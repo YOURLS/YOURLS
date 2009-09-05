@@ -8,8 +8,7 @@ $keyword = yourls_sanitize_string( $id );
 
 // First possible exit:
 if ( !$keyword ) {
-	header ('Location: '. YOURLS_SITE);
-	exit();
+	yourls_redirect( $url, 301 );
 }
 
 // Get URL From Database
