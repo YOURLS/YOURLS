@@ -893,13 +893,13 @@ function yourls_log_redirect( $keyword ) {
 	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) : 'direct' );
 	$ua = yourls_get_user_agent();
 	$ip = yourls_get_IP();
-	$location = yourls_get_location( $ip );
+	$location = yourls_geo_ip_to_countrycode( $ip );
 	
 	return $ydb->query( "INSERT INTO `$table` VALUES ('', NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
 
 // Converts an IP to a 2 letter country code, using GeoIP database if available in includes/geo/
-function yourls_get_location( $ip = '', $default = '' ) {
+function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	if ( !file_exists( dirname(__FILE__).'/geo/GeoIP.dat') || !file_exists( dirname(__FILE__).'/geo/geoip.inc') )
 		return $default;
 
@@ -914,6 +914,38 @@ function yourls_get_location( $ip = '', $default = '' ) {
 	return $location;
 }
 
+// Converts a 2 letter country code to long name (ie AU -> Australia)
+function yourls_geo_countrycode_to_countryname( $code ) {
+	// Load the Geo class if not already done
+	if( !class_exists('GeoIP') ) {
+		$temp = yourls_geo_ip_to_countrycode('127.0.0.1');
+	}
+	
+	if( class_exists('GeoIP') ) {
+		$geo = new GeoIP;
+		$id = $geo->GEOIP_COUNTRY_CODE_TO_NUMBER[$code];
+		$long = $geo->GEOIP_COUNTRY_NAMES[$id];
+		return $long;
+	} else {
+		return false;
+	}
+}
+
+// Return flag URL from 2 letter country code
+function yourls_geo_get_flag( $code ) {
+	// Load the Geo class if not already done
+	if( !class_exists('GeoIP') ) {
+		$temp = yourls_geo_ip_to_countrycode('127.0.0.1');
+	}
+	
+	if( class_exists('GeoIP') ) {
+		return YOURLS_SITE.'/includes/geo/flags/flag_'.(strtolower($code)).'.gif';
+	} else {
+		return false;
+	}
+}
+
+
 // Check if an upgrade is needed
 function yourls_upgrade_is_needed() {
 	// check YOURLS_VERSION && YOURLS_DB_VERSION exist && match values stored in YOURLS_DB_TABLE_OPTIONS
@@ -926,7 +958,7 @@ function yourls_upgrade_is_needed() {
 	return false;
 }
 
-// Get current version & db version as stored in the options DB
+// Get current version & db version as stored in the options DB. Prior to 1.4 there's no option table.
 function yourls_get_current_version_from_sql() {
 	$currentver = yourls_get_option( 'version' );
 	$currentsql = yourls_get_option( 'db_version' );
