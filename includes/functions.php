@@ -1141,3 +1141,15 @@ function yourls_maybe_require_auth() {
 	if( yourls_is_private() )
 		require_once( dirname(__FILE__).'/auth.php' );
 }
+
+// Echo HTML tag for a link
+function yourls_html_link( $href, $title = '' ) {
+	if( !$title )
+		$title = $href;
+	echo "<a href='$href'>$title</a>";
+}
+
+// Return word or words if more than one
+function yourls_plural( $word, $count=1 ) {
+	return $word . ($count > 1 ? 's' : '');
+}
