@@ -385,17 +385,59 @@ function yourls_xml_encode($array) {
 	return $converter->array2xml($array);
 }
 
-// Return long URL associated with keyword. Optional $notfound = string default message if nothing found
-function yourls_get_longurl( $keyword, $notfound = false ) {
+// Return array of all informations associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
+function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
 	$keyword = yourls_sanitize_string( $keyword );
-	$table = YOURLS_DB_TABLE_URL;
-	$url = stripslashes($ydb->get_var("SELECT `url` FROM `$table` WHERE `keyword` = '$keyword'"));
+
+	if( isset( $ydb->infos[$keyword] ) && $use_cache == true ) {
+		return $ydb->infos[$keyword];
+	}
 	
-	if( $url )
-		return $url;
+	$table = YOURLS_DB_TABLE_URL;
+	$infos = $ydb->get_row("SELECT * FROM `$table` WHERE `keyword` = '$keyword'");
+	
+	if( $infos ) {
+		$infos = (array)$infos;
+		$ydb->infos[$keyword] = $infos;
+	} else {
+		$ydb->infos[$keyword] = false;
+	}
 		
+	return $ydb->infos[$keyword];
+}
+
+// Return (string) selected information associated with a keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_info( $keyword, $field, $notfound = false ) {
+	global $ydb;
+	
+	$keyword = yourls_sanitize_string( $keyword );
+	$infos = yourls_get_keyword_infos( $keyword );
+	
+	if ( isset($infos[$field]) && $infos[$field] !== false )
+		return $infos[$field];
+
 	return $notfound;	
+}
+
+// Return long URL associated with keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_longurl( $keyword, $notfound = false ) {
+	return yourls_get_keyword_info( $keyword, 'url', $notfound );
+}
+
+// Return number of clicks on a keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_clicks( $keyword, $notfound = false ) {
+	return yourls_get_keyword_info( $keyword, 'clicks', $notfound );
+}
+
+// Return IP that added a keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_IP( $keyword, $notfound = false ) {
+	return yourls_get_keyword_info( $keyword, 'ip', $notfound );
+}
+
+// Return timestamp associated with a keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_timestamp( $keyword, $notfound = false ) {
+	return yourls_get_keyword_info( $keyword, 'timestamp', $notfound );
 }
 
 // Update click count on a short URL
@@ -405,7 +447,6 @@ function yourls_update_clicks( $keyword ) {
 	$table = YOURLS_DB_TABLE_URL;
 	return $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'");
 }
-
 
 
 // Return array for API stat requests
@@ -461,7 +502,7 @@ function yourls_get_db_stats( $where = '' ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->get_row("SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM $table_url WHERE 1=1 $where");
+	$totals = $ydb->get_row("SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where");
 	return array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
 }
 

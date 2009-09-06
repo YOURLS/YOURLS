@@ -12,7 +12,7 @@ if ( !$keyword ) {
 }
 
 // Get URL From Database
-$url = yourls_get_longurl( $keyword );
+$url = yourls_get_keyword_longurl( $keyword );
 
 // URL found
 if( !empty($url) ) {
