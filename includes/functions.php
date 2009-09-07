@@ -529,19 +529,20 @@ function yourls_api_output( $mode, $return ) {
 
 // Display HTML head and <body> tag
 function yourls_html_head( $context = 'index' ) {
+	// All components to false, except when specified true
+	$share = $insert = $tablesorter = $tabs = false;
 	// Load components as needed
 	switch ( $context ) {
-		case 'bookmark':
 		case 'infos':
-			$share = true;
-			$insert = true;
-			$tablesorter = true;
+			$share = $tabs = true;
+			break;
+			
+		case 'bookmark':
+			$share = $insert = $tablesorter = true;
 			break;
 			
 		case 'index':
-			$share = false;
-			$insert = true;
-			$tablesorter = true;
+			$insert = $tablesorter = true;
 			break;
 		
 		case 'install':
@@ -549,9 +550,6 @@ function yourls_html_head( $context = 'index' ) {
 		case 'new':
 		case 'tools':
 		case 'upgrade':
-			$share = false;
-			$insert = false;
-			$tablesorter = false;
 			break;
 	}
 	
@@ -567,6 +565,10 @@ function yourls_html_head( $context = 'index' ) {
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
 	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
+	<?php if ($tabs) { ?>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/infos.js" type="text/javascript"></script>
+	<?php } ?>
 	<?php if ($tablesorter) { ?>
 		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css" type="text/css" media="screen" />
 		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
@@ -575,6 +577,7 @@ function yourls_html_head( $context = 'index' ) {
 		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($share) { ?>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css" type="text/css" media="screen" />
 		<script src="<?php echo YOURLS_SITE; ?>/js/share.js" type="text/javascript"></script>
 	<?php } ?>
 </head>
@@ -697,7 +700,7 @@ function yourls_html_tfooter( $params = array() ) {
 }
 
 // Display the Quick Share box of the tools.php page
-function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
+function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>' ) {
 	$text = ( $text ? '"'.$text.'" ' : '' );
 	$title = ( $title ? "$title " : '' );
 	$share = htmlspecialchars_decode( $title.$text.$shorturl );
@@ -709,13 +712,13 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='' ) {
 	<div id="shareboxes">
 
 		<div id="copybox" class="share">
-		<h2>Your short link</h2>
+		<?php echo $shortlink_title; ?>
 			<p><input id="copylink" class="text" size="40" value="<?php echo $shorturl; ?>" /></p>
 			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small></p>
 		</div>
 
 		<div id="sharebox" class="share">
-			<h2>Quick Share</h2>
+			<?php echo $share_title; ?>
 			<div id="tweet">
 				<span id="charcount"><?php echo $count; ?></span>
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
