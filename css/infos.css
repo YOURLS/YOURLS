@@ -1,0 +1,60 @@
+
+#tabs ul#headers {
+	display:none;
+	list-style-type:none;
+	border-bottom:1px solid #ccc;
+	padding:12px 5px 3px 5px;
+	margin-left:0;
+	width:70em;
+}
+
+#tabs ul#headers li {
+	padding:0;
+}
+
+#tabs ul#headers li a {
+	color:#595441;
+	border:1px solid #ccc;
+	-moz-border-radius-topleft:10px;
+	-moz-border-radius-topright:10px;
+	-webkit-border-top-left-radius:10px;
+	-webkit-border-top-right-radius:10px;
+	padding:10px 5px 5px 15px;
+	background:#dde;
+}
+
+#tabs ul#headers li a:hover {
+	text-decoration:none;
+	background:#eef;
+}
+
+#tabs ul#headers li a.selected {
+	border-bottom:2px solid #fff;
+	background:#fff;
+}
+
+#tabs ul#headers li a.selected:hover {
+	background:#fff;
+}
+#tabs ul#headers li, #tabs ul#headers li h2 {
+	display: inline;
+	margin-right: 10px;
+}
+
+.tab {
+	padding:10px;
+}
+
+li#sites_various { padding-left:22px; padding-top:4px;}
+
+#referrer_cell { min-width: 300px;}
+
+ul.no_bullet {
+	list-style-type: none;
+	margin-left:0;
+	padding:0;
+}
+
+ul.no_bullet li {
+	margin-bottom:5px;
+}

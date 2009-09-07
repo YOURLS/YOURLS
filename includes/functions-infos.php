@@ -2,7 +2,6 @@
 
 // Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
 function yourls_stats_countries_map( $countries ) {
-	arsort( $countries );
 	$map = array(
 		'cht' => 't',
 		'chs' => '440x220',
@@ -16,34 +15,43 @@ function yourls_stats_countries_map( $countries ) {
 	echo "<img src='$map_src' witdh='440' height='220' border='0' />";
 }
 
-// Echoes an image tag of Google Charts pie from sorted array of 'country_code' => 'number of visits' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
-function yourls_stats_countries_pie( $countries, $limit = 10 ) {
-	if ( count( $countries ) > $limit ) {
+// Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
+function yourls_stats_pie( $data, $limit = 10, $size = '340x220' ) {
+	// Trim array: $limit first item + the sum of all others
+	if ( count( $data ) > $limit ) {
 		$i= 0;
-		$trim_countries = array('Others' => 0);
-		foreach( $countries as $country_code=>$visits ) {
+		$trim_data = array('Others' => 0);
+		foreach( $data as $item=>$value ) {
 			$i++;
 			if( $i <= $limit ) {
-				$trim_countries[$country_code] = $visits;
+				$trim_data[$item] = $value;
 			} else {
-				$trim_countries['Others'] += $visits;
+				$trim_data['Others'] += $value;
 			}
 		}
-		$countries = $trim_countries;
+		$data = $trim_data;
 	}
+	
+	// Scale items (biggest = 100)
+	$max = max( $data );
+	foreach( $data as $k=>$v ) {
+		$data[$k] = intval( $v / $max * 100 );
+	}
+	
+	// Hmmm, pie
 	$pie = array(
 		'cht' => 'p',
-		'chs' => '340x220',
-		'chd' => 't:'.( join(',' ,  $countries ) ),
+		'chs' => $size,
+		'chd' => 't:'.( join(',' ,  $data ) ),
 		'chco'=> '202040,9090AA',
-		'chl' => join('|' , array_keys( $countries ) )
+		'chl' => join('|' , array_keys( $data ) )
 	);
 	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
 	echo "<img src='$pie_src' witdh='440' height='220' border='0' />";
 }
 
 // Echoes an image tag of Google Charts bar graph from list of chronologically sorted array of [year][month][day] => 'number of clicks'
-function yourls_stats_clicks_bar( $dates ) {
+function yourls_stats_clicks_line( $dates ) {
 	/* Say we have an array like:
 	$dates = array (
 		2009 => array (
@@ -127,13 +135,13 @@ function yourls_stats_get_best_day( $dates ) {
 			foreach( $days as $day=>$visits ) {
 				if( $visits > $max ) {
 					$max = intval($visits);
-					$day = "$year-$month-$day";
+					$bday = "$year-$month-$day";
 				}
 			}
 		}
 	}
 
-	return array( 'day' => $day, 'max' => $max );
+	return array( 'day' => $bday, 'max' => $max );
 
 }
 
