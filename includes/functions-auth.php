@@ -56,31 +56,33 @@ function yourls_salt( $string ) {
 function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
 ?>
-<div id="login">
-	<form method="post" action="?"> <?php // reset any QUERY parameters ?>
-		<p>
-			<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" />
-		</p>
-		<?php
-			if(!empty($error_msg)) {
-				echo '<p class="error">'.$error_msg.'</p>';
-			}
-		?>
-		<p>
-			<label for="username">Username</label><br />
-			<input type="text" id="username" name="username" size="30" class="text" />
-		</p>
-		<p>
-			<label for="password">Password</label><br />
-			<input type="password" id="password" name="password" size="30" class="text" />
-		</p>
-		<p style="text-align: right;">
-			<input type="submit" id="submit" name="submit" value="Login" class="button" />
-		</p>
-	</form>
-	<script type="text/javascript">$('#username').focus();</script>
-</div>
-<?php
-yourls_html_footer();
-die();
+	<h1>
+		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
+	</h1>
+
+	<div id="login">
+		<form method="post" action="?"> <?php // reset any QUERY parameters ?>
+			<?php
+				if(!empty($error_msg)) {
+					echo '<p class="error">'.$error_msg.'</p>';
+				}
+			?>
+			<p>
+				<label for="username">Username</label><br />
+				<input type="text" id="username" name="username" size="30" class="text" />
+			</p>
+			<p>
+				<label for="password">Password</label><br />
+				<input type="password" id="password" name="password" size="30" class="text" />
+			</p>
+			<p style="text-align: right;">
+				<input type="submit" id="submit" name="submit" value="Login" class="button" />
+			</p>
+		</form>
+		<script type="text/javascript">$('#username').focus();</script>
+	</div>
+	<?php
+	yourls_html_footer();
+	die();
 }

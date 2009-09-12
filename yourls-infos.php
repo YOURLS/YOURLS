@@ -38,9 +38,7 @@ foreach( (array)$hits as $hit ) {
 		if ( $referrer == 'direct' ) {
 			$direct++;
 		} else {
-			$parse = parse_url( $referrer );
-			$host = $parse['host'];
-			unset( $parse );
+			$host = yourls_get_domain( $referrer );
 			if( !array_key_exists( $host, $referrers ) )
 				$referrers[$host] = array( );
 			if( !array_key_exists( $referrer, $referrers[$host] ) )
@@ -79,8 +77,9 @@ if ( $countries )
 // Sort referrers. $referrer_sort is a array of most frequent domains
 arsort( $referrers );
 $referrer_sort = array();
+$number_of_sites = count( array_keys( $referrers ) );
 foreach( $referrers as $site => $urls ) {
-	if( count($urls) > 1 )
+	if( count($urls) > 1 || $number_of_sites == 1 )
 		$referrer_sort[$site] = array_sum( $urls );
 }
 arsort($referrer_sort);
@@ -109,7 +108,7 @@ yourls_html_head( 'infos' );
 <h2 id="informations">Informations</h2>
 
 <h3>Short URL: <?php yourls_html_link( YOURLS_SITE."/$keyword" ); ?></h3>
-<p>Long URL: <?php yourls_html_link( yourls_get_keyword_longurl( $keyword ) ); ?></p>
+<h3>Long URL: <img src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/><?php yourls_html_link( $longurl, '', 'longurl' ); ?></h3>
 <p>Number of hits since <?php echo date("F j, Y, g:i a", strtotime($timestamp)); ?>: <strong><?php echo $clicks; ?></strong> hit<?php echo ($clicks > 1 ? 's' : ''); ?></p>
 
 <div id="tabs">
@@ -196,7 +195,8 @@ yourls_html_head( 'infos' );
 				<td valign="top">
 					<h3>Referrer shares</h3>
 					<?php
-					$referrer_sort['Others'] = count( $referrers );
+					if ( $number_of_sites > 1 )
+						$referrer_sort['Others'] = count( $referrers );
 					yourls_stats_pie( $referrer_sort, 5, '440x220', '902020,FF6060' );
 					unset( $referrer_sort['Others'] );
 					?>
@@ -214,12 +214,15 @@ yourls_html_head( 'infos' );
 							echo "</ul>\n";
 							unset( $referrers[$site] );
 						}
-						echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details' id='more_various'>(details)</a></li>\n";
-						echo "<ul id='details_various' style='display:none'>";
-						foreach( $referrers as $url ) {
-							echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
+						// Any referrer left? Group in "various"
+						if ( $referrers ) {
+							echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details' id='more_various'>(details)</a></li>\n";
+							echo "<ul id='details_various' style='display:none'>";
+							foreach( $referrers as $url ) {
+								echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
+							}
+							echo "</ul>\n";
 						}
-						echo "</ul>\n"
 						?>
 						
 					</ul>

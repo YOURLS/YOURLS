@@ -1150,10 +1150,12 @@ function yourls_maybe_require_auth() {
 }
 
 // Echo HTML tag for a link
-function yourls_html_link( $href, $title = '' ) {
+function yourls_html_link( $href, $title = '', $element = '' ) {
 	if( !$title )
 		$title = $href;
-	echo "<a href='$href'>$title</a>";
+	if( $element )
+		$element = "id='$element'";
+	echo "<a href='$href' $element>$title</a>";
 }
 
 // Return word or words if more than one

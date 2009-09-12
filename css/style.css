@@ -2,7 +2,7 @@ body {
 	font-family: Verdana, Arial;
 	font-size: 12px;
 	color: #595441;
-	background:#E6EEEE;
+	background:#F0F0F6;
 	text-align:center;
 	margin-top:0px;
 	padding-top:0px;
@@ -10,11 +10,12 @@ body {
 #wrap {
 	width:980px;
 	margin:0 auto;
-	border-left:2px solid #E6FFEE;
-	border-right:2px solid #E6eeff;
 	background:white;
 	text-align:justify;
-	padding:0 20px;
+	padding:0 20px 10px 20px;
+	border-left:3px solid #D5E3E3;
+	border-right:3px solid #D5E3E3;
+	border-bottom:2px solid #D5E3E3;
 	-moz-border-radius-bottomleft:20px;
 	-moz-border-radius-bottomright:20px;
 	-webkit-border-bottom-left-radius:20px;
@@ -142,9 +143,6 @@ td.actions .button_stats:hover {
 	width: 300px;
 	margin: 200px auto 0px auto;
 }
-#login img {
-	margin-left:50px;
-}
 #login p{
 	font-weight: bold;
 }
@@ -189,7 +187,7 @@ td.actions .button_stats:hover {
 }
 #footer {
 	text-align:center;
-	margin-top:10px;
+	margin-top:20px;
 }
 #footer p {
 	padding:10px;
@@ -198,6 +196,11 @@ td.actions .button_stats:hover {
 	width:980px;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
+	border:2px solid #D5E3E3;
+	-moz-border-radius-bottomleft:30px;
+	-moz-border-radius-bottomright:30px;
+	-webkit-border-bottom-left-radius:25px;
+	-webkit-border-bottom-right-radius:25px;
 }
 #footer p a {
 	background:#fff url(../images/favicon.gif) 2px center no-repeat;

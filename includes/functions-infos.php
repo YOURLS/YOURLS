@@ -142,6 +142,34 @@ function yourls_stats_get_best_day( $dates ) {
 	}
 
 	return array( 'day' => $bday, 'max' => $max );
+}
 
+// Fetch remote page title
+function yourls_get_page_title( $url, $default = '' ) {
+	if ( !class_exists('DOMDocument') )
+		return $default;
+
+	$dom = new DOMDocument();
+
+	if( @$dom->loadHTMLFile('http://planetozh.com/') ) {
+		$list = $dom->getElementsByTagName("title");
+		if ($list->length > 0) {
+			return( $list->item(0)->textContent );
+		}
+	}
+	
+	return $default;
+}
+
+// Return domain of a URL
+function yourls_get_domain( $url, $include_scheme = false ) {
+	$parse = parse_url( $url );
+	$host = $parse['host'];
+	$scheme = $parse['scheme'];
+	
+	if ( $include_scheme )
+		$host = $scheme.'://'.$host;
+		
+	return $host;
 }
 
