@@ -15,7 +15,7 @@ $sort_order_text = 'Descending Order';
 $sort_order_sql = 'desc';
 $page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
 $search = ( isset( $_GET['s_search'] ) ? mysql_real_escape_string(trim($_GET['s_search'])) : '' );
-$perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 10 );
+$perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 20 );
 $link_limit = ( isset( $_GET['link_limit'] ) && intval($_GET['link_limit']) ? intval($_GET['link_limit']) : '' );
 if ( $link_limit != '' ) {
 	$link_filter = ( isset( $_GET['link_filter'] ) && $_GET['link_filter'] == 'more' ? 'more' : 'less' ) ;
@@ -162,13 +162,12 @@ yourls_html_head( $context );
 		Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a>.
 	<?php } ?>
 	Check the <a href="tools.php">Tools</a>.</p>
-	<p><?php if ( !$is_bookmark ) {
+	<?php if ( !$is_bookmark ) {
 	?>
-	Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.
-		<?php echo $search_display; ?>
+	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.</p>
+	<p><?php echo $search_display; ?></p>
 	<?php } ?>
-		Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!
-	</p>
+	<p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
 
 	<?php yourls_html_addnew(); ?>
 	
@@ -180,7 +179,7 @@ yourls_html_head( $context );
 	<table id="tblUrl" class="tblSorter" cellpadding="0" cellspacing="1">
 		<thead>
 			<tr>
-				<th>Short URL</th>
+				<th>Short URL&nbsp;</th>
 				<th>Original URL</th>
 				<th>Date</th>
 				<th>IP</th>

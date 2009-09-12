@@ -41,24 +41,3 @@ div.share {
 #share_fb {background:transparent url(../images/facebook.png) left center no-repeat;}
 #share_ff {background:transparent url(../images/friendfeed.png) left center no-repeat;}
 
-#tools_desc {
-	width:550px;
-	zbackground:#ffe;
-	padding-bottom:10px;
-}
-#tools_desc span {
-	background:#ffa;
-	padding:0 2px;
-}
-
-#tools_desc .bookmarklet {
-	border:2px solid #2A85B3;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
-	padding:5px 5px 5px 20px;
-	background:#eef url(../images/favicon.gif) 2px center no-repeat;
-}
-
-#tools_desc .bookmarklet:hover {
-	text-decoration:none;
-}

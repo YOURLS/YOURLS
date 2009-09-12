@@ -41,8 +41,7 @@ function add() {
 
 // Display the edition interface
 function edit(id) {
-	add_loading("#edit-button-" + id);
-	add_loading("#delete-button-" + id);
+	add_loading('#actions-'+id+' .button');
 	var keyword = $('#keyword_'+id).val();
 	$.getJSON(
 		"index_ajax.php",
@@ -50,8 +49,7 @@ function edit(id) {
 		function(data){
 			$("#id-" + id).after( data.html );
 			$("#edit-url-"+ id).focus();
-			end_loading("#edit-button-" + id);
-			end_loading("#delete-button-" + id);
+			end_loading('#actions-'+id+' .button');
 		}
 	);
 }
@@ -75,11 +73,15 @@ function remove(id) {
 	);
 }
 
+// Redirect to stat page
+function stats(link) {
+	window.location=link;
+}
+
 // Cancel edition of a link
 function hide_edit(id) {
 	$("#edit-" + id).fadeOut(200, function(){
-		end_disable("#edit-button-" + id);
-		end_disable("#delete-button-" + id);
+		end_disable('#actions-'+id+' .button');
 	});
 }
 
@@ -96,17 +98,15 @@ function edit_save(id) {
 		function(data){
 			if(data.status == 'success') {
 				$("#url-" + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.url + '</a>');
-				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.shorturl + '</a>');
+				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
 					$('#tblUrl tbody').trigger("update");
 				});
 			}
 			feedback(data.message, data.status);
-			end_disable("#edit-close-" + id);
-			end_loading("#edit-close-" + id);
-			end_disable("#edit-button-" + id);
-			end_disable("#delete-button-" + id);
+			end_disable('#actions-'+id+' .button');
+			end_loading('#actions-'+id+' .button');
 		}
 	);
 }

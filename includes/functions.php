@@ -140,7 +140,7 @@ function yourls_table_edit_row( $keyword ) {
 	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="100" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
@@ -157,9 +157,11 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$clicks = number_format($clicks);
 	$www = YOURLS_SITE;
 	$shorturl = YOURLS_SITE.'/'.$keyword;
+	$display_url = yourls_trim_long_string( $url );
+	$statlink = $shorturl.'+';
 	
 	return <<<ROW
-<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$shorturl</a></td><td id="url-$id"><a href="$url" title="$url">$url</a></td><td id="timestamp-$id">$date</td><td>$ip</td><td>$clicks</td><td class="actions"><input type="button" id="edit-button-$id" name="edit-button" value="Edit" class="button" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="Del" class="button" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><input type="button" id="stats-button-$id" name="stat-button" value="" title="Stats" class="button button_stats" onclick="stats('$statlink');" />&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
 }
 
@@ -299,8 +301,8 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	
 	// All clear, update
 	if ( !$new_url_already_there && $keyword_is_ok ) {
-		$timestamp4screen = date( 'Y M d H:i', time()+( yourls_HOURS_OFFSET * 3600) );
-		$timestamp4db = date('Y-m-d H:i:s', time()+( yourls_HOURS_OFFSET * 3600) );
+		$timestamp4screen = date( 'Y M d H:i', time()+( YOURLS_HOURS_OFFSET * 3600) );
+		$timestamp4db = date('Y-m-d H:i:s', time()+( YOURLS_HOURS_OFFSET * 3600) );
 		$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `timestamp` = '$timestamp4db', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
 		if( $update_url ) {
 			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'date' => $timestamp4screen);
@@ -582,6 +584,7 @@ function yourls_html_head( $context = 'index' ) {
 	<?php } ?>
 </head>
 <body class="<?php echo $context; ?>">
+<div id="wrap">
 	<?php
 }
 
@@ -591,6 +594,7 @@ function yourls_html_footer() {
 	
 	$num_queries = $ydb->num_queries > 1 ? $ydb->num_queries.' queries' : $ydb->num_queries.' query';
 	?>
+	</div> <?php // wrap ?>
 	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
 	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';
@@ -813,7 +817,7 @@ function yourls_redirect( $location, $code = 301 ) {
 function yourls_redirect_javascript( $location ) {
 	echo <<<REDIR
 	<script type="text/javascript">
-	//window.location="$location";
+	window.location="$location";
 	</script>
 	<small>(if you are not redirected after 10 seconds, please <a href="$location">click here</a>)</small>
 REDIR;
@@ -1155,4 +1159,12 @@ function yourls_html_link( $href, $title = '' ) {
 // Return word or words if more than one
 function yourls_plural( $word, $count=1 ) {
 	return $word . ($count > 1 ? 's' : '');
+}
+
+// Return trimmed string
+function yourls_trim_long_string( $string, $length = 70, $append = '[...]' ) {
+	if ( strlen( $string ) > $length ) {
+		$string = substr( $string, 0, $length - strlen( $append ) ) . $append;	
+	}
+	return $string;
 }

@@ -47,6 +47,8 @@
 
 li#sites_various { padding-left:22px; padding-top:4px;}
 
+li.sites_list img {width:16px; height: 16px; display:inline-block;}
+
 #referrer_cell { min-width: 300px;}
 
 ul.no_bullet {

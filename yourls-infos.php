@@ -25,7 +25,7 @@ $countries = array();
 $dates = array();
 
 // Loop through all results and build list of referrers, countries and hits per day
-foreach( $hits as $hit ) {
+foreach( (array)$hits as $hit ) {
 	extract( (array)$hit );
 
 	if ( isset( $country_code ) && $country_code ) {
@@ -106,12 +106,11 @@ yourls_html_head( 'infos' );
 <p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
 <?php } ?>
 
-<h2>Informations</h2>
+<h2 id="informations">Informations</h2>
 
 <h3>Short URL: <?php yourls_html_link( YOURLS_SITE."/$keyword" ); ?></h3>
 <p>Long URL: <?php yourls_html_link( yourls_get_keyword_longurl( $keyword ) ); ?></p>
 <p>Number of hits since <?php echo date("F j, Y, g:i a", strtotime($timestamp)); ?>: <strong><?php echo $clicks; ?></strong> hit<?php echo ($clicks > 1 ? 's' : ''); ?></p>
-
 
 <div id="tabs">
 	<ul id="headers">
@@ -125,106 +124,124 @@ yourls_html_head( 'infos' );
 	<div id="stats" class="tab first_tab">
 		<h2>Traffic statistics</h2>
 		
-		<h3>Number of hits per day</h3>
+		<?php if ( $dates ) { ?>
 		
-		<p><?php yourls_stats_clicks_line( $dates ); ?></p>
+			<h3>Number of hits per day</h3>
 
-		<?php $best = yourls_stats_get_best_day( $dates ); ?>
-		
-		<h3>Best day</h3>
-		<p><strong><?php echo $best['max'];?></strong> hit<?php echo ($best['max'] > 1 ? 's' : ''); ?> on <?php echo date("F j, Y", strtotime($best['day'])); ?>. 
-		<a href="" class='details' id="more_clicks">Click for more details</a></p>
-		<ul id="details_clicks" style="display:none">
-			<?php
-			foreach( $dates as $year=>$months ) {
-				foreach( $months as $month=>$days) {
-					foreach( $days as $day=>$visits ) {
-						echo '<li>'.date("F j, Y", strtotime("$year-$month-$day"))." : $visits ".yourls_plural( 'hit', $visits )."</li>\n";
+			<p><?php yourls_stats_clicks_line( $dates ); ?></p>
+
+			<?php $best = yourls_stats_get_best_day( $dates ); ?>
+			
+			<h3>Best day</h3>
+			<p><strong><?php echo $best['max'];?></strong> hit<?php echo ($best['max'] > 1 ? 's' : ''); ?> on <?php echo date("F j, Y", strtotime($best['day'])); ?>. 
+			<a href="" class='details' id="more_clicks">Click for more details</a></p>
+			<ul id="details_clicks" style="display:none">
+				<?php
+				foreach( $dates as $year=>$months ) {
+					foreach( $months as $month=>$days) {
+						foreach( $days as $day=>$visits ) {
+							echo '<li>'.date("F j, Y", strtotime("$year-$month-$day"))." : $visits ".yourls_plural( 'hit', $visits )."</li>\n";
+						}
 					}
 				}
-			}
-			?>
-		</ul>
+				?>
+			</ul>
+		
+		<?php } else {
+			echo "<p>No traffic yet. Get some clicks first!</p>";
+		} ?>
 	</div>
 
 
 	<div id="location" class="tab">
 		<h2>Traffic location</h2>
 		
-		<table border="0" cellspacing="2">
-		<tr>
-			<td valign="top">
-				<h3>Top 5 countries</h3>
-				<?php yourls_stats_pie( $countries, 5 ); ?>
-				<p><a href="" class='details' id="more_countries">Click for more details</a></p>
-				<ul id="details_countries" style="display:none" class="no_bullet">
-				<?php
-				foreach( $countries as $code=>$count ) {
-					echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ).") : $count ".yourls_plural('hit', $count)."</li>\n";
-				}		
-				?>
-				</ul>
+		<?php if ( $countries ) { ?>
+			
+			<table border="0" cellspacing="2">
+			<tr>
+				<td valign="top">
+					<h3>Top 5 countries</h3>
+					<?php yourls_stats_pie( $countries, 5 ); ?>
+					<p><a href="" class='details' id="more_countries">Click for more details</a></p>
+					<ul id="details_countries" style="display:none" class="no_bullet">
+					<?php
+					foreach( $countries as $code=>$count ) {
+						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ).") : $count ".yourls_plural('hit', $count)."</li>\n";
+					}		
+					?>
+					</ul>
 
-			</td>
-			<td valign="top">
-				<h3>Overall traffic</h3>
-				<?php yourls_stats_countries_map( $countries ); ?>
-			</td>
-		</tr>
-		</table>
+				</td>
+				<td valign="top">
+					<h3>Overall traffic</h3>
+					<?php yourls_stats_countries_map( $countries ); ?>
+				</td>
+			</tr>
+			</table>
+		
+		<?php } else {
+			echo "<p>No countrie data. Maybe the geolocation module is not installed, or no traffic yet.</p>";
+		} ?>
 	</div>
 				
 				
 	<div id="sources" class="tab">
 		<h2>Traffic Sources</h2>
 		
-		<table border="0" cellspacing="2">
-		<tr>
-			<td valign="top">
-				<h3>Referrer shares</h3>
-				<?php
-				$referrer_sort['Others'] = count( $referrers );
-				yourls_stats_pie( $referrer_sort, 5, '440x220' );
-				unset( $referrer_sort['Others'] );
-				?>
-				<h3>Referrers</h3>
-				<ul class="no_bullet">
+		<?php if ( $referrers ) { ?>
+			
+			<table border="0" cellspacing="2">
+			<tr>
+				<td valign="top">
+					<h3>Referrer shares</h3>
 					<?php
-					$i = 0;
-					foreach( $referrer_sort as $site => $count ) {
-						$i++;
-						echo "<li class='sites_list'><img src='http://$site/favicon.ico'/ width='16'> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
-						echo "<ul id='details_url$i' style='display:none'>";
-						foreach( $referrers[$site] as $url => $count ) {
-							echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
-						}
-						echo "</ul>\n";
-						unset( $referrers[$site] );
-					}
-					echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details' id='more_various'>(details)</a></li>\n";
-					echo "<ul id='details_various' style='display:none'>";
-					foreach( $referrers as $url ) {
-						echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
-					}
-					echo "</ul>\n"
+					$referrer_sort['Others'] = count( $referrers );
+					yourls_stats_pie( $referrer_sort, 5, '440x220', '902020,FF6060' );
+					unset( $referrer_sort['Others'] );
 					?>
-					
-				</ul>
-			
-			</td>
-			
-			<td valign="top">
-				<h3>Direct vs Referrer Traffic</h3>
-				<?php
-				$ref_traffic = count($referrer_sort) + count($referrers);
-				yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $ref_traffic), 5, '440x220' );
-				?>
-				<p>Direct traffic: <strong><?php echo $direct; ?></strong> <?php echo yourls_plural( 'hit', $direct ); ?> </p>
-				<p>Referrer traffic: <strong><?php echo $ref_traffic; ?></strong> <?php echo yourls_plural( 'hit', $ref_traffic ); ?> </p>
+					<h3>Referrers</h3>
+					<ul class="no_bullet">
+						<?php
+						$i = 0;
+						foreach( $referrer_sort as $site => $count ) {
+							$i++;
+							echo "<li class='sites_list'><img src='http://$site/favicon.ico'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
+							echo "<ul id='details_url$i' style='display:none'>";
+							foreach( $referrers[$site] as $url => $count ) {
+								echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
+							}
+							echo "</ul>\n";
+							unset( $referrers[$site] );
+						}
+						echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details' id='more_various'>(details)</a></li>\n";
+						echo "<ul id='details_various' style='display:none'>";
+						foreach( $referrers as $url ) {
+							echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
+						}
+						echo "</ul>\n"
+						?>
+						
+					</ul>
+				
+				</td>
+				
+				<td valign="top">
+					<h3>Direct vs Referrer Traffic</h3>
+					<?php
+					$ref_traffic = count($referrer_sort) + count($referrers);
+					yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $ref_traffic), 5, '440x220', '902020,FF6060' );
+					?>
+					<p>Direct traffic: <strong><?php echo $direct; ?></strong> <?php echo yourls_plural( 'hit', $direct ); ?> </p>
+					<p>Referrer traffic: <strong><?php echo $ref_traffic; ?></strong> <?php echo yourls_plural( 'hit', $ref_traffic ); ?> </p>
 
-			</td>
-		</tr>
-		</table>
+				</td>
+			</tr>
+			</table>
+
+		<?php } else {
+			echo "<p>No referrer data. Get some clicks first!</p>";
+		} ?>
 			
 	</div>
 

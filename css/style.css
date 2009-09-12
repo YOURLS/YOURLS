@@ -2,6 +2,23 @@ body {
 	font-family: Verdana, Arial;
 	font-size: 12px;
 	color: #595441;
+	background:#E6EEEE;
+	text-align:center;
+	margin-top:0px;
+	padding-top:0px;
+}
+#wrap {
+	width:980px;
+	margin:0 auto;
+	border-left:2px solid #E6FFEE;
+	border-right:2px solid #E6eeff;
+	background:white;
+	text-align:justify;
+	padding:0 20px;
+	-moz-border-radius-bottomleft:20px;
+	-moz-border-radius-bottomright:20px;
+	-webkit-border-bottom-left-radius:20px;
+	-webkit-border-bottom-right-radius:20px;
 }
 div, p, td {
 	font-family: Verdana, Arial;
@@ -14,11 +31,11 @@ a, a:link, a:active, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-h1 {height:50px;}
+h1 {height:50px;margin:0;}
 h1 a {float:right;text-align:right;}
 h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#8dbdd8}
-input, textarea {
+input, textarea, .button_stats {
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 }
@@ -83,14 +100,30 @@ tr.edit-row  td {
 #new_url #feedback .fail {
 	color:#f55;
 }
-td.actions input{
+td.actions input, td.actions a {
 	visibility:hidden;
 }
-td.actions input.disabled, td.actions input.loading{
+td.actions input.disabled, td.actions input.loading {
 	visibility:visible;
 }
-tr:hover td.actions input{
+tr:hover td.actions input, tr:hover td.actions a {
 	visibility:visible;
+}
+td.actions .button {
+	height:22px;
+	width:22px;
+}
+td.actions .button_edit {
+	background:transparent url(../images/pencil.png) 2px center no-repeat;
+}
+td.actions .button_delete {
+	background:transparent url(../images/delete.png) 2px center no-repeat;
+}
+td.actions .button_stats {
+	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
+}
+td.actions .button_stats:hover {
+	text-decoration:none;
 }
 .error {
 	color: red;
@@ -134,4 +167,39 @@ tr:hover td.actions input{
 }
 #login ul.success li {
 	background:transparent url(../images/accept.png) top left no-repeat;
+}
+#tools_desc {
+	width:550px;
+	zbackground:#ffe;
+	padding-bottom:10px;
+}
+#tools_desc span {
+	background:#ffa;
+	padding:0 2px;
+}
+#tools_desc .bookmarklet {
+	border:2px solid #2A85B3;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	padding:5px 5px 5px 20px;
+	background:#eef url(../images/favicon.gif) 2px center no-repeat;
+}
+#tools_desc .bookmarklet:hover {
+	text-decoration:none;
+}
+#footer {
+	text-align:center;
+	margin-top:10px;
+}
+#footer p {
+	padding:10px;
+	background:white;
+	margin:0 auto;
+	width:980px;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+}
+#footer p a {
+	background:#fff url(../images/favicon.gif) 2px center no-repeat;
+	padding-left:20px;
 }

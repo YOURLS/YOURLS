@@ -16,7 +16,7 @@ function yourls_stats_countries_map( $countries ) {
 }
 
 // Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
-function yourls_stats_pie( $data, $limit = 10, $size = '340x220' ) {
+function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = '202040,9090AA' ) {
 	// Trim array: $limit first item + the sum of all others
 	if ( count( $data ) > $limit ) {
 		$i= 0;
@@ -43,7 +43,7 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220' ) {
 		'cht' => 'p',
 		'chs' => $size,
 		'chd' => 't:'.( join(',' ,  $data ) ),
-		'chco'=> '202040,9090AA',
+		'chco'=> $colors,
 		'chl' => join('|' , array_keys( $data ) )
 	);
 	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
