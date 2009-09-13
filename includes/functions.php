@@ -161,7 +161,7 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$statlink = $shorturl.'+';
 	
 	return <<<ROW
-<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><input type="button" id="stats-button-$id" name="stat-button" value="" title="Stats" class="button button_stats" onclick="stats('$statlink');" />&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><a href="$statlink" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
 }
 
