@@ -104,10 +104,6 @@ function yourls_stats_clicks_line( $dates ) {
 	if ( count( $list_of_days ) == 1 )
 		array_unshift( $list_of_days, 0 );
 	
-	// Scale items
-	$_list_of_days = yourls_scale_data( $list_of_days );
-
-	
 	// Make the chart
 	$label_years = $first_year != $last_year ? join('|', $list_of_years ) : $first_year.'|'.$last_year;
 	$label_months = count( $list_of_months ) > 1 ? join('|', $list_of_months) : $first_month.'|'.$first_month;
@@ -117,7 +113,7 @@ function yourls_stats_clicks_line( $dates ) {
 		'cht' => 'lc',
 		'chs' => '440x220',
 		'chxt'=> 'x,x,y',
-		'chd' => 't:'.( join(',' ,  $_list_of_days ) ),
+		'chd' => 't:'.( join(',' ,  $list_of_days ) ),
 		'chds' => '0,'.$max,
 		'chxl'=> '0:|'. $label_years .'|1:|'. $label_months .'|2:|'. $label_clicks
 	);
