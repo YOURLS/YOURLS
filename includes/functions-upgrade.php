@@ -97,6 +97,7 @@ function yourls_alter_url_table_to_14() {
 	$alters = array();
 	$results = array();
 	$alters[] = "ALTER TABLE `$table` CHANGE `id` `keyword` VARCHAR( 200 ) NOT NULL";
+	$alters[] = "ALTER TABLE `$table` CHANGE `url` `url` TEXT NOT NULL";
 	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
 	
 	foreach ( $alters as $query ) {

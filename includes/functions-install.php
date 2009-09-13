@@ -144,7 +144,7 @@ function yourls_create_sql_tables() {
 	$create_tables[YOURLS_DB_TABLE_URL] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
 		'`keyword` varchar(200) NOT NULL,'.
-		'`url` VARCHAR(200) NOT NULL,'.
+		'`url` text NOT NULL,'.
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
