@@ -180,7 +180,7 @@ yourls_html_head( 'infos' );
 			</table>
 		
 		<?php } else {
-			echo "<p>No countrie data. Maybe the geolocation module is not installed, or no traffic yet.</p>";
+			echo "<p>No country data.</p>";
 		} ?>
 	</div>
 				
@@ -243,7 +243,7 @@ yourls_html_head( 'infos' );
 			</table>
 
 		<?php } else {
-			echo "<p>No referrer data. Get some clicks first!</p>";
+			echo "<p>No referrer data.</p>";
 		} ?>
 			
 	</div>
