@@ -32,17 +32,14 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = '202
 		$data = $trim_data;
 	}
 	
-	// Scale items (biggest = 100)
-	$max = max( $data );
-	foreach( $data as $k=>$v ) {
-		$data[$k] = intval( $v / $max * 100 );
-	}
+	// Scale items
+	$_data = yourls_scale_data( $data );
 	
 	// Hmmm, pie
 	$pie = array(
 		'cht' => 'p',
 		'chs' => $size,
-		'chd' => 't:'.( join(',' ,  $data ) ),
+		'chd' => 't:'.( join(',' ,  $_data ) ),
 		'chco'=> $colors,
 		'chl' => join('|' , array_keys( $data ) )
 	);
@@ -103,18 +100,21 @@ function yourls_stats_clicks_line( $dates ) {
 			}
 		}
 	}
-
+	
+	// Scale items
+	$_list_of_days = yourls_scale_data( $list_of_days );
+	
 	// Make the chart
 	$label_years = $first_year != $last_year ? join('|', $list_of_years ) : $first_year.'|'.$last_year;
-	$label_months = count( $list_of_months ) > 1 ? join('|', $list_of_months) : $first_month.'|'.$first_year;
+	$label_months = count( $list_of_months ) > 1 ? join('|', $list_of_months) : $first_month.'|'.$first_month;
 	$max = max( $list_of_days );
 	$label_clicks = '0|'.intval( $max / 4 ).'|'.intval( $max / 2 ).'|'.intval( $max / 1.5 ).'|'.$max;
 	$line = array(
 		'cht' => 'lc',
-		'chs' => '1000x300',
 		'chs' => '440x220',
 		'chxt'=> 'x,x,y',
-		'chd' => 't:'.( join(',' ,  $list_of_days ) ),
+		'chd' => 't:'.( join(',' ,  $_list_of_days ) ),
+		'chds' => '0,'.$max,
 		'chxl'=> '0:|'. $label_years .'|1:|'. $label_months .'|2:|'. $label_clicks
 	);
 	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );
@@ -173,3 +173,13 @@ function yourls_get_domain( $url, $include_scheme = false ) {
 	return $host;
 }
 
+// Scale array of data from 0 to 100 max
+function yourls_scale_data( $data ) {
+	$max = max( $data );
+	if( $max > 100 ) {
+		foreach( $data as $k=>$v ) {
+			$data[$k] = intval( $v / $max * 100 );
+		}
+	}
+	return $data;
+}
