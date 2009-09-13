@@ -2,7 +2,9 @@
 
 /*
  * YOURLS : sample file showing how to use the API
- * This shows how to tap into your YOURLS install API from *another* server, not from a file hosted on the same server
+ * This shows how to tap into your YOURLS install API from *ANOTHER* server
+ * not from a file hosted on the same server. It's just a bit dumb to make a
+ * remote HTTP request to the server the request originates from.
  */
 
 // EDIT THIS: your auth parameters
