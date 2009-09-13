@@ -2,20 +2,20 @@ body {
 	font-family: Verdana, Arial;
 	font-size: 12px;
 	color: #595441;
-	background:#F0F0F6;
+	background:#F3FAFD;
 	text-align:center;
 	margin-top:0px;
 	padding-top:0px;
 }
 #wrap {
-	width:980px;
+	width:960px;
 	margin:0 auto;
 	background:white;
 	text-align:justify;
 	padding:0 20px 10px 20px;
-	border-left:3px solid #D5E3E3;
-	border-right:3px solid #D5E3E3;
-	border-bottom:2px solid #D5E3E3;
+	border-left:3px solid #5FA3C6;
+	border-right:3px solid #5FA3C6;
+	border-bottom:2px solid #5FA3C6;
 	-moz-border-radius-bottomleft:20px;
 	-moz-border-radius-bottomright:20px;
 	-webkit-border-bottom-left-radius:20px;
@@ -26,7 +26,7 @@ div, p, td {
 	font-size: 12px;
 }
 a, a:link, a:active, a:visited {
-	color: #4a8797;
+	color: #2A85B3;
 	text-decoration: none;
 }
 a:hover {
@@ -34,6 +34,7 @@ a:hover {
 }
 h1 {height:50px;margin:0;}
 h1 a {float:right;text-align:right;}
+h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2A85B3}
 h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#8dbdd8}
 input, textarea, .button_stats {
@@ -84,7 +85,7 @@ tr.edit-row  td {
 	clear:both;
 }
 #new_url div {
-	background:#E6EEEE;
+	background:#D9EAF3;
 	padding:4px;
 }
 #new_url_form {
@@ -193,10 +194,10 @@ td.actions .button_stats:hover {
 	padding:10px;
 	background:white;
 	margin:0 auto;
-	width:980px;
+	width:960px;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
-	border:2px solid #D5E3E3;
+	border:2px solid #2A85B3;
 	-moz-border-radius-bottomleft:30px;
 	-moz-border-radius-bottomright:30px;
 	-webkit-border-bottom-left-radius:25px;

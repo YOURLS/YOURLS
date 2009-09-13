@@ -8,13 +8,16 @@ table.tblSorter {
 	text-align: left;
 }
 table.tblSorter th.header {
-	background-color: #e6EEEE;
+	background-color: #D9EAF3;
 }
 table.tblSorter thead tr th, table.tblSorter tfoot tr th {
-	background-color: #e6EEEE;
+	background-color: #D9EAF3;
 	border: 1px solid #FFF;
 	font-size: 8pt;
 	padding: 4px;
+}
+table.tblSorter tfoot tr th {
+	background-color: #D9EAF3;
 }
 table.tblSorter thead tr .header {
 	background-image: url('../images/bg.gif');
@@ -33,7 +36,7 @@ table.tblSorter tbody tr.even td {
 	background-color:#FFF;
 }
 table.tblSorter tbody tr.odd td {
-	background-color:#F0F0F6;
+	background-color:#F3FAFD;
 }
 table.tblSorter thead tr .headerSortUp {
 	background-image: url('../images/desc.gif');
@@ -45,7 +48,7 @@ table.tblSorter thead tr .headerSortDown, table.tblSorter thead tr .headerSortUp
 	background-color: #8dbdd8;
 }
 table.tblSorter tfoot tr {
-	background-color: #e6EEEE;
+	background-color: #BCD9E8;
 }
 .pagedisplay {
 	color: #216fd8;
