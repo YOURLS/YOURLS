@@ -105,8 +105,10 @@ function edit_save(id) {
 				});
 			}
 			feedback(data.message, data.status);
-			end_disable('#actions-'+id+' .button');
-			end_loading('#actions-'+id+' .button');
+			end_disable("#edit-close-" + id);
+			end_loading("#edit-close-" + id);
+			end_disable("#edit-button-" + id);
+			end_disable("#delete-button-" + id);
 		}
 	);
 }
