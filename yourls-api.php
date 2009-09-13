@@ -14,6 +14,7 @@ switch( $action ) {
 		$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
 		$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
 		$return = yourls_add_new_link( $url, $keyword );
+		$return['simple'] = $return['shorturl']; // This one will be used in case output mode is 'simple'
 		unset($return['html']); // in API mode, no need for our internal HTML output
 		break;
 	
@@ -21,6 +22,11 @@ switch( $action ) {
 		$filter = ( isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : '' );
 		$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
 		$return = yourls_api_stats( $filter, $limit );
+		break;
+		
+	case 'expand':
+		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
+		$return = yourls_api_expand( $shorturl );
 		break;
 		
 	default:

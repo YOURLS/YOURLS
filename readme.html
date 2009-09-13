@@ -320,11 +320,17 @@
 			<ul>
 				<li>A valid <code>username</code></li>
 				<li>A valid <code>password</code></li>
-				<li>The requested <code>action</code>: either <tt>"shorturl"</tt> (get short URL for a link) or <tt>"stats"</tt> (get stats about your links)</li>
+				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl) or <tt>"stats"</tt> (get stats about your links)</li>
 				<li>With <tt>action = "shorturl"</tt> :
 					<ul>
 						<li>the <code>url</code> to shorten</li>
 						<li>optional <code>keyword</code> for custom short URLs</li>
+						<li>output <code>format</code>: either <tt>"json"</tt>, <tt>"xml"</tt> or <tt>"simple"</tt></li>
+					</ul>
+				</li>
+				<li>With <tt>action = "expand"</tt> :
+					<ul>
+						<li>the <code>shorturl</code> to expand (can be either 'abc' or 'http://site/abc')</li>
 						<li>output <code>format</code>: either <tt>"json"</tt>, <tt>"xml"</tt> or <tt>"simple"</tt></li>
 					</ul>
 				</li>

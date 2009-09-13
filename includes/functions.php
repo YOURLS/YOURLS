@@ -450,9 +450,8 @@ function yourls_update_clicks( $keyword ) {
 	return $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'");
 }
 
-
-// Return array for API stat requests
-function yourls_api_stats( $filter, $limit ) {
+// Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
+function yourls_get_links_stats( $filter = 'top', $limit = 10 ) {
 	global $ydb;
 
 	switch( $filter ) {
@@ -477,12 +476,14 @@ function yourls_api_stats( $filter, $limit ) {
 	}
 	
 	$limit = intval( $limit );
+	if ( $limit == 0 )
+		$limit = 1;
 	$table_url = YOURLS_DB_TABLE_URL;
-	$results = $ydb->get_results("SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT 0, $limit;");
-
+	$results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT 0, $limit;");
+	
 	$return = array();
 	$i = 1;
-
+	
 	foreach ($results as $res) {
 		$return['links']['link_'.$i++] = array(
 			'shorturl' => YOURLS_SITE .'/'. $res->keyword,
@@ -499,6 +500,29 @@ function yourls_api_stats( $filter, $limit ) {
 }
 
 
+// Return array for API stat requests
+function yourls_api_stats( $filter = 'top', $limit = 10 ) {
+	$return = yourls_get_links_stats( $filter, $limit );
+	$return['simple'] = 'Need either XML or JSON format for stats';
+	return $return;
+}
+
+// Expand short url to long url
+function yourls_api_expand( $shorturl ) {
+	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
+	$keyword = yourls_sanitize_string( $keyword );
+	
+	$longurl = yourls_get_keyword_longurl( $keyword );
+	
+	return array(
+		'keyword' => $keyword,
+		'shorturl' => YOURLS_SITE . "/$keyword",
+		'longurl' => $longurl,
+		'simple' => $longurl,
+	);
+}
+
+
 // Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
 function yourls_get_db_stats( $where = '' ) {
 	global $ydb;
@@ -510,6 +534,8 @@ function yourls_get_db_stats( $where = '' ) {
 
 // Return API result. Dies after this
 function yourls_api_output( $mode, $return ) {
+	$simple = $return['simple'];
+	unset( $return['simple'] );
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
@@ -523,7 +549,7 @@ function yourls_api_output( $mode, $return ) {
 			
 		case 'simple':
 		default:
-			echo $return['shorturl'];
+			echo $simple;
 			break;
 	}
 	die();
