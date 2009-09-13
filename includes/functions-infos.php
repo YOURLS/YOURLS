@@ -101,8 +101,12 @@ function yourls_stats_clicks_line( $dates ) {
 		}
 	}
 	
+	if ( count( $list_of_days ) == 1 )
+		array_unshift( $list_of_days, 0 );
+	
 	// Scale items
 	$_list_of_days = yourls_scale_data( $list_of_days );
+
 	
 	// Make the chart
 	$label_years = $first_year != $last_year ? join('|', $list_of_years ) : $first_year.'|'.$last_year;
