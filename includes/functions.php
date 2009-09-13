@@ -1190,7 +1190,7 @@ function yourls_plural( $word, $count=1 ) {
 }
 
 // Return trimmed string
-function yourls_trim_long_string( $string, $length = 70, $append = '[...]' ) {
+function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	if ( strlen( $string ) > $length ) {
 		$string = substr( $string, 0, $length - strlen( $append ) ) . $append;	
 	}
