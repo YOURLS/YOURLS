@@ -5,21 +5,22 @@ body {
 	background:#F3FAFD;
 	text-align:center;
 	margin-top:0px;
-	padding-top:0px;
+	padding-top:10px;
 }
 #wrap {
 	width:960px;
 	margin:0 auto;
 	background:white;
 	text-align:justify;
-	padding:0 20px 10px 20px;
+	padding:5px 20px 10px 20px;
 	border-left:3px solid #5FA3C6;
 	border-right:3px solid #5FA3C6;
-	border-bottom:2px solid #5FA3C6;
-	-moz-border-radius-bottomleft:20px;
-	-moz-border-radius-bottomright:20px;
-	-webkit-border-bottom-left-radius:20px;
-	-webkit-border-bottom-right-radius:20px;
+	border-bottom:3px solid #5FA3C6;
+	border-top:3px solid #5FA3C6;
+	-moz-border-radius:20px;
+	-webkit-border-radius:20px;
+	-zwebkit-border-bottom-left-radius:20px;
+	-zwebkit-border-bottom-right-radius:20px;
 }
 div, p, td {
 	font-family: Verdana, Arial;
