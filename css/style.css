@@ -8,7 +8,7 @@ body {
 	padding-top:10px;
 }
 #wrap {
-	width:960px;
+	width:950px;
 	margin:0 auto;
 	background:white;
 	text-align:left;
@@ -200,7 +200,7 @@ td.actions .button_stats:hover {
 	padding:10px;
 	background:white;
 	margin:0 auto;
-	width:960px;
+	width:950px;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
 	border:2px solid #2A85B3;
