@@ -56,8 +56,8 @@ if ( !yourls_upgrade_is_needed() ) {
 			echo "
 			<p>Your current installation needs to be upgraded.</p>
 			<p>Please, pretty please, it is recommended that
-			you <strong>backup</strong> your database (you should do this regularly anyway)</p>
-			<p>Nothing awful *should* happen, but this doesn't mean it *won't* happen, right?</p>
+			you <strong>backup</strong> your database<br/>(you should do this regularly anyway)</p>
+			<p>Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)</p>
 			<p>Once you are ready, press Upgrade!</p>
 			<form action='upgrade.php?' method='get'>
 			<input type='hidden' name='step' value='1' />
