@@ -19,8 +19,7 @@ define('YOURLS_DB_HOST', 'localhost');
 define('YOURLS_DB_PREFIX', 'yourls_');
 
 /** MySQL table name to store URLs. Don't change this if in doubt. */
-/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version
- ** You can remove this if installing from scratch, or once properly upgraded **/
+/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version **/
 define('YOURLS_DB_TABLE_URL', 'yourls_url');
 
 /** MySQL Next ID table name. Don't change this if in doubt. */
@@ -36,7 +35,7 @@ define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
 /** Turn this on to enable error reporting. Leave this to false **/
 define('YOURLS_DEBUG', false);
  
-/** Short domain URL, no trailing slash */
+/** YOURLS installation URL, no trailing slash */
 define('YOURLS_SITE', 'http://site.com'); //
 
 /** Timezone GMT offset */
