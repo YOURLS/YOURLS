@@ -26,5 +26,12 @@ $(document).ready(function(){
 		$('#'+target).toggle();
 		return false;	
 	});
+	
+	// If an image src is erroneous (404 or anything) replace it with a transparent gif
+	$('.fix_images').each(function(i,img) {
+		$(img).error(function(){
+			$(img).attr('src', 'images/blank.gif');
+		});
+	});
 
 });
