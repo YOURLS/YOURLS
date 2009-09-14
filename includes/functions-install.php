@@ -75,7 +75,7 @@ function yourls_create_htaccess() {
 		'RewriteCond %{REQUEST_FILENAME} !-f',
 		'RewriteCond %{REQUEST_FILENAME} !-d',
 		'RewriteRule ^([0-9A-Za-z]+)/?$ '.$path.'/yourls-go.php?id=$1 [L]',
-		'RewriteRule ^([0-9A-Za-z]+)\+/?$ '.$path.'/yourls-info.php?id=$1 [L]',
+		'RewriteRule ^([0-9A-Za-z]+)\+/?$ '.$path.'/yourls-infos.php?id=$1 [L]',
 		'</IfModule>',
 	);
 	
