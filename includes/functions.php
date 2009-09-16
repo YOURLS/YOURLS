@@ -7,7 +7,7 @@
 if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
 	error_reporting(E_ALL);
 } else {
-	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR | E_USER_WARNING);
+	error_reporting(E_ERROR | E_PARSE);
 }
 
 // function to convert an integer (1337) to a string (3jk). Input integer processed as a string to beat PHP's int max value
