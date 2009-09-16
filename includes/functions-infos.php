@@ -47,8 +47,8 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = '202
 	echo "<img src='$pie_src' witdh='440' height='220' border='0' />";
 }
 
-// Echoes an image tag of Google Charts bar graph from list of chronologically sorted array of [year][month][day] => 'number of clicks'
-function yourls_stats_clicks_line( $dates ) {
+// Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
+function yourls_build_list_of_days( $dates ) {
 	/* Say we have an array like:
 	$dates = array (
 		2009 => array (
@@ -65,6 +65,9 @@ function yourls_stats_clicks_line( $dates ) {
 			),
 		)
 	*/
+	
+	if( !$dates )
+		return array();
 
 	// Get first & last years from our range. In our example: 2009 & 2009
 	$first_year = key( $dates );
@@ -96,26 +99,53 @@ function yourls_stats_clicks_line( $dates ) {
 			$current_last_day  = ( $year == $last_year && $month == $last_month ? $last_day : yourls_days_in_month($month, $year) );
 			for ( $day = $current_first_day; $day <= $current_last_day; $day++ ) {
 				$day = sprintf('%02d', $day);
-				$list_of_days[] = isset( $dates[$_year][$_month][$day] ) ? $dates[$_year][$_month][$day] : 0;
+				$list_of_days["$_year-$_month-$day"] = isset( $dates[$_year][$_month][$day] ) ? $dates[$_year][$_month][$day] : 0;
 			}
 		}
 	}
 	
-	if ( count( $list_of_days ) == 1 )
-		array_unshift( $list_of_days, 0 );
+	return array(
+		'list_of_days' => $list_of_days,
+		'list_of_months' => $list_of_months,
+		'list_of_years' => $list_of_years,
+	);
+}
+
+// Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks'). $legend1_list & legend2_list are values used for the 2 x-axis labels
+function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
+
+	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
+	if ( count( $values ) == 1 )
+		array_unshift( $values, 0 );
+		
+	$values = yourls_array_granularity( $values, 100 );
 	
+	// If x-axis labels have only 1 value, double it for a nicer graph
+	if( count( $legend1_list ) == 1 )
+		$legend1_list[] = current( $legend1_list );
+	if( count( $legend2_list ) == 1 )
+		$legend2_list[] = current( $legend2_list );
+
 	// Make the chart
-	$label_years = $first_year != $last_year ? join('|', $list_of_years ) : $first_year.'|'.$last_year;
-	$label_months = count( $list_of_months ) > 1 ? join('|', $list_of_months) : $first_month.'|'.$first_month;
-	$max = max( $list_of_days );
-	$label_clicks = '0|'.intval( $max / 4 ).'|'.intval( $max / 2 ).'|'.intval( $max / 1.5 ).'|'.$max;
+	$legend1 = join('|', $legend1_list );
+	$legend2 = join('|', $legend2_list );
+	$max = max( $values );
+	if ( $max >= 4 ) {
+		$label_clicks = '0|'.intval( $max / 4 ).'|'.intval( $max / 2 ).'|'.intval( $max / 1.5 ).'|'.$max;
+	} else {
+		$label_clicks = array();
+		for ($i = 0; $i <= $max; $i++) {
+			$label_clicks[] = $i;
+		}
+		$label_clicks = join( '|', $label_clicks );
+	}
 	$line = array(
 		'cht' => 'lc',
 		'chs' => '440x220',
 		'chxt'=> 'x,x,y',
-		'chd' => 't:'.( join(',' ,  $list_of_days ) ),
+		'chd' => 't:'.( join(',' ,  $values ) ),
 		'chds' => '0,'.$max,
-		'chxl'=> '0:|'. $label_years .'|1:|'. $label_months .'|2:|'. $label_clicks
+		'chxl'=> '0:|'. $legend1 .'|1:|'. $legend2 .'|2:|'. $label_clicks
 	);
 	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );
 	echo "<img src='$line_src' />";
@@ -127,21 +157,14 @@ function yourls_days_in_month($month, $year) {
 	return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
 }
 
-// Get max value from date array of [year][month][day] = 'hits'
-function yourls_stats_get_best_day( $dates ) {
+// Get max value from date array of 'year-month-day' = 'hits'
+function yourls_stats_get_best_day( $list_of_days ) {
 	$max = 0; $day = 0;
-	foreach( $dates as $year=>$months ) {
-		foreach( $months as $month=>$days ) {
-			foreach( $days as $day=>$visits ) {
-				if( $visits > $max ) {
-					$max = intval($visits);
-					$bday = "$year-$month-$day";
-				}
-			}
-		}
+	$max = max( $list_of_days );
+	foreach( $list_of_days as $k=>$v ) {
+		if ( $v == $max )
+			return array( 'day' => $k, 'max' => $max );
 	}
-
-	return array( 'day' => $bday, 'max' => $max );
 }
 
 // Fetch remote page title
@@ -182,4 +205,32 @@ function yourls_scale_data( $data ) {
 		}
 	}
 	return $data;
+}
+
+// Tweak granularity of array $array: keep only $grain values. This make less accurate but less messy graphs when too much values. See http://code.google.com/apis/chart/formats.html#granularity
+function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) {
+	if ( count( $array ) > $grain ) {
+		$max = max( $array );
+		$step = intval( count( $array ) / $grain );
+		$i = 0;
+		$preserved = false;
+		// Loop through each item and unset except every $step (optional preserver the max value)
+		foreach( $array as $k=>$v ) {
+			$i++;
+			if ( $i % $step != 0 ) {
+				if ( $preserve_max == false ) {
+					unset( $array[$k] );
+				} else {
+					if ( $v == $max ) {
+						if( $preserved == false )
+							unset( $array[$k] );
+						$preserved = true;
+					} else {
+						unset( $array[$k] );
+					}
+				}
+			}
+		}
+	}
+	return $array;
 }
