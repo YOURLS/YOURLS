@@ -19,6 +19,7 @@ function yourls_upgrade_to_14( $step ) {
 		// update .htaccess
 		yourls_create_tables_for_14();
 		yourls_alter_url_table_to_14();
+		yourls_clean_htaccess_for_14();
 		yourls_create_htaccess();
 		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
 		break;
@@ -157,6 +158,28 @@ function yourls_update_table_to_14() {
 		echo '<p>All rows converted! Please wait...</p>';
 		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=3&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
 	}
+	
+}
+
+// Clean .htaccess as it existed before 1.4
+function yourls_clean_htaccess_for_14() {
+	$filename = dirname(dirname(__FILE__)).'/.htaccess';
+	
+	$contents = implode( '', file( $filename );
+	// remove "ShortURL" block
+	$contents = preg_replace( '/# BEGIN ShortURL.*# END ShortURL/', '', $contents );
+	// comment out deprecated RewriteRule
+	$find = 'RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization},L]';
+	$replace = "# You can safely remove this 4 lines block -- it's no longer used in YOURLS\n".
+			"# $find";
+	$contents = str_replace( $find, $replace, $contents );
+	
+	// Write cleaned file
+	$f = fopen( $filename, 'w' );
+	fwrite( $f, $contents );
+	fclose( $f );
+
+	echo "<p>Old .htaccess file cleaned up</p>";
 	
 }
 
