@@ -1,5 +1,6 @@
 <?php
 // Require Files
+define( 'YOURLS_INSTALLING', true );
 require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-install.php' );
 
@@ -34,7 +35,7 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 	if ( yourls_create_htaccess() ) {
 		$success[] = 'File <tt>.htaccess</tt> successfully created/updated.';
 	} else {
-		$error[] = 'Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will have to do it manually.';
+		$error[] = 'Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will have to do it manually. See <a href="http://yourls.org/htaccess">how</a>.';
 	}
 
 	// Create SQL tables
