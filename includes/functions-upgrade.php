@@ -165,7 +165,7 @@ function yourls_update_table_to_14() {
 function yourls_clean_htaccess_for_14() {
 	$filename = dirname(dirname(__FILE__)).'/.htaccess';
 	
-	$contents = implode( '', file( $filename );
+	$contents = implode( '', file( $filename ) );
 	// remove "ShortURL" block
 	$contents = preg_replace( '/# BEGIN ShortURL.*# END ShortURL/', '', $contents );
 	// comment out deprecated RewriteRule
