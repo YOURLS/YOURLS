@@ -14,7 +14,7 @@ h2 {border-bottom:1px solid white}
 <h1>YOURLS: Your Own URL Shortener</h1>
 
 <?php
-require_once( dirname(__FILE__).'/includes/config.php' );
+require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 
 // Part to be executed if FORM has been submitted
 if ( isset($_REQUEST['url']) ) {

@@ -1,6 +1,6 @@
 <?php
 // Require Files
-require_once( dirname(__FILE__).'/includes/config.php' );
+require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 
 // Variables
 $id = ( isset( $_GET['id'] ) ? $_GET['id'] : '' );

@@ -1,6 +1,6 @@
 <?php
 // Require Files
-require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
+require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 // Variables
@@ -15,7 +15,7 @@ $sort_order_text = 'Descending Order';
 $sort_order_sql = 'desc';
 $page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
 $search = ( isset( $_GET['s_search'] ) ? mysql_real_escape_string(trim($_GET['s_search'])) : '' );
-$perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 20 );
+$perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
 $link_limit = ( isset( $_GET['link_limit'] ) && intval($_GET['link_limit']) ? intval($_GET['link_limit']) : '' );
 if ( $link_limit != '' ) {
 	$link_filter = ( isset( $_GET['link_filter'] ) && $_GET['link_filter'] == 'more' ? 'more' : 'less' ) ;

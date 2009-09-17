@@ -1,7 +1,11 @@
 <?php
-// This file initialize everything
+// This file initialize everything needed for YOURLS
 
-// Include everything except auth functions
+// Include settings and functions
+if( !file_exists(dirname(__FILE__).'/config.php') )
+	die('Cannot find <tt>config.php</tt>. Please read the <tt>readme.html</tt> to learn how to install YOURLS');
+	
+require_once (dirname(__FILE__).'/config.php');
 require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
 require_once (dirname(__FILE__).'/functions-baseconvert.php');
@@ -25,7 +29,7 @@ if ( function_exists( 'yourls_db_connect' ) ) {
 	yourls_db_connect();
 }
 
-// Read option right from start
+// Read options right from start
 yourls_get_all_options();
 
 // Check if upgrade is needed.

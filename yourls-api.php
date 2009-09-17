@@ -1,6 +1,6 @@
 <?php
 define('YOURLS_API', true);
-require_once( dirname(__FILE__).'/includes/config.php' );
+require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 if ( !isset($_REQUEST['action']) )

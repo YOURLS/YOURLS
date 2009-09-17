@@ -1,6 +1,6 @@
 <?php
 // Require Files
-require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
+require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 yourls_html_head( 'tools' );
