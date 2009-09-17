@@ -16,8 +16,6 @@ yourls_html_head( 'tools' );
 	<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
 	<?php } ?>
 	
-	<div id="tools_desc">
-
 		<h2>Upgrade YOURLS</h2>
 
 <?php
@@ -31,8 +29,8 @@ if ( !yourls_upgrade_is_needed() ) {
 	/*
 	step 1: create new tables and populate them, update old tables structure, 
 	step 2: convert each row of outdated tables if needed
-	step 3: if applicable finish updating outdated tables (indexes etc)
-	step 4: update version & db_version in options, this is all done!
+	step 3: - if applicable finish updating outdated tables (indexes etc)
+	        - update version & db_version in options, this is all done!
 	*/
 	
 	// From what are we upgrading?
@@ -47,6 +45,9 @@ if ( !yourls_upgrade_is_needed() ) {
 	$newver = YOURLS_VERSION;
 	$newsql = YOURLS_DB_VERSION;
 	
+	// Verbose & ugly details
+	$ydb->show_errors = true;
+	
 	// Let's go
 	$step = ( isset( $_GET['step'] ) ? intval( $_GET['step'] ) : 0 );
 	switch( $step ) {
@@ -58,6 +59,8 @@ if ( !yourls_upgrade_is_needed() ) {
 			<p>Please, pretty please, it is recommended that
 			you <strong>backup</strong> your database<br/>(you should do this regularly anyway)</p>
 			<p>Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)</p>
+			<p>On every step, if <span class='error'>something goes wrong</span>, you'll see a message and hopefully a way to fix</p>
+			<p>If everything goes too fast and you cannot read, <span class='success'>good for you</span>, let it go :)</p>
 			<p>Once you are ready, press Upgrade!</p>
 			<form action='upgrade.php?' method='get'>
 			<input type='hidden' name='step' value='1' />
@@ -72,15 +75,14 @@ if ( !yourls_upgrade_is_needed() ) {
 			
 		case 1:
 		case 2:
-		case 3:
-			yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql );
+			$upgrade = yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql );
 			break;
 			
-		case 4:
-			yourls_upgrade( 4, $oldver, $newver, $oldsql, $newsql );
+		case 3:
+			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
 			$admin = YOURLS_SITE.'/admin/index.php';
 			echo "
-			<p>Your installation is now up to date :)</p>
+			<p>Your installation is now up to date !</p>
 			<p>Go back to <a href='$admin'>the admin interface</a></p>
 			";
 	}
@@ -89,6 +91,5 @@ if ( !yourls_upgrade_is_needed() ) {
 
 		
 ?>	
-	</div>
 
 <?php yourls_html_footer(); ?>

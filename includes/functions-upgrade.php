@@ -17,11 +17,14 @@ function yourls_upgrade_to_14( $step ) {
 		// create table log & table options
 		// update table url structure
 		// update .htaccess
-		yourls_create_tables_for_14();
-		yourls_alter_url_table_to_14();
-		yourls_clean_htaccess_for_14();
-		yourls_create_htaccess();
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
+		yourls_create_tables_for_14(); // no value returned, assuming it went OK
+		yourls_alter_url_table_to_14(); // no value returned, assuming it went OK
+		$clean = yourls_clean_htaccess_for_14(); // returns bool
+		$create = yourls_create_htaccess(); // returns bool
+		$result = ( $clean && $create );
+		if ( !$result )
+			echo "<p>Manually check your <tt>.htaccess</tt> file. Please refer to <a href='http://yourls.org/htaccess'>http://yourls.org/htaccess</a>.";
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200", $result );
 		break;
 		
 	case 2:
@@ -32,13 +35,11 @@ function yourls_upgrade_to_14( $step ) {
 	case 3:
 		// update table url structure part 2: recreate indexes
 		yourls_alter_url_table_to_14_part_two();
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=4&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
-		break;
-	
-	case 4:
 		// update version & db_version & next_id in the option table
 		// attempt to drop YOURLS_DB_TABLE_NEXTDEC
 		yourls_update_options_to_14();
+		break;
+	
 	}
 }
 
@@ -47,11 +48,15 @@ function yourls_update_options_to_14() {
 	yourls_update_option( 'version', YOURLS_VERSION );
 	yourls_update_option( 'db_version', YOURLS_DB_VERSION );
 	
-	global $ydb;
-	$table = YOURLS_DB_TABLE_NEXTDEC;
-	$next_id = $ydb->get_var("SELECT `next_id` FROM `$table`");
-	yourls_update_option( 'next_id', $next_id );
-	@$ydb->query( "DROP TABLE `$table`" );
+	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
+		global $ydb;
+		$table = YOURLS_DB_TABLE_NEXTDEC;
+		$next_id = $ydb->get_var("SELECT `next_id` FROM `$table`");
+		yourls_update_option( 'next_id', $next_id );
+		@$ydb->query( "DROP TABLE `$table`" );
+	} else {
+		yourls_update_option( 'next_id', 1 ); // In case someone mistakenly deleted the next_id constant or table too early
+	}
 }
 
 // Create new tables for YOURLS 1.4: options & log
@@ -83,7 +88,7 @@ function yourls_create_tables_for_14() {
 		');';
 	
 	foreach( $queries as $query ) {
-		$ydb->query( $query );
+		$ydb->query( $query ); // There's no result to be returned to check if table was created (except making another query to check table existence, which we'll avoid)
 	}
 	
 	echo "<p>New tables created. Please wait...</p>";
@@ -129,7 +134,7 @@ function yourls_update_table_to_14() {
 	$table = YOURLS_DB_TABLE_URL;
 
 	// Modify each link to reflect new structure
-	$chunk = 30;
+	$chunk = 15;
 	$from = isset($_GET['from']) ? intval( $_GET['from'] ) : 0 ;
 	$total = yourls_get_db_stats();
 	$total = $total['total_links'];
@@ -139,12 +144,26 @@ function yourls_update_table_to_14() {
 	$rows = $ydb->get_results($sql);
 	
 	$count = 0;
+	$queries = 0;
 	foreach( $rows as $row ) {
 		$keyword = $row->keyword;
 		$url = $row->url;
 		$newkeyword = yourls_int2string( $keyword );
-		$result = $ydb->query("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';");
+		$ydb->query("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';");
+		if( $ydb->result === true ) {
+			$queries++;
+		} else {
+			echo "<p>Huho... Could not update rown with url='$url', from keyword '$keyword' to keyword '$newkeyword'</p>"; // Find what went wrong :/
+		}
 		$count++;
+	}
+	
+	// All done for this chunk of queries, did it all go as expected?
+	$success = true;
+	if( $count != $queries ) {
+		$success = false;
+		$num = $count - $queries;
+		echo "<p>$num error(s) occured while updating the URL table :(</p>";
 	}
 	
 	if ( $count == $chunk ) {
@@ -152,34 +171,44 @@ function yourls_update_table_to_14() {
 		$from = $from + $chunk;
 		$remain = $total - $from;
 		echo "<p>Converted $chunk database rows ($remain remaining). Continuing... Please do not close this window until it's finished!</p>";
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200&from=$from" );
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200&from=$from", $success );
 	} else {
 		// All done
 		echo '<p>All rows converted! Please wait...</p>';
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=3&oldver=1.3&newver=1.4&oldsql=100&newsql=200" );
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=3&oldver=1.3&newver=1.4&oldsql=100&newsql=200", $success );
 	}
 	
 }
 
-// Clean .htaccess as it existed before 1.4
+// Clean .htaccess as it existed before 1.4. Returns boolean
 function yourls_clean_htaccess_for_14() {
 	$filename = dirname(dirname(__FILE__)).'/.htaccess';
 	
-	$contents = implode( '', file( $filename ) );
-	// remove "ShortURL" block
-	$contents = preg_replace( '/# BEGIN ShortURL.*# END ShortURL/', '', $contents );
-	// comment out deprecated RewriteRule
-	$find = 'RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization},L]';
-	$replace = "# You can safely remove this 4 lines block -- it's no longer used in YOURLS\n".
-			"# $find";
-	$contents = str_replace( $find, $replace, $contents );
-	
-	// Write cleaned file
-	$f = fopen( $filename, 'w' );
-	fwrite( $f, $contents );
-	fclose( $f );
+	$result = false;
+	if( is_writeable( $filename ) ) {
+		$contents = implode( '', file( $filename ) );
+		// remove "ShortURL" block
+		$contents = preg_replace( '/# BEGIN ShortURL.*# END ShortURL/s', '', $contents );
+		// comment out deprecated RewriteRule
+		$find = 'RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization},L]';
+		$replace = "# You can safely remove this 5 lines block -- it's no longer used in YOURLS\n".
+				"# $find";
+		$contents = str_replace( $find, $replace, $contents );
+		
+		// Write cleaned file
+		$f = fopen( $filename, 'w' );
+		fwrite( $f, $contents );
+		fclose( $f );
+		
+		$result = true;
+	}
 
-	echo "<p>Old .htaccess file cleaned up</p>";
+	if ( $result ) {
+		echo "<p>Old .htaccess file cleaned up</p>";
+	} else {
+		echo "<p>Could not update <tt>.htaccess</tt>.</p>";
+	}
 	
+	return $result;
 }
 

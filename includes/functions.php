@@ -839,14 +839,20 @@ function yourls_redirect( $location, $code = 301 ) {
 	}
 }
 
-// Redirect to another page using Javascript
-function yourls_redirect_javascript( $location ) {
+// Redirect to another page using Javascript. Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
+function yourls_redirect_javascript( $location, $dontwait = true ) {
+	if( $dontwait ) {
 	echo <<<REDIR
 	<script type="text/javascript">
 	window.location="$location";
 	</script>
 	<small>(if you are not redirected after 10 seconds, please <a href="$location">click here</a>)</small>
 REDIR;
+	} else {
+	echo <<<MANUAL
+	<p>Please <a href="$location">click here</a></p>
+MANUAL;
+	}
 }
 
 // Return a HTTP status code
@@ -995,6 +1001,8 @@ function yourls_upgrade_is_needed() {
 function yourls_get_current_version_from_sql() {
 	$currentver = yourls_get_option( 'version' );
 	$currentsql = yourls_get_option( 'db_version' );
+
+	// Values if version is 1.3
 	if( !$currentver )
 		$currentver = '1.3';
 	if( !$currentsql )
