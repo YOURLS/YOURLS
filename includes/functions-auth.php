@@ -2,6 +2,10 @@
 // Check for valid user. Returns true or an error message
 function yourls_is_valid_user() {
 
+	// Kill old cookies from 1.3 and prior
+	setcookie('yourls_username', null, time() - 3600 );
+	setcookie('yourls_password', null, time() - 3600 );
+
 	// Logout request
 	if( isset( $_GET['mode'] ) && $_GET['mode'] == 'logout') {
 		setcookie('yourls_username', null, time() - 3600, '/');
