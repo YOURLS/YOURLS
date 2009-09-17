@@ -32,9 +32,6 @@ define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
  ** Site options
  */
 
-/** Turn this on to enable error reporting. Leave this to false **/
-define('YOURLS_DEBUG', false);
- 
 /** YOURLS installation URL, no trailing slash */
 define('YOURLS_SITE', 'http://site.com'); //
 
