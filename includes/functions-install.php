@@ -8,7 +8,7 @@ function yourls_is_installed() {
 		if( YOURLS_VERSION == '1.3-RC1' ) {
 			$is_installed = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
 		} else {
-			$is_installed = yourls_get_option( 'YOURLS_VERSION' );
+			$is_installed = yourls_get_option( 'version' );
 		}
 	}
 	return (bool)$is_installed;
