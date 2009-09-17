@@ -75,6 +75,8 @@ $yourls_reserved_URL = array(
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
 );
 
+/*
+ ** Personal settings would go after here
+ */
 
-/******************** DO NOT EDIT ANYTHING ELSE ********************/
-require_once (dirname(__FILE__).'/load-yourls.php');
+
