@@ -215,8 +215,8 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 	$ip = yourls_get_IP();
 	$return = array();
 
-	// New URL : store it
-	if( !$url_exists ) {
+	// New URL : store it -- or: URL exists, but duplicates allowed
+	if( !$url_exists || yourls_allow_duplicate_longurls() ) {
 
 		// Custom keyword provided
 		if ( $keyword ) {
@@ -1203,4 +1203,21 @@ function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 		$string = substr( $string, 0, $length - strlen( $append ) ) . $append;	
 	}
 	return $string;
+}
+
+// Allow several short URLs for the same long URL ?
+function yourls_allow_duplicate_longurls() {
+	return ( defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS == false );
+}
+
+// Return list of all shorturls associated to the same long URL. Returns NULL or array of keywords.
+function yourls_get_duplicate_keywords( $longurl ) {
+	if( !yourls_allow_duplicate_longurls() )
+		return NULL;
+	
+	global $ydb;
+	$longurl = mysql_real_escape_string( yourls_sanitize_url($longurl) );
+	$table = YOURLS_DB_TABLE_URL;
+	
+	return $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
 }

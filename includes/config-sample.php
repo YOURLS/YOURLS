@@ -38,6 +38,11 @@ define('YOURLS_SITE', 'http://site.com'); //
 /** Timezone GMT offset */
 define('YOURLS_HOURS_OFFSET', 0); 
 
+/** Allow multiple short URLs for a same long URL
+ ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
+ ** Set to false to allow multiple short URLs pointing to the same long URL (bit.ly behavior) */
+define('YOURLS_UNIQUE_URLS', true);
+
 /** Private means protected with login/pass as defined below. Set to false for public usage. */
 define('YOURLS_PRIVATE', true);
 

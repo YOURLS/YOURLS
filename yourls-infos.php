@@ -6,18 +6,35 @@ yourls_maybe_require_auth();
 
 if ( !isset( $_GET['id'] ) )
 	yourls_redirect( YOURLS_SITE, 307 );
+	
+$aggregate = false;
+if ( isset( $_GET['all'] ) && $_GET['all'] == 1 && yourls_allow_duplicate_longurls() )
+	$aggregate = true;
 
 // Get basic infos for this shortened URL
 $keyword = yourls_sanitize_string( $_GET['id'] );
 $longurl = yourls_get_keyword_longurl( $keyword );
 $clicks = yourls_get_keyword_clicks( $keyword );
 $timestamp = yourls_get_keyword_timestamp( $keyword );
+
 if ( $longurl === false )
 	yourls_redirect( YOURLS_SITE, 307 );
+
+// Duplicate keywords, if applicable
+$keyword_list = yourls_get_duplicate_keywords( $longurl );
 	
 // Fetch all information from the table log
 $table = YOURLS_DB_TABLE_LOG;
-$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` = '$keyword';" );
+
+
+if( $aggregate ) {
+	$keywords = join( "', '", $keyword_list );
+	// Fetch information for all keywords pointing to $longurl
+	$hits = $ydb->get_results( "SELECT `shorturl`, `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` IN ( '$keywords' );" );
+} else {
+	// Fetch information for current keyword only
+	$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` = '$keyword';" );
+}
 
 $referrers = array();
 $direct = 0;
@@ -145,7 +162,24 @@ yourls_html_head( 'infos' );
 
 <h2 id="informations">Informations</h2>
 
-<h3>Short URL: <img class="fix_images" src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/> <?php yourls_html_link( YOURLS_SITE."/$keyword" ); ?></h3>
+<h3>Short URL: <img src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/>
+<?php if( $aggregate ) {
+	$i = 0;
+	foreach( $keyword_list as $k ) {
+		$i++;
+		if ( $i == 1 ) {
+			yourls_html_link( YOURLS_SITE."/$k" );
+		} else {
+			yourls_html_link( YOURLS_SITE."/$k", "/$k" );
+		}
+		if ( $i < count( $keyword_list ) )
+			echo ' + ';
+	}
+} else {
+	yourls_html_link( YOURLS_SITE."/$keyword" );
+	if( count( $keyword_list ) > 1 )
+		echo ' <a href="'. YOURLS_SITE .'/'.$keyword.'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
+} ?></h3>
 <h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/> <?php yourls_html_link( $longurl, '', 'longurl' ); ?></h3>
 
 <div id="tabs">
