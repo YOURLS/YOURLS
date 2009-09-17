@@ -19,8 +19,6 @@ body {
 	border-top:3px solid #5FA3C6;
 	-moz-border-radius:20px;
 	-webkit-border-radius:20px;
-	-zwebkit-border-bottom-left-radius:20px;
-	-zwebkit-border-bottom-right-radius:20px;
 }
 div, p, td {
 	font-family: Verdana, Arial;
@@ -175,7 +173,6 @@ td.actions .button_stats:hover {
 }
 #tools_desc {
 	width:550px;
-	zbackground:#ffe;
 	padding-bottom:10px;
 }
 #tools_desc span {
