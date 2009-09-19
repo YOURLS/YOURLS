@@ -122,9 +122,14 @@ function yourls_get_IP() {
 		$ip_address = $ip_address[0];
 	}
 	
-	$ip_address = preg_replace( '/[^0-9a-fA-F:., ]/', '', $ip_address );
+	$ip_address = yourls_sanitize_ip( $ip_address );
 
 	return $ip_address;
+}
+
+// Sanitize an IP address
+function yourls_sanitize_ip( $ip ) {
+	return preg_replace( '/[^0-9a-fA-F:., ]/', '', $ip );
 }
 
 // Add the "Edit" row
@@ -208,11 +213,14 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		return $return;
 	}
 
+	// Prevent DB flood
+	$ip = yourls_get_IP();
+	yourls_check_IP_flood( $ip );
+
 	$table = YOURLS_DB_TABLE_URL;
 	$url = mysql_real_escape_string( yourls_sanitize_url($url) );
 	$strip_url = stripslashes($url);
 	$url_exists = $ydb->get_row("SELECT keyword,url FROM `$table` WHERE `url` = '".$strip_url."';");
-	$ip = yourls_get_IP();
 	$return = array();
 
 	// New URL : store it -- or: URL exists, but duplicates allowed
@@ -343,7 +351,7 @@ function yourls_keyword_is_free( $keyword ) {
 function yourls_page( $page ) {
 	$include = dirname(dirname(__FILE__))."/pages/$page.php";
 	if (!file_exists($include)) {
-		die("Page '$page' not found");
+		yourls_die("Page '$page' not found", 'Not found', 404);
 	}
 	include($include);
 	die();	
@@ -358,11 +366,11 @@ function yourls_db_connect() {
 		or !defined('YOURLS_DB_NAME')
 		or !defined('YOURLS_DB_HOST')
 		or !class_exists('ezSQL_mysql')
-	) die ('DB config/class missing');
+	) yourls_die ('DB config missigin, or could not find DB class', 'Fatal error', 503);
 	
 	$ydb =  new ezSQL_mysql(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
 	if ( $ydb->last_error )
-		die( $ydb->last_error );
+		yourls_die( $ydb->last_error, 'Fatal error', 503 );
 	
 	if ( defined('YOURLS_DEBUG') && YOURLS_DEBUG === true )
 		$ydb->show_errors = true;
@@ -825,18 +833,25 @@ function yourls_get_user_agent() {
 function yourls_redirect( $location, $code = 301 ) {
 	// Anti fool check: cannot redirect to the URL we currently are on
 	if( preg_replace('!^[^:]+://!', '', $location) != $_SERVER["SERVER_NAME"].$_SERVER['REQUEST_URI'] ) {
-		$protocol = $_SERVER["SERVER_PROTOCOL"];
-		if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
-			$protocol = 'HTTP/1.0';
-
-		$code = intval( $code );
-		$desc = yourls_get_HTTP_status($code);
-
-		if ( php_sapi_name() != 'cgi-fcgi' )
-				header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
+		yourls_status_header( $code );
 		header("Location: $location");
 		die();
 	}
+}
+
+// Set HTTP status header
+function yourls_status_header( $code = 200 ) {
+	if( headers_sent() )
+		return;
+		
+	$protocol = $_SERVER["SERVER_PROTOCOL"];
+	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
+		$protocol = 'HTTP/1.0';
+
+	$code = intval( $code );
+	$desc = yourls_get_HTTP_status($code);
+
+	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
 }
 
 // Redirect to another page using Javascript. Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
@@ -1220,4 +1235,57 @@ function yourls_get_duplicate_keywords( $longurl ) {
 	$table = YOURLS_DB_TABLE_URL;
 	
 	return $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
+}
+
+// Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
+function yourls_check_IP_flood( $ip = '' ) {
+	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
+
+	// Don't throttle whitelist IPs
+	if( defined('YOURLS_FLOOD_IP_WHITELIST' && YOURLS_FLOOD_IP_WHITELIST ) ) {
+		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
+		foreach( $whitelist_ips as $whitelist_ip ) {
+			$whitelist_ip = trim( $whitelist_ip );
+			if ( $whitelist_ip == $ip )
+				return true;
+		}
+	}
+	
+	// Don't throttle logged in users
+	if( yourls_is_private() ) {
+		 if( yourls_is_valid_user() === true )
+			return true;
+	}
+
+	global $ydb;
+	$table = YOURLS_DB_TABLE_URL;
+	
+	$lasttime = $ydb->get_var( "SELECT `timestamp` FROM $table WHERE `ip` = '$ip' ORDER BY `timestamp` DESC LIMIT 1" );
+	if( $lasttime ) {
+		$now = date( 'U' );
+		$then = date( 'U', strtotime( $lasttime ) );
+		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
+			// Flood!
+			yourls_die( 'Too many URLs added too fast. Slow down please.', 'Forbidden', 403 );
+		}
+	}
+	
+	return true;
+}
+
+// Die die die
+function yourls_die( $message = '', $title = '', $header_code = 200 ) {
+	yourls_status_header( $header_code );
+	
+	yourls_html_head();
+	?>
+	<h1>
+		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
+	</h1>
+	<?php
+	echo "<h2>$title</h2>";
+	echo "<p>$message</p>";
+	yourls_html_footer();
+	die();
 }
