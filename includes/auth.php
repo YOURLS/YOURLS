@@ -1,6 +1,4 @@
 <?php
-require(dirname(__FILE__).'/functions-auth.php');
-
 $auth = yourls_is_valid_user();
 
 if( $auth !== true ) {

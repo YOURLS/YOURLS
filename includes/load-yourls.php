@@ -32,6 +32,11 @@ if ( function_exists( 'yourls_db_connect' ) ) {
 // Read options right from start
 yourls_get_all_options();
 
+// Load auth functions if needed
+if( yourls_is_private() )
+	require_once( dirname(__FILE__).'/functions-auth.php' );
+
+
 // Check if upgrade is needed.
 // Note: this is bypassable with define('YOURLS_NO_UPGRADE_CHECK', true)
 // This is also bypassed if YOURLS_INSTALLING
