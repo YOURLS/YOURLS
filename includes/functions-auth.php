@@ -37,7 +37,8 @@ function yourls_is_valid_user() {
 				setcookie('yourls_username', yourls_salt( $valid_user ), time() + (60*60*24*7), '/' );
 				setcookie('yourls_password', yourls_salt( $valid_password ), time() + (60*60*24*7), '/' );
 			}
-			define('YOURLS_USER', $valid_user);
+			if( !defined('YOURLS_USER') )
+				define('YOURLS_USER', $valid_user);
 			return true;
 		}
 	}
