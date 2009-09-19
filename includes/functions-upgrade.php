@@ -84,7 +84,7 @@ function yourls_create_tables_for_14() {
 		'`ip_address` varchar(41) NOT NULL,'.
 		'`country_code` char(2) NOT NULL,'.
 		'PRIMARY KEY (`click_id`),'.
-		'KEY `shorturl` (`shorturl`,`referrer`,`country_code`)'.
+		'KEY `shorturl` (`shorturl`)'.
 		');';
 	
 	foreach( $queries as $query ) {
