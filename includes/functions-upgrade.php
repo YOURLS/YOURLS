@@ -120,7 +120,7 @@ function yourls_alter_url_table_to_14_part_two() {
 	
 	$alters = array();
 	$alters[] = "ALTER TABLE `$table` ADD PRIMARY KEY ( `keyword` )";
-	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `ip` )":
+	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `ip` )";
 	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `timestamp` )";
 	
 	foreach ( $alters as $query ) {
