@@ -326,12 +326,12 @@ yourls_html_head( 'infos' );
 				<?php
 				$ago = round( (date('U') - strtotime($timestamp)) / (24* 60 * 60 ) );
 				if( $ago <= 1 ) {
-					$ago = '';
+					$daysago = '';
 				} else {
-					$ago = '(about '.$ago .' '.yourls_plural( ' day', $ago ).' ago)';
+					$daysago = '(about '.$ago .' '.yourls_plural( ' day', $ago ).' ago)';
 				}
 				?>
-				<p>Short URL created on <?php echo date("F j, Y @ g:i a", strtotime($timestamp)); ?> <?php echo $ago; ?></p>
+				<p>Short URL created on <?php echo date("F j, Y @ g:i a", strtotime($timestamp)); ?> <?php echo $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
@@ -341,8 +341,23 @@ yourls_html_head( 'infos' );
 						} else {
 							$link = $title;
 						}
+						$stat = '';
+						if( ${'do_'.$graph} ) {
+							switch( $graph ) {
+								case '7':
+								case '30':
+									$stat = round( ( ${'hits_'.$graph} / intval( $graph ) ) * 100 ) / 100 . ' per day';
+									break;
+								case '24':
+									$stat = round( ( ${'hits_'.$graph} / 24 ) * 100 ) / 100 . ' per hour';
+									break;
+								case 'all':
+									if( $ago > 0 )
+										$stat = round( ( ${'hits_'.$graph} / $ago ) * 100 ) / 100 . ' per day';
+							}
+						}
 						$hits = yourls_plural( 'hit', ${'hits_'.$graph} );
-						echo "<li><span class='historical_link'>$link</span> ${'hits_'.$graph} $hits</li>\n";
+						echo "<li><span class='historical_link'>$link</span> <span class='historical_count'>${'hits_'.$graph} $hits</span> $stat</li>\n";
 					}
 					?>
 					</ul>

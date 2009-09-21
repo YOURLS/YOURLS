@@ -94,7 +94,14 @@ ul.no_bullet li {
 	padding:2px 10px;
 	margin:0;
 }
+#historical_clicks li:hover {
+	background:#FFB545 !important;
+}
 #historical_clicks span.historical_link {
+	min-width:130px;
+	display:inline-block;
+}
+#historical_clicks span.historical_count {
 	min-width:100px;
 	display:inline-block;
 }

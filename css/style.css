@@ -131,6 +131,9 @@ td.actions .button_stats {
 td.actions .button_stats:hover {
 	text-decoration:none;
 }
+#tblUrl tfoot th, #tblUrl tfoot th div {
+	font-size:10px;
+}
 .error {
 	color: red;
 }
@@ -139,10 +142,6 @@ td.actions .button_stats:hover {
 }
 .success {
 	color: green;
-}
-#footer {
-	margin-top:2em;
-	text-align: center;
 }
 #login {
 	width: 300px;
