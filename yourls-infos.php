@@ -37,7 +37,7 @@ if( $aggregate ) {
 }
 
 $referrers = array();
-$direct = 0;
+$direct = $notdirect = 0;
 $countries = array();
 $dates = array();
 $list_of_days = array();
@@ -59,6 +59,7 @@ foreach( (array)$hits as $hit ) {
 		if ( $referrer == 'direct' ) {
 			$direct++;
 		} else {
+			$notdirect++;
 			$host = yourls_get_domain( $referrer );
 			if( !array_key_exists( $host, $referrers ) )
 				$referrers[$host] = array( );
@@ -134,10 +135,13 @@ foreach( $referrers as $site => $urls ) {
 }
 arsort($referrer_sort);
 
+
 /**
 echo "<pre>";
-//echo "referrers: "; print_r( $referrers );
-//echo "referrer sort: "; print_r( $referrer_sort );
+echo "referrers: "; print_r( $referrers );
+echo "referrer sort: "; print_r( $referrer_sort );
+echo "direct: $direct\n";
+echo "notdirect: $notdirect\n";
 echo "dates: "; print_r( $dates );
 echo "list of days: "; print_r( $list_of_days );
 echo "list_of_months: "; print_r( $list_of_months );
@@ -475,11 +479,10 @@ yourls_html_head( 'infos' );
 				<td valign="top">
 					<h3>Direct vs Referrer Traffic</h3>
 					<?php
-					$ref_traffic = count($referrer_sort) + count($referrers);
-					yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $ref_traffic), 5, '440x220', '902020,FF6060' );
+					yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $notdirect), 5, '440x220', '902020,FF6060' );
 					?>
 					<p>Direct traffic: <strong><?php echo $direct; ?></strong> <?php echo yourls_plural( 'hit', $direct ); ?> </p>
-					<p>Referrer traffic: <strong><?php echo $ref_traffic; ?></strong> <?php echo yourls_plural( 'hit', $ref_traffic ); ?> </p>
+					<p>Referrer traffic: <strong><?php echo $notdirect; ?></strong> <?php echo yourls_plural( 'hit', $notdirect ); ?> </p>
 
 				</td>
 			</tr>
