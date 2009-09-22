@@ -210,6 +210,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		$return['status'] = 'fail';
 		$return['code'] = 'error:nourl';
 		$return['message'] = 'Missing URL input';
+		$return['errorCode'] = '400';
 		return $return;
 	}
 
@@ -278,6 +279,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
 
+	$return['statusCode'] = 200; // regardless of result, this is still a valid request
 	return $return;
 }
 
@@ -498,11 +500,13 @@ function yourls_get_links_stats( $filter = 'top', $limit = 10 ) {
 			'url' => $res->url,
 			'timestamp' => $res->timestamp,
 			'ip' => $res->ip,
-			'clicks' => $res->clicks
+			'clicks' => $res->clicks,
 		);
 	}
 
 	$return['stats'] = yourls_get_db_stats();
+	
+	$return['statusCode'] = 200;
 
 	return $return;
 }
@@ -511,7 +515,8 @@ function yourls_get_links_stats( $filter = 'top', $limit = 10 ) {
 // Return array for API stat requests
 function yourls_api_stats( $filter = 'top', $limit = 10 ) {
 	$return = yourls_get_links_stats( $filter, $limit );
-	$return['simple'] = 'Need either XML or JSON format for stats';
+	$return['simple']  = 'Need either XML or JSON format for stats';
+	$return['message'] = 'success';
 	return $return;
 }
 
@@ -522,12 +527,23 @@ function yourls_api_expand( $shorturl ) {
 	
 	$longurl = yourls_get_keyword_longurl( $keyword );
 	
-	return array(
-		'keyword' => $keyword,
-		'shorturl' => YOURLS_SITE . "/$keyword",
-		'longurl' => $longurl,
-		'simple' => $longurl,
-	);
+	if( $longurl ) {
+		return array(
+			'keyword'  => $keyword,
+			'shorturl' => YOURLS_SITE . "/$keyword",
+			'longurl'  => $longurl,
+			'simple'   => $longurl,
+			'message'  => 'success',
+			'statusCode' => 200,
+		);
+	} else {
+		return array(
+			'keyword'  => $keyword,
+			'simple'   => 'not found',
+			'message'  => 'Error: short URL not found',
+			'errorCode' => 404,
+		);
+	}
 }
 
 
@@ -542,8 +558,10 @@ function yourls_get_db_stats( $where = '' ) {
 
 // Return API result. Dies after this
 function yourls_api_output( $mode, $return ) {
-	$simple = $return['simple'];
-	unset( $return['simple'] );
+	if( isset( $return['simple'] ) ) {
+		$simple = $return['simple'];
+		unset( $return['simple'] );
+	}
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
@@ -557,7 +575,8 @@ function yourls_api_output( $mode, $return ) {
 			
 		case 'simple':
 		default:
-			echo $simple;
+			if( isset( $simple ) )
+				echo $simple;
 			break;
 	}
 	die();

@@ -3,9 +3,6 @@ define('YOURLS_API', true);
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
-if ( !isset($_REQUEST['action']) )
-	die( 'Missing parameter "action"' );
-
 $action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );
 	
 switch( $action ) {
@@ -14,7 +11,7 @@ switch( $action ) {
 		$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
 		$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
 		$return = yourls_add_new_link( $url, $keyword );
-		$return['simple'] = $return['shorturl']; // This one will be used in case output mode is 'simple'
+		$return['simple'] = ( isset( $return['shorturl'] ) ? $return['shorturl'] : '' ); // This one will be used in case output mode is 'simple'
 		unset($return['html']); // in API mode, no need for our internal HTML output
 		break;
 	
@@ -30,7 +27,12 @@ switch( $action ) {
 		break;
 		
 	default:
-		die( 'Unknown "action" parameter' );
+		$return = array(
+			'errorCode' => 400,
+			'message'   => 'Unknown or missing "action" parameter',
+			'simple'    => 'Unknown or missing "action" parameter',
+		);
+		
 
 }
 
