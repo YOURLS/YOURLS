@@ -615,6 +615,7 @@ function yourls_html_head( $context = 'index' ) {
 	<title>YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
 	<link rel="icon" type="image/gif" href="<?php echo YOURLS_SITE; ?>/images/favicon.gif" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
 	<meta name="author" content="Ozh Richard, Lester Chan" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
