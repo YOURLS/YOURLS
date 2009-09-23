@@ -270,7 +270,9 @@
 			
 			<h2>Upgrade from YOURLS 1.3 or earlier</h2>
 			<ol>
+				<li>Make a copy of your <code>config.php</code></li>
 				<li>The configuration file has changed a bit, see <code>config-sample.php</code> and update your own <code>config.php</code> accordingly</li>
+				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
 				<li><strong>Backup the database!</strong></li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code> and follow instructions</li>
 			</ol>
