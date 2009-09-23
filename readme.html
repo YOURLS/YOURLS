@@ -202,7 +202,7 @@
 		<li id="APITab" class="Tab"><a href="#API" onclick="toggle(this);">API</a></li>
 		<li id="PluginTab" class="Tab"><a href="#Plugin" onclick="toggle(this);">WordPress plugin</a></li>
 		<li id="ConfigTab" class="Tab"><a href="#Config" onclick="toggle(this);">Configuration</a></li>
-		<li id="InstallTab" class="Tab"><a href="#Install" onclick="toggle(this);">Installation</a></li>
+		<li id="InstallTab" class="Tab"><a href="#Install" onclick="toggle(this);">Install/Upgrade</a></li>
 		<li id="AboutTab" class="SelectedTab"><a href="#About" onclick="toggle(this);">About</a></li>
 	</ul>
 
@@ -245,6 +245,7 @@
 			<h2>Download</h2>
 			
 			<p><a href="http://yourls.org/download">Download YOURLS</a> from Google Code</p>
+			<p>You can follow YOURLS' development on the <a href="http://yourls.org/revisions">revision list</a> and get current snapshot <a href="http://yourls.org/svnco">using SVN</a></p>
 			
 			<h2>Credits</h2>
 			
@@ -441,13 +442,13 @@
 			<h3>Server recommendations</h3>
 			<ul>
 				<li>PHP <a href="http://www.php.net/curl">CURL extension</a> installed if you plan on playing with the API</li>
-				<li>PHP <a href="http://www.php.net/manual/en/ref.bc.php">BCMath extension</a> for handling large integers (ie many (really many many) links or long custom keyword URLs)</li>	
 			</ul>
 			
 			<h3>Limitations</h3>
 			<ul>
-				<li>Maximum length of custom keyword is <strong>12 characters</strong></li>
-				<li><strong>4,738,381,338,321,617,846</strong> available URLs</li>
+				<li>Maximum length of long URLs to be shortened is <strong>2000 characters</strong></li>
+				<li>Maximum length of custom keyword is <strong>200 characters</strong></li>
+				<li>That makes about <strong>8 sexdecillions of centillions</strong> of available URLs (<a href="http://en.wikipedia.org/wiki/Names_of_large_numbers">seriously</a>. That's a 355 digits number). </li>
 			</ul>
 			
 			<h3>Difference Between Base 36 And Base 62 Encoding</h3>
@@ -456,7 +457,6 @@
 				<li>Base 62 encoding uses <code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</code></li>
 				<li>Stick to one setting, don't change after you've created links as it will change all your short URLs!</li>
 				<li>Base 36 should be picked. Use 62 only if you understand what it implies.</li>
-				<li>Using base 62 means you *need* PHP extension BCMath</li>
 				<li>Consider Base 62 encoding a <code>beta feature</code></li>
 			</ul>
 			
