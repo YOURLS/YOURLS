@@ -1,19 +1,5 @@
 <?php
 
-// Check if YOURLS is installed
-function yourls_is_installed() {
-	static $is_installed = false;
-	if (!$is_installed) {
-		global $ydb;
-		if( YOURLS_VERSION == '1.3-RC1' ) {
-			$is_installed = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
-		} else {
-			$is_installed = yourls_get_option( 'version' );
-		}
-	}
-	return (bool)$is_installed;
-}
-
 // Check if mod_rewrite is enabled
 function yourls_check_mod_rewrite() {
 	return yourls_apache_mod_loaded('mod_rewrite');
@@ -153,9 +139,9 @@ function yourls_create_sql_tables() {
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
-		'PRIMARY KEY  (`keyword`)'.
-		'KEY `timestamp` (`timestamp`),'.
-		'KEY `ip` (`ip`)'.
+		' PRIMARY KEY  (`keyword`),'.
+		' KEY `timestamp` (`timestamp`),'.
+		' KEY `ip` (`ip`)'.
 		');';
 
 	$create_tables[YOURLS_DB_TABLE_OPTIONS] = 

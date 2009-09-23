@@ -1022,11 +1022,9 @@ function yourls_geo_get_flag( $code ) {
 
 // Check if an upgrade is needed
 function yourls_upgrade_is_needed() {
-	// check YOURLS_VERSION && YOURLS_DB_VERSION exist && match values stored in YOURLS_DB_TABLE_OPTIONS
+	// check YOURLS_DB_VERSION exist && match values stored in YOURLS_DB_TABLE_OPTIONS
 	list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
-
-	// Using floatval() to get 1.4 from 1.4-alpha
-	if( ( $currentver < floatval( YOURLS_VERSION ) ) || ( $currentsql < floatval( YOURLS_DB_VERSION ) ) )	
+	if( $currentsql < YOURLS_DB_VERSION )
 		return true;
 		
 	return false;
@@ -1308,4 +1306,18 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	echo "<p>$message</p>";
 	yourls_html_footer();
 	die();
+}
+
+// Check if YOURLS is installed
+function yourls_is_installed() {
+	static $is_installed = false;
+	if (!$is_installed) {
+		global $ydb;
+		if( YOURLS_VERSION == '1.3-RC1' ) {
+			$is_installed = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
+		} else {
+			$is_installed = yourls_get_option( 'version' );
+		}
+	}
+	return (bool)$is_installed;
 }

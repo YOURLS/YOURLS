@@ -2,8 +2,11 @@
 // This file initialize everything needed for YOURLS
 
 // Include settings and functions
-if( !file_exists(dirname(__FILE__).'/config.php') )
-	die('Cannot find <tt>config.php</tt>. Please read the <tt>readme.html</tt> to learn how to install YOURLS');
+if( !file_exists(dirname(__FILE__).'/config.php') ) {
+	require_once (dirname(__FILE__).'/functions.php');
+	define('YOURLS_SITE', dirname($_SERVER['REQUEST_URI'])); // LOL. Wild guess.
+	yourls_die('<p>Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
+}
 	
 require_once (dirname(__FILE__).'/config.php');
 require_once (dirname(__FILE__).'/version.php');
@@ -40,6 +43,10 @@ yourls_get_all_options();
 if( yourls_is_private() )
 	require_once( dirname(__FILE__).'/functions-auth.php' );
 
+// Check if need to redirect to install procedure
+if( !yourls_is_installed() && ( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true ) ) {
+	yourls_redirect( YOURLS_SITE .'/admin/install.php' );
+}
 
 // Check if upgrade is needed.
 // Note: this is bypassable with define('YOURLS_NO_UPGRADE_CHECK', true)

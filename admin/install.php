@@ -1,7 +1,7 @@
 <?php
 // Require Files
 define( 'YOURLS_INSTALLING', true );
-require_once( dirname(dirname(__FILE__)).'/includes/config.php' );
+require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-install.php' );
 
 $error = array();
