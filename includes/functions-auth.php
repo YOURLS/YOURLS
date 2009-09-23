@@ -54,7 +54,7 @@ function yourls_is_valid_user() {
 // Return salted string
 function yourls_salt( $string ) {
 	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return md5 ($string . YOURLS_COOKIEKEY);
+	return md5 ($string . $salt);
 }
 
 // Display the login screen. Nothing past this point.
