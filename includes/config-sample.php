@@ -18,15 +18,11 @@ define('YOURLS_DB_HOST', 'localhost');
 /** MySQL tables prefix */
 define('YOURLS_DB_PREFIX', 'yourls_');
 
-/** MySQL table name to store URLs. Don't change this if in doubt. */
-/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version **/
-define('YOURLS_DB_TABLE_URL', 'yourls_url');
-
-/** MySQL Next ID table name. Don't change this if in doubt. */
-/** NOTE: as of 1.4 this constant is deprecated and will be needed only if upgrading from an older version
- ** You can remove this if installing from scratch, or once properly upgraded **/
-define('YOURLS_DB_TABLE_NEXTDEC', 'yourls_next_id');
-
+		/**         !!! IMPORTANT !!!
+		 * If you are UPGRADING from version 1.3,
+		 * there are additional constants to define.
+		 * Refer to the readme.html for details .
+		 **/
 
 /*
  ** Site options
@@ -66,7 +62,6 @@ define('YOURLS_URL_CONVERT', 36);
  * 62: generate case sensitive keywords (ie: 13jKm or 13JKm)
  * Stick to one setting, don't change after you've created links as it will change all your short URLs!
  * Base 36 should be picked. Use 62 only if you understand what it implies.
- * Using base 62 means you *need* PHP extension BCMath
  */
 
 /** 
@@ -80,5 +75,4 @@ $yourls_reserved_URL = array(
 /*
  ** Personal settings would go after here
  */
-
 
