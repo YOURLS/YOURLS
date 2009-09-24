@@ -5,7 +5,7 @@
 if( !file_exists(dirname(__FILE__).'/config.php') ) {
 	require_once (dirname(__FILE__).'/functions.php');
 	define('YOURLS_SITE', dirname($_SERVER['REQUEST_URI'])); // LOL. Wild guess.
-	yourls_die('<p>Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
+	yourls_die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
 }
 	
 require_once (dirname(__FILE__).'/config.php');
@@ -16,7 +16,7 @@ require_once (dirname(__FILE__).'/class-mysql.php');
 
 // Check if config.php was properly updated for 1.4
 if( !defined('YOURLS_DB_PREFIX') )
-	die('<p>Your <tt>config.php</tt> does not contain all the required constant definitions. Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
+	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
 // Define constants that have not been user defined in config.php
 if( !defined('YOURLS_DB_TABLE_URL') )

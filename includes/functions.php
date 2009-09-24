@@ -1311,13 +1311,12 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 // Check if YOURLS is installed
 function yourls_is_installed() {
 	static $is_installed = false;
-	if (!$is_installed) {
+	if ( $is_installed === false ) {
 		global $ydb;
-		if( YOURLS_VERSION == '1.3-RC1' ) {
-			$is_installed = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
-		} else {
-			$is_installed = yourls_get_option( 'version' );
-		}
+		if( defined('YOURLS_DB_TABLE_NEXTDEC') )
+			$check_13 = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
+		$check_14 = yourls_get_option( 'version' );
+		$is_installed = $check_13 || $check_14;
 	}
-	return (bool)$is_installed;
+	return $is_installed;
 }
