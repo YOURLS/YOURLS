@@ -265,16 +265,17 @@
 				<li>Open <code>includes/config.php</code> with a raw text editor (like Notepad) and fill in the required settings</li>
 				<li>Upload the unzipped files to your domain <code>public_html</code> or <code>www</code> folder</li>
 				<li>Create a new database (see <a href="#Config" onclick="toggle(this);">Configuration</a> &ndash; you can also use an existing one)</li>
-				<li>Point your browser to <code>http://yoursite.com/admin/install.php</code></li>
+				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
 			</ol>
 			
 			<h2>Upgrade from YOURLS 1.3 or earlier</h2>
 			<ol>
 				<li>Make a copy of your <code>config.php</code></li>
-				<li>The configuration file has changed a bit, see <code>config-sample.php</code> and update your own <code>config.php</code> accordingly</li>
+				<li>Copy <code>config-sample.php</code> to <code>config.php</code> and fill in details. <strong>Don't start with your old config file</strong>, use the new sample config file.</li>
 				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
 				<li><strong>Backup the database!</strong></li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code> and follow instructions</li>
+				<li>After upgrade is well and over, remove the define <code>YOURLS_DB_TABLE_NEXTDEC</code> from your config file</li>
 			</ol>
 			
 		</div>
