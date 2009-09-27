@@ -10,7 +10,7 @@ $success = array();
 
 // Check pre-requisites
 if ( !yourls_check_mod_rewrite() )
-	$error[] = 'Apache module <tt>mod_rewrite</tt> not found. Check this with your server admin.';
+	$warning[] = 'Apache module <tt>mod_rewrite</tt> not found. Check this with your server admin.';
 
 if ( !yourls_check_database_version() )
 	$error[] = 'MySQL version is too old. Ask your server admin for an upgrade.';
@@ -22,9 +22,6 @@ if ( !yourls_check_php_version() )
 if ( !yourls_check_curl() )
 	$warning[] = 'PHP extension <tt>cURL</tt> is not installed. This server won\'t be able to use the remote API';
 
-if ( !yourls_check_bcmath() )
-	$warning[] = 'PHP extension <tt>BC Math</tt> is not installed. Config setting <tt>YOURLS_URL_CONVERT</tt> forced to <tt>36</tt>';
-
 // Is YOURLS already installed ?
 if ( yourls_is_installed() )
 	$error[] = 'YOURLS already installed.';
@@ -35,7 +32,7 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 	if ( yourls_create_htaccess() ) {
 		$success[] = 'File <tt>.htaccess</tt> successfully created/updated.';
 	} else {
-		$error[] = 'Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will have to do it manually. See <a href="http://yourls.org/htaccess">how</a>.';
+		$warning[] = 'Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will have to do it manually. See <a href="http://yourls.org/htaccess">how</a>.';
 	}
 
 	// Create SQL tables
