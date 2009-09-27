@@ -1312,6 +1312,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 function yourls_is_installed() {
 	static $is_installed = false;
 	if ( $is_installed === false ) {
+		$check_14 = $check_13 = false;
 		global $ydb;
 		if( defined('YOURLS_DB_TABLE_NEXTDEC') )
 			$check_13 = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
