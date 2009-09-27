@@ -1257,6 +1257,12 @@ function yourls_get_duplicate_keywords( $longurl ) {
 
 // Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
 function yourls_check_IP_flood( $ip = '' ) {
+	if(
+		( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
+		!defined('YOURLS_FLOOD_DELAY_SECONDS')
+	)
+		return true;
+
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
 
 	// Don't throttle whitelist IPs
