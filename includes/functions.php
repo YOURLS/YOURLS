@@ -370,14 +370,19 @@ function yourls_db_connect() {
 		or !class_exists('ezSQL_mysql')
 	) yourls_die ('DB config missigin, or could not find DB class', 'Fatal error', 503);
 	
-	$ydb =  new ezSQL_mysql(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
+	// Are we standalone or in the WordPress environment?
+	if ( class_exists('wpdb') ) {
+		$ydb =  new wpdb(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
+	} else {
+		$ydb =  new ezSQL_mysql(YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST);
+	}
 	if ( $ydb->last_error )
 		yourls_die( $ydb->last_error, 'Fatal error', 503 );
 	
 	if ( defined('YOURLS_DEBUG') && YOURLS_DEBUG === true )
 		$ydb->show_errors = true;
 	
-	// return $ydb;
+	return $ydb;
 }
 
 // Return JSON output. Compatible with PHP prior to 5.2
