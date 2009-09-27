@@ -8,7 +8,7 @@ $(document).ready(function(){
 		var order_by = {'asc':0, 'desc':1};
 		var s_by = order[query_string('s_by')];
 		var s_order = order_by[query_string('s_order')];
-		if( !s_by) {
+		if( s_by == undefined ) {
 			s_by = 2;
 			s_order = 1;
 		}
