@@ -16,10 +16,10 @@ $sort_order_sql = 'desc';
 $page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
 $search = ( isset( $_GET['s_search'] ) ? mysql_real_escape_string(trim($_GET['s_search'])) : '' );
 $perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
-$link_limit = ( isset( $_GET['link_limit'] ) && intval($_GET['link_limit']) ? intval($_GET['link_limit']) : '' );
-if ( $link_limit != '' ) {
+$link_limit = ( isset( $_GET['link_limit'] ) ? intval($_GET['link_limit']) : '' );
+if ( $link_limit !== '' ) {
 	$link_filter = ( isset( $_GET['link_filter'] ) && $_GET['link_filter'] == 'more' ? 'more' : 'less' ) ;
-	$link_moreless = ( $link_filter == 'more' ? '>=' : '<=' );
+	$link_moreless = ( $link_filter == 'more' ? '>' : '<' );
 	$where = " AND clicks $link_moreless $link_limit";
 } else {
 	$link_filter = '';
