@@ -159,7 +159,7 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2int( $keyword ); // used as HTML #id
 	$date = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
-	$clicks = number_format($clicks);
+	$clicks = number_format($clicks, 0, '', '');
 	$www = YOURLS_SITE;
 	$shorturl = YOURLS_SITE.'/'.$keyword;
 	$display_url = yourls_trim_long_string( $url );
