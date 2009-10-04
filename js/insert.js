@@ -108,12 +108,14 @@ function edit_save(id) {
 		{mode:'edit_save', url: newurl, keyword: keyword, newkeyword: newkeyword },
 		function(data){
 			if(data.status == 'success') {
-				$("#url-" + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.url + '</a>');
+				$("#url-" + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_url + '</a>');
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
 					$('#tblUrl tbody').trigger("update");
 				});
+				$('#keyword_'+id).val( newkeyword );
+				$('#statlink-'+id).attr( 'href', data.url.shorturl+'+' );
 			}
 			feedback(data.message, data.status);
 			end_disable("#edit-close-" + id);

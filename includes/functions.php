@@ -166,7 +166,7 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$statlink = $shorturl.'+';
 	
 	return <<<ROW
-<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><a href="$statlink" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
 }
 
@@ -294,6 +294,8 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	$newkeyword = yourls_sanitize_string( $newkeyword );
 	$strip_url = stripslashes($url);
 	$old_url = $ydb->get_var("SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';");
+	$old_id = $id = yourls_string2int( $keyword );
+	$new_id = ( $newkeyword == '' ? $old_id : yourls_string2int( $newkeyword ) );
 	
 	// Check if new URL is not here already
 	if ($old_url != $url) {
@@ -310,12 +312,12 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	}
 	
 	// All clear, update
-	if ( !$new_url_already_there && $keyword_is_ok ) {
-		$timestamp4screen = date( 'Y M d H:i', time()+( YOURLS_HOURS_OFFSET * 3600) );
-		$timestamp4db = date('Y-m-d H:i:s', time()+( YOURLS_HOURS_OFFSET * 3600) );
-		$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `timestamp` = '$timestamp4db', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
+	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
+		//$timestamp4screen = date( 'Y M d H:i', time()+( YOURLS_HOURS_OFFSET * 3600) );
+		//$timestamp4db = date('Y-m-d H:i:s', time()+( YOURLS_HOURS_OFFSET * 3600) );
+		$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
 		if( $update_url ) {
-			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'date' => $timestamp4screen);
+			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'new_id' => $new_id );
 			$return['status'] = 'success';
 			$return['message'] = 'Link updated in database';
 		} else {
@@ -620,26 +622,26 @@ function yourls_html_head( $context = 'index' ) {
 	<title>YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
 	<link rel="icon" type="image/gif" href="<?php echo YOURLS_SITE; ?>/images/favicon.gif" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
 	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
 	<meta name="author" content="Ozh Richard, Lester Chan" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css" type="text/css" media="screen" />
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 	<?php if ($tabs) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/infos.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($tablesorter) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($insert) { ?>
-		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js" type="text/javascript"></script>
+		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($share) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/share.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 </head>
 <body class="<?php echo $context; ?>">
