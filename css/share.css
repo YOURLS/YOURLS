@@ -9,7 +9,7 @@ div.share {
 	margin-right:1em;
 	padding:0 1em;
 	float:left;
-	height:130px;
+	height:140px;
 }
 #copybox {
 	width:250px;
@@ -20,7 +20,7 @@ div.share {
 #tweet_body {
 	float:left;
 	width:450px;
-	height:3em;
+	height:4em;
 	font-size:12px;
 }
 #charcount {
