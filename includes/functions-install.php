@@ -34,7 +34,7 @@ function yourls_is_apache() {
 	);
 }
 
-// Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default
+// Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
 function yourls_apache_mod_loaded($mod, $default = false) {
 	if ( !yourls_is_apache() )
 		return false;
