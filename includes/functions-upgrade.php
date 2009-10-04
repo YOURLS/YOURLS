@@ -21,8 +21,7 @@ function yourls_upgrade_to_14( $step ) {
 		yourls_alter_url_table_to_14(); // no value returned, assuming it went OK
 		$clean = yourls_clean_htaccess_for_14(); // returns bool
 		$create = yourls_create_htaccess(); // returns bool
-		$result = ( $clean && $create );
-		if ( !$result )
+		if ( !$create )
 			echo "<p>Manually check your <tt>.htaccess</tt> file. Please refer to <a href='http://yourls.org/htaccess'>http://yourls.org/htaccess</a>.";
 		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200", $result );
 		break;
@@ -205,12 +204,6 @@ function yourls_clean_htaccess_for_14() {
 		$result = true;
 	}
 
-	if ( $result ) {
-		echo "<p>Old .htaccess file cleaned up</p>";
-	} else {
-		echo "<p>Could not update <tt>.htaccess</tt>.</p>";
-	}
-	
 	return $result;
 }
 
