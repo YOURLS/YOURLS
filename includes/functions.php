@@ -52,6 +52,7 @@ function yourls_clean_url( $url ) {
 	$strip = array('%0d', '%0a', '%0D', '%0A');
 	$url = yourls_deep_replace($strip, $url);
 	$url = str_replace(';//', '://', $url);
+	$url = str_replace('&amp;', '&', $url); // Revert & not to break query strings
 	
 	return $url;
 }
