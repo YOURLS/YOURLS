@@ -1,4 +1,6 @@
 <?php
+// TODO: make things cleaner. This file is an awful HTML/PHP soup.
+
 // Require Files
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 require_once( dirname(__FILE__).'/includes/functions-infos.php' );
@@ -20,138 +22,140 @@ $timestamp = yourls_get_keyword_timestamp( $keyword );
 if ( $longurl === false )
 	yourls_redirect( YOURLS_SITE, 307 );
 
-// Duplicate keywords, if applicable
-$keyword_list = yourls_get_duplicate_keywords( $longurl );
-	
-// Fetch all information from the table log
-$table = YOURLS_DB_TABLE_LOG;
+if( yourls_do_log_redirect() ) {
 
-
-if( $aggregate ) {
-	$keywords = join( "', '", $keyword_list );
-	// Fetch information for all keywords pointing to $longurl
-	$hits = $ydb->get_results( "SELECT `shorturl`, `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` IN ( '$keywords' );" );
-} else {
-	// Fetch information for current keyword only
-	$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` = '$keyword';" );
-}
-
-$referrers = array();
-$direct = $notdirect = 0;
-$countries = array();
-$dates = array();
-$list_of_days = array();
-$list_of_months = array();
-$list_of_years = array();
-$last_24h = array();
-
-// Loop through all results and build list of referrers, countries and hits per day
-foreach( (array)$hits as $hit ) {
-	extract( (array)$hit );
-
-	if ( isset( $country_code ) && $country_code ) {
-		if( !array_key_exists( $country_code, $countries ) )
-			$countries[$country_code] = 0;
-		$countries[$country_code]++;
-	}
-	
-	if( isset( $referrer ) ) {
-		if ( $referrer == 'direct' ) {
-			$direct++;
-		} else {
-			$notdirect++;
-			$host = yourls_get_domain( $referrer );
-			if( !array_key_exists( $host, $referrers ) )
-				$referrers[$host] = array( );
-			if( !array_key_exists( $referrer, $referrers[$host] ) )
-				$referrers[$host][$referrer] = 0;
-			$referrers[$host][$referrer]++;
-		}
-	}
-	
-	if( isset( $click_time ) ) {
-		$now = intval( date('U') );
-
-		preg_match('/(\d+)-(\d+)-(\d+)\s(\d+):(\d+):(\d+)/', $click_time, $matches);
-		list( $temp, $year, $month, $day, $hour, $min, $sec ) = $matches;
-		unset( $matches );
+	// Duplicate keywords, if applicable
+	$keyword_list = yourls_get_duplicate_keywords( $longurl );
 		
-		// Build array of $dates[$year][$month][$day] = number of clicks
-		if( !array_key_exists( $year, $dates ) )
-			$dates[$year] = array();
-		if( !array_key_exists( $month, $dates[$year] ) )
-			$dates[$year][$month] = array();
-		if( !array_key_exists( $day, $dates[$year][$month] ) )
-			$dates[$year][$month][$day] = 0;
-		$dates[$year][$month][$day]++;
+	// Fetch all information from the table log
+	$table = YOURLS_DB_TABLE_LOG;
+
+	if( $aggregate ) {
+		$keywords = join( "', '", $keyword_list );
+		// Fetch information for all keywords pointing to $longurl
+		$hits = $ydb->get_results( "SELECT `shorturl`, `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` IN ( '$keywords' );" );
+	} else {
+		// Fetch information for current keyword only
+		$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` = '$keyword';" );
+	}
+
+	$referrers = array();
+	$direct = $notdirect = 0;
+	$countries = array();
+	$dates = array();
+	$list_of_days = array();
+	$list_of_months = array();
+	$list_of_years = array();
+	$last_24h = array();
+
+	// Loop through all results and build list of referrers, countries and hits per day
+	foreach( (array)$hits as $hit ) {
+		extract( (array)$hit );
+
+		if ( isset( $country_code ) && $country_code ) {
+			if( !array_key_exists( $country_code, $countries ) )
+				$countries[$country_code] = 0;
+			$countries[$country_code]++;
+		}
 		
-		// Build array of last 24 hours $last_24h[$hour] = number of click
-		$then = strtotime( $click_time);
-		if( ( $now >= $then ) && ( ( $now - $then ) < ( 24 * 60 * 60 ) ) ) {
-			$year = sprintf( "%02d", substr( $year, -1, 2 ) ); // 2009 -> 09
-			$diff = $now - strtotime( $click_time);
-			if( !array_key_exists( "$year-$month-$day-$hour", $last_24h ) )
-				$last_24h["$year-$month-$day-$hour"] = 0;
-			$last_24h["$year-$month-$day-$hour"]++;
+		if( isset( $referrer ) ) {
+			if ( $referrer == 'direct' ) {
+				$direct++;
+			} else {
+				$notdirect++;
+				$host = yourls_get_domain( $referrer );
+				if( !array_key_exists( $host, $referrers ) )
+					$referrers[$host] = array( );
+				if( !array_key_exists( $referrer, $referrers[$host] ) )
+					$referrers[$host][$referrer] = 0;
+				$referrers[$host][$referrer]++;
+			}
+		}
+		
+		if( isset( $click_time ) ) {
+			$now = intval( date('U') );
+
+			preg_match('/(\d+)-(\d+)-(\d+)\s(\d+):(\d+):(\d+)/', $click_time, $matches);
+			list( $temp, $year, $month, $day, $hour, $min, $sec ) = $matches;
+			unset( $matches );
+			
+			// Build array of $dates[$year][$month][$day] = number of clicks
+			if( !array_key_exists( $year, $dates ) )
+				$dates[$year] = array();
+			if( !array_key_exists( $month, $dates[$year] ) )
+				$dates[$year][$month] = array();
+			if( !array_key_exists( $day, $dates[$year][$month] ) )
+				$dates[$year][$month][$day] = 0;
+			$dates[$year][$month][$day]++;
+			
+			// Build array of last 24 hours $last_24h[$hour] = number of click
+			$then = strtotime( $click_time);
+			if( ( $now >= $then ) && ( ( $now - $then ) < ( 24 * 60 * 60 ) ) ) {
+				$year = sprintf( "%02d", substr( $year, -1, 2 ) ); // 2009 -> 09
+				$diff = $now - strtotime( $click_time);
+				if( !array_key_exists( "$year-$month-$day-$hour", $last_24h ) )
+					$last_24h["$year-$month-$day-$hour"] = 0;
+				$last_24h["$year-$month-$day-$hour"]++;
+			}
 		}
 	}
-}
 
 
-// Sort dates, chronologically from [2007][12][24] to [2009][02][19]
-ksort( $dates );
-foreach( $dates as $year=>$months ) {
-	ksort( $dates[$year] );
-	foreach( $months as $month=>$day ) {
-		ksort( $dates[$year][$month] );
-	}
-}
-
-// Get $list_of_days, $list_of_months, $list_of_years
-if( $dates ) {
-	extract( yourls_build_list_of_days( $dates ) );
-
-	// If the $last_24h doesn't have all the hours, insert missing hours with value 0
-	for ($i = 23; $i >= 0; $i--) {
-		$h = date('y-m-d-H', $now - ($i * 60 * 60) );
-		if( !array_key_exists( $h, $last_24h ) ) {
-			$last_24h[$h] = 0;
+	// Sort dates, chronologically from [2007][12][24] to [2009][02][19]
+	ksort( $dates );
+	foreach( $dates as $year=>$months ) {
+		ksort( $dates[$year] );
+		foreach( $months as $month=>$day ) {
+			ksort( $dates[$year][$month] );
 		}
 	}
-	ksort( $last_24h );
+
+	// Get $list_of_days, $list_of_months, $list_of_years
+	if( $dates ) {
+		extract( yourls_build_list_of_days( $dates ) );
+
+		// If the $last_24h doesn't have all the hours, insert missing hours with value 0
+		for ($i = 23; $i >= 0; $i--) {
+			$h = date('y-m-d-H', $now - ($i * 60 * 60) );
+			if( !array_key_exists( $h, $last_24h ) ) {
+				$last_24h[$h] = 0;
+			}
+		}
+		ksort( $last_24h );
+	}
+
+	// Sort countries, most frequent first
+	if ( $countries )
+		arsort( $countries );
+
+	// Sort referrers. $referrer_sort is a array of most frequent domains
+	arsort( $referrers );
+	$referrer_sort = array();
+	$number_of_sites = count( array_keys( $referrers ) );
+	foreach( $referrers as $site => $urls ) {
+		if( count($urls) > 1 || $number_of_sites == 1 )
+			$referrer_sort[$site] = array_sum( $urls );
+	}
+	arsort($referrer_sort);
+
+
+	/**
+	echo "<pre>";
+	echo "referrers: "; print_r( $referrers );
+	echo "referrer sort: "; print_r( $referrer_sort );
+	echo "direct: $direct\n";
+	echo "notdirect: $notdirect\n";
+	echo "dates: "; print_r( $dates );
+	echo "list of days: "; print_r( $list_of_days );
+	echo "list_of_months: "; print_r( $list_of_months );
+	echo "list_of_years: "; print_r( $list_of_years );
+	echo "last_24h: "; print_r( $last_24h );
+	//echo "countries: "; print_r( $countries );
+
+	die();
+	/**/
+
 }
-
-// Sort countries, most frequent first
-if ( $countries )
-	arsort( $countries );
-
-// Sort referrers. $referrer_sort is a array of most frequent domains
-arsort( $referrers );
-$referrer_sort = array();
-$number_of_sites = count( array_keys( $referrers ) );
-foreach( $referrers as $site => $urls ) {
-	if( count($urls) > 1 || $number_of_sites == 1 )
-		$referrer_sort[$site] = array_sum( $urls );
-}
-arsort($referrer_sort);
-
-
-/**
-echo "<pre>";
-echo "referrers: "; print_r( $referrers );
-echo "referrer sort: "; print_r( $referrer_sort );
-echo "direct: $direct\n";
-echo "notdirect: $notdirect\n";
-echo "dates: "; print_r( $dates );
-echo "list of days: "; print_r( $list_of_days );
-echo "list_of_months: "; print_r( $list_of_months );
-echo "list_of_years: "; print_r( $list_of_years );
-echo "last_24h: "; print_r( $last_24h );
-//echo "countries: "; print_r( $countries );
-
-die();
-/**/
-
 
 yourls_html_head( 'infos' );
 ?>
@@ -161,7 +165,7 @@ yourls_html_head( 'infos' );
 	<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
 </h1>
 <?php if ( yourls_is_private() ) { ?>
-<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
+<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>.</p>
 <?php } ?>
 
 <h2 id="informations">Informations</h2>
@@ -189,14 +193,17 @@ yourls_html_head( 'infos' );
 <div id="tabs">
 	<div class="wrap_unfloat">
 	<ul id="headers" class="toggle_display stat_tab">
+		<?php if( yourls_do_log_redirect() ) { ?>
 		<li class="selected"><a href="#stat_tab_stats"><h2>Traffic statistics</h2></a></li>
 		<li><a href="#stat_tab_location"><h2>Traffic location</h2></a></li>
 		<li><a href="#stat_tab_sources"><h2>Traffic sources</h2></a></li>
+		<?php } ?>
 		<li><a href="#stat_tab_share"><h2>Share</h2></a></li>
 	</ul>
 	</div>
 
 			
+<?php if( yourls_do_log_redirect() ) { ?>
 	<div id="stat_tab_stats" class="tab">
 		<h2>Traffic statistics</h2>
 		
@@ -508,6 +515,9 @@ yourls_html_head( 'infos' );
 		} ?>
 			
 	</div>
+
+<?php } // endif do log redirect ?>
+
 
 	<div id="stat_tab_share" class="tab">
 		<h2>Share</h2>

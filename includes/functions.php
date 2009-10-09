@@ -968,6 +968,9 @@ function yourls_get_HTTP_status( $code ) {
 
 // Log a redirect (for stats)
 function yourls_log_redirect( $keyword ) {
+	if ( !yourls_do_log_redirect() )
+		return true;
+
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
 	
@@ -978,6 +981,11 @@ function yourls_log_redirect( $keyword ) {
 	$location = yourls_geo_ip_to_countrycode( $ip );
 	
 	return $ydb->query( "INSERT INTO `$table` VALUES ('', NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+}
+
+// Check if we want to not log redirects (for stats)
+function yourls_do_log_redirect() {
+	return ( !defined('YOURLS_NOSTATS') || YOURLS_NOSTATS != true );
 }
 
 // Converts an IP to a 2 letter country code, using GeoIP database if available in includes/geo/
