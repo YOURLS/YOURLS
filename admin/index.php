@@ -91,6 +91,7 @@ if ( $where ) {
 	list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
 } else {
 	$total_items = $total_urls;
+	$total_items_clicks = false;
 }
 
 // This is a bookmarklet
@@ -164,8 +165,8 @@ yourls_html_head( $context );
 	Check the <a href="tools.php">Tools</a>.</p>
 	<?php if ( !$is_bookmark ) {
 	?>
-	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs.</p>
 	<p><?php echo $search_display; ?></p>
+	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs<?php if( $total_items_clicks !== false ) echo ", counting <strong>$total_items_clicks</strong> " . yourls_plural('click', $total_items_clicks) ?>.</p>
 	<?php } ?>
 	<p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
 
