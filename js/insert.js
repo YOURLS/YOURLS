@@ -83,6 +83,7 @@ function remove(id) {
 		function(data){
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){$(this).remove();zebra_table();});
+				decrement();
 			} else {
 				alert('something wrong happened while deleting :/');
 			}
@@ -187,6 +188,13 @@ function reset_url() {
 function increment() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) + 1);
+	});
+}
+
+// Decrement URL counters
+function decrement() {
+	$('.increment').each(function(){
+		$(this).html( parseInt($(this).html()) - 1 );
 	});
 }
 
