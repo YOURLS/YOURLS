@@ -60,6 +60,8 @@ function yourls_salt( $string ) {
 // Display the login screen. Nothing past this point.
 function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
+	
+	$action = ( isset($_GET['mode']) && $_GET['mode'] == 'logout' ? '?' : '' );
 ?>
 	<h1>
 		<a href="<?php echo YOURLS_SITE; ?>/admin/index.php" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
@@ -67,7 +69,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	</h1>
 
 	<div id="login">
-		<form method="post" action="?"> <?php // reset any QUERY parameters ?>
+		<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
 				if(!empty($error_msg)) {
 					echo '<p class="error">'.$error_msg.'</p>';
