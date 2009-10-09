@@ -3,6 +3,12 @@ $(document).ready(function(){
 	$('#add-url, #add-keyword').keyup(function(e){ if (e.keyCode == 13) {add();} } );
 	reset_url();
 	$('#new_url_form').attr('action', 'javascript:add();');
+	
+	$('input.text').click(function(){
+		$(this).select();
+	});	
+	
+	
 	if ($("#tblUrl").tablesorter && $("#tblUrl tr.nourl_found").length != 1) {
 		var order = {'id':0, 'url':1, 'timestamp':2, 'ip':3, 'clicks':4};
 		var order_by = {'asc':0, 'desc':1};
@@ -184,7 +190,7 @@ function increment() {
 	});
 }
 
-// Get 
+// Get query string
 function query_string( key ) {
 	default_="";
 	key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
