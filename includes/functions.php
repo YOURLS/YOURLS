@@ -48,7 +48,7 @@ function yourls_sanitize_url($url) {
 
 // Function to filter all invalid characters from a URL. Stolen from WP's clean_url()
 function yourls_clean_url( $url ) {
-	$url = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', htmlentities($url, ENT_QUOTES) );
+	$url = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'"()\\x80-\\xff]|i', '', $url );
 	$strip = array('%0d', '%0a', '%0D', '%0A');
 	$url = yourls_deep_replace($strip, $url);
 	$url = str_replace(';//', '://', $url);
@@ -161,10 +161,10 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$id = yourls_string2int( $keyword ); // used as HTML #id
 	$date = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
 	$clicks = number_format($clicks, 0, '', '');
-	$www = YOURLS_SITE;
 	$shorturl = YOURLS_SITE.'/'.$keyword;
-	$display_url = yourls_trim_long_string( $url );
+	$display_url = htmlentities( yourls_trim_long_string( $url ) );
 	$statlink = $shorturl.'+';
+	$url = htmlentities( $url );
 	
 	return <<<ROW
 <tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
