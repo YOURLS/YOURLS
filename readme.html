@@ -270,8 +270,8 @@
 			<h2>Upgrade from YOURLS 1.3 or earlier</h2>
 			<ol>
 				<li>Make a copy of your <code>config.php</code></li>
-				<li>Delete the <code>.htaccess</code> file in YOURLS root directory</li>
-				<li>Unzip the YOURLS archive, upload the files, overwrite all existing files</li>
+				<li>Delete all files including <code>.htaccess</code> in YOURLS root directory</li>
+				<li>Unzip the YOURLS archive, upload the files</li>
 				<li>Copy <code>config-sample.php</code> to <code>config.php</code> and fill in details. <strong>Don't start with your old config file</strong>, use the new sample config file.</li>
 				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
 				<li><strong>Backup the database!</strong></li>
