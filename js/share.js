@@ -2,7 +2,7 @@ $(document).ready(function(){
 	$('#tweet_body').focus();
 
 	$('#tweet_body').keyup(function(event){
-		var text = escape( $('#tweet_body').val() );
+		var text = encodeURI( $('#tweet_body').val() );
 		var tw = 'http://twitter.com/home?status='+text;
 		var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+encodeURI( $('#tweet_body').val() ) ;
 		$('#share_tw').attr('href', tw);
