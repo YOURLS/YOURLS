@@ -23,7 +23,7 @@ function yourls_upgrade_to_14( $step ) {
 		$create = yourls_create_htaccess(); // returns bool
 		if ( !$create )
 			echo "<p class='warning'>Please create your <tt>.htaccess</tt> file (I could not do it for you). Please refer to <a href='http://yourls.org/htaccess'>http://yourls.org/htaccess</a>.";
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200", $result );
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200", $create );
 		break;
 		
 	case 2:
@@ -101,9 +101,9 @@ function yourls_alter_url_table_to_14() {
 
 	$alters = array();
 	$results = array();
-	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
 	$alters[] = "ALTER TABLE `$table` CHANGE `id` `keyword` VARCHAR( 200 ) NOT NULL";
 	$alters[] = "ALTER TABLE `$table` CHANGE `url` `url` TEXT NOT NULL";
+	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
 	
 	foreach ( $alters as $query ) {
 		$ydb->query( $query );
