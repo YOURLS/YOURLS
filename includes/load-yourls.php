@@ -29,7 +29,12 @@ if( !defined('YOURLS_FLOOD_DELAY_SECONDS') )
 	define('YOURLS_FLOOD_DELAY_SECONDS', 15 ); // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 if( !defined('YOURLS_FLOOD_IP_WHITELIST') )
 	define('YOURLS_FLOOD_IP_WHITELIST', '' ); // comma separated list of IPs that can bypass flood check.
+if( !defined('YOURLS_COOKIE_LIFE') )
+	define( 'YOURLS_COOKIE_LIFE', 60*60*24*7 ); // life span of an auth cookie in seconds
+if( !defined('YOURLS_NONCE_LIFE') )
+	define( 'YOURLS_NONCE_LIFE', 3600 ); // life span of a nonce in seconds
 
+	
 // Create the YOURLS object $ydb that will contain everything we globally need
 if ( function_exists( 'yourls_db_connect' ) ) {
 	global $ydb;

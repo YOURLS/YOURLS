@@ -74,7 +74,6 @@ function yourls_deep_replace($search, $subject){
 	return $subject;
 }
 
-
 // Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
 // TODO FIXME FFS: unused ?
 function yourls_sanitize_int($in) {
@@ -314,9 +313,7 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-		//$timestamp4screen = date( 'Y M d H:i', time()+( YOURLS_HOURS_OFFSET * 3600) );
-		//$timestamp4db = date('Y-m-d H:i:s', time()+( YOURLS_HOURS_OFFSET * 3600) );
-		$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
+			$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
 		if( $update_url ) {
 			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'new_id' => $new_id );
 			$return['status'] = 'success';
@@ -339,11 +336,11 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 // Check if keyword id is free (ie not already taken, and not reserved)
 function yourls_keyword_is_free( $keyword ) {
 	global $ydb;
-
-	$table = YOURLS_DB_TABLE_URL;
+	
 	if ( yourls_keyword_is_reserved($keyword) )
 		return false;
 		
+	$table = YOURLS_DB_TABLE_URL;
 	$already_exists = $ydb->get_var("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';");
 	if ( $already_exists )
 		return false;
@@ -1349,4 +1346,84 @@ if ( !function_exists('htmlspecialchars_decode') ) {
 	function htmlspecialchars_decode($text) {
 		return strtr($text, array_flip(get_html_translation_table(HTML_SPECIALCHARS)));
 	}
+}
+
+// Generate random string of (int)$lenght length and type $type (see function for details)
+function yourls_rnd_string ( $length = 5, $type = 1 ) {
+	$str = "";
+	$length = intval( $length );
+
+	// define possible characters
+	switch ( $type ) {
+		// no vowels to make no offending word, no 0 or 1 to avoid confusion betwee letters & digits. Perfect for passwords.
+		case '1':
+			$possible = "23456789bcdfghjkmnpqrstvwxyz";
+			break;
+		
+		// all letters, lowercase
+		case '2':
+			$possible = "abcdefghijklmnopqrstuvwxyz";
+			break;
+		
+		// all letters, lowercase + uppercase
+		case '3':
+			$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			break;
+		
+		// all digits & letters lowercase 
+		case '4':
+			$possible = "0123456789abcdefghijklmnopqrstuvwxyz";
+			break;
+		
+		// all digits & letters lowercase + uppercase
+		case '5':
+			$possible = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			break;
+		
+	}
+
+	$i = 0;
+	while ($i < $length) {
+	$str .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
+		$i++;
+	}
+	
+	return $str;
+}
+
+// Return salted string
+function yourls_salt( $string ) {
+	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+	return md5 ($string . $salt);
+}
+
+// Return a time-dependent string for nonce creation
+function yourls_tick() {
+	if( !defined('YOURLS_NONCE_LIFE') )
+		define( 'YOURLS_NONCE_LIFE', 3600 );
+	return ceil( time() / YOURLS_NONCE_LIFE );
+}
+
+// Create a time limited, action limited and user limited token
+function yourls_create_nonce( $action = '-1', $user = false ) {
+	if( false == $user )
+		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+	$tick = yourls_tick();
+	return substr( yourls_salt($tick . $action . $user), 0, 10 );
+}
+
+// Check validity of a nonce (ie time span, user and action match)
+function yourls_verify_nonce( $nonce, $action = -1, $user = false ) {
+	if( false == $user )
+		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+	$valid = yourls_create_nonce( $action, $user );
+	
+	return $nonce == $valid ;
+}
+
+// Check if we're in API mode. Returns bool
+function yourls_is_API() {
+	if ( defined('YOURLS_API') && YOURLS_API == true )
+		return true;
+	return false;
 }

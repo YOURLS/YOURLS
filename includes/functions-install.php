@@ -1,6 +1,6 @@
 <?php
 
-// Check if mod_rewrite is enabled
+// Check if mod_rewrite is enabled. Note: unused, not reliable enough.
 function yourls_check_mod_rewrite() {
 	return yourls_apache_mod_loaded('mod_rewrite');
 }
@@ -8,11 +8,6 @@ function yourls_check_mod_rewrite() {
 // Check if extension cURL is enabled
 function yourls_check_curl() {
 	return function_exists('curl_init');
-}
-
-// Check if extension BC Math is enabled
-function yourls_check_bcmath() {
-	return function_exists('bccomp');
 }
 
 // Check if server has MySQL 4.1+
@@ -134,8 +129,8 @@ function yourls_create_sql_tables() {
 	$create_tables = array();
 	$create_tables[YOURLS_DB_TABLE_URL] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
-		'`keyword` varchar(200) NOT NULL,'.
-		'`url` text NOT NULL,'.
+		'`keyword` varchar(200) BINARY NOT NULL,'.
+		'`url` text BINARY NOT NULL,'.
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
@@ -157,13 +152,13 @@ function yourls_create_sql_tables() {
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
 		'`click_id` int(11) NOT NULL auto_increment,'.
 		'`click_time` datetime NOT NULL,'.
-		'`shorturl` varchar(200) NOT NULL,'.
+		'`keyword` varchar(200) BINARY NOT NULL,'.
 		'`referrer` varchar(200) NOT NULL,'.
 		'`user_agent` varchar(255) NOT NULL,'.
 		'`ip_address` varchar(41) NOT NULL,'.
 		'`country_code` char(2) NOT NULL,'.
 		'PRIMARY KEY  (`click_id`),'.
-		'KEY `shorturl` (`shorturl`)'.
+		'KEY `keyword` (`keyword`)'.
 		') AUTO_INCREMENT=1 ;';
 
 

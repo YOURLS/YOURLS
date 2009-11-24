@@ -2,14 +2,57 @@
 
 // Upgrade YOURLS and DB schema
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
-	// As of now, there's no other upgrading possibility.
-	// In the future this function may contain tests to upgrade
-	// from any release to the latest
-	yourls_upgrade_to_14( $step );
+
+	if( $oldver == '1.3') {
+		yourls_upgrade_to_14( $step );
+	} elseif ( $oldver == '1.4' ) {
+		yourls_upgrade_to_141( $step );
+	}
 }
 
+/************************** 1.4 -> 1.4.1 **************************/
 
-// Upgrade DB Schema from 1.3-RC1 or prior to 1.4
+// Main func for upgrade from 1.4 to 1.4.1
+function yourls_upgrade_to_141( $step ) {
+	switch( $step ) {
+	case 1:
+		// Kill old cookies from 1.3 and prior
+		setcookie('yourls_username', null, time() - 3600 );
+		setcookie('yourls_password', null, time() - 3600 );
+		// alter table URL
+		yourls_alter_url_table_to_141();
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=3&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210" );
+		break;
+		
+	case 2:
+	case 3:
+		// Update options
+		yourls_update_options_to_141();
+	}
+}
+
+// Alter table URL to 1.4.1
+function yourls_alter_url_table_to_141() {
+	global $ydb;
+	$table_url = YOURLS_DB_TABLE_URL;
+	$table_log = YOURLS_DB_TABLE_LOG;
+	$alters[] = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 200 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
+	$alters[] = "ALTER TABLE `$table_log` CHANGE `shorturl` `keyword` VARCHAR( 200 ) BINARY;";
+	foreach( $alters as $alter ) {
+		$ydb->query( $alter );
+	}
+	echo "<p>Structure of existing tables updated. Please wait...</p>";
+}
+
+// Update options to reflect version 1.4.1
+function yourls_update_options_to_141() {
+	yourls_update_option( 'version', YOURLS_VERSION );
+	yourls_update_option( 'db_version', YOURLS_DB_VERSION );
+}
+
+/************************** 1.3 -> 1.4 **************************/
+
+// Main func for upgrade from 1.3-RC1 to 1.4
 function yourls_upgrade_to_14( $step ) {
 	
 	switch( $step ) {
@@ -37,8 +80,9 @@ function yourls_upgrade_to_14( $step ) {
 		// update version & db_version & next_id in the option table
 		// attempt to drop YOURLS_DB_TABLE_NEXTDEC
 		yourls_update_options_to_14();
+		// Now upgrade to 1.4.1
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=1&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210", $create );
 		break;
-	
 	}
 }
 
