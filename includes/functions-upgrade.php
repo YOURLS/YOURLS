@@ -2,7 +2,6 @@
 
 // Upgrade YOURLS and DB schema
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
-
 	if( $oldver == '1.3') {
 		yourls_upgrade_to_14( $step );
 	} elseif ( $oldver == '1.4' ) {

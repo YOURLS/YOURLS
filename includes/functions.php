@@ -1427,3 +1427,8 @@ function yourls_is_API() {
 		return true;
 	return false;
 }
+
+// Sanitize a version number
+function yourls_sanitize_version( $ver ) {
+	return preg_replace( '/[^0-9a-zA-Z-.]/', '', $ver );
+}
