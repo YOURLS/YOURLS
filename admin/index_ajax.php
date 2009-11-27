@@ -1,5 +1,5 @@
 <?php
-// Require Files
+define('YOURLS_AJAX', true);
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
