@@ -1,5 +1,5 @@
 <?php
-// Require Files
+define('YOURLS_GO', true);
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 
 // Variables
