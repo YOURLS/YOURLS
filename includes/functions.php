@@ -587,218 +587,6 @@ function yourls_api_output( $mode, $return ) {
 	die();
 }
 
-// Display HTML head and <body> tag
-function yourls_html_head( $context = 'index' ) {
-	// All components to false, except when specified true
-	$share = $insert = $tablesorter = $tabs = false;
-	// Load components as needed
-	switch ( $context ) {
-		case 'infos':
-			$share = $tabs = true;
-			break;
-			
-		case 'bookmark':
-			$share = $insert = $tablesorter = true;
-			break;
-			
-		case 'index':
-			$insert = $tablesorter = true;
-			break;
-		
-		case 'install':
-		case 'login':
-		case 'new':
-		case 'tools':
-		case 'upgrade':
-			break;
-	}
-	
-	?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<title>YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
-	<link rel="icon" type="image/gif" href="<?php echo YOURLS_SITE; ?>/images/favicon.gif" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
-	<meta name="copyright" content="Copyright &copy; 2008-<?php echo date('Y'); ?> YOURS" />
-	<meta name="author" content="Ozh Richard, Lester Chan" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-	<?php if ($tabs) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<?php } ?>
-	<?php if ($tablesorter) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<?php } ?>
-	<?php if ($insert) { ?>
-		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<?php } ?>
-	<?php if ($share) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<?php } ?>
-</head>
-<body class="<?php echo $context; ?>">
-<div id="wrap">
-	<?php
-}
-
-// Display HTML footer (including closing body & html tags)
-function yourls_html_footer() {
-	global $ydb;
-	
-	$num_queries = $ydb->num_queries > 1 ? $ydb->num_queries.' queries' : $ydb->num_queries.' query';
-	?>
-	</div> <?php // wrap ?>
-	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
-	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
-		echo '<p>'. $ydb->all_queries .'<p>';
-	} ?>
-	</body>
-	</html>
-	<?php
-}
-
-// Display "Add new URL" box
-function yourls_html_addnew( $url = '', $keyword = '' ) {
-	$url = $url ? $url : 'http://';
-	?>
-	<div id="new_url">
-		<div>
-			<form id="new_url_form" action="" method="get">
-				<div><strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
-				Optional: <strong>Custom short URL</strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
-				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" /></div>
-			</form>
-			<div id="feedback" style="display:none"></div>
-		</div>
-	</div>
-	<?php
-}
-
-// Display main table's footer
-function yourls_html_tfooter( $params = array() ) {
-	extract( $params ); // extract $search_text, $page, $search_in_sql ...
-
-	?>
-	<tfoot>
-		<tr>
-			<th colspan="4" style="text-align: left;">
-				<form action="" method="get">
-					<div>
-						<div style="float:right;">
-							<input type="submit" id="submit-sort" value="Filter" class="button primary" />
-							&nbsp;
-							<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'index.php'" />
-						</div>
-
-						Search&nbsp;for&nbsp;
-						<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
-						&nbsp;in&nbsp;
-						<select name="s_in" size="1">
-							<!-- <option value="id"<?php if($search_in_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option> -->
-							<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-							<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
-						</select>
-						&ndash;&nbsp;Order&nbsp;by&nbsp;
-						<select name="s_by" size="1">
-							<option value="id"<?php if($sort_by_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option>
-							<option value="url"<?php if($sort_by_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-							<option value="timestamp"<?php if($sort_by_sql == 'timestamp') { echo ' selected="selected"'; } ?>>Date</option>
-							<option value="ip"<?php if($sort_by_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
-							<option value="clicks"<?php if($sort_by_sql == 'clicks') { echo ' selected="selected"'; } ?>>Clicks</option>
-						</select>
-						<select name="s_order" size="1">
-							<option value="asc"<?php if($sort_order_sql == 'asc') { echo ' selected="selected"'; } ?>>Ascending</option>
-							<option value="desc"<?php if($sort_order_sql == 'desc') { echo ' selected="selected"'; } ?>>Descending</option>
-						</select>
-						&ndash;&nbsp;Show&nbsp;
-						<input type="text" name="perpage" class="text" size="2" value="<?php echo $perpage; ?>" />&nbsp;rows<br/>
-						
-						Show links with
-						<select name="link_filter" size="1">
-							<option value="more"<?php if($link_filter === 'more') { echo ' selected="selected"'; } ?>>more</option>
-							<option value="less"<?php if($link_filter === 'less') { echo ' selected="selected"'; } ?>>less</option>
-						</select>
-						than
-						<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" />clicks
-
-						
-					</div>
-				</form>
-			</th>
-			<th colspan="3" style="text-align: right;">
-				Pages (<?php echo $total_pages; ?>):
-				<?php
-					if ($page >= 4) {
-						echo '<b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page=1'.'" title="Go to First Page">&laquo; First</a></b> ... ';
-					}
-					if($page > 1) {
-						echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page-1).'" title="&laquo; Go to Page '.($page-1).'">&laquo;</a></b> ';
-					}
-					for($i = $page - 2 ; $i  <= $page +2; $i++) {
-						if ($i >= 1 && $i <= $total_pages) {
-							if($i == $page) {
-								echo "<strong>[$i]</strong> ";
-							} else {
-								echo '<a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($i).'" title="Page '.$i.'">'.$i.'</a> ';
-							}
-						}
-					}
-					if($page < $total_pages) {
-						echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page+1).'" title="Go to Page '.($page+1).' &raquo;">&raquo;</a></b> ';
-					}
-					if (($page+2) < $total_pages) {
-						echo ' ... <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></b>';
-					}
-				?>
-			</th>
-		</tr>
-	</tfoot>
-	<?php
-}
-
-// Display the Quick Share box of the tools.php page
-function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>' ) {
-	$text = ( $text ? '"'.$text.'" ' : '' );
-	$title = ( $title ? "$title " : '' );
-	$share = htmlspecialchars_decode( $title.$text.$shorturl );
-	$_share = rawurlencode( $share );
-	$_url = rawurlencode( $shorturl );
-	$count = 140 - strlen( $share );
-	?>
-	
-	<div id="shareboxes">
-
-		<div id="copybox" class="share">
-		<?php echo $shortlink_title; ?>
-			<p><input id="copylink" class="text" size="40" value="<?php echo $shorturl; ?>" /></p>
-			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small></p>
-		</div>
-
-		<div id="sharebox" class="share">
-			<?php echo $share_title; ?>
-			<div id="tweet">
-				<span id="charcount"><?php echo $count; ?></span>
-				<textarea id="tweet_body"><?php echo $share; ?></textarea>
-			</div>
-			<p id="share_links">Share with 
-				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="Tweet this!" onclick="share('tw');return false">Twitter</a>
-				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
-				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
-			</p>
-			</div>
-		</div>
-	
-	</div>
-	
-	<?php
-}
-
 // Get number of SQL queries performed
 function yourls_get_num_queries() {
 	global $ydb;
@@ -857,11 +645,17 @@ function yourls_get_user_agent() {
 // Redirect to another page
 function yourls_redirect( $location, $code = 301 ) {
 	// Anti fool check: cannot redirect to the URL we currently are on
-	if( preg_replace('!^[^:]+://!', '', $location) != $_SERVER["SERVER_NAME"].$_SERVER['REQUEST_URI'] ) {
+	if( preg_replace('!^[^:]+://!', '', $location) == $_SERVER["SERVER_NAME"].$_SERVER['REQUEST_URI'] )
+		return false;
+	
+	// Redirect, either properly if possible, or via Javascript otherwise
+	if( !headers_sent() ) {
 		yourls_status_header( $code );
 		header("Location: $location");
-		die();
+	} else {
+		yourls_redirect_javascript( $location );
 	}
+	die();
 }
 
 // Set HTTP status header
@@ -1229,15 +1023,6 @@ function yourls_maybe_require_auth() {
 		require_once( dirname(__FILE__).'/auth.php' );
 }
 
-// Echo HTML tag for a link
-function yourls_html_link( $href, $title = '', $element = '' ) {
-	if( !$title )
-		$title = $href;
-	if( $element )
-		$element = "id='$element'";
-	echo "<a href='$href' $element>$title</a>";
-}
-
 // Return word or words if more than one
 function yourls_plural( $word, $count=1 ) {
 	return $word . ($count > 1 ? 's' : '');
@@ -1308,23 +1093,6 @@ function yourls_check_IP_flood( $ip = '' ) {
 	}
 	
 	return true;
-}
-
-// Die die die
-function yourls_die( $message = '', $title = '', $header_code = 200 ) {
-	yourls_status_header( $header_code );
-	
-	yourls_html_head();
-	?>
-	<h1>
-		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
-	</h1>
-	<?php
-	echo "<h2>$title</h2>";
-	echo "<p>$message</p>";
-	yourls_html_footer();
-	die();
 }
 
 // Check if YOURLS is installed
@@ -1399,8 +1167,6 @@ function yourls_salt( $string ) {
 
 // Return a time-dependent string for nonce creation
 function yourls_tick() {
-	if( !defined('YOURLS_NONCE_LIFE') )
-		define( 'YOURLS_NONCE_LIFE', 3600 );
 	return ceil( time() / YOURLS_NONCE_LIFE );
 }
 
@@ -1421,6 +1187,11 @@ function yourls_verify_nonce( $nonce, $action = -1, $user = false ) {
 	return $nonce == $valid ;
 }
 
+// Sanitize a version number
+function yourls_sanitize_version( $ver ) {
+	return preg_replace( '/[^0-9a-zA-Z-.]/', '', $ver );
+}
+
 // Check if we're in API mode. Returns bool
 function yourls_is_API() {
 	if ( defined('YOURLS_API') && YOURLS_API == true )
@@ -1428,7 +1199,23 @@ function yourls_is_API() {
 	return false;
 }
 
-// Sanitize a version number
-function yourls_sanitize_version( $ver ) {
-	return preg_replace( '/[^0-9a-zA-Z-.]/', '', $ver );
+// Check if we're in Ajax mode. Returns bool
+function yourls_is_Ajax() {
+	if ( defined('YOURLS_AJAX') && YOURLS_AJAX == true )
+		return true;
+	return false;
+}
+
+// Check if we're in GO mode. Returns bool
+function yourls_is_GO() {
+	if ( defined('YOURLS_GO') && YOURLS_GO == true )
+		return true;
+	return false;
+}
+
+// Check if we'll need interface display function (ie not API or redirection)
+function yourls_has_interface() {
+	if( yourls_is_API() or yourls_is_GO() or yourls_is_Ajax() )
+		return false;
+	return true;
 }

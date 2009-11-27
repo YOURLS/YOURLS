@@ -80,7 +80,7 @@ function yourls_upgrade_to_14( $step ) {
 		// attempt to drop YOURLS_DB_TABLE_NEXTDEC
 		yourls_update_options_to_14();
 		// Now upgrade to 1.4.1
-		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=1&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210", $create );
+		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=1&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210" );
 		break;
 	}
 }

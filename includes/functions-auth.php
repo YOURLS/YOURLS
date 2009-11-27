@@ -1,48 +1,69 @@
 <?php
 // Check for valid user. Returns true or an error message
 function yourls_is_valid_user() {
-
-	// Kill old cookies from 1.3 and prior
-	setcookie('yourls_username', null, time() - 3600 );
-	setcookie('yourls_password', null, time() - 3600 );
+	static $valid = false;
+	
+	if( $valid )
+		return true;
 
 	// Logout request
 	if( isset( $_GET['mode'] ) && $_GET['mode'] == 'logout') {
-		setcookie('yourls_username', null, time() - 3600, '/');
-		setcookie('yourls_password', null, time() - 3600, '/');
+		yourls_store_cookie( null );
 		return 'Logged out successfully';
 	}
 	
 	// Check cookies or login request. Login form has precedence.
 	global $yourls_user_passwords;
-	foreach($yourls_user_passwords as $valid_user => $valid_password) {
-		if ( 
-			// Checking against POST data
-			( 	isset($_REQUEST['username'])
-				&& $valid_user == $_REQUEST['username']
-				&& isset($_REQUEST['password'])
-				&& $valid_password == $_REQUEST['password']
-			)
-			or
-			// Checking against encrypted COOKIE data
-			( 	isset($_COOKIE['yourls_username'])
-				&& yourls_salt($valid_user) == $_COOKIE['yourls_username']
-				&& isset($_COOKIE['yourls_password'])
-				&& yourls_salt($valid_password) == $_COOKIE['yourls_password'] 
-			)
-		) {
-			// (Re)store encrypted cookie and tell it's ok
-			if ( !defined('YOURLS_API') or YOURLS_API != true ) {
-				// No need to store a cookie when used in API mode.
-				setcookie('yourls_username', yourls_salt( $valid_user ), time() + (60*60*24*7), '/' );
-				setcookie('yourls_password', yourls_salt( $valid_password ), time() + (60*60*24*7), '/' );
-			}
-			if( !defined('YOURLS_USER') )
-				define('YOURLS_USER', $valid_user);
-			return true;
+	
+	// In the future maybe I'll implement nonces like in WP. Will be something like
+	// ?nonce=fn(login,pwd,action)
+	
+	// Determine auth method and check credentials
+	if
+		// API only: Secure (no login or pwd) and time limited token
+		// ?timestamp=12345678&signature=md5(totoblah12345678)
+		( yourls_is_API() &&
+		  isset($_REQUEST['timestamp']) && !empty($_REQUEST['timestamp']) &&
+		  isset($_REQUEST['signature'])
+		)
+		{
+			$valid = yourls_check_signature_timestamp();
 		}
+		
+	elseif
+		// API only: Secure (no login or pwd)
+		// ?signature=md5(totoblah)
+		( yourls_is_API() &&
+		  !isset($_REQUEST['timestamp']) &&
+		  isset($_REQUEST['signature'])
+		)
+		{
+			$valid = yourls_check_signature();
+		}
+	
+	elseif
+		// API or normal: login with username & pwd
+		( isset($_REQUEST['username']) && isset($_REQUEST['password']) )
+		{
+			$valid = yourls_check_username_password();
+		}
+	
+	elseif
+		// Normal only: cookies
+		( isset($_COOKIE['yourls_username']) && isset($_COOKIE['yourls_password']) )
+		{
+			$valid = yourls_check_auth_cookie();
+		}
+
+	// Login for the win!
+	if ( $valid ) {
+		// (Re)store encrypted cookie and tell it's ok
+		if ( !yourls_is_API() ) // No need to store a cookie when used in API mode.
+			yourls_store_cookie( YOURLS_USER );
+		return true;
 	}
 	
+	// Login failed
 	if ( isset($_REQUEST['username']) || isset($_REQUEST['password']) ) {
 		return 'Invalid username or password';
 	} else {
@@ -50,46 +71,99 @@ function yourls_is_valid_user() {
 	}
 }
 
-
-// Return salted string
-function yourls_salt( $string ) {
-	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return md5 ($string . $salt);
+// Check auth against list of login=>pwd. Sets user if applicable, returns bool
+function yourls_check_username_password() {
+	global $yourls_user_passwords;
+	if( $yourls_user_passwords[ $_REQUEST['username'] ] == $_REQUEST['password'] ) {
+		yourls_set_user( $_REQUEST['username'] );
+		return true;
+	}
+	return false;
 }
 
-// Display the login screen. Nothing past this point.
-function yourls_login_screen( $error_msg = '' ) {
-	yourls_html_head( 'login' );
-	
-	$action = ( isset($_GET['mode']) && $_GET['mode'] == 'logout' ? '?' : '' );
-?>
-	<h1>
-		<a href="<?php echo YOURLS_SITE; ?>/admin/index.php" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
-	</h1>
+// Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
+function yourls_check_auth_cookie() {
+	global $yourls_user_passwords;
+	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
+		if( 
+			yourls_salt($valid_user) == $_COOKIE['yourls_username']
+			&& yourls_salt($valid_password) == $_COOKIE['yourls_password'] 
+		) {
+			yourls_set_user( $valid_user );
+			return true;
+		}
+	}
+	return false;
+}
 
-	<div id="login">
-		<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
-			<?php
-				if(!empty($error_msg)) {
-					echo '<p class="error">'.$error_msg.'</p>';
-				}
-			?>
-			<p>
-				<label for="username">Username</label><br />
-				<input type="text" id="username" name="username" size="30" class="text" />
-			</p>
-			<p>
-				<label for="password">Password</label><br />
-				<input type="password" id="password" name="password" size="30" class="text" />
-			</p>
-			<p style="text-align: right;">
-				<input type="submit" id="submit" name="submit" value="Login" class="button" />
-			</p>
-		</form>
-		<script type="text/javascript">$('#username').focus();</script>
-	</div>
-	<?php
-	yourls_html_footer();
-	die();
+// Check auth against signature and timestamp. Sets user if applicable, returns bool
+function yourls_check_signature_timestamp() {
+	// Timestamp in PHP : time()
+	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
+	global $yourls_user_passwords;
+	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
+		if (
+			(
+				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) == $_REQUEST['signature']
+				or
+				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) == $_REQUEST['signature']
+			)
+			&&
+			yourls_check_timestamp( $_REQUEST['timestamp'] )
+			) {
+			yourls_set_user( $valid_user );
+			return true;
+		}
+	}
+	return false;
+}
+
+// Check auth against signature. Sets user if applicable, returns bool
+function yourls_check_signature() {
+	global $yourls_user_passwords;
+	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
+		if ( yourls_auth_signature( $valid_user ) == $_REQUEST['signature'] ) {
+			yourls_set_user( $valid_user );
+			return true;
+		}
+	}
+	return false;
+}
+
+// Generate secret signature hash
+function yourls_auth_signature( $username = false ) {
+	if( !$username && defined('YOURLS_USER') ) {
+		$username = YOURLS_USER;
+	}
+	return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
+}
+
+// Check a timestamp is from the past and not too old
+function yourls_check_timestamp( $time ) {
+	$now = time();
+	return ( $now >= $time && ceil( $now - $time ) < YOURLS_NONCE_LIFE );
+}
+
+// Store new cookie. No $user will delete the cookie.
+function yourls_store_cookie( $user = null ) {
+	if( !$user ) {
+		$pass = null;
+		$time = time() - 3600;
+	} else {
+		global $yourls_user_passwords;
+		if( isset($yourls_user_passwords[$user]) ) {
+			$pass = $yourls_user_passwords[$user];
+		} else {
+			die('Stealing cookies?'); // This should never happen
+		}
+		$time = time() + YOURLS_COOKIE_LIFE;
+	}  
+	setcookie('yourls_username', yourls_salt( $user ), $time, '/' );
+	setcookie('yourls_password', yourls_salt( $pass ), $time, '/' );
+}
+
+// Set user name
+function yourls_set_user( $user ) {
+	if( !defined('YOURLS_USER') )
+		define('YOURLS_USER', $user);
 }

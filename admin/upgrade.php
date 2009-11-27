@@ -7,17 +7,10 @@ require_once( dirname(dirname(__FILE__)).'/includes/functions-install.php' );
 yourls_maybe_require_auth();
 
 yourls_html_head( 'tools' );
+yourls_html_logo();
+yourls_html_menu();
 ?>
-	<h1>
-		<a href="<?php echo YOURLS_SITE; ?>/admin/index.php" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
-	</h1>
-	<?php if ( yourls_is_private() ) { ?>
-	<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a></p>
-	<?php } ?>
-	
 		<h2>Upgrade YOURLS</h2>
-
 <?php
 
 // Check if upgrade is needed
@@ -35,8 +28,8 @@ if ( !yourls_upgrade_is_needed() ) {
 	
 	// From what are we upgrading?
 	if ( isset( $_GET['oldver'] ) && isset( $_GET['oldsql'] ) ) {
-		$oldver = intval( $_GET['oldver'] );
-		$oldsql = intval( $_GET['oldsql'] );
+		$oldver = yourls_sanitize_version( $_GET['oldver'] );
+		$oldsql = yourls_sanitize_version( $_GET['oldsql'] );
 	} else {
 		list( $oldver, $oldsql ) = yourls_get_current_version_from_sql();
 	}

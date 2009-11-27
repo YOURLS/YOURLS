@@ -2,7 +2,7 @@ body {
 	font-family: Verdana, Arial;
 	font-size: 12px;
 	color: #595441;
-	background:#F3FAFD;
+	background:#E3F3FF;
 	text-align:center;
 	margin-top:0px;
 	padding-top:10px;
@@ -31,11 +31,36 @@ a, a:link, a:active, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-h1 {height:50px;margin:0;}
-h1 a {float:right;text-align:right;}
+h1 {height:50px;margin:0;float:right;width:500px;}
+h1 a {text-align:right;font-size:20px;float:right;}
 h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2A85B3}
 h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#8dbdd8}
+
+ul#admin_menu {
+	height:100px;
+	list-style-type:none;
+	padding:0;
+	font-size:105%;
+}
+ul#admin_menu li {
+	color:#aaa;
+	padding:1px 0;
+}
+ul#admin_menu li:hover {
+	list-style-type:square;
+	color:#000;
+}
+
+code {
+	background:#eaeaef;
+	padding:0 2px;
+}
+tt {
+	background:#ffc;
+	padding:0 2px;		
+}
+
 input, textarea {
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
@@ -170,22 +195,23 @@ td.actions .button_stats:hover {
 #login ul.success li {
 	background:transparent url(../images/accept.png) top left no-repeat;
 }
-#tools_desc {
+.sub_wrap {
 	width:550px;
-	padding-bottom:10px;
+	padding-bottom:30px;
+	text-align:justify;
 }
-#tools_desc span {
+.sub_wrap span {
 	background:#ffa;
 	padding:0 2px;
 }
-#tools_desc .bookmarklet {
+.sub_wrap .bookmarklet {
 	border:2px solid #2A85B3;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.gif) 2px center no-repeat;
 }
-#tools_desc .bookmarklet:hover {
+.sub_wrap .bookmarklet:hover {
 	text-decoration:none;
 }
 #footer {

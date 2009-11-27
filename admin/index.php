@@ -153,18 +153,10 @@ if ( isset( $_GET['u'] ) ) {
 // Begin output of the page
 $context = ( $is_bookmark ? 'bookmark' : 'index' );
 yourls_html_head( $context );
+yourls_html_logo();
+yourls_html_menu() ;
 ?>
-	<h1>
-		<a href="<?php echo $base_page; ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
-	</h1>
-	<p>
-	<?php if ( yourls_is_private() ) { ?>
-		Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>. <a href="?mode=logout" title="Logout">Logout</a>.
-	<?php } ?>
-	Check the <a href="tools.php">Tools</a>.</p>
-	<?php if ( !$is_bookmark ) {
-	?>
+	<?php if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_display; ?></p>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs<?php if( $total_items_clicks !== false ) echo ", counting <strong>$total_items_clicks</strong> " . yourls_plural('click', $total_items_clicks) ?>.</p>
 	<?php } ?>
