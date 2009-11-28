@@ -20,6 +20,8 @@ function yourls_upgrade_to_141( $step ) {
 		setcookie('yourls_password', null, time() - 3600 );
 		// alter table URL
 		yourls_alter_url_table_to_141();
+		// recreate the htaccess file if needed
+		yourls_create_htaccess();
 		yourls_redirect_javascript( YOURLS_SITE."/admin/upgrade.php?step=3&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210" );
 		break;
 		
