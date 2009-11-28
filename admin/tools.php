@@ -9,7 +9,8 @@ yourls_html_menu();
 ?>
 
 	<div class="sub_wrap">
-	<h2>Bookmarklet</h2>
+	
+	<h2>Bookmarklets</h2>
 		
 		<p>YOURLS comes with two handy <span>bookmarklets</span> for easier link shortening.</p>
 		<ul>
@@ -23,31 +24,40 @@ yourls_html_menu();
 		
 		<p>If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link</p>
 		
-		<h3>Simple bookmarklet</h3>
+		<ul>
+			<li><h3>Simple bookmarklet</h3>
+			Click and drag the link to your toolbar: <a href="javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo YOURLS_SITE; ?>/admin/index.php',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);" class="bookmarklet" onclick="alert('Drag to your toolbar!');return false;">Shorten</a>
+			</li>
 		
-		<p>Click and drag the link to your toolbar: <a href="javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo YOURLS_SITE; ?>/admin/index.php',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);" class="bookmarklet" onclick="alert('Drag to your toolbar!');return false;">Shorten</a> </p>
+			<li><h3>Advanced bookmarklet (custom keyword)</h3>
+			Click and drag the link to your toolbar: <a href="javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='<?php echo YOURLS_SITE; ?>/admin/index.php',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+''+s2+k2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)" class="bookmarklet" onclick="alert('Drag to your toolbar!');return false;">Custom shorten</a>
+			</li>
+		</ul>
 		
-		<h3>Advanced bookmarklet (custom keyword)</h3>
-		
-		<p>Click and drag the link to your toolbar: <a href="javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='<?php echo YOURLS_SITE; ?>/admin/index.php',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+''+s2+k2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)" class="bookmarklet" onclick="alert('Drag to your toolbar!');return false;">Custom shorten</a> </p>
 	</div>
 	
 	<?php if( yourls_is_private() ) { ?>
 
 	<div class="sub_wrap">
+
 	<h2>Secure passwordless API call</h2>
+	
 		<p>YOURLS allows API calls the old fashioned way, using <tt>username</tt> and <tt>password</tt>
 		parameters. If you're worried about sending your credentials into the wild, you can also make API
 		calls without using your login or your password, using a secret signature token.</p>
-		<p>This signature token can only be used with the API, not with the admin interface.</p>
-		<p>Your secret signature token: <strong><?php echo yourls_auth_signature(); ?></strong>
+
+		<p>Your secret signature token: <strong><code><?php echo yourls_auth_signature(); ?></code></strong>
 		(It's a secret. Keep it secret)</p>
+
+		<p>This signature token can only be used with the API, not with the admin interface.</p>
 		
-		<h3>Usage of the signature token</h3>
-		<p>Simply use parameter <tt>signature</tt> in your API requests. Example:</p>
-		<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
+		<ul>
+			<li><h3>Usage of the signature token</h3>
+			<p>Simply use parameter <tt>signature</tt> in your API requests. Example:</p>
+			<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
+			</li>
 		
-		<h3>Usage of a time limited signature token</h3>
+			<li><h3>Usage of a time limited signature token</h3>
 <pre><code>&lt;?php
 $timestamp = time();
 <tt>// actual value: $time = <?php $time = time(); echo $time; ?></tt>
@@ -56,14 +66,17 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 ?> 
 </code></pre>
 		<p>Now use parameters <tt>signature</tt> and <tt>timestamp</tt> in your API requests. Example:</p>
-		<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</code></p>
+		<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
+		<p>Actual values:<br/>
+		<tt><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
 		<p>This URL would be valid for only <?php echo YOURLS_NONCE_LIFE; ?> seconds</p>
-		
+		</li>
+	</ul>
 	
-		<p>(See the <a href="http://yourls.org/#API">API documentation</a> for more)</p>
+	<p>(See the <a href="<?php echo YOURLS_SITE; ?>/readme.html#API">API documentation</a> for more)</p>
 
 	</div>
 
-	<?php } ?>
+	<?php } // end is private ?>
 
 <?php yourls_html_footer(); ?>

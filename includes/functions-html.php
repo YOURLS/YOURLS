@@ -284,9 +284,9 @@ function yourls_html_menu() {
 	<?php if ( yourls_is_private() ) { ?>
 		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?mode=logout" title="Logout">Logout</a>)</li>
 	<?php } ?>
-		<li>Go to the <a href="index.php">Admin Interface</a></li>
-		<li>Check the <a href="tools.php">Tools</a></li>
-		<li>Read the <a href="http://yourls.org/">Help</a></li>
+		<li>Go to the <a href="<?php echo YOURLS_SITE; ?>/admin/index.php">Admin Interface</a></li>
+		<li>Check the <a href="<?php echo YOURLS_SITE; ?>/admin/tools.php">Tools</a></li>
+		<li>Read the <a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
 	</ul>
 	<?php
 }
