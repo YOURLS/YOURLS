@@ -9,9 +9,6 @@ $warning = array();
 $success = array();
 
 // Check pre-requisites
-if ( !yourls_check_mod_rewrite() )
-	$warning[] = 'Apache module <tt>mod_rewrite</tt> not found. Check this with your server admin.';
-
 if ( !yourls_check_database_version() )
 	$error[] = 'MySQL version is too old. Ask your server admin for an upgrade.';
 
