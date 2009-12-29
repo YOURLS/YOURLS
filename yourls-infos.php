@@ -168,7 +168,7 @@ yourls_html_head( 'infos' );
 <p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>.</p>
 <?php } ?>
 
-<h2 id="informations">Informations</h2>
+<h2 id="informations">Information</h2>
 
 <h3>Short URL: <img src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/>
 <?php if( $aggregate ) {
