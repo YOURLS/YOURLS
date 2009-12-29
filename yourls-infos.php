@@ -176,17 +176,17 @@ yourls_html_head( 'infos' );
 	foreach( $keyword_list as $k ) {
 		$i++;
 		if ( $i == 1 ) {
-			yourls_html_link( YOURLS_SITE."/$k" );
+			yourls_html_link( yourls_link($k) );
 		} else {
-			yourls_html_link( YOURLS_SITE."/$k", "/$k" );
+			yourls_html_link( yourls_link($k), "/$k" );
 		}
 		if ( $i < count( $keyword_list ) )
 			echo ' + ';
 	}
 } else {
-	yourls_html_link( YOURLS_SITE."/$keyword" );
+	yourls_html_link( yourls_link($keyword) );
 	if( count( $keyword_list ) > 1 )
-		echo ' <a href="'. YOURLS_SITE .'/'.$keyword.'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
+		echo ' <a href="'. yourls_link($keyword).'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
 } ?></h3>
 <h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/> <?php yourls_html_link( $longurl, '', 'longurl' ); ?></h3>
 
@@ -522,7 +522,7 @@ yourls_html_head( 'infos' );
 	<div id="stat_tab_share" class="tab">
 		<h2>Share</h2>
 		
-		<?php yourls_share_box( $longurl, YOURLS_SITE.'/'.$keyword, '', '', '<h3>Short link</h3>', '<h3>Quick Share</h3>'); ?>
+		<?php yourls_share_box( $longurl, yourls_link($keyword), '', '', '<h3>Short link</h3>', '<h3>Quick Share</h3>'); ?>
 
 	</div>
 	

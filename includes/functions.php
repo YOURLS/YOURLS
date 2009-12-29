@@ -32,6 +32,11 @@ function yourls_sanitize_string($in) {
 	return substr(preg_replace('/[^a-zA-Z0-9]/', '', $in), 0, 199);
 }
 
+// Alias function. I was always getting it wrong.
+function yourls_sanitize_keyword( $keyword ) {
+	return yourls_sanitize_string( $keyword );
+}
+
 // A few sanity checks on the URL
 function yourls_sanitize_url($url) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
@@ -1218,4 +1223,9 @@ function yourls_has_interface() {
 	if( yourls_is_API() or yourls_is_GO() or yourls_is_Ajax() )
 		return false;
 	return true;
+}
+
+// Converts keyword into short link
+function yourls_link( $keyword = '' ) {
+	return YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
 }
