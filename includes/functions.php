@@ -649,10 +649,6 @@ function yourls_get_user_agent() {
 
 // Redirect to another page
 function yourls_redirect( $location, $code = 301 ) {
-	// Anti fool check: cannot redirect to the URL we currently are on
-	if( preg_replace('!^[^:]+://!', '', $location) == $_SERVER["SERVER_NAME"].$_SERVER['REQUEST_URI'] )
-		return false;
-	
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
@@ -1197,6 +1193,11 @@ function yourls_sanitize_version( $ver ) {
 	return preg_replace( '/[^0-9a-zA-Z-.]/', '', $ver );
 }
 
+// Converts keyword into short link
+function yourls_link( $keyword = '' ) {
+	return YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
+}
+
 // Check if we're in API mode. Returns bool
 function yourls_is_API() {
 	if ( defined('YOURLS_API') && YOURLS_API == true )
@@ -1225,7 +1226,37 @@ function yourls_has_interface() {
 	return true;
 }
 
-// Converts keyword into short link
-function yourls_link( $keyword = '' ) {
-	return YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
+// Check if we're in the admin area. Returns bool
+function yourls_is_admin() {
+	if ( defined('YOURLS_ADMIN') && YOURLS_ADMIN == true )
+		return true;
+	return false;
+}
+
+// Check if SSL is required. Returns bool.
+function yourls_needs_ssl() {
+	if ( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
+		return true;
+	return false;
+}
+
+// Return admin link, with SSL preference if applicable.
+function yourls_admin_url( $page = '' ) {
+	$admin = YOURLS_SITE . '/admin/' . $page;
+	if( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
+		$admin = str_replace('http://', 'https://', $admin);
+	return $admin;
+}
+
+// Check if SSL is used, returns bool. Stolen from WP.
+function yourls_is_ssl() {
+	if ( isset($_SERVER['HTTPS']) ) {
+		if ( 'on' == strtolower($_SERVER['HTTPS']) )
+			return true;
+		if ( '1' == $_SERVER['HTTPS'] )
+			return true;
+	} elseif ( isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
+		return true;
+	}
+	return false;
 }

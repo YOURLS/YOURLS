@@ -1,5 +1,5 @@
 <?php
-// Require Files
+define( 'YOURLS_ADMIN', true );
 define( 'YOURLS_NO_UPGRADE_CHECK', true ); // Bypass version checking to prevent loop
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-upgrade.php' );
@@ -15,7 +15,7 @@ yourls_html_menu();
 
 // Check if upgrade is needed
 if ( !yourls_upgrade_is_needed() ) {
-	echo '<p>Upgrade not required. Go <a href="'.YOURLS_SITE.'/admin/index.php">back to play</a>!</p>';
+	echo '<p>Upgrade not required. Go <a href="'.yourls_admin_url('index.php').'">back to play</a>!</p>';
 
 
 } else {
@@ -73,7 +73,7 @@ if ( !yourls_upgrade_is_needed() ) {
 			
 		case 3:
 			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
-			$admin = YOURLS_SITE.'/admin/index.php';
+			$admin = yourls_admin_url('index.php');
 			echo "
 			<p>Your installation is now up to date !</p>
 			<p>Go back to <a href='$admin'>the admin interface</a></p>

@@ -4,7 +4,7 @@
 function yourls_html_logo() {
 	?>
 	<h1>
-		<a href="<?php echo YOURLS_SITE; ?>/admin/index.php" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<a href="<?php echo yourls_admin_url('index.php') ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
@@ -284,8 +284,8 @@ function yourls_html_menu() {
 	<?php if ( yourls_is_private() ) { ?>
 		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?mode=logout" title="Logout">Logout</a>)</li>
 	<?php } ?>
-		<li>Go to the <a href="<?php echo YOURLS_SITE; ?>/admin/index.php">Admin Interface</a></li>
-		<li>Check the <a href="<?php echo YOURLS_SITE; ?>/admin/tools.php">Tools</a></li>
+		<li>Go to the <a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
+		<li>Check the <a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
 		<li>Read the <a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
 	</ul>
 	<?php

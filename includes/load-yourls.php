@@ -43,9 +43,22 @@ if( !defined('YOURLS_NONCE_LIFE') )
 	define( 'YOURLS_NONCE_LIFE', 3600 ); // life span of a nonce in seconds
 if( !defined('YOURLS_NOSTATS') )
 	define( 'YOURLS_NOSTATS', false ); // if set to true, disable stat logging (no use for it, too busy servers, ...)
+if( !defined('YOURLS_ADMIN_SSL') )
+	define( 'YOURLS_ADMIN_SSL', false ); // if set to true, force https:// in the admin area
 if( !defined('YOURLS_DEBUG') )
 	define( 'YOURLS_DEBUG', false ); // if set to true, verbose debug infos. Will break things. Don't enable.
 
+
+// If request for an admin page is http:// and SSL is required, redirect
+if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
+	if ( 0 === strpos($_SERVER['REQUEST_URI'], 'http') ) {
+		yourls_redirect( preg_replace('|^http://|', 'https://', $_SERVER['REQUEST_URI']) );
+		exit();
+	} else {
+		yourls_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		exit();
+	}
+}
 
 // Create the YOURLS object $ydb that will contain everything we globally need
 if ( function_exists( 'yourls_db_connect' ) ) {

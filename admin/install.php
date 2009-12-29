@@ -1,6 +1,6 @@
 <?php
-// Require Files
 define( 'YOURLS_INSTALLING', true );
+define( 'YOURLS_ADMIN', true );
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 require_once( dirname(dirname(__FILE__)).'/includes/functions-install.php' );
 
@@ -66,7 +66,7 @@ yourls_html_head( 'install' );
 				echo '<p>&nbsp;</p><p style="text-align: center;"><input type="submit" name="install" value="Install YOURLS" class="button" /></p>';
 			} else {
 				if( count($error) == 0 )
-					echo '<p>&nbsp;</p><p style="text-align: center;">&raquo; <a href="'.YOURLS_SITE.'/admin/" title="YOURS Administration Page">YOURS Administration Page</a></p>';
+					echo '<p>&nbsp;</p><p style="text-align: center;">&raquo; <a href="'.yourls_admin_url().'" title="YOURS Administration Page">YOURS Administration Page</a></p>';
 			}
 		?>
 	</form>

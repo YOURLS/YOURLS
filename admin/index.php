@@ -1,5 +1,5 @@
 <?php
-// Require Files
+define( 'YOURLS_ADMIN', true );
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
@@ -24,7 +24,7 @@ if ( $link_limit !== '' ) {
 } else {
 	$link_filter = '';
 }
-$base_page = YOURLS_SITE . '/admin/index.php';
+$base_page = yourls_admin_url( 'index.php' );
 
 // Searching
 if(!empty($search) && !empty($_GET['s_in'])) {
