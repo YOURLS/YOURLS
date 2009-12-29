@@ -14,6 +14,7 @@ function yourls_html_logo() {
 function yourls_html_head( $context = 'index' ) {
 	// All components to false, except when specified true
 	$share = $insert = $tablesorter = $tabs = false;
+	
 	// Load components as needed
 	switch ( $context ) {
 		case 'infos':
@@ -34,6 +35,14 @@ function yourls_html_head( $context = 'index' ) {
 		case 'tools':
 		case 'upgrade':
 			break;
+	}
+	
+	// Force no cache for all admin pages
+	if( yourls_is_admin() && !headers_sent() ) {
+		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
+		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+		header( 'Pragma: no-cache' );
 	}
 	
 	?>
