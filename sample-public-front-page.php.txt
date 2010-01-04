@@ -35,7 +35,7 @@ if ( isset($_REQUEST['url']) ) {
 RESULT;
 
 /*
-If you want to add the Quick Share box like on the private bookmarklet, simply use this PHP function:
+If you want to add the Quick Share box like on the private bookmarklet, simply use this PHP function before the above RESULT; marker:
 <?php yourls_share_box( $url, $shorturl ); ?>
 For all the special stuff to work you need to include js/share.js in the <head> of your page
 */
