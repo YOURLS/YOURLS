@@ -89,7 +89,7 @@ function yourls_sanitize_int($in) {
 // Note: this is not checking for integers, since integers on 32bits system are way too limited
 // TODO: find a way to validate as integer
 function yourls_intval($in) {
-	return mysql_real_escape_string($in);
+	return yourls_escape($in);
 }
 
 // Escape a string
@@ -101,6 +101,7 @@ function yourls_escape( $in ) {
 // Returns bool
 function yourls_keyword_is_reserved( $keyword ) {
 	global $yourls_reserved_URL;
+	$keyword = yourls_sanitize_keyword( $keyword );
 	
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists(dirname(dirname(__FILE__))."/pages/$keyword.php")
@@ -218,13 +219,19 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		$return['errorCode'] = '400';
 		return $return;
 	}
-
+	
 	// Prevent DB flood
 	$ip = yourls_get_IP();
 	yourls_check_IP_flood( $ip );
 
+	// TODO? Prevent internal redirection loops: cannot shorten a shortened URL
+	// Could ban site.com/abc if 'abc' is already a taken keyword
+	// and site.com/abc-def
+	// Could allow site.com/abc+
+	// and site.com/abc+all
+
+	$url = yourls_escape( yourls_sanitize_url($url) );
 	$table = YOURLS_DB_TABLE_URL;
-	$url = mysql_real_escape_string( yourls_sanitize_url($url) );
 	$strip_url = stripslashes($url);
 	$url_exists = $ydb->get_row("SELECT keyword,url FROM `$table` WHERE `url` = '".$strip_url."';");
 	$return = array();
@@ -234,7 +241,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 
 		// Custom keyword provided
 		if ( $keyword ) {
-			$keyword = mysql_real_escape_string(yourls_sanitize_string($keyword));
+			$keyword = yourls_escape( yourls_sanitize_string($keyword) );
 			if ( !yourls_keyword_is_free($keyword) ) {
 				// This shorturl either reserved or taken already
 				$return['status'] = 'fail';
@@ -294,7 +301,7 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$url = mysql_real_escape_string(yourls_sanitize_url($url));
+	$url = yourls_escape(yourls_sanitize_url($url));
 	$keyword = yourls_sanitize_string( $keyword );
 	$newkeyword = yourls_sanitize_string( $newkeyword );
 	$strip_url = stripslashes($url);
@@ -338,12 +345,18 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 }
 
 
-// Check if keyword id is free (ie not already taken, and not reserved)
+// Check if keyword id is free (ie not already taken, and not reserved). Return bool.
 function yourls_keyword_is_free( $keyword ) {
-	global $ydb;
-	
-	if ( yourls_keyword_is_reserved($keyword) )
+	if ( yourls_keyword_is_reserved( $keyword ) or yourls_keyword_is_taken( $keyword ) )
 		return false;
+		
+	return true;
+}
+
+// Check if a keyword is taken (ie there is already a short URL with this id). Return bool.		
+function yourls_keyword_is_taken( $keyword ) {
+	global $ydb;
+	$keyword = yourls_sanitize_keyword( $keyword );
 		
 	$table = YOURLS_DB_TABLE_URL;
 	$already_exists = $ydb->get_var("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';");
@@ -1048,7 +1061,7 @@ function yourls_get_duplicate_keywords( $longurl ) {
 		return NULL;
 	
 	global $ydb;
-	$longurl = mysql_real_escape_string( yourls_sanitize_url($longurl) );
+	$longurl = yourls_escape( yourls_sanitize_url($longurl) );
 	$table = YOURLS_DB_TABLE_URL;
 	
 	return $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
