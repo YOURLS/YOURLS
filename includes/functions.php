@@ -361,9 +361,9 @@ function yourls_keyword_is_taken( $keyword ) {
 	$table = YOURLS_DB_TABLE_URL;
 	$already_exists = $ydb->get_var("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';");
 	if ( $already_exists )
-		return false;
+		return true;
 
-	return true;
+	return false;
 }
 
 
