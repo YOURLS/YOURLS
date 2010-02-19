@@ -158,15 +158,9 @@ if( yourls_do_log_redirect() ) {
 }
 
 yourls_html_head( 'infos' );
+yourls_html_logo();
+yourls_html_menu();
 ?>
-
-<h1>
-	<a href="<?php echo yourls_admin_url( 'index.php' ); ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-	<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" style="border: 0px;" /></a>
-</h1>
-<?php if ( yourls_is_private() ) { ?>
-<p>Your are logged in as: <strong><?php echo YOURLS_USER; ?></strong>.</p>
-<?php } ?>
 
 <h2 id="informations">Information</h2>
 
