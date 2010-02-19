@@ -223,7 +223,6 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
 			</p>
-			</div>
 		</div>
 	
 	</div>
