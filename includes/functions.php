@@ -554,21 +554,17 @@ function yourls_get_link_stats( $shorturl ) {
 	global $ydb;
 
 	$table_url = YOURLS_DB_TABLE_URL;
-	$res = $ydb->get_results("SELECT * FROM `$table_url` WHERE keyword = '$shorturl';");
+	$res = $ydb->get_row("SELECT * FROM `$table_url` WHERE keyword = '$shorturl';");
 
-    $res = $res[0];
-    
 	$return = array();
 
-    $return['links']['link_1'] = array(
+    $return['link'] = array(
         'shorturl' => YOURLS_SITE .'/'. $res->keyword,
         'url' => $res->url,
         'timestamp' => $res->timestamp,
         'ip' => $res->ip,
         'clicks' => $res->clicks,
     );
-
-//	$return['stats'] = yourls_get_db_stats();
 
 	$return['statusCode'] = 200;
 
@@ -585,7 +581,10 @@ function yourls_api_stats( $filter = 'top', $limit = 10 ) {
 
 // Return array for API stat requests
 function yourls_api_url_stats($shorturl) {
-	$return = yourls_get_link_stats( $shorturl );
+	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
+	$keyword = yourls_sanitize_string( $keyword );
+
+	$return = yourls_get_link_stats( $keyword );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
 	return $return;
