@@ -499,7 +499,7 @@ function yourls_update_clicks( $keyword ) {
 }
 
 // Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
-function yourls_get_links_stats( $filter = 'top', $limit = 10 ) {
+function yourls_get_stats( $filter = 'top', $limit = 10 ) {
 	global $ydb;
 
 	switch( $filter ) {
@@ -549,10 +549,43 @@ function yourls_get_links_stats( $filter = 'top', $limit = 10 ) {
 	return $return;
 }
 
+// Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
+function yourls_get_link_stats( $shorturl ) {
+	global $ydb;
+
+	$table_url = YOURLS_DB_TABLE_URL;
+	$res = $ydb->get_results("SELECT * FROM `$table_url` WHERE keyword = '$shorturl';");
+
+    $res = $res[0];
+    
+	$return = array();
+
+    $return['links']['link_1'] = array(
+        'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+        'url' => $res->url,
+        'timestamp' => $res->timestamp,
+        'ip' => $res->ip,
+        'clicks' => $res->clicks,
+    );
+
+//	$return['stats'] = yourls_get_db_stats();
+
+	$return['statusCode'] = 200;
+
+	return $return;
+}
 
 // Return array for API stat requests
 function yourls_api_stats( $filter = 'top', $limit = 10 ) {
-	$return = yourls_get_links_stats( $filter, $limit );
+	$return = yourls_get_stats( $filter, $limit );
+	$return['simple']  = 'Need either XML or JSON format for stats';
+	$return['message'] = 'success';
+	return $return;
+}
+
+// Return array for API stat requests
+function yourls_api_url_stats($shorturl) {
+	$return = yourls_get_link_stats( $shorturl );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
 	return $return;

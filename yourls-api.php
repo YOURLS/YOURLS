@@ -21,6 +21,11 @@ switch( $action ) {
 		$return = yourls_api_stats( $filter, $limit );
 		break;
 		
+	case 'url-stats':
+		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
+		$return = yourls_api_url_stats( $shorturl );
+		break;
+
 	case 'expand':
 		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
 		$return = yourls_api_expand( $shorturl );
