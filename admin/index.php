@@ -24,10 +24,12 @@ if ( $link_limit !== '' ) {
 } else {
 	$link_filter = '';
 }
+$date_filter = 'before';
+$date_first = $date_second = '';
 $base_page = yourls_admin_url( 'index.php' );
 
 // Searching
-if(!empty($search) && !empty($_GET['s_in'])) {
+if( !empty($search) && !empty($_GET['s_in']) ) {
 	switch($_GET['s_in']) {
 		case 'keyword':
 			$search_in_text = 'Short URL';
@@ -46,11 +48,43 @@ if(!empty($search) && !empty($_GET['s_in'])) {
 	$search_display = "Searching for <strong>$search_text</strong> in <strong>$search_in_text</strong>. ";
 	$search_url = "&amp;s_search=$search_text &amp;s_in=$search_in_sql";
 	$search = str_replace('*', '%', '*'.$search.'*');
-	$where .= " AND $search_in_sql LIKE ('$search')";
+	$where .= " AND `$search_in_sql` LIKE ('$search')";
+}
+
+// Time span
+if( !empty($_GET['date_filter']) ) {
+	switch($_GET['date_filter']) {
+		case 'before':
+			$date_filter = 'before';
+			if( yourls_sanitize_date( $_GET['date_first'] ) ) {
+				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
+				$where .= " AND `timestamp` < '$date_first_sql'";
+				$date_first = $_GET['date_first'];
+			}
+			break;
+		case 'after':
+			$date_filter = 'after';
+			if( yourls_sanitize_date( $_GET['date_first'] ) ) {
+				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
+				$where .= " AND `timestamp` > '$date_first_sql'";
+				$date_first = $_GET['date_first'];
+			}
+			break;
+		case 'between':
+			$date_filter = 'between';
+			if( yourls_sanitize_date( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_second'] ) ) {
+				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
+				$date_second_sql = yourls_sanitize_date_for_sql( $_GET['date_second'] );
+				$where .= " AND `timestamp` BETWEEN '$date_first_sql' AND '$date_second_sql'";
+				$date_first = $_GET['date_first'];
+				$date_second = $_GET['date_second'];
+			}
+			break;
+	}
 }
 
 // Sorting
-if(!empty($_GET['s_by']) || !empty($_GET['s_order'])) {
+if( !empty($_GET['s_by']) || !empty($_GET['s_order']) ) {
 	switch($_GET['s_by']) {
 		case 'keyword':
 			$sort_by_text = 'Short URL';
@@ -110,7 +144,7 @@ if ( isset( $_GET['u'] ) ) {
 	}
 	
 	$s_url = stripslashes( $url );
-	$where = " AND url LIKE '$s_url' ";
+	$where = " AND `url` LIKE '$s_url' ";
 	
 	$page = $total_pages = $perpage = 1;
 	$offset = 0;
@@ -195,6 +229,9 @@ yourls_html_menu() ;
 				'total_pages'    => $total_pages,
 				'base_page'      => $base_page,
 				'search_url'     => $search_url,
+				'date_filter'	 => $date_filter,
+				'date_first'	 => $date_first,
+				'date_second'	 => $date_second,
 			);
 			yourls_html_tfooter( $params );
 		}
@@ -203,7 +240,7 @@ yourls_html_menu() ;
 		<tbody>
 			<?php
 			// Main Query
-			$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY $sort_by_sql $sort_order_sql LIMIT $offset, $perpage;");
+			$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
 			if( $url_results ) {
 				foreach( $url_results as $url_result ) {
 					$keyword = yourls_sanitize_string($url_result->keyword);

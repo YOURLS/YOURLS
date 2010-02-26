@@ -138,6 +138,21 @@ function yourls_sanitize_ip( $ip ) {
 	return preg_replace( '/[^0-9a-fA-F:., ]/', '', $ip );
 }
 
+// Make sure a date is m(m)/d(d)/yyyy, return false otherwise
+function yourls_sanitize_date( $date ) {
+	if( !preg_match( '!^\d{1,2}/\d{1,2}/\d{4}$!' , $date ) ) {
+		return false;
+	}
+	return $date;
+}
+
+// Sanitize a date for SQL search. Return false if malformed input.
+function yourls_sanitize_date_for_sql( $date ) {
+	if( !yourls_sanitize_date( $date ) )
+		return false;
+	return date('Y-m-d', strtotime( $date ) );
+}
+
 // Add the "Edit" row
 function yourls_table_edit_row( $keyword ) {
 	global $ydb;

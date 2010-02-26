@@ -13,7 +13,7 @@ function yourls_html_logo() {
 // Display HTML head and <body> tag
 function yourls_html_head( $context = 'index' ) {
 	// All components to false, except when specified true
-	$share = $insert = $tablesorter = $tabs = false;
+	$share = $insert = $tablesorter = $tabs = $cal = false;
 	
 	// Load components as needed
 	switch ( $context ) {
@@ -26,7 +26,7 @@ function yourls_html_head( $context = 'index' ) {
 			break;
 			
 		case 'index':
-			$insert = $tablesorter = true;
+			$insert = $tablesorter = $cal = true;
 			break;
 		
 		case 'install':
@@ -72,6 +72,10 @@ function yourls_html_head( $context = 'index' ) {
 	<?php if ($share) { ?>
 		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 		<script src="<?php echo YOURLS_SITE; ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<?php } ?>
+	<?php if ($cal) { ?>
+		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 </head>
 <body class="<?php echo $context; ?>">
@@ -122,12 +126,6 @@ function yourls_html_tfooter( $params = array() ) {
 			<th colspan="4" style="text-align: left;">
 				<form action="" method="get">
 					<div>
-						<div style="float:right;">
-							<input type="submit" id="submit-sort" value="Filter" class="button primary" />
-							&nbsp;
-							<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'index.php'" />
-						</div>
-
 						Search&nbsp;for&nbsp;
 						<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
 						&nbsp;in&nbsp;
@@ -157,7 +155,23 @@ function yourls_html_tfooter( $params = array() ) {
 							<option value="less"<?php if($link_filter === 'less') { echo ' selected="selected"'; } ?>>less</option>
 						</select>
 						than
-						<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" />clicks
+						<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" />clicks<br/>
+						
+						Show links created
+						<select name="date_filter" id="date_filter" size="1">
+							<option value="before"<?php if($date_filter === 'before') { echo ' selected="selected"'; } ?>>before</option>
+							<option value="after"<?php if($date_filter === 'after') { echo ' selected="selected"'; } ?>>after</option>
+							<option value="between"<?php if($date_filter === 'between') { echo ' selected="selected"'; } ?>> between</option>
+						</select>
+						<input type="text" name="date_first" id="date_first" class="text" size="12" value="<?php echo $date_first; ?>" />
+						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> and </span>
+						<input type="text" name="date_second" id="date_second" class="text" size="12" value="<?php echo $date_second; ?>" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>/>
+						
+						<div style="float:right;">
+							<input type="submit" id="submit-sort" value="Filter" class="button primary" />
+							&nbsp;
+							<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'index.php'" />
+						</div>
 
 						
 					</div>
