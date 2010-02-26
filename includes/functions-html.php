@@ -132,13 +132,13 @@ function yourls_html_tfooter( $params = array() ) {
 						<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
 						&nbsp;in&nbsp;
 						<select name="s_in" size="1">
-							<!-- <option value="id"<?php if($search_in_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option> -->
+							<option value="keyword"<?php if($search_in_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
 							<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
 							<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
 						</select>
 						&ndash;&nbsp;Order&nbsp;by&nbsp;
 						<select name="s_by" size="1">
-							<option value="id"<?php if($sort_by_sql == 'id') { echo ' selected="selected"'; } ?>>ID</option>
+							<option value="id"<?php if($sort_by_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
 							<option value="url"<?php if($sort_by_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
 							<option value="timestamp"<?php if($sort_by_sql == 'timestamp') { echo ' selected="selected"'; } ?>>Date</option>
 							<option value="ip"<?php if($sort_by_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
