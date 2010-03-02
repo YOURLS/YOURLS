@@ -37,6 +37,22 @@ function yourls_sanitize_keyword( $keyword ) {
 	return yourls_sanitize_string( $keyword );
 }
 
+// Is an URL a short URL?
+function yourls_is_shorturl( $shorturl ) {
+	// TODO: make sure this function evolves with the feature set.
+	// A short URL might be, in the future:
+	// - http://site.com/abc
+	// - http://site.com/abc-bleh
+	// Could allow site.com/abc+ and site.com/abc+all
+	
+	$keyword = preg_replace( '!^'.YOURLS_SITE.'/!', '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
+	if( $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // A few sanity checks on the URL
 function yourls_sanitize_url($url) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
@@ -234,14 +250,19 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 	// Prevent DB flood
 	$ip = yourls_get_IP();
 	yourls_check_IP_flood( $ip );
-
-	// TODO? Prevent internal redirection loops: cannot shorten a shortened URL
-	// Could ban site.com/abc if 'abc' is already a taken keyword
-	// and site.com/abc-def
-	// Could allow site.com/abc+
-	// and site.com/abc+all
-
+	
+	// Prevent internal redirection loops: cannot shorten a shortened URL
 	$url = yourls_escape( yourls_sanitize_url($url) );
+	if( preg_match( '!^'.YOURLS_SITE.'/!', $url ) ) {
+		if( yourls_is_shorturl( $url ) ) {
+			$return['status'] = 'fail';
+			$return['code'] = 'error:noloop';
+			$return['message'] = 'URL is a short URL';
+			$return['errorCode'] = '400';
+			return $return;
+		}
+	}
+
 	$table = YOURLS_DB_TABLE_URL;
 	$strip_url = stripslashes($url);
 	$url_exists = $ydb->get_row("SELECT keyword,url FROM `$table` WHERE `url` = '".$strip_url."';");

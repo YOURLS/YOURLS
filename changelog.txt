@@ -37,6 +37,8 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 1.4.1
 - fixed base 62 URLs (keywords with MiXeD CaSe)
 - new & secure auth method for API calls, with no need to use login & password combo
-- Allow SSL enforcement for admin pages
-- New API method: stats for individual URL.
+- allow SSL enforcement for admin pages
+- new API method: stats for individual URL.
+- prevent internal redirection loops
+- filter and search URLs & short URLs by date
 
