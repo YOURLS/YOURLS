@@ -46,7 +46,7 @@ function yourls_is_shorturl( $shorturl ) {
 	// Could allow site.com/abc+ and site.com/abc+all
 	
 	$keyword = preg_replace( '!^'.YOURLS_SITE.'/!', '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
-	if( $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
+	if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
 		return true;
 	} else {
 		return false;
