@@ -1268,7 +1268,7 @@ function yourls_is_Ajax() {
 	return false;
 }
 
-// Check if we're in GO mode. Returns bool
+// Check if we're in GO mode (redirection on yourls-go.php). Returns bool
 function yourls_is_GO() {
 	if ( defined('YOURLS_GO') && YOURLS_GO == true )
 		return true;
