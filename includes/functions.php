@@ -114,23 +114,19 @@ function yourls_keyword_is_reserved( $keyword ) {
 
 // Function: Get IP Address. Returns a DB safe string.
 function yourls_get_IP() {
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
-		$ip_address = $_SERVER['HTTP_CLIENT_IP'];
-	} else if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		$ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	} else if(!empty($_SERVER['REMOTE_ADDR'])) {
-		$ip_address = $_SERVER['REMOTE_ADDR'];
+	if( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
+		$ip = $_SERVER['REMOTE_ADDR'];
 	} else {
-		$ip_address = '';
+		if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} else if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else if(!empty($_SERVER['HTTP_VIA '])) {
+			$ip = $_SERVER['HTTP_VIA '];
+		}
 	}
-	if(strpos($ip_address, ',') !== false) {
-		$ip_address = explode(',', $ip_address);
-		$ip_address = $ip_address[0];
-	}
-	
-	$ip_address = yourls_sanitize_ip( $ip_address );
 
-	return $ip_address;
+	return yourls_sanitize_ip( $ip );
 }
 
 // Sanitize an IP address
