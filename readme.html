@@ -223,7 +223,7 @@
 				<li>Handy <tt>bookmarklet</tt> to easily shorten and share links</li>
 				<li>Awesome <tt>stats</tt>: historical click reports, referrers tracking, visitors geo-location</li>
 				<li>Neat <tt>AJAXed</tt> interface</li>
-				<li>Developer <tt>API</tt></li>
+				<li>Cool developer <tt>API</tt></li>
 				<li>Friendly <tt>installer</tt></li>
 			</ul>
 			
@@ -267,6 +267,13 @@
 				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
 			</ol>
 			
+			<h2>Upgrade from YOURLS 1.4</h2>
+			<ol>
+				<li>Unzip the YOURLS archive</li>
+				<li>Upload files to your server, overwriting your existing install</li>
+				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
+			</ol>
+			
 			<h2>Upgrade from YOURLS 1.3 or earlier</h2>
 			<ol>
 				<li>Make a copy of your <code>config.php</code></li>
@@ -277,7 +284,6 @@
 				<li><strong>Backup the database!</strong></li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code> and follow instructions</li>
 				<li>After upgrade is well and over, remove the define <code>YOURLS_DB_TABLE_NEXTDEC</code> from your config file</li>
-				<li>I promise that during next upgrade you won't need to touch your config file again :)</li>
 			</ol>
 			
 		</div>
@@ -313,7 +319,7 @@
 				Timezone GMT offset<br/>
 				<em>Example:</em> <tt>'-5'</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
-				Private means protected with login/pass as defined below. Set to false for public usage<br/>
+				Private means protected with login/pass as defined below. Set to false for public usage (on an intranet for instance)<br/>
 				<em>Example:</em> <tt>'true'</tt></li>
 				<li><code>YOURLS_UNIQUE_URLS</code><br/>
 				Allow multiple short URLs for a same long URL<br/>
@@ -361,6 +367,7 @@
 			<h3>Features</h3>
 			<ul>
 				<li>Generate short URLs for each new post or page</li>
+				<li>Generate short URLs for all your old posts and pages if wished</li>
 				<li>Send a tweet on your Twitter account with the post title and short URL as you publish them</li>
 				<li>Works if YOURLS is hosted on the same server or on a remote server</li>
 				<li>Also compatible with tr.im, is.gd, tinyurl.com and bit.ly for maximum fun</li>
@@ -388,14 +395,14 @@
 				<li>Generate or get existing short URLs, with sequential or custom keyword</li>
 				<li>Get some statistics about your links: top clicked links, least clicked links, newest links</li>
 				<li>Output format: JSON, XML, or simple raw text</li>
+				<li>Authentify either with login/password or using a secure passwordless mechanism</li>
 			</ul>
 			
 			<h3>Usage</h3>
 			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code>. These parameters are:</p>
 			<ul>
-				<li>A valid <code>username</code></li>
-				<li>A valid <code>password</code></li>
-				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl) or <tt>"stats"</tt> (get stats about your links)</li>
+				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI">Passwordless API requests</a>)</li>
+				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL) or <tt>"stats"</tt> (get stats about your links)</li>
 				<li>With <tt>action = "shorturl"</tt> :
 					<ul>
 						<li>the <code>url</code> to shorten</li>
@@ -407,6 +414,12 @@
 					<ul>
 						<li>the <code>shorturl</code> to expand (can be either 'abc' or 'http://site/abc')</li>
 						<li>output <code>format</code>: either <tt>"json"</tt>, <tt>"xml"</tt> or <tt>"simple"</tt></li>
+					</ul>
+				</li>
+				<li>With <tt>action = "url-stats"</tt> :
+					<ul>
+						<li>the <code>shorturl</code> for which to get stats (can be either 'abc' or 'http://site/abc')</li>
+						<li>output <code>format</code>: either <tt>"json"</tt> or <tt>"xml"</tt></li>
 					</ul>
 				</li>
 				<li>With <tt>action = "stats"</tt> :
@@ -467,8 +480,7 @@
 				<li>Base 36 encoding uses <code>0123456789abcdefghijklmnopqrstuvwxyz</code></li>
 				<li>Base 62 encoding uses <code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</code></li>
 				<li>Stick to one setting, don't change after you've created links as it will change all your short URLs!</li>
-				<li>Base 36 should be picked. Use 62 only if you understand what it implies.</li>
-				<li>Consider Base 62 encoding a <code>beta feature</code></li>
+				<li>Base 36 is the default and should be picked.</li>
 			</ul>
 			
 			<h3>Getting a short domain name for your YOURLS install</h3>
@@ -487,12 +499,13 @@
 			<h3>If YOURLS generates 404 for your short URLs</h3>
 			<ul>
 				<li>Make sure <strong>mod_rewrite</strong> is enabled with your Apache server</li>
-				<li>Some (crappy) hosts such as GoDaddy or 1and1 need <a href="http://code.google.com/p/yourls/issues/detail?id=25">a small fix</a> to .htaccess:</li>
+				<li>Some (crappy) hosts such as GoDaddy or 1and1 need <a href="http://code.google.com/p/yourls/issues/detail?id=25">a small fix</a> to .htaccess</li>
 			</ul>
 			
-			<h3>Feedback and bug reporting</h3>
+			<h3>Feedback, feature requests and bug reporting</h3>
 			<ul>
-				<li>Please don't get in touch directly by mail or Twitter</li>
+				<li>Please don't get in touch directly by mail or Twitter. <a href="http://yourls.org/support">Please</a>.</li>
+				<li>Check the <a href="http://code.google.com/p/yourls/wiki/RoadMap">Road Map</a> for future features</li>
 				<li>Raise an <a href="http://yourls.org/issues">issue here</a> and give all the details. Thanks!</li>
 			</ul>
 
@@ -545,6 +558,9 @@
 				
 				<li><a href="http://www.eugenegordin.com/etc/how-to-use-your-custom-yourls-shortener-with-tweetie-2.html">YOURLS and Tweetie 2</a><br/>
 				How to set up Tweetie2 so it uses your own service</li>
+				
+				<li><a href="http://www.mrtech.com/forums/index.php/topic,2524.0.html">YOURLS hacks</a><br/>
+				How to enhance YOURLS for spam control/throttling, unshortening and weekly stats
 				
 				<li><a href="http://code.google.com/p/yourls/issues/detail?id=137">Export URLS as text list</a><br/>
 				A simple script to list all URLs, one per line, in plain text (for using as an indexer config file, for example)</li>
