@@ -4,12 +4,6 @@
  * Function library
  */
 
-if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
-	error_reporting(E_ALL);
-} else {
-	error_reporting(E_ERROR | E_PARSE);
-}
-
 // function to convert an integer (1337) to a string (3jk). Input integer processed as a string to beat PHP's int max value
 function yourls_int2string( $id ) {
 	$str = yourls_base2base(trim(strval($id)), 10, YOURLS_URL_CONVERT);
@@ -1180,7 +1174,7 @@ function yourls_is_installed() {
 		$check_14 = $check_13 = false;
 		global $ydb;
 		if( defined('YOURLS_DB_TABLE_NEXTDEC') )
-			$check_13 = $ydb->get_var('SELECT next_id FROM '.YOURLS_DB_TABLE_NEXTDEC);
+			$check_13 = $ydb->get_var('SELECT `next_id` FROM '.YOURLS_DB_TABLE_NEXTDEC);
 		$check_14 = yourls_get_option( 'version' );
 		$is_installed = $check_13 || $check_14;
 	}
@@ -1196,7 +1190,7 @@ if ( !function_exists('htmlspecialchars_decode') ) {
 
 // Generate random string of (int)$lenght length and type $type (see function for details)
 function yourls_rnd_string ( $length = 5, $type = 1 ) {
-	$str = "";
+	$str = '';
 	$length = intval( $length );
 
 	// define possible characters
@@ -1265,9 +1259,9 @@ function yourls_verify_nonce( $nonce, $action = -1, $user = false ) {
 	return $nonce == $valid ;
 }
 
-// Sanitize a version number
+// Sanitize a version number (1.4.1-whatever -> 1.4.1)
 function yourls_sanitize_version( $ver ) {
-	return preg_replace( '/[^0-9a-zA-Z-.]/', '', $ver );
+	return preg_replace( '/[^0-9.]/', '', $ver );
 }
 
 // Converts keyword into short link

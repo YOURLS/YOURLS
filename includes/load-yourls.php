@@ -25,7 +25,6 @@ if( yourls_has_interface() )
 if( !defined('YOURLS_DB_PREFIX') )
 	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
-
 // Define constants that have not been user defined in config.php
 if( !defined('YOURLS_DB_TABLE_URL') )
 	define('YOURLS_DB_TABLE_URL', YOURLS_DB_PREFIX.'url'); // table to store URLs
@@ -48,6 +47,12 @@ if( !defined('YOURLS_ADMIN_SSL') )
 if( !defined('YOURLS_DEBUG') )
 	define( 'YOURLS_DEBUG', false ); // if set to true, verbose debug infos. Will break things. Don't enable.
 
+// Error reporting
+if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
+	error_reporting(E_ALL);
+} else {
+	error_reporting(E_ERROR | E_PARSE);
+}
 
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
