@@ -157,9 +157,11 @@ function yourls_store_cookie( $user = null ) {
 			die('Stealing cookies?'); // This should never happen
 		}
 		$time = time() + YOURLS_COOKIE_LIFE;
-	}  
-	setcookie('yourls_username', yourls_salt( $user ), $time, '/' );
-	setcookie('yourls_password', yourls_salt( $pass ), $time, '/' );
+	}
+	if ( !headers_sent() ) {
+		setcookie('yourls_username', yourls_salt( $user ), $time, '/' );
+		setcookie('yourls_password', yourls_salt( $pass ), $time, '/' );
+	}
 }
 
 // Set user name
