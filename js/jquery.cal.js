@@ -299,7 +299,7 @@
 		enddate : today.getFullYear() + 1,
 		
 		// offset from the top left corner of the input element
-		x : 18, // must be in px
+		x : 1, // must be in px
 		y : 18 // must be in px
 	};
 
