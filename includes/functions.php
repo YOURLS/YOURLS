@@ -1110,6 +1110,11 @@ function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 
 // Allow several short URLs for the same long URL ?
 function yourls_allow_duplicate_longurls() {
+	// special treatment if API to check for WordPress plugin requests
+	if( yourls_is_API() ) {
+		if ( isset($_REQUEST['source']) && $_REQUEST['source'] == 'plugin' ) 
+			return false;
+	}
 	return ( defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS == false );
 }
 
