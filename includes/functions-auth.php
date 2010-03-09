@@ -24,7 +24,7 @@ function yourls_is_valid_user() {
 		// ?timestamp=12345678&signature=md5(totoblah12345678)
 		( yourls_is_API() &&
 		  isset($_REQUEST['timestamp']) && !empty($_REQUEST['timestamp']) &&
-		  isset($_REQUEST['signature'])
+		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
 		)
 		{
 			$valid = yourls_check_signature_timestamp();
@@ -35,7 +35,7 @@ function yourls_is_valid_user() {
 		// ?signature=md5(totoblah)
 		( yourls_is_API() &&
 		  !isset($_REQUEST['timestamp']) &&
-		  isset($_REQUEST['signature'])
+		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
 		)
 		{
 			$valid = yourls_check_signature();
@@ -43,14 +43,16 @@ function yourls_is_valid_user() {
 	
 	elseif
 		// API or normal: login with username & pwd
-		( isset($_REQUEST['username']) && isset($_REQUEST['password']) )
+		( isset($_REQUEST['username']) && isset($_REQUEST['password'])
+		  && !empty( $_REQUEST['username'] ) && !empty( $_REQUEST['password']  ) )
 		{
 			$valid = yourls_check_username_password();
 		}
 	
 	elseif
 		// Normal only: cookies
-		( isset($_COOKIE['yourls_username']) && isset($_COOKIE['yourls_password']) )
+		( !yourls_is_API() && 
+		  isset($_COOKIE['yourls_username']) && isset($_COOKIE['yourls_password']) )
 		{
 			$valid = yourls_check_auth_cookie();
 		}
