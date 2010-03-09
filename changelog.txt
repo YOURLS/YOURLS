@@ -42,3 +42,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - prevent internal redirection loops
 - filter and search URLs & short URLs by date
 
+1.4.2
+- fixed bug in auth function
+- added sample public API file
+- added check in API requests for WordPress plugin when adding a new short URL
