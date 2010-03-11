@@ -152,7 +152,7 @@ function yourls_create_sql_tables() {
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
 		'`click_id` int(11) NOT NULL auto_increment,'.
 		'`click_time` datetime NOT NULL,'.
-		'`keyword` varchar(200) BINARY NOT NULL,'.
+		'`shorturl` varchar(200) BINARY NOT NULL,'.
 		'`referrer` varchar(200) NOT NULL,'.
 		'`user_agent` varchar(255) NOT NULL,'.
 		'`ip_address` varchar(41) NOT NULL,'.

@@ -33,10 +33,10 @@ if( yourls_do_log_redirect() ) {
 	if( $aggregate ) {
 		$keywords = join( "', '", $keyword_list );
 		// Fetch information for all keywords pointing to $longurl
-		$hits = $ydb->get_results( "SELECT `keyword`, `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `keyword` IN ( '$keywords' );" );
+		$hits = $ydb->get_results( "SELECT `shorturl`, `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` IN ( '$keywords' );" );
 	} else {
 		// Fetch information for current keyword only
-		$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `keyword` = '$keyword';" );
+		$hits = $ydb->get_results( "SELECT `click_time`, `referrer`, `user_agent`, `country_code` FROM `$table` WHERE `shorturl` = '$keyword';" );
 	}
 	
 	$referrers = array();
