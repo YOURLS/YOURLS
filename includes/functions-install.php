@@ -158,7 +158,7 @@ function yourls_create_sql_tables() {
 		'`ip_address` varchar(41) NOT NULL,'.
 		'`country_code` char(2) NOT NULL,'.
 		'PRIMARY KEY  (`click_id`),'.
-		'KEY `keyword` (`keyword`)'.
+		'KEY `shorturl` (`shorturl`)'.
 		') AUTO_INCREMENT=1 ;';
 
 
