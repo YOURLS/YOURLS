@@ -161,12 +161,15 @@ td.actions .button_stats:hover {
 }
 .error {
 	color: red;
+	background:#fee;
 }
 .warning {
 	color: orange;
+	background:#ffe9bf;
 }
 .success {
 	color: green;
+	background:#efe;
 }
 #login {
 	width: 300px;
