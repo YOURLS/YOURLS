@@ -183,6 +183,10 @@ function yourls_create_sql_tables() {
 	yourls_update_option( 'db_version', YOURLS_DB_VERSION );
 	yourls_update_option( 'next_id', 1 );
 	
+	// Insert sample links
+	yourls_insert_link_in_db( 'http://planetozh.com/', 'ozh');
+	yourls_insert_link_in_db( 'http://yourls.org/', 'yourls');
+		
 	// Check results of operations
 	if ( sizeof($create_tables) == $create_table_count ) {
 		$success_msg[] = 'YOURLS tables successfully created.';
