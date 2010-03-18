@@ -46,6 +46,8 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - fixed bug in auth function
 - added sample public API file
 - added check in API requests for WordPress plugin when adding a new short URL
+- prettier sample public interface
 
 1.4.3
-- fixed bug in stats
+- fixed bug no-stats-showing-ffs due to inconsistency in DB schema
+- improve error reporting with API method url-stat
