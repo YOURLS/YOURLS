@@ -566,18 +566,27 @@ function yourls_get_link_stats( $shorturl ) {
 
 	$table_url = YOURLS_DB_TABLE_URL;
 	$res = $ydb->get_row("SELECT * FROM `$table_url` WHERE keyword = '$shorturl';");
-
 	$return = array();
 
-    $return['link'] = array(
-        'shorturl' => YOURLS_SITE .'/'. $res->keyword,
-        'url' => $res->url,
-        'timestamp' => $res->timestamp,
-        'ip' => $res->ip,
-        'clicks' => $res->clicks,
-    );
-
-	$return['statusCode'] = 200;
+	if( !$res ) {
+		// non existent link
+		$return = array(
+			'statusCode' => 404,
+			'message'    => 'Error: short URL not found',
+		);
+	} else {
+		$return = array(
+			'statusCode' => 200,
+			'message'    => 'success',
+			'link'       => array(
+		        'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+		        'url' => $res->url,
+		        'timestamp' => $res->timestamp,
+		        'ip' => $res->ip,
+		        'clicks' => $res->clicks,
+			)
+		);
+	}
 
 	return $return;
 }
@@ -597,7 +606,6 @@ function yourls_api_url_stats($shorturl) {
 
 	$return = yourls_get_link_stats( $keyword );
 	$return['simple']  = 'Need either XML or JSON format for stats';
-	$return['message'] = 'success';
 	return $return;
 }
 
