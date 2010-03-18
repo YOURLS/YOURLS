@@ -76,7 +76,7 @@ function yourls_is_valid_user() {
 // Check auth against list of login=>pwd. Sets user if applicable, returns bool
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
-	if( $yourls_user_passwords[ $_REQUEST['username'] ] == $_REQUEST['password'] ) {
+	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && $yourls_user_passwords[ $_REQUEST['username'] ] == $_REQUEST['password'] ) {
 		yourls_set_user( $_REQUEST['username'] );
 		return true;
 	}
