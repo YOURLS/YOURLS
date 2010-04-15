@@ -112,14 +112,15 @@ function yourls_escape( $in ) {
 function yourls_keyword_is_reserved( $keyword ) {
 	global $yourls_reserved_URL;
 	$keyword = yourls_sanitize_keyword( $keyword );
+	$reserved = false;
 	
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists(dirname(dirname(__FILE__))."/pages/$keyword.php")
 		or is_dir(dirname(dirname(__FILE__))."/$keyword")
 	)
-		return true;
+		$reserved = true;
 	
-	return false;
+	return yourls_apply_filter( 'keyword_is_reserved', $reserved, $keyword );
 }
 
 // Function: Get IP Address. Returns a DB safe string.
@@ -136,7 +137,7 @@ function yourls_get_IP() {
 		}
 	}
 
-	return yourls_sanitize_ip( $ip );
+	return yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
 
 // Sanitize an IP address
@@ -178,6 +179,8 @@ RETURN;
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
 	}
 	
+	$return = yourls_apply_filter( 'table_edit_row', $return );
+
 	return $return;
 }
 
@@ -192,19 +195,30 @@ function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
 	$statlink = $shorturl.'+';
 	$url = htmlentities( $url );
 	
-	return <<<ROW
-<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id"><a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" /><input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+	$actions = <<<ACTION
+<a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" />
+ACTION;
+	$actions = yourls_apply_filter( 'action_links', $actions );
+	
+	$row = <<<ROW
+<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id">$actions<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
+	$row = yourls_apply_filter( 'table_row', $row );
+	
+	yourls_do_action( 'table_add_row' );
+
+	return $row;
 }
 
 // Get next id a new link will have if no custom keyword provided
 function yourls_get_next_decimal() {
-	return (int)yourls_get_option( 'next_id' );
+	return yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
 }
 
 // Update id for next link with no custom keyword
 function yourls_update_next_decimal( $int = '' ) {
 	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;
+	yourls_do_action( 'update_next_decimal', $int );
 	return yourls_update_option( 'next_id', $int );
 }
 
@@ -214,6 +228,7 @@ function yourls_delete_link_by_keyword( $keyword ) {
 
 	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
+	yourls_do_action( 'delete_link', $keyword );
 	return $ydb->query("DELETE FROM `$table` WHERE `keyword` = '$keyword';");
 }
 
@@ -225,6 +240,8 @@ function yourls_insert_link_in_db($url, $keyword) {
 	$timestamp = date('Y-m-d H:i:s');
 	$ip = yourls_get_IP();
 	$insert = $ydb->query("INSERT INTO `$table` VALUES('$keyword', '$url', '$timestamp', '$ip', 0);");
+	
+	yourls_do_action( 'insert_link', (bool)$insert, $url, $shorturl, $timestamp, $ip );
 	
 	return (bool)$insert;
 }
@@ -238,6 +255,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		$return['code'] = 'error:nourl';
 		$return['message'] = 'Missing URL input';
 		$return['errorCode'] = '400';
+		yourls_do_action( 'add_new_link_fail_nourl' );
 		return $return;
 	}
 	
@@ -253,10 +271,13 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 			$return['code'] = 'error:noloop';
 			$return['message'] = 'URL is a short URL';
 			$return['errorCode'] = '400';
+			yourls_do_action( 'add_new_link_fail_noloop' );
 			return $return;
 		}
 	}
 
+	yourls_do_action( 'pre_add_new_link', $url, $keyword );
+	
 	$table = YOURLS_DB_TABLE_URL;
 	$strip_url = stripslashes($url);
 	$url_exists = $ydb->get_row("SELECT keyword,url FROM `$table` WHERE `url` = '".$strip_url."';");
@@ -268,6 +289,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		// Custom keyword provided
 		if ( $keyword ) {
 			$keyword = yourls_escape( yourls_sanitize_string($keyword) );
+			$keyword = yourls_apply_filter( 'custom_keyword', $keyword );
 			if ( !yourls_keyword_is_free($keyword) ) {
 				// This shorturl either reserved or taken already
 				$return['status'] = 'fail';
@@ -290,6 +312,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 			$ok = false;
 			do {
 				$keyword = yourls_int2string( $id );
+				$keyword = yourls_apply_filter( 'random_keyword', $keyword );
 				$free = yourls_keyword_is_free($keyword);
 				$add_url = @yourls_insert_link_in_db($url, $keyword);
 				$ok = ($free && $add_url);
@@ -316,6 +339,8 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		$return['message'] = $strip_url.' already exists in database';
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
+	
+	yourls_do_action( 'post_add_new_link', $url, $keyword );
 
 	$return['statusCode'] = 200; // regardless of result, this is still a valid request
 	return $return;
@@ -349,6 +374,8 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 		$keyword_is_ok = true;
 	}
 	
+	yourls_do_action( 'pre_edit_link' );
+	
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
 			$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
@@ -367,16 +394,19 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 		$return['message'] = 'URL or keyword already exists in database';
 	}
 	
+	yourls_do_action( 'post_edit_link' );
+	
 	return $return;
 }
 
 
 // Check if keyword id is free (ie not already taken, and not reserved). Return bool.
 function yourls_keyword_is_free( $keyword ) {
+	$free = true;
 	if ( yourls_keyword_is_reserved( $keyword ) or yourls_keyword_is_taken( $keyword ) )
-		return false;
+		$free = false;
 		
-	return true;
+	return yourls_apply_filter( 'keyword_is_free', $free, $keyword );
 }
 
 // Check if a keyword is taken (ie there is already a short URL with this id). Return bool.		
@@ -399,7 +429,9 @@ function yourls_page( $page ) {
 	if (!file_exists($include)) {
 		yourls_die("Page '$page' not found", 'Not found', 404);
 	}
+	yourls_do_action( 'pre_page', $page );
 	include($include);
+	yourls_do_action( 'post_page', $page );
 	die();	
 }
 
@@ -412,7 +444,7 @@ function yourls_db_connect() {
 		or !defined('YOURLS_DB_NAME')
 		or !defined('YOURLS_DB_HOST')
 		or !class_exists('ezSQL_mysql')
-	) yourls_die ('DB config missigin, or could not find DB class', 'Fatal error', 503);
+	) yourls_die ('DB config missing, or could not find DB class', 'Fatal error', 503);
 	
 	// Are we standalone or in the WordPress environment?
 	if ( class_exists('wpdb') ) {
@@ -651,6 +683,7 @@ function yourls_api_output( $mode, $return ) {
 		$simple = $return['simple'];
 		unset( $return['simple'] );
 	}
+	
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
@@ -668,6 +701,9 @@ function yourls_api_output( $mode, $return ) {
 				echo $simple;
 			break;
 	}
+
+	yourls_do_action( 'api_output', $mode );
+	
 	die();
 }
 
@@ -723,11 +759,12 @@ function yourls_get_user_agent() {
 	$ua = strip_tags( html_entity_decode( $_SERVER['HTTP_USER_AGENT'] ));
 	$ua = preg_replace('![^0-9a-zA-Z\':., /{}\(\)\[\]\+@&\!\?;_\-=~\*\#]!', '', $ua );
 		
-	return substr( $ua, 0, 254 );
+	return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 254 ) );
 }
 
 // Redirect to another page
 function yourls_redirect( $location, $code = 301 ) {
+	yourls_do_action( 'pre_redirect' );
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
@@ -751,6 +788,7 @@ function yourls_status_header( $code = 200 ) {
 	$desc = yourls_get_HTTP_status($code);
 
 	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
+	yourls_do_action( 'status_header', $code );
 }
 
 // Redirect to another page using Javascript. Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
@@ -767,6 +805,7 @@ REDIR;
 	<p>Please <a href="$location">click here</a></p>
 MANUAL;
 	}
+	yourls_do_action( 'redirect_javascrip' );
 }
 
 // Return a HTTP status code
@@ -946,7 +985,7 @@ function yourls_get_option( $option_name, $default = false ) {
 		$ydb->option[$option_name] = yourls_maybe_unserialize( $value );
 	}
 
-	return $ydb->option[$option_name];
+	return yourls_apply_filter( 'get_option_'.$option_name, $ydb->option[$option_name] );
 }
 
 // Read all options from DB at once
@@ -980,6 +1019,8 @@ function yourls_update_option( $option_name, $newvalue ) {
 	}
 
 	$_newvalue = yourls_escape( yourls_maybe_serialize( $newvalue ) );
+	
+	yourls_do_action( 'update_option', $option_name, $oldvalue, $newvalue );
 
 	$ydb->query( "UPDATE `$table` SET `option_value` = '$_newvalue' WHERE `option_name` = '$option_name'");
 
@@ -996,11 +1037,13 @@ function yourls_add_option( $name, $value = '' ) {
 	$table = YOURLS_DB_TABLE_OPTIONS;
 	$safe_name = yourls_escape( $name );
 
-	// Make sure the option doesn't already exist. We can check the 'notoptions' cache before we ask for a db query
+	// Make sure the option doesn't already exist
 	if ( false !== yourls_get_option( $safe_name ) )
 		return;
 
 	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
+
+	yourls_do_action( 'add_option', $option_name, $_value );
 
 	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
 	$ydb->option[$name] = $value;
@@ -1018,6 +1061,9 @@ function yourls_delete_option( $name ) {
 	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name'" );
 	if ( is_null($option) || !$option->option_id )
 		return false;
+		
+	yourls_do_action( 'delete_option', $option_name );
+		
 	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
 	return true;
 }
@@ -1163,7 +1209,9 @@ function yourls_check_IP_flood( $ip = '' ) {
 		 if( yourls_is_valid_user() === true )
 			return true;
 	}
-
+	
+	yourls_do_action( 'check_ip_flood', $ip );
+	
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
 	
