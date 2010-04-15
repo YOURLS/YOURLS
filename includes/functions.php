@@ -764,7 +764,7 @@ function yourls_get_user_agent() {
 
 // Redirect to another page
 function yourls_redirect( $location, $code = 301 ) {
-	yourls_do_action( 'pre_redirect' );
+	yourls_do_action( 'redirect', $location );
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
@@ -805,7 +805,7 @@ REDIR;
 	<p>Please <a href="$location">click here</a></p>
 MANUAL;
 	}
-	yourls_do_action( 'redirect_javascrip' );
+	yourls_do_action( 'redirect_javascript', $location );
 }
 
 // Return a HTTP status code
