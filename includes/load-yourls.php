@@ -14,6 +14,7 @@ require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
 require_once (dirname(__FILE__).'/functions-baseconvert.php');
 require_once (dirname(__FILE__).'/class-mysql.php');
+require_once (dirname(__FILE__).'/functions-plugins.php');
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once( dirname(__FILE__).'/functions-auth.php' );
@@ -26,6 +27,8 @@ if( !defined('YOURLS_DB_PREFIX') )
 	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
 // Define constants that have not been user defined in config.php
+if( !defined('YOURLS_ABSPATH') )
+	define('YOURLS_ABSPATH', str_replace('\\', '/', dirname(dirname(__FILE__))) ); // physical path of YOURLS root
 if( !defined('YOURLS_DB_TABLE_URL') )
 	define('YOURLS_DB_TABLE_URL', YOURLS_DB_PREFIX.'url'); // table to store URLs
 if( !defined('YOURLS_DB_TABLE_OPTIONS') )
@@ -91,3 +94,7 @@ if (
 		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php' );
 	}
 }
+
+// Init all plugins
+yourls_load_plugins();
+yourls_do_action( 'plugins_loaded' );
