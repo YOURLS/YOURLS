@@ -20,6 +20,8 @@ if( !empty($url) ) {
 	$update_clicks = yourls_update_clicks( $keyword );
 	// Update detailed log for stats
 	$log_redirect = yourls_log_redirect( $keyword );
+	
+	yourls_do_action( 'redirect_shorturl' );
 
 	yourls_redirect( $url, 301 );
 

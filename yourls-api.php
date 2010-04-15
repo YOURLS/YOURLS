@@ -4,6 +4,8 @@ require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 $action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );
+
+yourls_do_action( 'api', $action );
 	
 switch( $action ) {
 
