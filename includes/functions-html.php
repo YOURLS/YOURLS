@@ -45,11 +45,14 @@ function yourls_html_head( $context = 'index' ) {
 		header( 'Pragma: no-cache' );
 	}
 	
+	// Page title
+	$title = yourls_apply_filter( 'html_title', 'YOURLS &raquo; Your Own URL Shortener | ' . YOURLS_SITE );
+	
 	?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title>YOURLS &raquo; Your Own URL Shortener | <?php echo YOURLS_SITE; ?></title>
+	<title><?php echo $title ?></title>
 	<link rel="icon" type="image/gif" href="<?php echo YOURLS_SITE; ?>/images/favicon.gif" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
@@ -76,6 +79,7 @@ function yourls_html_head( $context = 'index' ) {
 		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
+	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context; ?>">
 <div id="wrap">
@@ -93,6 +97,7 @@ function yourls_html_footer() {
 	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
+	<?php yourls_do_action( 'html_footer' ); ?>
 	</body>
 	</html>
 	<?php
@@ -111,8 +116,9 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 			</form>
 			<div id="feedback" style="display:none"></div>
 		</div>
+		<?php yourls_do_action( 'html_addnew' ); ?>
 	</div>
-	<?php
+	<?php 
 }
 
 // Display main table's footer
@@ -203,6 +209,7 @@ function yourls_html_tfooter( $params = array() ) {
 				?>
 			</th>
 		</tr>
+		<?php yourls_do_action( 'html_tfooter' ); ?>
 	</tfoot>
 	<?php
 }
@@ -219,11 +226,15 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 	
 	<div id="shareboxes">
 
+		<?php yourls_do_action( 'shareboxes_before' ); ?>
+
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
 			<p><input id="copylink" class="text" size="40" value="<?php echo $shorturl; ?>" /></p>
 			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small></p>
 		</div>
+
+		<?php yourls_do_action( 'shareboxes_middle' ); ?>
 
 		<div id="sharebox" class="share">
 			<?php echo $share_title; ?>
@@ -235,13 +246,19 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="Tweet this!" onclick="share('tw');return false">Twitter</a>
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
+				<?php
+				yourls_do_action( 'share_links' , $longurl, $shorturl, $title, $text );
+				?>
 			</p>
 		</div>
+		
+		<?php yourls_do_action( 'shareboxes_after' ); ?>
 	
 	</div>
 	
 	<?php
 }
+
 
 // Die die die
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
@@ -249,8 +266,9 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	
 	yourls_html_head();
 	yourls_html_logo();
-	echo "<h2>$title</h2>";
-	echo "<p>$message</p>";
+	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
+	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
+	yourls_do_action( 'yourls_die' );
 	yourls_html_footer();
 	die();
 }
@@ -308,6 +326,7 @@ function yourls_html_menu() {
 		<li>Go to the <a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
 		<li>Check the <a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
 		<li>Read the <a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
+		<?php yourls_do_action( 'admin_menu' ); ?>
 	</ul>
 	<?php
 }
