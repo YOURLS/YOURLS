@@ -172,7 +172,15 @@ function yourls_apply_filter( $hook, $value = '' ) {
 }
 
 function yourls_do_action( $hook, $arg = '' ) {
-	yourls_apply_filter( $hook, $arg );
+	$args = array();
+	if ( is_array($arg) && 1 == count($arg) && isset($arg[0]) && is_object($arg[0]) ) // array(&$this)
+		$args[] =& $arg[0];
+	else
+		$args[] = $arg;
+	for ( $a = 2; $a < func_num_args(); $a++ )
+		$args[] = func_get_arg($a);
+
+	yourls_apply_filter( $hook, $args );
 }
 
 
