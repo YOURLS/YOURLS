@@ -115,8 +115,8 @@ function yourls_keyword_is_reserved( $keyword ) {
 	$reserved = false;
 	
 	if ( in_array( $keyword, $yourls_reserved_URL)
-		or file_exists(dirname(dirname(__FILE__))."/pages/$keyword.php")
-		or is_dir(dirname(dirname(__FILE__))."/$keyword")
+		or file_exists( YOURLS_ABSPATH ."/pages/$keyword.php" )
+		or is_dir( YOURLS_ABSPATH ."/$keyword" )
 	)
 		$reserved = true;
 	
@@ -425,7 +425,7 @@ function yourls_keyword_is_taken( $keyword ) {
 
 // Display a page
 function yourls_page( $page ) {
-	$include = dirname(dirname(__FILE__))."/pages/$page.php";
+	$include = YOURLS_ABSPATH . "/pages/$page.php";
 	if (!file_exists($include)) {
 		yourls_die("Page '$page' not found", 'Not found', 404);
 	}
@@ -1391,4 +1391,31 @@ function yourls_is_ssl() {
 		return true;
 	}
 	return false;
+}
+
+
+// Get a remote page <title>, return a string (either title or url)
+function yourls_get_remote_title( $url ) {
+	require_once( dirname(__FILE__).'/functions-http.php' );
+
+	$url = yourls_sanitize_url( $url );
+
+	$title = false;
+	
+	// Try fopen, then fsock. If no luck, $title will be $url
+	$content = yourls_get_remote_content_fopen( $url );
+	if( $content === false )
+		$content = yourls_get_remote_content_fsock( $url );
+
+	if( $content !== false ) {
+		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
+			$title = $found[1];
+			unset( $found );
+		}
+	}
+	
+	if( $title == false )
+		$title = $url;
+
+	return yourls_apply_filter( 'get_remote_title', $title );
 }
