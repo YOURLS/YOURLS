@@ -1,15 +1,20 @@
 <?php
 // This file initialize everything needed for YOURLS
 
-// Include settings and functions
-if( !file_exists(dirname(__FILE__).'/config.php') ) {
+// Include settings
+if( file_exists(dirname(__FILE__).'/config.php') ) {
+	// config.php in /includes/
+	require_once( dirname(__FILE__).'/config.php' );
+} elseif ( file_exists(dirname(dirname(__FILE__)).'/user/config.php') ) {
+	// config.php in /user/
+	require_once( dirname(dirname(__FILE__)).'/user/config.php' );
+} else {
+	// config.php not found :(
 	require_once (dirname(__FILE__).'/functions.php');
 	require_once (dirname(__FILE__).'/functions-html.php');
 	define('YOURLS_SITE', dirname($_SERVER['REQUEST_URI'])); // LOL. Wild guess.
 	yourls_die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
 }
-	
-require_once (dirname(__FILE__).'/config.php');
 require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
 require_once (dirname(__FILE__).'/functions-baseconvert.php');

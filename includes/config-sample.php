@@ -1,4 +1,12 @@
 <?php
+/* This is a sample config file.
+ * Edit this file with your own settings and save it as "config.php"
+ * You can leave it in the "includes" directory, or, better, move it to
+ * the "user" directory. This way, when a new version of YOURLS is available,
+ * simply delete everything but "/user", and upload the new version.
+ */
+
+
 /*
  ** MySQL settings - You can get this info from your web host
  */
