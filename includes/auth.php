@@ -1,5 +1,5 @@
 <?php
-$auth = yourls_is_valid_user();
+$auth = yourls_apply_filter( 'is_valid_user', yourls_is_valid_user() );
 
 if( $auth !== true ) {
 

@@ -82,6 +82,9 @@ if ( function_exists( 'yourls_db_connect' ) ) {
 // Read options right from start
 yourls_get_all_options();
 
+// Core now loaded
+yourls_do_action( 'init' );
+
 // Check if need to redirect to install procedure
 if( !yourls_is_installed() && ( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true ) ) {
 	yourls_redirect( YOURLS_SITE .'/admin/install.php' );
