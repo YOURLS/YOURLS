@@ -12,7 +12,7 @@
  * This API is heavily inspired by the one I implemented in Zenphoto 1.3, which was heavily inspired by the one used in WordPress.
  *
  * @author Ozh
- * @since 1.4.5
+ * @since 1.5
  */
 
 $yourls_filters = array();

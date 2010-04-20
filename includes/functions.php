@@ -241,7 +241,7 @@ function yourls_insert_link_in_db($url, $keyword) {
 	$ip = yourls_get_IP();
 	$insert = $ydb->query("INSERT INTO `$table` VALUES('$keyword', '$url', '$timestamp', '$ip', 0);");
 	
-	yourls_do_action( 'insert_link', (bool)$insert, $url, $shorturl, $timestamp, $ip );
+	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $timestamp, $ip );
 	
 	return (bool)$insert;
 }
