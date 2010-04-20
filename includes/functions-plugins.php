@@ -198,7 +198,7 @@ function yourls_do_action( $hook, $arg = '' ) {
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callback $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
- * @param int $accepted_args optional. The number of arguments the function accpets (default: 1).
+ * @param int $accepted_args optional. The number of arguments the function accepts (default: 1).
  * @return boolean Whether the function was registered as a filter before it was removed.
  */
 function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $accepted_args = 1 ) {
@@ -247,3 +247,55 @@ function yourls_has_action( $hook, $function_to_check = false ) {
 	return yourls_has_filter( $hook, $function_to_check );
 }
 
+
+/**
+ * List plugins in /user/plugins
+ *
+ * @global $ydb Storage of mostly everything YOURLS needs to know
+ * @return array Array of [/dir/path/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello')
+ */
+function yourls_get_plugins( ) {
+	global $ydb;
+	
+	if( !property_exists( $ydb, 'plugins' ) || !$ydb->plugins )
+		return array();
+	
+	$plugins = array();
+	foreach( $ydb->plugins as $plugin ) {
+		$plugins[ $plugin ] = yourls_get_plugin_data( $plugin );
+	}
+	
+	return $plugins;
+}
+
+/**
+ * Parse a plugin header
+ *
+ * @param string $file Physical path to plugin file
+ * @return array Array of 'Field'=>'Value' from plugin comment header lines of the form "Field: Value"
+ */
+function yourls_get_plugin_data( $file ) {
+	$fp = fopen( $file, 'r' ); // assuming $file is readable, since yourls_load_plugins() filters this
+	$data = fread( $fp, 8192 ); // get first 8kb
+	fclose( $fp );
+	
+	// Capture all the header within first comment block
+	if( !preg_match( '!.*?/\*(.*?)\*/!ms', $data, $matches ) )
+		return array();
+	
+	// Capture each line with "Something: some text"
+	unset( $data );
+	$lines = explode( "\n", $matches[1] );
+	unset( $matches );
+
+	$plugin_data = array();
+	foreach( $lines as $line ) {
+		if( !preg_match( '!(.*?):\s*(.*)!', $line, $matches ) )
+			continue;
+		
+		list( $null, $field, $value ) = array_map( 'trim', $matches);
+		$plugin_data[ $field ] = $value;
+	}
+	
+	return $plugin_data;
+}
