@@ -15,9 +15,11 @@ if( file_exists(dirname(__FILE__).'/config.php') ) {
 	define('YOURLS_SITE', dirname($_SERVER['REQUEST_URI'])); // LOL. Wild guess.
 	yourls_die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
 }
+
+// Include all functions
 require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
-require_once (dirname(__FILE__).'/functions-baseconvert.php');
+require_once (dirname(__FILE__).'/functions-compat.php');
 require_once (dirname(__FILE__).'/class-mysql.php');
 require_once (dirname(__FILE__).'/functions-plugins.php');
 // Load auth functions if needed
@@ -54,7 +56,7 @@ if( !defined('YOURLS_ADMIN_SSL') )
 	define( 'YOURLS_ADMIN_SSL', false ); // if set to true, force https:// in the admin area
 if( !defined('YOURLS_DEBUG') )
 	define( 'YOURLS_DEBUG', false ); // if set to true, verbose debug infos. Will break things. Don't enable.
-
+	
 // Error reporting
 if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
 	error_reporting(E_ALL);
@@ -74,10 +76,8 @@ if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 }
 
 // Create the YOURLS object $ydb that will contain everything we globally need
-if ( function_exists( 'yourls_db_connect' ) ) {
-	global $ydb;
-	yourls_db_connect();
-}
+global $ydb;
+yourls_db_connect();
 
 // Read options right from start
 yourls_get_all_options();

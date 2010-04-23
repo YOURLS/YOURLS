@@ -4,26 +4,76 @@
  * Function library
  */
 
-// function to convert an integer (1337) to a string (3jk). Input integer processed as a string to beat PHP's int max value
-function yourls_int2string( $id ) {
-	$str = yourls_base2base(trim(strval($id)), 10, YOURLS_URL_CONVERT);
-	if (YOURLS_URL_CONVERT <= 37)
-		$str = strtolower($str);
-	return yourls_apply_filter( 'int2string', $str );
+// Determine the allowed character set in short URLs
+function yourls_get_shorturl_charset() {
+	static $charset = null;
+	if( $charset !== null )
+		return $charset;
+		
+	if( !defined('YOURLS_URL_CONVERT') ) {
+		$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+	} else {
+		switch( YOURLS_URL_CONVERT ) {
+			case 36:
+				$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+				break;
+			case 62:
+			case 64: // just because some people get this wrong in their config.php
+				$charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				break;
+		}
+	}
+	
+	$charset = yourls_apply_filter( 'get_shorturl_charset', $charset );
+	return $charset;
+}
+ 
+// function to convert an integer (1337) to a string (3jk).
+function yourls_int2string( $num, $chars = null ) {
+	if( $chars == null )
+		$chars = yourls_get_shorturl_charset();
+	$string = '';
+	$len = strlen( $chars );
+	while( $num >= $len ) {
+		$mod = bcmod( $num, $len );
+		$num = bcdiv( $num, $len );
+		$string = $chars[$mod] . $string;
+	}
+	$string = $chars[$num] . $string;
+	
+	return yourls_apply_filter( 'int2string', $string );
 }
 
 // function to convert a string (3jk) to an integer (1337)
-function yourls_string2int( $str ) {
-	if (YOURLS_URL_CONVERT <= 37)
-		$str = strtolower($str);
-	return yourls_apply_filter( 'string2int', yourls_base2base(trim($str), YOURLS_URL_CONVERT, 10) );
+function yourls_string2int( $string, $chars = null ) {
+	if( $chars == null )
+		$chars = yourls_get_shorturl_charset();
+	$integer = 0;
+	$string = strrev( $string  );
+	$baselen = strlen( $chars );
+	$inputlen = strlen( $string );
+	for ($i = 0; $i < $inputlen; $i++) {
+		$index = strpos( $chars, $string[$i] );
+		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
+	}
+	return yourls_apply_filter( 'string2int', $integer );
+	
 }
 
 // Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
-function yourls_sanitize_string($in) {
-	if (YOURLS_URL_CONVERT <= 37)
-		$in = strtolower($in);
-	return substr(preg_replace('/[^a-zA-Z0-9]/', '', $in), 0, 199);
+function yourls_sanitize_string( $string ) {
+	// make a regexp pattern with the shorturl charset, and remove everything but this
+	$pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
+	$valid = substr(preg_replace('/[^'.$pattern.']/', '', $string ), 0, 199);
+	
+	return yourls_apply_filter( 'sanitize_string', $valid, $string );
+}
+
+// Make an optimized regexp pattern from a string of characters
+function yourls_make_regexp_pattern( $string ) {
+	$pattern = preg_quote( $string, '-' ); // add - as an escaped characters -- this is fixed in PHP 5.3
+	// TODO: replace char sequences by smart sequences such as 0-9, a-z, A-Z ... ?
+	return $pattern;
 }
 
 // Alias function. I was always getting it wrong.
@@ -460,16 +510,6 @@ function yourls_db_connect() {
 	return $ydb;
 }
 
-// Return JSON output. Compatible with PHP prior to 5.2
-function yourls_json_encode($array) {
-	if (function_exists('json_encode')) {
-		return json_encode($array);
-	} else {
-		require_once(dirname(__FILE__).'/functions-json.php');
-		return yourls_array_to_json($array);
-	}
-}
-
 // Return XML output.
 function yourls_xml_encode($array) {
 	require_once(dirname(__FILE__).'/functions-xml.php');
@@ -693,7 +733,7 @@ function yourls_api_output( $mode, $return ) {
 	switch ( $mode ) {
 		case 'json':
 			header('Content-type: application/json');
-			echo yourls_json_encode($return);
+			echo json_encode($return);
 			break;
 		
 		case 'xml':
@@ -718,43 +758,6 @@ function yourls_get_num_queries() {
 	global $ydb;
 
 	return yourls_apply_filter( 'get_num_queries', $ydb->num_queries );
-}
-
-// Compat http_build_query for PHP4
-if (!function_exists('http_build_query')) {
-	function http_build_query($data, $prefix=null, $sep=null) {
-		return yourls_http_build_query($data, $prefix, $sep);
-	}
-}
-
-// from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
-function yourls_http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
-	$ret = array();
-
-	foreach ( (array) $data as $k => $v ) {
-		if ( $urlencode)
-			$k = urlencode($k);
-		if ( is_int($k) && $prefix != null )
-			$k = $prefix.$k;
-		if ( !empty($key) )
-			$k = $key . '%5B' . $k . '%5D';
-		if ( $v === NULL )
-			continue;
-		elseif ( $v === FALSE )
-			$v = '0';
-
-		if ( is_array($v) || is_object($v) )
-			array_push($ret,yourls_http_build_query($v, '', $sep, $k, $urlencode));
-		elseif ( $urlencode )
-			array_push($ret, $k.'='.urlencode($v));
-		else
-			array_push($ret, $k.'='.$v);
-	}
-
-	if ( NULL === $sep )
-		$sep = ini_get('arg_separator.output');
-
-	return implode($sep, $ret);
 }
 
 // Returns a sanitized a user agent string. Given what I found on http://www.user-agents.org/ it should be OK.
@@ -1259,13 +1262,6 @@ function yourls_is_installed() {
 		$is_installed = $check_13 || $check_14;
 	}
 	return yourls_apply_filter( 'is_installed', $is_installed );
-}
-
-// Compat for PHP < 5.1
-if ( !function_exists('htmlspecialchars_decode') ) {
-	function htmlspecialchars_decode($text) {
-		return strtr($text, array_flip(get_html_translation_table(HTML_SPECIALCHARS)));
-	}
 }
 
 // Generate random string of (int)$lenght length and type $type (see function for details)
