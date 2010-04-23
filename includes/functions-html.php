@@ -330,4 +330,9 @@ function yourls_html_menu() {
 	</ul>
 	<?php
 	yourls_do_action( 'admin_notices' );
+	/*
+	To display a notice:
+	$message = "<div>OMG, dude, I mean!</div>" );
+	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
+	*/
 }
