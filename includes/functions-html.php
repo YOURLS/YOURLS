@@ -28,6 +28,10 @@ function yourls_html_head( $context = 'index' ) {
 		case 'index':
 			$insert = $tablesorter = $cal = true;
 			break;
+			
+		case 'plugins':
+			$tablesorter = true;
+			break;
 		
 		case 'install':
 		case 'login':
@@ -323,9 +327,12 @@ function yourls_html_menu() {
 	<?php if ( yourls_is_private() ) { ?>
 		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?mode=logout" title="Logout">Logout</a>)</li>
 	<?php } ?>
-		<li>Go to the <a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
-		<li>Check the <a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
-		<li>Read the <a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
+		<li><a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
+		<li><a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
+		<?php if( yourls_has_plugins() ) { ?>
+			<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
+		<?php } ?>
+		<li><a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
 		<?php yourls_do_action( 'admin_menu' ); ?>
 	</ul>
 	<?php

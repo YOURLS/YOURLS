@@ -247,6 +247,20 @@ function yourls_has_action( $hook, $function_to_check = false ) {
 	return yourls_has_filter( $hook, $function_to_check );
 }
 
+/**
+ * Check if any plugin is activated
+ *
+ * @return integer Number of activated plugins
+ */
+function yourls_has_plugins( ) {
+	global $ydb;
+	
+	if( !property_exists( $ydb, 'plugins' ) || !$ydb->plugins )
+		return;
+		
+	return count( $ydb->plugins );
+}
+
 
 /**
  * List plugins in /user/plugins
@@ -257,7 +271,7 @@ function yourls_has_action( $hook, $function_to_check = false ) {
 function yourls_get_plugins( ) {
 	global $ydb;
 	
-	if( !property_exists( $ydb, 'plugins' ) || !$ydb->plugins )
+	if( !yourls_has_plugins() )
 		return array();
 	
 	$plugins = array();
