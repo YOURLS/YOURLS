@@ -256,7 +256,7 @@ function yourls_has_plugins( ) {
 	global $ydb;
 	
 	if( !property_exists( $ydb, 'plugins' ) || !$ydb->plugins )
-		return;
+		return 0;
 		
 	return count( $ydb->plugins );
 }

@@ -2,12 +2,14 @@
 
 // Display <h1> header and logo
 function yourls_html_logo() {
+	yourls_do_action( 'pre_html_logo' );
 	?>
 	<h1>
 		<a href="<?php echo yourls_admin_url('index.php') ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
+	yourls_do_action( 'html_logo' );
 }
 
 // Display HTML head and <body> tag
