@@ -8,25 +8,6 @@ $(document).ready(function(){
 		$(this).select();
 	});	
 	
-	
-	if ($("#tblUrl").tablesorter && $("#tblUrl tr.nourl_found").length != 1) {
-		var order = {'id':0, 'url':1, 'timestamp':2, 'ip':3, 'clicks':4};
-		var order_by = {'asc':0, 'desc':1};
-		var s_by = order[query_string('s_by')];
-		var s_order = order_by[query_string('s_order')];
-		if( s_by == undefined ) {
-			s_by = 2;
-			s_order = 1;
-		}
-		
-		$("#tblUrl").tablesorter({
-			sortList:[[ s_by, s_order ]], // Sort on column #3 (numbering starts at 0)
-			headers: { 5: {sorter: false} }, // no sorter on column #6
-			widgets: ['zebra'] // prettify
-		});
-	}
-	
-
 });
 
 // Create new link and add to table
@@ -196,16 +177,4 @@ function decrement() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
-}
-
-// Get query string
-function query_string( key ) {
-	default_="";
-	key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-	var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
-	var qs = regex.exec(window.location.href);
-	if(qs == null)
-		return default_;
-	else
-		return qs[1];
 }
