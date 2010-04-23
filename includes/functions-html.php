@@ -329,4 +329,5 @@ function yourls_html_menu() {
 		<?php yourls_do_action( 'admin_menu' ); ?>
 	</ul>
 	<?php
+	yourls_do_action( 'admin_notices' );
 }
