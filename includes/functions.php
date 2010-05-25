@@ -512,7 +512,7 @@ function yourls_db_connect() {
 
 // Return XML output.
 function yourls_xml_encode($array) {
-	require_once(dirname(__FILE__).'/functions-xml.php');
+	require_once(YOURLS_INC.'/functions-xml.php');
 	$converter= new yourls_array2xml;
 	return $converter->array2xml($array);
 }
@@ -914,14 +914,14 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	if ( false !== $location )
 		return $location;
 
-	if ( !file_exists( dirname(__FILE__).'/geo/GeoIP.dat') || !file_exists( dirname(__FILE__).'/geo/geoip.inc') )
+	if ( !file_exists( YOURLS_INC.'/geo/GeoIP.dat') || !file_exists( YOURLS_INC.'/geo/geoip.inc') )
 		return $default;
 
 	if ( $ip == '' )
 		$ip = yourls_get_IP();
 	
-	require_once( dirname(__FILE__).'/geo/geoip.inc') ;
-	$gi = geoip_open( dirname(__FILE__).'/geo/GeoIP.dat', GEOIP_STANDARD);
+	require_once( YOURLS_INC.'/geo/geoip.inc') ;
+	$gi = geoip_open( YOURLS_INC.'/geo/GeoIP.dat', GEOIP_STANDARD);
 	$location = geoip_country_code_by_addr($gi, $ip);
 	geoip_close($gi);
 
@@ -1162,7 +1162,7 @@ function yourls_is_private() {
 // Show login form if required
 function yourls_maybe_require_auth() {
 	if( yourls_is_private() )
-		require_once( dirname(__FILE__).'/auth.php' );
+		require_once( YOURLS_INC.'/auth.php' );
 }
 
 // Return word or words if more than one
@@ -1412,7 +1412,7 @@ function yourls_is_ssl() {
 
 // Get a remote page <title>, return a string (either title or url)
 function yourls_get_remote_title( $url ) {
-	require_once( dirname(__FILE__).'/functions-http.php' );
+	require_once( YOURLS_INC.'/functions-http.php' );
 
 	$url = yourls_sanitize_url( $url );
 

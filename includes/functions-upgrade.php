@@ -252,7 +252,7 @@ function yourls_update_table_to_14() {
 
 // Clean .htaccess as it existed before 1.4. Returns boolean
 function yourls_clean_htaccess_for_14() {
-	$filename = dirname(dirname(__FILE__)).'/.htaccess';
+	$filename = YOURLS_ABSPATH.'/.htaccess';
 	
 	$result = false;
 	if( is_writeable( $filename ) ) {

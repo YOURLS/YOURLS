@@ -29,9 +29,9 @@ if( !empty($url) ) {
 } else {
 
 	// Do we have a page?
-	if (file_exists(dirname(__FILE__)."/pages/$keyword.php")) {
+	if ( file_exists(YOURLS_PAGEDIR."/$keyword.php") ) {
 		// Include YOURLS functions we've skipped, they might be of use
-		require_once( dirname(__FILE__).'/includes/functions-html.php' );
+		require_once( YOURLS_INC.'/functions-html.php' );
 		yourls_page($keyword);
 
 	// Either reserved id, or no such id

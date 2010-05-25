@@ -3,7 +3,7 @@
 
 // Require Files
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
-require_once( dirname(__FILE__).'/includes/functions-infos.php' );
+require_once( YOURLS_INC.'/functions-infos.php' );
 yourls_maybe_require_auth();
 
 if ( !isset( $_GET['id'] ) )

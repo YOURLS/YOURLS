@@ -65,7 +65,7 @@ function yourls_create_htaccess() {
 		'</IfModule>',
 	);
 	
-	$filename = dirname(dirname(__FILE__)).'/.htaccess';
+	$filename = YOURLS_ABSPATH.'/.htaccess';
 	
 	return ( yourls_insert_with_markers( $filename, 'YOURLS', $content ) );
 }
