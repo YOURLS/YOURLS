@@ -1392,7 +1392,7 @@ function yourls_admin_url( $page = '' ) {
 	$admin = YOURLS_SITE . '/admin/' . $page;
 	if( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
 		$admin = str_replace('http://', 'https://', $admin);
-	return yourls_apply_filter( 'admin_url', $admin );
+	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
 // Check if SSL is used, returns bool. Stolen from WP.
