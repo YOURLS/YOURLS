@@ -36,6 +36,8 @@ if( !empty($url) ) {
 
 	// Either reserved id, or no such id
 	} else {
+		yourls_do_action( 'redirect_no_url', $url );
+		
 		yourls_redirect( YOURLS_SITE, 307 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
 }
