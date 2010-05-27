@@ -1057,7 +1057,7 @@ function yourls_add_option( $name, $value = '' ) {
 
 	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
 
-	yourls_do_action( 'add_option', $option_name, $_value );
+	yourls_do_action( 'add_option', $safe_name, $_value );
 
 	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
 	$ydb->option[$name] = $value;
