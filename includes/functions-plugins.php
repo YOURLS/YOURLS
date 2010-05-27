@@ -19,28 +19,6 @@ $yourls_filters = array();
 /* This global var will collect filters with the following structure:
  * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args)]']
  */
- 
- 
-// Scan "user/plugins" directory and include plugins
-function yourls_load_plugins() {
-	$plugins = glob( YOURLS_ABSPATH .'/user/plugins/*/plugin.php');
-	
-	if( !$plugins )
-		return;
-	
-	global $ydb;
-	foreach( $plugins as $plugin ) {
-		if( is_readable( $plugin ) ) {
-			include_once( $plugin );
-			$ydb->plugins[] = $plugin;
-		}
-	}
-	
-	/* TODO : move list of registered plugins to a DB entry, a la WP? This would
-	   save the glob() call on every YOURLS instance
-	*/
-}
-
 
 /**
  * Registers a filtering function
@@ -248,15 +226,15 @@ function yourls_has_action( $hook, $function_to_check = false ) {
 }
 
 /**
- * Check if any plugin is activated
+ * Return number of active plugins
  *
  * @return integer Number of activated plugins
  */
-function yourls_has_plugins( ) {
+function yourls_has_active_plugins( ) {
 	global $ydb;
 	
 	if( !property_exists( $ydb, 'plugins' ) || !$ydb->plugins )
-		return 0;
+		$ydb->plugins = array();
 		
 	return count( $ydb->plugins );
 }
@@ -266,20 +244,40 @@ function yourls_has_plugins( ) {
  * List plugins in /user/plugins
  *
  * @global $ydb Storage of mostly everything YOURLS needs to know
- * @return array Array of [/dir/path/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello')
+ * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
 function yourls_get_plugins( ) {
 	global $ydb;
 	
-	if( !yourls_has_plugins() )
+	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
+	
+	if( !$plugins )
 		return array();
 	
-	$plugins = array();
-	foreach( $ydb->plugins as $plugin ) {
-		$plugins[ $plugin ] = yourls_get_plugin_data( $plugin );
+	foreach( $plugins as $key=>$plugin ) {
+		$_plugin = yourls_plugin_basename( $plugin );
+		$plugins[ $_plugin ] = yourls_get_plugin_data( $plugin );
+		unset( $plugins[ $key ] );
 	}
 	
 	return $plugins;
+}
+
+/**
+ * Check if a plugin is active
+ *
+ * @param string $file Physical path to plugin file
+ * @return bool
+ */
+function yourls_is_active_plugin( $plugin ) {
+	if( !yourls_has_active_plugins( ) )
+		return false;
+	
+	global $ydb;
+	$plugin = yourls_plugin_basename( $plugin );
+	
+	return in_array( $plugin, $ydb->plugins );
+
 }
 
 /**
@@ -312,4 +310,115 @@ function yourls_get_plugin_data( $file ) {
 	}
 	
 	return $plugin_data;
+}
+
+// Include active plugins
+function yourls_load_plugins() {
+	global $ydb;
+	$ydb->plugins = array();
+	$active_plugins = yourls_get_option( 'active_plugins' );
+	
+	// Don't load plugins when installing or updating
+	if( !$active_plugins  OR ( defined( 'YOURLS_INSTALLING' ) AND YOURLS_INSTALLING ) OR yourls_upgrade_is_needed() )
+		return;
+	
+	foreach( (array)$active_plugins as $plugin ) {
+		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
+			include_once( YOURLS_PLUGINDIR.'/'.$plugin );
+			$ydb->plugins[] = $plugin;
+		}
+	}
+}
+
+/**
+ * Check if a file is safe for inclusion (well, "safe", no guarantee)
+ *
+ * @param string $file Full pathname to a file
+ */
+function yourls_validate_plugin_file( $file ) {
+	if (
+		false !== strpos( $file, '..' )
+		OR
+		false !== strpos( $file, './' )
+		OR
+		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
+		OR
+		!is_readable( $file )
+	)
+		return false;
+		
+	return true;
+}
+
+/**
+ * Activate a plugin
+ *
+ * @param string $plugin Plugin filename (full or relative to plugins directory)
+ * @return mixed string if error or true if success
+ */
+function yourls_activate_plugin( $plugin ) {
+	// validate file
+	$plugin = yourls_plugin_basename( $plugin );
+	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+	if( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) )
+		return 'Not a valid plugin file';
+		
+	// check not activated already
+	global $ydb;
+	if( yourls_has_active_plugins() && in_array( $plugin, $ydb->plugins ) )
+		return 'Plugin already activated';
+	
+	// attempt activation. TODO: uber cool fail proof sandbox like in WP.
+	ob_start();
+	include( YOURLS_PLUGINDIR.'/'.$plugin );
+	if ( ob_get_length() > 0 ) {
+		// there was some output: error
+		$output = ob_get_clean();
+		return 'Plugin generated expected output. Error was: <br/><pre>'.$output.'</pre>';
+	}
+	
+	// so far, so good: update active plugin list
+	$ydb->plugins[] = $plugin;
+	yourls_update_option( 'active_plugins', $ydb->plugins );
+	yourls_do_action( 'activated_plugin', $plugin );
+	yourls_do_action( 'activated_' . $plugin );
+	
+	return true;
+}
+
+/**
+ * Dectivate a plugin
+ *
+ * @param string $plugin Plugin filename (full relative to plugins directory)
+ * @return mixed string if error or true if success
+ */
+function yourls_deactivate_plugin( $plugin ) {
+	$plugin = yourls_plugin_basename( $plugin );
+
+	// Check plugin is active
+	if( !yourls_is_active_plugin( $plugin ) )
+		return 'Plugin not active';
+	
+	// Deactivate the plugin
+	global $ydb;
+	$key = array_search( $plugin, $ydb->plugins );
+	if( $key !== false ) {
+		array_splice( $ydb->plugins, $key, 1 );
+	}
+	
+	yourls_update_option( 'active_plugins', $ydb->plugins );
+	yourls_do_action( 'deactivated_plugin', $plugin );
+	yourls_do_action( 'deactivated_' . $plugin );
+	
+	return true;
+}
+
+/**
+ * Return the path of a plugin file, relative to the plugins directory
+ */
+function yourls_plugin_basename( $file ) {
+	$file = yourls_sanitize_filename( $file );
+	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+	$file = str_replace( $plugindir, '', $file );
+	return trim( $file, '/' );
 }
