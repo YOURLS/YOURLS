@@ -238,3 +238,13 @@ td.actions .button_stats:hover {
 	background:#fff url(../images/favicon.gif) 2px center no-repeat;
 	padding-left:20px;
 }
+
+.notice {
+	border:1px solid #5FA3C6;
+	background: #F3FAFD;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	width:70%;
+	margin-left:15%;
+	padding-left:10px;
+}

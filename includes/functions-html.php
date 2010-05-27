@@ -345,3 +345,12 @@ function yourls_html_menu() {
 	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
 	*/
 }
+
+// Return a formatted notice
+function yourls_notice_box( $message ) {
+	return <<<HTML
+	<div class="notice">
+	<p>$message</p>
+	</div>
+HTML;
+}
