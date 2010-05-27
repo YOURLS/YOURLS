@@ -6,7 +6,9 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		1.3		100
 		1.4		200
 		1.4.1	210
-		1.4.3	220 */
+		1.4.3	220
+		1.5		230
+	*/
 		
 	// special case for 1.3: the upgrade is a multi step procedure
 	if( $oldsql == 100 ) {
@@ -24,6 +26,9 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		if( $oldsql < 220 )
 			yourls_upgrade_to_143();
 		
+		if( $oldsql < 230 )
+			yourls_upgrade_to_15();
+		
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
 		break;
@@ -34,6 +39,16 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		yourls_update_option( 'db_version', YOURLS_DB_VERSION );
 		break;
 	}
+}
+
+/************************** 1.4.3 -> 1.5 **************************/
+
+// Main func for upgrade from 1.4.3 to 1.5
+function yourls_upgrade_to_15( ) {
+	// Create empty 'active_plugins' entry in the option if needed
+	if( yourls_get_option( 'active_plugins' ) === false )
+		yourls_add_option( 'active_plugins', array() );
+	echo "<p>Enabling the plugin API. Please wait...</p>";
 }
 
 /************************** 1.4.1 -> 1.4.3 **************************/
