@@ -333,9 +333,7 @@ function yourls_html_menu() {
 	<?php } ?>
 		<li><a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
 		<li><a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
-		<?php if( yourls_has_plugins() ) { ?>
-			<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
-		<?php } ?>
+		<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
 		<li><a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
 		<?php yourls_do_action( 'admin_menu' ); ?>
 	</ul>
