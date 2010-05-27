@@ -198,6 +198,7 @@
 		<li id="FAQTab" class="Tab"><a href="#FAQ" onclick="toggle(this);">FAQ</a></li>
 		<li id="APITab" class="Tab"><a href="#API" onclick="toggle(this);">API</a></li>
 		<li id="PluginTab" class="Tab"><a href="#Plugin" onclick="toggle(this);">WordPress plugin</a></li>
+		<li id="PluginsTab" class="Tab"><a href="#Plugins" onclick="toggle(this);">YOURLS plugins</a></li>
 		<li id="ConfigTab" class="Tab"><a href="#Config" onclick="toggle(this);">Configuration</a></li>
 		<li id="InstallTab" class="Tab"><a href="#Install" onclick="toggle(this);">Install/Upgrade</a></li>
 		<li id="AboutTab" class="SelectedTab"><a href="#About" onclick="toggle(this);">About</a></li>
@@ -220,6 +221,7 @@
 				<li>Handy <tt>bookmarklet</tt> to easily shorten and share links</li>
 				<li>Awesome <tt>stats</tt>: historical click reports, referrers tracking, visitors geo-location</li>
 				<li>Neat <tt>AJAXed</tt> interface</li>
+				<li>Terrific <tt>Plugin</tt> architecture to easily implement new features</li>
 				<li>Cool developer <tt>API</tt></li>
 				<li>Friendly <tt>installer</tt></li>
 			</ul>
@@ -370,7 +372,7 @@
 				<li>Also compatible with tr.im, is.gd, tinyurl.com and bit.ly for maximum fun</li>
 			</ul>
 			
-			<h3>Screenshots</h3>
+			<h3>Screenshot</h3>
 			<div class="sshot">
 			<img src="http://yourls.org/images/wpplugin.gif"/>
 			</div>
@@ -380,6 +382,20 @@
 				<li>Download <a href="http://yourls.org/plugin">YOURLS: WordPress to Twitter</a> from the official WordPress plugin repository</li>
 				<li>More information, tips and feedback on <a href="http://yourls.org/plugindoc">the plugin page</a> from planetOzh</li>
 			</ul>
+		
+		</div>
+		
+		<!-- YOURLS plugins -->
+		<div id="PluginsDiv" style="display:none">
+			<h2>Plugins for YOURLS</h2>
+			
+			<h3>Plugins?</h3>
+			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
+			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation.</p>
+
+			<h3>Documentation</h3>
+			<p>A sample plugin is included in the archive. Read the source and learn the concept. It's easy!</p>
+			<p>Check the <a href="http://yourls.org/pluginapi">plugin API documentation</a> to learn more</p>
 		
 		</div>
 		
