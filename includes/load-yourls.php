@@ -37,23 +37,23 @@ if( !defined('YOURLS_DB_PREFIX') )
 
 // physical path of YOURLS root
 if( !defined('YOURLS_ABSPATH') )
-	define('YOURLS_ABSPATH', str_replace('\\', '/', dirname(dirname(__FILE__))) );
+	define('YOURLS_ABSPATH', yourls_sanitize_filename( dirname(dirname(__FILE__))) );
 
 // physical path of includes directory
 if( !defined('YOURLS_INC') )
-	define('YOURLS_INC', str_replace('\\', '/', YOURLS_ABSPATH.'/includes' ) );
+	define('YOURLS_INC', yourls_sanitize_filename( YOURLS_ABSPATH.'/includes' ) );
 
 // physical path of user directory
 if( !defined('YOURLS_USERDIR') )
-	define('YOURLS_USERDIR', str_replace('\\', '/', YOURLS_ABSPATH.'/user' ) );
+	define('YOURLS_USERDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/user' ) );
 
 // physical path of plugins directory
 if( !defined('YOURLS_PLUGINDIR') )
-	define('YOURLS_PLUGINDIR', str_replace('\\', '/', YOURLS_USERDIR.'/plugins' ) );
+	define('YOURLS_PLUGINDIR', yourls_sanitize_filename( YOURLS_USERDIR.'/plugins' ) );
 
 // physical path of pages directory
 if( !defined('YOURLS_PAGEDIR') )
-	define('YOURLS_ABSPATH', str_replace('\\', '/', YOURLS_ABSPATH.'/pages' ) );
+	define('YOURLS_ABSPATH', yourls_sanitize_filename( YOURLS_ABSPATH.'/pages' ) );
 
 // table to store URLs
 if( !defined('YOURLS_DB_TABLE_URL') )

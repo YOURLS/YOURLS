@@ -1435,3 +1435,10 @@ function yourls_get_remote_title( $url ) {
 
 	return yourls_apply_filter( 'get_remote_title', $title );
 }
+
+// Sanitize a filename (no Win32 stuff)
+function yourls_sanitize_filename( $file ) {
+	$file = str_replace( '\\', '/', $file ); // sanitize for Win32 installs
+	$file = preg_replace( '|/+|' ,'/', $file ); // remove any duplicate slash
+	return $file;
+}
