@@ -52,6 +52,6 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - fixed bug no-stats-showing-ffs due to inconsistency in DB schema
 - improve error reporting with API method url-stat
 
-1.4.4
+1.5
 - added: plugin architecture! OMG plugins!
 - added directory /user, config.php can be moved there
