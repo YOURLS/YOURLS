@@ -38,20 +38,15 @@ if( isset( $_GET['action'] ) ) {
 		$result = 'No plugin specified, or not a valid plugin';
 	}
 	
-	$result = yourls_notice_box( $result );
-	yourls_add_action('admin_notices', create_function( '', "echo '$result';" ) );
+	yourls_add_notice( $result );
 }
 
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) ) {
 	if( $_GET['success'] == 'activated' OR $_GET['success'] == 'deactivated' ) {
-		$result = yourls_notice_box( 'Plugin '.$_GET['success'] );
-		yourls_add_action('admin_notices', create_function( '', "echo '$result';" ) );
+		yourls_add_notice( 'Plugin '.$_GET['success'] );
 	}
 }
-
-
-// TODO: UPDATE PLUGIN LIST IF ONE IS MISSING ?
 
 yourls_html_head( 'plugins' );
 yourls_html_logo();
@@ -134,7 +129,7 @@ yourls_html_menu();
 	yourls_defaultorder = 0;
 	</script>
 	
-	<p>If something goes wrong after you activate a plugin, simply delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.
+	<p>If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.</p>
 
 	
 <?php yourls_html_footer(); ?>

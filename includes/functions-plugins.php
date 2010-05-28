@@ -322,11 +322,20 @@ function yourls_load_plugins() {
 	if( !$active_plugins  OR ( defined( 'YOURLS_INSTALLING' ) AND YOURLS_INSTALLING ) OR yourls_upgrade_is_needed() )
 		return;
 	
-	foreach( (array)$active_plugins as $plugin ) {
+	foreach( (array)$active_plugins as $key=>$plugin ) {
 		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
 			include_once( YOURLS_PLUGINDIR.'/'.$plugin );
 			$ydb->plugins[] = $plugin;
+			unset( $active_plugins[$key] );
 		}
+	}
+	
+	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
+	if( count( $active_plugins ) ) {
+		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
+		yourls_update_option( 'active_plugins', $ydb->plugins );
+		$message = 'Could not find and deactivated '. yourls_plural( 'plugin', count( $active_plugins ) ) .' '. $missing;
+		yourls_add_notice( $message );
 	}
 }
 
