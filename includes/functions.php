@@ -1442,3 +1442,33 @@ function yourls_sanitize_filename( $file ) {
 	$file = preg_replace( '|/+|' ,'/', $file ); // remove any duplicate slash
 	return $file;
 }
+
+// Check for maintenance mode that will shortcut everything
+function yourls_check_maintenance_mode() {
+	
+	// TODO: all cases that always display the sites (is_admin but not is_ajax?)
+	if( 1 )
+		return;
+
+	// first case: /user/maintenance.php file
+	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
+		include( YOURLS_USERDIR.'/maintenance.php' );
+		die();	
+	}
+	
+	// second case: option in DB
+	if( yourls_get_option( 'maintenance_mode' ) !== false ) {
+		require_once( YOURLS_INC.'/functions-html.php' );
+		$title = 'Service temporarily unavailable';
+		$message = 'Our service is currently undergoing scheduled maintenance.</p>
+		<p>Things should not last very long, thank you for your patience and please excuse the inconvenience';
+		yourls_die( $message, $title , 503 );
+	}
+	
+}
+
+// Toggle maintenance mode
+function yourls_maintenance_mode( $maintenance = true ) {
+	yourls_update_option( 'maintenance_mode', (bool)$maintenance );
+}
+
