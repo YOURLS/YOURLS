@@ -339,12 +339,20 @@ function yourls_html_menu() {
 	</ul>
 	<?php
 	yourls_do_action( 'admin_notices' );
+	yourls_do_action( 'admin_notice' ); 	// because I never remember if it's 'notices' or 'notice'
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );
 	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
 	*/
 }
+
+// Wrapper to admin notices
+function yourls_add_notice( $message ) {
+	$message = yourls_notice_box( $message );
+	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
+}
+
 
 // Return a formatted notice
 function yourls_notice_box( $message ) {
