@@ -160,9 +160,14 @@ function yourls_store_cookie( $user = null ) {
 		}
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
+	
+	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, 1 ) );
+	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
+	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
+		
 	if ( !headers_sent() ) {
-		setcookie('yourls_username', yourls_salt( $user ), $time, '/' );
-		setcookie('yourls_password', yourls_salt( $pass ), $time, '/' );
+		setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
+		setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure, $httponly );
 	}
 }
 
