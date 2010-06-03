@@ -143,6 +143,16 @@ if ( isset( $_GET['u'] ) ) {
 		$return['message'] .= ' ('.$msg.')';
 	}
 	
+	// Stop here if bookmarklet with a JSON callback function
+	if( isset( $_GET['jsonp'] ) && $_GET['jsonp'] == 'yourls' ) {
+		$short = $return['shorturl'] ? $return['shorturl'] : '';
+		$message = $return['message'];
+		header('Content-type: application/json');
+		echo "yourls_callback({'short_url':'$short','message':'$message'});";
+		
+		die();
+	}
+
 	$s_url = stripslashes( $url );
 	$where = " AND `url` LIKE '$s_url' ";
 	
@@ -151,6 +161,7 @@ if ( isset( $_GET['u'] ) ) {
 	
 	$text = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
 	$title = ( isset( $_GET['t'] ) ? stripslashes( $_GET['t'] ) : '' );
+	
 
 // This is not a bookmarklet
 } else {

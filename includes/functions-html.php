@@ -32,13 +32,13 @@ function yourls_html_head( $context = 'index' ) {
 			break;
 			
 		case 'plugins':
+		case 'tools':
 			$tablesorter = true;
 			break;
 		
 		case 'install':
 		case 'login':
 		case 'new':
-		case 'tools':
 		case 'upgrade':
 			break;
 	}

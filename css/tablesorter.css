@@ -7,10 +7,7 @@ table.tblSorter {
 	width: 100%;
 	text-align: left;
 }
-table.tblSorter th.header {
-	background-color: #D9EAF3;
-}
-table.tblSorter thead tr th, table.tblSorter tfoot tr th {
+table.tblSorter thead tr th, table.tblSorter tfoot tr th, table.tblSorter th.header {
 	background-color: #D9EAF3;
 	border: 1px solid #FFF;
 	font-size: 8pt;
