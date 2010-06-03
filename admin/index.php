@@ -14,7 +14,7 @@ $sort_by_sql = 'timestamp';
 $sort_order_text = 'Descending Order';
 $sort_order_sql = 'desc';
 $page = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
-$search = ( isset( $_GET['s_search'] ) ? mysql_real_escape_string(trim($_GET['s_search'])) : '' );
+$search = ( isset( $_GET['s_search'] ) ? htmlspecialchars( trim($_GET['s_search']) ) : '' );
 $perpage = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
 $link_limit = ( isset( $_GET['link_limit'] ) && !empty( $_GET['link_limit'] ) ) ? intval($_GET['link_limit']) : '' ;
 if ( $link_limit !== '' ) {
