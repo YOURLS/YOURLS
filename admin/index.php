@@ -132,8 +132,8 @@ if ( $where ) {
 if ( isset( $_GET['u'] ) ) {
 	$is_bookmark = true;
 
-	$url = $_GET['u'];
-	$keyword = ( isset( $_GET['k'] ) ? $_GET['k'] : '' );
+	$url = yourls_sanitize_url( $_GET['u'] );
+	$keyword = ( isset( $_GET['k'] ) ? yourls_sanitize_keyword( $_GET['k'] ) : '' );
 	$return = yourls_add_new_link( $url, $keyword );
 	
 	// If fails because keyword already exist, retry with no keyword
