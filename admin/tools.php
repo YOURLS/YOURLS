@@ -30,7 +30,7 @@ yourls_html_menu();
 		
 		<h3>The Bookmarklets</h3>
 		
-		<p>Click and drag one or several links to your toolbar</p>
+		<p>Click and drag links to your toolbar (or right-click and bookmark it)</p>
 		
 		<table class="tblSorter" cellpadding="0" cellspacing="1">
 			<thead>
