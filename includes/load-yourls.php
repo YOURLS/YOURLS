@@ -53,7 +53,7 @@ if( !defined('YOURLS_PLUGINDIR') )
 
 // physical path of pages directory
 if( !defined('YOURLS_PAGEDIR') )
-	define('YOURLS_ABSPATH', yourls_sanitize_filename( YOURLS_ABSPATH.'/pages' ) );
+	define('YOURLS_PAGEDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/pages' ) );
 
 // table to store URLs
 if( !defined('YOURLS_DB_TABLE_URL') )
