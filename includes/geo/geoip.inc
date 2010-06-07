@@ -53,6 +53,7 @@ define("GEOIP_DIALUP_SPEED", 1);
 define("GEOIP_CABLEDSL_SPEED", 2);
 define("GEOIP_CORPORATE_SPEED", 3);
 
+if( !class_exists('GeoIP') ) {
 class GeoIP {
     var $flags;
     var $filehandle;
@@ -204,6 +205,9 @@ class GeoIP {
 "Aland Islands","Guernsey","Isle of Man","Jersey","Saint Barthelemy","Saint Martin"
 );
 }
+} // class_exists
+
+if( !function_exists('geoip_load_shared_mem') ) {
 function geoip_load_shared_mem ($file) {
 
   $fp = fopen($file, "rb");
@@ -221,7 +225,9 @@ function geoip_load_shared_mem ($file) {
   shmop_write ($shmid, fread($fp, $size), 0);
   shmop_close ($shmid);
 }
+} // function_exists
 
+if( !function_exists('_setup_segments') ) {
 function _setup_segments($gi){
   $gi->databaseType = GEOIP_COUNTRY_EDITION;
   $gi->record_length = STANDARD_RECORD_LENGTH;
@@ -304,7 +310,9 @@ function _setup_segments($gi){
   }
   return $gi;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_open' ) ) {
 function geoip_open($filename, $flags) {
   $gi = new GeoIP;
   $gi->flags = $flags;
@@ -321,7 +329,9 @@ function geoip_open($filename, $flags) {
   $gi = _setup_segments($gi);
   return $gi;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_close' ) ) {
 function geoip_close($gi) {
   if ($gi->flags & GEOIP_SHARED_MEMORY) {
     return true;
@@ -329,7 +339,9 @@ function geoip_close($gi) {
 
   return fclose($gi->filehandle);
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_id_by_name' ) ) {
 function geoip_country_id_by_name($gi, $name) {
   $addr = gethostbyname($name);
   if (!$addr || $addr == $name) {
@@ -337,7 +349,9 @@ function geoip_country_id_by_name($gi, $name) {
   }
   return geoip_country_id_by_addr($gi, $addr);
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_code_by_name' ) ) {
 function geoip_country_code_by_name($gi, $name) {
   $country_id = geoip_country_id_by_name($gi,$name);
   if ($country_id !== false) {
@@ -345,7 +359,9 @@ function geoip_country_code_by_name($gi, $name) {
   }
   return false;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_name_by_name' ) ) {
 function geoip_country_name_by_name($gi, $name) {
   $country_id = geoip_country_id_by_name($gi,$name);
   if ($country_id !== false) {
@@ -353,12 +369,16 @@ function geoip_country_name_by_name($gi, $name) {
   }
   return false;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_id_by_addr' ) ) {
 function geoip_country_id_by_addr($gi, $addr) {
   $ipnum = ip2long($addr);
   return _geoip_seek_country($gi, $ipnum) - GEOIP_COUNTRY_BEGIN;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_code_by_addr' ) ) {
 function geoip_country_code_by_addr($gi, $addr) {
   if ($gi->databaseType == GEOIP_CITY_EDITION_REV1) {
     $record = geoip_record_by_addr($gi,$addr);
@@ -373,7 +393,9 @@ function geoip_country_code_by_addr($gi, $addr) {
   }
   return false;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_country_name_by_addr' ) ) {
 function geoip_country_name_by_addr($gi, $addr) {
   if ($gi->databaseType == GEOIP_CITY_EDITION_REV1) {
     $record = geoip_record_by_addr($gi,$addr);
@@ -386,7 +408,9 @@ function geoip_country_name_by_addr($gi, $addr) {
   }
   return false;
 }
+} // function_exists
 
+if( !function_exists( '_geoip_seek_country' ) ) {
 function _geoip_seek_country($gi, $ipnum) {
   $offset = 0;
   for ($depth = 31; $depth >= 0; --$depth) {
@@ -424,7 +448,9 @@ function _geoip_seek_country($gi, $ipnum) {
   trigger_error("error traversing database - perhaps it is corrupt?", E_USER_ERROR);
   return false;
 }
+} // function_exists
 
+if( !function_exists( '_get_org' ) ) {
 function _get_org($gi,$ipnum){
   $seek_org = _geoip_seek_country($gi,$ipnum);
   if ($seek_org == $gi->databaseSegments) {
@@ -440,7 +466,9 @@ function _get_org($gi,$ipnum){
   $org_buf = substr($org_buf, 0, strpos($org_buf, 0));
   return $org_buf;
 }
+} // function_exists
 
+if( !function_exists( 'geoip_org_by_addr' ) ) {
 function geoip_org_by_addr ($gi,$addr) {
   if ($addr == NULL) {
     return 0;
@@ -448,7 +476,9 @@ function geoip_org_by_addr ($gi,$addr) {
   $ipnum = ip2long($addr);
   return _get_org($gi, $ipnum);
 }
+} // function_exists
 
+if( !function_exists( '_get_region' ) ) {
 function _get_region($gi,$ipnum){
   if ($gi->databaseType == GEOIP_REGION_EDITION_REV0){
     $seek_region = _geoip_seek_country($gi,$ipnum) - GEOIP_STATE_BEGIN_REV0;
@@ -479,7 +509,9 @@ function _get_region($gi,$ipnum){
   return array ($country_code,$region);
   }
 }
+} // function_exists
 
+if( !function_exists( 'geoip_region_by_addr' ) ) {
 function geoip_region_by_addr ($gi,$addr) {
   if ($addr == NULL) {
     return 0;
@@ -487,7 +519,9 @@ function geoip_region_by_addr ($gi,$addr) {
   $ipnum = ip2long($addr);
   return _get_region($gi, $ipnum);
 }
+} // function_exists
 
+if( !function_exists( 'getdnsattributes' ) ) {
 function getdnsattributes ($l,$ip){
   $r = new Net_DNS_Resolver();
   $r->nameservers = array("ws1.maxmind.com");
@@ -497,5 +531,4 @@ function getdnsattributes ($l,$ip){
   $str = $regs[1];
   return $str;
 }
-
-?>
+} // function_exists
