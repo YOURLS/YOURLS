@@ -1,16 +1,85 @@
 <?php
 
-// Functions to get remote content. TODO: support also cURL ?
+// Determine best transport for GET request.
+// Order of preference: curl, fopen, fsockopen.
+// Return 'curl', 'fopen', 'fsockopen' or false if nothing works
+function yourls_get_http_transport( $url ) {
+
+	$transports = array();
+	
+	$scheme = parse_url( $url, PHP_URL_SCHEME );
+	$is_ssl = ( $scheme == 'https' || $scheme == 'ssl' );
+
+	// Test transports by order of preference, best first
+
+	// curl
+	if( function_exists('curl_init') && function_exists('curl_exec') )
+		$transports[]= 'curl';
+
+	// fopen. Doesn't work with https?
+	if( !$is_ssl && function_exists('fopen') && ini_get('allow_url_fopen') )
+		$transports[]= 'fopen';
+		
+	// fsock
+	if( function_exists( 'fsockopen' ) )
+		$transports[]= 'fsockopen';
+	
+	$best = ( $transports ? array_shift( $transports ) : false );
+	
+	return yourls_apply_filter( 'get_http_transport', $best, $transports );
+}
+
+// Get remote content via a GET request using best transport available
+// Returns $content (might be an error message) or false if no transport available
+function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
+	$url = yourls_sanitize_url( $url );
+
+	$transport = yourls_get_http_transport( $url );
+	if( $transport ) {
+		$content = call_user_func( 'yourls_get_remote_content_'.$transport, $url, $maxlen, $timeout );
+	} else {
+		$content = false;
+	}
+	
+	return yourls_apply_filter( 'get_remote_content', $content, $url, $maxlen, $timeout );
+}
+
+// Get remote content using curl. Needs sanitized $url. Returns false or $content.
+function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
+	
+    $ch = curl_init();
+	curl_setopt( $ch, CURLOPT_URL, $url );
+    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+    curl_setopt( $ch, CURLOPT_TIMEOUT, $timeout );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 ); // follow redirects...
+    curl_setopt( $ch, CURLOPT_MAXREDIRS, 3 ); // ... but not more than 3
+    curl_setopt( $ch, CURLOPT_USERAGENT, yourls_http_user_agent() );
+    curl_setopt( $ch, CURLOPT_RANGE, "0-{$maxlen}" ); // Get no more than $maxlen
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 ); // dont check SSL certificates
+	curl_setopt( $ch, CURLOPT_HEADER, 0 );
+
+    $response = curl_exec( $ch );
+	
+	if( !$response && curl_error( $ch ) )
+		$response = curl_error( $ch );
+
+	curl_close( $ch );
+
+	return substr( $response, 0, $maxlen ); // substr in case CURLOPT_RANGE not supported
+}
 
 // Get remote content using fopen. Needs sanitized $url. Returns false or $content.
 function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
-	//$url = urlencode( $url );
 	$content = false;
 	
-	$old_timeout = ini_set('default_socket_timeout', $timeout);
-	$fp = @fopen( $url, 'r');
-	if( $old_timeout !== false )
-		ini_set('default_socket_timeout', $old_timeout); 
+	$initial_timeout = @ini_set( 'default_socket_timeout', $timeout );
+	$initial_user_agent = @ini_set( 'user_agent', yourls_http_user_agent() );
+
+	// Basic error reporting shortcut
+	set_error_handler( create_function('$code, $string', 'global $ydb; $ydb->fopen_error = $string;') );
+	
+	$fp = fopen( $url, 'r');
 	if( $fp !== false ) {
 		$buffer = min( $maxlen, 4096 );
 		while ( !feof( $fp ) && !( strlen( $content ) >= $maxlen ) ) {
@@ -18,14 +87,27 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 		}
 		fclose( $fp );
 	}
+
+	if( $initial_timeout !== false )
+		@ini_set('default_socket_timeout', $initial_timeout); 
+	if( $initial_user_agent !== false )
+		@ini_set('user_agent', $initial_user_agent);
+		
+
+	restore_error_handler();
 	
-	// return the file content
+	if( !$content ) {
+		global $ydb;
+		$content = strip_tags( $ydb->fopen_error );
+	}
+	
+
 	return $content;
 
 }
 
-// Get remote content using fsockopen. Needs sanitized $url. Returns false or $content.
-function yourls_get_remote_content_fsock( $url, $maxlen = 4096, $timeout = 5 ) {
+// Get remote content using fsockopen. Needs sanitized $url. Returns $content or an error message
+function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	// get the host name and url path
 	$parsed_url = parse_url($url);
 
@@ -50,11 +132,12 @@ function yourls_get_remote_content_fsock( $url, $maxlen = 4096, $timeout = 5 ) {
 
 	// connect to the remote server
 	$fp = @fsockopen( $host, $port, $errno, $errstr, $timeout );
+	var_dump( $errno, $errstr );
 	if( $fp !== false ) {
 		// send some fake headers to mimick a standard browser
 		fputs($fp, "GET $path HTTP/1.0\r\n" .
 			"Host: $host\r\n" . 
-			"User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6\r\n" .
+			"User-Agent: " . yourls_http_user_agent() . "\r\n" .
 			"Accept: */*\r\n" .
 			"Accept-Language: en-us,en;q=0.5\r\n" .
 			"Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7\r\n" .
@@ -69,9 +152,15 @@ function yourls_get_remote_content_fsock( $url, $maxlen = 4096, $timeout = 5 ) {
 		}
 
 		fclose( $fp );
+	} else {
+		$response = trim( "Error #$errno. $errstr" );
 	}
 
 	// return the file content
 	return $response;
 }
 
+// Return funky user agent string
+function yourls_http_user_agent() {
+	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/' );
+}

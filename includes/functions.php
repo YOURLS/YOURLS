@@ -1418,10 +1418,7 @@ function yourls_get_remote_title( $url ) {
 
 	$title = false;
 	
-	// Try fopen, then fsock. If no luck, $title will be $url
-	$content = yourls_get_remote_content_fopen( $url );
-	if( $content === false )
-		$content = yourls_get_remote_content_fsock( $url );
+	$content = yourls_get_remote_content( $url );
 
 	if( $content !== false ) {
 		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
