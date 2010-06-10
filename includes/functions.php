@@ -412,7 +412,7 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	$new_id = ( $newkeyword == '' ? $old_id : yourls_string2int( $newkeyword ) );
 	
 	// Check if new URL is not here already
-	if ($old_url != $url) {
+	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
 		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$strip_url';"));
 	} else {
 		$new_url_already_there = false;
