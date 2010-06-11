@@ -9,6 +9,7 @@ body {
 }
 #wrap {
 	width:950px;
+	min-height:150px;
 	margin:0 auto;
 	background:white;
 	text-align:left;
