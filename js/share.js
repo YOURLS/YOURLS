@@ -60,12 +60,11 @@ function init_clipboard() {
 	$('#copylink').css({'backgroundPosition':'130% 50%'});
 	$('#'+clip.movieId)
 		.mouseover(function(){
-			$('#copylink').animate({'backgroundPosition':'100% 50%'}, 300);
-			//$('#copylink').addClass('copyhover');
+			$('#copylink').select().animate({'backgroundPosition':'100% 50%'}, 300);
+
 		})
 		.mouseout(function(){
-			$('#copylink').animate({'backgroundPosition':'130% 50%'}, 300);
-			//$('#copylink').removeClass('copyhover');
+			$('#copylink').blur().animate({'backgroundPosition':'130% 50%'}, 300);
 		});
 		
 	// Force flash clip size (IE fix)
