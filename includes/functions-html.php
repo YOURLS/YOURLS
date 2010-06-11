@@ -241,7 +241,11 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
 			<p><input id="copylink" class="text" size="40" value="<?php echo $shorturl; ?>" /></p>
-			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small></p>
+			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small>
+			<?php if( yourls_do_log_redirect() ) { ?>
+			<br/><small>Real time stats: <a href="<?php echo $shorturl; ?>+"><?php echo $shorturl; ?>+</a></small>
+			<?php } ?>
+			</p>
 		</div>
 
 		<?php yourls_do_action( 'shareboxes_middle' ); ?>
