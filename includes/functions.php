@@ -1420,6 +1420,7 @@ function yourls_get_remote_title( $url ) {
 	
 	$content = yourls_get_remote_content( $url );
 
+	// look for <title>
 	if( $content !== false ) {
 		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
 			$title = $found[1];
@@ -1427,8 +1428,12 @@ function yourls_get_remote_title( $url ) {
 		}
 	}
 	
-	if( $title == false )
+	// if title not found, guess if returned content was actually an error message
+	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
+		$title = $content;
+	} else {
 		$title = $url;
+	}
 
 	return yourls_apply_filter( 'get_remote_title', $title );
 }

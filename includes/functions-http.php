@@ -44,7 +44,7 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	return yourls_apply_filter( 'get_remote_content', $content, $url, $maxlen, $timeout );
 }
 
-// Get remote content using curl. Needs sanitized $url. Returns false or $content.
+// Get remote content using curl. Needs sanitized $url. Returns $content or an error message
 function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 	
     $ch = curl_init();
@@ -62,14 +62,14 @@ function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
     $response = curl_exec( $ch );
 	
 	if( !$response && curl_error( $ch ) )
-		$response = curl_error( $ch );
+		$response = 'Error: '.curl_error( $ch );
 
 	curl_close( $ch );
 
 	return substr( $response, 0, $maxlen ); // substr in case CURLOPT_RANGE not supported
 }
 
-// Get remote content using fopen. Needs sanitized $url. Returns false or $content.
+// Get remote content using fopen. Needs sanitized $url. Returns $content or an error message
 function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	$content = false;
 	
@@ -98,7 +98,7 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	
 	if( !$content ) {
 		global $ydb;
-		$content = strip_tags( $ydb->fopen_error );
+		$content = 'Error: '.strip_tags( $ydb->fopen_error );
 	}
 	
 
@@ -153,7 +153,7 @@ function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5
 
 		fclose( $fp );
 	} else {
-		$response = trim( "Error #$errno. $errstr" );
+		$response = trim( "Error: #$errno. $errstr" );
 	}
 
 	// return the file content
