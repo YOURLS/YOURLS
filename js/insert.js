@@ -178,3 +178,28 @@ function decrement() {
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
 }
+
+// Change an element text an revert in a smooth pulse. el is an element id like '#copybox h2'
+function html_pulse( el, newtext ){
+	var oldtext = $(el).html();
+	// Fast pulse to "Copied" and revert
+	$(el).fadeTo(
+		"normal",
+		0.01,
+		function(){
+			$(el)
+			.html( newtext )
+			.css('opacity', 1)
+			.fadeTo(
+				"slow", 1, // this fades from 1 to 1: just a 'sleep(1)' actually
+				function(){
+					$(el).fadeTo("normal", 0.01, function(){$(el).html( oldtext ).css('opacity', 1)});
+				}
+			);
+		}
+	);
+
+
+}
+
+

@@ -18,6 +18,7 @@ $(document).ready(function(){
 		$(this).select();
 	});	
 	
+	init_clipboard();
 })
 
 function share(dest) {
@@ -38,4 +39,36 @@ function share(dest) {
 	}
 	return false;
 }
+
+function init_clipboard() {
+	//Create a new clipboard client
+	clip = new ZeroClipboard.Client();
+	
+	//Glue the clipboard client to the last td in each row
+	clip.glue( 'copylink' );
+
+	//Grab the text from the parent row of the icon
+	var txt = $('#copylink').val();
+	clip.setText(txt);
+
+	//Add a complete event to let the user know the text was copied
+	clip.addEventListener('complete', function(client, text) {
+		html_pulse( '#copybox h2', 'Copied!' );
+	});
+	
+	// Custom animation on hover
+	$('#copylink').css({'backgroundPosition':'130% 50%'});
+	$('#'+clip.movieId)
+		.mouseover(function(){
+			$('#copylink').animate({'backgroundPosition':'100% 50%'}, 300);
+			//$('#copylink').addClass('copyhover');
+		})
+		.mouseout(function(){
+			$('#copylink').animate({'backgroundPosition':'130% 50%'}, 300);
+			//$('#copylink').removeClass('copyhover');
+		});
+		
+	// Force flash clip size (IE fix)
+	$('#'+clip.movieId).css('height', '16px');
+};                     
 
