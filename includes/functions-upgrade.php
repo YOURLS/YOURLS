@@ -7,7 +7,7 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		1.4		200
 		1.4.1	210
 		1.4.3	220
-		1.5		230
+		1.5		240
 	*/
 		
 	// special case for 1.3: the upgrade is a multi step procedure
@@ -26,7 +26,7 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		if( $oldsql < 220 )
 			yourls_upgrade_to_143();
 		
-		if( $oldsql < 230 )
+		if( $oldsql < 240 )
 			yourls_upgrade_to_15();
 		
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
@@ -49,6 +49,10 @@ function yourls_upgrade_to_15( ) {
 	if( yourls_get_option( 'active_plugins' ) === false )
 		yourls_add_option( 'active_plugins', array() );
 	echo "<p>Enabling the plugin API. Please wait...</p>";
+	
+	// Update .htaccess
+	yourls_create_htaccess();
+	echo "<p>Updating .htaccess file. Please wait...</p>";
 }
 
 /************************** 1.4.1 -> 1.4.3 **************************/
