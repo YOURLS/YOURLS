@@ -11,15 +11,15 @@ function yourls_get_shorturl_charset() {
 		return $charset;
 		
 	if( !defined('YOURLS_URL_CONVERT') ) {
-		$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+		$charset = '0123456789abcdefghijklmnopqrstuvwxyz-';
 	} else {
 		switch( YOURLS_URL_CONVERT ) {
 			case 36:
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+				$charset = '0123456789abcdefghijklmnopqrstuvwxyz-';
 				break;
 			case 62:
 			case 64: // just because some people get this wrong in their config.php
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				$charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-';
 				break;
 		}
 	}

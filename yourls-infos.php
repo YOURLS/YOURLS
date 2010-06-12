@@ -1,20 +1,23 @@
 <?php
 // TODO: make things cleaner. This file is an awful HTML/PHP soup.
 
-// Require Files
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 require_once( YOURLS_INC.'/functions-infos.php' );
 yourls_maybe_require_auth();
 
-if ( !isset( $_GET['id'] ) )
-	yourls_redirect( YOURLS_SITE, 307 );
-	
-$aggregate = false;
-if ( isset( $_GET['all'] ) && $_GET['all'] == 1 && yourls_allow_duplicate_longurls() )
+// Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-infos.php)
+if( !isset( $keyword ) && isset( $_GET['id'] ) )
+	$keyword = $_GET['id'];
+if( !isset( $aggregate ) && isset( $_GET['all'] ) && $_GET['all'] == 1 && yourls_allow_duplicate_longurls() )
 	$aggregate = true;
 
+if ( !isset( $keyword ) )
+	yourls_redirect( YOURLS_SITE, 307 );
+	
+	var_dump( $aggregate );
+	
 // Get basic infos for this shortened URL
-$keyword = yourls_sanitize_string( $_GET['id'] );
+$keyword = yourls_sanitize_string( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );
 $clicks = yourls_get_keyword_clicks( $keyword );
 $timestamp = yourls_get_keyword_timestamp( $keyword );

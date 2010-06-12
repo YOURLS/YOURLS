@@ -57,4 +57,5 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - added directory /user, config.php can be moved there
 - added new instant bookmarklets
 - added 1 click copy to clipboard a la bitly
+- change in logic: now all request are handled by PHP and don't rely on .htaccess
 - working on: maintenance mode

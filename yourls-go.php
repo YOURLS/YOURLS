@@ -2,9 +2,10 @@
 define('YOURLS_GO', true);
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 
-// Variables
-$id = ( isset( $_GET['id'] ) ? $_GET['id'] : '' );
-$keyword = yourls_sanitize_string( $id );
+// Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-go.php)
+if( !isset( $keyword ) && isset( $_GET['id'] ) )
+	$keyword = $_GET['id'];
+$keyword = yourls_sanitize_string( $keyword );
 
 // First possible exit:
 if ( !$keyword ) {
@@ -42,4 +43,3 @@ if( !empty($url) ) {
 	}
 }
 exit();
-?>
