@@ -23,19 +23,28 @@ yourls_do_action( 'pre_load_template', $request );
 // At this point, $request is not sanitized. Sanitize in loaded template.
 
 // Redirection:
-if( preg_match( "/^([$pattern]+)\/?$/", $request, $matches ) ) {
+if( preg_match( "@^([$pattern]+)/?$@", $request, $matches ) ) {
 	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
 	include( YOURLS_ABSPATH.'/yourls-go.php' );
 	exit;
 }
 
 // Stats:
-if( preg_match( "/^([$pattern]+)\+(all)?\/?$/", $request, $matches ) ) {
+if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
 	$aggregate = isset( $matches[2] ) ? (bool)$matches[2] && yourls_allow_duplicate_longurls() : false;
 	include( YOURLS_ABSPATH.'/yourls-infos.php' );
 	exit;
 }
+
+/** Check this on Linux. Cannot run on Windows, see https://issues.apache.org/bugzilla/show_bug.cgi?id=41441
+// Bookmarklet:
+if( preg_match( "@^[a-zA-Z]://.+@", $request, $matches ) ) {
+	$url = $matches[0];
+	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ) );
+	exit;
+}
+/**/
 
 // Past this point this is a request the loader could not understand
 yourls_do_action( 'loader_failed', $request );
