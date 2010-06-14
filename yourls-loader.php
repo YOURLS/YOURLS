@@ -37,14 +37,13 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 	exit;
 }
 
-/** Check this on Linux. Cannot run on Windows, see https://issues.apache.org/bugzilla/show_bug.cgi?id=41441
 // Bookmarklet:
-if( preg_match( "@^[a-zA-Z]://.+@", $request, $matches ) ) {
+if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = $matches[0];
 	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ) );
 	exit;
 }
-/**/
+
 
 // Past this point this is a request the loader could not understand
 yourls_do_action( 'loader_failed', $request );
