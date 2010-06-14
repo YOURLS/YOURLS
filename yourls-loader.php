@@ -37,13 +37,12 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 	exit;
 }
 
-// Bookmarklet:
-if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
+// Bookmarklet (doesn't work on Windows)
+if( strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = $matches[0];
 	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ) );
 	exit;
 }
-
 
 // Past this point this is a request the loader could not understand
 yourls_do_action( 'loader_failed', $request );
