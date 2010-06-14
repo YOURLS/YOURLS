@@ -9,6 +9,7 @@ $keyword = yourls_sanitize_string( $keyword );
 
 // First possible exit:
 if ( !$keyword ) {
+	yourls_do_action( 'redirect_no_keyword' );
 	yourls_redirect( YOURLS_SITE, 301 );
 }
 
@@ -37,7 +38,7 @@ if( !empty($url) ) {
 
 	// Either reserved id, or no such id
 	} else {
-		yourls_do_action( 'redirect_no_url', $url );
+		yourls_do_action( 'redirect_keyword_not_found', $keyword );
 		
 		yourls_redirect( YOURLS_SITE, 307 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
