@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	$('#tweet_body').focus();
 
-	$('#tweet_body').keyup(function(event){
+	$('#tweet_body').keypress(function(event){
 		var text = encodeURI( $('#tweet_body').val() );
 		var tw = 'http://twitter.com/home?status='+text;
 		var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+encodeURI( $('#tweet_body').val() ) ;

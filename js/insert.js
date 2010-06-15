@@ -1,6 +1,8 @@
 // Init some stuff
 $(document).ready(function(){
-	$('#add-url, #add-keyword').keyup(function(e){ if (e.keyCode == 13) {add();} } );
+	$('#add-url, #add-keyword').keypress(function(e){
+		if (e.which == 13) {add();}
+	});
 	reset_url();
 	$('#new_url_form').attr('action', 'javascript:add();');
 	
@@ -14,7 +16,6 @@ $(document).ready(function(){
 function add() {
 	var newurl = $("#add-url").val();
 	if ( !newurl || newurl == 'http://' || newurl == 'https://' ) {
-		alert('no URL ?');
 		return;
 	}
 	var keyword = $("#add-keyword").val();
@@ -31,6 +32,13 @@ function add() {
 				increment();
 			}
 			feedback(data.message, data.status);
+			
+			$('#copylink').val( data.shorturl );
+			$('#origlink').attr( 'href', data.url.url ).html( data.url.url );
+			$('#statlink').attr( 'href', data.shorturl+'+' ).html( data.shorturl+'+' );
+			$('#tweet_body').val( data.shorturl ).keypress();
+			$('#shareboxes').slideDown();		
+			
 			end_loading("#add-button");
 			end_disable("#add-button");
 		}

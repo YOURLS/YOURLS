@@ -209,10 +209,14 @@ yourls_html_menu() ;
 
 	<?php yourls_html_addnew(); ?>
 	
-	<?php if ( $is_bookmark ) {
+	<?php
+	// If bookmarklet, add message. Otherwise, hide hidden share box.
+	if ( !$is_bookmark ) {
+		yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
+	} else {
 		echo '<h2 class="bookmark_result">' . $return['message'] . '</h2>';
-	
-	} ?>
+	}
+	?>
 	
 	<table id="tblUrl" class="tblSorter" cellpadding="0" cellspacing="1">
 		<thead>

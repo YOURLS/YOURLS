@@ -1,6 +1,11 @@
 #shareboxes, #tweet {
 	overflow:hidden;
 }
+
+#shareboxes{
+	margin-top:15px;
+}
+
 div.share {
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;

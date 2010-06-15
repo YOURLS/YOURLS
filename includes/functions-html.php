@@ -28,7 +28,7 @@ function yourls_html_head( $context = 'index' ) {
 			break;
 			
 		case 'index':
-			$insert = $tablesorter = $cal = true;
+			$insert = $tablesorter = $cal = $share = true;
 			break;
 			
 		case 'plugins':
@@ -224,26 +224,28 @@ function yourls_html_tfooter( $params = array() ) {
 	<?php
 }
 
-// Display the Quick Share box of the tools.php page
-function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>' ) {
+// Display the Quick Share box
+function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>', $hidden = false ) {
 	$text = ( $text ? '"'.$text.'" ' : '' );
 	$title = ( $title ? "$title " : '' );
 	$share = htmlspecialchars_decode( $title.$text.$shorturl );
 	$_share = rawurlencode( $share );
 	$_url = rawurlencode( $shorturl );
 	$count = 140 - strlen( $share );
+	
+	$hidden = ( $hidden ? 'style="display:none;"' : '' );
 	?>
 	
-	<div id="shareboxes">
+	<div id="shareboxes" <?php echo $hidden; ?>>
 
 		<?php yourls_do_action( 'shareboxes_before' ); ?>
 
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
 			<p><input id="copylink" class="text" size="40" value="<?php echo $shorturl; ?>" /></p>
-			<p><small>Original link: <a href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small>
+			<p><small>Original link: <a id="origlink" href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small>
 			<?php if( yourls_do_log_redirect() ) { ?>
-			<br/><small>Real time stats: <a href="<?php echo $shorturl; ?>+"><?php echo $shorturl; ?>+</a></small>
+			<br/><small>Real time stats: <a id="statlink" href="<?php echo $shorturl; ?>+"><?php echo $shorturl; ?>+</a></small>
 			<?php } ?>
 			</p>
 		</div>
