@@ -387,6 +387,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 		// URL was already stored
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
+		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url );
 		$return['message'] = $strip_url.' already exists in database';
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
