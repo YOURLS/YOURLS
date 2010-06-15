@@ -29,6 +29,7 @@ ul.toggle_display li {
 	-moz-border-radius-topright:10px;
 	-webkit-border-top-left-radius:10px;
 	-webkit-border-top-right-radius:10px;
+	border-radius:10px;
 	padding:10px 5px 5px 15px;
 	background:#dde;
 }
@@ -52,6 +53,7 @@ ul.toggle_display li {
 	-moz-border-radius-topright:10px;
 	-webkit-border-top-left-radius:10px;
 	-webkit-border-top-right-radius:10px;
+	border-radius:10px;
 	padding:3px 10px;
 	background:#FFE3BB;
 }

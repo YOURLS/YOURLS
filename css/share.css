@@ -9,6 +9,7 @@
 div.share {
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
+	border-radius:5px;
 	border:2px solid #8DBDD8;
 	background:#fff;
 	margin-right:1em;

@@ -20,6 +20,7 @@ body {
 	border-top:3px solid #5FA3C6;
 	-moz-border-radius:20px;
 	-webkit-border-radius:20px;
+	border-radius:20px;
 }
 div, p, td {
 	font-family: Verdana, Arial;
@@ -65,6 +66,7 @@ tt {
 input, textarea {
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
+	border-radius:3px;
 }
 Input.text, select, textarea {
 	font-family: Verdana, Arial;
@@ -150,6 +152,7 @@ td.actions .button_stats {
 	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
+	border-radius:3px;
 	margin-top:0px;
 	display:block;
 	float:left;
@@ -212,6 +215,7 @@ a.bookmarklet {
 	border:2px solid #2A85B3;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
+	border-radius:3px;
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.gif) 2px center no-repeat;
 	margin:3px;
@@ -233,11 +237,14 @@ a.bookmarklet:hover {
 	width:950px;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
+	border-radius:10px;
 	border:2px solid #2A85B3;
 	-moz-border-radius-bottomleft:30px;
 	-moz-border-radius-bottomright:30px;
 	-webkit-border-bottom-left-radius:25px;
 	-webkit-border-bottom-right-radius:25px;
+	border-bottom-left-radius:25px;
+	border-bottom-right-radius:25px;
 }
 #footer p a {
 	background:#fff url(../images/favicon.gif) 2px center no-repeat;
@@ -249,6 +256,7 @@ a.bookmarklet:hover {
 	background: #F3FAFD;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
+	border-radius:6px;
 	width:70%;
 	margin-left:15%;
 	padding-left:10px;
