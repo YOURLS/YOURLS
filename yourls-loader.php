@@ -12,6 +12,12 @@ require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 $scheme = ( isset($_SERVER["HTTPS"]) ? 'https' : 'http' );
 $request = str_replace( YOURLS_SITE.'/', '', $scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+if( isset($_SERVER['QUERY_STRING']) )
+	$request = str_replace( '?'.$_SERVER['QUERY_STRING'], '', $request );
+/**
+ * TODO: think about doing something with $_SERVER['QUERY_STRING']?
+ * (if so, deal with logout requests early)
+ */
 
 // Make valid regexp pattern from authorized charset in keywords
 $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
