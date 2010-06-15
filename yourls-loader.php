@@ -25,6 +25,8 @@ yourls_do_action( 'pre_load_template', $request );
 // Redirection:
 if( preg_match( "@^([$pattern]+)/?$@", $request, $matches ) ) {
 	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
+	$keyword = yourls_sanitize_keyword( $keyword );
+	yourls_do_action( 'load_template_go', $keyword );
 	include( YOURLS_ABSPATH.'/yourls-go.php' );
 	exit;
 }
@@ -32,14 +34,17 @@ if( preg_match( "@^([$pattern]+)/?$@", $request, $matches ) ) {
 // Stats:
 if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
+	$keyword = yourls_sanitize_keyword( $keyword );
 	$aggregate = isset( $matches[2] ) ? (bool)$matches[2] && yourls_allow_duplicate_longurls() : false;
+	yourls_do_action( 'load_template_infos', $keyword );
 	include( YOURLS_ABSPATH.'/yourls-infos.php' );
 	exit;
 }
 
-// Bookmarklet (doesn't work on Windows)
-if( strtoupper(substr(PHP_OS, 0, 3)) != 'WIN' && preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
-	$url = $matches[0];
+// Prefix-n-Shorten sends to bookmarklet (doesn't work on Windows)
+if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
+	$url = yourls_sanitize_url( $matches[0] );
+	yourls_do_action( 'load_template_redirect_admin', $url );
 	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ) );
 	exit;
 }
