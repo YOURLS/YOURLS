@@ -261,3 +261,39 @@ a.bookmarklet:hover {
 	margin-left:15%;
 	padding-left:10px;
 }
+
+
+.jquery-notify-bar {
+  width:100%;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:32768;
+  background-color:#efefef;
+  font-size:18px;
+  color:#000;
+  text-align:center;
+  font-family: Arial, Verdana, sans-serif;
+  padding:20px 0px;
+  border-bottom:1px solid #bbb;
+  filter:alpha(opacity=92);
+  -moz-opacity:0.92;
+  -khtml-opacity:0.92;
+  opacity:0.92;
+  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.jquery-notify-bar.error ,.jquery-notify-bar.fail {
+  color:#f00;
+  background-color:#fdd;
+}
+.jquery-notify-bar.success {
+  color:#060;
+  background-color:#99FF55;
+}
+.notify-bar-close {
+  position:absolute;
+  left:95%;
+  font-size:11px;
+}

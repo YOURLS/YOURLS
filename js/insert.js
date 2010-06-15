@@ -31,16 +31,17 @@ function add() {
 				reset_url();
 				increment();
 			}
-			feedback(data.message, data.status);
 			
 			$('#copylink').val( data.shorturl );
 			$('#origlink').attr( 'href', data.url.url ).html( data.url.url );
 			$('#statlink').attr( 'href', data.shorturl+'+' ).html( data.shorturl+'+' );
 			$('#tweet_body').val( data.shorturl ).keypress();
 			$('#shareboxes').slideDown();		
-			
+
 			end_loading("#add-button");
 			end_disable("#add-button");
+
+			feedback(data.message, data.status);
 		}
 	);
 }
@@ -122,49 +123,11 @@ function edit_save(id) {
 	);
 }
 
-// Unused for now since HTTP Auth sucks donkeys.
-function logout() {
-	$.ajax({
-		type: "POST",
-		url: "index_ajax.php",
-		data: {mode:'logout'},
-		success: function() {
-			window.parent.location.href = window.parent.location.href;
-		}
-	});
-}
-
-// Begin the spinning animation & disable a button
-function add_loading(el) {
-	$(el).attr("disabled", "disabled").addClass('disabled').addClass('loading');
-}
-
-// End spinning animation
-function end_loading(el) {
-	$(el).removeClass('loading');
-}
-
-// Un-disable an element
-function end_disable(el) {
-	$(el).removeAttr("disabled").removeClass('disabled');
-}
-
 // Prettify table with odd & even rows
 function zebra_table() {
 	$("#tblUrl tbody tr:even").removeClass('odd').addClass('even');
 	$("#tblUrl tbody tr:odd").removeClass('even').addClass('odd');
 	$('#tblUrl tbody').trigger("update");
-}
-
-// Update feedback message
-function feedback(msg, type) {
-	var span = (type == 'fail') ? '<span class="fail">' : '<span>' ;
-	var delay = (type == 'fail') ? 2500 : 1000 ;
-	$('#feedback').html(span + msg + '</span>').fadeIn(200,function(){
-		$(this).animate({'opacity':1}, delay, function() {
-			$(this).fadeOut(800);
-		})
-	});
 }
 
 // Ready to add another URL
@@ -186,28 +149,4 @@ function decrement() {
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
 }
-
-// Change an element text an revert in a smooth pulse. el is an element id like '#copybox h2'
-function html_pulse( el, newtext ){
-	var oldtext = $(el).html();
-	// Fast pulse to "Copied" and revert
-	$(el).fadeTo(
-		"normal",
-		0.01,
-		function(){
-			$(el)
-			.html( newtext )
-			.css('opacity', 1)
-			.fadeTo(
-				"slow", 1, // this fades from 1 to 1: just a 'sleep(1)' actually
-				function(){
-					$(el).fadeTo("normal", 0.01, function(){$(el).html( oldtext ).css('opacity', 1)});
-				}
-			);
-		}
-	);
-
-
-}
-
 

@@ -67,6 +67,8 @@ function yourls_html_head( $context = 'index' ) {
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
 	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php echo YOURLS_SITE; ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php echo YOURLS_SITE; ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 	<?php if ($tabs) { ?>
 		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
