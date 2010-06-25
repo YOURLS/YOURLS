@@ -21,6 +21,13 @@ $keyword = yourls_sanitize_string( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );
 $clicks = yourls_get_keyword_clicks( $keyword );
 $timestamp = yourls_get_keyword_timestamp( $keyword );
+$title = yourls_get_keyword_title( $keyword );
+
+// Update title if it hasn't been stored yet
+if( $title == '' ) {
+	$title = yourls_get_remote_title( $longurl );
+	yourls_edit_link_title( $keyword, $title );
+}
 
 if ( $longurl === false ) {
 	yourls_do_action( 'infos_keyword_not_found' );
@@ -167,7 +174,7 @@ yourls_html_logo();
 yourls_html_menu();
 ?>
 
-<h2 id="informations">Information</h2>
+<h2 id="informations"><?php echo $title; ?></h2>
 
 <h3>Short URL: <img src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/>
 <?php if( $aggregate ) {
@@ -187,7 +194,7 @@ yourls_html_menu();
 	if( count( $keyword_list ) > 1 )
 		echo ' <a href="'. yourls_link($keyword).'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
 } ?></h3>
-<h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/> <?php yourls_html_link( $longurl, '', 'longurl' ); ?></h3>
+<h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
 
 <div id="tabs">
 	<div class="wrap_unfloat">

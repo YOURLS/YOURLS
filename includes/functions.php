@@ -484,6 +484,19 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
 }
 
+// Update a title link (no checks for duplicates etc..)
+function yourls_edit_link_title( $keyword, $title ) {
+	global $ydb;
+	
+	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
+	$title = yourls_escape( yourls_sanitize_title( $title ) );
+	
+	$table = YOURLS_DB_TABLE_URL;
+	$update = $ydb->query("UPDATE `$table` SET `title` = '$title' WHERE `keyword` = '$keyword';");
+
+	return $update;
+}
+
 
 // Check if keyword id is free (ie not already taken, and not reserved). Return bool.
 function yourls_keyword_is_free( $keyword ) {
@@ -1473,6 +1486,9 @@ function yourls_get_remote_title( $url ) {
 	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
 		$title = $content;
 	}
+	
+	if( $title == false )
+		$title = $url;
 
 	$title = yourls_sanitize_title( $title );
 
