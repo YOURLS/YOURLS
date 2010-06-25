@@ -214,7 +214,7 @@ yourls_html_menu() ;
 	if ( !$is_bookmark ) {
 		yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
 	} else {
-		echo '<h2 class="bookmark_result">' . $return['message'] . '</h2>';
+		echo '<script type="text/javascript">$(document).ready(function(){ feedback( "' . $return['message'] . '", "'. $return['status'] .'") });</script>';
 	}
 	?>
 	
@@ -258,13 +258,14 @@ yourls_html_menu() ;
 			$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
 			if( $url_results ) {
 				foreach( $url_results as $url_result ) {
-					$keyword = yourls_sanitize_string($url_result->keyword);
-					$timestamp = strtotime($url_result->timestamp);
-					$url = stripslashes($url_result->url);
+					$keyword = yourls_sanitize_string( $url_result->keyword );
+					$timestamp = strtotime( $url_result->timestamp );
+					$url = stripslashes( $url_result->url );
 					$ip = $url_result->ip;
+					$title = $url_result->title ? $url_result->title : '';
 					$clicks = $url_result->clicks;
 
-					echo yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp );
+					echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp );
 				}
 			} else {
 				echo '<tr class="nourl_found"><td colspan="6">No URL Found</td></tr>';

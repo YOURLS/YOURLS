@@ -129,6 +129,9 @@ tr.edit-row  td {
 #new_url #feedback .fail {
 	color:#f55;
 }
+td.url small a{
+	color:#bbc;
+}
 td.actions input, td.actions a {
 	visibility:hidden;
 }

@@ -35,7 +35,8 @@ function add() {
 			$('#copylink').val( data.shorturl );
 			$('#origlink').attr( 'href', data.url.url ).html( data.url.url );
 			$('#statlink').attr( 'href', data.shorturl+'+' ).html( data.shorturl+'+' );
-			$('#tweet_body').val( data.shorturl ).keypress();
+			var tweet = ( data.url.title ? data.url.title + ' ' + data.shorturl : data.shorturl );
+			$('#tweet_body').val( tweet ).keypress();
 			$('#shareboxes').slideDown();		
 
 			end_loading("#add-button");
@@ -98,14 +99,22 @@ function edit_save(id) {
 	add_loading("#edit-close-" + id);
 	var newurl = $("#edit-url-" + id).val();
 	var newkeyword = $("#edit-keyword-" + id).val();
+	var title = $("#edit-title-" + id).val();
 	var keyword = $('#old_keyword_'+id).val();
 	var www = $('#yourls-site').val();
 	$.getJSON(
 		"index_ajax.php",
-		{mode:'edit_save', url: newurl, keyword: keyword, newkeyword: newkeyword },
+		{mode:'edit_save', url: newurl, keyword: keyword, newkeyword: newkeyword, title: title },
 		function(data){
 			if(data.status == 'success') {
-				$("#url-" + id).html('<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_url + '</a>');
+			
+				if( data.url.title != '' ) {
+					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
+				} else {
+					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_url + '</a>';
+				}
+
+				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){

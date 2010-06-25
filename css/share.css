@@ -17,6 +17,13 @@ div.share {
 	float:left;
 	height:140px;
 }
+#origlink{
+	display:inline-block;
+	white-space:pre;
+	width:183px;
+	overflow:hidden;
+	vertical-align:-2px;
+}
 #copybox {
 	width:250px;
 }

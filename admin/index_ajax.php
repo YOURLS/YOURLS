@@ -21,7 +21,7 @@ switch( stripslashes($_REQUEST['mode']) ) {
 		break;
 
 	case 'edit_save':
-		$return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'] );
+		$return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'] );
 		echo json_encode($return);
 		break;
 		

@@ -81,6 +81,15 @@ function yourls_sanitize_keyword( $keyword ) {
 	return yourls_sanitize_string( $keyword );
 }
 
+// Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
+function yourls_sanitize_title( $title ) {
+	// TODO: make stronger. Implement KSES?
+	$title = strip_tags( $title );
+	return $title;
+}
+
+
+
 // Is an URL a short URL?
 function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
@@ -218,33 +227,48 @@ function yourls_table_edit_row( $keyword ) {
 	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2int( $keyword ); // used as HTML #id
-	$url = $ydb->get_row("SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';");
-	$safe_url = stripslashes( $url->url );
+	$url = yourls_get_keyword_longurl( $keyword );
+	$title = yourls_get_keyword_title( $keyword );
+	$safe_url = stripslashes( $url );
+	$safe_title = stripslashes( $title );
 	$www = YOURLS_SITE;
 	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
 	}
 	
-	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url );
+	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
 
 	return $return;
 }
 
 // Add a link row
-function yourls_table_add_row( $keyword, $url, $ip, $clicks, $timestamp ) {
-	$keyword = yourls_sanitize_string( $keyword );
-	$id = yourls_string2int( $keyword ); // used as HTML #id
-	$date = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
-	$clicks = number_format($clicks, 0, '', '');
-	$shorturl = YOURLS_SITE.'/'.$keyword;
+function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
+	$keyword  = yourls_sanitize_string( $keyword );
+	$display_keyword = htmlentities( $keyword );
+
+	$url = yourls_sanitize_url( $url );
 	$display_url = htmlentities( yourls_trim_long_string( $url ) );
+	
+	$title   = yourls_sanitize_title( $title ) ;
+	$display_title   = htmlentities( yourls_trim_long_string( $title ) );
+
+	$id      = yourls_string2int( $keyword ); // used as HTML #id
+	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
+	$clicks  = number_format($clicks, 0, '', '');
+
+	$shorturl = YOURLS_SITE.'/'.$keyword;
 	$statlink = $shorturl.'+';
-	$url = htmlentities( $url );
+	
+	if( $title ) {
+		$display_link = "<a href=\"$url\" title=\"$url\">$display_title</a><br/><small><a href=\"$url\">$display_url</a></small>";
+	} else {
+		$display_link = "<a href=\"$url\" title=\"$url\">$display_url</a>";
+	}
 	
 	$actions = <<<ACTION
 <a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" />
@@ -252,9 +276,9 @@ ACTION;
 	$actions = yourls_apply_filter( 'action_links', $actions, $keyword, $url, $ip, $clicks, $timestamp );
 	
 	$row = <<<ROW
-<tr id="id-$id"><td id="keyword-$id"><a href="$shorturl">$keyword</a></td><td id="url-$id"><a href="$url" title="$url">$display_url</a></td><td id="timestamp-$id">$date</td><td id="ip-$id">$ip</td><td id="clicks-$id">$clicks</td><td class="actions" id="actions-$id">$actions<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+<tr id="id-$id"><td id="keyword-$id" class="keyword"><a href="$shorturl">$display_keyword</a></td><td id="url-$id" class="url">$display_link</td><td id="timestamp-$id" class="timestamp">$date</td><td id="ip-$id" class="ip">$ip</td><td id="clicks-$id" class="clicks">$clicks</td><td class="actions" id="actions-$id">$actions<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
-	$row = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $ip, $clicks, $timestamp );
+	$row = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
 	
 	return $row;
 }
@@ -283,16 +307,20 @@ function yourls_delete_link_by_keyword( $keyword ) {
 	return $delete;
 }
 
-// SQL query to insert a new link in the DB. Needs sanitized data. Returns boolean for success or failure of the inserting
-function yourls_insert_link_in_db($url, $keyword) {
+// SQL query to insert a new link in the DB. Returns boolean for success or failure of the inserting
+function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	global $ydb;
+	
+	$url     = addslashes( yourls_sanitize_url( $url ) );
+	$keyword = addslashes( yourls_sanitize_keyword( $keyword ) );
+	$title   = addslashes( yourls_sanitize_title( $title ) );
 
 	$table = YOURLS_DB_TABLE_URL;
 	$timestamp = date('Y-m-d H:i:s');
 	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` VALUES('$keyword', '$url', '$timestamp', '$ip', 0);");
+	$insert = $ydb->query("INSERT INTO `$table` VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
 	
-	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $timestamp, $ip );
+	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 	
 	return (bool)$insert;
 }
@@ -336,6 +364,8 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 
 	// New URL : store it -- or: URL exists, but duplicates allowed
 	if( !$url_exists || yourls_allow_duplicate_longurls() ) {
+	
+		$title = yourls_get_remote_title( $url );
 
 		// Custom keyword provided
 		if ( $keyword ) {
@@ -348,11 +378,12 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 				$return['message'] = 'Short URL '.$keyword.' already exists in database or is reserved';
 			} else {
 				// all clear, store !
-				yourls_insert_link_in_db($url, $keyword);
-				$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
+				yourls_insert_link_in_db( $url, $keyword, $title );
+				$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
 				$return['status'] = 'success';
 				$return['message'] = $strip_url.' added to database';
-				$return['html'] = yourls_table_add_row( $keyword, $url, $ip, 0, time() );
+				$return['title'] = $title;
+				$return['html'] = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 				$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
 			}
 
@@ -365,7 +396,7 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword );
 				$free = yourls_keyword_is_free($keyword);
-				$add_url = @yourls_insert_link_in_db($url, $keyword);
+				$add_url = @yourls_insert_link_in_db( $url, $keyword, $title );
 				$ok = ($free && $add_url);
 				if ( $ok === false && $add_url === 1 ) {
 					// we stored something, but shouldn't have (ie reserved id)
@@ -373,18 +404,20 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 					$return['extra_info'] .= '(deleted '.$keyword.')';
 				} else {
 					// everything ok, populate needed vars
-					$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'date' => $timestamp, 'ip' => $ip );
+					$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 					$return['status'] = 'success';
 					$return['message'] = $strip_url.' added to database';
-					$return['html'] = yourls_table_add_row( $keyword, $url, $ip, 0, time() );
+					$return['title'] = $title;
+					$return['html'] = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 					$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
 				}
 				$id++;
 			} while (!$ok);
 			@yourls_update_next_decimal($id);
 		}
+
+	// URL was already stored
 	} else {
-		// URL was already stored
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
 		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url );
@@ -400,14 +433,16 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 
 
 // Edit a link
-function yourls_edit_link($url, $keyword, $newkeyword='') {
+function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
 	$url = yourls_escape(yourls_sanitize_url($url));
-	$keyword = yourls_sanitize_string( $keyword );
-	$newkeyword = yourls_sanitize_string( $newkeyword );
+	$keyword = yourls_escape(yourls_sanitize_string( $keyword ));
+	$title = yourls_escape(yourls_sanitize_title( $title ));
+	$newkeyword = yourls_escape(yourls_sanitize_string( $newkeyword ));
 	$strip_url = stripslashes($url);
+	$strip_title = stripslashes($title);
 	$old_url = $ydb->get_var("SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';");
 	$old_id = $id = yourls_string2int( $keyword );
 	$new_id = ( $newkeyword == '' ? $old_id : yourls_string2int( $newkeyword ) );
@@ -430,9 +465,9 @@ function yourls_edit_link($url, $keyword, $newkeyword='') {
 	
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-			$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword' WHERE `keyword` = '$keyword';");
+			$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword', `title` = '$title' WHERE `keyword` = '$keyword';");
 		if( $update_url ) {
-			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'new_id' => $new_id );
+			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'new_id' => $new_id, 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status'] = 'success';
 			$return['message'] = 'Link updated in database';
 		} else {
@@ -550,6 +585,11 @@ function yourls_get_keyword_info( $keyword, $field, $notfound = false ) {
 		$return = $infos[$field];
 
 	return yourls_apply_filter( 'get_keyword_info', $return, $keyword, $field, $notfound );	
+}
+
+// Return title associated with keyword. Optional $notfound = string default message if nothing found
+function yourls_get_keyword_title( $keyword, $notfound = false ) {
+	return yourls_get_keyword_info( $keyword, 'title', $notfound );
 }
 
 // Return long URL associated with keyword. Optional $notfound = string default message if nothing found
@@ -1432,9 +1472,9 @@ function yourls_get_remote_title( $url ) {
 	// if title not found, guess if returned content was actually an error message
 	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
 		$title = $content;
-	} else {
-		$title = $url;
 	}
+
+	$title = yourls_sanitize_title( $title );
 
 	return yourls_apply_filter( 'get_remote_title', $title );
 }
