@@ -41,5 +41,10 @@ $(document).ready(function(){
 			$(img).attr('src', 'images/blank.gif');
 		});
 	});
-
+	
+	// If we have the zeroclipboard thing, init it when Share Tab is displayed
+	$('#tabs ul#headers li a[href="#stat_tab_share"]').click(function(){
+		init_clipboard();
+	});
+	
 });

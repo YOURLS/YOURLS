@@ -37,7 +37,8 @@ function add() {
 			$('#statlink').attr( 'href', data.shorturl+'+' ).html( data.shorturl+'+' );
 			var tweet = ( data.url.title ? data.url.title + ' ' + data.shorturl : data.shorturl );
 			$('#tweet_body').val( tweet ).keypress();
-			$('#shareboxes').slideDown();		
+			$('#shareboxes').slideDown();
+			init_clipboard();
 
 			end_loading("#add-button");
 			end_disable("#add-button");
