@@ -276,10 +276,10 @@ a.bookmarklet:hover {
   font-family: Arial, Verdana, sans-serif;
   padding:20px 0px;
   border-bottom:1px solid #bbb;
-  filter:alpha(opacity=92);
-  -moz-opacity:0.92;
-  -khtml-opacity:0.92;
-  opacity:0.92;
+  filter:alpha(opacity=95);
+  -moz-opacity:0.95;
+  -khtml-opacity:0.95;
+  opacity:0.95;
   -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
@@ -290,7 +290,7 @@ a.bookmarklet:hover {
 }
 .jquery-notify-bar.success {
   color:#060;
-  background-color:#99FF55;
+  background-color:#e3f3ff;
 }
 .notify-bar-close {
   position:absolute;
