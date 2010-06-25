@@ -23,7 +23,7 @@ if( !empty($url) ) {
 	// Update detailed log for stats
 	$log_redirect = yourls_log_redirect( $keyword );
 	
-	yourls_do_action( 'redirect_shorturl', $url );
+	yourls_do_action( 'redirect_shorturl', $url, $keyword );
 
 	yourls_redirect( $url, 301 );
 
