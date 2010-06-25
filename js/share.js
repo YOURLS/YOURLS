@@ -3,10 +3,13 @@ $(document).ready(function(){
 
 	$('#tweet_body').keypress(function(event){
 		var text = encodeURI( $('#tweet_body').val() );
+		var url = encodeURI( $('#copylink').val() );
 		var tw = 'http://twitter.com/home?status='+text;
-		var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+encodeURI( $('#tweet_body').val() ) ;
+		var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+text ;
+		var fb = 'http://www.facebook.com/share.php?u='+url ;
 		$('#share_tw').attr('href', tw);
 		$('#share_ff').attr('href', ff);
+		$('#share_fb').attr('href', fb);
 		
 		var charcount = parseInt(140 - $('#tweet_body').val().length);
 		$('#charcount')
