@@ -149,6 +149,7 @@ function yourls_html_tfooter( $params = array() ) {
 						<select name="s_in" size="1">
 							<option value="keyword"<?php if($search_in_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
 							<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
+							<option value="title"<?php if($search_in_sql == 'title') { echo ' selected="selected"'; } ?>>Title</option>
 							<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
 						</select>
 						&ndash;&nbsp;Order&nbsp;by&nbsp;

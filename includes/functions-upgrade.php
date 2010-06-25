@@ -53,7 +53,7 @@ function yourls_upgrade_to_15( ) {
 	// Alter URL table to store titles
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
-	$sql = "ALTER TABLE `$table_url` ADD `title` TEXT BINARY AFTER `url`;";
+	$sql = "ALTER TABLE `$table_url` ADD `title` TEXT AFTER `url`;";
 	$ydb->query( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 	

@@ -39,6 +39,10 @@ if( !empty($search) && !empty($_GET['s_in']) ) {
 			$search_in_text = 'URL';
 			$search_in_sql = 'url';
 			break;
+		case 'title':
+			$search_in_text = 'Title';
+			$search_in_sql = 'title';
+			break;
 		case 'ip':
 			$search_in_text = 'IP Address';
 			$search_in_sql = 'ip';
