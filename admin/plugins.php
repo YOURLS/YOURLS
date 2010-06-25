@@ -68,8 +68,8 @@ yourls_html_menu();
 		<tr>
 			<th>Plugin Name</th>
 			<th>Version</th>
-			<th>Author</th>
 			<th>Description</th>
+			<th>Author</th>
 			<th>Action</th>
 		</tr>
 	</thead>
