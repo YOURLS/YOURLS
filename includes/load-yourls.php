@@ -47,10 +47,18 @@ if( !defined('YOURLS_INC') )
 if( !defined('YOURLS_USERDIR') )
 	define('YOURLS_USERDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/user' ) );
 
+// URL of user directory
+if( !defined('YOURLS_USERURL') )
+	define('YOURLS_USERURL', YOURLS_SITE.'/user');
+	
 // physical path of plugins directory
 if( !defined('YOURLS_PLUGINDIR') )
 	define('YOURLS_PLUGINDIR', yourls_sanitize_filename( YOURLS_USERDIR.'/plugins' ) );
 
+// URL of plugins directory
+if( !defined('YOURLS_PLUGINURL') )
+	define('YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins');
+	
 // physical path of pages directory
 if( !defined('YOURLS_PAGEDIR') )
 	define('YOURLS_PAGEDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/pages' ) );
