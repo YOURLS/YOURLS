@@ -145,6 +145,9 @@ td.actions .button {
 	height:22px;
 	width:22px;
 }
+td.actions .button_share {
+	background:transparent url(../images/share.png) 2px center no-repeat;
+}
 td.actions .button_edit {
 	background:transparent url(../images/pencil.png) 2px center no-repeat;
 }

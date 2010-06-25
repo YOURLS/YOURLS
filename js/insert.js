@@ -31,14 +31,8 @@ function add() {
 				reset_url();
 				increment();
 			}
-			
-			$('#copylink').val( data.shorturl );
-			$('#origlink').attr( 'href', data.url.url ).html( data.url.url );
-			$('#statlink').attr( 'href', data.shorturl+'+' ).html( data.shorturl+'+' );
-			var tweet = ( data.url.title ? data.url.title + ' ' + data.shorturl : data.shorturl );
-			$('#tweet_body').val( tweet ).keypress();
-			$('#shareboxes').slideDown();
-			init_clipboard();
+
+			toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
 
 			end_loading("#add-button");
 			end_disable("#add-button");
@@ -46,6 +40,16 @@ function add() {
 			feedback(data.message, data.status);
 		}
 	);
+}
+
+function toggle_share_fill_boxes( url, shorturl, title ) {
+	$('#copylink').val( shorturl );
+	$('#origlink').attr( 'href', url ).html( url );
+	$('#statlink').attr( 'href', shorturl+'+' ).html( shorturl+'+' );
+	var tweet = ( title ? title + ' ' + shorturl : shorturl );
+	$('#tweet_body').val( tweet ).keypress();
+	$('#shareboxes').slideDown();
+	init_clipboard();
 }
 
 // Display the edition interface
@@ -160,3 +164,12 @@ function decrement() {
 	});
 }
 
+// Toggle Share box
+function toggle_share(id) {
+	var link = $('#url-'+id+' a:first');
+	var longurl = link.attr('href');
+	var title = link.text();
+	var shorturl = $('#keyword-'+id+' a:first').attr('href');
+	
+	toggle_share_fill_boxes( longurl, shorturl, title );
+}

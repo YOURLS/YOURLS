@@ -271,7 +271,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	}
 	
 	$actions = <<<ACTION
-<a href="$statlink" id="statlink-$id" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" />
+<a href="$statlink" id="statlink-$id" title="Stats" class="button button_stats">&nbsp;&nbsp;&nbsp;</a>&nbsp;<input type="button" id="share-button-$id" name="share-button" value="" title="Share" class="button button_share" onclick="toggle_share('$id');" />&nbsp;<input type="button" id="edit-button-$id" name="edit-button" value="" title="Edit" class="button button_edit" onclick="edit('$id');" />&nbsp;<input type="button" id="delete-button-$id" name="delete-button" value="" title="Delete" class="button button_delete" onclick="remove('$id');" />
 ACTION;
 	$actions = yourls_apply_filter( 'action_links', $actions, $keyword, $url, $ip, $clicks, $timestamp );
 	

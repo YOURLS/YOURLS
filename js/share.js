@@ -71,6 +71,6 @@ function init_clipboard() {
 		});
 		
 	// Force flash clip size (IE fix)
-	$('#'+clip.movieId).css('height', '16px');
+	$('#'+clip.movieId).css('height', '35px');
 };                     
 
