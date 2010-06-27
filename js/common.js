@@ -22,10 +22,11 @@ function html_pulse( el, newtext ){
 }
 
 // Update feedback message
-function feedback(msg, type) {
+function feedback(msg, type, delay) {
+	delay = delay || 2000;
 	$.notifyBar({
 		html: '<span>'+msg+'</span>',
-		delay: 2000,
+		delay: delay,
 		animationSpeed: "normal",
 		cls: type
 	});
