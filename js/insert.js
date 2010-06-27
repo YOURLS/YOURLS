@@ -129,10 +129,8 @@ function edit_save(id) {
 				$('#statlink-'+id).attr( 'href', data.url.shorturl+'+' );
 			}
 			feedback(data.message, data.status);
-			end_disable("#edit-close-" + id);
 			end_loading("#edit-close-" + id);
-			end_disable("#edit-button-" + id);
-			end_disable("#delete-button-" + id);
+			end_disable("#actions-" + id + ' .button');
 		}
 	);
 }
