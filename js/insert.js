@@ -6,7 +6,7 @@ $(document).ready(function(){
 	reset_url();
 	$('#new_url_form').attr('action', 'javascript:add();');
 	
-	$('input.text').click(function(){
+	$('input.text').focus(function(){
 		$(this).select();
 	});	
 	

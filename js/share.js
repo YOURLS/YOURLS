@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	$('#tweet_body').focus();
 
-	$('#tweet_body').keypress(function(event){
+	$('#tweet_body').keyup(function(event){
 		var text = encodeURI( $('#tweet_body').val() );
 		var url = encodeURI( $('#copylink').val() );
 		var tw = 'http://twitter.com/home?status='+text;
