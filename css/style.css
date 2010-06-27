@@ -294,9 +294,16 @@ a.bookmarklet:hover {
   color:#f00;
   background-color:#fdd;
 }
+.jquery-notify-bar.error span,.jquery-notify-bar.fail span{
+	background:transparent url("../images/error.png") no-repeat left center;
+	padding-left:20px;
+}.jquery-notify-bar.success span{
+	background:transparent url("../images/accept.png") no-repeat left center;
+	padding-left:20px;
+}
 .jquery-notify-bar.success {
   color:#060;
-  background-color:#e3f3ff;
+  background-color:#aea;
 }
 .notify-bar-close {
   position:absolute;
