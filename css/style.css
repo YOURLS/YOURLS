@@ -310,3 +310,6 @@ a.bookmarklet:hover {
   left:95%;
   font-size:11px;
 }
+tr.plugin.active a{ font-weight:bolder;}
+tr.plugin td.plugin_desc small{ visibility:hidden;}
+tr:hover.plugin td.plugin_desc small{ visibility:visible;}

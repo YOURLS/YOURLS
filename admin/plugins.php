@@ -105,6 +105,10 @@ yourls_html_menu();
 			"<a href='?action=deactivate&plugin=$plugindir&nonce=$nonce'>Deactivate</a>" :
 			"<a href='?action=activate&plugin=$plugindir&nonce=$nonce'>Activate</a>" ;
 	
+		$class = yourls_is_active_plugin( $file ) ?
+			'active' :
+			'inactive' ;
+			
 		// Other "Fields: Value" in the header? Get them too
 		if( $plugin ) {
 			foreach( $plugin as $extra_field=>$extra_value ) {
@@ -115,8 +119,8 @@ yourls_html_menu();
 		
 		$data['desc'] .= "<br/><small>plugin location: $file</small>";
 		
-		printf( "<tr><td><a href='%s'>%s</a></td><td>%s</td><td>%s</td><td><a href='%s'>%s</a></td><td>%s</td></tr>",
-			$data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action
+		printf( "<tr class='plugin %s'><td class='plugin_name'><a href='%s'>%s</a></td><td class='plugin_version'>%s</td><td class='plugin_desc'>%s</td><td class='plugin_author'><a href='%s'>%s</a></td><td class='plugin_actions actions'>%s</td></tr>",
+			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action
 			);
 		
 	}
