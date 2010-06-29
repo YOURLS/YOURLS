@@ -669,7 +669,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10 ) {
 	$return = array();
 	$i = 1;
 	
-	foreach ($results as $res) {
+	foreach ( (array)$results as $res) {
 		$return['links']['link_'.$i++] = array(
 			'shorturl' => YOURLS_SITE .'/'. $res->keyword,
 			'url' => $res->url,
@@ -1272,7 +1272,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 	// Don't throttle whitelist IPs
 	if( defined('YOURLS_FLOOD_IP_WHITELIST' && YOURLS_FLOOD_IP_WHITELIST ) ) {
 		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
-		foreach( $whitelist_ips as $whitelist_ip ) {
+		foreach( (array)$whitelist_ips as $whitelist_ip ) {
 			$whitelist_ip = trim( $whitelist_ip );
 			if ( $whitelist_ip == $ip )
 				return true;
