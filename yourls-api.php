@@ -12,9 +12,10 @@ switch( $action ) {
 	case 'shorturl':
 		$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
 		$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
-		$return = yourls_add_new_link( $url, $keyword );
+		$title = ( isset( $_REQUEST['title'] ) ? $_REQUEST['title'] : '' );
+		$return = yourls_add_new_link( $url, $keyword, $title );
 		$return['simple'] = ( isset( $return['shorturl'] ) ? $return['shorturl'] : '' ); // This one will be used in case output mode is 'simple'
-		unset($return['html']); // in API mode, no need for our internal HTML output
+		unset( $return['html'] ); // in API mode, no need for our internal HTML output
 		break;
 	
 	case 'stats':

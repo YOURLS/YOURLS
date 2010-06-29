@@ -326,7 +326,7 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 }
 
 // Add a new link in the DB, either with custom keyword, or find one
-function yourls_add_new_link( $url, $keyword = '' ) {
+function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	global $ydb;
 
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
@@ -359,13 +359,17 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 	
 	$table = YOURLS_DB_TABLE_URL;
 	$strip_url = stripslashes($url);
-	$url_exists = $ydb->get_row("SELECT keyword,url FROM `$table` WHERE `url` = '".$strip_url."';");
+	$url_exists = $ydb->get_row("SELECT * FROM `$table` WHERE `url` = '".$strip_url."';");
 	$return = array();
 
 	// New URL : store it -- or: URL exists, but duplicates allowed
 	if( !$url_exists || yourls_allow_duplicate_longurls() ) {
 	
-		$title = yourls_get_remote_title( $url );
+		if( isset( $title ) && !empty( $title ) ) {
+			$title = yourls_sanitize_title( $title );
+		} else {
+			$title = yourls_get_remote_title( $url );
+		}
 
 		// Custom keyword provided
 		if ( $keyword ) {
@@ -420,8 +424,9 @@ function yourls_add_new_link( $url, $keyword = '' ) {
 	} else {
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
-		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url );
+		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
 		$return['message'] = $strip_url.' already exists in database';
+		$return['title'] = $url_exists->title; 
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
 	

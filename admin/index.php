@@ -138,7 +138,8 @@ if ( isset( $_GET['u'] ) ) {
 
 	$url = yourls_sanitize_url( $_GET['u'] );
 	$keyword = ( isset( $_GET['k'] ) ? yourls_sanitize_keyword( $_GET['k'] ) : '' );
-	$return = yourls_add_new_link( $url, $keyword );
+	$title = ( isset( $_GET['t'] ) ? yourls_sanitize_title( $_GET['t'] ) : '' );
+	$return = yourls_add_new_link( $url, $keyword, $title );
 	
 	// If fails because keyword already exist, retry with no keyword
 	if ( isset( $return['status'] ) && $return['status'] == 'fail' && isset( $return['code'] ) && $return['code'] == 'error:keyword' ) {
@@ -164,7 +165,6 @@ if ( isset( $_GET['u'] ) ) {
 	$offset = 0;
 	
 	$text = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
-	$title = ( isset( $_GET['t'] ) ? stripslashes( $_GET['t'] ) : '' );
 	
 
 // This is not a bookmarklet
