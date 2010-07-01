@@ -3,6 +3,11 @@ define( 'YOURLS_ADMIN', true );
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
+// Handle plugin administration pages
+if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
+	yourls_plugin_admin_page( $_GET['page'] );
+}
+
 // Handle activation/deactivation of plugins
 if( isset( $_GET['action'] ) ) {
 
@@ -48,7 +53,7 @@ if( isset( $_GET['success'] ) ) {
 	}
 }
 
-yourls_html_head( 'plugins' );
+yourls_html_head( 'plugins', 'Manage Plugins' );
 yourls_html_logo();
 yourls_html_menu();
 ?>

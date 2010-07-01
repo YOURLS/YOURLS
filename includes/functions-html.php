@@ -13,7 +13,7 @@ function yourls_html_logo() {
 }
 
 // Display HTML head and <body> tag
-function yourls_html_head( $context = 'index' ) {
+function yourls_html_head( $context = 'index', $title = '' ) {
 	// All components to false, except when specified true
 	$share = $insert = $tablesorter = $tabs = $cal = false;
 	
@@ -53,7 +53,9 @@ function yourls_html_head( $context = 'index' ) {
 	}
 	
 	// Page title
-	$title = yourls_apply_filter( 'html_title', 'YOURLS &raquo; Your Own URL Shortener | ' . YOURLS_SITE );
+	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . YOURLS_SITE;
+	$title = $title ? $title . " &laquo; " . $_title : $_title;
+	$title = yourls_apply_filter( 'html_title', $title );
 	
 	?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -249,6 +251,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 			<p><small>Long link: <a id="origlink" href="<?php echo $longurl; ?>"><?php echo $longurl; ?></a></small>
 			<?php if( yourls_do_log_redirect() ) { ?>
 			<br/><small>Stats: <a id="statlink" href="<?php echo $shorturl; ?>+"><?php echo $shorturl; ?>+</a></small>
+			<input type="hidden" id="titlelink" value="<?php echo $title; ?>" />
 			<?php } ?>
 			</p>
 		</div>
@@ -343,14 +346,17 @@ function yourls_html_menu() {
 		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?mode=logout" title="Logout">Logout</a>)</li>
 	<?php } ?>
 		<li><a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
+	<?php if( yourls_is_admin() ) { ?>
 		<li><a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
 		<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
+		<?php yourls_list_plugin_admin_pages(); ?>	
 		<li><a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
 		<?php yourls_do_action( 'admin_menu' ); ?>
+	<?php } ?>
 	</ul>
 	<?php
 	yourls_do_action( 'admin_notices' );
-	yourls_do_action( 'admin_notice' ); 	// because I never remember if it's 'notices' or 'notice'
+	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );

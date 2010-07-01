@@ -126,7 +126,7 @@ function yourls_apply_filter( $hook, $value = '' ) {
 		return $value;
 	
 	$args = func_get_args();
-
+	
 	// Sort filters by priority
 	ksort( $yourls_filters[$hook] );
 	
@@ -157,7 +157,7 @@ function yourls_do_action( $hook, $arg = '' ) {
 		$args[] = $arg;
 	for ( $a = 2; $a < func_num_args(); $a++ )
 		$args[] = func_get_arg($a);
-
+	
 	yourls_apply_filter( $hook, $args );
 }
 
@@ -430,4 +430,61 @@ function yourls_plugin_basename( $file ) {
 	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	$file = str_replace( $plugindir, '', $file );
 	return trim( $file, '/' );
+}
+
+/**
+ * Display list of links to plugin admin pages, if any
+ */
+function yourls_list_plugin_admin_pages() {
+	global $ydb;
+	
+	if( !property_exists( $ydb, 'plugin_pages' ) || !$ydb->plugin_pages )
+		return;
+		
+	echo '<ul id="admin_pluginmenu">'."\n";
+	foreach( (array)$ydb->plugin_pages as $page ) {
+		echo '<li><a href="'.yourls_admin_url( 'plugins.php?page='.$page['slug'] ).'">'.$page['title']."</a></li>\n";
+	}
+	echo "</ul>\n";
+}
+
+/**
+ * Register a plugin administration page
+ */
+function yourls_register_plugin_page( $slug, $title, $function ) {
+	global $ydb;
+	
+	if( !property_exists( $ydb, 'plugin_pages' ) || !$ydb->plugin_pages )
+		$ydb->plugin_pages = array();
+
+	$ydb->plugin_pages[ $slug ] = array(
+		'slug'  => $slug,
+		'title' => $title,
+		'function' => $function,
+	);
+}
+
+/**
+ * Handle plugin administration page
+ *
+ */
+function yourls_plugin_admin_page( $plugin_page ) {
+	global $ydb;
+
+	// Check the plugin page is actually registered
+	if( !isset( $ydb->plugin_pages[$plugin_page] ) ) {
+		yourls_die( 'This page does not exist. Maybe a plugin you thought was activated is inactive?', 'Invalid link' );
+	}
+	
+	// Draw the page itself
+	yourls_do_action( 'load-' . $plugin_page);
+	yourls_html_head( 'plugin_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
+	yourls_html_logo();
+	yourls_html_menu();
+	
+	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
+	
+	yourls_html_footer();
+	
+	die();
 }
