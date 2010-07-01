@@ -41,7 +41,7 @@ function yourls_int2string( $num, $chars = null ) {
 	}
 	$string = $chars[$num] . $string;
 	
-	return yourls_apply_filter( 'int2string', $string );
+	return yourls_apply_filter( 'int2string', $string, $num, $chars );
 }
 
 // function to convert a string (3jk) to an integer (1337)
@@ -56,7 +56,7 @@ function yourls_string2int( $string, $chars = null ) {
 		$index = strpos( $chars, $string[$i] );
 		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
 	}
-	return yourls_apply_filter( 'string2int', $integer );
+	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
 	
 }
 
@@ -88,15 +88,9 @@ function yourls_sanitize_title( $title ) {
 	return $title;
 }
 
-
-
 // Is an URL a short URL?
 function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
-	// A short URL might be, in the future:
-	// - http://site.com/abc
-	// - http://site.com/abc-bleh
-	// Could allow site.com/abc+ and site.com/abc+all
 	
 	$is_short = false;
 	$keyword = preg_replace( '!^'.YOURLS_SITE.'/!', '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
@@ -104,7 +98,7 @@ function yourls_is_shorturl( $shorturl ) {
 		$is_short = true;
 	}
 	
-	return yourls_apply_filter( 'is_shorturl', $is_short );
+	return yourls_apply_filter( 'is_shorturl', $is_short, $shorturl );
 }
 
 // A few sanity checks on the URL
@@ -255,7 +249,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$display_url = htmlentities( yourls_trim_long_string( $url ) );
 	
 	$title   = yourls_sanitize_title( $title ) ;
-	$display_title   = htmlentities( yourls_trim_long_string( $title ) );
+	$display_title   = htmlentities( yourls_trim_long_string( $title ), ENT_QUOTES, 'UTF-8' );
 
 	$id      = yourls_string2int( $keyword ); // used as HTML #id
 	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
@@ -486,7 +480,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 		$return['message'] = 'URL or keyword already exists in database';
 	}
 	
-	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
+	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title, $new_url_already_there, $keyword_is_ok );
 }
 
 // Update a title link (no checks for duplicates etc..)
@@ -522,7 +516,7 @@ function yourls_keyword_is_taken( $keyword ) {
 	if ( $already_exists )
 		$taken = true;
 
-	return yourls_apply_filter( 'keyword_is_taken', $taken );
+	return yourls_apply_filter( 'keyword_is_taken', $taken, $keyword );
 }
 
 
@@ -576,9 +570,13 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
 	$keyword = yourls_sanitize_string( $keyword );
 
+	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
+
 	if( isset( $ydb->infos[$keyword] ) && $use_cache == true ) {
 		return yourls_apply_filter( 'get_keyword_infos', $ydb->infos[$keyword], $keyword );
 	}
+	
+	yourls_do_action( 'get_keyword_not_cached', $keyword );
 	
 	$table = YOURLS_DB_TABLE_URL;
 	$infos = $ydb->get_row("SELECT * FROM `$table` WHERE `keyword` = '$keyword'");
@@ -665,30 +663,33 @@ function yourls_get_stats( $filter = 'top', $limit = 10 ) {
 			break;
 	}
 	
+	// Fetch links
 	$limit = intval( $limit );
-	if ( $limit == 0 )
-		$limit = 1;
-	$table_url = YOURLS_DB_TABLE_URL;
-	$results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT 0, $limit;");
-	
-	$return = array();
-	$i = 1;
-	
-	foreach ( (array)$results as $res) {
-		$return['links']['link_'.$i++] = array(
-			'shorturl' => YOURLS_SITE .'/'. $res->keyword,
-			'url' => $res->url,
-			'timestamp' => $res->timestamp,
-			'ip' => $res->ip,
-			'clicks' => $res->clicks,
-		);
+	if ( $limit > 0 ) {
+
+		$table_url = YOURLS_DB_TABLE_URL;
+		$results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT 0, $limit;");
+		
+		$return = array();
+		$i = 1;
+		
+		foreach ( (array)$results as $res) {
+			$return['links']['link_'.$i++] = array(
+				'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+				'url'      => $res->url,
+				'title'    => $res->title,
+				'timestamp'=> $res->timestamp,
+				'ip'       => $res->ip,
+				'clicks'   => $res->clicks,
+			);
+		}
 	}
 
 	$return['stats'] = yourls_get_db_stats();
 	
 	$return['statusCode'] = 200;
 
-	return yourls_apply_filter( 'get_stats', $return);
+	return yourls_apply_filter( 'get_stats', $return, $filter, $limit );
 }
 
 // Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
@@ -711,15 +712,16 @@ function yourls_get_link_stats( $shorturl ) {
 			'message'    => 'success',
 			'link'       => array(
 		        'shorturl' => YOURLS_SITE .'/'. $res->keyword,
-		        'url' => $res->url,
-		        'timestamp' => $res->timestamp,
-		        'ip' => $res->ip,
-		        'clicks' => $res->clicks,
+		        'url'      => $res->url,
+		        'title'    => $res->title,
+		        'timestamp'=> $res->timestamp,
+		        'ip'       => $res->ip,
+		        'clicks'   => $res->clicks,
 			)
 		);
 	}
 
-	return yourls_apply_filter( 'get_link_stats', $return );
+	return yourls_apply_filter( 'get_link_stats', $return, $shorturl );
 }
 
 // Return array for API stat requests
@@ -727,7 +729,7 @@ function yourls_api_stats( $filter = 'top', $limit = 10 ) {
 	$return = yourls_get_stats( $filter, $limit );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
-	return yourls_apply_filter( 'api_stats', $return );
+	return yourls_apply_filter( 'api_stats', $return, $filter, $limit );
 }
 
 // Return array for API stat requests
@@ -737,7 +739,7 @@ function yourls_api_url_stats($shorturl) {
 
 	$return = yourls_get_link_stats( $keyword );
 	$return['simple']  = 'Need either XML or JSON format for stats';
-	return yourls_apply_filter( 'api_url_stats', $return );
+	return yourls_apply_filter( 'api_url_stats', $return, $shorturl );
 }
 
 // Expand short url to long url
@@ -765,7 +767,7 @@ function yourls_api_expand( $shorturl ) {
 		);
 	}
 	
-	return yourls_apply_filter( 'api_expand', $return );
+	return yourls_apply_filter( 'api_expand', $return, $shorturl );
 }
 
 
@@ -777,7 +779,7 @@ function yourls_get_db_stats( $where = '' ) {
 	$totals = $ydb->get_row("SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where");
 	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
 	
-	return yourls_apply_filter( 'get_db_stats', $return );
+	return yourls_apply_filter( 'get_db_stats', $return, $where );
 }
 
 // Return API result. Dies after this
@@ -1046,6 +1048,12 @@ function yourls_get_current_version_from_sql() {
 // Read an option from DB (or from cache if available). Return value or $default if not found
 function yourls_get_option( $option_name, $default = false ) {
 	global $ydb;
+	
+	// Allow plugins to short-circuit options
+	$pre = yourls_apply_filter( 'pre_option_'.$option_name, false );
+	if ( false !== $pre )
+		return $pre;
+
 	if ( !isset( $ydb->option[$option_name] ) ) {
 		$table = YOURLS_DB_TABLE_OPTIONS;
 		$option_name = yourls_escape( $option_name );
@@ -1258,7 +1266,7 @@ function yourls_get_duplicate_keywords( $longurl ) {
 	$table = YOURLS_DB_TABLE_URL;
 	
 	$return = $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
-	return yourls_apply_filter( 'get_duplicate_keywords', $return );
+	return yourls_apply_filter( 'get_duplicate_keywords', $return, $longurl );
 }
 
 // Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
@@ -1323,35 +1331,47 @@ function yourls_is_installed() {
 	return yourls_apply_filter( 'is_installed', $is_installed );
 }
 
-// Generate random string of (int)$lenght length and type $type (see function for details)
-function yourls_rnd_string ( $length = 5, $type = 1 ) {
+// Generate random string of (int)$length length and type $type (see function for details)
+function yourls_rnd_string ( $length = 5, $type = 1, $charlist = '' ) {
 	$str = '';
 	$length = intval( $length );
 
 	// define possible characters
 	switch ( $type ) {
+		// custom char list
+		case '0':
+			if( $charlist ) {
+				$possible = $charlist;
+				break;
+			}
+	
 		// no vowels to make no offending word, no 0 or 1 to avoid confusion betwee letters & digits. Perfect for passwords.
 		case '1':
 			$possible = "23456789bcdfghjkmnpqrstvwxyz";
 			break;
 		
-		// all letters, lowercase
+		// Same, with lower + upper
 		case '2':
+			$possible = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ";
+			break;
+		
+		// all letters, lowercase
+		case '3':
 			$possible = "abcdefghijklmnopqrstuvwxyz";
 			break;
 		
 		// all letters, lowercase + uppercase
-		case '3':
+		case '4':
 			$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			break;
 		
 		// all digits & letters lowercase 
-		case '4':
+		case '5':
 			$possible = "0123456789abcdefghijklmnopqrstuvwxyz";
 			break;
 		
 		// all digits & letters lowercase + uppercase
-		case '5':
+		case '6':
 			$possible = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			break;
 		
@@ -1359,17 +1379,17 @@ function yourls_rnd_string ( $length = 5, $type = 1 ) {
 
 	$i = 0;
 	while ($i < $length) {
-	$str .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
+		$str .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
 		$i++;
 	}
 	
-	return yourls_apply_filter( 'rnd_string', $str);
+	return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
 }
 
 // Return salted string
 function yourls_salt( $string ) {
 	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt) );
+	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
 }
 
 // Return a time-dependent string for nonce creation
@@ -1495,9 +1515,9 @@ function yourls_get_remote_title( $url ) {
 	if( $title == false )
 		$title = $url;
 
-	$title = yourls_sanitize_title( $title );
+	$title = html_entity_decode( yourls_sanitize_title( $title ), ENT_NOQUOTES, 'UTF-8' );
 
-	return yourls_apply_filter( 'get_remote_title', $title );
+	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
 // Sanitize a filename (no Win32 stuff)
