@@ -379,7 +379,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				yourls_insert_link_in_db( $url, $keyword, $title );
 				$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
 				$return['status'] = 'success';
-				$return['message'] = $strip_url.' added to database';
+				$return['message'] = yourls_trim_long_string( $strip_url ).' added to database';
 				$return['title'] = $title;
 				$return['html'] = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 				$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
@@ -404,7 +404,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 					// everything ok, populate needed vars
 					$return['url'] = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 					$return['status'] = 'success';
-					$return['message'] = $strip_url.' added to database';
+					$return['message'] = yourls_trim_long_string( $strip_url ).' added to database';
 					$return['title'] = $title;
 					$return['html'] = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 					$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
@@ -419,7 +419,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
 		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-		$return['message'] = $strip_url.' already exists in database';
+		$return['message'] = yourls_trim_long_string( $strip_url ).' already exists in database';
 		$return['title'] = $url_exists->title; 
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
@@ -471,7 +471,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 			$return['message'] = 'Link updated in database';
 		} else {
 			$return['status'] = 'fail';
-			$return['message'] = 'Error updating '.$strip_url.' (Short URL: '.$keyword.') to database';
+			$return['message'] = 'Error updating '. yourls_trim_long_string( $strip_url ).' (Short URL: '.$keyword.') to database';
 		}
 	
 	// Nope
@@ -1514,6 +1514,9 @@ function yourls_get_remote_title( $url ) {
 	
 	if( $title == false )
 		$title = $url;
+	
+	if( !yourls_seems_utf8( $title ) )
+		$title = utf8_encode( $title );
 
 	$title = html_entity_decode( yourls_sanitize_title( $title ), ENT_NOQUOTES, 'UTF-8' );
 
@@ -1556,3 +1559,22 @@ function yourls_maintenance_mode( $maintenance = true ) {
 	yourls_update_option( 'maintenance_mode', (bool)$maintenance );
 }
 
+// Check if a string seems to be UTF-8. Stolen from WP.
+function yourls_seems_utf8($str) {
+	$length = strlen($str);
+	for ($i=0; $i < $length; $i++) {
+		$c = ord($str[$i]);
+		if ($c < 0x80) $n = 0; # 0bbbbbbb
+		elseif (($c & 0xE0) == 0xC0) $n=1; # 110bbbbb
+		elseif (($c & 0xF0) == 0xE0) $n=2; # 1110bbbb
+		elseif (($c & 0xF8) == 0xF0) $n=3; # 11110bbb
+		elseif (($c & 0xFC) == 0xF8) $n=4; # 111110bb
+		elseif (($c & 0xFE) == 0xFC) $n=5; # 1111110b
+		else return false; # Does not match any model
+		for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
+			if ((++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80))
+				return false;
+		}
+	}
+	return true;
+}

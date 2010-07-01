@@ -28,10 +28,10 @@ function add() {
 				$('#tblUrl tbody').prepend( data.html ).trigger("update");
 				$('#nourl_found').css('display', 'none');
 				zebra_table();
-				reset_url();
 				increment();
 			}
 
+			reset_url();
 			toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
 
 			end_loading("#add-button");

@@ -23,11 +23,13 @@ function html_pulse( el, newtext ){
 
 // Update feedback message
 function feedback(msg, type, delay) {
-	delay = delay || 2000;
+	close = ( type == 'fail' || type == 'error' ) ? true : false;		
+	delay = delay || ( close == true ? 10000 : 2000 );
 	$.notifyBar({
 		html: '<span>'+msg+'</span>',
 		delay: delay,
 		animationSpeed: "normal",
+		close: close,
 		cls: type
 	});
 	return true;
@@ -58,4 +60,14 @@ function end_loading(el) {
 // Un-disable an element
 function end_disable(el) {
 	$(el).removeAttr("disabled").removeClass('disabled');
+}
+
+// Trim long string
+function trim_long_string( string, length) {
+	var newstring = string;
+	length = length || 60;
+	if ( newstring.length > length ) {
+		newstring = newstring.substr(0, (length - 5) ) + '[...]';	
+	}
+	return newstring;
 }
