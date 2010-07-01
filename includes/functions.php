@@ -1200,29 +1200,27 @@ function yourls_maybe_unserialize( $original ) {
 function yourls_is_private() {
 	$private = false;
 
-	if (defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true) {
+	if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) {
 
-		// Allow overruling of particular pages
-		$current = basename( $_SERVER["SCRIPT_NAME"] );
-
-		switch( $current ) {
+		// Allow overruling for particular pages:
 		
-		case 'yourls-api.php':
+		// API
+		if( yourls_is_API() ) {
 			if( !defined('YOURLS_PRIVATE_API') || YOURLS_PRIVATE_API != false )
-				$private = true;
-			break;
-				
-		case 'yourls-infos.php':
+				$private = true;		
+
+		// Infos
+		} elseif( yourls_is_infos() ) {
 			if( !defined('YOURLS_PRIVATE_INFOS') || YOURLS_PRIVATE_INFOS !== false )
 				$private = true;
-			break;
 		
-		default:
+		// Others
+		} else {
 			$private = true;
-			break;
 		}
+		
 	}
-	
+			
 	return yourls_apply_filter( 'is_private', $private );
 }
 
@@ -1438,9 +1436,16 @@ function yourls_is_Ajax() {
 	return false;
 }
 
-// Check if we're in GO mode (redirection on yourls-go.php). Returns bool
+// Check if we're in GO mode (yourls-go.php). Returns bool
 function yourls_is_GO() {
 	if ( defined('YOURLS_GO') && YOURLS_GO == true )
+		return true;
+	return false;
+}
+
+// Check if we're displaying stats infos (yourls-infos.php). Returns bool
+function yourls_is_infos() {
+	if ( defined('YOURLS_INFOS') && YOURLS_INFOS == true )
 		return true;
 	return false;
 }
