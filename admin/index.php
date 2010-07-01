@@ -260,7 +260,9 @@ yourls_html_menu() ;
 			<?php
 			// Main Query
 			$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
+			$found_rows = false;
 			if( $url_results ) {
+				$found_rows = true;
 				foreach( $url_results as $url_result ) {
 					$keyword = yourls_sanitize_string( $url_result->keyword );
 					$timestamp = strtotime( $url_result->timestamp );
@@ -271,9 +273,11 @@ yourls_html_menu() ;
 
 					echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp );
 				}
-			} else {
-				echo '<tr class="nourl_found"><td colspan="6">No URL Found</td></tr>';
 			}
+			
+			$display = $found_rows ? 'display:none' : '';
+			echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">No URL</td></tr>';
+
 			?>
 		</tbody>
 	</table>

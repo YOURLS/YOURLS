@@ -26,7 +26,7 @@ function add() {
 		function(data){
 			if(data.status == 'success') {
 				$('#tblUrl tbody').prepend( data.html ).trigger("update");
-				$('.nourl_found').remove();
+				$('#nourl_found').css('display', 'none');
 				zebra_table();
 				reset_url();
 				increment();
@@ -78,7 +78,15 @@ function remove(id) {
 		{ mode: "delete", keyword: keyword },
 		function(data){
 			if (data.success == 1) {
-				$("#id-" + id).fadeOut(function(){$(this).remove();zebra_table();});
+				$("#id-" + id).fadeOut(function(){
+					$(this).remove();
+					console.log( $('#tblUrl tbody tr').length );
+					if( $('#tblUrl tbody tr').length  == 1 ) {
+						$('#nourl_found').css('display', '');
+					}
+
+					zebra_table();
+				});
 				decrement();
 			} else {
 				alert('something wrong happened while deleting :/');
