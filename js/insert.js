@@ -44,12 +44,14 @@ function add() {
 
 function toggle_share_fill_boxes( url, shorturl, title ) {
 	$('#copylink').val( shorturl );
+	$('#titlelink').val( title );
 	$('#origlink').attr( 'href', url ).html( url );
 	$('#statlink').attr( 'href', shorturl+'+' ).html( shorturl+'+' );
 	var tweet = ( title ? title + ' ' + shorturl : shorturl );
 	$('#tweet_body').val( tweet ).keypress();
 	$('#shareboxes').slideDown();
 	init_clipboard();
+	$('#tweet_body').keypress();
 }
 
 // Display the edition interface

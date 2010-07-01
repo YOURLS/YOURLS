@@ -1,28 +1,33 @@
 $(document).ready(function(){
 	$('#tweet_body').focus();
 
-	$('#tweet_body').keyup(function(event){
-		var text = encodeURI( $('#tweet_body').val() );
-		var url = encodeURI( $('#copylink').val() );
-		var tw = 'http://twitter.com/home?status='+text;
-		var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+text ;
-		var fb = 'http://www.facebook.com/share.php?u='+url ;
-		$('#share_tw').attr('href', tw);
-		$('#share_ff').attr('href', ff);
-		$('#share_fb').attr('href', fb);
-		
-		var charcount = parseInt(140 - $('#tweet_body').val().length);
-		$('#charcount')
-			.toggleClass("negative", charcount < 0)
-			.text( charcount );
+	$('#tweet_body').keypress(function(){
+		setTimeout( function(){update_share()}, 50 ); // we're delaying, otherwise keypress() always triggers too fast before current key press actually inserts a letter?!! Go figure.
 	});
-
+	
 	$('#copylink').click(function(){
 		$(this).select();
 	});	
 	
 	init_clipboard();
 })
+
+function update_share() {
+	var text = encodeURI( $('#tweet_body').val() );
+	console.log( text );
+	var url = encodeURI( $('#copylink').val() );
+	var tw = 'http://twitter.com/home?status='+text;
+	var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+text ;
+	var fb = 'http://www.facebook.com/share.php?u='+url ;
+	$('#share_tw').attr('href', tw);
+	$('#share_ff').attr('href', ff);
+	$('#share_fb').attr('href', fb);
+	
+	var charcount = parseInt(140 - $('#tweet_body').val().length);
+	$('#charcount')
+		.toggleClass("negative", charcount < 0)
+		.text( charcount );
+}
 
 function share(dest) {
 	var url = $('#share_'+dest).attr('href');
