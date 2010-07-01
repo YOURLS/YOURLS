@@ -23,7 +23,7 @@ class yourls_array2xml {
 	//global $array_text;
 	foreach($array as $key => $value){
 	if(!is_array($value)){
-	 $this->text .= "<$key>$value</$key>";
+	 $this->text .= "<$key>".htmlentities( $value )."</$key>";
 	 } else {
 	 $this->text.="<$key>";
 	 $this->array_transform($value);
