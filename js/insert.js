@@ -80,7 +80,6 @@ function remove(id) {
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){
 					$(this).remove();
-					console.log( $('#tblUrl tbody tr').length );
 					if( $('#tblUrl tbody tr').length  == 1 ) {
 						$('#nourl_found').css('display', '');
 					}
