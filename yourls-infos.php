@@ -169,7 +169,7 @@ if( yourls_do_log_redirect() ) {
 
 }
 
-yourls_html_head( 'infos' );
+yourls_html_head( 'infos', 'Statistics for '.YOURLS_SITE.'/'.$keyword );
 yourls_html_logo();
 yourls_html_menu();
 ?>

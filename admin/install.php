@@ -42,7 +42,7 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 
 
 // Start output
-yourls_html_head( 'install' );
+yourls_html_head( 'install', 'Install YOURLS' );
 ?>
 <div id="login">
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>

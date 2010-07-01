@@ -3,7 +3,7 @@ define( 'YOURLS_ADMIN', true );
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
-yourls_html_head( 'tools' );
+yourls_html_head( 'tools', 'Cool YOURLS Tools' );
 yourls_html_logo();
 yourls_html_menu();
 ?>
