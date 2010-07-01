@@ -14,7 +14,6 @@ $(document).ready(function(){
 
 function update_share() {
 	var text = encodeURI( $('#tweet_body').val() );
-	console.log( text );
 	var url = encodeURI( $('#copylink').val() );
 	var tw = 'http://twitter.com/home?status='+text;
 	var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+text ;
