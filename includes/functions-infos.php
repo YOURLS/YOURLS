@@ -44,7 +44,9 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = '202
 		'chl' => join('|' , array_keys( $data ) )
 	);
 	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
-	echo "<img src='$pie_src' width='440' height='220' border='0' />";
+	
+	list( $size_x, $size_y ) = split( 'x', $size );
+	echo "<img src='$pie_src' width='$size_x' height='$size_y' border='0' />";
 }
 
 // Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
