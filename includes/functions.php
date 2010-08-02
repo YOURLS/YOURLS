@@ -1330,20 +1330,19 @@ function yourls_is_installed() {
 }
 
 // Generate random string of (int)$length length and type $type (see function for details)
-function yourls_rnd_string ( $length = 5, $type = 1, $charlist = '' ) {
+function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 	$str = '';
 	$length = intval( $length );
 
 	// define possible characters
 	switch ( $type ) {
-		// custom char list
+
+		// custom char list, or comply to charset as defined in config
 		case '0':
-			if( $charlist ) {
-				$possible = $charlist;
-				break;
-			}
+			$possible = $charlist ? $charlist : yourls_get_shorturl_charset() ;
+			break;
 	
-		// no vowels to make no offending word, no 0 or 1 to avoid confusion betwee letters & digits. Perfect for passwords.
+		// no vowels to make no offending word, no 0/1/o/l to avoid confusion between letters & digits. Perfect for passwords.
 		case '1':
 			$possible = "23456789bcdfghjkmnpqrstvwxyz";
 			break;
