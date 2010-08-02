@@ -122,7 +122,7 @@ yourls_html_menu();
 			}
 		}
 		
-		$data['desc'] .= "<br/><small>plugin location: $file</small>";
+		$data['desc'] .= "<br/><small>plugin file location: $file</small>";
 		
 		printf( "<tr class='plugin %s'><td class='plugin_name'><a href='%s'>%s</a></td><td class='plugin_version'>%s</td><td class='plugin_desc'>%s</td><td class='plugin_author'><a href='%s'>%s</a></td><td class='plugin_actions actions'>%s</td></tr>",
 			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action
