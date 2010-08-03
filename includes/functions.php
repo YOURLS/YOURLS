@@ -1512,12 +1512,12 @@ function yourls_get_remote_title( $url ) {
 
 		// look for charset
 		// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		if ( preg_match('/<meta[^>]*?charset=([^>]*?)>/is', $content, $found ) ) {
+		if ( preg_match('/<meta[^>]*?charset=([^>]*?)\/?>/is', $content, $found ) ) {
 			$charset = trim($found[1], '"\' ');
 			unset( $found );
 		}
 	}
-		
+	
 	// if title not found, guess if returned content was actually an error message
 	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
 		$title = $content;
@@ -1531,15 +1531,21 @@ function yourls_get_remote_title( $url ) {
 		$title = utf8_encode( $title );
 	*/
 	
-	//$title = html_entity_decode( yourls_sanitize_title( $title ), ENT_NOQUOTES, 'UTF-8' );
-	
-	if( $charset ) {
-		$title = mb_convert_encoding( $title, 'HTML-ENTITIES', $charset  );
+	// Charset conversion. We use @ to remove warnings (mb_ functions are easily bitching about illegal chars)
+	if( function_exists( 'mb_convert_encoding' ) ) {
+		if( $charset ) {
+			$title = @mb_convert_encoding( $title, 'UTF-8', $charset );
+		} else {
+			$title = @mb_convert_encoding( $title, 'UTF-8' );
+		}
 	} else {
-		$title = mb_convert_encoding( $title, 'HTML-ENTITIES'  );
+		// I'm not sure this isn't a crappy failover. Need more feedback.
+		if( !yourls_seems_utf8( $title ) )
+			$title = utf8_encode( $title );
 	}
 	
-	// TODO: what if mb_* not available?
+	// Remove HTML entities
+	$title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
 	
 	// Strip out evil things
 	$title = yourls_sanitize_title( $title );
