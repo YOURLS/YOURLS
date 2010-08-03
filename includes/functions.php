@@ -222,7 +222,7 @@ function yourls_table_edit_row( $keyword ) {
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2int( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
-	$title = yourls_get_keyword_title( $keyword );
+	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = stripslashes( $url );
 	$safe_title = stripslashes( $title );
 	$www = YOURLS_SITE;
@@ -249,7 +249,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$display_url = htmlentities( yourls_trim_long_string( $url ) );
 	
 	$title   = yourls_sanitize_title( $title ) ;
-	$display_title   = htmlentities( yourls_trim_long_string( $title ), ENT_QUOTES, 'UTF-8' );
+	$display_title   = yourls_trim_long_string( $title );
 
 	$id      = yourls_string2int( $keyword ); // used as HTML #id
 	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
