@@ -1499,18 +1499,25 @@ function yourls_get_remote_title( $url ) {
 
 	$url = yourls_sanitize_url( $url );
 
-	$title = false;
+	$title = $charset = false;
 	
 	$content = yourls_get_remote_content( $url );
 
-	// look for <title>
 	if( $content !== false ) {
+		// look for <title>
 		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
 			$title = $found[1];
 			unset( $found );
 		}
+
+		// look for charset
+		// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		if ( preg_match('/<meta[^>]*?charset=([^>]*?)>/is', $content, $found ) ) {
+			$charset = trim($found[1], '"\' ');
+			unset( $found );
+		}
 	}
-	
+		
 	// if title not found, guess if returned content was actually an error message
 	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
 		$title = $content;
@@ -1519,11 +1526,24 @@ function yourls_get_remote_title( $url ) {
 	if( $title == false )
 		$title = $url;
 	
+	/*
 	if( !yourls_seems_utf8( $title ) )
 		$title = utf8_encode( $title );
-
-	$title = html_entity_decode( yourls_sanitize_title( $title ), ENT_NOQUOTES, 'UTF-8' );
-
+	*/
+	
+	//$title = html_entity_decode( yourls_sanitize_title( $title ), ENT_NOQUOTES, 'UTF-8' );
+	
+	if( $charset ) {
+		$title = mb_convert_encoding( $title, 'HTML-ENTITIES', $charset  );
+	} else {
+		$title = mb_convert_encoding( $title, 'HTML-ENTITIES'  );
+	}
+	
+	// TODO: what if mb_* not available?
+	
+	// Strip out evil things
+	$title = yourls_sanitize_title( $title );
+	
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
