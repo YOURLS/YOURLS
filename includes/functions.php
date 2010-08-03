@@ -1538,10 +1538,6 @@ function yourls_get_remote_title( $url ) {
 		} else {
 			$title = @mb_convert_encoding( $title, 'UTF-8' );
 		}
-	} else {
-		// I'm not sure this isn't a crappy failover. Need more feedback.
-		if( !yourls_seems_utf8( $title ) )
-			$title = utf8_encode( $title );
 	}
 	
 	// Remove HTML entities
