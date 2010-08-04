@@ -66,7 +66,7 @@ yourls_html_menu();
 	$count_active = yourls_has_active_plugins();
 	?>
 	
-	<p>You currently have <strong><?php echo $count.' '.yourls_plural( 'plugin', $count ); ?></strong> installed, and <strong><?php echo $count_active; ?></strong> activated.</p>
+	<p id="plugin_summary">You currently have <strong><?php echo $count.' '.yourls_plural( 'plugin', $count ); ?></strong> installed, and <strong><?php echo $count_active; ?></strong> activated</p>
 
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>
@@ -136,6 +136,14 @@ yourls_html_menu();
 	<script type="text/javascript">
 	yourls_defaultsort = 0;
 	yourls_defaultorder = 0;
+	<?php if ($count_active) { ?>
+	$('#plugin_summary').append('<span id="toggle_plugins">filter</span>');
+	$('#toggle_plugins').css({'background':'transparent url("../images/filter.gif") top left no-repeat','display':'inline-block','text-indent':'-9999px','width':'16px','height':'16px','margin-left':'3px','cursor':'pointer'})
+		.attr('title', 'Toggle active/inactive plugins')
+		.click(function(){
+			$('#main_table tr.inactive').toggle();
+		});
+	<?php } ?>
 	</script>
 	
 	<p>If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.</p>
