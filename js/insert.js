@@ -25,7 +25,7 @@ function add() {
 		{mode:'add', url: newurl, keyword: keyword},
 		function(data){
 			if(data.status == 'success') {
-				$('#tblUrl tbody').prepend( data.html ).trigger("update");
+				$('#main_table tbody').prepend( data.html ).trigger("update");
 				$('#nourl_found').css('display', 'none');
 				zebra_table();
 				increment();
@@ -82,7 +82,7 @@ function remove(id) {
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){
 					$(this).remove();
-					if( $('#tblUrl tbody tr').length  == 1 ) {
+					if( $('#main_table tbody tr').length  == 1 ) {
 						$('#nourl_found').css('display', '');
 					}
 
@@ -132,7 +132,7 @@ function edit_save(id) {
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
-					$('#tblUrl tbody').trigger("update");
+					$('#main_table tbody').trigger("update");
 				});
 				$('#keyword_'+id).val( newkeyword );
 				$('#statlink-'+id).attr( 'href', data.url.shorturl+'+' );
@@ -146,9 +146,9 @@ function edit_save(id) {
 
 // Prettify table with odd & even rows
 function zebra_table() {
-	$("#tblUrl tbody tr:even").removeClass('odd').addClass('even');
-	$("#tblUrl tbody tr:odd").removeClass('even').addClass('odd');
-	$('#tblUrl tbody').trigger("update");
+	$("#main_table tbody tr:even").removeClass('odd').addClass('even');
+	$("#main_table tbody tr:odd").removeClass('even').addClass('odd');
+	$('#main_table tbody').trigger("update");
 }
 
 // Ready to add another URL

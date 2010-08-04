@@ -222,7 +222,7 @@ yourls_html_menu() ;
 	}
 	?>
 	
-	<table id="tblUrl" class="tblSorter" cellpadding="0" cellspacing="1">
+	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 		<thead>
 			<tr>
 				<th>Short URL&nbsp;</th>

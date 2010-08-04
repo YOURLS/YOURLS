@@ -68,7 +68,7 @@ yourls_html_menu();
 	
 	<p>You currently have <strong><?php echo $count.' '.yourls_plural( 'plugin', $count ); ?></strong> installed, and <strong><?php echo $count_active; ?></strong> activated.</p>
 
-	<table id="tblUrl" class="tblSorter" cellpadding="0" cellspacing="1">
+	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>
 		<tr>
 			<th>Plugin Name</th>

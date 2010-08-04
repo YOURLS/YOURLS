@@ -166,7 +166,7 @@ td.actions .button_stats {
 td.actions .button_stats:hover {
 	text-decoration:none;
 }
-#tblUrl tfoot th, #tblUrl tfoot th div {
+#main_table tfoot th, #main_table tfoot th div {
 	font-size:10px;
 }
 .error {
