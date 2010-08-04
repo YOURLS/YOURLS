@@ -27,7 +27,16 @@ body {
 	z-index: 900000;
 }
 
-#yourls-about, #yourls-topsy, #yourls-selfclose {
+#yourls-bar a {
+	text-decoration:none;
+	color:#2A85B3;
+}
+
+#yourls-bar a:hover {
+	text-decoration:underline;
+}
+
+#yourls-about, #yourls-topsy, #yourls-delicious, #yourls-selfclose {
 	margin-left:10px;
 	float:left;
 	display:block;
@@ -40,13 +49,11 @@ body {
 	padding-left:20px;
 	color:inherit;
 	font-weight:bold;
-	text-decoration:none;
 }
 
 #yourls-topsy {
 	width:300px;
 }
-
 
 #yourls-selfclose {
 	float:right;

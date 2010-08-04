@@ -45,6 +45,8 @@ function ozh_toolbar_do( $args ) {
 	}
 	
 	$www = YOURLS_SITE;
+	$ver = YOURLS_VERSION;
+	$md5 = md5( $url );
 
 	// When was the link created (in days)
 	$diff = abs( time() - strtotime( yourls_get_keyword_timestamp( $ozh_toolbar['keyword'] ) ) );
@@ -67,6 +69,11 @@ function ozh_toolbar_do( $args ) {
 <html>
 <head>
 	<title>$pagetitle &mdash; YOURLS</title>
+	<link rel="icon" type="image/gif" href="$www/images/favicon.gif" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta name="generator" content="YOURLS v$ver" />
+	<meta name="ROBOTS" content="NOINDEX, FOLLOW" />
 	<link rel="stylesheet" href="$pluginurl/css/toolbar.css" type="text/css" media="all" />
 </head>
 <body>
@@ -75,6 +82,11 @@ function ozh_toolbar_do( $args ) {
 		Short link powered by <a href="http://yourls.org/">YOURLS</a> and created $created. $hits.
 	</div>
 	
+	<div id="yourls-delicious">
+	<img src="http://static.delicious.com/img/delicious.small.gif" height="10" width="10" alt="Delicious" />
+	<a id="yourls-delicious-link" title="Bookmark on delicious" href="http://delicious.com/save" onclick="window.open('http://delicious.com/save?v=5&noui&jump=close&url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title), 'delicious','toolbar=no,width=550,height=550'); return false;"> Bookmark on Delicious</a>
+	</div>
+
 	<script type="text/javascript" id="topsy_global_settings">
 	var topsy_theme = "light-blue";
 	var topsy_nick = " ";
@@ -87,7 +99,7 @@ function ozh_toolbar_do( $args ) {
 		        "title": "$pagetitle",
 		}-->
 	</div>
-
+	
 	<div id="yourls-selfclose">
 		<a id="yourls-once" href="$url" title="Close this toolbar">close</a>
 		<a id="yourls-always" href="$url" title="Never show me this toolbar again">close</a>
@@ -98,6 +110,7 @@ function ozh_toolbar_do( $args ) {
 <iframe id="yourls-frame" frameborder="0" noresize="noresize" src="$url" name="yourlsFrame"></iframe>
 <script type="text/javascript" src="$pluginurl/js/toolbar.js"></script>
 <script type="text/javascript" src="http://cdn.topsy.com/topsy.js?init=topsyWidgetCreator"></script>
+<script type="text/javascript" src="http://feeds.delicious.com/v2/json/urlinfo/$md5?callback=yourls_get_books"></script>
 </body>
 </html>
 PAGE;
