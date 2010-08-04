@@ -54,12 +54,13 @@ yourls_html_menu();
 			</tbody>
 		</table>
 		
-		<h3>Prefix-n-Shorten</h3>
+	<h2>Prefix-n-Shorten</h2>
 		
 		<p>When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add "<span><?php echo preg_replace('@https?://@', '', YOURLS_SITE); ?>/</span>" to the beginning of the current URL (right before its 'http://' part) and hit enter.</p>
 		
-		<p>Note: this will probably not work if your web server is running on Windows.</p>
-					
+		<p>Note: this will probably not work if your web server is running on Windows <?php if( yourls_is_windows() ) echo '(which seems to be the case here)'; ?>.</p>
+
+
 	<?php if( yourls_is_private() ) { ?>
 
 	<h2>Secure passwordless API call</h2>

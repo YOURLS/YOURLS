@@ -1463,6 +1463,11 @@ function yourls_is_admin() {
 	return false;
 }
 
+// Check if the server seems to be running on Windows. Not exactly sure how reliable this is.
+function yourls_is_windows() {
+	return defined( 'DIRECTORY_SEPARATOR' ) && DIRECTORY_SEPARATOR == '\\';
+}
+
 // Check if SSL is required. Returns bool.
 function yourls_needs_ssl() {
 	if ( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
