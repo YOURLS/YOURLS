@@ -364,6 +364,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		} else {
 			$title = yourls_get_remote_title( $url );
 		}
+		$title = yourls_apply_filter( 'add_new_title', $title );
 
 		// Custom keyword provided
 		if ( $keyword ) {
