@@ -97,7 +97,7 @@ input.loading {
 	background:#cc7 url(../images/loading.gif) center center no-repeat;
 	color:#cc7;
 }
-input:focus, textarea:focus {
+input.text:focus, textarea:focus {
 	border:2px solid #AACCAA;
 	margin:0px;
 }
