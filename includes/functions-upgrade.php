@@ -2,14 +2,6 @@
 
 // Upgrade YOURLS and DB schema
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
-	/*	Code /	DB version table:
-		1.3		100
-		1.4		200
-		1.4.1	210
-		1.4.3	220
-		1.5		250
-	*/
-		
 	// special case for 1.3: the upgrade is a multi step procedure
 	if( $oldsql == 100 ) {
 		yourls_upgrade_to_14( $step );
@@ -28,6 +20,9 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		
 		if( $oldsql < 250 )
 			yourls_upgrade_to_15();
+			
+		if( $oldsql < 482 )
+			yourls_upgrade_482();
 		
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
@@ -39,6 +34,16 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		yourls_update_option( 'db_version', YOURLS_DB_VERSION );
 		break;
 	}
+}
+
+// Upgrade r482
+function yourls_upgrade_482() {
+	// Change URL title charset to UTF8
+	global $ydb;
+	$table_url = YOURLS_DB_TABLE_URL;
+	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
+	$ydb->query( $sql );
+	echo "<p>Updating table structure. Please wait...</p>";
 }
 
 /************************** 1.4.3 -> 1.5 **************************/
