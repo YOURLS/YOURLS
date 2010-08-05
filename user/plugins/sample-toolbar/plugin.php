@@ -41,12 +41,14 @@ function ozh_toolbar_do( $args ) {
 	// Update title if it hasn't been stored yet
 	if( $pagetitle == '' ) {
 		$pagetitle = yourls_get_remote_title( $url );
+		$_pagetitle = htmlentities( yourls_get_remote_title( $url ) );
 		yourls_edit_link_title( $ozh_toolbar['keyword'], $pagetitle );
 	}
 	
 	$www = YOURLS_SITE;
 	$ver = YOURLS_VERSION;
 	$md5 = md5( $url );
+	$sql = yourls_get_num_queries();
 
 	// When was the link created (in days)
 	$diff = abs( time() - strtotime( yourls_get_keyword_timestamp( $ozh_toolbar['keyword'] ) ) );
@@ -80,6 +82,7 @@ function ozh_toolbar_do( $args ) {
 <div id="yourls-bar">
 	<div id="yourls-about">
 		Short link powered by <a href="http://yourls.org/">YOURLS</a> and created $created. $hits.
+		<!-- $sql queries -->
 	</div>
 	
 	<div id="yourls-delicious">
@@ -96,7 +99,7 @@ function ozh_toolbar_do( $args ) {
 	<div id="yourls-topsy" class="topsy_widget_data">
 		<!--{
 		        "url": "$www/{$ozh_toolbar['keyword']}",
-		        "title": "$pagetitle",
+		        "title": "$_pagetitle",
 		}-->
 	</div>
 	
