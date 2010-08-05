@@ -10,10 +10,7 @@ if( file_exists(dirname(__FILE__).'/config.php') ) {
 	require_once( dirname(dirname(__FILE__)).'/user/config.php' );
 } else {
 	// config.php not found :(
-	require_once (dirname(__FILE__).'/functions.php');
-	require_once (dirname(__FILE__).'/functions-html.php');
-	define('YOURLS_SITE', dirname($_SERVER['REQUEST_URI'])); // LOL. Wild guess.
-	yourls_die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
+	die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
 }
 
 // Include all functions
