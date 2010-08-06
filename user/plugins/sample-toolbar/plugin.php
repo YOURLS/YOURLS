@@ -41,9 +41,9 @@ function ozh_toolbar_do( $args ) {
 	// Update title if it hasn't been stored yet
 	if( $pagetitle == '' ) {
 		$pagetitle = yourls_get_remote_title( $url );
-		$_pagetitle = htmlentities( yourls_get_remote_title( $url ) );
 		yourls_edit_link_title( $ozh_toolbar['keyword'], $pagetitle );
 	}
+	$_pagetitle = htmlentities( yourls_get_remote_title( $url ) );
 	
 	$www = YOURLS_SITE;
 	$ver = YOURLS_VERSION;
