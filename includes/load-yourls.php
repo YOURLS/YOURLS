@@ -13,40 +13,24 @@ if( file_exists(dirname(__FILE__).'/config.php') ) {
 	die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
 }
 
-// Include all functions
-require_once (dirname(__FILE__).'/version.php');
-require_once (dirname(__FILE__).'/functions.php');
-require_once (dirname(__FILE__).'/functions-compat.php');
-if( file_exists(dirname(dirname(__FILE__)).'/user/db.php') ) {
-	require_once( (dirname(dirname(__FILE__)).'/user/db.php') );
-} else {
-	require_once (dirname(__FILE__).'/class-mysql.php');
-}
-require_once (dirname(__FILE__).'/functions-plugins.php');
-// Load auth functions if needed
-if( yourls_is_private() )
-	require_once( dirname(__FILE__).'/functions-auth.php' );
-// Load template functions if needed
-if( yourls_has_interface() )
-	require_once( dirname(__FILE__).'/functions-html.php' );
-
 // Check if config.php was properly updated for 1.4
 if( !defined('YOURLS_DB_PREFIX') )
 	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
+	
 // Define constants that have not been user defined in config.php
 
 // physical path of YOURLS root
 if( !defined('YOURLS_ABSPATH') )
-	define('YOURLS_ABSPATH', yourls_sanitize_filename( dirname(dirname(__FILE__))) );
+	define('YOURLS_ABSPATH', dirname(dirname(__FILE__)) );
 
 // physical path of includes directory
 if( !defined('YOURLS_INC') )
-	define('YOURLS_INC', yourls_sanitize_filename( YOURLS_ABSPATH.'/includes' ) );
+	define('YOURLS_INC', YOURLS_ABSPATH.'/includes' );
 
 // physical path of user directory
 if( !defined('YOURLS_USERDIR') )
-	define('YOURLS_USERDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/user' ) );
+	define('YOURLS_USERDIR', YOURLS_ABSPATH.'/user' );
 
 // URL of user directory
 if( !defined('YOURLS_USERURL') )
@@ -54,7 +38,7 @@ if( !defined('YOURLS_USERURL') )
 	
 // physical path of plugins directory
 if( !defined('YOURLS_PLUGINDIR') )
-	define('YOURLS_PLUGINDIR', yourls_sanitize_filename( YOURLS_USERDIR.'/plugins' ) );
+	define('YOURLS_PLUGINDIR', YOURLS_USERDIR.'/plugins' );
 
 // URL of plugins directory
 if( !defined('YOURLS_PLUGINURL') )
@@ -62,7 +46,7 @@ if( !defined('YOURLS_PLUGINURL') )
 	
 // physical path of pages directory
 if( !defined('YOURLS_PAGEDIR') )
-	define('YOURLS_PAGEDIR', yourls_sanitize_filename( YOURLS_ABSPATH.'/pages' ) );
+	define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );
 
 // table to store URLs
 if( !defined('YOURLS_DB_TABLE_URL') )
@@ -111,6 +95,24 @@ if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
 	error_reporting(E_ERROR | E_PARSE);
 }
 
+// Include all functions
+require_once( YOURLS_INC.'/version.php' );
+require_once( YOURLS_INC.'/functions.php');
+require_once( YOURLS_INC.'/functions-compat.php' );
+// Allow drop-in replacement for the DB engine
+if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
+	require_once( YOURLS_USERDIR.'/db.php' );
+} else {
+	require_once( YOURLS_INC.'/class-mysql.php' );
+}
+require_once( YOURLS_INC.'/functions-plugins.php');
+// Load auth functions if needed
+if( yourls_is_private() )
+	require_once( YOURLS_INC.'/functions-auth.php' );
+// Load template functions if needed
+if( yourls_has_interface() )
+	require_once( YOURLS_INC.'/functions-html.php' );
+
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 	if ( 0 === strpos($_SERVER['REQUEST_URI'], 'http') ) {
@@ -156,3 +158,4 @@ if (
 // Init all plugins
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
+
