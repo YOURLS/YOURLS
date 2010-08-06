@@ -17,7 +17,11 @@ if( file_exists(dirname(__FILE__).'/config.php') ) {
 require_once (dirname(__FILE__).'/version.php');
 require_once (dirname(__FILE__).'/functions.php');
 require_once (dirname(__FILE__).'/functions-compat.php');
-require_once (dirname(__FILE__).'/class-mysql.php');
+if( file_exists(dirname(dirname(__FILE__)).'/user/db.php') ) {
+	require_once( (dirname(dirname(__FILE__)).'/user/db.php') );
+} else {
+	require_once (dirname(__FILE__).'/class-mysql.php');
+}
 require_once (dirname(__FILE__).'/functions-plugins.php');
 // Load auth functions if needed
 if( yourls_is_private() )
