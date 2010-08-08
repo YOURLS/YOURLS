@@ -183,8 +183,9 @@ function yourls_create_sql_tables() {
 	yourls_update_option( 'next_id', 1 );
 	
 	// Insert sample links
-	yourls_insert_link_in_db( 'http://planetozh.com/', 'ozh');
-	yourls_insert_link_in_db( 'http://yourls.org/', 'yourls');
+	yourls_insert_link_in_db( 'http://planetozh.com/blog/', 'ozhblog', 'planetOzh: Ozh\' blog' );
+	yourls_insert_link_in_db( 'http://ozh.org/', 'ozh', 'ozh.org' );
+	yourls_insert_link_in_db( 'http://yourls.org/', 'yourls', 'YOURLS: Your Own URL Shortener' );
 		
 	// Check results of operations
 	if ( sizeof($create_tables) == $create_table_count ) {
