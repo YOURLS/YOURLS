@@ -1239,8 +1239,14 @@ function yourls_plural( $word, $count=1 ) {
 // Return trimmed string
 function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	$newstring = $string;
-	if ( strlen( $newstring ) > $length ) {
-		$newstring = substr( $newstring, 0, $length - strlen( $append ) ) . $append;	
+	if( function_exists('mb_substr') ) {
+		if ( mb_strlen( $newstring ) > $length ) {
+			$newstring = mb_substr( $newstring, 0, $length - mb_strlen( $append ), 'UTF-8' ) . $append;	
+		}
+	} else {
+		if ( strlen( $newstring ) > $length ) {
+			$newstring = substr( $newstring, 0, $length - strlen( $append ) ) . $append;	
+		}
 	}
 	return yourls_apply_filter( 'trim_long_string', $newstring, $string, $length, $append );
 }
