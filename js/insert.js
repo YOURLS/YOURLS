@@ -175,7 +175,7 @@ function decrement() {
 function toggle_share(id) {
 	var link = $('#url-'+id+' a:first');
 	var longurl = link.attr('href');
-	var title = link.text();
+	var title = link.attr('title');
 	var shorturl = $('#keyword-'+id+' a:first').attr('href');
 	
 	toggle_share_fill_boxes( longurl, shorturl, title );

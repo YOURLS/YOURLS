@@ -250,8 +250,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$url = yourls_sanitize_url( $url );
 	$display_url = htmlentities( yourls_trim_long_string( $url ) );
 	
-	$title   = yourls_sanitize_title( $title ) ;
+	$title = yourls_sanitize_title( $title ) ;
 	$display_title   = yourls_trim_long_string( $title );
+	$title = htmlspecialchars( $title );
 
 	$id      = yourls_string2int( $keyword ); // used as HTML #id
 	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
@@ -261,7 +262,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$statlink = $shorturl.'+';
 	
 	if( $title ) {
-		$display_link = "<a href=\"$url\" title=\"$url\">$display_title</a><br/><small><a href=\"$url\">$display_url</a></small>";
+		$display_link = "<a href=\"$url\" title=\"$title\">$display_title</a><br/><small><a href=\"$url\">$display_url</a></small>";
 	} else {
 		$display_link = "<a href=\"$url\" title=\"$url\">$display_url</a>";
 	}
