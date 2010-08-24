@@ -83,8 +83,10 @@ function yourls_sanitize_keyword( $keyword ) {
 
 // Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
 function yourls_sanitize_title( $title ) {
-	// TODO: make stronger. Implement KSES?
+	// TODO: make stronger Implement KSES?
 	$title = strip_tags( $title );
+	// Remove extra white space
+	$title = preg_replace( "/\s+/", ' ', trim( $title ) );
 	return $title;
 }
 
