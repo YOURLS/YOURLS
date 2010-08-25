@@ -249,6 +249,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$url = yourls_sanitize_url( $url );
 	$display_url = htmlentities( yourls_trim_long_string( $url ) );
+	$title_url = htmlspecialchars( $url );
 	
 	$title = yourls_sanitize_title( $title ) ;
 	$display_title   = yourls_trim_long_string( $title );
@@ -262,9 +263,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$statlink = $shorturl.'+';
 	
 	if( $title ) {
-		$display_link = "<a href=\"$url\" title=\"$title\">$display_title</a><br/><small><a href=\"$url\">$display_url</a></small>";
+		$display_link = "<a href=\"$url\" title=\"$title\">$display_title</a><br/><small><a href=\"$url\" title=\"$title_url\">$display_url</a></small>";
 	} else {
-		$display_link = "<a href=\"$url\" title=\"$url\">$display_url</a>";
+		$display_link = "<a href=\"$url\" title=\"$title_url\">$display_url</a>";
 	}
 	
 	$actions = <<<ACTION
