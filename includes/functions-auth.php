@@ -166,8 +166,14 @@ function yourls_store_cookie( $user = null ) {
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 		
 	if ( !headers_sent() ) {
-		setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
-		setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure, $httponly );
+		// Set httponly if the php version is >= 5.2.0
+		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
+			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
+			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure, $httponly );
+		} else {
+			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
+			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure );
+		}
 	}
 }
 
