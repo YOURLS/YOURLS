@@ -1413,13 +1413,24 @@ function yourls_create_nonce( $action = '-1', $user = false ) {
 	return substr( yourls_salt($tick . $action . $user), 0, 10 );
 }
 
-// Check validity of a nonce (ie time span, user and action match)
-function yourls_verify_nonce( $nonce, $action = -1, $user = false ) {
+// Check validity of a nonce (ie time span, user and action match). Returns true or dies.
+// $nonce is the name of the GET or POST parameter
+function yourls_verify_nonce( $action, $nonce = 'nonce', $user = false ) {
+	// get user
 	if( false == $user )
 		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
-	$valid = yourls_create_nonce( $action, $user );
+		
+	// what nonce should be
+	$valid = yourls_create_nonce( $action, $user ); 
 	
-	return $nonce == $valid ;
+	// what nonce is
+	$nonce = isset($_REQUEST[$nonce]) ? $_REQUEST[$nonce] : false;
+	
+	if( $nonce == $valid ) {
+		return true;
+	} else {
+		yourls_die( 'Unauthorized action or expired link', 'Error', 403 );
+	}
 }
 
 // Sanitize a version number (1.4.1-whatever -> 1.4.1)

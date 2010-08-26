@@ -12,8 +12,7 @@ if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
 if( isset( $_GET['action'] ) ) {
 
 	// Check nonce
-	if( !isset( $_GET['nonce'] ) or !yourls_verify_nonce( $_GET['nonce'], 'manage_plugins' ) )
-		yourls_die( 'Unauthorized action or expired link', 'Error', 403 );
+	yourls_verify_nonce( 'manage_plugins' );
 
 	// Check plugin file is valid
 	if( isset( $_GET['plugin'] ) && yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$_GET['plugin'].'/plugin.php') ) {
