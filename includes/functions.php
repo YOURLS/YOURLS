@@ -1400,17 +1400,122 @@ function yourls_salt( $string ) {
 	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
 }
 
+// Add a query var to a URL and return URL. Completely stolen from WP.
+// Works with one of these parameter patterns:
+//     array( 'var' => 'value' )
+//     array( 'var' => 'value' ), $url
+//     'var', 'value'
+//     'var', 'value', $url
+// If $url ommited, uses $_SERVER['REQUEST_URI']
+function yourls_add_query_arg() {
+	$ret = '';
+	if ( is_array( func_get_arg(0) ) ) {
+		if ( @func_num_args() < 2 || false === @func_get_arg( 1 ) )
+			$uri = $_SERVER['REQUEST_URI'];
+		else
+			$uri = @func_get_arg( 1 );
+	} else {
+		if ( @func_num_args() < 3 || false === @func_get_arg( 2 ) )
+			$uri = $_SERVER['REQUEST_URI'];
+		else
+			$uri = @func_get_arg( 2 );
+	}
+	
+	$uri = str_replace( '&amp;', '&', $uri );
+
+	
+	if ( $frag = strstr( $uri, '#' ) )
+		$uri = substr( $uri, 0, -strlen( $frag ) );
+	else
+		$frag = '';
+
+	if ( preg_match( '|^https?://|i', $uri, $matches ) ) {
+		$protocol = $matches[0];
+		$uri = substr( $uri, strlen( $protocol ) );
+	} else {
+		$protocol = '';
+	}
+
+	if ( strpos( $uri, '?' ) !== false ) {
+		$parts = explode( '?', $uri, 2 );
+		if ( 1 == count( $parts ) ) {
+			$base = '?';
+			$query = $parts[0];
+		} else {
+			$base = $parts[0] . '?';
+			$query = $parts[1];
+		}
+	} elseif ( !empty( $protocol ) || strpos( $uri, '=' ) === false ) {
+		$base = $uri . '?';
+		$query = '';
+	} else {
+		$base = '';
+		$query = $uri;
+	}
+
+	parse_str( $query, $qs );
+	$qs = yourls_urlencode_deep( $qs ); // this re-URL-encodes things that were already in the query string
+	if ( is_array( func_get_arg( 0 ) ) ) {
+		$kayvees = func_get_arg( 0 );
+		$qs = array_merge( $qs, $kayvees );
+	} else {
+		$qs[func_get_arg( 0 )] = func_get_arg( 1 );
+	}
+
+	foreach ( (array) $qs as $k => $v ) {
+		if ( $v === false )
+			unset( $qs[$k] );
+	}
+
+	$ret = http_build_query( $qs );
+	$ret = trim( $ret, '?' );
+	$ret = preg_replace( '#=(&|$)#', '$1', $ret );
+	$ret = $protocol . $base . $ret . $frag;
+	$ret = rtrim( $ret, '?' );
+	return $ret;
+}
+
+// Navigates through an array and encodes the values to be used in a URL. Stolen from WP, used in yourls_add_query_arg()
+function yourls_urlencode_deep($value) {
+	$value = is_array($value) ? array_map('yourls_urlencode_deep', $value) : urlencode($value);
+	return $value;
+}
+
+// Remove arg from query. Opposite of yourls_add_query_arg. Stolen from WP.
+function yourls_remove_query_arg( $key, $query = false ) {
+	if ( is_array( $key ) ) { // removing multiple keys
+		foreach ( $key as $k )
+			$query = add_query_arg( $k, false, $query );
+		return $query;
+	}
+	return add_query_arg( $key, false, $query );
+}
+
 // Return a time-dependent string for nonce creation
 function yourls_tick() {
 	return ceil( time() / YOURLS_NONCE_LIFE );
 }
 
 // Create a time limited, action limited and user limited token
-function yourls_create_nonce( $action = '-1', $user = false ) {
+function yourls_create_nonce( $action, $user = false ) {
 	if( false == $user )
 		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
 	return substr( yourls_salt($tick . $action . $user), 0, 10 );
+}
+
+// Create a nonce field for inclusion into a form
+function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
+	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
+	if( $echo )
+		echo $field."\n";
+	return $field;
+}
+
+// Add a nonce to a URL. If URL omitted, adds nonce to current URL
+function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false ) {
+	$nonce = yourls_create_nonce( $action, $user );
+	return yourls_add_query_arg( $name, $nonce, $url );
 }
 
 // Check validity of a nonce (ie time span, user and action match). Returns true or dies.

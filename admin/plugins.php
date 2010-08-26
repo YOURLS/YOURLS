@@ -105,13 +105,16 @@ yourls_html_menu();
 		}
 		
 		$plugindir = trim( dirname( $file ), '/' );
-		$action = yourls_is_active_plugin( $file ) ?
-			"<a href='?action=deactivate&plugin=$plugindir&nonce=$nonce'>Deactivate</a>" :
-			"<a href='?action=activate&plugin=$plugindir&nonce=$nonce'>Activate</a>" ;
-	
-		$class = yourls_is_active_plugin( $file ) ?
-			'active' :
-			'inactive' ;
+		
+		if( yourls_is_active_plugin( $file ) ) {
+			$class = 'active';
+			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
+			$action_anchor = 'Deactivate';
+		} else {
+			$class = 'inactive';
+			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
+			$action_anchor = 'Activate';
+		}
 			
 		// Other "Fields: Value" in the header? Get them too
 		if( $plugin ) {
@@ -123,8 +126,8 @@ yourls_html_menu();
 		
 		$data['desc'] .= "<br/><small>plugin file location: $file</small>";
 		
-		printf( "<tr class='plugin %s'><td class='plugin_name'><a href='%s'>%s</a></td><td class='plugin_version'>%s</td><td class='plugin_desc'>%s</td><td class='plugin_author'><a href='%s'>%s</a></td><td class='plugin_actions actions'>%s</td></tr>",
-			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action
+		printf( "<tr class='plugin %s'><td class='plugin_name'><a href='%s'>%s</a></td><td class='plugin_version'>%s</td><td class='plugin_desc'>%s</td><td class='plugin_author'><a href='%s'>%s</a></td><td class='plugin_actions actions'><a href='%s'>%s</a></td></tr>",
+			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action_url, $action_anchor
 			);
 		
 	}
