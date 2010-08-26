@@ -22,7 +22,7 @@ if( !defined('YOURLS_DB_PREFIX') )
 
 // physical path of YOURLS root
 if( !defined('YOURLS_ABSPATH') )
-	define('YOURLS_ABSPATH', dirname(dirname(__FILE__)) );
+	define('YOURLS_ABSPATH', str_replace( '\\', '/', dirname(dirname(__FILE__)) ) );
 
 // physical path of includes directory
 if( !defined('YOURLS_INC') )
@@ -132,7 +132,7 @@ yourls_db_connect();
 yourls_get_all_options();
 
 // Core now loaded
-yourls_do_action( 'init' );
+yourls_do_action( 'init' ); // plugins can't see this, not loaded yet
 
 // Check if we are in maintenance mode
 yourls_check_maintenance_mode();
@@ -158,4 +158,7 @@ if (
 // Init all plugins
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
+
+if( yourls_is_admin() )
+	yourls_do_action( 'admin_init' );
 
