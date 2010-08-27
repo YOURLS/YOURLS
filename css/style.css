@@ -76,7 +76,7 @@ Input.text, select, textarea {
 	border: 1px solid #8dbdd8;
 	margin:1px;
 }
-input.button, a.button_stats {
+input.button {
 	font-family: Verdana, Arial;
 	font-size: 10px;
 	color: #595441;
@@ -89,20 +89,12 @@ input.primary {
 	border:2px solid #aaccaa;
 	background:#fafafe;
 }
-input.disabled {
-	border:1px solid #333;
-	background:#ccc;
-}
-input.loading {
-	background:#cc7 url(../images/loading.gif) center center no-repeat;
-	color:#cc7;
-}
 input.text:focus, textarea:focus {
 	border:2px solid #AACCAA;
 	margin:0px;
 }
 tr.edit-row  td {
-	background:#fdf !important;
+	background:#a9f6ff !important;
 }
 #new_url {
 	text-align:center;
@@ -142,8 +134,38 @@ tr:hover td.actions input, tr:hover td.actions a {
 	visibility:visible;
 }
 td.actions .button {
+	font-family: Verdana, Arial;
+	font-size: 10px;
+	color: #595441;
+	font-weight: bold;
+	background-color: #FFFFFF;
+	border: 1px solid #8dbdd8;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	cursor:pointer;
 	height:22px;
 	width:22px;
+	margin-top:0px;
+	margin-right:5px;
+	display:block;
+	float:left;
+	text-indent:-9999px;
+	outline:0px;
+}
+td.actions .button:active {
+	border:1px solid #000;
+}
+td.actions .button:hover {
+	text-decoration:none;
+}
+td.actions .button.disabled {
+	border:1px solid #333;
+	background:#ccc;
+}
+td.actions .button.loading {
+	background:#cc7 url(../images/loading.gif) center center no-repeat;
+	color:#cc7;
 }
 td.actions .button_share {
 	background:transparent url(../images/share.png) 2px center no-repeat;
@@ -156,15 +178,6 @@ td.actions .button_delete {
 }
 td.actions .button_stats {
 	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
-	border-radius:3px;
-	margin-top:0px;
-	display:block;
-	float:left;
-}
-td.actions .button_stats:hover {
-	text-decoration:none;
 }
 #main_table tfoot th, #main_table tfoot th div {
 	font-size:10px;
