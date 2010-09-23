@@ -1634,6 +1634,11 @@ function yourls_get_remote_title( $url ) {
 	$title = $charset = false;
 	
 	$content = yourls_get_remote_content( $url );
+	
+	// If false, return url as title.
+	// Todo: improve this with temporary title when shorturl_meta available?
+	if( false === $content )
+		return $url;
 
 	if( $content !== false ) {
 		// look for <title>

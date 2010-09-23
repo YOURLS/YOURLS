@@ -1,4 +1,7 @@
 <?php
+// TODO: improve this.
+// yourls_get_http_transport: use static vars
+// yourls_get_remote_content: return array( content, status, code )
 
 // Determine best transport for GET request.
 // Order of preference: curl, fopen, fsockopen.
@@ -44,7 +47,7 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	return yourls_apply_filter( 'get_remote_content', $content, $url, $maxlen, $timeout );
 }
 
-// Get remote content using curl. Needs sanitized $url. Returns $content or an error message
+// Get remote content using curl. Needs sanitized $url. Returns $content or false
 function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 	
     $ch = curl_init();
@@ -61,15 +64,17 @@ function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 
     $response = curl_exec( $ch );
 	
-	if( !$response && curl_error( $ch ) )
-		$response = 'Error: '.curl_error( $ch );
+	if( !$response || curl_error( $ch ) ) {
+		//$response = 'Error: '.curl_error( $ch );
+		return false;
+	}
 
 	curl_close( $ch );
 
 	return substr( $response, 0, $maxlen ); // substr in case CURLOPT_RANGE not supported
 }
 
-// Get remote content using fopen. Needs sanitized $url. Returns $content or an error message
+// Get remote content using fopen. Needs sanitized $url. Returns $content or false
 function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	$content = false;
 	
@@ -97,16 +102,15 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	restore_error_handler();
 	
 	if( !$content ) {
-		global $ydb;
-		$content = 'Error: '.strip_tags( $ydb->fopen_error );
+		//global $ydb;
+		//$content = 'Error: '.strip_tags( $ydb->fopen_error );
+		return false;
 	}
 	
-
 	return $content;
-
 }
 
-// Get remote content using fsockopen. Needs sanitized $url. Returns $content or an error message
+// Get remote content using fsockopen. Needs sanitized $url. Returns $content or false
 function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	// get the host name and url path
 	$parsed_url = parse_url($url);
@@ -153,7 +157,8 @@ function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5
 
 		fclose( $fp );
 	} else {
-		$response = trim( "Error: #$errno. $errstr" );
+		//$response = trim( "Error: #$errno. $errstr" );
+		return false;
 	}
 
 	// return the file content
@@ -162,5 +167,5 @@ function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5
 
 // Return funky user agent string
 function yourls_http_user_agent() {
-	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/' );
+	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.YOURLS_SITE.')' );
 }

@@ -18,7 +18,7 @@ if( !defined('YOURLS_DB_PREFIX') )
 	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
 	
-// Define constants that have not been user defined in config.php
+// Define core constants that have not been user defined in config.php
 
 // physical path of YOURLS root
 if( !defined('YOURLS_ABSPATH') )
