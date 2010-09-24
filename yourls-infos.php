@@ -481,7 +481,7 @@ yourls_html_menu();
 						$i = 0;
 						foreach( $referrer_sort as $site => $count ) {
 							$i++;
-							echo "<li class='sites_list'><img src='http://$site/favicon.ico' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
+							echo "<li class='sites_list'><img src='http://www.google.com/s2/favicons?domain=$site' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
 							echo "<ul id='details_url$i' style='display:none'>";
 							foreach( $referrers[$site] as $url => $count ) {
 								echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
