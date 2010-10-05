@@ -12,46 +12,40 @@
  */
 
 /** MySQL database username */
-define('YOURLS_DB_USER', 'dbuser');
+define( 'YOURLS_DB_USER', 'dbuser' );
 
 /** MySQL database password */
-define('YOURLS_DB_PASS', 'dbpassword');
+define( 'YOURLS_DB_PASS', 'dbpassword' );
 
 /** The name of the database for YOURLS */
-define('YOURLS_DB_NAME', 'yourls');
+define( 'YOURLS_DB_NAME', 'yourls' );
 
 /** MySQL hostname */
-define('YOURLS_DB_HOST', 'localhost');
+define( 'YOURLS_DB_HOST', 'localhost' );
 
 /** MySQL tables prefix */
-define('YOURLS_DB_PREFIX', 'yourls_');
-
-		/**         !!! IMPORTANT !!!
-		 * If you are UPGRADING from version 1.3,
-		 * there are additional constants to define.
-		 * Refer to the readme.html for details .
-		 **/
+define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*
  ** Site options
  */
 
 /** YOURLS installation URL, no trailing slash */
-define('YOURLS_SITE', 'http://site.com'); //
+define( 'YOURLS_SITE', 'http://site.com' );
 
 /** Timezone GMT offset */
-define('YOURLS_HOURS_OFFSET', 0); 
+define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
 /** Allow multiple short URLs for a same long URL
  ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
  ** Set to false to allow multiple short URLs pointing to the same long URL (bit.ly behavior) */
-define('YOURLS_UNIQUE_URLS', true);
+define( 'YOURLS_UNIQUE_URLS', true );
 
 /** Private means protected with login/pass as defined below. Set to false for public usage. */
-define('YOURLS_PRIVATE', true);
+define( 'YOURLS_PRIVATE', true );
 
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
-define('YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm');
+define( 'YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm' );
 
 /**  Username(s) and password(s) allowed to access the site */
 $yourls_user_passwords = array(
@@ -64,7 +58,7 @@ $yourls_user_passwords = array(
  */
 
 /** URL shortening method: 36 or 62 */
-define('YOURLS_URL_CONVERT', 36);
+define( 'YOURLS_URL_CONVERT', 36 );
 /*
  * 36: generates case insentitive lowercase keywords (ie: 13jkm)
  * 62: generate case sensitive keywords (ie: 13jKm or 13JKm)
@@ -81,6 +75,6 @@ $yourls_reserved_URL = array(
 );
 
 /*
- ** Personal settings would go after here
+ ** Personal settings would go after here.
  */
 
