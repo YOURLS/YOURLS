@@ -229,9 +229,15 @@ function yourls_table_edit_row( $keyword ) {
 	$safe_title = stripslashes( $title );
 	$www = YOURLS_SITE;
 	
+	$save_link = yourls_nonce_url( 'save-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	$nonce = yourls_create_nonce( 'edit-save_'.$id );
+	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
@@ -268,8 +274,18 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		$display_link = "<a href=\"$url\" title=\"$title_url\">$display_url</a>";
 	}
 	
+	$delete_link = yourls_nonce_url( 'delete-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'delete', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	$edit_link = yourls_nonce_url( 'edit-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	
+	
 	$actions = <<<ACTION
-<a href="$statlink" id="statlink-$id" title="Stats" class="button button_stats">Stats</a><a href="" id="share-button-$id" name="share-button" title="Share" class="button button_share" onclick="toggle_share('$id');return false;">Share</a><a href="" id="edit-button-$id" name="edit-button" title="Edit" class="button button_edit" onclick="edit('$id');return false;">Edit</a><a href="" id="delete-button-$id" name="delete-button" title="Delete" class="button button_delete" onclick="remove('$id');return false;">Delete</a>
+<a href="$statlink" id="statlink-$id" title="Stats" class="button button_stats">Stats</a><a href="" id="share-button-$id" name="share-button" title="Share" class="button button_share" onclick="toggle_share('$id');return false;">Share</a><a href="$edit_link" id="edit-button-$id" name="edit-button" title="Edit" class="button button_edit" onclick="edit('$id');return false;">Edit</a><a href="$delete_link" id="delete-button-$id" name="delete-button" title="Delete" class="button button_delete" onclick="remove('$id');return false;">Delete</a>
 ACTION;
 	$actions = yourls_apply_filter( 'action_links', $actions, $keyword, $url, $ip, $clicks, $timestamp );
 	
@@ -1518,22 +1534,21 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
 	return yourls_add_query_arg( $name, $nonce, $url );
 }
 
-// Check validity of a nonce (ie time span, user and action match). Returns true or dies.
-// $nonce is the name of the GET or POST parameter
-function yourls_verify_nonce( $action, $nonce = 'nonce', $user = false ) {
+// Check validity of a nonce (ie time span, user and action match).
+// Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
+function yourls_verify_nonce( $action, $nonce, $user = false, $return = '' ) {
 	// get user
 	if( false == $user )
 		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
 		
 	// what nonce should be
-	$valid = yourls_create_nonce( $action, $user ); 
-	
-	// what nonce is
-	$nonce = isset($_REQUEST[$nonce]) ? $_REQUEST[$nonce] : false;
+	$valid = yourls_create_nonce( $action, $user );
 	
 	if( $nonce == $valid ) {
 		return true;
 	} else {
+		if( $return )
+			die( $return );
 		yourls_die( 'Unauthorized action or expired link', 'Error', 403 );
 	}
 }
@@ -1578,7 +1593,7 @@ function yourls_is_infos() {
 
 // Check if we'll need interface display function (ie not API or redirection)
 function yourls_has_interface() {
-	if( yourls_is_API() or yourls_is_GO() or yourls_is_Ajax() )
+	if( yourls_is_API() or yourls_is_GO() )
 		return false;
 	return true;
 }
@@ -1608,6 +1623,18 @@ function yourls_admin_url( $page = '' ) {
 	if( yourls_is_ssl() or yourls_needs_ssl() )
 		$admin = str_replace('http://', 'https://', $admin);
 	return yourls_apply_filter( 'admin_url', $admin, $page );
+}
+
+// Return YOURLS_SITE, with SSL preference
+function yourls_site_url( $echo = true ) {
+	$site = YOURLS_SITE;
+	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
+	if( yourls_is_ssl() )
+		$site = str_replace( 'http://', 'https://', $site );
+	$site = yourls_apply_filter( 'site_url', $site );
+	if( $echo )
+		echo $site;
+	return $site;
 }
 
 // Check if SSL is used, returns bool. Stolen from WP.

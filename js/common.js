@@ -39,8 +39,8 @@ function feedback(msg, type, delay) {
 function logout() {
 	$.ajax({
 		type: "POST",
-		url: "index_ajax.php",
-		data: {mode:'logout'},
+		url: ajaxurl,
+		data: {action:'logout'},
 		success: function() {
 			window.parent.location.href = window.parent.location.href;
 		}
@@ -70,6 +70,31 @@ function trim_long_string( string, length) {
 		newstring = newstring.substr(0, (length - 5) ) + '[...]';	
 	}
 	return newstring;
+}
+
+// Get the var=xxx from a query string
+function get_var_from_query( url, varname, default_val ) {
+	if( varname == undefined ) {
+		varname = 'nonce';
+	}
+	if( default_val == undefined ) {
+		default_val = '';
+	}
+	
+	try{
+		url = url.split('?')[1].split('&').reverse().filter(function(e){
+			var pair = e.split('=');
+			return( pair[0] == varname );
+		})[0].split('=')[1];
+		// weeeeeeee
+		// split the query string on '&', reverse to check last pairs first so that ?ozh=1&ozh=2 matches ozh=2 first
+		// then filter on each pair to find the matching 'varname=something',
+		// which is then returned in a one element array that we split on '=' and take second part. woot!
+	} catch(err) {
+		return default_val;
+	}
+	
+	return url;
 }
 
 /**

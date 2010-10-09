@@ -6,7 +6,7 @@ function yourls_html_logo() {
 	?>
 	<h1>
 		<a href="<?php echo yourls_admin_url('index.php') ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
 	yourls_do_action( 'html_logo' );
@@ -62,37 +62,42 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><?php echo $title ?></title>
-	<link rel="icon" type="image/gif" href="<?php echo YOURLS_SITE; ?>/images/favicon.gif" />
+	<link rel="icon" type="image/gif" href="<?php yourls_site_url(); ?>/images/favicon.gif" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php echo YOURLS_SITE; ?>" />
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.3.2.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<script src="<?php echo YOURLS_SITE; ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<script src="<?php echo YOURLS_SITE; ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
+	<script src="<?php yourls_site_url(); ?>/js/jquery-1.3.2.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 	<?php if ($tabs) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($tablesorter) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($insert) { ?>
-		<script src="<?php echo YOURLS_SITE; ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ($share) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-		<script src="<?php echo YOURLS_SITE; ?>/js/ZeroClipboard.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-		<script type="text/javascript">ZeroClipboard.setMoviePath( '<?php echo YOURLS_SITE; ?>/js/ZeroClipboard.swf' );</script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/ZeroClipboard.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script type="text/javascript">ZeroClipboard.setMoviePath( '<?php yourls_site_url(); ?>/js/ZeroClipboard.swf' );</script>
 	<?php } ?>
 	<?php if ($cal) { ?>
-		<link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php echo YOURLS_SITE; ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
+	<script type="text/javascript">
+	//<![CDATA[
+		var ajaxurl = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
+	//]]>
+	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context; ?>">
@@ -126,6 +131,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 			<form id="new_url_form" action="" method="get">
 				<div><strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
 				Optional: <strong>Custom short URL</strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" /></div>
 			</form>
 			<div id="feedback" style="display:none"></div>
@@ -308,7 +314,7 @@ function yourls_html_link( $href, $title = '', $element = '' ) {
 function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
 	
-	$action = ( isset($_GET['mode']) && $_GET['mode'] == 'logout' ? '?' : '' );
+	$action = ( isset($_GET['action']) && $_GET['action'] == 'logout' ? '?' : '' );
 
 	yourls_html_logo();
 	?>
@@ -343,14 +349,14 @@ function yourls_html_menu() {
 	?>
 	<ul id="admin_menu">
 	<?php if ( yourls_is_private() ) { ?>
-		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?mode=logout" title="Logout">Logout</a>)</li>
+		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?action=logout" title="Logout">Logout</a>)</li>
 	<?php } ?>
 		<li><a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
 	<?php if( yourls_is_admin() ) { ?>
 		<li><a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
 		<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
 		<?php yourls_list_plugin_admin_pages(); ?>	
-		<li><a href="<?php echo YOURLS_SITE; ?>/readme.html">Help</a></li>
+		<li><a href="<?php yourls_site_url(); ?>/readme.html">Help</a></li>
 		<?php yourls_do_action( 'admin_menu' ); ?>
 	<?php } ?>
 	</ul>

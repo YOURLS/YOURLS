@@ -7,7 +7,7 @@ function yourls_is_valid_user() {
 		return true;
 
 	// Logout request
-	if( isset( $_GET['mode'] ) && $_GET['mode'] == 'logout') {
+	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout') {
 		yourls_store_cookie( null );
 		return 'Logged out successfully';
 	}

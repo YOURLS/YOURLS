@@ -8,21 +8,31 @@ $(document).ready(function(){
 	
 	$('input.text').focus(function(){
 		$(this).select();
-	});	
+	});
 	
+	// this one actually has little impact, the .hasClass('disabled') in each edit(), remove() etc... fires faster
+	$('a.button').live('click', function() {
+		if( $(this).hasClass('disabled') ) {
+			return false;
+		}
+	});
 });
 
 // Create new link and add to table
 function add() {
+	if( $('#add-button').hasClass('disabled') ) {
+		return false;
+	}
 	var newurl = $("#add-url").val();
+	var nonce = $("#nonce-add").val();
 	if ( !newurl || newurl == 'http://' || newurl == 'https://' ) {
 		return;
 	}
 	var keyword = $("#add-keyword").val();
 	add_loading("#add-button");
 	$.getJSON(
-		"index_ajax.php",
-		{mode:'add', url: newurl, keyword: keyword},
+		ajaxurl,
+		{action:'add', url: newurl, keyword: keyword, nonce: nonce},
 		function(data){
 			if(data.status == 'success') {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
@@ -56,11 +66,15 @@ function toggle_share_fill_boxes( url, shorturl, title ) {
 
 // Display the edition interface
 function edit(id) {
+	if( $('#edit-button-'+id).hasClass('disabled') ) {
+		return false;
+	}
 	add_loading('#actions-'+id+' .button');
 	var keyword = $('#keyword_'+id).val();
+	var nonce = get_var_from_query( $('#edit-button-'+id).attr('href'), 'nonce' );
 	$.getJSON(
-		"index_ajax.php",
-		{ mode: "edit_display", keyword: keyword },
+		ajaxurl,
+		{ action: "edit_display", keyword: keyword, nonce: nonce, id: id },
 		function(data){
 			$("#id-" + id).after( data.html );
 			$("#edit-url-"+ id).focus();
@@ -71,13 +85,17 @@ function edit(id) {
 
 // Delete a link
 function remove(id) {
+	if( $('#delete-button-'+id).hasClass('disabled') ) {
+		return false;
+	}
 	if (!confirm('Really delete?')) {
 		return;
 	}
 	var keyword = $('#keyword_'+id).val();
+	var nonce = get_var_from_query( $('#delete-button-'+id).attr('href'), 'nonce' );
 	$.getJSON(
-		"index_ajax.php",
-		{ mode: "delete", keyword: keyword },
+		ajaxurl,
+		{ action: "delete", keyword: keyword, nonce: nonce, id: id },
 		function(data){
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){
@@ -115,10 +133,11 @@ function edit_save(id) {
 	var newkeyword = $("#edit-keyword-" + id).val();
 	var title = $("#edit-title-" + id).val();
 	var keyword = $('#old_keyword_'+id).val();
+	var nonce = $('#nonce_'+id).val();
 	var www = $('#yourls-site').val();
 	$.getJSON(
-		"index_ajax.php",
-		{mode:'edit_save', url: newurl, keyword: keyword, newkeyword: newkeyword, title: title },
+		ajaxurl,
+		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
 		function(data){
 			if(data.status == 'success') {
 			
@@ -173,6 +192,9 @@ function decrement() {
 
 // Toggle Share box
 function toggle_share(id) {
+	if( $('#share-button-'+id).hasClass('disabled') ) {
+		return false;
+	}
 	var link = $('#url-'+id+' a:first');
 	var longurl = link.attr('href');
 	var title = link.attr('title');
