@@ -20,8 +20,13 @@ if ( !yourls_check_curl() )
 	$warning[] = 'PHP extension <tt>cURL</tt> is not installed. This server won\'t be able to use the remote API';
 
 // Is YOURLS already installed ?
-if ( yourls_is_installed() )
+if ( yourls_is_installed() ) {
 	$error[] = 'YOURLS already installed.';
+	// check if .htaccess exists, recreate otherwise. No error checking.
+	if( !file_exists( YOURLS_ABSPATH.'/.htaccess' ) ) {
+		yourls_create_htaccess();
+	}
+}
 
 // Start install if possible and needed
 if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
