@@ -23,14 +23,14 @@ if( isset( $_GET['action'] ) ) {
 			case 'activate':
 				$result = yourls_activate_plugin( $_GET['plugin'].'/plugin.php' );
 				if( $result === true )
-					yourls_redirect( yourls_admin_url( 'plugins.php?success=activated' ) );
+					yourls_redirect( yourls_admin_url( 'plugins.php?success=activated' ), 302 );
 
 				break;
 		
 			case 'deactivate':
 				$result = yourls_deactivate_plugin( $_GET['plugin'].'/plugin.php' );
 				if( $result === true )
-					yourls_redirect( yourls_admin_url( 'plugins.php?success=deactivated' ) );
+					yourls_redirect( yourls_admin_url( 'plugins.php?success=deactivated' ), 302 );
 
 				break;
 				

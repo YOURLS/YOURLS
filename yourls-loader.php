@@ -53,11 +53,11 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = yourls_sanitize_url( $matches[0] );
 	yourls_do_action( 'load_template_redirect_admin', $url );
-	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ) );
+	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ), 302 );
 	exit;
 }
 
 // Past this point this is a request the loader could not understand
 yourls_do_action( 'loader_failed', $request );
-yourls_redirect( YOURLS_SITE, 307 );
+yourls_redirect( YOURLS_SITE, 302 );
 exit;

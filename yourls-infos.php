@@ -13,7 +13,7 @@ if( !isset( $aggregate ) && isset( $_GET['all'] ) && $_GET['all'] == 1 && yourls
 
 if ( !isset( $keyword ) ) {
 	yourls_do_action( 'infos_no_keyword' );
-	yourls_redirect( YOURLS_SITE, 307 );
+	yourls_redirect( YOURLS_SITE, 302 );
 }
 	
 // Get basic infos for this shortened URL
@@ -31,7 +31,7 @@ if( $title == '' ) {
 
 if ( $longurl === false ) {
 	yourls_do_action( 'infos_keyword_not_found' );
-	yourls_redirect( YOURLS_SITE, 307 );
+	yourls_redirect( YOURLS_SITE, 302 );
 }
 
 if( yourls_do_log_redirect() ) {

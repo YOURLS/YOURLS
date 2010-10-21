@@ -139,7 +139,7 @@ yourls_check_maintenance_mode();
 
 // Check if need to redirect to install procedure
 if( !yourls_is_installed() && ( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true ) ) {
-	yourls_redirect( YOURLS_SITE .'/admin/install.php' );
+	yourls_redirect( yourls_admin_url( 'install.php' ), 302 );
 }
 
 // Check if upgrade is needed.
@@ -151,7 +151,7 @@ if (
 	( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true )
 ) {
 	if ( yourls_upgrade_is_needed() ) {
-		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php' );
+		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php', 302 );
 	}
 }
 

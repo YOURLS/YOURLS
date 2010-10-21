@@ -40,7 +40,7 @@ if( !empty($url) ) {
 	} else {
 		yourls_do_action( 'redirect_keyword_not_found', $keyword );
 		
-		yourls_redirect( YOURLS_SITE, 307 ); // no 404 to tell browser this might change, and also to not pollute logs
+		yourls_redirect( YOURLS_SITE, 302 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
 }
 exit();
