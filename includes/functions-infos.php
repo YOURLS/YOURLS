@@ -147,6 +147,8 @@ function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
 		'chxt'=> 'x,x,y',
 		'chd' => 't:'.( join(',' ,  $values ) ),
 		'chds' => '0,'.$max,
+		'chm' => 'B,E3F3FF,0,0,0|o,5FA3C6,0,-1,6|o,FFFFFF,0,-1,4',
+		'chco' => '5FA3C6',
 		'chxl'=> '0:|'. $legend1 .'|1:|'. $legend2 .'|2:|'. $label_clicks
 	);
 	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );
@@ -172,13 +174,23 @@ function yourls_stats_get_best_day( $list_of_days ) {
 // Return domain of a URL
 function yourls_get_domain( $url, $include_scheme = false ) {
 	$parse = parse_url( $url );
-	$host = $parse['host'];
-	$scheme = $parse['scheme'];
-	
-	if ( $include_scheme )
+
+	// Get host & scheme. Fall back to path if not found.
+	$host = isset( $parse['host'] ) ? $parse['host'] : '';
+	$scheme = isset( $parse['scheme'] ) ? $parse['scheme'] : '';
+	$path = isset( $parse['path'] ) ? $parse['path'] : '';
+	if( !$host )
+		$host = $path;	
+		
+	if ( $include_scheme && $scheme )
 		$host = $scheme.'://'.$host;
 		
 	return $host;
+}
+
+// Return favicon URL
+function yourls_get_favicon_url( $url ) {
+	return 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false );
 }
 
 // Scale array of data from 0 to 100 max

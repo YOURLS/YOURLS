@@ -194,7 +194,7 @@ yourls_html_menu();
 	if( count( $keyword_list ) > 1 )
 		echo ' <a href="'. yourls_link($keyword).'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
 } ?></h3>
-<h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_domain( $longurl, true );?>/favicon.ico"/> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
+<h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl );?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
 
 <div id="tabs">
 	<div class="wrap_unfloat">
@@ -481,7 +481,8 @@ yourls_html_menu();
 						$i = 0;
 						foreach( $referrer_sort as $site => $count ) {
 							$i++;
-							echo "<li class='sites_list'><img src='http://www.google.com/s2/favicons?domain=$site' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
+							$favicon = yourls_get_favicon_url( $site );
+							echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
 							echo "<ul id='details_url$i' style='display:none'>";
 							foreach( $referrers[$site] as $url => $count ) {
 								echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
