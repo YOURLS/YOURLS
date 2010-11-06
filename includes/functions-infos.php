@@ -173,7 +173,7 @@ function yourls_stats_get_best_day( $list_of_days ) {
 
 // Return domain of a URL
 function yourls_get_domain( $url, $include_scheme = false ) {
-	$parse = parse_url( $url );
+	$parse = @parse_url( $url ); // Hiding ugly stuff coming from malformed referrer URLs
 
 	// Get host & scheme. Fall back to path if not found.
 	$host = isset( $parse['host'] ) ? $parse['host'] : '';
