@@ -433,6 +433,16 @@ function yourls_plugin_basename( $file ) {
 }
 
 /**
+ * Return the URL of the directory a plugin
+ */
+function yourls_plugin_url( $file ) {
+	$url = YOURLS_PLUGINURL . '/' . yourls_plugin_basename( $file );
+	if( yourls_is_ssl() or yourls_needs_ssl() )
+		$url = str_replace('http://', 'https://', $url);
+	return yourls_apply_filter( 'plugin_url', $url, $file );
+}
+
+/**
  * Display list of links to plugin admin pages, if any
  */
 function yourls_list_plugin_admin_pages() {
