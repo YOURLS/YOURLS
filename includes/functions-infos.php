@@ -147,8 +147,8 @@ function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
 		'chxt'=> 'x,x,y',
 		'chd' => 't:'.( join(',' ,  $values ) ),
 		'chds' => '0,'.$max,
-		'chm' => 'B,E3F3FF,0,0,0|o,5FA3C6,0,-1,6|o,FFFFFF,0,-1,4',
-		'chco' => '5FA3C6',
+		'chm' => 'B,E3F3FF,0,0,0|o,2a85b3,0,-1,6|o,FFFFFF,0,-1,4',
+		'chco' => '2a85b3',
 		'chxl'=> '0:|'. $legend1 .'|1:|'. $legend2 .'|2:|'. $label_clicks
 	);
 	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );

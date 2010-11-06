@@ -176,7 +176,7 @@ yourls_html_menu();
 
 <h2 id="informations"><?php echo $title; ?></h2>
 
-<h3>Short URL: <img src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/>
+<h3><span class="label">Short URL:</span> <img src="<?php echo YOURLS_SITE; ?>/images/favicon.gif"/>
 <?php if( $aggregate ) {
 	$i = 0;
 	foreach( $keyword_list as $k ) {
@@ -194,7 +194,7 @@ yourls_html_menu();
 	if( count( $keyword_list ) > 1 )
 		echo ' <a href="'. yourls_link($keyword).'+all" title="Aggregate stats for duplicate short URLs"><img src="' . YOURLS_SITE . '/images/chart_bar_add.png" border="0" /></a>';
 } ?></h3>
-<h3 id="longurl">Long URL: <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl );?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
+<h3 id="longurl"><span class="label">Long URL:</span> <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl );?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
 
 <div id="tabs">
 	<div class="wrap_unfloat">

@@ -26,7 +26,7 @@ $(document).ready(function(){
 	$('#stats_lines li a:first').click();
 	
 	// Prettify list
-	$('#historical_clicks li:odd').css('background', '#FFE3BB');
+	$('#historical_clicks li:odd').css('background', '#E3F3FF');
 	
 	// Toggle detail lists
 	$('a.details').click(function(){

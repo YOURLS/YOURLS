@@ -2,7 +2,7 @@ body {
 	font-family: Verdana, Arial;
 	font-size: 12px;
 	color: #595441;
-	background:#E3F3FF;
+	background:#e3f3ff;
 	text-align:center;
 	margin-top:0px;
 	padding-top:10px;
@@ -14,10 +14,10 @@ body {
 	background:white;
 	text-align:left;
 	padding:5px 20px 10px 20px;
-	border-left:3px solid #5FA3C6;
-	border-right:3px solid #5FA3C6;
-	border-bottom:3px solid #5FA3C6;
-	border-top:3px solid #5FA3C6;
+	border-left:3px solid #2a85b3;
+	border-right:3px solid #2a85b3;
+	border-bottom:3px solid #2a85b3;
+	border-top:3px solid #2a85b3;
 	-moz-border-radius:20px;
 	-webkit-border-radius:20px;
 	border-radius:20px;
@@ -27,7 +27,7 @@ div, p, td {
 	font-size: 12px;
 }
 a, a:link, a:active, a:visited {
-	color: #2A85B3;
+	color: #2a85b3;
 	text-decoration: none;
 }
 a:hover {
@@ -35,9 +35,9 @@ a:hover {
 }
 h1 {height:50px;margin:0;float:right;width:500px;}
 h1 a {text-align:right;font-size:20px;float:right;}
-h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2A85B3}
+h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2a85b3}
 h1 a:hover{text-decoration:none;}
-h1 a:hover span{text-decoration:underline;color:#8dbdd8}
+h1 a:hover span{text-decoration:underline;color:#88c0eb}
 
 ul#admin_menu {
 	min-height:100px;
@@ -73,7 +73,7 @@ Input.text, select, textarea {
 	font-size: 10px;
 	color: #595441;
 	background-color: #FFFFFF;
-	border: 1px solid #8dbdd8;
+	border: 1px solid #88c0eb;
 	margin:1px;
 }
 input.button {
@@ -82,15 +82,15 @@ input.button {
 	color: #595441;
 	font-weight: bold;
 	background-color: #FFFFFF;
-	border: 1px solid #8dbdd8;
+	border: 1px solid #88c0eb;
 	cursor:pointer;
 }
 input.primary {
-	border:2px solid #aaccaa;
+	border:2px solid #2A85B3;
 	background:#fafafe;
 }
 input.text:focus, textarea:focus {
-	border:2px solid #AACCAA;
+	border:2px solid #2A85B3;
 	margin:0px;
 }
 tr.edit-row  td {
@@ -104,7 +104,7 @@ tr.edit-row  td {
 	clear:both;
 }
 #new_url div {
-	background:#D9EAF3;
+	background:#C7E7FF;
 	padding:4px;
 }
 #new_url_form {
@@ -112,7 +112,7 @@ tr.edit-row  td {
 }
 #new_url #feedback {
 	background:#ff8;
-	color:#8DBDD8;
+	color:#88c0eb;
 	width:50%;
 	margin:0px 25%;
 	padding:2px;
@@ -139,7 +139,7 @@ td.actions .button {
 	color: #595441;
 	font-weight: bold;
 	background-color: #FFFFFF;
-	border: 1px solid #8dbdd8;
+	border: 1px solid #88c0eb;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	border-radius:3px;
@@ -231,7 +231,7 @@ td.actions .button_stats {
 	padding:0 2px;
 }
 a.bookmarklet {
-	border:2px solid #2A85B3;
+	border:2px solid #2a85b3;
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	border-radius:3px;
@@ -257,7 +257,7 @@ a.bookmarklet:hover {
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
 	border-radius:10px;
-	border:2px solid #2A85B3;
+	border:2px solid #2a85b3;
 	-moz-border-radius-bottomleft:30px;
 	-moz-border-radius-bottomright:30px;
 	-webkit-border-bottom-left-radius:25px;
@@ -271,7 +271,7 @@ a.bookmarklet:hover {
 }
 
 .notice {
-	border:1px solid #5FA3C6;
+	border:1px solid #2a85b3;
 	background: #F3FAFD;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;

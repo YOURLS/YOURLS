@@ -1,3 +1,7 @@
+h3 span.label {
+	width:100px;
+	display:inline-block;
+}
 
 ul.toggle_display {
 	display:none;
@@ -13,9 +17,8 @@ ul.toggle_display li {
 	margin-right: 10px;
 }
 #tabs ul#headers {
-	border-bottom:1px solid #ccc;
+	border-bottom:1px solid #E3F3FF;
 	padding:12px 5px 3px 5px;
-	zmargin-right:200px;
 	float:left;
 }
 .wrap_unfloat {
@@ -24,19 +27,19 @@ ul.toggle_display li {
 
 #tabs ul#headers li a {
 	color:#595441;
-	border:1px solid #ccc;
+	border:1px solid #C7E7FF;
 	-moz-border-radius-topleft:10px;
 	-moz-border-radius-topright:10px;
 	-webkit-border-top-left-radius:10px;
 	-webkit-border-top-right-radius:10px;
 	border-radius:10px;
 	padding:10px 5px 5px 15px;
-	background:#dde;
+	background:#E3F3FF;
 }
 
 #tabs ul#headers li a:hover {
 	text-decoration:none;
-	background:#eef;
+	background:#88C0EB;
 }
 
 #tabs ul#headers li a.selected {
@@ -55,17 +58,17 @@ ul.toggle_display li {
 	-webkit-border-top-right-radius:10px;
 	border-radius:10px;
 	padding:3px 10px;
-	background:#FFE3BB;
+	background:#E3F3FF;
 }
 #stats_lines li a:hover {
 	text-decoration:none;
-	background:#FF9B06;
+	background:#C7E7FF;
 }
 #stats_lines li a.selected {
-	background:#FFC26B;
+	background:#88C0EB;
 }
 #stats_lines li a.selected:hover {
-	background:#FFC26B;
+	background:#88C0EB;
 }
 .tab {
 	padding:10px;
@@ -97,7 +100,7 @@ ul.no_bullet li {
 	margin:0;
 }
 #historical_clicks li:hover {
-	background:#FFB545 !important;
+	background:#C7E7FF !important;
 }
 #historical_clicks span.historical_link {
 	min-width:130px;
