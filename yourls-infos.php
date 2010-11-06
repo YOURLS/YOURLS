@@ -103,7 +103,7 @@ if( yourls_do_log_redirect() ) {
 			// Build array of last 24 hours $last_24h[$hour] = number of click
 			$then = strtotime( $click_time);
 			if( ( $now >= $then ) && ( ( $now - $then ) < ( 24 * 60 * 60 ) ) ) {
-				$year = sprintf( "%02d", substr( $year, -1, 2 ) ); // 2009 -> 09
+				$year = sprintf( "%02d", substr($year, -2) ); // 2009 -> 09
 				$diff = $now - strtotime( $click_time);
 				if( !array_key_exists( "$year-$month-$day-$hour", $last_24h ) )
 					$last_24h["$year-$month-$day-$hour"] = 0;
