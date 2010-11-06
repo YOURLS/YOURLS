@@ -52,6 +52,10 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		yourls_do_action( 'admin_headers' );
 	}
 	
+	// Body class
+	$bodyclass = '';
+	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
+	
 	// Page title
 	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . YOURLS_SITE;
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
@@ -100,7 +104,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
-<body class="<?php echo $context; ?>">
+<body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
 <div id="wrap">
 	<?php
 }

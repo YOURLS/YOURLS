@@ -1768,3 +1768,22 @@ function yourls_seems_utf8($str) {
 	}
 	return true;
 }
+
+// Quick UA check for mobile devices. Return boolean.
+function yourls_is_mobile_device() {
+	// Strings searched
+	$mobiles = array(
+		'android', 'blackberry', 'blazer',
+		'compal', 'elaine', 'fennec', 'hiptop',
+		'iemobile', 'iphone', 'ipod', 'ipad',
+		'iris', 'kindle', 'opera mobi', 'opera mini',
+		'palm', 'phone', 'pocket', 'psp', 'symbian',
+		'treo', 'wap', 'windows ce', 'windows phone'
+	);
+	
+	// Current user-agent
+	$current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
+	
+	// Check
+	return str_replace( $mobiles, '', $current ) != $current;
+}

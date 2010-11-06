@@ -124,7 +124,7 @@ tr.edit-row  td {
 td.url small a{
 	color:#bbc;
 }
-td.actions input, td.actions a {
+body.desktop td.actions input,body.desktop  td.actions a {
 	visibility:hidden;
 }
 td.actions input.disabled, td.actions input.loading {
@@ -324,5 +324,5 @@ a.bookmarklet:hover {
   font-size:11px;
 }
 tr.plugin.active a{ font-weight:bolder;}
-tr.plugin td.plugin_desc small{ visibility:hidden;}
+body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
 tr:hover.plugin td.plugin_desc small{ visibility:visible;}
