@@ -7,7 +7,9 @@ ul.toggle_display {
 	display:none;
 	list-style-type:none;
 	margin-left:0;
-	padding:0;
+	margin-right:23px;
+	padding:12px 5px 3px;
+	border-bottom:1px solid #C7E7FF;
 }
 ul.toggle_display li {
 	padding:0;
@@ -59,16 +61,19 @@ ul.toggle_display li {
 	border-radius:10px;
 	padding:3px 10px;
 	background:#E3F3FF;
+	border:1px solid #C7E7FF;
 }
 #stats_lines li a:hover {
 	text-decoration:none;
 	background:#C7E7FF;
 }
 #stats_lines li a.selected {
-	background:#88C0EB;
+	background:#fff;
+	border:1px solid #C7E7FF;
+	border-bottom:1px solid white;
 }
 #stats_lines li a.selected:hover {
-	background:#88C0EB;
+	background:#fff;
 }
 .tab {
 	padding:10px;
