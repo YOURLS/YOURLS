@@ -216,11 +216,11 @@
 			
 			<h3>YOURLS Features</h3>
 			<ul>
-				<li><tt>Public</tt> (everybody can create short links) or <tt>private</tt> (your links only)</li>
+				<li><tt>Private</tt> (your links only) or <tt>Public</tt> (everybody can create short links, fine for an intranet)</li>
 				<li>Sequential or custom URL keyword</li>
-				<li>Handy <tt>bookmarklet</tt> to easily shorten and share links</li>
+				<li>Handy <tt>bookmarklets</tt> to easily shorten and share links</li>
 				<li>Awesome <tt>stats</tt>: historical click reports, referrers tracking, visitors geo-location</li>
-				<li>Neat <tt>AJAXed</tt> interface</li>
+				<li>Neat <tt>Ajaxed</tt> interface</li>
 				<li>Terrific <tt>Plugin</tt> architecture to easily implement new features</li>
 				<li>Cool developer <tt>API</tt></li>
 				<li>Friendly <tt>installer</tt></li>
@@ -234,9 +234,7 @@
 				<img src="http://yourls.org/images/admin-dashboard.gif" />
 				
 				<p>Stats for each short URL</p>
-				<img src="http://yourls.org/images/stats_1.png" />
-				<img src="http://yourls.org/images/stats_2.png" />
-				<img src="http://yourls.org/images/stats_3.png" />
+				<img src="http://yourls.org/images/stats-anim.gif" />
 				
 				<p>See a live example of YOURLS stats on <a href="http://yourls.org/download+">http://yourls.org/download+</a></p>
 			</div>
@@ -250,8 +248,8 @@
 			
 			<p>YOURLS is made by:</p>
 			<ul>
-				<li><a href="http://yourls.org/lesterchan" title="Visit Lester Chan's site">Lester Chan</a> &ndash <a href="http://twitter.com/gamerz">@GamerZ</a> on Twitter</li>
-				<li><a href="http://yourls.org/ozh" title"Visit Ozh's site">Ozh Richard</a> &ndash <a href="http://twitter.com/ozh">@Ozh</a> on Twitter</li>
+				<li><a href="http://yourls.org/lesterchan" title="Visit Lester Chan's site">Lester Chan</a> &ndash <a href="http://twitter.com/gamerz">@GamerZ</a> on Twitter (initial idea)</li>
+				<li><a href="http://yourls.org/ozh" title"Visit Ozh's site">Ozh Richard</a> &ndash <a href="http://twitter.com/ozh">@Ozh</a> on Twitter (development)</li>
 			</ul>
 		</div>
 
@@ -260,28 +258,30 @@
 			<h2>Fresh Install</h2>
 			<ol>
 				<li>Unzip the YOURLS archive</li>
-				<li>Copy <code>includes/config-sample.php</code> to <code>includes/config.php</code></li>
-				<li>Open <code>includes/config.php</code> with a raw text editor (like Notepad) and fill in the required settings</li>
+				<li>Copy <code>includes/config-sample.php</code> to <code>user/config.php</code></li>
+				<li>Open <code>user/config.php</code> with a raw text editor (like Notepad) and fill in the required settings</li>
 				<li>Upload the unzipped files to your domain <code>public_html</code> or <code>www</code> folder</li>
 				<li>Create a new database (see <a href="#Config" onclick="toggle(this);">Configuration</a> &ndash; you can also use an existing one)</li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
 			</ol>
 			
-			<h2>Upgrade from YOURLS 1.4</h2>
+			<h2>Upgrade from YOURLS 1.4.x</h2>
 			<ol>
+				<li><strong>Backup the database!</strong></li>
 				<li>Unzip the YOURLS archive</li>
 				<li>Upload files to your server, overwriting your existing install</li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
+				<li>Tip: you can now move your <code>config.php</code> file to the <code>/user</code> directory</li>
 			</ol>
 			
 			<h2>Upgrade from YOURLS 1.3 or earlier</h2>
 			<ol>
+				<li><strong>Backup the database!</strong></li>
 				<li>Make a copy of your <code>config.php</code></li>
 				<li>Delete all files including <code>.htaccess</code> in YOURLS root directory</li>
 				<li>Unzip the YOURLS archive, upload the files</li>
 				<li>Copy <code>config-sample.php</code> to <code>config.php</code> and fill in details. <strong>Don't start with your old config file</strong>, use the new sample config file.</li>
 				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
-				<li><strong>Backup the database!</strong></li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code> and follow instructions</li>
 				<li>After upgrade is well and over, remove the define <code>YOURLS_DB_TABLE_NEXTDEC</code> from your config file</li>
 			</ol>
@@ -395,7 +395,7 @@
 			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation.</p>
 
 			<h3>Documentation</h3>
-			<p>A sample plugin is included in the archive. Read the source and learn the concept. It's easy!</p>
+			<p>Several sample plugins are included in the archive. Read the source and learn the concept. It's easy and fun!</p>
 			<p>Check the <a href="http://yourls.org/pluginapi">plugin API documentation</a> to learn more</p>
 		
 		</div>
@@ -513,7 +513,7 @@
 			<h3>If YOURLS generates 404 for your short URLs</h3>
 			<ul>
 				<li>Make sure <strong>mod_rewrite</strong> is enabled with your Apache server</li>
-				<li>Some (crappy) hosts such as GoDaddy or 1and1 need <a href="http://code.google.com/p/yourls/issues/detail?id=25">a small fix</a> to .htaccess</li>
+				<li>Make sure your .htaccess file looks like <a href="http://yourls.org/htaccess">this one</a></li>
 			</ul>
 			
 			<h3>Feedback, feature requests and bug reporting</h3>
@@ -543,7 +543,7 @@
 				John Girvin's YOURLS setup with all links in a sortable display</li>
 				<li><a href="http://www.iyeman.net/">http://www.iyeman.net/</a><br/>
 				Example of portal for your online self with links to your places (blog, Twitter) and your URL shortener</li>
-				<li><a href="http://vb.ly/">http://vb.ly/</a><br/>
+				<li>http://vb.ly/ (early adopter, now <a href="http://www.readwriteweb.com/archives/libya_shuts_down_vbly_bitly_owly_next.php">defunct</a>)<br/>
 				Public YOURLS setup run by famous sex writer Violet Blue as "the internet's first and only sex-positive url shortener"</li>
 			</ul>
 			
@@ -581,7 +581,7 @@
 				Twitter Tools for Movable Type supports custom YOURLS setup</li>
 				
 				<li><a href="http://www.mrtech.com/forums/index.php/topic,2524.0.html">YOURLS hacks</a><br/>
-				How to enhance YOURLS for spam control/throttling, unshortening and weekly stats
+				Hacks to enhance YOURLS for spam control/throttling, unshortening and weekly stats
 				
 				<li><a href="http://code.google.com/p/yourls/issues/detail?id=137">Export URLS as text list</a><br/>
 				A simple script to list all URLs, one per line, in plain text (for using as an indexer config file, for example)</li>
