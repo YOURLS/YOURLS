@@ -1,3 +1,9 @@
+// Handle .hide-if-no-js and .hide-if-js styles
+$(document).ready(function(){
+	$('.hide-if-no-js').removeClass('hide-if-no-js');
+ 	$('.hide-if-js').hide();
+});
+
 // Change an element text an revert in a smooth pulse. el is an element id like '#copybox h2'
 function html_pulse( el, newtext ){
 	var oldtext = $(el).html();

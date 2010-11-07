@@ -22,6 +22,7 @@ body {
 	-webkit-border-radius:20px;
 	border-radius:20px;
 }
+.hide-if-no-js {display: none;}
 div, p, td {
 	font-family: Verdana, Arial;
 	font-size: 12px;
