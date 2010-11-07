@@ -23,6 +23,9 @@ table.tblSorter thead tr .header {
 	cursor: pointer;
 	padding-right:10px;
 }
+table.tblSorter tbody tr:hover td {
+	background-color:#F3FAFD;
+}
 table.tblSorter tbody td {
 	color: #3D3D3D;
 	padding: 4px;
@@ -30,10 +33,10 @@ table.tblSorter tbody td {
 	vertical-align: top;
 }
 table.tblSorter tbody tr.even td {
-	background-color:#FFF;
+
 }
 table.tblSorter tbody tr.odd td {
-	background-color:#F3FAFD;
+
 }
 table.tblSorter thead tr .headerSortUp {
 	background-image: url('../images/desc.gif');
