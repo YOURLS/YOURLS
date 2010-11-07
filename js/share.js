@@ -47,6 +47,7 @@ function share(dest) {
 	return false;
 }
 
+var clip;
 function init_clipboard() {
 	// Check we have the proper copy element
 	if( !$('#copylink').length )
@@ -69,15 +70,13 @@ function init_clipboard() {
 	
 	// Custom animation on hover
 	$('#copylink').css({'backgroundPosition':'130% 50%'});
-	$('#'+clip.movieId)
-		.mouseover(function(){
-			$('#copylink').select().animate({'backgroundPosition':'100% 50%'}, 300);
-
-		})
-		.mouseout(function(){
-			$('#copylink').blur().animate({'backgroundPosition':'130% 50%'}, 300);
-		});
-		
+	clip.addEventListener('onMouseOver', function(client, text) {
+		$('#copylink').select().animate({'backgroundPosition':'100% 50%'}, 300);
+	});
+	clip.addEventListener('onMouseOut', function(client, text) {
+		$('#copylink').blur().animate({'backgroundPosition':'130% 50%'}, 300);
+	});
+	
 	// Force flash clip size (IE fix)
 	$('#'+clip.movieId).css('height', '35px');
 };                     
