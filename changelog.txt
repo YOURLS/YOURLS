@@ -56,7 +56,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - added: plugin architecture! OMG plugins!!1!!1!
 - added: directory /user, config.php can be moved there
 - added: new "instant bookmarklets"
-- added: 1 click copy to clipboard a la bitly
+- added: 1 click copy-to-clipboard a la bitly
 - change in logic: now all request are handled by PHP and don't rely on .htaccess
 - added: saving URL titles
 - added: support for prefix-n-shorten: sho.rt/http://example.com/
@@ -66,4 +66,6 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - added: core plugin to display a random pretty background
 - changed: layout now using a more consistent palette, see http://yourls.org/palette
 - added: anti XSS and anti CSRF measures
+- added: interactive map if possible in stat traffic by countries
+- fixed: lots of bugs
 
