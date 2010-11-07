@@ -379,7 +379,7 @@ yourls_html_menu();
 				<h3>Best day</h3>
 				<?php $best = yourls_stats_get_best_day( $list_of_days ); ?>
 				<p><strong><?php echo $best['max'];?></strong> <?php echo yourls_plural( 'hit', $best['max'] ); ?> on <?php echo date("F j, Y", strtotime($best['day'])); ?>. 
-				<a href="" class='details' id="more_clicks">Click for more details</a></p>
+				<a href="" class='details hide-if-no-js' id="more_clicks">Click for more details</a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php
 					foreach( $dates as $year=>$months ) {
@@ -437,7 +437,7 @@ yourls_html_menu();
 				<td valign="top">
 					<h3>Top 5 countries</h3>
 					<?php yourls_stats_pie( $countries, 5 ); ?>
-					<p><a href="" class='details' id="more_countries">Click for more details</a></p>
+					<p><a href="" class='details hide-if-no-js' id="more_countries">Click for more details</a></p>
 					<ul id="details_countries" style="display:none" class="no_bullet">
 					<?php
 					foreach( $countries as $code=>$count ) {
@@ -472,7 +472,7 @@ yourls_html_menu();
 					<?php
 					if ( $number_of_sites > 1 )
 						$referrer_sort['Others'] = count( $referrers );
-					yourls_stats_pie( $referrer_sort, 5, '440x220', '902020,FF6060' );
+					yourls_stats_pie( $referrer_sort, 5, '440x220' );
 					unset( $referrer_sort['Others'] );
 					?>
 					<h3>Referrers</h3>
@@ -482,7 +482,7 @@ yourls_html_menu();
 						foreach( $referrer_sort as $site => $count ) {
 							$i++;
 							$favicon = yourls_get_favicon_url( $site );
-							echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details' id='more_url$i'>(details)</a></li>\n";
+							echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details hide-if-no-js' id='more_url$i'>(details)</a></li>\n";
 							echo "<ul id='details_url$i' style='display:none'>";
 							foreach( $referrers[$site] as $url => $count ) {
 								echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
@@ -492,7 +492,7 @@ yourls_html_menu();
 						}
 						// Any referrer left? Group in "various"
 						if ( $referrers ) {
-							echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details' id='more_various'>(details)</a></li>\n";
+							echo "<li id='sites_various'>Various: <strong>". count( $referrers ). "</strong> <a href='' class='details hide-if-no-js' id='more_various'>(details)</a></li>\n";
 							echo "<ul id='details_various' style='display:none'>";
 							foreach( $referrers as $url ) {
 								echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
@@ -508,7 +508,7 @@ yourls_html_menu();
 				<td valign="top">
 					<h3>Direct vs Referrer Traffic</h3>
 					<?php
-					yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $notdirect), 5, '440x220', '902020,FF6060' );
+					yourls_stats_pie( array('Direct'=>$direct, 'Referrers'=> $notdirect), 5, '440x220' );
 					?>
 					<p>Direct traffic: <strong><?php echo $direct; ?></strong> <?php echo yourls_plural( 'hit', $direct ); ?> </p>
 					<p>Referrer traffic: <strong><?php echo $notdirect; ?></strong> <?php echo yourls_plural( 'hit', $notdirect ); ?> </p>

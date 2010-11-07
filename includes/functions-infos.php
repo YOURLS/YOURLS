@@ -2,21 +2,69 @@
 
 // Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
 function yourls_stats_countries_map( $countries ) {
+	yourls_do_action( 'stats_countries_map' );
+	
+	// Echo static map. Will be hidden if JS
 	$map = array(
 		'cht' => 't',
 		'chs' => '440x220',
 		'chtm'=> 'world',
-		'chco'=> 'FFFFFF,9090AA,202040',
+		'chco'=> 'FFFFFF,88C0EB,2A85B3,1F669C',
 		'chld'=> join('' , array_keys( $countries ) ),
 		'chd' => 't:'. join(',' ,  $countries ),
 		'chf' => 'bg,s,EAF7FE'
 	);
 	$map_src = 'http://chart.apis.google.com/chart?' . http_build_query( $map );
-	echo "<img src='$map_src' width='440' height='220' border='0' />";
+	echo "<img class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
+
+	// Echo dynamic map. Will be hidden if no JS
+	echo <<<MAP
+<script type='text/javascript' src='http://www.google.com/jsapi'></script>
+<script type='text/javascript'>
+google.load('visualization', '1', {'packages': ['geomap']});
+google.setOnLoadCallback(drawMap);
+function drawMap() {
+  var data = new google.visualization.DataTable();
+MAP;
+	echo '
+	data.addRows('.count( $countries ).');
+	';
+	echo "
+	data.addColumn('string', 'Country');
+	data.addColumn('number', 'Hits');
+	";
+	$i = 0;
+	foreach( $countries as $c => $v ) {
+		echo "
+		  data.setValue($i, 0, '$c');
+		  data.setValue($i, 1, $v);
+		";
+		$i++;
+	}
+
+	echo <<<MAP
+  var options = {};
+  options['dataMode'] = 'regions';
+  options['width'] = '550px';
+  options['height'] = '340px';
+  options['colors'] = [0x88C0EB,0x2A85B3,0x1F669C];
+  var container = document.getElementById('yourls_stat_countries');
+  var geomap = new google.visualization.GeoMap(container);
+  geomap.draw(data, options);
+  google.visualization.events.addListener(geomap, 'select', selectHandler);
+
+function selectHandler(e) {
+  console.log( 'bleh', e );
+}
+};
+</script>
+<div id="yourls_stat_countries"></div>
+MAP;
+
 }
 
 // Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
-function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = '202040,9090AA' ) {
+function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E7FF,1F669C' ) {
 	// Trim array: $limit first item + the sum of all others
 	if ( count( $data ) > $limit ) {
 		$i= 0;
@@ -120,7 +168,7 @@ function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
 	if ( count( $values ) == 1 )
 		array_unshift( $values, 0 );
 		
-	$values = yourls_array_granularity( $values, 100 );
+	$values = yourls_array_granularity( $values, 30 );
 	
 	// If x-axis labels have only 1 value, double it for a nicer graph
 	if( count( $legend1_list ) == 1 )
@@ -210,21 +258,15 @@ function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) 
 		$max = max( $array );
 		$step = intval( count( $array ) / $grain );
 		$i = 0;
-		$preserved = false;
-		// Loop through each item and unset except every $step (optional preserver the max value)
+		// Loop through each item and unset except every $step (optional preserve the max value)
 		foreach( $array as $k=>$v ) {
 			$i++;
 			if ( $i % $step != 0 ) {
 				if ( $preserve_max == false ) {
 					unset( $array[$k] );
 				} else {
-					if ( $v == $max ) {
-						if( $preserved == false )
-							unset( $array[$k] );
-						$preserved = true;
-					} else {
+					if ( $v < $max )
 						unset( $array[$k] );
-					}
 				}
 			}
 		}
