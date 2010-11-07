@@ -15,7 +15,7 @@ function yourls_stats_countries_map( $countries ) {
 		'chf' => 'bg,s,EAF7FE'
 	);
 	$map_src = 'http://chart.apis.google.com/chart?' . http_build_query( $map );
-	echo "<img class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
+	echo "<img id='yourls_stat_countries_static' class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
 
 	// Echo dynamic map. Will be hidden if no JS
 	echo <<<MAP
@@ -51,11 +51,6 @@ MAP;
   var container = document.getElementById('yourls_stat_countries');
   var geomap = new google.visualization.GeoMap(container);
   geomap.draw(data, options);
-  google.visualization.events.addListener(geomap, 'select', selectHandler);
-
-function selectHandler(e) {
-  console.log( 'bleh', e );
-}
 };
 </script>
 <div id="yourls_stat_countries"></div>
