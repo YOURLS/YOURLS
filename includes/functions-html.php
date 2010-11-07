@@ -271,7 +271,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 		<div id="sharebox" class="share">
 			<?php echo $share_title; ?>
 			<div id="tweet">
-				<span id="charcount"><?php echo $count; ?></span>
+				<span id="charcount" class="hide-if-no-js"><?php echo $count; ?></span>
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
 			</div>
 			<p id="share_links">Share with 
