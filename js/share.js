@@ -48,17 +48,21 @@ function share(dest) {
 }
 
 function init_clipboard() {
-	//Create a new clipboard client
+	// Check we have the proper copy element
+	if( !$('#copylink').length )
+		return;
+		
+	// Create a new clipboard client
 	clip = new ZeroClipboard.Client();
 	
-	//Glue the clipboard client to the last td in each row
+	// Glue the clipboard client to the last td in each row
 	clip.glue( 'copylink' );
 
-	//Grab the text from the parent row of the icon
+	// Grab the text from the parent row of the icon
 	var txt = $('#copylink').val();
 	clip.setText(txt);
 
-	//Add a complete event to let the user know the text was copied
+	// Add a complete event to let the user know the text was copied
 	clip.addEventListener('complete', function(client, text) {
 		html_pulse( '#copybox h2', 'Copied!' );
 	});
