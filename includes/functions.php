@@ -1037,7 +1037,7 @@ function yourls_geo_get_flag( $code ) {
 	}
 	
 	if( class_exists('GeoIP') ) {
-		return YOURLS_SITE.'/includes/geo/flags/flag_'.(strtolower($code)).'.gif';
+		return yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.(strtolower($code)).'.gif' );
 	} else {
 		return false;
 	}
@@ -1804,6 +1804,13 @@ function yourls_get_request() {
 	);
 
 	return yourls_apply_filter( 'get_request', $request );
+}
+
+// Change protocol to match current scheme used (http or https)
+function yourls_match_current_protocol( $url, $normal = 'http', $ssl = 'https' ) {
+	if( yourls_is_ssl() )
+		$url = str_replace( $normal, $ssl, $url );
+	return $url;
 }
 
 // Fix $_SERVER['REQUEST_URI'] variable for various setups. Stolen from WP.

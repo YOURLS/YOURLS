@@ -15,34 +15,38 @@ function yourls_stats_countries_map( $countries ) {
 		'chf' => 'bg,s,EAF7FE'
 	);
 	$map_src = 'http://chart.apis.google.com/chart?' . http_build_query( $map );
-	echo "<img id='yourls_stat_countries_static' class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
+	//$map_src = yourls_match_current_protocol( $map_src, 'http://chart.apis.', 'https://www.' );
+	
+	$static = "<img id='yourls_stat_countries_static' class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
+	echo yourls_apply_filter( 'stats_countries_static', $static, $countries );
 
 	// Echo dynamic map. Will be hidden if no JS
-	echo <<<MAP
-<script type='text/javascript' src='http://www.google.com/jsapi'></script>
+	$jsapi = yourls_match_current_protocol( 'http://www.google.com/jsapi' );
+	$dynamic = <<<MAP
+<script type='text/javascript' src='$jsapi'></script>
 <script type='text/javascript'>
 google.load('visualization', '1', {'packages': ['geomap']});
 google.setOnLoadCallback(drawMap);
 function drawMap() {
   var data = new google.visualization.DataTable();
 MAP;
-	echo '
+	$dynamic .= '
 	data.addRows('.count( $countries ).');
 	';
-	echo "
+	$dynamic .= "
 	data.addColumn('string', 'Country');
 	data.addColumn('number', 'Hits');
 	";
 	$i = 0;
 	foreach( $countries as $c => $v ) {
-		echo "
+		$dynamic .= "
 		  data.setValue($i, 0, '$c');
 		  data.setValue($i, 1, $v);
 		";
 		$i++;
 	}
 
-	echo <<<MAP
+	$dynamic .= <<<MAP
   var options = {};
   options['dataMode'] = 'regions';
   options['width'] = '550px';
@@ -56,10 +60,13 @@ MAP;
 <div id="yourls_stat_countries"></div>
 MAP;
 
+	echo yourls_apply_filter( 'stats_countries_dynamic', $dynamic, $countries );
 }
 
 // Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
 function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E7FF,1F669C' ) {
+	yourls_do_action( 'stats_pie' );
+
 	// Trim array: $limit first item + the sum of all others
 	if ( count( $data ) > $limit ) {
 		$i= 0;
@@ -87,9 +94,11 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E
 		'chl' => join('|' , array_keys( $data ) )
 	);
 	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
-	
+	//$pie_src = yourls_match_current_protocol( $pie_src, 'http://chart.apis.', 'https://www.' );
 	list( $size_x, $size_y ) = split( 'x', $size );
-	echo "<img src='$pie_src' width='$size_x' height='$size_y' border='0' />";
+	
+	$pie = "<img src='$pie_src' width='$size_x' height='$size_y' border='0' />";
+	echo yourls_apply_filter( 'stats_pie', $pie, $data, $limit, $size, $colors );
 }
 
 // Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
@@ -158,6 +167,7 @@ function yourls_build_list_of_days( $dates ) {
 
 // Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks'). $legend1_list & legend2_list are values used for the 2 x-axis labels
 function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
+	yourls_do_action( 'stats_line' );
 
 	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
 	if ( count( $values ) == 1 )
@@ -195,7 +205,9 @@ function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
 		'chxl'=> '0:|'. $legend1 .'|1:|'. $legend2 .'|2:|'. $label_clicks
 	);
 	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );
-	echo "<img src='$line_src' />";
+	//$line_src = yourls_match_current_protocol( $line_src, 'http://chart.apis.', 'https://www.' );
+
+	echo yourls_apply_filter( 'stats_line', "<img src='$line_src' />", $values, $legend1_list, $legend2_list );
 }
 
 // Return the number of days in a month. From php.net, used if PHP built without calendar functions
@@ -233,7 +245,7 @@ function yourls_get_domain( $url, $include_scheme = false ) {
 
 // Return favicon URL
 function yourls_get_favicon_url( $url ) {
-	return 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false );
+	return yourls_match_current_protocol( 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false ) );
 }
 
 // Scale array of data from 0 to 100 max
