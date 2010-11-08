@@ -1807,7 +1807,7 @@ function yourls_get_request() {
 }
 
 // Fix $_SERVER['REQUEST_URI'] variable for various setups. Stolen from WP.
-function wp_fix_request_uri() {
+function yourls_fix_request_uri() {
 
 	$default_server_values = array(
 		'SERVER_SOFTWARE' => '',

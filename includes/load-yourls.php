@@ -125,7 +125,7 @@ if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 }
 
 // Fix REQUEST_URI for IIS
-wp_fix_request_uri();
+yourls_fix_request_uri();
 
 // Create the YOURLS object $ydb that will contain everything we globally need
 global $ydb;
