@@ -267,6 +267,8 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$shorturl = YOURLS_SITE.'/'.$keyword;
 	$statlink = $shorturl.'+';
+	if( yourls_is_ssl() )
+		$statlink = str_replace( 'http://', 'https://', $statlink );
 	
 	if( $title ) {
 		$display_link = "<a href=\"$url\" title=\"$title\">$display_title</a><br/><small><a href=\"$url\" title=\"$title_url\">$display_url</a></small>";
@@ -1786,4 +1788,60 @@ function yourls_is_mobile_device() {
 	
 	// Check
 	return str_replace( $mobiles, '', $current ) != $current;
+}
+
+// Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
+function yourls_get_request() {
+	// Cover all cases: YOURLS_SITE https or not * current URL https or not
+	$base = str_replace( array( 'https', 'http' ), '', YOURLS_SITE );
+	$scheme = yourls_is_ssl() ? 'https' : 'http' ;
+
+	// Extract the 'abdc' from the requested URL
+	$request = str_replace(
+		$scheme . $base.'/',
+		'',
+		$scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+	);
+
+	return yourls_apply_filter( 'get_request', $request );
+}
+
+// Fix $_SERVER['REQUEST_URI'] variable for various setups. Stolen from WP.
+function wp_fix_request_uri() {
+
+	$default_server_values = array(
+		'SERVER_SOFTWARE' => '',
+		'REQUEST_URI' => '',
+	);
+	$_SERVER = array_merge( $default_server_values, $_SERVER );
+
+	// Fix for IIS when running with PHP ISAPI
+	if ( empty( $_SERVER['REQUEST_URI'] ) || ( php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE'] ) ) ) {
+
+		// IIS Mod-Rewrite
+		if ( isset( $_SERVER['HTTP_X_ORIGINAL_URL'] ) ) {
+			$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'];
+		}
+		// IIS Isapi_Rewrite
+		else if ( isset( $_SERVER['HTTP_X_REWRITE_URL'] ) ) {
+			$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
+		} else {
+			// Use ORIG_PATH_INFO if there is no PATH_INFO
+			if ( !isset( $_SERVER['PATH_INFO'] ) && isset( $_SERVER['ORIG_PATH_INFO'] ) )
+				$_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+
+			// Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
+			if ( isset( $_SERVER['PATH_INFO'] ) ) {
+				if ( $_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME'] )
+					$_SERVER['REQUEST_URI'] = $_SERVER['PATH_INFO'];
+				else
+					$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
+			}
+
+			// Append the query string if it exists and isn't null
+			if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+				$_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING'];
+			}
+		}
+	}
 }

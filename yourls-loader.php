@@ -10,8 +10,7 @@ if ( '/favicon.ico' == $_SERVER['REQUEST_URI'] ) {
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
-$scheme = ( isset($_SERVER["HTTPS"]) ? 'https' : 'http' );
-$request = str_replace( YOURLS_SITE.'/', '', $scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+$request = yourls_get_request();
 
 /**
  * TODO: think about doing something with $_SERVER['QUERY_STRING']?
