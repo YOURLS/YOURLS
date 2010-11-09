@@ -491,15 +491,15 @@
 			
 			<h3>Difference Between Base 36 And Base 62 Encoding</h3>
 			<ul>
-				<li>Base 36 encoding uses <code>0123456789abcdefghijklmnopqrstuvwxyz</code></li>
+				<li>Base 36 encoding uses <code>0123456789abcdefghijklmnopqrstuvwxyz</code> for short URLs</li>
 				<li>Base 62 encoding uses <code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</code></li>
 				<li>Stick to one setting, don't change after you've created links as it will change all your short URLs!</li>
-				<li>Base 36 is the default and should be picked.</li>
+				<li>Base 36 is the default and should be picked if you're not sure.</li>
 			</ul>
 			
 			<h3>Getting a short domain name for your YOURLS install</h3>
 			<ul>
-				<li>Unless you plan on making it public, any shared hosting should be fine</li>
+				<li>Unless you plan on making it public and popular, any shared hosting should be fine</li>
 				<li><a href="http://domai.nr/">Domainr</a> is a fun search tool that might inspire and help you</li>
 				<li>Aim for exotic top level domains (.in, .im, .li ...), they're often cheap and a lot are still available. <a href="https://www.gandi.net/domain/buy/search/">Gandi</a> is a pretty comprehensive registrar, for instance.</li>
 			</ul>
@@ -516,11 +516,18 @@
 				<li>Make sure your .htaccess file looks like <a href="http://yourls.org/htaccess">this one</a></li>
 			</ul>
 			
+			<h3>There is no index page at the root of the install</h3>
+			<ul>
+				<li>Indeed. It's intented. It's up to the user to make what he needs. Some redirect the root to a different place, some make a public interface for anyone to shorten links, some make a portfolio. You make it.</li>
+				<li>If you want to make a public interface, there's a sample file provided as an example.</li>
+			
 			<h3>Feedback, feature requests and bug reporting</h3>
 			<ul>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="http://yourls.org/support">Please</a>.</li>
-				<li>Check the <a href="http://code.google.com/p/yourls/wiki/RoadMap">Road Map</a> for future features</li>
-				<li>Raise an <a href="http://yourls.org/issues">issue here</a> and give all the details. Thanks!</li>
+				<li>Check the <a href="http://code.google.com/p/yourls/wiki/RoadMap">Road Map</a> for future features.</li>
+				<li>Check all the <a href="http://code.google.com/p/yourls/wiki/">wiki documents</a>.</li>
+				<li>Search in the <a href="http://code.google.com/p/yourls/issues/list?can=1">closed issues</a>.</li>
+				<li>Eventually raise an <a href="http://yourls.org/issues">issue here</a> and give all the details. Thanks!</li>
 			</ul>
 
 		</div>
@@ -567,6 +574,9 @@
 				
 				<li><a href="https://rubygems.org/gems/yourls">YOURLS Ruby</a><br/>
 				A Ruby wrapper for the YOURLS API</li>
+				
+				<li><a href="http://sharetronix.com/sharetronix/addons/view/41">Sharetronix</a><br/>
+				A YOURLS addon for Sharetronix</li>
 				
 				<li><a href="http://www.chrismarquardt.com/blog.php?id=7952283233607249761">Textexpander and YOURLS</a><br/>
 				Making YOURLS and Textexpander on the Mac play together</li>
