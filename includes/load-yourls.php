@@ -74,7 +74,7 @@ if( !defined('YOURLS_COOKIE_LIFE') )
 
 // life span of a nonce in seconds
 if( !defined('YOURLS_NONCE_LIFE') )
-	define( 'YOURLS_NONCE_LIFE', 3600 );
+	define( 'YOURLS_NONCE_LIFE', 43200 ); // 3600 * 12
 
 // if set to true, disable stat logging (no use for it, too busy servers, ...)
 if( !defined('YOURLS_NOSTATS') )
