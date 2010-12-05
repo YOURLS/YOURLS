@@ -2,6 +2,7 @@
 // Start YOURLS engine
 require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>YOURLS Public Interface Sample</title>
@@ -113,7 +114,7 @@ HTML;
 	?>
 
 	<!-- Example bookmarklet. Be sure to rename the link target from "sample-public-front-page.php" to whatever you'll use (probably index.php) -->
-	<p><a href="javascript:void(location.href='<?php echo YOURLS_SITE; ?>/sample-public-front-page.php?format=simple&action=shorturl&url='+escape(location.href))">bookmarklet</a>
+	<p><a href="javascript:void(location.href='<?php echo YOURLS_SITE; ?>/sample-public-front-page.php?format=simple&amp;action=shorturl&amp;url='+escape(location.href))">bookmarklet</a>
 
 </div>
 
