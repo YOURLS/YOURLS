@@ -345,6 +345,11 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	global $ydb;
 
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
+	if ( false !== $pre )
+		return $pre;
+
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status'] = 'fail';
 		$return['code'] = 'error:nourl';
@@ -616,6 +621,12 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 
 // Return (string) selected information associated with a keyword. Optional $notfound = string default message if nothing found
 function yourls_get_keyword_info( $keyword, $field, $notfound = false ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_get_keyword_info', false, $keyword, $field, $notfound );
+	if ( false !== $pre )
+		return $pre;
+
 	$keyword = yourls_sanitize_string( $keyword );
 	$infos = yourls_get_keyword_infos( $keyword );
 	
@@ -653,6 +664,11 @@ function yourls_get_keyword_timestamp( $keyword, $notfound = false ) {
 
 // Update click count on a short URL. Return 0/1 for error/success.
 function yourls_update_clicks( $keyword ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword );
+	if ( false !== $pre )
+		return $pre;
+
 	global $ydb;
 	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
@@ -971,6 +987,11 @@ function yourls_get_HTTP_status( $code ) {
 
 // Log a redirect (for stats)
 function yourls_log_redirect( $keyword ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
+	if ( false !== $pre )
+		return $pre;
+
 	if ( !yourls_do_log_redirect() )
 		return true;
 
@@ -993,8 +1014,8 @@ function yourls_do_log_redirect() {
 
 // Converts an IP to a 2 letter country code, using GeoIP database if available in includes/geo/
 function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
-	// allow a plugin to shortcircuit the Geo IP API
-	$location = yourls_apply_filter( 'pre_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
+	// Allow plugins to short-circuit the Geo IP API
+	$location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
 	if ( false !== $location )
 		return $location;
 
@@ -1073,7 +1094,7 @@ function yourls_get_option( $option_name, $default = false ) {
 	global $ydb;
 	
 	// Allow plugins to short-circuit options
-	$pre = yourls_apply_filter( 'pre_option_'.$option_name, false );
+	$pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
 	if ( false !== $pre )
 		return $pre;
 
@@ -1298,6 +1319,11 @@ function yourls_get_duplicate_keywords( $longurl ) {
 
 // Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
 function yourls_check_IP_flood( $ip = '' ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_check_IP_flood', false, $ip );
+	if ( false !== $pre )
+		return $pre;
 
 	yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
@@ -1656,6 +1682,11 @@ function yourls_is_ssl() {
 
 // Get a remote page <title>, return a string (either title or url)
 function yourls_get_remote_title( $url ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_get_remote_title', false, $url );
+	if ( false !== $pre )
+		return $pre;
+
 	require_once( YOURLS_INC.'/functions-http.php' );
 
 	$url = yourls_sanitize_url( $url );
@@ -1786,8 +1817,9 @@ function yourls_is_mobile_device() {
 	// Current user-agent
 	$current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
 	
-	// Check
-	return str_replace( $mobiles, '', $current ) != $current;
+	// Check and return
+	$is_mobile = ( str_replace( $mobiles, '', $current ) != $current );
+	return yourls_apply_filter( 'is_mobile_device', $is_mobile );
 }
 
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
