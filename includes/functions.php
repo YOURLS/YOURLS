@@ -1035,6 +1035,11 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 
 // Converts a 2 letter country code to long name (ie AU -> Australia)
 function yourls_geo_countrycode_to_countryname( $code ) {
+	// Allow plugins to short-circuit the Geo IP API
+	$country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
+	if ( false !== $country )
+		return $country;
+
 	// Load the Geo class if not already done
 	if( !class_exists('GeoIP') ) {
 		$temp = yourls_geo_ip_to_countrycode('127.0.0.1');
@@ -1052,16 +1057,12 @@ function yourls_geo_countrycode_to_countryname( $code ) {
 
 // Return flag URL from 2 letter country code
 function yourls_geo_get_flag( $code ) {
-	// Load the Geo class if not already done
-	if( !class_exists('GeoIP') ) {
-		$temp = yourls_geo_ip_to_countrycode('127.0.0.1');
-	}
-	
-	if( class_exists('GeoIP') ) {
-		return yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.(strtolower($code)).'.gif' );
+	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
+		$img = yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.(strtolower($code)).'.gif' );
 	} else {
-		return false;
+		$img = false;
 	}
+	return yourls_apply_filter( 'geo_get_flag', $img, $code );
 }
 
 
