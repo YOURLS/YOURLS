@@ -8,6 +8,9 @@ Author: Ozh
 Author URI: http://ozh.org/
 */
 
+// No direct call
+if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 /* Example of an action
  *
  * We're going to add an entry to the menu.

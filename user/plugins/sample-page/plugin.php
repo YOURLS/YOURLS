@@ -8,6 +8,9 @@ Author: Ozh
 Author URI: http://ozh.org/
 */
 
+// No direct call
+if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 // Register our plugin admin page
 yourls_add_action( 'plugins_loaded', 'ozh_yourls_samplepage_add_page' );
 function ozh_yourls_samplepage_add_page() {

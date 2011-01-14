@@ -8,6 +8,9 @@ Author: Ozh
 Author URI: http://ozh.org/
 */
 
+// No direct call
+if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 // Add the inline style
 yourls_add_action( 'html_head', 'ozh_yourls_randombg' );
 function ozh_yourls_randombg() {

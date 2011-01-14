@@ -9,6 +9,9 @@ Author URI: http://ozh.org/
 Disclaimer: Toolbars ruin the user experience. Be warned.
 */
 
+// No direct call
+if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 global $ozh_toolbar;
 $ozh_toolbar['do'] = false;
 $ozh_toolbar['keyword'] = '';
