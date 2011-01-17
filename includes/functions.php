@@ -64,7 +64,7 @@ function yourls_string2int( $string, $chars = null ) {
 function yourls_sanitize_string( $string ) {
 	// make a regexp pattern with the shorturl charset, and remove everything but this
 	$pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
-	$valid = substr(preg_replace('/[^'.$pattern.']/', '', $string ), 0, 199);
+	$valid = substr(preg_replace('![^'.$pattern.']!', '', $string ), 0, 199);
 	
 	return yourls_apply_filter( 'sanitize_string', $valid, $string );
 }
