@@ -225,12 +225,12 @@ yourls_html_menu() ;
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 		<thead>
 			<tr>
-				<th>Short URL&nbsp;</th>
-				<th>Original URL</th>
-				<th>Date</th>
-				<th>IP</th>
-				<th>Clicks&nbsp;&nbsp;</th>
-				<th>Actions</th>
+				<th id="main_table_head_shorturl">Short URL&nbsp;</th>
+				<th id="main_table_head_longurl">Original URL</th>
+				<th id="main_table_head_date">Date</th>
+				<th id="main_table_head_ip">IP</th>
+				<th id="main_table_head_clicks">Clicks&nbsp;&nbsp;</th>
+				<th id="main_table_head_actions">Actions</th>
 			</tr>
 		</thead>
 
