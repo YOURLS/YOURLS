@@ -355,8 +355,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['code'] = 'error:nourl';
 		$return['message'] = 'Missing URL input';
 		$return['errorCode'] = '400';
-		yourls_do_action( 'add_new_link_fail_nourl' );
-		return $return;
+		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
 	
 	// Prevent DB flood
@@ -371,8 +370,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			$return['code'] = 'error:noloop';
 			$return['message'] = 'URL is a short URL';
 			$return['errorCode'] = '400';
-			yourls_do_action( 'add_new_link_fail_noloop' );
-			return $return;
+			return yourls_apply_filter( 'add_new_link_fail_noloop', $return, $url, $keyword, $title );
 		}
 	}
 
@@ -395,6 +393,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 		// Custom keyword provided
 		if ( $keyword ) {
+			
+			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
+		
 			$keyword = yourls_escape( yourls_sanitize_string($keyword) );
 			$keyword = yourls_apply_filter( 'custom_keyword', $keyword );
 			if ( !yourls_keyword_is_free($keyword) ) {
@@ -415,6 +416,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 		// Create random keyword	
 		} else {
+			
+			yourls_do_action( 'add_new_link_create_keyword', $url, $keyword, $title );
+		
 			$timestamp = date('Y-m-d H:i:s');
 			$id = yourls_get_next_decimal();
 			$ok = false;
@@ -444,6 +448,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 	// URL was already stored
 	} else {
+			
+		yourls_do_action( 'add_new_link_already_stored', $url, $keyword, $title );
+		
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
 		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
@@ -452,10 +459,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
 	
-	yourls_do_action( 'post_add_new_link', $url, $keyword );
+	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
 
 	$return['statusCode'] = 200; // regardless of result, this is still a valid request
-	return $return;
+	return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
 }
 
 
