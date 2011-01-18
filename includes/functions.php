@@ -678,7 +678,7 @@ function yourls_update_clicks( $keyword ) {
 }
 
 // Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
-function yourls_get_stats( $filter = 'top', $limit = 10 ) {
+function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	global $ydb;
 
 	switch( $filter ) {
@@ -704,10 +704,11 @@ function yourls_get_stats( $filter = 'top', $limit = 10 ) {
 	
 	// Fetch links
 	$limit = intval( $limit );
+	$start = intval( $start );
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT 0, $limit;");
+		$results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;");
 		
 		$return = array();
 		$i = 1;
@@ -728,7 +729,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10 ) {
 	
 	$return['statusCode'] = 200;
 
-	return yourls_apply_filter( 'get_stats', $return, $filter, $limit );
+	return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
 }
 
 // Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
@@ -764,11 +765,11 @@ function yourls_get_link_stats( $shorturl ) {
 }
 
 // Return array for API stat requests
-function yourls_api_stats( $filter = 'top', $limit = 10 ) {
-	$return = yourls_get_stats( $filter, $limit );
+function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
+	$return = yourls_get_stats( $filter, $limit, $start );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
-	return yourls_apply_filter( 'api_stats', $return, $filter, $limit );
+	return yourls_apply_filter( 'api_stats', $return, $filter, $limit, $start );
 }
 
 // Return array for API stat requests
