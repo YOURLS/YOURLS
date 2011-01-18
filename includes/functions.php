@@ -1566,11 +1566,16 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
 
 // Check validity of a nonce (ie time span, user and action match).
 // Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
-function yourls_verify_nonce( $action, $nonce, $user = false, $return = '' ) {
+// if $nonce is false or unspecified, it will use $_REQUEST['nonce']
+function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
 	// get user
 	if( false == $user )
 		$user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
 		
+	// get current nonce value
+	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
+		$nonce = $_REQUEST['nonce'];
+
 	// what nonce should be
 	$valid = yourls_create_nonce( $action, $user );
 	
