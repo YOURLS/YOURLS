@@ -779,6 +779,14 @@ function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	return yourls_apply_filter( 'api_stats', $return, $filter, $limit, $start );
 }
 
+// Return array for counts of shorturls and clicks
+function yourls_api_db_stats() {
+	$return = yourls_get_db_stats();
+	$return['simple']  = 'Need either XML or JSON format for stats';
+	$return['message'] = 'success';
+	return yourls_apply_filter( 'api_db_stats', $return );
+}
+
 // Return array for API stat requests
 function yourls_api_url_stats($shorturl) {
 	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'

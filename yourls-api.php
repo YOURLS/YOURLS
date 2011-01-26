@@ -19,13 +19,19 @@ switch( $action ) {
 		unset( $return['html'] ); // in API mode, no need for our internal HTML output
 		break;
 	
-	// Global stats
+	// Stats about links (XX top, bottom, last, rand)
 	case 'stats':
 		$filter = ( isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : '' );
 		$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
-		$return = yourls_api_stats( $filter, $limit );
+		$start = ( isset( $_REQUEST['start'] ) ? $_REQUEST['start'] : '' );
+		$return = yourls_api_stats( $filter, $limit, $start );
 		break;
 	
+	// Just the global counts of shorturls and clicks
+	case "db-stats":
+		$return = yourls_api_db_stats();
+		break;
+
 	// Stats for a shorturl
 	case 'url-stats':
 		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
