@@ -374,7 +374,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		}
 	}
 
-	yourls_do_action( 'pre_add_new_link', $url, $keyword );
+	yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
 	
 	$table = YOURLS_DB_TABLE_URL;
 	$strip_url = stripslashes($url);
@@ -389,7 +389,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		} else {
 			$title = yourls_get_remote_title( $url );
 		}
-		$title = yourls_apply_filter( 'add_new_title', $title );
+		$title = yourls_apply_filter( 'add_new_title', $title, $url, $keyword );
 
 		// Custom keyword provided
 		if ( $keyword ) {
@@ -397,7 +397,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 		
 			$keyword = yourls_escape( yourls_sanitize_string($keyword) );
-			$keyword = yourls_apply_filter( 'custom_keyword', $keyword );
+			$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 			if ( !yourls_keyword_is_free($keyword) ) {
 				// This shorturl either reserved or taken already
 				$return['status'] = 'fail';
@@ -424,7 +424,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			$ok = false;
 			do {
 				$keyword = yourls_int2string( $id );
-				$keyword = yourls_apply_filter( 'random_keyword', $keyword );
+				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
 				$free = yourls_keyword_is_free($keyword);
 				$add_url = @yourls_insert_link_in_db( $url, $keyword, $title );
 				$ok = ($free && $add_url);
