@@ -30,7 +30,7 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL, no trailing slash */
+/** YOURLS installation URL, no trailing slash. If you define it to http://site.com/, don't use www.site.com (and vice-versa) */
 define( 'YOURLS_SITE', 'http://site.com' );
 
 /** Timezone GMT offset */
