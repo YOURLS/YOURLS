@@ -1020,7 +1020,7 @@ function yourls_log_redirect( $keyword ) {
 	$ip = yourls_get_IP();
 	$location = yourls_geo_ip_to_countrycode( $ip );
 	
-	return $ydb->query( "INSERT INTO `$table` VALUES ('', NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
 
 // Check if we want to not log redirects (for stats)
