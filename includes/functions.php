@@ -56,8 +56,13 @@ function yourls_string2int( $string, $chars = null ) {
 		$index = strpos( $chars, $string[$i] );
 		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
 	}
+
 	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
-	
+}
+
+// return a unique(ish) hash for a string to be used as a valid HTML id
+function yourls_string2htmlid( $string ) {
+	return yourls_apply_filter( 'string2htmlid', 'y'.abs( crc32( $string ) ) );
 }
 
 // Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
@@ -222,7 +227,7 @@ function yourls_table_edit_row( $keyword ) {
 	
 	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
-	$id = yourls_string2int( $keyword ); // used as HTML #id
+	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = stripslashes( $url );
@@ -261,7 +266,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$display_title   = yourls_trim_long_string( $title );
 	$title = htmlspecialchars( $title );
 
-	$id      = yourls_string2int( $keyword ); // used as HTML #id
+	$id      = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
 	$clicks  = number_format($clicks, 0, '', '');
 
@@ -478,8 +483,6 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	$strip_url = stripslashes($url);
 	$strip_title = stripslashes($title);
 	$old_url = $ydb->get_var("SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';");
-	$old_id = $id = yourls_string2int( $keyword );
-	$new_id = ( $newkeyword == '' ? $old_id : yourls_string2int( $newkeyword ) );
 	
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
@@ -501,7 +504,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
 			$update_url = $ydb->query("UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword', `title` = '$title' WHERE `keyword` = '$keyword';");
 		if( $update_url ) {
-			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'new_id' => $new_id, 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
+			$return['url'] = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status'] = 'success';
 			$return['message'] = 'Link updated in database';
 		} else {
