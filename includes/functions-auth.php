@@ -15,9 +15,6 @@ function yourls_is_valid_user() {
 	// Check cookies or login request. Login form has precedence.
 	global $yourls_user_passwords;
 	
-	// In the future maybe I'll implement nonces like in WP. Will be something like
-	// ?nonce=fn(login,pwd,action)
-	
 	// Determine auth method and check credentials
 	if
 		// API only: Secure (no login or pwd) and time limited token
