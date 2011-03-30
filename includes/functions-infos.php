@@ -95,7 +95,7 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E
 	);
 	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
 	//$pie_src = yourls_match_current_protocol( $pie_src, 'http://chart.apis.', 'https://www.' );
-	list( $size_x, $size_y ) = split( 'x', $size );
+	list( $size_x, $size_y ) = explode( 'x', $size );
 	
 	$pie = "<img src='$pie_src' width='$size_x' height='$size_y' border='0' />";
 	echo yourls_apply_filter( 'stats_pie', $pie, $data, $limit, $size, $colors );
