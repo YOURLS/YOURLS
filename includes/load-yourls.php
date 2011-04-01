@@ -15,7 +15,7 @@ if( file_exists(dirname(__FILE__).'/config.php') ) {
 
 // Check if config.php was properly updated for 1.4
 if( !defined('YOURLS_DB_PREFIX') )
-	yourls_die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
+	die('<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>');
 
 	
 // Define core constants that have not been user defined in config.php
