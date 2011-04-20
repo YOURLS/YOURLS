@@ -253,7 +253,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 	
 	<div id="shareboxes" <?php echo $hidden; ?>>
 
-		<?php yourls_do_action( 'shareboxes_before' ); ?>
+		<?php yourls_do_action( 'shareboxes_before', $longurl, $shorturl, $title, $text ); ?>
 
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
@@ -266,7 +266,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 			</p>
 		</div>
 
-		<?php yourls_do_action( 'shareboxes_middle' ); ?>
+		<?php yourls_do_action( 'shareboxes_middle', $longurl, $shorturl, $title, $text ); ?>
 
 		<div id="sharebox" class="share">
 			<?php echo $share_title; ?>
@@ -279,12 +279,12 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
 				<?php
-				yourls_do_action( 'share_links' , $longurl, $shorturl, $title, $text );
+				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				?>
 			</p>
 		</div>
 		
-		<?php yourls_do_action( 'shareboxes_after' ); ?>
+		<?php yourls_do_action( 'shareboxes_after', $longurl, $shorturl, $title, $text ); ?>
 	
 	</div>
 	
