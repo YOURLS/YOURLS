@@ -59,7 +59,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	// Page title
 	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . YOURLS_SITE;
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
-	$title = yourls_apply_filter( 'html_title', $title );
+	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
 	?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

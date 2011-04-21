@@ -1611,9 +1611,10 @@ function yourls_sanitize_version( $ver ) {
 	return preg_replace( '/[^0-9.]/', '', $ver );
 }
 
-// Converts keyword into short link
+// Converts keyword into short link (prepend with YOURLS base URL)
 function yourls_link( $keyword = '' ) {
-	return YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
+	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
+	return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
 // Check if we're in API mode. Returns bool
