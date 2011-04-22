@@ -893,10 +893,11 @@ function yourls_get_user_agent() {
 // Redirect to another page
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
+	$location = yourls_apply_filter( 'redirect', $location, $code );
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
-		header("Location: $location");
+		header( "Location: $location" );
 	} else {
 		yourls_redirect_javascript( $location );
 	}
@@ -913,7 +914,7 @@ function yourls_status_header( $code = 200 ) {
 		$protocol = 'HTTP/1.0';
 
 	$code = intval( $code );
-	$desc = yourls_get_HTTP_status($code);
+	$desc = yourls_get_HTTP_status( $code );
 
 	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
 	yourls_do_action( 'status_header', $code );
@@ -921,19 +922,21 @@ function yourls_status_header( $code = 200 ) {
 
 // Redirect to another page using Javascript. Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
 function yourls_redirect_javascript( $location, $dontwait = true ) {
+	yourls_do_action( 'pre_redirect_javascript', $location, $dontwait );
+	$location = yourls_apply_filter( 'redirect_javascript', $location, $dontwait );
 	if( $dontwait ) {
-	echo <<<REDIR
-	<script type="text/javascript">
-	window.location="$location";
-	</script>
-	<small>(if you are not redirected after 10 seconds, please <a href="$location">click here</a>)</small>
+		echo <<<REDIR
+		<script type="text/javascript">
+		window.location="$location";
+		</script>
+		<small>(if you are not redirected after 10 seconds, please <a href="$location">click here</a>)</small>
 REDIR;
 	} else {
-	echo <<<MANUAL
-	<p>Please <a href="$location">click here</a></p>
+		echo <<<MANUAL
+		<p>Please <a href="$location">click here</a></p>
 MANUAL;
 	}
-	yourls_do_action( 'redirect_javascript', $location );
+	yourls_do_action( 'post_redirect_javascript', $location );
 }
 
 // Return a HTTP status code
