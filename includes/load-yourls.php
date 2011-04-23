@@ -99,6 +99,7 @@ if (defined('YOURLS_DEBUG') && YOURLS_DEBUG == true) {
 require_once( YOURLS_INC.'/version.php' );
 require_once( YOURLS_INC.'/functions.php');
 require_once( YOURLS_INC.'/functions-compat.php' );
+require_once( YOURLS_INC.'/functions-html.php' );
 // Allow drop-in replacement for the DB engine
 if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
 	require_once( YOURLS_USERDIR.'/db.php' );
@@ -109,9 +110,6 @@ require_once( YOURLS_INC.'/functions-plugins.php');
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once( YOURLS_INC.'/functions-auth.php' );
-// Load template functions if needed
-if( yourls_has_interface() )
-	require_once( YOURLS_INC.'/functions-html.php' );
 
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
