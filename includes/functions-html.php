@@ -305,6 +305,87 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	die();
 }
 
+// Add the "Edit" row
+function yourls_table_edit_row( $keyword ) {
+	global $ydb;
+	
+	$table = YOURLS_DB_TABLE_URL;
+	$keyword = yourls_sanitize_string( $keyword );
+	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
+	$url = yourls_get_keyword_longurl( $keyword );
+	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
+	$safe_url = stripslashes( $url );
+	$safe_title = stripslashes( $title );
+	$www = YOURLS_SITE;
+	
+	$save_link = yourls_nonce_url( 'save-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	$nonce = yourls_create_nonce( 'edit-save_'.$id );
+	
+	if( $url ) {
+		$return = <<<RETURN
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+RETURN;
+	} else {
+		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
+	}
+	
+	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
+
+	return $return;
+}
+
+// Add a link row
+function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
+	$keyword  = yourls_sanitize_string( $keyword );
+	$display_keyword = htmlentities( $keyword );
+
+	$url = yourls_sanitize_url( $url );
+	$display_url = htmlentities( yourls_trim_long_string( $url ) );
+	$title_url = htmlspecialchars( $url );
+	
+	$title = yourls_sanitize_title( $title ) ;
+	$display_title   = yourls_trim_long_string( $title );
+	$title = htmlspecialchars( $title );
+
+	$id      = yourls_string2htmlid( $keyword ); // used as HTML #id
+	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
+	$clicks  = number_format($clicks, 0, '', '');
+
+	$shorturl = YOURLS_SITE.'/'.$keyword;
+	$statlink = $shorturl.'+';
+	if( yourls_is_ssl() )
+		$statlink = str_replace( 'http://', 'https://', $statlink );
+	
+	if( $title ) {
+		$display_link = "<a href=\"$url\" title=\"$title\">$display_title</a><br/><small><a href=\"$url\" title=\"$title_url\">$display_url</a></small>";
+	} else {
+		$display_link = "<a href=\"$url\" title=\"$title_url\">$display_url</a>";
+	}
+	
+	$delete_link = yourls_nonce_url( 'delete-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'delete', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	$edit_link = yourls_nonce_url( 'edit-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
+	$actions = <<<ACTION
+<a href="$statlink" id="statlink-$id" title="Stats" class="button button_stats">Stats</a><a href="" id="share-button-$id" name="share-button" title="Share" class="button button_share" onclick="toggle_share('$id');return false;">Share</a><a href="$edit_link" id="edit-button-$id" name="edit-button" title="Edit" class="button button_edit" onclick="edit('$id');return false;">Edit</a><a href="$delete_link" id="delete-button-$id" name="delete-button" title="Delete" class="button button_delete" onclick="remove('$id');return false;">Delete</a>
+ACTION;
+	$actions = yourls_apply_filter( 'action_links', $actions, $keyword, $url, $ip, $clicks, $timestamp );
+	
+	$row = <<<ROW
+<tr id="id-$id"><td id="keyword-$id" class="keyword"><a href="$shorturl">$display_keyword</a></td><td id="url-$id" class="url">$display_link</td><td id="timestamp-$id" class="timestamp">$date</td><td id="ip-$id" class="ip">$ip</td><td id="clicks-$id" class="clicks">$clicks</td><td class="actions" id="actions-$id">$actions<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+ROW;
+	$row = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
+	
+	return $row;
+}
+
 // Echo HTML tag for a link
 function yourls_html_link( $href, $title = '', $element = '' ) {
 	if( !$title )
