@@ -1794,7 +1794,7 @@ function yourls_get_request() {
 function yourls_match_current_protocol( $url, $normal = 'http', $ssl = 'https' ) {
 	if( yourls_is_ssl() )
 		$url = str_replace( $normal, $ssl, $url );
-	return $url;
+	return yourls_apply_filter( 'match_current_protocol', $url );
 }
 
 // Fix $_SERVER['REQUEST_URI'] variable for various setups. Stolen from WP.
