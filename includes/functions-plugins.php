@@ -302,7 +302,7 @@ function yourls_get_plugin_data( $file ) {
 
 	$plugin_data = array();
 	foreach( $lines as $line ) {
-		if( !preg_match( '!(.*?):\s*(.*)!', $line, $matches ) )
+		if( !preg_match( '!(.*?):\s+(.*)!', $line, $matches ) )
 			continue;
 		
 		list( $null, $field, $value ) = array_map( 'trim', $matches);
