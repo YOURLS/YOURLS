@@ -1537,6 +1537,12 @@ function yourls_link( $keyword = '' ) {
 	return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
+// Converts keyword into stat link (prepend with YOURLS base URL, append +)
+function yourls_statlink( $keyword = '' ) {
+	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword ) . '+';
+	return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
+}
+
 // Check if we're in API mode. Returns bool
 function yourls_is_API() {
 	if ( defined('YOURLS_API') && YOURLS_API == true )
@@ -1770,17 +1776,17 @@ function yourls_is_mobile_device() {
 
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 function yourls_get_request() {
-	// Cover all cases: YOURLS_SITE https or not * current URL https or not
-	$base = str_replace( array( 'https', 'http' ), '', YOURLS_SITE );
-	$scheme = yourls_is_ssl() ? 'https' : 'http' ;
-
-	// Extract the 'abdc' from the requested URL
-	$request = str_replace(
-		$scheme . $base.'/',
-		'',
-		$scheme . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-	);
-
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_get_request', false );
+	if ( false !== $pre )
+		return $pre;
+		
+	yourls_do_action( 'pre_get_request' );
+	
+	// Ignore protocol and extract keyword
+	$base = str_replace( array( 'https://', 'http://' ), '', YOURLS_SITE );
+	$request = str_replace( $base.'/', '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+	
 	return yourls_apply_filter( 'get_request', $request );
 }
 
