@@ -57,7 +57,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
 	
 	// Page title
-	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . YOURLS_SITE;
+	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . yourls_link();
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
@@ -316,7 +316,7 @@ function yourls_table_edit_row( $keyword ) {
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = stripslashes( $url );
 	$safe_title = stripslashes( $title );
-	$www = YOURLS_SITE;
+	$www = yourls_link();
 	
 	$save_link = yourls_nonce_url( 'save-link_'.$id,
 		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
@@ -326,7 +326,7 @@ function yourls_table_edit_row( $keyword ) {
 	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www/<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
@@ -351,11 +351,11 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$title = htmlspecialchars( $title );
 
 	$id      = yourls_string2htmlid( $keyword ); // used as HTML #id
-	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600) );
-	$clicks  = number_format($clicks, 0, '', '');
+	$date    = date( 'M d, Y H:i', $timestamp+( YOURLS_HOURS_OFFSET * 3600 ) );
+	$clicks  = number_format( $clicks, 0, '', '' );
 
-	$shorturl = YOURLS_SITE.'/'.$keyword;
-	$statlink = $shorturl.'+';
+	$shorturl = yourls_link( $keyword );
+	$statlink = yourls_statlink( $keyword );
 	if( yourls_is_ssl() )
 		$statlink = str_replace( 'http://', 'https://', $statlink );
 	
@@ -373,17 +373,88 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
 	);
 	
-	$actions = <<<ACTION
-<a href="$statlink" id="statlink-$id" title="Stats" class="button button_stats">Stats</a><a href="" id="share-button-$id" name="share-button" title="Share" class="button button_share" onclick="toggle_share('$id');return false;">Share</a><a href="$edit_link" id="edit-button-$id" name="edit-button" title="Edit" class="button button_edit" onclick="edit('$id');return false;">Edit</a><a href="$delete_link" id="delete-button-$id" name="delete-button" title="Delete" class="button button_delete" onclick="remove('$id');return false;">Delete</a>
-ACTION;
-	$actions = yourls_apply_filter( 'action_links', $actions, $keyword, $url, $ip, $clicks, $timestamp );
+	// Action button links
+	$actions = array(
+		'stats' => array(
+			'href'    => $statlink,
+			'id'      => "statlink-$id",
+			'title'   => 'Stats',
+			'anchor'  => 'Stats',
+		),
+		'share' => array(
+			'href'    => '',
+			'id'      => "share-button-$id",
+			'title'   => 'Share',
+			'anchor'  => 'Share',
+			'onclick' => "toggle_share('$id');return false;",
+		),
+		'edit' => array(
+			'href'    => $edit_link,
+			'id'      => "edit-button-$id",
+			'title'   => 'Edit',
+			'anchor'  => 'Edit',
+			'onclick' => "edit('$id');return false;",
+		),
+		'delete' => array(
+			'href'    => $delete_link,
+			'id'      => "delete-button-$id",
+			'title'   => 'Delete',
+			'anchor'  => 'Delete',
+			'onclick' => "remove('$id');return false;",
+		)
+	);
+	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
+	$action_links = '';
+	foreach( $actions as $key => $action ) {
+		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
+		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s>%s</a>',
+			$action['href'], $action['id'], $action['title'], 'button button_'.$key, $onclick, $action['anchor']
+		);
+	}
+	$action_links = yourls_apply_filter( 'action_links', $action_links, $keyword, $url, $ip, $clicks, $timestamp );
 	
 	$row = <<<ROW
-<tr id="id-$id"><td id="keyword-$id" class="keyword"><a href="$shorturl">$display_keyword</a></td><td id="url-$id" class="url">$display_link</td><td id="timestamp-$id" class="timestamp">$date</td><td id="ip-$id" class="ip">$ip</td><td id="clicks-$id" class="clicks">$clicks</td><td class="actions" id="actions-$id">$actions<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
+<tr id="id-$id"><td id="keyword-$id" class="keyword"><a href="$shorturl">$display_keyword</a></td><td id="url-$id" class="url">$display_link</td><td id="timestamp-$id" class="timestamp">$date</td><td id="ip-$id" class="ip">$ip</td><td id="clicks-$id" class="clicks">$clicks</td><td class="actions" id="actions-$id">$action_links<input type="hidden" id="keyword_$id" value="$keyword"/></td></tr>
 ROW;
 	$row = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
 	
 	return $row;
+}
+
+// Echo the main table head
+function yourls_table_head() {
+	$start = '<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1"><thead><tr>'."\n";
+	echo yourls_apply_filter( 'table_head_start', $start );
+	
+	$cells = yourls_apply_filter( 'table_head_cells', array(
+		'shorturl' => 'Short URL&nbsp;',
+		'longurl'  => 'Original URL',
+		'date'     => 'Date',
+		'ip'       => 'IP',
+		'clicks'   => 'Clicks&nbsp;&nbsp;',
+		'actions'  => 'Actions'
+	) );
+	foreach( $cells as $k => $v ) {
+		echo "<th id='main_table_head_$k'>$v</th>\n";
+	}
+	
+	$end = "</tr></thead>\n";
+	echo yourls_apply_filter( 'table_head_end', $end );
+}
+
+// Echo the tbody start tag
+function yourls_table_tbody_start() {
+	echo yourls_apply_filter( 'table_tbody_start', '<tbody>' );
+}
+
+// Echo the tbody end tag
+function yourls_table_tbody_end() {
+	echo yourls_apply_filter( 'table_tbody_end', '</tbody>' );
+}
+
+// Echo the table start tag
+function yourls_table_end() {
+	echo yourls_apply_filter( 'table_end', '</table>' );
 }
 
 // Echo HTML tag for a link
@@ -392,7 +463,7 @@ function yourls_html_link( $href, $title = '', $element = '' ) {
 		$title = $href;
 	if( $element )
 		$element = "id='$element'";
-	echo "<a href='$href' $element>$title</a>";
+	echo yourls_apply_filter( 'html_link', "<a href='$href' $element>$title</a>" );
 }
 
 // Display the login screen. Nothing past this point.

@@ -204,86 +204,73 @@ $context = ( $is_bookmark ? 'bookmark' : 'index' );
 yourls_html_head( $context );
 yourls_html_logo();
 yourls_html_menu() ;
-?>
-	<?php if ( !$is_bookmark ) { ?>
+
+if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_display; ?></p>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs<?php if( $total_items_clicks !== false ) echo ", counting <strong>$total_items_clicks</strong> " . yourls_plural('click', $total_items_clicks) ?>.</p>
-	<?php } ?>
-	<p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
+<?php } ?>
+<p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
 
-	<?php yourls_html_addnew(); ?>
-	
-	<?php
-	// If bookmarklet, add message. Otherwise, hide hidden share box.
-	if ( !$is_bookmark ) {
-		yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
-	} else {
-		echo '<script type="text/javascript">$(document).ready(function(){ feedback( "' . $return['message'] . '", "'. $return['status'] .'") });</script>';
+<?php yourls_html_addnew(); ?>
+
+<?php
+// If bookmarklet, add message. Otherwise, hide hidden share box.
+if ( !$is_bookmark ) {
+	yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
+} else {
+	echo '<script type="text/javascript">$(document).ready(function(){ feedback( "' . $return['message'] . '", "'. $return['status'] .'") });</script>';
+}
+
+yourls_table_head();
+
+if ( !$is_bookmark ) {
+	$params = array(
+		'search_text'    => $search_text,
+		'search_in_sql'  => $search_in_sql,
+		'sort_by_sql'    => $sort_by_sql,
+		'sort_order_sql' => $sort_order_sql,
+		'page'           => $page,
+		'perpage'        => $perpage,
+		'link_filter'    => $link_filter,
+		'link_limit'     => $link_limit,
+		'total_pages'    => $total_pages,
+		'base_page'      => $base_page,
+		'search_url'     => $search_url,
+		'date_filter'	 => $date_filter,
+		'date_first'	 => $date_first,
+		'date_second'	 => $date_second,
+	);
+	yourls_html_tfooter( $params );
+}
+
+yourls_table_tbody_start();
+
+// Main Query
+$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
+$found_rows = false;
+if( $url_results ) {
+	$found_rows = true;
+	foreach( $url_results as $url_result ) {
+		$keyword = yourls_sanitize_string( $url_result->keyword );
+		$timestamp = strtotime( $url_result->timestamp );
+		$url = stripslashes( $url_result->url );
+		$ip = $url_result->ip;
+		$title = $url_result->title ? $url_result->title : '';
+		$clicks = $url_result->clicks;
+
+		echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp );
 	}
-	?>
-	
-	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
-		<thead>
-			<tr>
-				<th id="main_table_head_shorturl">Short URL&nbsp;</th>
-				<th id="main_table_head_longurl">Original URL</th>
-				<th id="main_table_head_date">Date</th>
-				<th id="main_table_head_ip">IP</th>
-				<th id="main_table_head_clicks">Clicks&nbsp;&nbsp;</th>
-				<th id="main_table_head_actions">Actions</th>
-			</tr>
-		</thead>
+}
 
-		<?php
-		if ( !$is_bookmark ) {
-			$params = array(
-				'search_text'    => $search_text,
-				'search_in_sql'  => $search_in_sql,
-				'sort_by_sql'    => $sort_by_sql,
-				'sort_order_sql' => $sort_order_sql,
-				'page'           => $page,
-				'perpage'        => $perpage,
-				'link_filter'    => $link_filter,
-				'link_limit'     => $link_limit,
-				'total_pages'    => $total_pages,
-				'base_page'      => $base_page,
-				'search_url'     => $search_url,
-				'date_filter'	 => $date_filter,
-				'date_first'	 => $date_first,
-				'date_second'	 => $date_second,
-			);
-			yourls_html_tfooter( $params );
-		}
-		?>
+$display = $found_rows ? 'display:none' : '';
+echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">No URL</td></tr>';
 
-		<tbody>
-			<?php
-			// Main Query
-			$url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
-			$found_rows = false;
-			if( $url_results ) {
-				$found_rows = true;
-				foreach( $url_results as $url_result ) {
-					$keyword = yourls_sanitize_string( $url_result->keyword );
-					$timestamp = strtotime( $url_result->timestamp );
-					$url = stripslashes( $url_result->url );
-					$ip = $url_result->ip;
-					$title = $url_result->title ? $url_result->title : '';
-					$clicks = $url_result->clicks;
+yourls_table_tbody_end();
 
-					echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp );
-				}
-			}
-			
-			$display = $found_rows ? 'display:none' : '';
-			echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">No URL</td></tr>';
+yourls_table_end();
 
-			?>
-		</tbody>
-	</table>
-	
-	<?php if ( $is_bookmark )
-		yourls_share_box( $url, $return['shorturl'], $title, $text );
-	?>
+if ( $is_bookmark )
+	yourls_share_box( $url, $return['shorturl'], $title, $text );
+?>
 	
 <?php yourls_html_footer( ); ?>
