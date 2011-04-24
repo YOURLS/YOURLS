@@ -135,6 +135,7 @@ if ( $where ) {
 // This is a bookmarklet
 if ( isset( $_GET['u'] ) ) {
 	$is_bookmark = true;
+	yourls_do_action( 'bookmarklet' );
 
 	$url = yourls_sanitize_url( $_GET['u'] );
 	$keyword = ( isset( $_GET['k'] ) ? yourls_sanitize_keyword( $_GET['k'] ) : '' );
@@ -153,7 +154,7 @@ if ( isset( $_GET['u'] ) ) {
 		$short = $return['shorturl'] ? $return['shorturl'] : '';
 		$message = $return['message'];
 		header('Content-type: application/json');
-		echo "yourls_callback({'short_url':'$short','message':'$message'});";
+		echo yourls_apply_filter( 'bookmarklet_jsonp', "yourls_callback({'short_url':'$short','message':'$message'});" );
 		
 		die();
 	}
