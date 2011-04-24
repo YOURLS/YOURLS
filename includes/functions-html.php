@@ -245,14 +245,24 @@ function yourls_html_tfooter( $params = array() ) {
 
 // Display the Quick Share box
 function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>', $hidden = false ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_share_box', false );
+	if ( false !== $pre )
+		return $pre;
+		
 	$text = ( $text ? '"'.$text.'" ' : '' );
 	$title = ( $title ? "$title " : '' );
 	$share = htmlspecialchars_decode( $title.$text.$shorturl );
+	$count = 140 - strlen( $share );
+	$hidden = ( $hidden ? 'style="display:none;"' : '' );
+	
+	// Allow plugins to filter all data
+	$data = compact( 'longurl', 'shorturl', 'title', 'text', 'shortlink_title', 'share_title', 'share', 'count', 'hidden' );
+	$data = yourls_apply_filter( 'share_box_data', $data );
+	extract( $data );
+	
 	$_share = rawurlencode( $share );
 	$_url = rawurlencode( $shorturl );
-	$count = 140 - strlen( $share );
-	
-	$hidden = ( $hidden ? 'style="display:none;"' : '' );
 	?>
 	
 	<div id="shareboxes" <?php echo $hidden; ?>>
