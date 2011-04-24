@@ -52,8 +52,12 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		yourls_do_action( 'admin_headers' );
 	}
 	
+	// Store page context in global object
+	global $ydb;
+	$ydb->context = $context;
+	
 	// Body class
-	$bodyclass = '';
+	$bodyclass = yourls_apply_filter( 'bodyclass', '' );
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
 	
 	// Page title
@@ -120,7 +124,7 @@ function yourls_html_footer() {
 	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
-	<?php yourls_do_action( 'html_footer' ); ?>
+	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
 	</body>
 	</html>
 	<?php
