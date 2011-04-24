@@ -529,7 +529,7 @@ yourls_html_menu();
 	<div id="stat_tab_share" class="tab">
 		<h2>Share</h2>
 		
-		<?php yourls_share_box( $longurl, yourls_link($keyword), '', '', '<h3>Short link</h3>', '<h3>Quick Share</h3>'); ?>
+		<?php yourls_share_box( $longurl, yourls_link($keyword), $title, '', '<h3>Short link</h3>', '<h3>Quick Share</h3>'); ?>
 
 	</div>
 	
