@@ -109,7 +109,7 @@ function yourls_is_shorturl( $shorturl ) {
 }
 
 // A few sanity checks on the URL
-function yourls_sanitize_url($url) {
+function yourls_sanitize_url( $url ) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
 	$url = str_replace('http://http://', 'http://', $url);
 
@@ -117,18 +117,23 @@ function yourls_sanitize_url($url) {
 	if ( !preg_match('!^([a-zA-Z]+://)!', $url ) )
 		$url = 'http://'.$url;
 	
-	$url = yourls_clean_url($url);
+	// force scheme and domain to lowercase - see issue 591
+	preg_match( '!^([a-zA-Z]+://([^/]+))(.*)$!', $url, $matches );
+	if( isset( $matches[1] ) && isset( $matches[3] ) )
+		$url = strtolower( $matches[1] ) . $matches[3];
+	
+	$url = yourls_clean_url( $url );
 	
 	return substr( $url, 0, 1999 );
 }
 
 // Function to filter all invalid characters from a URL. Stolen from WP's clean_url()
 function yourls_clean_url( $url ) {
-	$url = preg_replace('|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*\'"()\\x80-\\xff]|i', '', $url );
-	$strip = array('%0d', '%0a', '%0D', '%0A');
-	$url = yourls_deep_replace($strip, $url);
-	$url = str_replace(';//', '://', $url);
-	$url = str_replace('&amp;', '&', $url); // Revert & not to break query strings
+	$url = preg_replace( '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*\'"()\\x80-\\xff]|i', '', $url );
+	$strip = array( '%0d', '%0a', '%0D', '%0A' );
+	$url = yourls_deep_replace( $strip, $url );
+	$url = str_replace( ';//', '://', $url );
+	$url = str_replace( '&amp;', '&', $url ); // Revert & not to break query strings
 	
 	return $url;
 }
