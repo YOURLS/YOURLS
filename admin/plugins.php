@@ -96,7 +96,7 @@ yourls_html_menu();
 		
 		// Loop through all default fields, get value if any and reset it
 		foreach( $fields as $field=>$value ) {
-			if( $plugin[ $value ] ) {
+			if( isset( $plugin[ $value ] ) ) {
 				$data[ $field ] = $plugin[ $value ];
 			} else {
 				$data[ $field ] = '(no info)';
