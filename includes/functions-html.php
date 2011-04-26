@@ -294,6 +294,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
+				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
 				?>
 			</p>
 		</div>
