@@ -14,6 +14,9 @@ function yourls_html_logo() {
 
 // Display HTML head and <body> tag
 function yourls_html_head( $context = 'index', $title = '' ) {
+
+	yourls_do_action( 'pre_html_head', $context, $title );
+	
 	// All components to false, except when specified true
 	$share = $insert = $tablesorter = $tabs = $cal = false;
 	
@@ -42,8 +45,6 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		case 'upgrade':
 			break;
 	}
-	
-	yourls_do_action( 'html_head', $context, $title );
 	
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
