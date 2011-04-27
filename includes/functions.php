@@ -1841,3 +1841,8 @@ function yourls_fix_request_uri() {
 		}
 	}
 }
+
+// Shutdown function, runs just before PHP shuts down execution. Stolen from WP
+function yourls_shutdown() {
+	yourls_do_action( 'shutdown' );
+}

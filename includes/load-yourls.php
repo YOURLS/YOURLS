@@ -132,6 +132,9 @@ yourls_db_connect();
 // Read options right from start
 yourls_get_all_options();
 
+// Register shutdown function
+register_shutdown_function( 'yourls_shutdown' );
+
 // Core now loaded
 yourls_do_action( 'init' ); // plugins can't see this, not loaded yet
 
