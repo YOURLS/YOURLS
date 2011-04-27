@@ -43,13 +43,15 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 			break;
 	}
 	
+	yourls_do_action( 'html_head', $context, $title );
+	
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
 		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
 		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 		header( 'Pragma: no-cache' );
-		yourls_do_action( 'admin_headers' );
+		yourls_do_action( 'admin_headers', $context, $title );
 	}
 	
 	// Store page context in global object
