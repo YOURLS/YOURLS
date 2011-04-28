@@ -270,7 +270,7 @@ yourls_html_menu();
 				</ul>
 				<?php
 				// Generate, and display if applicable, each needed graph
-				foreach( $graphs as $graph => $title ) {
+				foreach( $graphs as $graph => $graphtitle ) {
 					if( ${'do_'.$graph} == true ) {
 						$display = ( ${'display_'.$graph} === true ? 'display:block' : 'display:none' );
 						echo "<div id='stat_line_$graph' class='stats_line line' style='$display'>";
@@ -289,7 +289,7 @@ yourls_html_menu();
 									$labels_1[] = end( explode( '-', $k ) ); // 'hh'
 								}
 								
-								echo "<h3>Number of hits : $title</h3>";
+								echo "<h3>Number of hits : $graphtitle</h3>";
 								yourls_stats_line( $last_24h, $labels_1, $labels_2 );
 								break;
 
@@ -308,7 +308,7 @@ yourls_html_menu();
 								$last_label = preg_replace( '/\d\d\d\d-(\d\d)-(\d\d)/', '$2/$1', $last_key );
 								$labels_2 = array( $first_label, $last_label);
 								
-								echo "<h3>Number of hits : $title</h3>";
+								echo "<h3>Number of hits : $graphtitle</h3>";
 								yourls_stats_line( $slice, $labels_1, $labels_2 );
 								unset( $slice );
 								break;
@@ -325,7 +325,7 @@ yourls_html_menu();
 									$labels_1[$k] = preg_replace( '/\d\d-(\d\d)/', '$1', $v );
 								}
 								
-								echo "<h3>Number of hits : $title</h3>";
+								echo "<h3>Number of hits : $graphtitle</h3>";
 								$labels_1 = yourls_array_granularity( $labels_1, 30, false );
 								$labels_2 = yourls_array_granularity( $list_of_years, 30, false );
 								yourls_stats_line( $list_of_days, $labels_1, $labels_2 );
@@ -350,11 +350,11 @@ yourls_html_menu();
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
-					foreach( $graphs as $graph => $title ) {
+					foreach( $graphs as $graph => $graphtitle ) {
 						if ( ${'do_'.$graph} ) {
-							$link = "<a href='#stat_line_$graph'>$title</a>";
+							$link = "<a href='#stat_line_$graph'>$graphtitle</a>";
 						} else {
-							$link = $title;
+							$link = $graphtitle;
 						}
 						$stat = '';
 						if( ${'do_'.$graph} ) {
