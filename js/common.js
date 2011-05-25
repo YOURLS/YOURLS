@@ -29,13 +29,13 @@ function html_pulse( el, newtext ){
 
 // Update feedback message
 function feedback(msg, type, delay) {
-	close = ( type == 'fail' || type == 'error' ) ? true : false;		
-	delay = delay || ( close == true ? 10000 : 3500 );
+	closeme = ( type == 'fail' || type == 'error' ) ? true : false;		
+	delay = delay || ( closeme == true ? 10000 : 3500 );
 	$.notifyBar({
 		html: '<span>'+msg+'</span>',
 		delay: delay,
 		animationSpeed: "normal",
-		close: close,
+		close: closeme,
 		cls: type
 	});
 	return true;
@@ -87,20 +87,22 @@ function get_var_from_query( url, varname, default_val ) {
 		default_val = '';
 	}
 	
-	try{
-		url = url.split('?')[1].split('&').reverse().filter(function(e){
-			var pair = e.split('=');
-			return( pair[0] == varname );
-		})[0].split('=')[1];
-		// weeeeeeee
-		// split the query string on '&', reverse to check last pairs first so that ?ozh=1&ozh=2 matches ozh=2 first
-		// then filter on each pair to find the matching 'varname=something',
-		// which is then returned in a one element array that we split on '=' and take second part. woot!
-	} catch(err) {
-		return default_val;
+	// Split the url on '?' and get only the params (which is element 1)
+	url = url.split('?')[1];
+	// Now split those params on '&' so we can get each one individually (Ex. param_var=param_value)
+	url = url.split('&');
+	// Now we have to find the varname in that array using methods that IE likes (Curse you IE!!!)
+	var i=0;
+	for( i=0; i<url.length; i++ ){
+		// So split the first param elemment on '=' and check the param_var to see if it matches varname (element 0)
+		if( url[i].split('=')[0] == varname ){
+			// If it matches we want to return the param_value
+			return url[i].split('=')[1];
+		}
 	}
 	
-	return url;
+	// If we didn't find anything then we just return the default_val
+	return default_val;	
 }
 
 /**
