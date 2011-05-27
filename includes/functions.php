@@ -1043,6 +1043,7 @@ function yourls_get_option( $option_name, $default = false ) {
 	if ( false !== $pre )
 		return $pre;
 
+	// If option not cached already, get its value from the DB
 	if ( !isset( $ydb->option[$option_name] ) ) {
 		$table = YOURLS_DB_TABLE_OPTIONS;
 		$option_name = yourls_escape( $option_name );
@@ -1061,6 +1062,12 @@ function yourls_get_option( $option_name, $default = false ) {
 // Read all options from DB at once
 function yourls_get_all_options() {
 	global $ydb;
+
+	// Allow plugins to short-circuit all options
+	$pre = yourls_apply_filter( 'shunt_all_options', false );
+	if ( false !== $pre )
+		return $pre;
+
 	$table = YOURLS_DB_TABLE_OPTIONS;
 	
 	$allopt = $ydb->get_results("SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1");
