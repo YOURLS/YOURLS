@@ -125,6 +125,9 @@ if( yourls_do_log_redirect() ) {
 	}
 
 	// Get $list_of_days, $list_of_months, $list_of_years
+	reset($dates);
+	$first_year = key( $dates );
+	$last_year  = end( array_keys($dates) );
 	if( $dates ) {
 		extract( yourls_build_list_of_days( $dates ) );
 
