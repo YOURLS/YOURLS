@@ -55,7 +55,7 @@ h2 {
 	padding-left:20px;
 }
 div#copybox { width:600px; height:auto;}
-div#sharebox {height:auto; width:600px; margin-top: 20px}
+div#sharebox {height:auto; width:600px; margin-top:20px;}
 </style>
 <link rel="stylesheet" href="<?php echo YOURLS_SITE; ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 <script src="<?php echo YOURLS_SITE; ?>/js/jquery-1.4.3.min.js" type="text/javascript"></script>
