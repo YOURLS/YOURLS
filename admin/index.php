@@ -219,7 +219,10 @@ if ( !$is_bookmark ) { ?>
 if ( !$is_bookmark ) {
 	yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
 } else {
-	echo '<script type="text/javascript">$(document).ready(function(){ feedback( "' . $return['message'] . '", "'. $return['status'] .'") });</script>';
+	echo '<script type="text/javascript">$(document).ready(function(){
+		feedback( "' . $return['message'] . '", "'. $return['status'] .'");
+		init_clipboard();
+	});</script>';
 }
 
 yourls_table_head();

@@ -59,8 +59,7 @@ function toggle_share_fill_boxes( url, shorturl, title ) {
 	$('#statlink').attr( 'href', shorturl+'+' ).html( shorturl+'+' );
 	var tweet = ( title ? title + ' ' + shorturl : shorturl );
 	$('#tweet_body').val( tweet ).keypress();
-	$('#shareboxes').slideDown();
-	init_clipboard();
+	$('#shareboxes').slideDown( '300', function(){ init_clipboard(); } ); // clipboard re-initialized after slidedown to make sure the invisible Flash element is correctly positionned
 	$('#tweet_body').keypress();
 }
 

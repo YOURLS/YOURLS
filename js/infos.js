@@ -46,5 +46,4 @@ $(document).ready(function(){
 	$('#tabs ul#headers li a[href="#stat_tab_share"]').click(function(){
 		init_clipboard();
 	});
-	
 });

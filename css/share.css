@@ -59,3 +59,7 @@ div.share {
 	background:transparent url(../images/copy.png) 130% center no-repeat;
 }
 
+#copylink:hover, #copylink.hover {
+	background-position:100% 50%;
+}
+

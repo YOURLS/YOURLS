@@ -4,12 +4,6 @@ $(document).ready(function(){
 	$('#tweet_body').keypress(function(){
 		setTimeout( function(){update_share()}, 50 ); // we're delaying, otherwise keypress() always triggers too fast before current key press actually inserts a letter?!! Go figure.
 	});
-	
-	$('#copylink').click(function(){
-		$(this).select();
-	});	
-	
-	init_clipboard();
 })
 
 function update_share() {
@@ -47,37 +41,17 @@ function share(dest) {
 	return false;
 }
 
-var clip;
 function init_clipboard() {
-	// Check we have the proper copy element
-	if( !$('#copylink').length )
-		return;
-		
-	// Create a new clipboard client
-	clip = new ZeroClipboard.Client();
+	$('#copylink').click(function(){
+		$(this).select();
+	})
 	
-	// Glue the clipboard client to the last td in each row
-	clip.glue( 'copylink' );
-
-	// Grab the text from the parent row of the icon
-	var txt = $('#copylink').val();
-	clip.setText(txt);
-
-	// Add a complete event to let the user know the text was copied
-	clip.addEventListener('complete', function(client, text) {
-		html_pulse( '#copybox h2', 'Copied!' );
+	$('#copylink').zclip({
+		path: zclipurl,
+		copy: $('#copylink').val(),
+		afterCopy:function(){
+			html_pulse( '#copybox h2, #copybox h3', 'Copied!' );
+		}
 	});
-	
-	// Custom animation on hover
-	$('#copylink').css({'backgroundPosition':'130% 50%'});
-	clip.addEventListener('onMouseOver', function(client, text) {
-		$('#copylink').select().animate({'backgroundPosition':'100% 50%'}, 300);
-	});
-	clip.addEventListener('onMouseOut', function(client, text) {
-		$('#copylink').blur().animate({'backgroundPosition':'130% 50%'}, 300);
-	});
-	
-	// Force flash clip size (IE fix)
-	$('#'+clip.movieId).css('height', '35px');
 };                     
 
