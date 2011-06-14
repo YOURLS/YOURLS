@@ -111,6 +111,10 @@ require_once( YOURLS_INC.'/functions-plugins.php');
 if( yourls_is_private() )
 	require_once( YOURLS_INC.'/functions-auth.php' );
 
+// Allow early inclusion of a cache layer
+if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
+	require_once( YOURLS_USERDIR.'/cache.php' );
+	
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 	if ( 0 === strpos($_SERVER['REQUEST_URI'], 'http') ) {

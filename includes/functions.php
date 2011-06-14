@@ -1063,7 +1063,7 @@ function yourls_get_option( $option_name, $default = false ) {
 function yourls_get_all_options() {
 	global $ydb;
 
-	// Allow plugins to short-circuit all options
+	// Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
 	$pre = yourls_apply_filter( 'shunt_all_options', false );
 	if ( false !== $pre )
 		return $pre;
@@ -1075,6 +1075,8 @@ function yourls_get_all_options() {
 	foreach( (array)$allopt as $option ) {
 		$ydb->option[$option->option_name] = yourls_maybe_unserialize( $option->option_value );
 	}
+	
+	$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
 }
 
 // Update (add if doesn't exist) an option to DB
