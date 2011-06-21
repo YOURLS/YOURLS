@@ -261,7 +261,7 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	$table = YOURLS_DB_TABLE_URL;
 	$timestamp = date('Y-m-d H:i:s');
 	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
+	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
 	
 	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 	

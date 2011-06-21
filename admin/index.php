@@ -250,6 +250,7 @@ if ( !$is_bookmark ) {
 yourls_table_tbody_start();
 
 // Main Query
+$where = yourls_apply_filter( 'admin_list_where', $where );
 $url_results = $ydb->get_results("SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by_sql` $sort_order_sql LIMIT $offset, $perpage;");
 $found_rows = false;
 if( $url_results ) {
