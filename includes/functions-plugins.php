@@ -297,7 +297,7 @@ function yourls_get_plugin_data( $file ) {
 	
 	// Capture each line with "Something: some text"
 	unset( $data );
-	$lines = explode( "\n", $matches[1] );
+	$lines = preg_split( "[\n|\r]", $matches[1] );
 	unset( $matches );
 
 	$plugin_data = array();
