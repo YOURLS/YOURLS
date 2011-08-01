@@ -1,11 +1,7 @@
 <?php
 /* This is a sample config file.
  * Edit this file with your own settings and save it as "config.php"
- * You can leave it in the "includes" directory, or, better, move it to
- * the "user" directory. This way, when a new version of YOURLS is available,
- * simply delete everything but "/user", and upload the new version.
  */
-
 
 /*
  ** MySQL settings - You can get this info from your web host
@@ -30,7 +26,8 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL, no trailing slash. If you define it to http://site.com/, don't use www.site.com (and vice-versa) */
+/** YOURLS installation URL -- all lowercase and with no trailing slash.
+ ** If you define it to "http://site.com", don't use "http://www.site.com" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://site.com' );
 
 /** Timezone GMT offset */
@@ -41,11 +38,11 @@ define( 'YOURLS_HOURS_OFFSET', 0 );
  ** Set to false to allow multiple short URLs pointing to the same long URL (bit.ly behavior) */
 define( 'YOURLS_UNIQUE_URLS', true );
 
-/** Private means protected with login/pass as defined below. Set to false for public usage. */
+/** Private means protected with login/pass as defined below. Set to false for public usage on a restricted intranet or for test setups. */
 define( 'YOURLS_PRIVATE', true );
 
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
-define( 'YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm' );
+define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
 /**  Username(s) and password(s) allowed to access the site */
 $yourls_user_passwords = array(
