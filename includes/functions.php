@@ -380,7 +380,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		
 		$return['status'] = 'fail';
 		$return['code'] = 'error:url';
-		$return['url'] = array( 'keyword' => $keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
+		$return['url'] = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
 		$return['message'] = yourls_trim_long_string( $strip_url ).' already exists in database';
 		$return['title'] = $url_exists->title; 
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
