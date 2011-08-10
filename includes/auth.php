@@ -9,11 +9,13 @@ if( $auth !== true ) {
 	// API mode, 
 	if ( yourls_is_API() ) {
 		$format = ( isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml' );
+		$callback = ( isset($_REQUEST['callback']) ? $_REQUEST['callback'] : '' );
 		yourls_api_output( $format, array(
 			'simple' => $auth,
 			'message' => $auth,
 			'errorCode' => 403,
-			) );
+			'callback' => $callback,
+		) );
 
 	// Regular mode
 	} else {
