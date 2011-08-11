@@ -38,7 +38,9 @@ define( 'YOURLS_HOURS_OFFSET', 0 );
  ** Set to false to allow multiple short URLs pointing to the same long URL (bit.ly behavior) */
 define( 'YOURLS_UNIQUE_URLS', true );
 
-/** Private means protected with login/pass as defined below. Set to false for public usage on a restricted intranet or for test setups. */
+/** Private means the Admin area will be protected with login/pass as defined below.
+ ** Set to false for public usage (eg on a restricted intranet or for test setups)
+ ** Read http://yourls.org/privatepublic for more details if you're unsure */
 define( 'YOURLS_PRIVATE', true );
 
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
