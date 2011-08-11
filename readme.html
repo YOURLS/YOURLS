@@ -39,7 +39,7 @@
 			margin-top: 10px;
 		}
 		a, a:active, a:link, a:visited {
-			color: #5b87b4;
+			color: #7ba7e4;
 			text-decoration: none;
 		}
 		a:hover {
@@ -69,6 +69,7 @@
 			margin-top: -13px;
 			-moz-border-radius:15px;
 			-webkit-border-radius:15px;
+			border-radius:15px;
 		}
 		/* Title Style */
 		h1 {
@@ -91,7 +92,7 @@
 			color: #5b87b4;
 		}
 		h2:before {
-			content: '\00BB';
+			content: '\00BB  ';
 			color:#BFE0FE;
 		}
 		h3 {
@@ -102,8 +103,11 @@
 			margin-top:2em;
 		}
 		h3:before {
-			content: '\00BB';
+			content: '\203A  ';
 			color:#BFE0FE;
+		}
+		ul+h2 {
+			margin-top:30px;
 		}
 		/* Tabs */
 		ul#Tabs {
@@ -124,10 +128,12 @@
 			background-color: #deedfb;
 			margin: 2px 0px 0px 5px;
 			border: 1px solid #2A85B3;
-			-moz-border-radius-topleft:5px;
-			-moz-border-radius-topright:5px;
-			-webkit-border-top-left-radius:5px;
-			-webkit-border-top-right-radius:5px;
+			-webkit-border-top-left-radius: 5px;
+			-webkit-border-top-right-radius: 5px;
+			-moz-border-radius-topleft: 5px;
+			-moz-border-radius-topright: 5px;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
 		}
 		#Tabs li.Tab a {
 			float: left;
@@ -154,6 +160,8 @@
 			-moz-border-radius-topright:3px;
 			-webkit-border-top-left-radius:3px;
 			-webkit-border-top-right-radius:3px;
+			border-top-left-radius: 3px;
+			border-top-right-radius: 3px;
 		}
 		#Tabs li.SelectedTab a {
 			float: left;
@@ -173,13 +181,16 @@
 			background:white;
 			margin:0 auto;
 			width:750px;
-			-moz-border-radius:10px;
-			-webkit-border-radius:10px;
 			border:1px solid #2A85B3;
-			-moz-border-radius-bottomleft:30px;
-			-moz-border-radius-bottomright:30px;
-			-webkit-border-bottom-left-radius:25px;
-			-webkit-border-bottom-right-radius:25px;
+			-webkit-border-radius: 10px;
+			-webkit-border-bottom-right-radius: 25px;
+			-webkit-border-bottom-left-radius: 25px;
+			-moz-border-radius: 10px;
+			-moz-border-radius-bottomright: 30px;
+			-moz-border-radius-bottomleft: 30px;
+			border-radius: 10px;
+			border-bottom-right-radius: 30px;
+			border-bottom-left-radius: 30px;
 		}
 		#Copyright p a {
 			background:#fff url(http://yourls.org/images/favicon.gif) 2px center no-repeat;
@@ -194,12 +205,12 @@
 
 	<!-- Tabs -->
 	<ul id="Tabs">
-		<li id="ShowcaseTab" class="Tab"><a href="#Showcase" onclick="toggle(this);">More</a></li>
+		<li id="MoreTab" class="Tab"><a href="#More" onclick="toggle(this);">More</a></li>
 		<li id="FAQTab" class="Tab"><a href="#FAQ" onclick="toggle(this);">FAQ</a></li>
 		<li id="APITab" class="Tab"><a href="#API" onclick="toggle(this);">API</a></li>
 		<li id="PluginTab" class="Tab"><a href="#Plugin" onclick="toggle(this);">WordPress plugin</a></li>
 		<li id="PluginsTab" class="Tab"><a href="#Plugins" onclick="toggle(this);">YOURLS plugins</a></li>
-		<li id="ConfigTab" class="Tab"><a href="#Config" onclick="toggle(this);">Configuration</a></li>
+		<li id="ConfigTab" class="Tab"><a href="#Config" onclick="toggle(this);">Config</a></li>
 		<li id="InstallTab" class="Tab"><a href="#Install" onclick="toggle(this);">Install/Upgrade</a></li>
 		<li id="AboutTab" class="SelectedTab"><a href="#About" onclick="toggle(this);">About</a></li>
 	</ul>
@@ -223,6 +234,7 @@
 				<li>Neat <tt>Ajaxed</tt> interface</li>
 				<li>Terrific <tt>Plugin</tt> architecture to easily implement new features</li>
 				<li>Cool developer <tt>API</tt></li>
+				<li>Full <tt>jsonp</tt> support</li>
 				<li>Friendly <tt>installer</tt></li>
 				<li><tt>Sample files</tt> to create your own public interface and more</li>
 			</ul>
@@ -259,14 +271,14 @@
 			<h2>Fresh Install</h2>
 			<ol>
 				<li>Unzip the YOURLS archive</li>
-				<li>Copy <code>includes/config-sample.php</code> to <code>user/config.php</code></li>
+				<li>Copy <code>user/config-sample.php</code> to <code>user/config.php</code></li>
 				<li>Open <code>user/config.php</code> with a raw text editor (like Notepad) and fill in the required settings</li>
 				<li>Upload the unzipped files to your domain <code>public_html</code> or <code>www</code> folder</li>
 				<li>Create a new database (see <a href="#Config" onclick="toggle(this);">Configuration</a> &ndash; you can also use an existing one)</li>
 				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
 			</ol>
 			
-			<h2>Upgrade from YOURLS 1.4.x</h2>
+			<h2>Upgrade</h2>
 			<ol>
 				<li><strong>Backup the database!</strong></li>
 				<li>Unzip the YOURLS archive</li>
@@ -291,7 +303,7 @@
 
 		<!-- Configuration Instructions -->	
 		<div id="ConfigDiv" style="display: none;">
-			<h2>Configuration (in includes/config.php)</h2>
+			<h2>Configuration (in <code>user/config.php</code>)</h2>
 			<h3>MySQL settings</h3>
 			<ul>
 				<li><code>YOURLS_DB_USER</code><br/>
@@ -314,13 +326,13 @@
 			<h3>Site options</h3>
 			<ul>
 				<li><code>YOURLS_SITE</code><br/>
-				Your (short) domain URL, no trailing slash<br/>
+				Your (short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
 				<em>Example:</em> <tt>'http://ozh.in'</tt></li>
 				<li><code>YOURLS_HOURS_OFFSET</code><br/>
 				Timezone GMT offset<br/>
 				<em>Example:</em> <tt>'-5'</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
-				Private means protected with login/pass as defined below. Set to false for public usage (on an intranet for instance)<br/>
+				Private means the admin area will be protected with login/pass as defined below. See <a href="http://yourls.org/privatepublic">Private or Public</a> for more.<br/>
 				<em>Example:</em> <tt>'true'</tt></li>
 				<li><code>YOURLS_UNIQUE_URLS</code><br/>
 				Allow multiple short URLs for a same long URL<br/>
@@ -346,11 +358,11 @@
 			<h3>Optional settings</h3>
 			<ul>
 				<li><code>YOURLS_PRIVATE_INFOS</code><br/>
-				If <code>YOURLS_PRIVATE</code> is set to <tt>true</tt>, you can still easily make your individual stat pages public. To do so, override the global private setting with:<br/>
+				If <code>YOURLS_PRIVATE</code> is set to <tt>true</tt>, you can still make stat pages public. To do so, define with:<br/>
 				<tt>define('YOURLS_PRIVATE_INFOS', false);</tt>
 				</li>
 				<li><code>YOURLS_PRIVATE_API</code><br/>
-				If <code>YOURLS_PRIVATE</code> is set to <tt>true</tt>, you can still easily make your API public. To do so, override the global private setting with:<br/>
+				If <code>YOURLS_PRIVATE</code> is set to <tt>true</tt>, you can still make your API public. To do so, define with:<br/>
 				<tt>define('YOURLS_PRIVATE_API', false);</tt>
 				<li><code>YOURLS_NOSTATS</code><br/>
 				If <code>YOURLS_NOSTATS</code> is set to <tt>true</tt>, redirects won't be logged and there will be not stats available.<br/>
@@ -371,7 +383,6 @@
 				<li>Generate short URLs for all your old posts and pages if wished</li>
 				<li>Send a tweet on your Twitter account with the post title and short URL as you publish them</li>
 				<li>Works if YOURLS is hosted on the same server or on a remote server</li>
-				<li>Also compatible with tr.im, is.gd, tinyurl.com and bit.ly for maximum fun</li>
 			</ul>
 			
 			<h3>Screenshot</h3>
@@ -394,6 +405,7 @@
 			<h3>Plugins?</h3>
 			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
 			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation.</p>
+			<p>There's a growing number of plugins available: check the <a href="http://yourls.org/pluginlist">Plugin list</a>.</p>
 
 			<h3>Documentation</h3>
 			<p>Several sample plugins are included in the archive. Read the source and learn the concept. It's easy and fun!</p>
@@ -416,8 +428,8 @@
 			<h3>Usage</h3>
 			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code>. These parameters are:</p>
 			<ul>
-				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI">Passwordless API requests</a>)</li>
-				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL) or <tt>"stats"</tt> (get stats about your links)</li>
+				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://yourls.org/passwordlessapi">Passwordless API requests</a>)</li>
+				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links) or <tt>"db-stats"</tt> (get global link and click count)</li>
 				<li>With <tt>action = "shorturl"</tt> :
 					<ul>
 						<li>the <code>url</code> to shorten</li>
@@ -441,6 +453,11 @@
 					<ul>
 						<li>the <code>filter</code>: either <tt>"top"</tt>, <tt>"bottom"</tt> , <tt>"rand"</tt> or <tt>"last"</tt></li>
 						<li>the <code>limit</code> (maximum number of links to return)</li>
+						<li>output <code>format</code>: either <tt>"json"</tt> or <tt>"xml"</tt></li>
+					</ul>
+				</li>
+				<li>With <tt>action = "db-stats"</tt> :
+					<ul>
 						<li>output <code>format</code>: either <tt>"json"</tt> or <tt>"xml"</tt></li>
 					</ul>
 				</li>
@@ -509,7 +526,7 @@
 
 			<h3>YOURLS needs its own .htaccess</h3>
 			<ul>
-				<li>You cannot install YOURLS and, say, WordPress, in the same directory. Both of them need to handle URLs differently</li>
+				<li>You cannot install YOURLS and, say, WordPress, in the same directory. Both need to handle URLs differently and need their own <tt>.htaccess</tt> file.</li>
 				<li>If you want to install YOURLS on the same domain than your blog, give it its own (short) subdirectory, such as yourblog.com/s/ (for "short") or yourblog.com/x/ (for "exit")</li>
 			</ul>
 			
@@ -529,16 +546,28 @@
 			<ul>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="http://yourls.org/support">Please</a>.</li>
 				<li>Check the <a href="http://yourls.org/roadmap">Road Map</a> for future features.</li>
-				<li>Check all the <a href="http://code.google.com/p/yourls/wiki/">wiki documents</a>.</li>
-				<li>Search in the <a href="http://code.google.com/p/yourls/issues/list?can=1">closed issues</a>.</li>
+				<li>Read all the <a href="http://yourls.org/wiki">wiki documents</a>.</li>
+				<li>Search in the <a href="http://yourls.org/closedissues">closed issues</a>.</li>
 				<li>Eventually raise an <a href="http://yourls.org/issues">issue here</a> and give all the details. Thanks!</li>
 			</ul>
 
 		</div>
 		
 		
-				<!-- Showcase -->	
-		<div id="ShowcaseDiv" style="display: none;">
+				<!-- More -->	
+		<div id="MoreDiv" style="display: none;">
+		
+			<h2>Community</h2>
+			
+			<p>YOURLS is open source, so the community of users plays a great role in its development, by contributing, helping others or giving feedback that helps improve the software.</p>
+			
+			<h3>Resources</h3>
+			<ul>
+				<li>The official <a href="http://blog.yourls.org">YOURLS blog</a>, for news, hints and showcase.</li>
+				<li>The official <a href="http://blog.yourls.org/forums/">YOURLS forums</a>: show off, discuss ideas, announce your plugins, seek help.</li>
+				<li>The <a href="http://yourls.org/wiki">wiki</a>: advanced documentation, plugins, tips and more</li>
+			</ul>
+		
 			<h2>Showcase</h2>
 
 			<h3>Here are a few examples of sites running YOURLS with a unique design or concept</h3>
@@ -607,7 +636,7 @@
 	</div> <!-- content -->
 </div> <!-- container -->
 
-<div id="Copyright"><p><a href="http://yourls.org/">YOURLS</a>: Your Own URL Shortener<br />All Free & GPL &ndash; 2009</p></div>
+</p></div>
 
 	<script type="text/javascript">
 	/* <![CDATA[*/
