@@ -109,21 +109,29 @@ function yourls_is_shorturl( $shorturl ) {
 }
 
 // A few sanity checks on the URL
-function yourls_sanitize_url( $url ) {
+function yourls_sanitize_url( $url, $force_protocol = true, $force_lowercase = true ) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
-	$url = str_replace('http://http://', 'http://', $url);
+	$url = str_replace( 
+		array( 'http://http://', 'http://https://' ),
+		array( 'http://',        'https://'        ),
+		$url
+	);
 
-	// make sure there's a protocol, add http:// if not
-	if ( !preg_match('!^([a-zA-Z]+://)!', $url ) )
-		$url = 'http://'.$url;
+	if( $force_protocol ) {
+		// make sure there's a protocol, add http:// if not
+		if ( !preg_match('!^([a-zA-Z]+://)!', $url ) )
+			$url = 'http://'.$url;
+	}
 	
-	// force scheme and domain to lowercase - see issue 591
-	preg_match( '!^([a-zA-Z]+://([^/]+))(.*)$!', $url, $matches );
-	if( isset( $matches[1] ) && isset( $matches[3] ) )
-		$url = strtolower( $matches[1] ) . $matches[3];
+	if( $force_lowercase ) {
+		// force scheme and domain to lowercase - see issue 591
+		preg_match( '!^([a-zA-Z]+://([^/]+))(.*)$!', $url, $matches );
+		if( isset( $matches[1] ) && isset( $matches[3] ) )
+			$url = strtolower( $matches[1] ) . $matches[3];
+	}
 	
+	// clean and shave
 	$url = yourls_clean_url( $url );
-	
 	return substr( $url, 0, 1999 );
 }
 
