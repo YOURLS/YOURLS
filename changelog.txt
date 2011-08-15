@@ -69,3 +69,8 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - added: interactive map if possible in stat traffic by countries
 - fixed: lots of bugs
 
+1.5.1
+- added: full jsonp support
+- added: hooks, hooks, hooks
+- fixed: bugs, bugs, bugs
+- improved: things, things, things
