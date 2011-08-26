@@ -73,12 +73,26 @@ function yourls_is_valid_user() {
 // Check auth against list of login=>pwd. Sets user if applicable, returns bool
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
-	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && $yourls_user_passwords[ $_REQUEST['username'] ] == $_REQUEST['password'] ) {
+	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $yourls_user_passwords[ $_REQUEST['username'] ], $_REQUEST['password'] ) ) {
 		yourls_set_user( $_REQUEST['username'] );
 		return true;
 	}
 	return false;
 }
+
+// Check a REQUEST password sent in plain text against stored password which can be a salted hash
+function yourls_check_password_hash( $stored, $plaintext ) {
+	if ( substr( $stored, 0, 4 ) == 'md5:' and strlen( $stored ) == 42 ) {
+		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
+		// And 42. Of course. http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+		list( $temp, $salt, $md5 ) = split( ':', $stored );
+		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
+	} else {
+		// Password was sent in clear
+		return( $stored == $plaintext );
+	}
+}
+
 
 // Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
 function yourls_check_auth_cookie() {
