@@ -1810,9 +1810,12 @@ function yourls_get_request() {
 		
 	yourls_do_action( 'pre_get_request' );
 	
-	// Ignore protocol and extract keyword
-	$base = str_replace( array( 'https://', 'http://' ), '', YOURLS_SITE );
+	// Ignore protocol, www. prefix and extract keyword
+	$base = str_replace( array( 'https://', 'http://', 'https://www.', 'http://www.' ), '', YOURLS_SITE );
 	$request = str_replace( $base.'/', '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+	
+	// Strip query string from keyword
+	$request = current( explode( '?', $request ) );
 	
 	return yourls_apply_filter( 'get_request', $request );
 }
