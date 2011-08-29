@@ -309,7 +309,6 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 	<?php
 }
 
-
 // Die die die
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	yourls_status_header( $header_code );
@@ -344,7 +343,7 @@ function yourls_table_edit_row( $keyword ) {
 	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Original URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /> <strong>Short URL</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 	} else {
 		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
@@ -550,7 +549,6 @@ function yourls_add_notice( $message ) {
 	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
 }
 
-
 // Return a formatted notice
 function yourls_notice_box( $message ) {
 	return <<<HTML
@@ -559,3 +557,16 @@ function yourls_notice_box( $message ) {
 	</div>
 HTML;
 }
+
+// Display a page
+function yourls_page( $page ) {
+	$include = YOURLS_ABSPATH . "/pages/$page.php";
+	if (!file_exists($include)) {
+		yourls_die("Page '$page' not found", 'Not found', 404);
+	}
+	yourls_do_action( 'pre_page', $page );
+	include($include);
+	yourls_do_action( 'post_page', $page );
+	die();	
+}
+
