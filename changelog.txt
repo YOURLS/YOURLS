@@ -72,6 +72,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 1.5.1
 - added: full jsonp support
 - added: ability to use encrypted passwords in the config file
-- added: hooks, hooks, hooks
+- fixed: support for http://www.sho.rt/bleh and http://sho.rt/bleh
 - fixed: bugs, bugs, bugs
+- added: hooks, hooks, hooks
 - improved: things, things, things
