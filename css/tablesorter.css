@@ -50,11 +50,43 @@ table.tblSorter thead tr .headerSortDown, table.tblSorter thead tr .headerSortUp
 table.tblSorter tfoot tr {
 	background-color: #BCD9E8;
 }
-.pagedisplay {
-	color: #216fd8;
-	font-weight: bold;
+#filter_form{
+	float:left;
+	max-width:69%;
 }
-.prev, .next, .first, .last {
-	font-weight: bold;
-	cursor: pointer;
+#filter_buttons{
+	float:right;
+}
+#pagination{
+	text-align:right;
+	float:right;
+	width:30%;
+}
+.navigation .nav_total{
+	display:block;
+	margin-bottom:10px;
+}
+.navigation .nav_link a, .navigation .nav_current {
+	border:1px solid #CDCDCD;
+	margin:0px 2px;
+	padding:2px 1px;
+	background:#fff;
+	text-align:center;
+	min-width:15px;
+	display:inline-block;
+}
+.navigation .nav_current {
+	border:0px;
+	background:none;
+}
+.navigation .nav_first a, .navigation .nav_last a {
+	padding:2px 2px;
+}
+.navigation .nav_prev:before, .navigation .nav_next:after {
+	content:"...";
+}
+.navigation .nav_link a:hover {
+	border:1px solid #BCD9E8;
+	background:#BCD9E8;
+	text-decoration:none;
 }

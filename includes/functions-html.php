@@ -159,9 +159,10 @@ function yourls_html_tfooter( $params = array() ) {
 	?>
 	<tfoot>
 		<tr>
-			<th colspan="4" style="text-align: left;">
+			<th colspan="6">
+			<div id="filter_form">
 				<form action="" method="get">
-					<div>
+					<div id="filter_options">
 						Search&nbsp;for&nbsp;
 						<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
 						&nbsp;in&nbsp;
@@ -204,41 +205,42 @@ function yourls_html_tfooter( $params = array() ) {
 						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> and </span>
 						<input type="text" name="date_second" id="date_second" class="text" size="12" value="<?php echo $date_second; ?>" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>/>
 						
-						<div style="float:right;">
-							<input type="submit" id="submit-sort" value="Filter" class="button primary" />
+						<div id="filter_buttons">
+							<input type="submit" id="submit-sort" value="Search" class="button primary" />
 							&nbsp;
-							<input type="button" id="submit-clear-filter" value="Clear Filter" class="button" onclick="window.parent.location.href = 'index.php'" />
+							<input type="button" id="submit-clear-filter" value="Clear" class="button" onclick="window.parent.location.href = 'index.php'" />
 						</div>
-
-						
+				
 					</div>
 				</form>
-			</th>
-			<th colspan="3" style="text-align: right;">
-				Pages (<?php echo $total_pages; ?>):
-				<?php
-					if ($page >= 4) {
-						echo '<b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page=1'.'" title="Go to First Page">&laquo; First</a></b> ... ';
+			</div>
+			<div id="pagination">
+				<span class="navigation">
+				<?php if( $total_pages > 1 ) { ?>
+					<span class="nav_total"><?php echo $total_pages .' '. yourls_plural( 'page', $total_pages ); ?></span>
+					<?php
+					// Pagination offsets: min( max ( zomg! ) );
+					$p_start = max(  min( $total_pages - 4, $page - 2 ), 1 );
+					$p_end = min( max( 5, $page + 2 ), $total_pages );
+					if( $p_start >= 2 ) {
+						echo '<span class="nav_link nav_first"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page=1'.'" title="Go to First Page">&laquo; First</a></span>';
+						echo '<span class="nav_link nav_prev"></span>';
 					}
-					if($page > 1) {
-						echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page-1).'" title="&laquo; Go to Page '.($page-1).'">&laquo;</a></b> ';
-					}
-					for($i = $page - 2 ; $i  <= $page +2; $i++) {
-						if ($i >= 1 && $i <= $total_pages) {
-							if($i == $page) {
-								echo "<strong>[$i]</strong> ";
-							} else {
-								echo '<a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($i).'" title="Page '.$i.'">'.$i.'</a> ';
-							}
+					for( $i = $p_start ; $i <= $p_end; $i++ ) {
+						if( $i == $page ) {
+							echo "<span class='nav_link nav_current'>$i</span>";
+						} else {
+							echo '<span class="nav_link nav_goto"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($i).'" title="Page '.$i.'">'.$i.'</a></span>';
 						}
 					}
-					if($page < $total_pages) {
-						echo ' <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($page+1).'" title="Go to Page '.($page+1).' &raquo;">&raquo;</a></b> ';
+					if( ( $p_end ) < $total_pages ) {
+						echo '<span class="nav_link nav_next"></span>';
+						echo '<span class="nav_link nav_last"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></span>';
 					}
-					if (($page+2) < $total_pages) {
-						echo ' ... <b><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></b>';
-					}
-				?>
+					?>
+				<?php } ?>
+				</span>
+			</div>
 			</th>
 		</tr>
 		<?php yourls_do_action( 'html_tfooter' ); ?>
