@@ -39,11 +39,10 @@ function add() {
 				$('#nourl_found').css('display', 'none');
 				zebra_table();
 				increment();
+				toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
 			}
 
 			reset_url();
-			toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
-
 			end_loading("#add-button");
 			end_disable("#add-button");
 
