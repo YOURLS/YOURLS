@@ -160,11 +160,11 @@ td.actions .button:active {
 td.actions .button:hover {
 	text-decoration:none;
 }
-td.actions .button.disabled {
+td.actions .button.disabled, #add-button.disabled {
 	border:1px solid #333;
 	background:#ccc;
 }
-td.actions .button.loading {
+td.actions .button.loading, #add-button.loading {
 	background:#cc7 url(../images/loading.gif) center center no-repeat;
 	color:#cc7;
 }
