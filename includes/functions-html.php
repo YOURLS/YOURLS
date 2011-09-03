@@ -164,7 +164,7 @@ function yourls_html_tfooter( $params = array() ) {
 				<form action="" method="get">
 					<div id="filter_options">
 						Search&nbsp;for&nbsp;
-						<input type="text" name="s_search" class="text" size="20" value="<?php echo $search_text; ?>" />
+						<input type="text" name="s_search" class="text" size="15" value="<?php echo $search_text; ?>" />
 						&nbsp;in&nbsp;
 						<select name="s_in" size="1">
 							<option value="keyword"<?php if($search_in_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
