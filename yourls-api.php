@@ -16,7 +16,7 @@ switch( $action ) {
 		$title = ( isset( $_REQUEST['title'] ) ? $_REQUEST['title'] : '' );
 		$return = yourls_add_new_link( $url, $keyword, $title );
 		$return['simple'] = ( isset( $return['shorturl'] ) ? $return['shorturl'] : '' ); // This one will be used in case output mode is 'simple'
-		$return['callback'] = $_REQUEST['callback'];
+		$return['callback'] = ( isset( $_REQUEST['callback'] ) ? $_REQUEST['callback'] : '' );
 		unset( $return['html'] ); // in API mode, no need for our internal HTML output
 		break;
 	
