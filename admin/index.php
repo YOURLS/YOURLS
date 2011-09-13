@@ -238,7 +238,6 @@ if ( !$is_bookmark ) {
 		'link_filter'    => $link_filter,
 		'link_limit'     => $link_limit,
 		'total_pages'    => $total_pages,
-		'base_page'      => $base_page,
 		'search_url'     => $search_url,
 		'date_filter'	 => $date_filter,
 		'date_first'	 => $date_first,

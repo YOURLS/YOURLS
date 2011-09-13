@@ -219,23 +219,27 @@ function yourls_html_tfooter( $params = array() ) {
 				<?php if( $total_pages > 1 ) { ?>
 					<span class="nav_total"><?php echo $total_pages .' '. yourls_plural( 'page', $total_pages ); ?></span>
 					<?php
+					$base_page = yourls_admin_url( 'index.php' );
 					// Pagination offsets: min( max ( zomg! ) );
 					$p_start = max(  min( $total_pages - 4, $page - 2 ), 1 );
 					$p_end = min( max( 5, $page + 2 ), $total_pages );
 					if( $p_start >= 2 ) {
-						echo '<span class="nav_link nav_first"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page=1'.'" title="Go to First Page">&laquo; First</a></span>';
+						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => 1 ) ), $base_page );
+						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="Go to First Page">&laquo; First</a></span>';
 						echo '<span class="nav_link nav_prev"></span>';
 					}
 					for( $i = $p_start ; $i <= $p_end; $i++ ) {
 						if( $i == $page ) {
 							echo "<span class='nav_link nav_current'>$i</span>";
 						} else {
-							echo '<span class="nav_link nav_goto"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($i).'" title="Page '.$i.'">'.$i.'</a></span>';
+							$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $i ) ), $base_page );
+							echo '<span class="nav_link nav_goto"><a href="' . $link . '" title="Page '.$i.'">'.$i.'</a></span>';
 						}
 					}
 					if( ( $p_end ) < $total_pages ) {
+						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
 						echo '<span class="nav_link nav_next"></span>';
-						echo '<span class="nav_link nav_last"><a href="'.$base_page.'?s_by='.$sort_by_sql.'&amp;s_order='.$sort_order_sql.$search_url.'&amp;perpage='.$perpage.'&amp;page='.($total_pages).'" title="Go to Last Page">Last &raquo;</a></span>';
+						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="Go to Last Page">Last &raquo;</a></span>';
 					}
 					?>
 				<?php } ?>
