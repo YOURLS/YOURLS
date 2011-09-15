@@ -525,34 +525,75 @@ function yourls_login_screen( $error_msg = '' ) {
 
 // Display the admin menu
 function yourls_html_menu() {
-	?>
-	<ul id="admin_menu">
-	<?php if ( yourls_is_private() ) { ?>
-		<li>Hello <strong><?php echo YOURLS_USER; ?></strong> (<a href="?action=logout" title="Logout">Logout</a>)</li>
-	<?php } ?>
-		<li><a href="<?php echo yourls_admin_url('index.php') ?>">Admin Interface</a></li>
-	<?php if( yourls_is_admin() ) { ?>
-		<li><a href="<?php echo yourls_admin_url('tools.php'); ?>">Tools</a></li>
-		<li><a href="<?php echo yourls_admin_url('plugins.php'); ?>">Plugins</a></li>
-		<?php yourls_list_plugin_admin_pages(); ?>	
-		<li><a href="<?php yourls_site_url(); ?>/readme.html">Help</a></li>
-		<?php yourls_do_action( 'admin_menu' ); ?>
-	<?php } ?>
-	</ul>
-	<?php
+
+	// Build menu links
+	$logout_link = yourls_apply_filter( 'logout_link', 'Hello <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">Logout</a>)' );
+	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">Help</a>' );
+	
+	$admin_links['admin'] = array(
+		'url'   => yourls_admin_url('index.php'),
+		'title' => 'Go to the admin interface',
+		'anchor' => 'Admin interface'
+	);
+	
+	if( yourls_is_admin() ) {
+		$admin_links['tools'] = array(
+			'url'    => yourls_admin_url('tools.php'),
+			'anchor' => 'Tools',
+		);
+		$admin_links['plugins'] = array(
+			'url'    => yourls_admin_url('plugins.php'),
+			'anchor' => 'Manage Plugins',
+		);
+		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
+	}
+	
+	$admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
+	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
+	
+	// Now output menu
+	echo '<ul id="admin_menu">'."\n";
+	if ( yourls_is_private() && isset( $logout_link ) )
+		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
+
+	foreach( $admin_links as $link => $ar ) {
+		if( isset( $ar['url'] ) ) {
+			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
+			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
+			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel"><a href="%s" %s>%s</a>', $link, $ar['url'], $title, $anchor );
+		}
+		// Output submenu if any. TODO: clean up, too many code duplicated here
+		if( isset( $admin_sublinks[$link] ) ) {
+			echo "<ul>\n";
+			foreach( $admin_sublinks[$link] as $link => $ar ) {
+				if( isset( $ar['url'] ) ) {
+					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
+					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
+					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a>', $link, $link, $ar['url'], $title, $anchor );
+				}
+			}
+			echo "</ul>\n";
+		}
+	}
+	
+	if ( isset( $help_link ) )
+		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
+		
+	yourls_do_action( 'admin_menu' );
+	echo "</ul>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 	*/
 }
 
 // Wrapper to admin notices
 function yourls_add_notice( $message ) {
 	$message = yourls_notice_box( $message );
-	yourls_add_action('admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 }
 
 // Return a formatted notice
@@ -567,8 +608,8 @@ HTML;
 // Display a page
 function yourls_page( $page ) {
 	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if (!file_exists($include)) {
-		yourls_die("Page '$page' not found", 'Not found', 404);
+	if( !file_exists($include) ) {
+		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
 	include($include);

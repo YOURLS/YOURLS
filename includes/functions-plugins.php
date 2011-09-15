@@ -450,12 +450,15 @@ function yourls_list_plugin_admin_pages() {
 	
 	if( !property_exists( $ydb, 'plugin_pages' ) || !$ydb->plugin_pages )
 		return;
-		
-	echo '<ul id="admin_pluginmenu">'."\n";
-	foreach( (array)$ydb->plugin_pages as $page ) {
-		echo '<li><a href="'.yourls_admin_url( 'plugins.php?page='.$page['slug'] ).'">'.$page['title']."</a></li>\n";
+	
+	$plugin_links = array();
+	foreach( (array)$ydb->plugin_pages as $plugin => $page ) {
+		$plugin_links[$plugin] = array(
+			'url'    => yourls_admin_url( 'plugins.php?page='.$page['slug'] ),
+			'anchor' => $page['title'],
+		);
 	}
-	echo "</ul>\n";
+	return $plugin_links;
 }
 
 /**
