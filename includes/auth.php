@@ -24,3 +24,5 @@ if( $auth !== true ) {
 	
 	die();
 }
+
+yourls_do_action( 'auth_successful' );
