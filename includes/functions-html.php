@@ -530,6 +530,9 @@ function yourls_html_menu() {
 	$logout_link = yourls_apply_filter( 'logout_link', 'Hello <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">Logout</a>)' );
 	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">Help</a>' );
 	
+	$admin_links    = array();
+	$admin_sublinks = array();
+	
 	$admin_links['admin'] = array(
 		'url'   => yourls_admin_url('index.php'),
 		'title' => 'Go to the admin interface',
