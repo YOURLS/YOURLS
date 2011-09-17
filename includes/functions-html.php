@@ -556,7 +556,7 @@ function yourls_html_menu() {
 	if ( yourls_is_private() && isset( $logout_link ) )
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
-	foreach( $admin_links as $link => $ar ) {
+	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
 			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
