@@ -32,7 +32,7 @@ $yourls_filters = array();
  * @param integer $priority optional. Used to specify the order in which the functions associated with a particular action are executed (default=10, lower=earlier execution, and functions with the same priority are executed in the order in which they were added to the filter)
  * @param int $accepted_args optional. The number of arguments the function accept (default is the number provided).
  */
-function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL ) {
+function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
 	global $yourls_filters;
 	// At this point, we cannot check if the function exists, as it may well be defined later (which is OK)
 	$id = yourls_filter_unique_id( $hook, $function_name, $priority );
@@ -40,6 +40,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
 	$yourls_filters[$hook][$priority][$id] = array(
 		'function' => $function_name,
 		'accepted_args' => $accepted_args,
+		'type' => $type,
 	);
 }
 
@@ -57,7 +58,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * @param int $accepted_args optional. The number of arguments the function accept (default 1).
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
-	return yourls_add_filter( $hook, $function_name, $priority, $accepted_args );
+	return yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
 }
 
 
@@ -133,20 +134,24 @@ function yourls_apply_filter( $hook, $value = '' ) {
 	// Loops through each filter
 	reset( $yourls_filters[$hook] );
 	do {
-		foreach( (array) current($yourls_filters[$hook]) as $the_ )
+		foreach( (array) current($yourls_filters[$hook]) as $the_ ) {
 			if ( !is_null($the_['function']) ){
 				$args[1] = $value;
 				$count = $the_['accepted_args'];
 				if (is_null($count)) {
-					$value = call_user_func_array($the_['function'], array_slice($args, 1));
+					$_value = call_user_func_array($the_['function'], array_slice($args, 1));
 				} else {
-					$value = call_user_func_array($the_['function'], array_slice($args, 1, (int) $count));
+					$_value = call_user_func_array($the_['function'], array_slice($args, 1, (int) $count));
 				}
 			}
+			if( $the_['type'] == 'filter' )
+				$value = $_value;
+		}
 
 	} while ( next($yourls_filters[$hook]) !== false );
 	
-	return $value;
+	if( $the_['type'] == 'filter' )
+		return $value;
 }
 
 function yourls_do_action( $hook, $arg = '' ) {
