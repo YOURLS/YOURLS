@@ -34,6 +34,8 @@ if ( $longurl === false ) {
 	yourls_redirect( YOURLS_SITE, 302 );
 }
 
+yourls_do_action( 'pre_yourls_infos', $keyword );
+
 if( yourls_do_log_redirect() ) {
 
 	// Duplicate keywords, if applicable
@@ -154,7 +156,18 @@ if( yourls_do_log_redirect() ) {
 			$referrer_sort[$site] = array_sum( $urls );
 	}
 	arsort($referrer_sort);
-
+	
+	// Filter all this junk if applicable. Be warned, some are possibly huge datasets.
+	$referrers      = yourls_apply_filter( 'pre_yourls_info_referrers', $referrers );
+	$referrer_sort  = yourls_apply_filter( 'pre_yourls_info_referrer_sort', $referrer_sort );
+	$direct         = yourls_apply_filter( 'pre_yourls_info_direct', $direct );
+	$notdirect      = yourls_apply_filter( 'pre_yourls_info_notdirect', $notdirect );
+	$dates          = yourls_apply_filter( 'pre_yourls_info_dates', $dates );
+	$list_of_days   = yourls_apply_filter( 'pre_yourls_info_list_of_days', $list_of_days );
+	$list_of_months = yourls_apply_filter( 'pre_yourls_info_list_of_months', $list_of_months );
+	$list_of_years  = yourls_apply_filter( 'pre_yourls_info_list_of_years', $list_of_years );
+	$last_24h       = yourls_apply_filter( 'pre_yourls_info_last_24h', $last_24h );
+	$countries      = yourls_apply_filter( 'pre_yourls_info_countries', $countries );
 
 	/**
 	echo "<pre>";
@@ -167,8 +180,7 @@ if( yourls_do_log_redirect() ) {
 	echo "list_of_months: "; print_r( $list_of_months );
 	echo "list_of_years: "; print_r( $list_of_years );
 	echo "last_24h: "; print_r( $last_24h );
-	//echo "countries: "; print_r( $countries );
-
+	echo "countries: "; print_r( $countries );
 	die();
 	/**/
 
@@ -217,6 +229,8 @@ yourls_html_menu();
 <?php if( yourls_do_log_redirect() ) { ?>
 	<div id="stat_tab_stats" class="tab">
 		<h2>Traffic statistics</h2>
+		
+		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword ); ?>
 		
 		<?php if ( $list_of_days ) { ?>
 		
@@ -424,7 +438,7 @@ yourls_html_menu();
 			</tr>
 			</table>
 
-
+		<?php yourls_do_action( 'post_yourls_info_stats', $keyword ); ?>
 		
 		<?php } else {
 			echo "<p>No traffic yet. Get some clicks first!</p>";
@@ -435,6 +449,8 @@ yourls_html_menu();
 	<div id="stat_tab_location" class="tab">
 		<h2>Traffic location</h2>
 		
+		<?php yourls_do_action( 'pre_yourls_info_location', $keyword ); ?>
+
 		<?php if ( $countries ) { ?>
 			
 			<table border="0" cellspacing="2">
@@ -459,6 +475,8 @@ yourls_html_menu();
 			</tr>
 			</table>
 		
+		<?php yourls_do_action( 'post_yourls_info_location', $keyword ); ?>
+
 		<?php } else {
 			echo "<p>No country data.</p>";
 		} ?>
@@ -468,6 +486,8 @@ yourls_html_menu();
 	<div id="stat_tab_sources" class="tab">
 		<h2>Traffic Sources</h2>
 		
+		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword ); ?>
+
 		<?php if ( $referrers ) { ?>
 			
 			<table border="0" cellspacing="2">
@@ -522,6 +542,8 @@ yourls_html_menu();
 			</tr>
 			</table>
 
+		<?php yourls_do_action( 'post_yourls_info_sources', $keyword ); ?>
+			
 		<?php } else {
 			echo "<p>No referrer data.</p>";
 		} ?>
