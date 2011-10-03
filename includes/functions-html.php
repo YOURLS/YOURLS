@@ -527,7 +527,11 @@ function yourls_login_screen( $error_msg = '' ) {
 function yourls_html_menu() {
 
 	// Build menu links
-	$logout_link = yourls_apply_filter( 'logout_link', 'Hello <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">Logout</a>)' );
+	if( defined( 'YOURLS_USER' ) ) {
+		$logout_link = yourls_apply_filter( 'logout_link', 'Hello <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">Logout</a>)' );
+	} else {
+		$logout_link = yourls_apply_filter( 'logout_link', '' );
+	}
 	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">Help</a>' );
 	
 	$admin_links    = array();
