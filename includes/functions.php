@@ -1311,10 +1311,10 @@ function yourls_urlencode_deep($value) {
 function yourls_remove_query_arg( $key, $query = false ) {
 	if ( is_array( $key ) ) { // removing multiple keys
 		foreach ( $key as $k )
-			$query = add_query_arg( $k, false, $query );
+			$query = yourls_add_query_arg( $k, false, $query );
 		return $query;
 	}
-	return add_query_arg( $key, false, $query );
+	return yourls_add_query_arg( $key, false, $query );
 }
 
 // Return a time-dependent string for nonce creation
