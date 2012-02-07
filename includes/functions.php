@@ -123,6 +123,21 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	return (bool)$insert;
 }
 
+// Check if a URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+function yourls_url_exists( $url ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_url_exists', false, $url );
+	if ( false !== $pre )
+		return $pre;
+
+	global $ydb;
+	$table = YOURLS_DB_TABLE_URL;
+	$strip_url = stripslashes($url);
+	$url_exists = $ydb->get_row("SELECT * FROM `$table` WHERE `url` = '".$strip_url."';");
+	
+	return yourls_apply_filter( 'url_exists', $url_exists, $url );
+}
+
 // Add a new link in the DB, either with custom keyword, or find one
 function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	global $ydb;
@@ -158,13 +173,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 	yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
 	
-	$table = YOURLS_DB_TABLE_URL;
 	$strip_url = stripslashes($url);
-	$url_exists = $ydb->get_row("SELECT * FROM `$table` WHERE `url` = '".$strip_url."';");
 	$return = array();
 
-	// New URL : store it -- or: URL exists, but duplicates allowed
-	if( !$url_exists || yourls_allow_duplicate_longurls() ) {
+	// duplicates allowed or new URL => store it
+	if( yourls_allow_duplicate_longurls() || !yourls_url_exists( $url ) ) {
 	
 		if( isset( $title ) && !empty( $title ) ) {
 			$title = yourls_sanitize_title( $title );
