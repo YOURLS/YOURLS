@@ -12,14 +12,6 @@ require_once( dirname(__FILE__).'/includes/load-yourls.php' );
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
 
-/**
- * TODO: think about doing something with $_SERVER['QUERY_STRING']?
- * Like sho.rt/keyword?something
- * if so:
- *     - deal with logout requests early
- *     - handle differently short urls (sho.rt/keyword?something) and prefix-n-shorten (sho.rt/http://bleh/?s=1)
- */
-
 // Make valid regexp pattern from authorized charset in keywords
 $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
 
