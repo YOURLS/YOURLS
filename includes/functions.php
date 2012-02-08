@@ -451,17 +451,21 @@ function yourls_get_keyword_timestamp( $keyword, $notfound = false ) {
 }
 
 // Update click count on a short URL. Return 0/1 for error/success.
-function yourls_update_clicks( $keyword ) {
+function yourls_update_clicks( $keyword, $clicks = false ) {
 	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword );
+	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
 	if ( false !== $pre )
 		return $pre;
 
 	global $ydb;
 	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
-	$update = $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'");
-	yourls_do_action( 'update_clicks', $keyword, $update );
+	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
+		$update = $ydb->query("UPDATE `$table` SET `clicks` = $clicks WHERE `keyword` = '$keyword'");
+	else
+		$update = $ydb->query("UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'");
+
+	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
 }
 
