@@ -1135,7 +1135,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
 
 	// Don't throttle whitelist IPs
-	if( defined('YOURLS_FLOOD_IP_WHITELIST' && YOURLS_FLOOD_IP_WHITELIST ) ) {
+	if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
 		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
 		foreach( (array)$whitelist_ips as $whitelist_ip ) {
 			$whitelist_ip = trim( $whitelist_ip );
