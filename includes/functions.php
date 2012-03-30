@@ -177,7 +177,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	$return = array();
 
 	// duplicates allowed or new URL => store it
-	if( yourls_allow_duplicate_longurls() || !yourls_url_exists( $url ) ) {
+	if( yourls_allow_duplicate_longurls() || !( $url_exists = yourls_url_exists( $url ) ) ) {
 	
 		if( isset( $title ) && !empty( $title ) ) {
 			$title = yourls_sanitize_title( $title );
