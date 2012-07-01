@@ -122,6 +122,7 @@ tr.edit-row  td {
 #new_url #feedback .fail {
 	color:#f55;
 }
+#add-url {width:400px}
 td.url small a{
 	color:#bbc;
 }
