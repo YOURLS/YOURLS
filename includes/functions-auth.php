@@ -8,6 +8,7 @@ function yourls_is_valid_user() {
 
 	// Logout request
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout') {
+		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
 		return 'Logged out successfully';
 	}
@@ -15,6 +16,8 @@ function yourls_is_valid_user() {
 	// Check cookies or login request. Login form has precedence.
 	global $yourls_user_passwords;
 	
+	yourls_do_action( 'pre_login' );
+
 	// Determine auth method and check credentials
 	if
 		// API only: Secure (no login or pwd) and time limited token
@@ -24,6 +27,7 @@ function yourls_is_valid_user() {
 		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
 		)
 		{
+			yourls_do_action( 'pre_login_signature_timestamp' );
 			$valid = yourls_check_signature_timestamp();
 		}
 		
@@ -35,6 +39,7 @@ function yourls_is_valid_user() {
 		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
 		)
 		{
+			yourls_do_action( 'pre_login_signature' );
 			$valid = yourls_check_signature();
 		}
 	
@@ -43,6 +48,7 @@ function yourls_is_valid_user() {
 		( isset($_REQUEST['username']) && isset($_REQUEST['password'])
 		  && !empty( $_REQUEST['username'] ) && !empty( $_REQUEST['password']  ) )
 		{
+			yourls_do_action( 'pre_login_username_password' );
 			$valid = yourls_check_username_password();
 		}
 	
@@ -51,11 +57,13 @@ function yourls_is_valid_user() {
 		( !yourls_is_API() && 
 		  isset($_COOKIE['yourls_username']) && isset($_COOKIE['yourls_password']) )
 		{
+			yourls_do_action( 'pre_login_cookie' );
 			$valid = yourls_check_auth_cookie();
 		}
 
 	// Login for the win!
 	if ( $valid ) {
+		yourls_do_action( 'login' );
 		// (Re)store encrypted cookie and tell it's ok
 		if ( !yourls_is_API() ) // No need to store a cookie when used in API mode.
 			yourls_store_cookie( YOURLS_USER );
@@ -63,6 +71,8 @@ function yourls_is_valid_user() {
 	}
 	
 	// Login failed
+	yourls_do_action( 'login_failed' );
+
 	if ( isset($_REQUEST['username']) || isset($_REQUEST['password']) ) {
 		return 'Invalid username or password';
 	} else {
