@@ -93,7 +93,7 @@ function yourls_sanitize_url( $url, $force_protocol = true, $force_lowercase = t
 
 // Function to filter all invalid characters from a URL. Stolen from WP's clean_url()
 function yourls_clean_url( $url ) {
-	$url = preg_replace( '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*\'"()\\x80-\\xff]|i', '', $url );
+	$url = preg_replace( '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i', '', $url );
 	$strip = array( '%0d', '%0a', '%0D', '%0A' );
 	$url = yourls_deep_replace( $strip, $url );
 	$url = str_replace( ';//', '://', $url );
