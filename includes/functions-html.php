@@ -73,7 +73,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><?php echo $title ?></title>
-	<link rel="icon" type="image/gif" href="<?php yourls_site_url(); ?>/images/favicon.gif" />
+	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
@@ -623,4 +623,3 @@ function yourls_page( $page ) {
 	yourls_do_action( 'post_page', $page );
 	die();	
 }
-

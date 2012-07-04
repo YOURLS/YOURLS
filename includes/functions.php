@@ -1459,16 +1459,22 @@ function yourls_admin_url( $page = '' ) {
 	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
-// Return YOURLS_SITE, with SSL preference
-function yourls_site_url( $echo = true ) {
-	$site = YOURLS_SITE;
+// Return YOURLS_SITE or URL under YOURLS setup, with SSL preference
+function yourls_site_url( $echo = true, $url = '' ) {
+	if( !$url ) {
+		$url = YOURLS_SITE;
+	} else {
+		// make $url relative to YOURLS base in case a full URL has been provided. Will break if user mixes https/http.
+		$url = str_replace( YOURLS_SITE, '', $url );
+		$url = YOURLS_SITE . '/' . ltrim( $url, '/' );
+	}
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() )
-		$site = str_replace( 'http://', 'https://', $site );
-	$site = yourls_apply_filter( 'site_url', $site );
+		$url = str_replace( 'http://', 'https://', $url );
+	$url = yourls_apply_filter( 'site_url', $url );
 	if( $echo )
-		echo $site;
-	return $site;
+		echo $url;
+	return $url;
 }
 
 // Check if SSL is used, returns bool. Stolen from WP.
@@ -1670,4 +1676,29 @@ function yourls_fix_request_uri() {
 // Shutdown function, runs just before PHP shuts down execution. Stolen from WP
 function yourls_shutdown() {
 	yourls_do_action( 'shutdown' );
+}
+
+// Auto detect custom favicon in /user directory, fallback to YOURLS favicon, and echo/return its URL
+function yourls_favicon( $echo = true ) {
+	static $favicon = null;
+	if( $favicon !== null )
+		return $favicon;
+	
+	$custom = null;
+	// search for favicon.(gif|ico|png|jpg|svg)
+	foreach( array( 'gif', 'ico', 'png', 'jpg', 'svg' ) as $ext ) {
+		if( file_exists( YOURLS_USERDIR. '/favicon.' . $ext ) ) {
+			$custom = 'favicon.' . $ext;
+			break;
+		}
+	}
+	
+	if( $custom ) {
+		$favicon = yourls_site_url( false, YOURLS_USERURL . '/' . $custom );
+	} else {
+		$favicon = yourls_site_url( false ) . '/images/favicon.gif';
+	}
+	if( $echo )
+		echo $favicon;
+	return $favicon;
 }
