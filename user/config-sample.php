@@ -60,10 +60,9 @@ $yourls_user_passwords = array(
 /** URL shortening method: 36 or 62 */
 define( 'YOURLS_URL_CONVERT', 36 );
 /*
- * 36: generates case insentitive lowercase keywords (ie: 13jkm)
- * 62: generate case sensitive keywords (ie: 13jKm or 13JKm)
- * Stick to one setting, don't change after you've created links as it will change all your short URLs!
- * Base 36 should be picked. Use 62 only if you understand what it implies.
+ * 36: generates all lowercase keywords (ie: 13jkm)
+ * 62: generates mixed case keywords (ie: 13jKm or 13JKm)
+ * Stick to one setting. It's best not to change after you've started creating links.
  */
 
 /** 
