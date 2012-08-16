@@ -371,12 +371,18 @@ yourls_html_menu();
 				</div>
 		
 				<h3>Best day</h3>
-				<?php $best = yourls_stats_get_best_day( $list_of_days ); ?>
-				<p><strong><?php echo $best['max'];?></strong> <?php echo yourls_plural( 'hit', $best['max'] ); ?> on <?php echo date("F j, Y", strtotime($best['day'])); ?>. 
+				<?php
+				$best = yourls_stats_get_best_day( $list_of_days );
+				$best_time['day']   = date("d", strtotime( $best['day'] ) );
+				$best_time['month'] = date("m", strtotime( $best['day'] ) );
+				$best_time['year']  = date("Y", strtotime( $best['day'] ) );
+				?>
+				<p><strong><?php echo $best['max'];?></strong> <?php echo yourls_plural( 'hit', $best['max'] ); ?> on <?php echo date("F j, Y", strtotime( $best['day'] ) ); ?>. 
 				<a href="" class='details hide-if-no-js' id="more_clicks">Click for more details</a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php
 					foreach( $dates as $year=>$months ) {
+						$css_year = ( $year == $best_time['year'] ? 'best_year' : '' );
 						if( count( $list_of_years ) > 1 ) {
 							$li = "<a href='' class='details' id='more_year$year'>Year $year</a>";
 							$display = 'none';
@@ -384,9 +390,10 @@ yourls_html_menu();
 							$li = "Year $year";
 							$display = 'block';
 						}
-						echo "<li>$li";
+						echo "<li><span class='$css_year'>$li</span>";
 						echo "<ul style='display:$display' id='details_year$year'>";
 						foreach( $months as $month=>$days ) {
+							$css_month = ( ( $month == $best_time['month'] && ( $css_year == 'best_year' ) ) ? 'best_month' : '' );
 							$monthname = date("F", mktime(0, 0, 0, $month,1));
 							if( count( $list_of_months ) > 1 ) {
 								$li = "<a href='' class='details' id='more_month$year$month'>$monthname</a>";
@@ -395,7 +402,7 @@ yourls_html_menu();
 								$li = "$monthname";
 								$display = 'block';
 							}
-							echo "<li>$li";
+							echo "<li><span class='$css_month'>$li</span>";
 							echo "<ul style='display:$display' id='details_month$year$month'>";
 								foreach( $days as $day=>$hits ) {
 									$class = ( $hits == $best['max'] ? 'class="bestday"' : '' );

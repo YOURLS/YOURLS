@@ -80,7 +80,7 @@ li.sites_list img, #longurl img {width:16px; height: 16px; display:inline-block;
 
 #referrer_cell { min-width: 300px;}
 
-#details_clicks li.bestday {
+#details_clicks li.bestday, #details_clicks li span.best_month, #details_clicks li span.best_year    {
 	font-weight:bold;
 }
 
