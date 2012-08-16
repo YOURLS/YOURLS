@@ -2,12 +2,12 @@
 // This file initialize everything needed for YOURLS
 
 // Include settings
-if( file_exists(dirname(__FILE__).'/config.php') ) {
-	// config.php in /includes/
-	require_once( dirname(__FILE__).'/config.php' );
-} elseif ( file_exists(dirname(dirname(__FILE__)).'/user/config.php') ) {
+if( file_exists( dirname(dirname(__FILE__)).'/user/config.php' ) ) {
 	// config.php in /user/
 	require_once( dirname(dirname(__FILE__)).'/user/config.php' );
+} elseif ( file_exists( dirname(__FILE__).'/config.php' ) ) {
+	// config.php in /includes/
+	require_once( file_exists( dirname(__FILE__).'/config.php' ) );
 } else {
 	// config.php not found :(
 	die('<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>');
