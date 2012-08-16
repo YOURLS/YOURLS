@@ -10,7 +10,6 @@ $(document).ready(function(){
 		$('div.'+divs).css('display', 'none');
 		$('div#'+target).css('display', 'block');
 		$('ul.stat_'+divs+' li a').removeClass('selected');
-		//$(this).addClass('selected').css('outline', 'none').blur();
 		$('ul.stat_'+divs+' li a[href="#'+target+'"]').addClass('selected').css('outline', 'none').blur();
 		return false;
 	});

@@ -1,71 +1,39 @@
 <?php
 
 // Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
-function yourls_stats_countries_map( $countries ) {
-	yourls_do_action( 'stats_countries_map' );
+function yourls_stats_countries_map( $countries, $id = null ) {
+
+	yourls_do_action( 'pre_stats_countries_map' );
 	
-	// Echo static map. Will be hidden if JS
-	$map = array(
-		'cht' => 't',
-		'chs' => '440x220',
-		'chtm'=> 'world',
-		'chco'=> 'FFFFFF,88C0EB,2A85B3,1F669C',
-		'chld'=> join('' , array_keys( $countries ) ),
-		'chd' => 't:'. join(',' ,  $countries ),
-		'chf' => 'bg,s,EAF7FE'
+	// if $id is null then assign a random string
+	if( $id === null )
+		$id = uniqid ( 'yourls_stats_map_' );
+
+	$data = array_merge( array( 'Country' => 'Hits' ), $countries );
+	$data = yourls_google_array_to_data_table( $data );
+
+	$options = array(
+		'backgroundColor' => "white",
+		'colorAxis'       => "{colors:['A8D0ED','99C4E4','8AB8DB','7BACD2','6BA1C9','5C95C0','4D89B7','3E7DAE','2E72A5','1F669C']}",
+		'width'           => "550",
+		'height'          => "340",
+		'theme'           => 'maximized'
 	);
-	$map_src = 'http://chart.apis.google.com/chart?' . http_build_query( $map );
-	//$map_src = yourls_match_current_protocol( $map_src, 'http://chart.apis.', 'https://www.' );
+	$options = yourls_apply_filter( 'stats_countries_map_options', $options );
 	
-	$static = "<img id='yourls_stat_countries_static' class='hide-if-js' src='$map_src' width='440' height='220' border='0' />";
-	echo yourls_apply_filter( 'stats_countries_static', $static, $countries );
+	$map = yourls_google_viz_code( 'GeoChart', $data, $options, $id );
 
-	// Echo dynamic map. Will be hidden if no JS
-	$jsapi = yourls_match_current_protocol( 'http://www.google.com/jsapi' );
-	$dynamic = <<<MAP
-<script type='text/javascript' src='$jsapi'></script>
-<script type='text/javascript'>
-google.load('visualization', '1', {'packages': ['geomap']});
-google.setOnLoadCallback(drawMap);
-function drawMap() {
-  var data = new google.visualization.DataTable();
-MAP;
-	$dynamic .= '
-	data.addRows('.count( $countries ).');
-	';
-	$dynamic .= "
-	data.addColumn('string', 'Country');
-	data.addColumn('number', 'Hits');
-	";
-	$i = 0;
-	foreach( $countries as $c => $v ) {
-		$dynamic .= "
-		  data.setValue($i, 0, '$c');
-		  data.setValue($i, 1, $v);
-		";
-		$i++;
-	}
-
-	$dynamic .= <<<MAP
-  var options = {};
-  options['dataMode'] = 'regions';
-  options['width'] = '550px';
-  options['height'] = '340px';
-  options['colors'] = [0x88C0EB,0x2A85B3,0x1F669C];
-  var container = document.getElementById('yourls_stat_countries');
-  var geomap = new google.visualization.GeoMap(container);
-  geomap.draw(data, options);
-};
-</script>
-<div id="yourls_stat_countries"></div>
-MAP;
-
-	echo yourls_apply_filter( 'stats_countries_dynamic', $dynamic, $countries );
+	echo yourls_apply_filter( 'stats_countries_map', $map, $countries, $options, $id );
 }
 
 // Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
-function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E7FF,1F669C' ) {
-	yourls_do_action( 'stats_pie' );
+function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
+
+	yourls_do_action( 'pre_stats_pie' );
+	
+	// if $id is null then assign a random string
+	if( $id === null )
+		$id = uniqid ( 'yourls_stats_pie_' );
 
 	// Trim array: $limit first item + the sum of all others
 	if ( count( $data ) > $limit ) {
@@ -85,20 +53,25 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $colors = 'C7E
 	// Scale items
 	$_data = yourls_scale_data( $data );
 	
-	// Hmmm, pie
-	$pie = array(
-		'cht' => 'p',
-		'chs' => $size,
-		'chd' => 't:'.( join(',' ,  $_data ) ),
-		'chco'=> $colors,
-		'chl' => join('|' , array_keys( $data ) )
-	);
-	$pie_src = 'http://chart.apis.google.com/chart?' . http_build_query( $pie );
-	//$pie_src = yourls_match_current_protocol( $pie_src, 'http://chart.apis.', 'https://www.' );
-	list( $size_x, $size_y ) = explode( 'x', $size );
+	list($width, $height) = explode('x', $size);
 	
-	$pie = "<img src='$pie_src' width='$size_x' height='$size_y' border='0' />";
-	echo yourls_apply_filter( 'stats_pie', $pie, $data, $limit, $size, $colors );
+	$options = array(
+		'theme'  => 'maximized',
+		'width'   => $width,
+		'height'   => $height,
+		'colors'    => "['A8D0ED','99C4E4','8AB8DB','7BACD2','6BA1C9','5C95C0','4D89B7','3E7DAE','2E72A5','1F669C']",
+		'legend'     => 'none',
+		'chartArea'   => '{top: "5%", height: "90%"}',
+		'pieSliceText' => 'label',
+	);
+	$options = yourls_apply_filter( 'stats_pie_options', $options );
+
+	$script_data = array_merge( array( 'Country' => 'Value' ), $_data);
+	$script_data = yourls_google_array_to_data_table( $script_data );
+
+	$pie = yourls_google_viz_code( 'PieChart', $script_data, $options, $id );
+
+	echo yourls_apply_filter( 'stats_pie', $pie, $data, $limit, $size, $options, $id );
 }
 
 // Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
@@ -110,7 +83,7 @@ function yourls_build_list_of_days( $dates ) {
 				29 => 15,
 				30 => 5,
 				),
-		    '09' => array (
+			'09' => array (
 				'02' => 3,
 				'03' => 5,
 				'04' => 2,
@@ -153,7 +126,9 @@ function yourls_build_list_of_days( $dates ) {
 			$current_last_day  = ( $year == $last_year && $month == $last_month ? $last_day : yourls_days_in_month($month, $year) );
 			for ( $day = $current_first_day; $day <= $current_last_day; $day++ ) {
 				$day = sprintf('%02d', $day);
-				$list_of_days["$_year-$_month-$day"] = isset( $dates[$_year][$_month][$day] ) ? $dates[$_year][$_month][$day] : 0;
+				//$key = "$_year-$_month-$day";
+				$key = date( 'M d, Y', mktime( 0, 0, 0, $_month, $day, $_year ) );
+				$list_of_days[ $key ] = isset( $dates[$_year][$_month][$day] ) ? $dates[$_year][$_month][$day] : 0;
 			}
 		}
 	}
@@ -165,49 +140,42 @@ function yourls_build_list_of_days( $dates ) {
 	);
 }
 
-// Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks'). $legend1_list & legend2_list are values used for the 2 x-axis labels
-function yourls_stats_line( $values, $legend1_list, $legend2_list ) {
-	yourls_do_action( 'stats_line' );
+// Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks').
+// $legend1_list & legend2_list are values used for the 2 x-axis labels. $id is an HTML/JS id
+function yourls_stats_line( $values, $id = null ) {
 
+	yourls_do_action( 'pre_stats_line' );
+	
+	// if $id is null then assign a random string
+	if( $id === null )
+		$id = uniqid ( 'yourls_stats_line_' );
+		
 	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
 	if ( count( $values ) == 1 )
 		array_unshift( $values, 0 );
 		
+	// Keep only a subset of values to keep graph smooth
 	$values = yourls_array_granularity( $values, 30 );
 	
-	// If x-axis labels have only 1 value, double it for a nicer graph
-	if( count( $legend1_list ) == 1 )
-		$legend1_list[] = current( $legend1_list );
-	if( count( $legend2_list ) == 1 )
-		$legend2_list[] = current( $legend2_list );
-
-	// Make the chart
-	$legend1 = join('|', $legend1_list );
-	$legend2 = join('|', $legend2_list );
-	$max = max( $values );
-	if ( $max >= 4 ) {
-		$label_clicks = '0|'.intval( $max / 4 ).'|'.intval( $max / 2 ).'|'.intval( $max / 1.5 ).'|'.$max;
-	} else {
-		$label_clicks = array();
-		for ($i = 0; $i <= $max; $i++) {
-			$label_clicks[] = $i;
-		}
-		$label_clicks = join( '|', $label_clicks );
-	}
-	$line = array(
-		'cht' => 'lc',
-		'chs' => '440x220',
-		'chxt'=> 'x,x,y',
-		'chd' => 't:'.( join(',' ,  $values ) ),
-		'chds' => '0,'.$max,
-		'chm' => 'B,E3F3FF,0,0,0|o,2a85b3,0,-1,6|o,FFFFFF,0,-1,4',
-		'chco' => '2a85b3',
-		'chxl'=> '0:|'. $legend1 .'|1:|'. $legend2 .'|2:|'. $label_clicks
+	$data = array_merge( array( 'Time' => 'Hits' ), $values );
+	$data = yourls_google_array_to_data_table( $data );
+	
+	$options = array(
+		"legend"      => "none",
+		"pointSize"   => "3",
+		"theme"       => "maximized",
+		"curveType"   => "function",
+		"width"       => 430,
+		"height"	  => 220,
+		"hAxis"       => "{minTextSpacing: 80, maxTextLines: 1, maxAlternation: 1}",
+		"vAxis"       => "{minValue: -0.5, format: '#'}",
+		"colors"	  => "['#2a85b3']",
 	);
-	$line_src = 'http://chart.apis.google.com/chart?' . http_build_query( $line );
-	//$line_src = yourls_match_current_protocol( $line_src, 'http://chart.apis.', 'https://www.' );
+	$options = yourls_apply_filter( 'stats_line_options', $options );
+	
+	$lineChart = yourls_google_viz_code( 'LineChart', $data, $options, $id );
 
-	echo yourls_apply_filter( 'stats_line', "<img src='$line_src' />", $values, $legend1_list, $legend2_list );
+	echo yourls_apply_filter( 'stats_line', $lineChart, $values, $options, $id );
 }
 
 // Return the number of days in a month. From php.net, used if PHP built without calendar functions
@@ -280,3 +248,52 @@ function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) 
 	}
 	return $array;
 }
+
+// Transform data array to data table for Google API
+function yourls_google_array_to_data_table( $data ){
+	$str  = "var data = google.visualization.arrayToDataTable([\n";
+	foreach( $data as $label => $values ){
+		if( !is_array( $values ) ) {
+			$values = array( $values );
+		}
+		$str .= "\t['$label',"; 
+		foreach( $values as $value ){
+			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+				$value = "'$value'";
+			}
+			$str .= "$value";
+		}		
+		$str .= "],\n";
+	}
+	$str = substr( $str, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
+	$str .= "]);\n"; // wrap it up	
+	return $str;
+}
+
+// Return javascript code that will display the Google Chart
+function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
+	$function_name = 'yourls_graph' . $id;
+	$code  = "\n<script id=\"$function_name\" type=\"text/javascript\">\n";
+	$code .= "function $function_name() { \n";
+
+	$code .= "$data\n";
+
+	$code .= "var options = {\n";
+	foreach( $options as $field => $value ) {
+		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+			$value = "\"$value\"";
+		}
+		$code .= "\t'$field': $value,\n";
+	}
+	$code  = substr( $code, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
+	$code .= "\t}\n";
+
+	$code .= "new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );";
+	$code .= "}\n";
+	$code .= "google.setOnLoadCallback( $function_name );\n";
+	$code .= "</script>\n";
+	$code .= "<div id=\"visualization_$id\"></div>\n";
+	
+	return $code;
+}
+
