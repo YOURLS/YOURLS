@@ -4,10 +4,11 @@
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>YOURLS: Your Own URL Shortener</title>
+	<link href='http://fonts.googleapis.com/css?family=Magra:400,700' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
 		/* Default Style */
 		body {
-			font-family: Verdana, Arial;
+			font-family: Verdana, Arial, sans-serif;
 			font-size: 12px;
 			color: #595441;
 			background:#E3F3FF;
@@ -85,15 +86,15 @@
 		    min-height: 150px;
 		    padding: 5px 20px 10px;
 		    text-align: left;
-			border-radius:15px;
+			z-index:2;
 		}
 		/* Title Style */
 		h1{margin:0px}
 		#Container h1 a {
 			display:block;
-			font-family: Verdana, Arial;
-			font-size: 22px;
-			font-weight: bold;
+			font-family: 'Magra', Verdana, Arial;
+			font-size: 32px;
+			font-weight: 700;
 			color: #2A85B3;
 			margin-top:0px;
 			margin-bottom: 0px;
@@ -109,9 +110,9 @@
 			text-decoration:underline;
 		}
 		h2 {
-			font-family: Verdana, Arial;
-			font-size: 18px;
-			font-weight: bold;
+			font-family: 'Magra', Verdana, Arial;
+			font-size: 22px;
+			font-weight: 700;
 			color: #5b87b4;
 			margin-top:50px;
 		}
@@ -121,8 +122,8 @@
 			color:#BFE0FE;
 		}
 		h3 {
-			font-family: Verdana, Arial;
-			font-size: 14px;
+			font-family: 'Magra', Verdana, Arial;
+			font-size: 18px;
 			font-weight: bold;
 			color: #73a4d6;
 			margin-top:2em;
@@ -134,8 +135,8 @@
 		/* Tabs */
 		ul#Tabs {
 			font-family: Verdana, Arial;
-			font-size: 12px;
-			font-weight: bold;
+			font-size: 13px;
+			font-weight: 400;
 			list-style-type: none;
 			padding-bottom: 28px;
 			border-bottom: 1px solid #2A85B3;
@@ -144,10 +145,10 @@
 		}
 		#Tabs li.Tab {
 			float: right;
-			height: 25px;
+			height: 23px;
 			background-color: #deedfb;
-			margin: 2px 0px 0px 5px;
-			border: 1px solid #2A85B3;
+			margin: 3px 0px 0px 5px;
+			border: 2px solid #2A85B3;
 			-webkit-border-top-left-radius: 10px;
 			-webkit-border-top-right-radius: 10px;
 			-moz-border-radius-topleft: 10px;
@@ -160,7 +161,7 @@
 			display: block;
 			color: #666666;
 			text-decoration: none;
-			padding: 5px;
+			padding: 3px 5px;
 		}
 		#Tabs li.Tab a:hover {
 			background-color: #bfe0fe;
@@ -174,13 +175,13 @@
 		/* Selected Tab */
 		#Tabs li.SelectedTab {
 			float: right;
-			height: 25px;
+			height: 24px;
 			background-color: #fff;
-			margin: 2px 0px 0px 5px;
-			border-top: 1px solid #2A85B3;
-			border-right: 1px solid #2A85B3;
-			border-left: 1px solid #2A85B3;
-			border-bottom: 4px solid #fff;
+			margin: 0px 0px 0px 5px;
+			border-top: 2px solid #2A85B3;
+			border-right: 2px solid #2A85B3;
+			border-left: 2px solid #2A85B3;
+			border-bottom: 6px solid #fff;
 			-webkit-border-top-left-radius: 10px;
 			-webkit-border-top-right-radius: 10px;
 			-moz-border-radius-topleft: 10px;
