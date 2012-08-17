@@ -50,18 +50,30 @@
 		div.sshot {
 		}
 		div.sshot p {
-			color:#5577a5;
-			font-size:90%;
+			zcolor:#5577a5;
+			zfont-size:90%;
 		}
 		div.sshot img {
 			margin-bottom:1em;
-			border-bottom:1px solid #ccc;
+			border:1px solid #2A85B3;
+			padding:10px;
+			border-radius:10px;
 		}
+		#fade {
+			position:absolute; background: #E3F3FF; width:100%; height:230px; top:0px; left:0px; z-index:-1;
+			background: -webkit-gradient(linear, left top, left bottom, from(rgba(227, 243, 255, 1)), to(rgba(227, 243, 255, 0)));
+			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */ 
+		}
+		#buttons{ width:80px; margin-top:10px; float:right; position:absolute; margin-left: 810px;}
+		#fb,#g1,#tw{ float:left; margin:0 5px; width: 60px; text-align: center; margin-bottom: 10px; padding:7px 2px; border:2px solid #2A85B3; background: #E3F3FF; border-radius:10px;}
+		#fb span {width:50px !important}
+
 		/* Place Holder Style */
 		#Container {
-			width: 950px;
+			width: 850px;
 			margin-left: auto;
-			margin-right: auto; 
+			margin-right: auto;
+			z-index:1337;
 		}
 		#Content {
 		    background: none repeat scroll 0 0 white;
@@ -101,7 +113,9 @@
 			font-size: 18px;
 			font-weight: bold;
 			color: #5b87b4;
+			margin-top:50px;
 		}
+		h2.first{margin-top:10px}
 		h2:before {
 			content: '\00BB  ';
 			color:#BFE0FE;
@@ -116,9 +130,6 @@
 		h3:before {
 			content: '\203A  ';
 			color:#BFE0FE;
-		}
-		ul+h2 {
-			margin-top:30px;
 		}
 		/* Tabs */
 		ul#Tabs {
@@ -211,9 +222,12 @@
 			padding-left:20px;
 		}
 	</style>
+	<!--[if IE]> <style>#fade{display:none}</style> <![endif]-->
 </head>
 <body>
+<div id="fb-root"></div>
 <div id="Container">
+
 	<!-- Title -->
 	<h1><a href="http://yourls.org/">YOURLS: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
 
@@ -231,9 +245,32 @@
 
 	<!-- Content -->
 	<div id="Content">
+
+		<div id="buttons">
+			<div id="fb">
+			<div class="fb-like" data-href="http://yourls.org/" data-send="false" data-layout="box_count" data-width="60" data-show-faces="true" data-font="verdana"></div>
+			
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=125474947598196";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+			</div>
+			<div id="g1">
+			<div class="g-plusone" data-size="tall" data-href="http://yourls.org/"></div>
+			<script type="text/javascript">(function(){var po=document.createElement('script');po.type='text/javascript';po.async=true;po.src='https://apis.google.com/js/plusone.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(po,s);})();</script>
+			</div>
+			<div id="tw">
+			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://yourls.org" data-via="ozh" data-lang="en" data-related="YOURLS" data-count="vertical">Tweet</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</div>
+		</div>
+
 		<!-- Index -->
 		<div id="AboutDiv">
-			<h2>About YOURLS</h2>
+			<h2 class='first'>About YOURLS</h2>
 			
 			<h3>What is YOURLS</h3>
 			<p>YOURLS is a small set of PHP scripts that will allow you to run your own URL shortening service (<em>a la</em> TinyURL). You can make it private or public, you can pick custom keyword URLs, it comes with its own API. You will love it.</p>
@@ -257,12 +294,12 @@
 			
 			<div class="sshot">
 				<p>Main admin dashboard</p>
-				<img src="http://yourls.org/images/admin-dashboard.gif" />
+				<img src="http://yourls.org/yourls-org-images/admin-dashboard.gif" />
 				
 				<p>Stats for each short URL</p>
-				<img src="http://yourls.org/images/stats-anim.gif" />
+				<img src="http://yourls.org/yourls-org-images/stats-anim.gif" />
 				
-				<p>See a live example of YOURLS stats on <a href="http://yourls.org/download+">http://yourls.org/download+</a></p>
+				<p>See a live example of YOURLS stats on <a href="http://yourls.org/cookie+">http://yourls.org/cookie+</a></p>
 			</div>
 			
 			<h2>Download</h2>
@@ -274,15 +311,15 @@
 			
 			<p>YOURLS is made by:</p>
 			<ul>
-				<li><a href="http://yourls.org/lesterchan" title="Visit Lester Chan's site">Lester Chan</a> &ndash <a href="http://twitter.com/gamerz">@GamerZ</a> on Twitter (initial idea)</li>
-				<li><a href="http://yourls.org/ozh" title"Visit Ozh's site">Ozh Richard</a> &ndash <a href="http://twitter.com/ozh">@Ozh</a> on Twitter (development)</li>
+				<li><a href="http://yourls.org/lesterchan" title="Visit Lester Chan's site">Lester Chan</a> &ndash; <a href="http://twitter.com/gamerz">@GamerZ</a> on Twitter (initial idea)</li>
+				<li><a href="http://yourls.org/ozh" title"Visit Ozh's site">Ozh Richard</a> &ndash; <a href="http://twitter.com/ozh">@Ozh</a> on Twitter (development)</li>
 			</ul>
-			<p>Keep up to date: follow <a href="http://twitter.com/ozh">Ozh</a> and read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>.
+			<p>Keep up to date: follow <a href="http://twitter.com/ozh">Ozh</a> and read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>
 		</div>
 
 		<!-- Installation Instructions -->
 		<div id="InstallDiv" style="display: none;">
-			<h2>Fresh Install</h2>
+			<h2 class='first'>Fresh Install</h2>
 			<ol>
 				<li>Unzip the YOURLS archive</li>
 				<li>Copy <code>user/config-sample.php</code> to <code>user/config.php</code></li>
@@ -317,7 +354,7 @@
 
 		<!-- Configuration Instructions -->	
 		<div id="ConfigDiv" style="display: none;">
-			<h2>Configuration (in <code>user/config.php</code>)</h2>
+			<h2 class='first'>Configuration (in <code>user/config.php</code>)</h2>
 			<h3>MySQL settings</h3>
 			<ul>
 				<li><code>YOURLS_DB_USER</code><br/>
@@ -390,7 +427,7 @@
 		
 		<!-- WordPress plugin -->
 		<div id="PluginDiv" style="display:none">
-			<h2>WordPress Plugin</h2>
+			<h2 class='first'>WordPress Plugin</h2>
 			
 			<h3>Features</h3>
 			<ul>
@@ -399,11 +436,6 @@
 				<li>Send a tweet on your Twitter account with the post title and short URL as you publish them</li>
 				<li>Works if YOURLS is hosted on the same server or on a remote server</li>
 			</ul>
-			
-			<h3>Screenshot</h3>
-			<div class="sshot">
-			<img src="http://yourls.org/images/wpplugin.gif"/>
-			</div>
 			
 			<h3>Download &amp; more informations</h3>
 			<ul>
@@ -415,11 +447,11 @@
 		
 		<!-- YOURLS plugins -->
 		<div id="PluginsDiv" style="display:none">
-			<h2>Plugins for YOURLS</h2>
+			<h2 class='first'>Plugins for YOURLS</h2>
 			
 			<h3>Plugins?</h3>
 			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
-			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation.</p>
+			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation and you can easily activate and deactivate a plugin from the admin interface.</p>
 			<p>There's a growing number of plugins available: check the <a href="http://yourls.org/pluginlist">Plugin list</a>.</p>
 
 			<h3>Documentation</h3>
@@ -430,7 +462,7 @@
 		
 		<!-- API -->
 		<div id="APIDiv" style="display:none">
-			<h2>YOURLS' API</h2>
+			<h2 class='first'>YOURLS' API</h2>
 			
 			<h3>Features</h3>
 			<ul>
@@ -502,7 +534,7 @@
 
 		<!-- FAQ Instructions -->	
 		<div id="FAQDiv" style="display: none;">
-			<h2>FAQ</h2>
+			<h2 class='first'>FAQ</h2>
 
 			<h3>Server requirements</h3>
 			<ol>
@@ -534,7 +566,7 @@
 			
 			<h3>Getting a short domain name for your YOURLS install</h3>
 			<ul>
-				<li>Unless you plan on making it public and popular, any shared hosting should be fine</li>
+				<li>Unless you plan on making it public and as popular as bit.ly, any shared hosting will be fine. Ozh runs all his YOURLS instance on <a href="http://www.dreamhost.com/r.cgi?114740">Dreamhost</a> and it works just great.</li>
 				<li><a href="http://domai.nr/">Domainr</a> is a fun search tool that might inspire and help you</li>
 				<li>Aim for exotic top level domains (.in, .im, .li ...), they're often cheap and a lot are still available. <a href="https://www.gandi.net/domain/buy/search/">Gandi</a> is a pretty comprehensive registrar, for instance.</li>
 			</ul>
@@ -569,42 +601,125 @@
 		</div>
 		
 		
-				<!-- More -->	
+		<!-- More -->	
 		<div id="MoreDiv" style="display: none;">
 		
-			<h2>Community</h2>
+			<h2 class='first'>Community</h2>
 			
 			<p>YOURLS is open source, so the community of users plays a great role in its development, by contributing, helping others or giving feedback that helps improve the software.</p>
 			
 			<h3>Resources</h3>
 			<ul>
 				<li>The official <a href="http://blog.yourls.org">YOURLS blog</a>, for news, hints and showcase.</li>
-				<li>The official <a href="http://blog.yourls.org/forums/">YOURLS forums</a>: show off, discuss ideas, announce your plugins, seek help.</li>
 				<li>The <a href="http://yourls.org/wiki">wiki</a>: advanced documentation, plugins, tips and more</li>
+				<li>Follow <a href="https://twitter.com/YOURLS">@YOURLS</a> to get the scoops on development, and <a href="https://twitter.com/ozh">@Ozh</a> for tips and news (and random geekiness too)</li>
 			</ul>
 		
 			<h2>Showcase</h2>
 
 			<h3>Here are a few examples of sites running YOURLS with a unique design or concept</h3>
-			
 			<ul>
 				<li><a href="http://mrte.ch/">http://mrte.ch/</a><br/>
 				Mr Tech's public YOURLS setup, listing top links and some stats</li>
+				
+				<li><a href="http://freze.it/">http://freze.it/</a></br/>
+				Shortens and saves a screenshot of a long URL</li>
+				
 				<li><a href="http://xib.me/">http://xib.me/</a></br/>
 				A nicely styled YOURLS public interface</li>
+				
 				<li><a href="http://girv.in/">http://girv.in/</a><br/>
-				John Girvin's YOURLS setup with all links in a sortable display</li>
+				John Girvin's YOURLS setup with all links in a sortable display (and its <a href="https://github.com/johngirvin/yourls-index-page">source</a>)</li>
+				
 				<li><a href="http://rml.me/">http://rml.me/</a><br/>
 				A personal URL shortener front page showing new links and most clicked links</li>
-				<li><a href="http://6bit.us/">6Bit.us</a><br/>
-				A public YOURLS setup with a different approach: it offers widgets to embed in other sites</li>
+				
+				<li><a href="http://vt802.us/">http://vt802.us/</a><br/>
+				Defined as "The World's First Vermont-centric URL Shortener"</li>
+				
+				<li><a href="http://yourwish.es/">http://yourwish.es/</a><br/>
+				Easily share an Amazon wishlist</li>
+				
 				<li><a href="http://vbly.us">http://vbly.us</a><br/>
 				Public YOURLS setup and early adopter, run by famous sex writer Violet Blue as "the internet's first and only sex-positive url shortener", once taken down by Libya (<a href="http://www.readwriteweb.com/archives/libya_shuts_down_vbly_bitly_owly_next.php">story</a>)</li>
 			</ul>
 			
-			<h2>More stuff about or with YOURLS</h2>
-			
+			<h2>YOURLS and other platforms or frameworks</h2>
+			<ul>		
+				<li><a href="http://github.com/pjain/WWW-Shorten-Yourls">Perl</a><br/>
+				WWW-Shorten-Yourls is a Perl module to shorten URLs using YOURLS</li>
+				
+				<li><a href="https://github.com/threestage/yourls">Ruby</a><br/>
+				A Ruby wrapper for the YOURLS API</li>
+				
+				<li><a href="http://tflink.github.com/python-yourls/">Python</a><br/>
+				A Python client for YOURLS</li>
+				
+				<li><a href="http://neocotic.com/yourls-api/">Javascript</a><br/>
+				JavaScript bindings for the YOURLS API to leverage JSONP support</li>
+
+				<li><a href="https://github.com/driflash/CakePHP-YOURLS-Plugin">CakePHP</a><br/>
+				Plugin which integrates CakePHP with Yourls</li>
+				
+				<li><a href="http://drupal.org/project/yourls">Drupal</a><br/>
+				Allows for the automatic creation of short urls using a YOURLS installation</li>
+				
+				<li><a href="https://github.com/rthees/yourls-status-net">status.net</a><br/>
+				A plugin for status.net to use YOURLS</li>
+				
+				<li><a href="http://developer.sharetronix.com/mpview/12/tag:yourls">Sharetronix</a><br/>
+				A YOURLS addon for Sharetronix</li>
+				
+			</ul>
+				
+			<h2>YOURLS works with your favorite sofware or device</h2>
 			<ul>
+				<li><a href="http://www.eugenegordin.com/etc/how-to-use-your-custom-yourls-shortener-with-tweetie-2.html">Tweetie 2</a><br/>
+				How to set up Tweetie2 so it uses your own service</li>
+				
+				<li><a href="http://remkusdevries.com/how-to-setup-tweetdeck-with-yourls/">TweetDeck</a><br/>
+				Set up TweetDeck to run with YOURLS</li>
+				
+				<li><a href="http://2fatdads.com/2012/02/how-to-make-yourls-org-work-in-tweetbot/">Tweetbot</a><br/>
+				Make Tweetbot run with YOURLS</li>
+				
+				<li><a href="http://christophe.rousee.fr/plugin-yourls-pour-seesmic-desktop-2">Seesmic</a><br/>
+				Use YOURLS with Seesmic</li>
+				
+				<li><a href="http://blog.yourls.org/2011/09/how-to-use-twitterfeed-with-your-custom-yourls-url-shortener/">Twitterfeed</a><br/>
+				Use Twitterfeed with YOURLS</li>
+
+				<li><a href="http://timi.im/app/">Mac Client</a><br/>
+				Simple app to have a global keyboard shortcut send a link to YOURLS</li>
+
+				<li><a href="https://play.google.com/store/apps/details?id=com.mndroid.apps.urly">Android</a><br/>
+				URLy is an Android app that plays nice with YOURLS</li>
+
+				<li><a href="http://itunes.apple.com/us/app/clicklytics-track-clicks-on/id444008024?mt=8">iOS</a><br/>
+				Clicklytics track links using YOURLS on iPhone and iPad</li>
+
+				<li><a href="https://github.com/ukoms/Chrourls">Chrourls</a><br/>
+				Google Chrome quick link shortening addon for YOURLS</li>
+
+				<li><a href="https://addons.mozilla.org/en-us/firefox/addon/yourls-shortener/">Firefox Addon</a><br/>
+				Firefox Addon for YOURLS</li>
+
+				<li><a href="http://www.chrismarquardt.com/blog.php?id=7952283233607249761">Textexpander and YOURLS</a><br/>
+				Making YOURLS and Textexpander on the Mac play together</li>
+			</ul>
+
+			<h2>More stuff to do with YOURLS</h2>
+			<ul>
+				
+				<li><a href="https://github.com/tomslominski/infinity-squared">Infinity Squared</a><br/>
+				&#8734;&sup2; is a public page theme for YOURLS to help you design your own public interface</li>
+				
+				<li><a href="https://github.com/johngirvin/yourls-index-page">John Girvin's page</a><br/>
+				The source of http://girv.in/ home page</li>
+				
+				<li><a href="https://github.com/ctrloptcmd/xs.ht">xs.ht</a><br/>
+				An example front end page for YOURLS</li>
+				
 				<li><a href="http://screenr.com/nTs">http://screenr.com/nTs</a><br/>
 				A screencast explaining how to setup YOURLS</li>
 				
@@ -617,41 +732,29 @@
 				<li><a href="http://www.stewartallen.org/2010/08/yourls-twitter-tools-wordpress-plugin/">Twitter Tools & YOURLS</a><br/>
 				Companion plugin for Alex King's Twitter Tool for WordPress, that enables YOURLS support</li>
 				
-				<li><a href="http://github.com/pjain/WWW-Shorten-Yourls">WWW-Shorten-Yourls</a><br/>
-				A Perl module to shorten URLs using YOURLS</li>
-				
-				<li><a href="https://rubygems.org/gems/yourls">YOURLS Ruby</a><br/>
-				A Ruby wrapper for the YOURLS API</li>
-				
-				<li><a href="http://sharetronix.com/sharetronix/addons/view/41">Sharetronix</a><br/>
-				A YOURLS addon for Sharetronix</li>
-				
-				<li><a href="http://www.chrismarquardt.com/blog.php?id=7952283233607249761">Textexpander and YOURLS</a><br/>
-				Making YOURLS and Textexpander on the Mac play together</li>
-				
-				<li><a href="http://www.eugenegordin.com/etc/how-to-use-your-custom-yourls-shortener-with-tweetie-2.html">YOURLS and Tweetie 2</a><br/>
-				How to set up Tweetie2 so it uses your own service</li>
-				
-				<li><a href="http://remkusdevries.com/how-to-setup-tweetdeck-with-yourls/">YOURLS and TweetDeck</a><br/>
-				How to set up TweetDeck so it uses your own service</li>
-				
-				<li><a href="http://mt-hacks.com/AzaZ">YOURLS with Movable Type</a><br/>
-				Twitter Tools for Movable Type supports custom YOURLS setup</li>
-				
-				<li><a href="https://github.com/driflash/CakePHP-YOURLS-Plugin">CakePHP YOURLS Plugin</a><br/>
-				Integrates CakePHP with Yourls</li>
-				
 				<li><a href="http://code.google.com/p/yourls/issues/detail?id=137">Export URLS as text list</a><br/>
 				A simple script to list all URLs, one per line, in plain text (for using as an indexer config file, for example)</li>
 				
 				<li>YOURLS featured on <a href="http://lifehacker.com/5335216/make-your-own-url-shortening-service">Lifehacker</a></li>
 			</ul>
 
+			<h2>"Celebrity endorsements", sort of.</h2>
+			<ul>
+				
+				<li><a href="http://ithem.es/">http://ithem.es/</a> by <a href="http://www.ithemes.com/">iThemes</a></li>
+				
+				<li><a href="http://virg.in/">http://virg.in/</a> for the <a href="http://www.virgin.com/">Virgin Group companies</a></li>
+				
+				<li><a href="http://dhurl.org/">http://dhurl.org/</a> by <a href="http://www.dreamhost.com/">Dreamhost</a></li>
+				
+			</ul>
+				
+				
 		</div>
 	</div> <!-- content -->
 </div> <!-- container -->
 
-</p></div>
+<div id="fade"></div>
 
 	<script type="text/javascript">
 	/* <![CDATA[*/
@@ -679,6 +782,7 @@
 		// highlight & display target
 		document.getElementById(target+'Div').style.display = 'block';
 		document.getElementById(target+'Tab').className = 'SelectedTab';
+		randbg();
 		try { el.blur(); } catch(err) {}
 	}
 	// Get tab list
@@ -687,6 +791,13 @@
 	if (location.hash) {
 		toggle(location.hash);
 	}
+	// Background fancyness
+	function randbg(){
+		var rndbg = [ 'bg_ants.png', 'bg_circles.png', 'bg_cross.png', 'bg_diag.png', 'bg_fuzzy.png', 'bg_yourls.png' ];
+		var bg = rndbg[ Math.floor( Math.random() * rndbg.length ) ];
+		document.body.style.background='#E3F3FF url(user/plugins/random-bg/img/'+bg+')';
+	};
+	randbg();
 	/* ]]> */
 	</script>
 
