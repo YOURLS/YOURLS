@@ -64,20 +64,21 @@ function yourls_keyword_is_reserved( $keyword ) {
 	return yourls_apply_filter( 'keyword_is_reserved', $reserved, $keyword );
 }
 
-// Function: Get IP Address. Returns a DB safe string.
+// Function: Get client IP Address. Returns a DB safe string.
 function yourls_get_IP() {
-	if( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
-		$ip = $_SERVER['REMOTE_ADDR'];
-	} else {
-		if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
-		} else if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} else if(!empty($_SERVER['HTTP_VIA '])) {
-			$ip = $_SERVER['HTTP_VIA '];
+	// Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
+	$headers = array( 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' );
+	foreach( $headers as $header ) {
+		if ( !empty( $_SERVER[ $header ] ) ) {
+			$ip = $_SERVER[ $header ];
+			break;
 		}
 	}
-
+	
+	// headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
+	if ( strpos( $ip, ',' ) !== false )
+		$ip = substr( $ip, 0, strpos( $ip, ',' ) );
+	
 	return yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
 
