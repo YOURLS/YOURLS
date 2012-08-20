@@ -13,9 +13,9 @@ function yourls_int2string( $num, $chars = null ) {
 	while( $num >= $len ) {
 		$mod = bcmod( $num, $len );
 		$num = bcdiv( $num, $len );
-		$string = $chars[$mod] . $string;
+		$string = $chars[ $mod ] . $string;
 	}
-	$string = $chars[$num] . $string;
+	$string = $chars[ $num ] . $string;
 	
 	return yourls_apply_filter( 'int2string', $string, $num, $chars );
 }
@@ -45,7 +45,7 @@ function yourls_string2htmlid( $string ) {
 function yourls_sanitize_string( $string ) {
 	// make a regexp pattern with the shorturl charset, and remove everything but this
 	$pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
-	$valid = substr(preg_replace('![^'.$pattern.']!', '', $string ), 0, 199);
+	$valid = substr( preg_replace( '![^'.$pattern.']!', '', $string ), 0, 199 );
 	
 	return yourls_apply_filter( 'sanitize_string', $valid, $string );
 }
@@ -104,14 +104,14 @@ function yourls_clean_url( $url ) {
 
 // Perform a replacement while a string is found, eg $subject = '%0%0%0DDD', $search ='%0D' -> $result =''
 // Stolen from WP's _deep_replace
-function yourls_deep_replace($search, $subject){
+function yourls_deep_replace( $search, $subject ){
 	$found = true;
 	while($found) {
 		$found = false;
 		foreach( (array) $search as $val ) {
-			while(strpos($subject, $val) !== false) {
+			while( strpos( $subject, $val ) !== false ) {
 				$found = true;
-				$subject = str_replace($val, '', $subject);
+				$subject = str_replace( $val, '', $subject );
 			}
 		}
 	}
@@ -121,20 +121,20 @@ function yourls_deep_replace($search, $subject){
 
 // Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
 // TODO FIXME FFS: unused ?
-function yourls_sanitize_int($in) {
-	return ( substr(preg_replace('/[^0-9]/', '', strval($in) ), 0, 20) );
+function yourls_sanitize_int( $in ) {
+	return ( substr( preg_replace( '/[^0-9]/', '', strval( $in ) ), 0, 20 ) );
 }
 
 // Make sure a integer is safe
 // Note: this is not checking for integers, since integers on 32bits system are way too limited
 // TODO: find a way to validate as integer
-function yourls_intval($in) {
-	return yourls_escape($in);
+function yourls_intval( $in ) {
+	return yourls_escape( $in );
 }
 
 // Escape a string
 function yourls_escape( $in ) {
-	return mysql_real_escape_string($in);
+	return mysql_real_escape_string( $in );
 }
 
 // Sanitize an IP address
@@ -154,7 +154,7 @@ function yourls_sanitize_date( $date ) {
 function yourls_sanitize_date_for_sql( $date ) {
 	if( !yourls_sanitize_date( $date ) )
 		return false;
-	return date('Y-m-d', strtotime( $date ) );
+	return date( 'Y-m-d', strtotime( $date ) );
 }
 
 // Return word or words if more than one
@@ -165,7 +165,7 @@ function yourls_plural( $word, $count=1 ) {
 // Return trimmed string
 function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	$newstring = $string;
-	if( function_exists('mb_substr') ) {
+	if( function_exists( 'mb_substr' ) ) {
 		if ( mb_strlen( $newstring ) > $length ) {
 			$newstring = mb_substr( $newstring, 0, $length - mb_strlen( $append ), 'UTF-8' ) . $append;	
 		}
@@ -190,11 +190,11 @@ function yourls_sanitize_filename( $file ) {
 }
 
 // Check if a string seems to be UTF-8. Stolen from WP.
-function yourls_seems_utf8($str) {
-	$length = strlen($str);
-	for ($i=0; $i < $length; $i++) {
-		$c = ord($str[$i]);
-		if ($c < 0x80) $n = 0; # 0bbbbbbb
+function yourls_seems_utf8( $str ) {
+	$length = strlen( $str );
+	for ( $i=0; $i < $length; $i++ ) {
+		$c = ord( $str[ $i ] );
+		if ( $c < 0x80 ) $n = 0; # 0bbbbbbb
 		elseif (($c & 0xE0) == 0xC0) $n=1; # 110bbbbb
 		elseif (($c & 0xF0) == 0xE0) $n=2; # 1110bbbb
 		elseif (($c & 0xF8) == 0xF0) $n=3; # 11110bbb

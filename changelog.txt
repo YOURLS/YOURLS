@@ -73,6 +73,8 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - added: full jsonp support
 - added: ability to use encrypted passwords in the config file
 - fixed: support for http://www.sho.rt/bleh and http://sho.rt/bleh
+- added: support for any favicon dropped in the /user directory
+- updated: Google Visualization API instead of deprecated Google Charts
 - fixed: bugs, bugs, bugs
 - added: hooks, hooks, hooks
 - improved: things, things, things

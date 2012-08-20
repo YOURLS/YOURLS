@@ -1,11 +1,11 @@
 <?php
-define('YOURLS_AJAX', true);
-define('YOURLS_ADMIN', true);
-require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
+define( 'YOURLS_AJAX', true );
+define( 'YOURLS_ADMIN', true );
+require_once( dirname( dirname( __FILE__ ) ) .'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 // This file will output a JSON string
-header('Content-type: application/json');
+header( 'Content-type: application/json' );
 
 if( !isset( $_REQUEST['action'] ) )
 	die();

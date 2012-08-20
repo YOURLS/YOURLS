@@ -31,16 +31,16 @@ function yourls_array_to_json( $array ){
             // formatting each key and value properly as we go.
 
             // Format the key:
-            if( is_numeric($key) ){
+            if( is_numeric( $key ) ){
                 $key = "key_$key";
             }
-            $key = '"'.addslashes($key).'"';
+            $key = '"'.addslashes( $key ).'"';
 
             // Format the value:
             if( is_array( $value )){
                 $value = yourls_array_to_json( $value );
             } else if( !is_numeric( $value ) || is_string( $value ) ){
-                $value = '"'.addslashes($value).'"';
+                $value = '"'.addslashes( $value ).'"';
             }
 
             // Add to staging array:
@@ -74,51 +74,51 @@ function yourls_array_to_json( $array ){
 }
 
 // Compat http_build_query for PHP4
-if (!function_exists('http_build_query')) {
-	function http_build_query($data, $prefix=null, $sep=null) {
-		return yourls_http_build_query($data, $prefix, $sep);
+if ( !function_exists( 'http_build_query' ) ) {
+	function http_build_query( $data, $prefix=null, $sep=null ) {
+		return yourls_http_build_query( $data, $prefix, $sep );
 	}
 }
 
 // from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
-function yourls_http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
+function yourls_http_build_query( $data, $prefix=null, $sep=null, $key='', $urlencode=true ) {
 	$ret = array();
 
 	foreach ( (array) $data as $k => $v ) {
 		if ( $urlencode)
-			$k = urlencode($k);
+			$k = urlencode( $k );
 		if ( is_int($k) && $prefix != null )
 			$k = $prefix.$k;
-		if ( !empty($key) )
+		if ( !empty( $key ) )
 			$k = $key . '%5B' . $k . '%5D';
 		if ( $v === NULL )
 			continue;
 		elseif ( $v === FALSE )
 			$v = '0';
 
-		if ( is_array($v) || is_object($v) )
-			array_push($ret,yourls_http_build_query($v, '', $sep, $k, $urlencode));
+		if ( is_array( $v ) || is_object( $v ) )
+			array_push( $ret,yourls_http_build_query( $v, '', $sep, $k, $urlencode ) );
 		elseif ( $urlencode )
-			array_push($ret, $k.'='.urlencode($v));
+			array_push( $ret, $k.'='.urlencode( $v ) );
 		else
-			array_push($ret, $k.'='.$v);
+			array_push( $ret, $k.'='.$v );
 	}
 
 	if ( NULL === $sep )
-		$sep = ini_get('arg_separator.output');
+		$sep = ini_get( 'arg_separator.output' );
 
-	return implode($sep, $ret);
+	return implode( $sep, $ret );
 }
 
 // htmlspecialchars_decode for PHP < 5.1
-if ( !function_exists('htmlspecialchars_decode') ) {
-	function htmlspecialchars_decode($text) {
-		return strtr($text, array_flip(get_html_translation_table(HTML_SPECIALCHARS)));
+if ( !function_exists( 'htmlspecialchars_decode' ) ) {
+	function htmlspecialchars_decode( $text ) {
+		return strtr( $text, array_flip( get_html_translation_table( HTML_SPECIALCHARS ) ) );
 	}
 }
 
 // BC Math functions (assuming if one doesn't exist, none does)
-if ( !function_exists( 'bcdiv' )) {
+if ( !function_exists( 'bcdiv' ) ) {
 	function bcdiv( $dividend, $divisor ) {
 		$quotient = floor( $dividend/$divisor );
 		return $quotient;

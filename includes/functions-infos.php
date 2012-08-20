@@ -38,7 +38,7 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 	// Trim array: $limit first item + the sum of all others
 	if ( count( $data ) > $limit ) {
 		$i= 0;
-		$trim_data = array('Others' => 0);
+		$trim_data = array( 'Others' => 0 );
 		foreach( $data as $item=>$value ) {
 			$i++;
 			if( $i <= $limit ) {
@@ -53,7 +53,7 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 	// Scale items
 	$_data = yourls_scale_data( $data );
 	
-	list($width, $height) = explode('x', $size);
+	list($width, $height) = explode( 'x', $size );
 	
 	$options = array(
 		'theme'  => 'maximized',
@@ -66,7 +66,7 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 	);
 	$options = yourls_apply_filter( 'stats_pie_options', $options );
 
-	$script_data = array_merge( array( 'Country' => 'Value' ), $_data);
+	$script_data = array_merge( array( 'Country' => 'Value' ), $_data );
 	$script_data = yourls_google_array_to_data_table( $script_data );
 
 	$pie = yourls_google_viz_code( 'PieChart', $script_data, $options, $id );
@@ -98,35 +98,34 @@ function yourls_build_list_of_days( $dates ) {
 
 	// Get first & last years from our range. In our example: 2009 & 2009
 	$first_year = key( $dates );
-	$last_year  = end( array_keys($dates) );
+	$last_year  = end( array_keys( $dates ) );
 	reset( $dates );
 
 	// Get first & last months from our range. In our example: 08 & 09
-	$first_month = key( $dates[$first_year] );
-	$last_month  = end( array_keys($dates[$last_year]) );
+	$first_month = key( $dates[ $first_year ] );
+	$last_month  = end( array_keys( $dates[ $last_year ] ) );
 	reset( $dates );
 	
 	// Get first & last days from our range. In our example: 29 & 05
-	$first_day = key( $dates[$first_year][$first_month] );
-	$last_day  = end( array_keys($dates[$last_year][$last_month]) );
+	$first_day = key( $dates[ $first_year ][ $first_month ] );
+	$last_day  = end( array_keys( $dates[ $last_year ][ $last_month ] ) );
 
 	// Now build a list of all years (2009), month (08 & 09) and days (all from 2009-08-29 to 2009-09-05)
-	$list_of_years = array();
+	$list_of_years  = array();
 	$list_of_months = array();
-	$list_of_days = array();
+	$list_of_days   = array();
 	for ( $year = $first_year; $year <= $last_year; $year++ ) {
-		$_year = sprintf('%04d', $year);
-		$list_of_years[$_year] = $_year;
+		$_year = sprintf( '%04d', $year );
+		$list_of_years[ $_year ] = $_year;
 		$current_first_month = ( $year == $first_year ? $first_month : '01' );
 		$current_last_month  = ( $year == $last_year ? $last_month : '12' );
 		for ( $month = $current_first_month; $month <= $current_last_month; $month++ ) {
-			$_month = sprintf('%02d', $month);
-			$list_of_months[$_month] = $_month;
+			$_month = sprintf( '%02d', $month );
+			$list_of_months[ $_month ] = $_month;
 			$current_first_day = ( $year == $first_year && $month == $first_month ? $first_day : '01' );
-			$current_last_day  = ( $year == $last_year && $month == $last_month ? $last_day : yourls_days_in_month($month, $year) );
+			$current_last_day  = ( $year == $last_year && $month == $last_month ? $last_day : yourls_days_in_month( $month, $year) );
 			for ( $day = $current_first_day; $day <= $current_last_day; $day++ ) {
-				$day = sprintf('%02d', $day);
-				//$key = "$_year-$_month-$day";
+				$day = sprintf( '%02d', $day );
 				$key = date( 'M d, Y', mktime( 0, 0, 0, $_month, $day, $_year ) );
 				$list_of_days[ $key ] = isset( $dates[$_year][$_month][$day] ) ? $dates[$_year][$_month][$day] : 0;
 			}
@@ -134,9 +133,9 @@ function yourls_build_list_of_days( $dates ) {
 	}
 	
 	return array(
-		'list_of_days' => $list_of_days,
+		'list_of_days'   => $list_of_days,
 		'list_of_months' => $list_of_months,
-		'list_of_years' => $list_of_years,
+		'list_of_years'  => $list_of_years,
 	);
 }
 
@@ -179,9 +178,9 @@ function yourls_stats_line( $values, $id = null ) {
 }
 
 // Return the number of days in a month. From php.net, used if PHP built without calendar functions
-function yourls_days_in_month($month, $year) {
+function yourls_days_in_month( $month, $year ) {
 	// calculate number of days in a month
-	return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+	return $month == 2 ? ( $year % 4 ? 28 : ( $year % 100 ? 29 : ( $year % 400 ? 28 : 29 ) ) ) : ( ( $month - 1 ) % 7 % 2 ? 30 : 31 );
 }
 
 // Get max value from date array of 'Aug 12, 2012' = '1337'

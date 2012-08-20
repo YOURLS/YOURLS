@@ -23,7 +23,7 @@ yourls_do_action( 'pre_load_template', $request );
 
 // Redirection:
 if( preg_match( "@^([$pattern]+)/?$@", $request, $matches ) ) {
-	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
+	$keyword = isset( $matches[1] ) ? $matches[1] : '';
 	$keyword = yourls_sanitize_keyword( $keyword );
 	yourls_do_action( 'load_template_go', $keyword );
 	include( YOURLS_ABSPATH.'/yourls-go.php' );
@@ -32,7 +32,7 @@ if( preg_match( "@^([$pattern]+)/?$@", $request, $matches ) ) {
 
 // Stats:
 if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
-	$keyword   = isset( $matches[1] ) ? $matches[1] : '';
+	$keyword = isset( $matches[1] ) ? $matches[1] : '';
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$aggregate = isset( $matches[2] ) ? (bool)$matches[2] && yourls_allow_duplicate_longurls() : false;
 	yourls_do_action( 'load_template_infos', $keyword );

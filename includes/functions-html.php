@@ -5,7 +5,7 @@ function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
 	<h1>
-		<a href="<?php echo yourls_admin_url('index.php') ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
@@ -130,7 +130,7 @@ function yourls_html_footer() {
 	?>
 	</div> <?php // wrap ?>
 	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
-	<?php if( defined('YOURLS_DEBUG') && YOURLS_DEBUG == true ) {
+	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
 	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
@@ -499,14 +499,14 @@ function yourls_html_link( $href, $title = '', $element = '' ) {
 function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
 	
-	$action = ( isset($_GET['action']) && $_GET['action'] == 'logout' ? '?' : '' );
+	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
 	yourls_html_logo();
 	?>
 	<div id="login">
 		<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
-				if(!empty($error_msg)) {
+				if( !empty( $error_msg ) ) {
 					echo '<p class="error">'.$error_msg.'</p>';
 				}
 			?>
@@ -544,18 +544,18 @@ function yourls_html_menu() {
 	$admin_sublinks = array();
 	
 	$admin_links['admin'] = array(
-		'url'   => yourls_admin_url('index.php'),
-		'title' => 'Go to the admin interface',
+		'url'    => yourls_admin_url( 'index.php' ),
+		'title'  => 'Go to the admin interface',
 		'anchor' => 'Admin interface'
 	);
 	
 	if( yourls_is_admin() ) {
 		$admin_links['tools'] = array(
-			'url'    => yourls_admin_url('tools.php'),
+			'url'    => yourls_admin_url( 'tools.php' ),
 			'anchor' => 'Tools',
 		);
 		$admin_links['plugins'] = array(
-			'url'    => yourls_admin_url('plugins.php'),
+			'url'    => yourls_admin_url( 'plugins.php' ),
 			'anchor' => 'Manage Plugins',
 		);
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();

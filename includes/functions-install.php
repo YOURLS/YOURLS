@@ -2,12 +2,12 @@
 
 // Check if mod_rewrite is enabled. Note: unused, not reliable enough.
 function yourls_check_mod_rewrite() {
-	return yourls_apache_mod_loaded('mod_rewrite');
+	return yourls_apache_mod_loaded( 'mod_rewrite' );
 }
 
 // Check if extension cURL is enabled
 function yourls_check_curl() {
-	return function_exists('curl_init');
+	return function_exists( 'curl_init' );
 }
 
 // Check if server has MySQL 4.1+
@@ -24,25 +24,25 @@ function yourls_check_php_version() {
 // Check if server is an Apache
 function yourls_is_apache() {
 	return (
-	   strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false
-	|| strpos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false
+	   strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache' ) !== false
+	|| strpos( $_SERVER['SERVER_SOFTWARE'], 'LiteSpeed' ) !== false
 	);
 }
 
 // Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
-function yourls_apache_mod_loaded($mod, $default = false) {
+function yourls_apache_mod_loaded( $mod, $default = false ) {
 	if ( !yourls_is_apache() )
 		return false;
 
-	if ( function_exists('apache_get_modules') ) {
+	if ( function_exists( 'apache_get_modules' ) ) {
 		$mods = apache_get_modules();
-		if ( in_array($mod, $mods) )
+		if ( in_array( $mod, $mods ) )
 			return true;
-	} elseif ( function_exists('phpinfo') ) {
+	} elseif ( function_exists( 'phpinfo' ) ) {
 			ob_start();
-			phpinfo(8);
+			phpinfo( 8 );
 			$phpinfo = ob_get_clean();
-			if ( false !== strpos($phpinfo, $mod) )
+			if ( false !== strpos( $phpinfo, $mod ) )
 				return true;
 	}
 	return $default;
@@ -70,8 +70,8 @@ function yourls_create_htaccess() {
 
 // Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
 function yourls_insert_with_markers( $filename, $marker, $insertion ) {
-	if (!file_exists( $filename ) || is_writeable( $filename ) ) {
-		if (!file_exists( $filename ) ) {
+	if ( !file_exists( $filename ) || is_writeable( $filename ) ) {
+		if ( !file_exists( $filename ) ) {
 			$markerdata = '';
 		} else {
 			$markerdata = explode( "\n", implode( '', file( $filename ) ) );
@@ -84,7 +84,7 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 		if ( $markerdata ) {
 			$state = true;
 			foreach ( $markerdata as $n => $markerline ) {
-				if (strpos($markerline, '# BEGIN ' . $marker) !== false)
+				if ( strpos($markerline, '# BEGIN ' . $marker) !== false )
 					$state = false;
 				if ( $state ) {
 					if ( $n + 1 < count( $markerdata ) )
@@ -92,9 +92,9 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 					else
 						fwrite( $f, "{$markerline}" );
 				}
-				if (strpos($markerline, '# END ' . $marker) !== false) {
+				if ( strpos( $markerline, '# END ' . $marker ) !== false ) {
 					fwrite( $f, "# BEGIN {$marker}\n" );
-					if ( is_array( $insertion ))
+					if ( is_array( $insertion ) )
 						foreach ( $insertion as $insertline )
 							fwrite( $f, "{$insertline}\n" );
 					fwrite( $f, "# END {$marker}\n" );
@@ -167,9 +167,9 @@ function yourls_create_sql_tables() {
 	
 	// Create tables
 	foreach ( $create_tables as $table_name => $table_query ) {
-		$ydb->query($table_query);
-		$create_success = $ydb->query("SHOW TABLES LIKE '$table_name'");
-		if($create_success) {
+		$ydb->query( $table_query );
+		$create_success = $ydb->query( "SHOW TABLES LIKE '$table_name'" );
+		if( $create_success ) {
 			$create_table_count++;
 			$success_msg[] = "Table '$table_name' created."; 
 		} else {

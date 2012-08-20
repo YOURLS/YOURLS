@@ -7,7 +7,7 @@ function yourls_is_valid_user() {
 		return true;
 
 	// Logout request
-	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout') {
+	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
 		return 'Logged out successfully';
@@ -23,8 +23,8 @@ function yourls_is_valid_user() {
 		// API only: Secure (no login or pwd) and time limited token
 		// ?timestamp=12345678&signature=md5(totoblah12345678)
 		( yourls_is_API() &&
-		  isset($_REQUEST['timestamp']) && !empty($_REQUEST['timestamp']) &&
-		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
+		  isset( $_REQUEST['timestamp'] ) && !empty($_REQUEST['timestamp'] ) &&
+		  isset( $_REQUEST['signature'] ) && !empty($_REQUEST['signature'] )
 		)
 		{
 			yourls_do_action( 'pre_login_signature_timestamp' );
@@ -35,8 +35,8 @@ function yourls_is_valid_user() {
 		// API only: Secure (no login or pwd)
 		// ?signature=md5(totoblah)
 		( yourls_is_API() &&
-		  !isset($_REQUEST['timestamp']) &&
-		  isset($_REQUEST['signature']) && !empty($_REQUEST['signature'])
+		  !isset( $_REQUEST['timestamp'] ) &&
+		  isset( $_REQUEST['signature'] ) && !empty( $_REQUEST['signature'] )
 		)
 		{
 			yourls_do_action( 'pre_login_signature' );
@@ -45,7 +45,7 @@ function yourls_is_valid_user() {
 	
 	elseif
 		// API or normal: login with username & pwd
-		( isset($_REQUEST['username']) && isset($_REQUEST['password'])
+		( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] )
 		  && !empty( $_REQUEST['username'] ) && !empty( $_REQUEST['password']  ) )
 		{
 			yourls_do_action( 'pre_login_username_password' );
@@ -55,7 +55,7 @@ function yourls_is_valid_user() {
 	elseif
 		// Normal only: cookies
 		( !yourls_is_API() && 
-		  isset($_COOKIE['yourls_username']) && isset($_COOKIE['yourls_password']) )
+		  isset( $_COOKIE['yourls_username'] ) && isset( $_COOKIE['yourls_password'] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$valid = yourls_check_auth_cookie();
@@ -73,7 +73,7 @@ function yourls_is_valid_user() {
 	// Login failed
 	yourls_do_action( 'login_failed' );
 
-	if ( isset($_REQUEST['username']) || isset($_REQUEST['password']) ) {
+	if ( isset( $_REQUEST['username'] ) || isset( $_REQUEST['password'] ) ) {
 		return 'Invalid username or password';
 	} else {
 		return 'Please log in';
@@ -109,8 +109,8 @@ function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if( 
-			yourls_salt($valid_user) == $_COOKIE['yourls_username']
-			&& yourls_salt($valid_password) == $_COOKIE['yourls_password'] 
+			yourls_salt( $valid_user ) == $_COOKIE['yourls_username']
+			&& yourls_salt( $valid_password ) == $_COOKIE['yourls_password'] 
 		) {
 			yourls_set_user( $valid_user );
 			return true;
@@ -177,7 +177,7 @@ function yourls_store_cookie( $user = null ) {
 		if( isset($yourls_user_passwords[$user]) ) {
 			$pass = $yourls_user_passwords[$user];
 		} else {
-			die('Stealing cookies?'); // This should never happen
+			die( 'Stealing cookies?' ); // This should never happen
 		}
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
@@ -200,6 +200,6 @@ function yourls_store_cookie( $user = null ) {
 
 // Set user name
 function yourls_set_user( $user ) {
-	if( !defined('YOURLS_USER') )
-		define('YOURLS_USER', $user);
+	if( !defined( 'YOURLS_USER' ) )
+		define( 'YOURLS_USER', $user );
 }

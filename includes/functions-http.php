@@ -16,11 +16,11 @@ function yourls_get_http_transport( $url ) {
 	// Test transports by order of preference, best first
 
 	// curl
-	if( function_exists('curl_init') && function_exists('curl_exec') )
+	if( function_exists( 'curl_init' ) && function_exists( 'curl_exec' ) )
 		$transports[]= 'curl';
 
 	// fopen. Doesn't work with https?
-	if( !$is_ssl && function_exists('fopen') && ini_get('allow_url_fopen') )
+	if( !$is_ssl && function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) )
 		$transports[]= 'fopen';
 		
 	// fsock
@@ -94,9 +94,9 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	}
 
 	if( $initial_timeout !== false )
-		@ini_set('default_socket_timeout', $initial_timeout); 
+		@ini_set( 'default_socket_timeout', $initial_timeout ); 
 	if( $initial_user_agent !== false )
-		@ini_set('user_agent', $initial_user_agent);
+		@ini_set( 'user_agent', $initial_user_agent );
 		
 
 	restore_error_handler();
@@ -113,20 +113,20 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 // Get remote content using fsockopen. Needs sanitized $url. Returns $content or false
 function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	// get the host name and url path
-	$parsed_url = parse_url($url);
+	$parsed_url = parse_url( $url );
 
 	$host = $parsed_url['host'];
-	if ( isset($parsed_url['path']) ) {
+	if ( isset( $parsed_url['path'] ) ) {
 		$path = $parsed_url['path'];
 	} else {
 		$path = '/'; // the url is pointing to the host like http://www.mysite.com
 	}
 
-	if (isset($parsed_url['query'])) {
+	if ( isset( $parsed_url['query'] ) ) {
 		$path .= '?' . $parsed_url['query'];
 	}
 
-	if (isset($parsed_url['port'])) {
+	if ( isset( $parsed_url['port'] ) ) {
 		$port = $parsed_url['port'];
 	} else {
 		$port = '80';	

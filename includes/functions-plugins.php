@@ -37,10 +37,10 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
 	// At this point, we cannot check if the function exists, as it may well be defined later (which is OK)
 	$id = yourls_filter_unique_id( $hook, $function_name, $priority );
 	
-	$yourls_filters[$hook][$priority][$id] = array(
-		'function' => $function_name,
+	$yourls_filters[ $hook ][ $priority ][ $id ] = array(
+		'function'      => $function_name,
 		'accepted_args' => $accepted_args,
-		'type' => $type,
+		'type'          => $type,
 	);
 }
 
@@ -79,24 +79,24 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 	global $yourls_filters;
 
 	// If function then just skip all of the tests and not overwrite the following.
-	if ( is_string($function) )
+	if ( is_string( $function ) )
 		return $function;
 	// Object Class Calling
-	else if (is_object($function[0]) ) {
-		$obj_idx = get_class($function[0]).$function[1];
-		if ( !isset($function[0]->_yourls_filters_id) ) {
+	else if ( is_object( $function[0] ) ) {
+		$obj_idx = get_class( $function[0] ) . $function[1];
+		if ( !isset( $function[0]->_yourls_filters_id ) ) {
 			if ( false === $priority )
 				return false;
-			$count = isset($yourls_filters[$hook][$priority]) ? count((array)$yourls_filters[$hook][$priority]) : 0;
+			$count = isset( $yourls_filters[ $hook ][ $priority ]) ? count( (array)$yourls_filters[ $hook ][ $priority ] ) : 0;
 			$function[0]->_yourls_filters_id = $count;
 			$obj_idx .= $count;
-			unset($count);
+			unset( $count );
 		} else
 			$obj_idx .= $function[0]->_yourls_filters_id;
 		return $obj_idx;
 	}
 	// Static Calling
-	else if ( is_string($function[0]) )
+	else if ( is_string( $function[0] ) )
 		return $function[0].$function[1];
 
 }
@@ -123,32 +123,32 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
  */
 function yourls_apply_filter( $hook, $value = '' ) {
 	global $yourls_filters;
-	if ( !isset( $yourls_filters[$hook] ) )
+	if ( !isset( $yourls_filters[ $hook ] ) )
 		return $value;
 	
 	$args = func_get_args();
 	
 	// Sort filters by priority
-	ksort( $yourls_filters[$hook] );
+	ksort( $yourls_filters[ $hook ] );
 	
 	// Loops through each filter
-	reset( $yourls_filters[$hook] );
+	reset( $yourls_filters[ $hook ] );
 	do {
-		foreach( (array) current($yourls_filters[$hook]) as $the_ ) {
-			if ( !is_null($the_['function']) ){
+		foreach( (array) current( $yourls_filters[ $hook ] ) as $the_ ) {
+			if ( !is_null( $the_['function'] ) ){
 				$args[1] = $value;
 				$count = $the_['accepted_args'];
-				if (is_null($count)) {
-					$_value = call_user_func_array($the_['function'], array_slice($args, 1));
+				if ( is_null( $count ) ) {
+					$_value = call_user_func_array( $the_['function'], array_slice( $args, 1 ) );
 				} else {
-					$_value = call_user_func_array($the_['function'], array_slice($args, 1, (int) $count));
+					$_value = call_user_func_array( $the_['function'], array_slice( $args, 1, (int) $count ) );
 				}
 			}
 			if( $the_['type'] == 'filter' )
 				$value = $_value;
 		}
 
-	} while ( next($yourls_filters[$hook]) !== false );
+	} while ( next( $yourls_filters[ $hook ] ) !== false );
 	
 	if( $the_['type'] == 'filter' )
 		return $value;
@@ -156,12 +156,12 @@ function yourls_apply_filter( $hook, $value = '' ) {
 
 function yourls_do_action( $hook, $arg = '' ) {
 	$args = array();
-	if ( is_array($arg) && 1 == count($arg) && isset($arg[0]) && is_object($arg[0]) ) // array(&$this)
+	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) // array(&$this)
 		$args[] =& $arg[0];
 	else
 		$args[] = $arg;
 	for ( $a = 2; $a < func_num_args(); $a++ )
-		$args[] = func_get_arg($a);
+		$args[] = func_get_arg( $a );
 	
 	yourls_apply_filter( $hook, $args );
 }
@@ -187,14 +187,14 @@ function yourls_do_action( $hook, $arg = '' ) {
 function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $accepted_args = 1 ) {
 	global $yourls_filters;
 	
-	$function_to_remove = yourls_filter_unique_id($hook, $function_to_remove, $priority);
+	$function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
 
-	$remove = isset ($yourls_filters[$hook][$priority][$function_to_remove]);
+	$remove = isset( $yourls_filters[ $hook ][ $priority ][ $function_to_remove ] );
 
 	if ( $remove === true ) {
-		unset ($yourls_filters[$hook][$priority][$function_to_remove]);
-		if ( empty($yourls_filters[$hook][$priority]) )
-			unset ($yourls_filters[$hook]);
+		unset ( $yourls_filters[$hook][$priority][$function_to_remove] );
+		if ( empty( $yourls_filters[$hook][$priority] ) )
+			unset( $yourls_filters[$hook] );
 	}
 	return $remove;
 }
@@ -211,16 +211,16 @@ function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $acce
 function yourls_has_filter( $hook, $function_to_check = false ) {
 	global $yourls_filters;
 
-	$has = !empty($yourls_filters[$hook]);
+	$has = !empty( $yourls_filters[ $hook ] );
 	if ( false === $function_to_check || false == $has ) {
 		return $has;
 	}
-	if ( !$idx = yourls_filter_unique_id($hook, $function_to_check, false) ) {
+	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) ) {
 		return false;
 	}
 
-	foreach ( (array) array_keys($yourls_filters[$hook]) as $priority ) {
-		if ( isset($yourls_filters[$hook][$priority][$idx]) )
+	foreach ( (array) array_keys( $yourls_filters[ $hook ] ) as $priority ) {
+		if ( isset( $yourls_filters[ $hook ][ $priority ][ $idx ] ) )
 			return $priority;
 	}
 	return false;
@@ -259,7 +259,7 @@ function yourls_get_plugins( ) {
 	if( !$plugins )
 		return array();
 	
-	foreach( $plugins as $key=>$plugin ) {
+	foreach( $plugins as $key => $plugin ) {
 		$_plugin = yourls_plugin_basename( $plugin );
 		$plugins[ $_plugin ] = yourls_get_plugin_data( $plugin );
 		unset( $plugins[ $key ] );
@@ -443,7 +443,7 @@ function yourls_plugin_basename( $file ) {
 function yourls_plugin_url( $file ) {
 	$url = YOURLS_PLUGINURL . '/' . yourls_plugin_basename( $file );
 	if( yourls_is_ssl() or yourls_needs_ssl() )
-		$url = str_replace('http://', 'https://', $url);
+		$url = str_replace( 'http://', 'https://', $url );
 	return yourls_apply_filter( 'plugin_url', $url, $file );
 }
 
@@ -458,7 +458,7 @@ function yourls_list_plugin_admin_pages() {
 	
 	$plugin_links = array();
 	foreach( (array)$ydb->plugin_pages as $plugin => $page ) {
-		$plugin_links[$plugin] = array(
+		$plugin_links[ $plugin ] = array(
 			'url'    => yourls_admin_url( 'plugins.php?page='.$page['slug'] ),
 			'anchor' => $page['title'],
 		);
@@ -476,8 +476,8 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
 		$ydb->plugin_pages = array();
 
 	$ydb->plugin_pages[ $slug ] = array(
-		'slug'  => $slug,
-		'title' => $title,
+		'slug'     => $slug,
+		'title'    => $title,
 		'function' => $function,
 	);
 }

@@ -1,6 +1,6 @@
 <?php
-define('YOURLS_GO', true);
-require_once( dirname(__FILE__).'/includes/load-yourls.php' );
+define( 'YOURLS_GO', true );
+require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
 // Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-go.php)
 if( !isset( $keyword ) && isset( $_GET['id'] ) )
@@ -17,7 +17,7 @@ if ( !$keyword ) {
 $url = yourls_get_keyword_longurl( $keyword );
 
 // URL found
-if( !empty($url) ) {
+if( !empty( $url ) ) {
 	// Update click count in main table
 	$update_clicks = yourls_update_clicks( $keyword );
 	// Update detailed log for stats
@@ -31,10 +31,8 @@ if( !empty($url) ) {
 } else {
 
 	// Do we have a page?
-	if ( file_exists(YOURLS_PAGEDIR."/$keyword.php") ) {
-		// Include YOURLS functions we've skipped, they might be of use
-		require_once( YOURLS_INC.'/functions-html.php' );
-		yourls_page($keyword);
+	if ( file_exists( YOURLS_PAGEDIR . "/$keyword.php" ) ) {
+		yourls_page( $keyword );
 
 	// Either reserved id, or no such id
 	} else {
