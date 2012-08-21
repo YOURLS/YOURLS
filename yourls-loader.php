@@ -1,13 +1,21 @@
 <?php
-// Handle inexistant root favicon requests and exit
+// Handle inexistent root favicon requests and exit
 if ( '/favicon.ico' == $_SERVER['REQUEST_URI'] ) {
-	header('Content-Type: image/gif');
-	echo base64_decode("R0lGODlhEAAQAJECAAAAzFZWzP///wAAACH5BAEAAAIALAAAAAAQABAAAAIplI+py+0PUQAgSGoNQFt0LWTVOE6GuX1H6onTVHaW2tEHnJ1YxPc+UwAAOw==");
+	header( 'Content-Type: image/gif' );
+	echo base64_decode( "R0lGODlhEAAQAJECAAAAzFZWzP///wAAACH5BAEAAAIALAAAAAAQABAAAAIplI+py+0PUQAgSGoNQFt0LWTVOE6GuX1H6onTVHaW2tEHnJ1YxPc+UwAAOw==" );
+	exit;
+}
+
+// Handle inexistent root robots.txt requests and exit
+if ( '/robots.txt' == $_SERVER['REQUEST_URI'] ) {
+	header( 'Content-Type: text/plain; charset=utf-8' );
+	echo "User-agent: *\n";
+	echo "Disallow:\n";
 	exit;
 }
 
 // Start YOURLS
-require_once( dirname(__FILE__).'/includes/load-yourls.php' );
+require_once( dirname( __FILE__ ) . ' /includes/load-yourls.php' );
 
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
