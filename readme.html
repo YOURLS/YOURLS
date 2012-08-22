@@ -65,10 +65,20 @@
 			background: -webkit-gradient(linear, left top, left bottom, from(rgba(227, 243, 255, 1)), to(rgba(227, 243, 255, 0)));
 			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */ 
 		}
-		#buttons{ width:80px; margin-top:10px; float:right; position:absolute; margin-left: 810px;}
-		#fb,#g1,#tw{ float:left; margin:0 5px; width: 60px; text-align: center; margin-bottom: 10px; padding:7px 2px; border:2px solid #2A85B3; background: #E3F3FF; border-radius:10px;}
+		/* Social */
+		@keyframes mymove { 0% {top:130px;} 50% {top:150px;} 100% {top:130px;} }
+		@-moz-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
+		@-webkit-keyframes mymove { 0% {top:130px;} 50% {top:140px;} 100% {top:130px;} }
+		@-o-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
+		#buttons{
+			width:80px; margin-top:10px; float:right; position:absolute; margin-left: 810px;
+			animation:mymove 0.5s ease 5s 7;
+			-moz-animation:mymove 0.5s ease 5s 7;
+			-webkit-animation:mymove 0.5s ease 5s 7;
+			-o-animation:mymove 0.5s ease 5s 7;
+		}
+		#fb,#g1,#tw{ float:left; margin:0 5px; width: 60px; height:63px; text-align: center; margin-bottom: 10px; padding:7px 2px; border:2px solid #2A85B3; background: #E3F3FF; border-radius:10px;}
 		#fb span {width:50px !important}
-
 		/* Place Holder Style */
 		#Container {
 			width: 850px;
