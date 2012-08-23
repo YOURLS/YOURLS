@@ -206,11 +206,14 @@ yourls_html_head( $context );
 yourls_html_logo();
 yourls_html_menu() ;
 
+yourls_do_action( 'admin_page_before_content' );
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_display; ?></p>
 	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs<?php if( $total_items_clicks !== false ) echo ", counting <strong>$total_items_clicks</strong> " . yourls_plural('click', $total_items_clicks) ?>.</p>
 <?php } ?>
 <p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
+
+<?php yourls_do_action( 'admin_page_before_form' ); ?>
 
 <?php yourls_html_addnew(); ?>
 
@@ -224,6 +227,8 @@ if ( !$is_bookmark ) {
 		init_clipboard();
 	});</script>';
 }
+
+yourls_do_action( 'admin_page_before_table' );
 
 yourls_table_head();
 
@@ -272,6 +277,8 @@ echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">No URL</td></tr>
 yourls_table_tbody_end();
 
 yourls_table_end();
+
+yourls_do_action( 'admin_page_after_table' );
 
 if ( $is_bookmark )
 	yourls_share_box( $url, $return['shorturl'], $title, $text );
