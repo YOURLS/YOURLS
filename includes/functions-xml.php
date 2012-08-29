@@ -79,5 +79,3 @@ class yourls_array2xml {
 
 }//End of the class
 
-
-?>

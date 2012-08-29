@@ -17,4 +17,3 @@ function ozh_hyphen_in_charset( $in ) {
 }
 
 
-?>

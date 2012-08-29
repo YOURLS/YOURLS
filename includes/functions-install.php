@@ -196,4 +196,3 @@ function yourls_create_sql_tables() {
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );
 }
-?>

@@ -404,4 +404,3 @@ class ezSQL_mysql extends ezSQLcore {
 		return  mysql_get_server_info( $this->dbh ) ;
 	}
 }
-?>
