@@ -78,3 +78,6 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - fixed: bugs, bugs, bugs
 - added: hooks, hooks, hooks
 - improved: things, things, things
+
+1.6
+- added: custom API actions

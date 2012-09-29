@@ -49,15 +49,17 @@ switch( $action ) {
 		$return['callback'] = $_REQUEST['callback'];
 		break;
 	
-	// Missing or incorrect action parameter
+	// Unknown action parameter
 	default:
-		$return = array(
-			'errorCode' => 400,
-			'message'   => 'Unknown or missing "action" parameter',
-			'simple'    => 'Unknown or missing "action" parameter',
-		);
-		
-
+		// Check if we have a custom action, return default otherwise
+		$return = yourls_apply_filter( 'api_action_' . $action, false );
+		if ( false === $return ) {
+			$return = array(
+				'errorCode' => 400,
+				'message'   => 'Unknown or missing "action" parameter',
+				'simple'    => 'Unknown or missing "action" parameter',
+			);
+		}
 }
 
 $format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : 'xml' );
