@@ -65,12 +65,12 @@ function yourls_sanitize_title( $title ) {
 }
 
 // A few sanity checks on the URL
-function yourls_sanitize_url( $url, $force_protocol = true, $force_lowercase = true ) {
+function yourls_sanitize_url( $unsafe_url, $force_protocol = true, $force_lowercase = true ) {
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
 	$url = str_replace( 
 		array( 'http://http://', 'http://https://' ),
 		array( 'http://',        'https://'        ),
-		$url
+		$unsafe_url
 	);
 
 	if( $force_protocol ) {
@@ -88,7 +88,9 @@ function yourls_sanitize_url( $url, $force_protocol = true, $force_lowercase = t
 	
 	// clean and shave
 	$url = yourls_clean_url( $url );
-	return substr( $url, 0, 1999 );
+	$url = substr( $url, 0, 1999 );
+	
+	return yourls_apply_filter( 'sanitize_url', $url, $unsafe_url, $force_protocol, $force_lowercase );
 }
 
 // Function to filter all invalid characters from a URL. Stolen from WP's clean_url()
