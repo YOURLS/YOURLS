@@ -567,9 +567,13 @@ function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 // Return array for counts of shorturls and clicks
 function yourls_api_db_stats() {
-	$return = yourls_get_db_stats();
-	$return['simple']  = 'Need either XML or JSON format for stats';
-	$return['message'] = 'success';
+	$return = array(
+		'db-stats'   => yourls_get_db_stats(),
+		'statusCode' => 200,
+		'simple'     => 'Need either XML or JSON format for stats',
+		'message'    => 'success',
+	);
+		
 	return yourls_apply_filter( 'api_db_stats', $return );
 }
 
