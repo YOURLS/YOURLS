@@ -84,7 +84,7 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 		if ( $markerdata ) {
 			$state = true;
 			foreach ( $markerdata as $n => $markerline ) {
-				if ( strpos( $markerline, '# BEGIN ' . $marker) !== false )
+				if ( strpos( $markerline, '# BEGIN ' . $marker ) !== false )
 					$state = false;
 				if ( $state ) {
 					if ( $n + 1 < count( $markerdata ) )
