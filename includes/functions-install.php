@@ -103,7 +103,7 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 				}
 			}
 		}
-		if (!$foundit) {
+		if ( !$foundit ) {
 			fwrite( $f, "\n\n# BEGIN {$marker}\n" );
 			foreach ( $insertion as $insertline )
 				fwrite( $f, "{$insertline}\n" );
@@ -188,7 +188,7 @@ function yourls_create_sql_tables() {
 	yourls_insert_link_in_db( 'http://yourls.org/', 'yourls', 'YOURLS: Your Own URL Shortener' );
 		
 	// Check results of operations
-	if ( sizeof($create_tables) == $create_table_count ) {
+	if ( sizeof( $create_tables ) == $create_table_count ) {
 		$success_msg[] = 'YOURLS tables successfully created.';
 	} else {
 		$error_msg[] = "Error creating YOURLS tables."; 
