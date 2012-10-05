@@ -8,7 +8,7 @@ if( !isset( $keyword ) && isset( $_GET['id'] ) )
 $keyword = yourls_sanitize_string( $keyword );
 
 // First possible exit:
-if ( !$keyword ) {
+if ( !isset( $keyword ) ) {
 	yourls_do_action( 'redirect_no_keyword' );
 	yourls_redirect( YOURLS_SITE, 301 );
 }
