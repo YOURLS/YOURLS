@@ -325,12 +325,16 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	yourls_status_header( $header_code );
 	
-	yourls_html_head();
-	yourls_html_logo();
+	if( !yourls_did_action( 'html_head' ) ) {
+		yourls_html_head();
+		yourls_html_logo();
+	}
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
 	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
 	yourls_do_action( 'yourls_die' );
-	yourls_html_footer();
+	if( !yourls_did_action( 'html_head' ) ) {
+		yourls_html_footer();
+	}
 	die();
 }
 
