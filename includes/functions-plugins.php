@@ -154,7 +154,24 @@ function yourls_apply_filter( $hook, $value = '' ) {
 		return $value;
 }
 
+
+/**
+ * Performs an action triggered by a YOURLS event.
+* 
+ * @param string $hook the name of the YOURLS action
+ * @param mixed $arg action arguments
+ */
 function yourls_do_action( $hook, $arg = '' ) {
+	global $yourls_actions;
+	
+	// Keep track of actions that are "done"
+	if ( !isset( $yourls_actions ) )
+		$yourls_actions = array();
+	if ( !isset( $yourls_actions[ $hook ] ) )
+		$yourls_actions[ $hook ] = 1;
+	else
+		++$yourls_actions[ $hook ];
+
 	$args = array();
 	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) // array(&$this)
 		$args[] =& $arg[0];
@@ -166,6 +183,18 @@ function yourls_do_action( $hook, $arg = '' ) {
 	yourls_apply_filter( $hook, $args );
 }
 
+/**
+* Retrieve the number times an action is fired.
+*
+* @param string $hook Name of the action hook.
+* @return int The number of times action hook <tt>$hook</tt> is fired
+*/
+function yourls_did_action( $hook ) {
+	global $yourls_actions;
+	if ( !isset( $yourls_actions ) || !isset( $yourls_actions[ $hook ] ) )
+		return 0;
+	return $yourls_actions[ $hook ];
+}
 
 /**
  * Removes a function from a specified filter hook.
