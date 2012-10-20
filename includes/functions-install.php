@@ -29,6 +29,11 @@ function yourls_is_apache() {
 	);
 }
 
+// Check if server is running IIS
+function yourls_is_iis() {
+	return ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false );
+}
+
 // Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
 function yourls_apache_mod_loaded( $mod, $default = false ) {
 	if ( !yourls_is_apache() )
@@ -48,24 +53,54 @@ function yourls_apache_mod_loaded( $mod, $default = false ) {
 	return $default;
 }
 
-// Create .htaccess. Returns boolean
+// Create .htaccess or web.config. Returns boolean
 function yourls_create_htaccess() {
 	$host = parse_url( YOURLS_SITE );
 	$path = ( isset( $host['path'] ) ? $host['path'] : '' );
 
-	$content = array(
-		'<IfModule mod_rewrite.c>',
-		'RewriteEngine On',
-		'RewriteBase '.$path.'/',
-		'RewriteCond %{REQUEST_FILENAME} !-f',
-		'RewriteCond %{REQUEST_FILENAME} !-d',
-		'RewriteRule ^(.*)$ '.$path.'/yourls-loader.php [L]',
-		'</IfModule>',
-	);
+    if ( yourls_is_iis() ) {
+		// Prepare content for a web.config file
+	    $content = array(
+            '<?'.'xml version="1.0" encoding="UTF-8"?>',
+            '<configuration>', 
+            '    <system.webServer>',
+            '        <rewrite>',
+            '            <rules>',
+            '                <rule name="YOURLS" stopProcessing="true">',
+            '                    <match url="^(.*)$" ignoreCase="false" />',
+            '                    <conditions>',
+            '                        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />',
+            '                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />',
+            '                    </conditions>',
+            '                    <action type="Rewrite" url="'.$path.'/yourls-loader.php" appendQueryString="true" />',
+            '                </rule>',
+            '            </rules>',
+            '        </rewrite>',
+            '    </system.webServer>',
+            '</configuration>',
+	    );
 	
-	$filename = YOURLS_ABSPATH.'/.htaccess';
+	    $filename = YOURLS_ABSPATH.'/web.config';
+		$marker = 'none';
+
+    } else {
+		// Prepare content for a .htaccess file
+	    $content = array(
+		    '<IfModule mod_rewrite.c>',
+		    'RewriteEngine On',
+		    'RewriteBase '.$path.'/',
+		    'RewriteCond %{REQUEST_FILENAME} !-f',
+		    'RewriteCond %{REQUEST_FILENAME} !-d',
+		    'RewriteRule ^(.*)$ '.$path.'/yourls-loader.php [L]',
+		    '</IfModule>',
+	    );
 	
-	return ( yourls_insert_with_markers( $filename, 'YOURLS', $content ) );
+	    $filename = YOURLS_ABSPATH.'/.htaccess';
+		$marker = 'YOURLS';
+		
+	}
+	
+	return ( yourls_insert_with_markers( $filename, $marker, $content ) );
 }
 
 // Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
@@ -93,21 +128,25 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 						fwrite( $f, "{$markerline}" );
 				}
 				if ( strpos( $markerline, '# END ' . $marker ) !== false ) {
-					fwrite( $f, "# BEGIN {$marker}\n" );
+					if ( $marker != 'none' )
+						fwrite( $f, "# BEGIN {$marker}\n" );
 					if ( is_array( $insertion ) )
 						foreach ( $insertion as $insertline )
 							fwrite( $f, "{$insertline}\n" );
-					fwrite( $f, "# END {$marker}\n" );
+					if ( $marker != 'none' )
+						fwrite( $f, "# END {$marker}\n" );
 					$state = true;
 					$foundit = true;
 				}
 			}
 		}
 		if ( !$foundit ) {
-			fwrite( $f, "\n\n# BEGIN {$marker}\n" );
+			if ( $marker != 'none' )
+				fwrite( $f, "\n\n# BEGIN {$marker}\n" );
 			foreach ( $insertion as $insertline )
 				fwrite( $f, "{$insertline}\n" );
-			fwrite( $f, "# END {$marker}\n\n" );
+			if ( $marker != 'none' )
+				fwrite( $f, "# END {$marker}\n\n" );
 		}
 		fclose( $f );
 		return true;
