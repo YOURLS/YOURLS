@@ -52,6 +52,7 @@ table.tblSorter tfoot tr {
 }
 #filter_form{
 	float:left;
+	text-align:left;
 	max-width:69%;
 }
 #filter_buttons{
