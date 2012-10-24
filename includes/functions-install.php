@@ -235,3 +235,28 @@ function yourls_create_sql_tables() {
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );
 }
+
+
+// Toggle maintenance mode. Inspired from WP. Returns true for success, false otherwise
+function yourls_maintenance_mode( $maintenance = true ) {
+
+	$file = YOURLS_ABSPATH . '/.maintenance' ;
+
+	// Turn maintenance mode on : create .maintenance file
+	if ( (bool)$maintenance ) {
+		if ( ! ( $fp = @fopen( $file, 'w' ) ) )
+			return false;
+		
+		$maintenance_string = '<?php $maintenance_start = ' . time() . '; ?>';
+		@fwrite( $fp, $maintenance_string );
+		@fclose( $fp );
+		@chmod( $file, 0644 ); // Read and write for owner, read for everybody else
+
+		// Not sure why the fwrite would fail if the fopen worked... Just in case
+		return( is_readable( $file ) );
+		
+	// Turn maintenance mode off : delete the .maintenance file
+	} else {
+		return @unlink($file);
+	}
+}

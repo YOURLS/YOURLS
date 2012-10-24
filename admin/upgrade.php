@@ -1,4 +1,5 @@
 <?php
+define( 'YOURLS_UPGRADING', true );
 define( 'YOURLS_ADMIN', true );
 define( 'YOURLS_NO_UPGRADE_CHECK', true ); // Bypass version checking to prevent loop
 require_once( dirname( dirname( __FILE__ ) ).'/includes/load-yourls.php' );

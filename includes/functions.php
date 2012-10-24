@@ -1563,35 +1563,6 @@ function yourls_get_remote_title( $url ) {
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
-// Check for maintenance mode that will shortcut everything
-function yourls_check_maintenance_mode() {
-	
-	// TODO: all cases that always display the sites (is_admin but not is_ajax?)
-	if( 1 )
-		return;
-
-	// first case: /user/maintenance.php file
-	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
-		include( YOURLS_USERDIR.'/maintenance.php' );
-		die();	
-	}
-	
-	// second case: option in DB
-	if( yourls_get_option( 'maintenance_mode' ) !== false ) {
-		require_once( YOURLS_INC.'/functions-html.php' );
-		$title = 'Service temporarily unavailable';
-		$message = 'Our service is currently undergoing scheduled maintenance.</p>
-		<p>Things should not last very long, thank you for your patience and please excuse the inconvenience';
-		yourls_die( $message, $title , 503 );
-	}
-	
-}
-
-// Toggle maintenance mode
-function yourls_maintenance_mode( $maintenance = true ) {
-	yourls_update_option( 'maintenance_mode', (bool)$maintenance );
-}
-
 // Quick UA check for mobile devices. Return boolean.
 function yourls_is_mobile_device() {
 	// Strings searched
@@ -1709,4 +1680,32 @@ function yourls_favicon( $echo = true ) {
 	if( $echo )
 		echo $favicon;
 	return $favicon;
+}
+
+// Check for maintenance mode. If yes, die. See yourls_maintenance_mode(). Stolen from WP.
+function yourls_check_maintenance_mode() {
+
+	$file = YOURLS_ABSPATH . '/.maintenance' ;
+	if ( !file_exists( $file ) || defined( 'YOURLS_UPGRADING' ) || defined( 'YOURLS_INSTALLING' ) )
+		return;
+	
+	global $maintenance_start;
+
+	include( $file );
+	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
+	if ( ( time() - $maintenance_start ) >= 600 )
+		return;
+
+	// Use any /user/maintenance.php file
+	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
+		include( YOURLS_USERDIR.'/maintenance.php' );
+		die();
+	}
+	
+	// https://www.youtube.com/watch?v=Xw-m4jEY-Ns
+	$title   = 'Service temporarily unavailable';
+	$message = 'Our service is currently undergoing scheduled maintenance.</p>
+	<p>Things should not last very long, thank you for your patience and please excuse the inconvenience';
+	yourls_die( $message, $title , 503 );
+
 }

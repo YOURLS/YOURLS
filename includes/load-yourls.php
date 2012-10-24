@@ -115,6 +115,9 @@ if( yourls_is_private() )
 // Allow early inclusion of a cache layer
 if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
 	require_once( YOURLS_USERDIR.'/cache.php' );
+
+// Check if we are in maintenance mode - if yes, it will die here.
+yourls_check_maintenance_mode();
 	
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
@@ -142,9 +145,6 @@ register_shutdown_function( 'yourls_shutdown' );
 
 // Core now loaded
 yourls_do_action( 'init' ); // plugins can't see this, not loaded yet
-
-// Check if we are in maintenance mode
-yourls_check_maintenance_mode();
 
 // Check if need to redirect to install procedure
 if( !yourls_is_installed() && ( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true ) ) {
