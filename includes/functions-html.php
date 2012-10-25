@@ -608,15 +608,15 @@ function yourls_html_menu() {
 }
 
 // Wrapper to admin notices
-function yourls_add_notice( $message ) {
-	$message = yourls_notice_box( $message );
+function yourls_add_notice( $message, $style = 'notice' ) {
+	$message = yourls_notice_box( $message, $style );
 	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 }
 
 // Return a formatted notice
-function yourls_notice_box( $message ) {
+function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
-	<div class="notice">
+	<div class="$style">
 	<p>$message</p>
 	</div>
 HTML;
