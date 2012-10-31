@@ -161,10 +161,11 @@ function yourls_auth_signature( $username = false ) {
 	return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
 }
 
-// Check a timestamp is from the past and not too old
+// Check if timestamp is not too old
 function yourls_check_timestamp( $time ) {
 	$now = time();
-	return ( $now >= $time && ceil( $now - $time ) < YOURLS_NONCE_LIFE );
+	// Allow timestamp to be a little in the future or the past -- see Issue 766
+	return yourls_apply_filter( 'check_timestamp', abs( $now - $time ) < YOURLS_NONCE_LIFE, $time );
 }
 
 // Store new cookie. No $user will delete the cookie.
