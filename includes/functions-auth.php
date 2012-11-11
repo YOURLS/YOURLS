@@ -28,7 +28,7 @@ function yourls_is_valid_user() {
 		)
 		{
 			yourls_do_action( 'pre_login_signature_timestamp' );
-			$valid = yourls_check_signature_timestamp();
+			$unfiltered_valid = yourls_check_signature_timestamp();
 		}
 		
 	elseif
@@ -40,7 +40,7 @@ function yourls_is_valid_user() {
 		)
 		{
 			yourls_do_action( 'pre_login_signature' );
-			$valid = yourls_check_signature();
+			$unfiltered_valid = yourls_check_signature();
 		}
 	
 	elseif
@@ -49,7 +49,7 @@ function yourls_is_valid_user() {
 		  && !empty( $_REQUEST['username'] ) && !empty( $_REQUEST['password']  ) )
 		{
 			yourls_do_action( 'pre_login_username_password' );
-			$valid = yourls_check_username_password();
+			$unfiltered_valid = yourls_check_username_password();
 		}
 	
 	elseif
@@ -58,14 +58,16 @@ function yourls_is_valid_user() {
 		  isset( $_COOKIE['yourls_username'] ) && isset( $_COOKIE['yourls_password'] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
-			$valid = yourls_check_auth_cookie();
+			$unfiltered_valid = yourls_check_auth_cookie();
 		}
+
+	$valid = yourls_apply_filter( 'is_valid_user', $unfiltered_valid );
 
 	// Login for the win!
 	if ( $valid ) {
 		yourls_do_action( 'login' );
-		// (Re)store encrypted cookie and tell it's ok
-		if ( !yourls_is_API() ) // No need to store a cookie when used in API mode.
+		// (Re)store encrypted cookie if needed and tell it's ok
+		if ( !yourls_is_API() && $unfiltered_valid ) 
 			yourls_store_cookie( YOURLS_USER );
 		return true;
 	}

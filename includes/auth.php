@@ -2,7 +2,7 @@
 // No direct call
 if( !defined( 'YOURLS_ABSPATH' ) ) die();
 
-$auth = yourls_apply_filter( 'is_valid_user', yourls_is_valid_user() );
+$auth = yourls_is_valid_user();
 
 if( $auth !== true ) {
 
