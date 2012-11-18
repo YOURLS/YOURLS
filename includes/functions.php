@@ -110,9 +110,9 @@ function yourls_delete_link_by_keyword( $keyword ) {
 function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	global $ydb;
 	
-	$url     = addslashes( yourls_sanitize_url( $url ) );
-	$keyword = addslashes( yourls_sanitize_keyword( $keyword ) );
-	$title   = addslashes( yourls_sanitize_title( $title ) );
+	$url     = yourls_escape( yourls_sanitize_url( $url ) );
+	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
+	$title   = yourls_escape( yourls_sanitize_title( $title ) );
 
 	$table = YOURLS_DB_TABLE_URL;
 	$timestamp = date('Y-m-d H:i:s');
