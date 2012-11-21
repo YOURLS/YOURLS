@@ -1,7 +1,6 @@
 <?php
-define( 'YOURLS_UPGRADING', true );
 define( 'YOURLS_ADMIN', true );
-define( 'YOURLS_NO_UPGRADE_CHECK', true ); // Bypass version checking to prevent loop
+define( 'YOURLS_UPGRADING', true );
 require_once( dirname( dirname( __FILE__ ) ).'/includes/load-yourls.php' );
 require_once( YOURLS_INC.'/functions-upgrade.php' );
 require_once( YOURLS_INC.'/functions-install.php' );

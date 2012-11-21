@@ -1174,6 +1174,29 @@ function yourls_check_IP_flood( $ip = '' ) {
 	return true;
 }
 
+/**
+ * Check if YOURLS is installing
+ *
+ * @return bool
+ * @since 1.6
+ */
+function yourls_is_installing() {
+	$installing = defined( 'YOURLS_INSTALLING' ) && YOURLS_INSTALLING == true;
+	return yourls_apply_filter( 'is_installing', $installing );
+}
+
+/**
+ * Check if YOURLS is upgrading
+ *
+ * @return bool
+ * @since 1.6
+ */
+function yourls_is_upgrading() {
+	$upgrading = defined( 'YOURLS_UPGRADING' ) && YOURLS_UPGRADING == true;
+	return yourls_apply_filter( 'is_upgrading', $upgrading );
+}
+
+
 // Check if YOURLS is installed
 function yourls_is_installed() {
 	static $is_installed = false;
@@ -1686,7 +1709,7 @@ function yourls_favicon( $echo = true ) {
 function yourls_check_maintenance_mode() {
 
 	$file = YOURLS_ABSPATH . '/.maintenance' ;
-	if ( !file_exists( $file ) || defined( 'YOURLS_UPGRADING' ) || defined( 'YOURLS_INSTALLING' ) )
+	if ( !file_exists( $file ) || yourls_is_upgrading() || yourls_is_installing() )
 		return;
 	
 	global $maintenance_start;
@@ -1708,4 +1731,21 @@ function yourls_check_maintenance_mode() {
 	<p>Things should not last very long, thank you for your patience and please excuse the inconvenience';
 	yourls_die( $message, $title , 503 );
 
+}
+
+/**
+ * Return current admin page, or null if not an admin page
+ *
+ * @return mixed string if admin page, null if not an admin page
+ * @since 1.6
+ */
+function yourls_current_admin_page() {
+	if( yourls_is_admin() ) {
+		$current = substr( yourls_get_request(), 6 );
+		if( $current === false ) 
+			$current = 'index.php'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index.php
+			
+		return $current;
+	}
+	return null;
 }

@@ -147,18 +147,12 @@ register_shutdown_function( 'yourls_shutdown' );
 yourls_do_action( 'init' ); // plugins can't see this, not loaded yet
 
 // Check if need to redirect to install procedure
-if( !yourls_is_installed() && ( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true ) ) {
+if( !yourls_is_installed() && !yourls_is_installing() ) {
 	yourls_redirect( yourls_admin_url( 'install.php' ), 302 );
 }
 
-// Check if upgrade is needed.
-// Note: this is bypassable with define('YOURLS_NO_UPGRADE_CHECK', true)
-// This is also bypassed if YOURLS_INSTALLING
-if (
-	( !defined('YOURLS_NO_UPGRADE_CHECK') || YOURLS_NO_UPGRADE_CHECK != true )
-	&&  
-	( !defined('YOURLS_INSTALLING') || YOURLS_INSTALLING != true )
-) {
+// Check if upgrade is needed (bypassed if upgrading or installing)
+if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 	if ( yourls_upgrade_is_needed() ) {
 		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php', 302 );
 	}

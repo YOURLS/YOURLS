@@ -353,7 +353,7 @@ function yourls_load_plugins() {
 	$active_plugins = yourls_get_option( 'active_plugins' );
 	
 	// Don't load plugins when installing or updating
-	if( !$active_plugins  OR ( defined( 'YOURLS_INSTALLING' ) AND YOURLS_INSTALLING ) OR yourls_upgrade_is_needed() )
+	if( !$active_plugins OR yourls_is_installing() OR yourls_upgrade_is_needed() )
 		return;
 	
 	foreach( (array)$active_plugins as $key=>$plugin ) {
