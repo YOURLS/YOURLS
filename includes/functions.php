@@ -1613,7 +1613,12 @@ function yourls_get_request() {
 	if ( false !== $pre )
 		return $pre;
 		
-	yourls_do_action( 'pre_get_request' );
+	static $request = null;
+
+	yourls_do_action( 'pre_get_request', $request );
+	
+	if( $request !== null )
+		return $request;
 	
 	// Ignore protocol & www. prefix
 	$root = str_replace( array( 'https://', 'http://', 'https://www.', 'http://www.' ), '', YOURLS_SITE );
