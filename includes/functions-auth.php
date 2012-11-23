@@ -5,6 +5,8 @@ function yourls_is_valid_user() {
 	
 	if( $valid )
 		return true;
+		
+	$unfiltered_valid = false;
 
 	// Logout request
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
