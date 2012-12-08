@@ -1422,6 +1422,8 @@ function yourls_link( $keyword = '' ) {
 // Converts keyword into stat link (prepend with YOURLS base URL, append +)
 function yourls_statlink( $keyword = '' ) {
 	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword ) . '+';
+	if( yourls_is_ssl() )
+		$link = str_replace( 'http://', 'https://', $link );
 	return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 
