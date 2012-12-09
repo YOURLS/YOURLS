@@ -58,7 +58,6 @@ function yourls_sanitize_keyword( $keyword ) {
 // Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
 function yourls_sanitize_title( $unsafe_title ) {
 	$title = $unsafe_title;
-	$title = yourls_esc_html( $title );
 	$title = strip_tags( $title );
 	$title = preg_replace( "/\s+/", ' ', trim( $title ) );
 	return yourls_apply_filter( 'sanitize_title', $title, $unsafe_title );
