@@ -1756,3 +1756,47 @@ function yourls_current_admin_page() {
 	}
 	return null;
 }
+
+/**
+ * Check if a URL protocol is allowed
+ *
+ * Checks a URL against a list of whitelisted protocols. Protocols must be defined with
+ * their complete scheme name, ie 'stuff:' or 'stuff://' (for instance, 'mailto:' is a valid
+ * protocol, 'mailto://' isn't, and 'http:' with no double slashed isn't either
+ *
+ * @since 1.6
+ *
+ * @param string $url URL to be check
+ * @param array $protocols Optional. Array of protocols, defaults to global $yourls_allowedprotocols
+ * @return boolean true if protocol allowed, false otherwise
+ */
+function yourls_is_allowed_protocol( $url, $protocols = array() ) {
+	if( ! $protocols ) {
+		global $yourls_allowedprotocols;
+		$protocols = $yourls_allowedprotocols;
+	}
+	
+	$protocol = yourls_get_protocol( $url );
+	return yourls_apply_filter( 'is_allowed_protocol', in_array( $protocol, $protocols ), $url, $protocols );
+}
+
+/**
+ * Get protocol from a URL (eg mailto:, http:// ...)
+ *
+ * @since 1.6
+ *
+ * @param string $url URL to be check
+ * @return string Protocol, with slash slash if applicable. Empty string if no protocol
+ */
+function yourls_get_protocol( $url ) {
+	preg_match( '!^[a-zA-Z0-9\+\.-]+:(//)?!', $url, $matches );
+	/*
+	http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
+	The scheme name consists of a sequence of characters beginning with a letter and followed by any
+	combination of letters, digits, plus ("+"), period ("."), or hyphen ("-"). Although schemes are
+	case-insensitive, the canonical form is lowercase and documents that specify schemes must do so
+	with lowercase letters. It is followed by a colon (":").
+	*/
+	$protocol = ( isset( $matches[0] ) ? $matches[0] : '' );
+	return yourls_apply_filter( 'get_protocol', $protocol, $url );
+}

@@ -98,7 +98,9 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 // Include all functions
 require_once( YOURLS_INC.'/version.php' );
 require_once( YOURLS_INC.'/functions.php');
+require_once( YOURLS_INC.'/functions-plugins.php' );
 require_once( YOURLS_INC.'/functions-formatting.php' );
+require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
 // Allow drop-in replacement for the DB engine
@@ -107,7 +109,6 @@ if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
 } else {
 	require_once( YOURLS_INC.'/class-mysql.php' );
 }
-require_once( YOURLS_INC.'/functions-plugins.php' );
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once( YOURLS_INC.'/functions-auth.php' );
