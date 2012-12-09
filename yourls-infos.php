@@ -206,9 +206,9 @@ yourls_html_logo();
 yourls_html_menu();
 ?>
 
-<h2 id="informations"><?php echo $title; ?></h2>
+<h2 id="informations"><?php echo yourls_esc_html( $title ); ?></h2>
 
-<h3><span class="label">Short URL:</span> <img src="<?php echo yourls_match_current_protocol( YOURLS_SITE ); ?>/images/favicon.gif"/>
+<h3><span class="label">Short URL:</span> <img src="<?php yourls_favicon() ?>"/>
 <?php if( $aggregate ) {
 	$i = 0;
 	foreach( $keyword_list as $k ) {
