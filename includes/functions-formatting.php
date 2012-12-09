@@ -470,7 +470,7 @@ function yourls_esc_js( $text ) {
  * @param string $text
  * @return string
  */
-function yourl_esc_textarea( $text ) {
+function yourls_esc_textarea( $text ) {
 	$safe_text = htmlspecialchars( $text, ENT_QUOTES );
 	return yourls_apply_filters( 'esc_textarea', $safe_text, $text );
 }
