@@ -232,7 +232,7 @@ function yourls_check_invalid_utf8( $string, $strip = false ) {
  * @param boolean $double_encode Optional. Whether to encode existing html entities. Default is false.
  * @return string The encoded text with HTML entities.
  */
-function yourls_specialchars( $string, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false ) {
+function yourls_specialchars( $string, $quote_style = ENT_NOQUOTES, $double_encode = false ) {
 	$string = (string) $string;
 
 	if ( 0 === strlen( $string ) )
