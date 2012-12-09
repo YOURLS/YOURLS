@@ -154,6 +154,22 @@ function yourls_apply_filter( $hook, $value = '' ) {
 		return $value;
 }
 
+/**
+ * Alias for yourls_apply_filter because I never remember if it's _filter or _filters
+ *
+ * Plus, semantically, it makes more sense. There can be several filters. I should have named it
+ * like this from the very start. Duh.
+ *
+ * @since 1.6
+ *
+ * @param string $hook the name of the YOURLS element or action
+ * @param mixed $value the value of the element before filtering
+ * @return mixed
+ */
+function yourls_apply_filters( $hook, $value = '' ) {
+	return yourls_apply_filter( $hook, $value );
+}
+
 
 /**
  * Performs an action triggered by a YOURLS event.
