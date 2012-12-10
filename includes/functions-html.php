@@ -432,6 +432,10 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	if( ! $title )
 		$title = $url;
 
+	$protocol_warning = '';
+	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
+		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<span class="warning" title="Not a common link">&#9733;</span>' );
+
 	// Row cells: the array
 	$cells = array(
 		'keyword' => array(
@@ -440,11 +444,12 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'keyword_html'  => yourls_esc_html( $keyword ),
 		),
 		'url' => array(
-			'template'      => '<a href="%long_url%" title="%title_attr%">%title_html%</a><br/><small><a href="%long_url%">%long_url_html%</a></small>',
+			'template'      => '<a href="%long_url%" title="%title_attr%">%title_html%</a><br/><small>%warning%<a href="%long_url%">%long_url_html%</a></small>',
 			'long_url'      => yourls_esc_url( $url ),
 			'title_attr'    => yourls_esc_attr( $title ),
 			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
 			'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
+			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
 			'template' => '%date%',
