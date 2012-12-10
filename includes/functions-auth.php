@@ -103,6 +103,9 @@ function yourls_check_password_hash( $stored, $plaintext ) {
 		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
 	} else {
 		// Password was sent in clear
+		yourls_add_notice( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>.
+		Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?
+		See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details', 'notice' );
 		return( $stored == $plaintext );
 	}
 }
