@@ -148,10 +148,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	if ( false !== $pre )
 		return $pre;
 
+	$url = yourls_escape( yourls_sanitize_url( $url ) );		
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';
-		$return['message']   = 'Missing URL input';
+		$return['message']   = 'Missing or malformed URL';
 		$return['errorCode'] = '400';
 		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
@@ -161,7 +162,6 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	yourls_check_IP_flood( $ip );
 	
 	// Prevent internal redirection loops: cannot shorten a shortened URL
-	$url = yourls_escape( yourls_sanitize_url( $url ) );
 	if( preg_match( '!^'.YOURLS_SITE.'/!', $url ) ) {
 		if( yourls_is_shorturl( $url ) ) {
 			$return['status']    = 'fail';
