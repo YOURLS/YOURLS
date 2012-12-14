@@ -424,7 +424,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 		$url = str_replace( "'", '&#039;', $url );
 	}
 	
-	if ( ! is_array( $protocols ) ) {
+	if ( ! is_array( $protocols ) or ! $protocols ) {
 		global $yourls_allowedprotocols;
 		$protocols = yourls_apply_filter( 'esc_url_protocols', $yourls_allowedprotocols );
 		// Note: $yourls_allowedprotocols is also globally filterable in functions-kses.php/yourls_kses_init()
