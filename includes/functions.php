@@ -40,7 +40,7 @@ function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
 	
 	$is_short = false;
-	$keyword = preg_replace( '!^'.YOURLS_SITE.'/!', '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
+	$keyword = yourls_get_relative_url( $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
 	if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
 		$is_short = true;
 	}
@@ -162,7 +162,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	yourls_check_IP_flood( $ip );
 	
 	// Prevent internal redirection loops: cannot shorten a shortened URL
-	if( preg_match( '!^'.YOURLS_SITE.'/!', $url ) ) {
+	if( yourls_get_relative_url( $url ) ) {
 		if( yourls_is_shorturl( $url ) ) {
 			$return['status']    = 'fail';
 			$return['code']      = 'error:noloop';
@@ -1395,13 +1395,9 @@ function yourls_admin_url( $page = '' ) {
 
 // Return YOURLS_SITE or URL under YOURLS setup, with SSL preference
 function yourls_site_url( $echo = true, $url = '' ) {
-	if( !$url ) {
-		$url = YOURLS_SITE;
-	} else {
-		// make $url relative to YOURLS base in case a full URL has been provided. Will break if user mixes https/http.
-		$url = str_replace( YOURLS_SITE, '', $url );
-		$url = YOURLS_SITE . '/' . ltrim( $url, '/' );
-	}
+	$url = yourls_get_relative_url( $url );
+	$url = trim( YOURLS_SITE . '/' . $url, '/' );
+	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() )
 		$url = str_replace( 'http://', 'https://', $url );
@@ -1703,4 +1699,30 @@ function yourls_get_protocol( $url ) {
 	*/
 	$protocol = ( isset( $matches[0] ) ? $matches[0] : '' );
 	return yourls_apply_filter( 'get_protocol', $protocol, $url );
+}
+
+/**
+ * Get relative URL (eg 'abc' from 'http://sho.rt/abc')
+ *
+ * Treat indifferently http & https. If a URL isn't relative to the YOURLS install, return it as is
+ * or return empty string if $strict is true
+ *
+ * @since 1.6
+ * @param string $url URL to relativize
+ * @param bool $strict if true and if URL isn't relative to YOURLS install, return empty string
+ * @return string URL 
+ */
+function yourls_get_relative_url( $url, $strict = true ) {
+	$url = yourls_sanitize_url( $url );
+
+	// Remove protocols to make it easier
+	$noproto_url  = str_replace( 'https:', 'http:', $url );
+	$noproto_site = str_replace( 'https:', 'http:', YOURLS_SITE );
+	
+	// Trim URL from YOURLS root URL : if no modification made, URL wasn't relative
+	$_url = str_replace( $noproto_site . '/', '', $noproto_url );
+	if( $_url == $noproto_url )
+		$_url = ( $strict ? '' : $url );
+
+	return yourls_apply_filter( 'get_relative_url', $_url, $url );
 }
