@@ -100,6 +100,7 @@ require_once( YOURLS_INC.'/version.php' );
 require_once( YOURLS_INC.'/functions.php');
 require_once( YOURLS_INC.'/functions-plugins.php' );
 require_once( YOURLS_INC.'/functions-formatting.php' );
+require_once( YOURLS_INC.'/functions-api.php' );
 require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
