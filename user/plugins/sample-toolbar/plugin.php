@@ -76,7 +76,7 @@ function ozh_toolbar_do( $args ) {
 	<title>$pagetitle &mdash; YOURLS</title>
 	<link rel="icon" type="image/gif" href="$www/images/favicon.gif" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta name="generator" content="YOURLS v$ver" />
 	<meta name="ROBOTS" content="NOINDEX, FOLLOW" />
 	<link rel="stylesheet" href="$pluginurl/css/toolbar.css" type="text/css" media="all" />

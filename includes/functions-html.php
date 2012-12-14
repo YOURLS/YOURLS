@@ -75,7 +75,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
