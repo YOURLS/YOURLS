@@ -16,7 +16,6 @@ switch( $action ) {
 		$title = ( isset( $_REQUEST['title'] ) ? $_REQUEST['title'] : '' );
 		$return = yourls_add_new_link( $url, $keyword, $title );
 		$return['simple'] = ( isset( $return['shorturl'] ) ? $return['shorturl'] : '' ); // This one will be used in case output mode is 'simple'
-		$return['callback'] = ( isset( $_REQUEST['callback'] ) ? $_REQUEST['callback'] : '' );
 		unset( $return['html'] ); // in API mode, no need for our internal HTML output
 		break;
 	
@@ -26,27 +25,23 @@ switch( $action ) {
 		$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
 		$start = ( isset( $_REQUEST['start'] ) ? $_REQUEST['start'] : '' );
 		$return = yourls_api_stats( $filter, $limit, $start );
-		$return['callback'] = $_REQUEST['callback'];
 		break;
 	
 	// Just the global counts of shorturls and clicks
 	case "db-stats":
 		$return = yourls_api_db_stats();
-		$return['callback'] = $_REQUEST['callback'];
 		break;
 
 	// Stats for a shorturl
 	case 'url-stats':
 		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
 		$return = yourls_api_url_stats( $shorturl );
-		$return['callback'] = $_REQUEST['callback'];
 		break;
 
 	// Expand a short link
 	case 'expand':
 		$shorturl = ( isset( $_REQUEST['shorturl'] ) ? $_REQUEST['shorturl'] : '' );
 		$return = yourls_api_expand( $shorturl );
-		$return['callback'] = $_REQUEST['callback'];
 		break;
 	
 	// Unknown action parameter
@@ -61,6 +56,8 @@ switch( $action ) {
 			);
 		}
 }
+
+$return['callback'] = ( isset( $_REQUEST['callback'] ) ? $_REQUEST['callback'] : '' );
 
 $format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : 'xml' );
 
