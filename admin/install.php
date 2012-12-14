@@ -52,7 +52,7 @@ yourls_html_head( 'install', 'Install YOURLS' );
 <div id="login">
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>
 		<p>
-			<img src="<?php echo YOURLS_SITE; ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" />
+			<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" />
 		</p>
 		<?php
 			// Print errors, warnings and success messages
