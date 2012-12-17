@@ -13,6 +13,7 @@
 			color: #595441;
 			background:#E3F3FF;
 			margin-top:0px;
+			margin-bottom:30px;
 		}
 		p {
 			padding-left: 10px;
@@ -247,7 +248,6 @@
 		<li id="MoreTab" class="Tab"><a href="#More" onclick="toggle(this);">More</a></li>
 		<li id="FAQTab" class="Tab"><a href="#FAQ" onclick="toggle(this);">FAQ</a></li>
 		<li id="APITab" class="Tab"><a href="#API" onclick="toggle(this);">API</a></li>
-		<li id="PluginTab" class="Tab"><a href="#Plugin" onclick="toggle(this);">WordPress plugin</a></li>
 		<li id="PluginsTab" class="Tab"><a href="#Plugins" onclick="toggle(this);">YOURLS plugins</a></li>
 		<li id="ConfigTab" class="Tab"><a href="#Config" onclick="toggle(this);">Config</a></li>
 		<li id="InstallTab" class="Tab"><a href="#Install" onclick="toggle(this);">Install/Upgrade</a></li>
@@ -284,11 +284,13 @@
 			<h2 class='first'>About YOURLS</h2>
 			
 			<h3>What is YOURLS</h3>
-			<p>YOURLS is a small set of PHP scripts that will allow you to run your own URL shortening service (<em>a la</em> TinyURL). You can make it private or public, you can pick custom keyword URLs, it comes with its own API. You will love it.</p>
-			<p>There's a <a href="#Plugin" onclick="toggle(this);">WordPress plugin</a> available for YOURLS, making integration with your blog a snap: create short URLs and tweet them automagically as you publish blog posts.</p>
+			<p><strong>YOURLS</strong> stands for <strong>Your Own URL Shortener</strong>. It is a small set of PHP scripts that will allow you to run your own URL shortening service (<em>a la</em> TinyURL or bitly).</p>
 			
-			<h3>YOURLS Features</h3>
+			<p>Running your own URL shortener is fun, geeky and useful: you own your data and don't depend on third party services. It's also a great way to add branding to your short URLs, instead of using the same public URL shortener everyone uses.</p>
+			
+			<A NAME="DETAIL"></A><h3>YOURLS Features</h3>
 			<ul>
+				<li><tt>Free</tt> and <tt>Open Source</tt> software.</li>
 				<li><tt>Private</tt> (your links only) or <tt>Public</tt> (everybody can create short links, fine for an intranet)</li>
 				<li>Sequential or custom URL keyword</li>
 				<li>Handy <tt>bookmarklets</tt> to easily shorten and share links</li>
@@ -433,27 +435,7 @@
 			</ul>
 			
 			<h3>Advanced settings</h3>
-			<p>File <code>includes/yourls-load.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing</p>
-		</div>
-		
-		<!-- WordPress plugin -->
-		<div id="PluginDiv" style="display:none">
-			<h2 class='first'>WordPress Plugin</h2>
-			
-			<h3>Features</h3>
-			<ul>
-				<li>Generate short URLs for each new post or page</li>
-				<li>Generate short URLs for all your old posts and pages if wished</li>
-				<li>Send a tweet on your Twitter account with the post title and short URL as you publish them</li>
-				<li>Works if YOURLS is hosted on the same server or on a remote server</li>
-			</ul>
-			
-			<h3>Download &amp; more informations</h3>
-			<ul>
-				<li>Download <a href="http://yourls.org/plugin">YOURLS: WordPress to Twitter</a> from the official WordPress plugin repository</li>
-				<li>More information, tips and feedback on <a href="http://yourls.org/plugindoc">the plugin page</a> from planetOzh</li>
-			</ul>
-		
+			<p>File <code>includes/yourls-load.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</p>
 		</div>
 		
 		<!-- YOURLS plugins -->
@@ -603,17 +585,17 @@
 			<h3>Uppercase letters in short URLs are eaten up, eg "<code>OmgOzh</code>" becomes "<code>mgzh</code>" !</h3>
 			<ul>
 				<li>Indeed. It's intented if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
-				<li>If you want to force lowercase, you'll need a plugin.</li>
+				<li>If you want to force lowercase, you'll need a <a href="http://yourls.org/pluginlist">plugin</a>.</li>
 			</ul>
 			
 			<h3>Feedback, feature requests and bug reporting</h3>
-			<ul>
+			<ol>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="http://yourls.org/support">Please</a>.</li>
 				<li>Check the <a href="http://yourls.org/roadmap">Road Map</a> for future features.</li>
 				<li>Read all the <a href="http://yourls.org/wiki">wiki documents</a>.</li>
 				<li>Search in the <a href="http://yourls.org/closedissues">closed issues</a>.</li>
 				<li>Eventually raise an <a href="http://yourls.org/issues">issue here</a> and give all the details. Thanks!</li>
-			</ul>
+			</ol>
 
 		</div>
 		
@@ -629,7 +611,7 @@
 			<ul>
 				<li>The official <a href="http://blog.yourls.org">YOURLS blog</a>, for news, hints and showcase.</li>
 				<li>The <a href="http://yourls.org/wiki">wiki</a>: advanced documentation, plugins, tips and more</li>
-				<li>Follow <a href="https://twitter.com/YOURLS">@YOURLS</a> to get the scoops on development, and <a href="https://twitter.com/ozh">@Ozh</a> for tips and news (and random geekiness too)</li>
+				<li>Follow <a href="https://twitter.com/YOURLS">@YOURLS</a> for hardcore development, and <a href="https://twitter.com/ozh">@Ozh</a> for tips and news (and random geekiness too)</li>
 			</ul>
 		
 			<h2>Showcase</h2>
@@ -663,6 +645,12 @@
 			
 			<h2>YOURLS and other platforms or frameworks</h2>
 			<ul>		
+				<li><a href="http://wordpress.org/extend/plugins/search.php?q=yourls">WordPress</a><br/>
+				There are numerous WordPress plugin with YOURLS support. The <a href="http://wordpress.org/extend/plugins/yourls-wordpress-to-twitter/">official plugin</a> is no longer maintained. <a href="http://wordpress.org/extend/plugins/yourls-link-creator/">YOURLS Link Creator</a> is recommended.</li>
+				
+				<li><a href="http://drupal.org/project/yourls">Drupal</a><br/>
+				Allows for the automatic creation of short urls using a YOURLS installation</li>
+				
 				<li><a href="http://github.com/pjain/WWW-Shorten-Yourls">Perl</a><br/>
 				WWW-Shorten-Yourls is a Perl module to shorten URLs using YOURLS</li>
 				
@@ -677,9 +665,6 @@
 
 				<li><a href="https://github.com/driflash/CakePHP-YOURLS-Plugin">CakePHP</a><br/>
 				Plugin which integrates CakePHP with Yourls</li>
-				
-				<li><a href="http://drupal.org/project/yourls">Drupal</a><br/>
-				Allows for the automatic creation of short urls using a YOURLS installation</li>
 				
 				<li><a href="https://github.com/rthees/yourls-status-net">status.net</a><br/>
 				A plugin for status.net to use YOURLS</li>
@@ -788,7 +773,6 @@
 	}
 	// Toggle tab display
 	function toggle(el) {
-		//var tabs = ["About", "Install", "Config", "Plugin", "FAQ"];
 		var target = el.toString().replace(/^.*#/, '');
 		for (var tab in tabs) {
 			// reinit tabs
