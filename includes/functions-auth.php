@@ -99,7 +99,7 @@ function yourls_check_password_hash( $stored, $plaintext ) {
 	if ( substr( $stored, 0, 4 ) == 'md5:' and strlen( $stored ) == 42 ) {
 		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
 		// And 42. Of course. http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
-		list( $temp, $salt, $md5 ) = split( ':', $stored );
+		list( $temp, $salt, $md5 ) = explode( ':', $stored );
 		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
 	} else {
 		// Password was sent in clear
