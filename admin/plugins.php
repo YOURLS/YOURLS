@@ -61,6 +61,8 @@ yourls_html_menu();
 	
 	<?php
 	$plugins = (array)yourls_get_plugins();
+	uasort( $plugins, 'yourls_plugins_sort_callback' );
+	
 	$count = count( $plugins );
 	$count_active = yourls_has_active_plugins();
 	?>

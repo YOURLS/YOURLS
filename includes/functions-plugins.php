@@ -551,3 +551,29 @@ function yourls_plugin_admin_page( $plugin_page ) {
 	
 	die();
 }
+
+
+/**
+ * Callback function: Sort plugins 
+ *
+ * @link http://php.net/uasort
+ *
+ * @param array $plugin_a
+ * @param array $plugin_b
+ * @return int 0, 1 or -1, see uasort()
+ */
+function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
+	$orderby = yourls_apply_filters( 'plugins_sort_callback', 'Plugin Name' );
+	$order   = yourls_apply_filters( 'plugins_sort_callback', 'ASC' );
+
+	$a = $plugin_a[$orderby];
+	$b = $plugin_b[$orderby];
+
+	if ( $a == $b )
+		return 0;
+
+	if ( 'DESC' == $order )
+		return ( $a < $b ) ? 1 : -1;
+	else
+		return ( $a < $b ) ? -1 : 1;		
+}
