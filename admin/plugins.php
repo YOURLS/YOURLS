@@ -154,7 +154,7 @@ yourls_html_menu();
 	
 	<h3>More plugins</h3>
 	
-	<p>For more plugins, head to the official <a href="http://code.google.com/p/yourls/wiki/PluginList">Plugin list</a>.</p>
+	<p>For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.</p>
 
 	
 <?php yourls_html_footer(); ?>
