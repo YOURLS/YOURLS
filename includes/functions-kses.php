@@ -544,7 +544,7 @@ function yourls_kses_allowed_protocols() {
 		// Text & voice
 		'aim:', 'facetime://', 'gtalk:', 'xmpp:',
 		'irc://', 'ircs://', 'mumble://', 
-		'callto:', 'skype:',
+		'callto:', 'skype:', 'sip:',
 		'teamspeak://', 'ventrilo://', 'xfire:', 
 		'ymsgr:', 
 
