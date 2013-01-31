@@ -87,6 +87,15 @@ function yourls_api_output( $mode, $return ) {
 	
 	yourls_do_action( 'pre_api_output', $mode, $return );
 	
+	if( isset( $return['statusCode'] ) ) {
+		$code = $return['statusCode'];
+	} elseif ( isset( $return['errorCode'] ) ) {
+		$code = $return['errorCode'];
+	} else {
+		$code = 200;
+	}
+	yourls_status_header( $code );
+	
 	switch ( $mode ) {
 		case 'jsonp':
 			header( 'Content-type: application/javascript' );
