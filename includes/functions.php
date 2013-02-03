@@ -1738,7 +1738,7 @@ function yourls_get_relative_url( $url, $strict = true ) {
  *
  * This function is to be used in every function that is deprecated.
  *
- * @since 1.6.1
+ * @since 1.6
  * @uses yourls_do_action() Calls 'deprecated_function' and passes the function name, what to use instead,
  *   and the version the function was deprecated in.
  * @uses yourls_apply_filters() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
