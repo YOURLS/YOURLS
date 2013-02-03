@@ -36,6 +36,10 @@ if( !defined( 'YOURLS_USERDIR' ) )
 if( !defined( 'YOURLS_USERURL' ) )
 	define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
 	
+// physical path of translations directory
+if( !defined( 'YOURLS_LANG_DIR' ) )
+	define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
+
 // physical path of plugins directory
 if( !defined( 'YOURLS_PLUGINDIR' ) )
 	define( 'YOURLS_PLUGINDIR', YOURLS_USERDIR.'/plugins' );
@@ -102,6 +106,7 @@ require_once( YOURLS_INC.'/functions-plugins.php' );
 require_once( YOURLS_INC.'/functions-formatting.php' );
 require_once( YOURLS_INC.'/functions-api.php' );
 require_once( YOURLS_INC.'/functions-kses.php' );
+require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
 // Allow drop-in replacement for the DB engine
@@ -163,6 +168,9 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 // Init all plugins
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
+
+// Load locale
+yourls_load_default_textdomain();
 
 if( yourls_is_admin() )
 	yourls_do_action( 'admin_init' );

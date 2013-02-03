@@ -209,9 +209,9 @@ yourls_html_menu() ;
 yourls_do_action( 'admin_page_before_content' );
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_display; ?></p>
-	<p>Display <strong><?php echo $display_on_page; ?></strong> to <strong class='increment'><?php echo $max_on_page; ?></strong> of <strong class='increment'><?php echo $total_items; ?></strong> URLs<?php if( $total_items_clicks !== false ) echo ", counting <strong>$total_items_clicks</strong> " . yourls_plural('click', $total_items_clicks) ?>.</p>
+	<p><?php printf(yourls__('Display <strong>%d</strong> to <strong class="increment">%d</strong> of <strong class="increment">%d</strong> URLs'), $display_on_page, $max_on_page, $total_items ); if( $total_items_clicks !== false ) echo ", " . yourls__('counting') . " <strong>$total_items_clicks</strong> " . yourls_plural(yourls__('click'), $total_items_clicks); ?>.</p>
 <?php } ?>
-<p>Overall, tracking <strong class='increment'><?php echo number_format($total_urls); ?></strong> links, <strong><?php echo number_format($total_clicks); ?></strong> clicks, and counting!</p>
+<p><?php printf(yourls__('Overall, tracking <strong class="increment">%d</strong> links, <strong>%d</strong> clicks, and counting!'), number_format($total_urls), number_format($total_clicks) ); ?></p>
 
 <?php yourls_do_action( 'admin_page_before_form' ); ?>
 
@@ -220,7 +220,7 @@ if ( !$is_bookmark ) { ?>
 <?php
 // If bookmarklet, add message. Otherwise, hide hidden share box.
 if ( !$is_bookmark ) {
-	yourls_share_box( '', '', '', '', '<h2>Your short link</h2>', '<h2>Quick Share</h2>', true );
+	yourls_share_box( '', '', '', '', '', '', true );
 } else {
 	echo '<script type="text/javascript">$(document).ready(function(){
 		feedback( "' . $return['message'] . '", "'. $return['status'] .'");
@@ -272,7 +272,7 @@ if( $url_results ) {
 }
 
 $display = $found_rows ? 'display:none' : '';
-echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">No URL</td></tr>';
+echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">' . yourls__('No URL') . '</td></tr>';
 
 yourls_table_tbody_end();
 

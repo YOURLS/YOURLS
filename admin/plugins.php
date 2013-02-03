@@ -48,7 +48,7 @@ if( isset( $_GET['action'] ) ) {
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) ) {
 	if( $_GET['success'] == 'activated' OR $_GET['success'] == 'deactivated' ) {
-		yourls_add_notice( 'Plugin '.$_GET['success'] );
+		yourls_add_notice( 'Plugin '.__($_GET['success']) );
 	}
 }
 
@@ -57,7 +57,7 @@ yourls_html_logo();
 yourls_html_menu();
 ?>
 
-	<h2>Plugins</h2>
+	<h2><?php _e("Plugins"); ?></h2>
 	
 	<?php
 	$plugins = (array)yourls_get_plugins();
@@ -65,18 +65,19 @@ yourls_html_menu();
 	
 	$count = count( $plugins );
 	$count_active = yourls_has_active_plugins();
+    $plugins_count = $count.' '.yourls_plural( __('plugin'), $count );
 	?>
 	
-	<p id="plugin_summary">You currently have <strong><?php echo $count.' '.yourls_plural( 'plugin', $count ); ?></strong> installed, and <strong><?php echo $count_active; ?></strong> activated</p>
+	<p id="plugin_summary"><?php printf(__('You currently have <strong>%d</strong> installed, and <strong>%d</strong> activated'), $plugins_count, $count_active ); ?></p>
 
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>
 		<tr>
-			<th>Plugin Name</th>
-			<th>Version</th>
-			<th>Description</th>
-			<th>Author</th>
-			<th>Action</th>
+			<th><?php _e('Plugin Name'); ?></th>
+			<th><?php _e('Version'); ?></th>
+			<th><?php _e('Description'); ?></th>
+			<th><?php _e('Author'); ?></th>
+			<th><?php _e('Action'); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -111,11 +112,11 @@ yourls_html_menu();
 		if( yourls_is_active_plugin( $file ) ) {
 			$class = 'active';
 			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
-			$action_anchor = 'Deactivate';
+			$action_anchor = __('Deactivate');
 		} else {
 			$class = 'inactive';
 			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
-			$action_anchor = 'Activate';
+			$action_anchor = __('Activate');
 		}
 			
 		// Other "Fields: Value" in the header? Get them too
@@ -150,11 +151,11 @@ yourls_html_menu();
 	<?php } ?>
 	</script>
 	
-	<p>If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.</p>
+	<p><?php _e('If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.'); ?></p>
 	
-	<h3>More plugins</h3>
+	<h3><?php _e('More plugins'); ?></h3>
 	
-	<p>For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.</p>
+	<p><?php _e('For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.'); ?></p>
 
 	
 <?php yourls_html_footer(); ?>

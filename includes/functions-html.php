@@ -146,10 +146,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<div><strong>Enter the URL</strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
-				Optional: <strong>Custom short URL</strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+				<div><strong><?php yourls_e('Enter the URL'); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
+				<?php yourls_e('Optional'); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
 				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-				<input type="button" id="add-button" name="add-button" value="Shorten The URL" class="button" onclick="add();" /></div>
+				<input type="button" id="add-button" name="add-button" value="<?php yourls_e('Shorten The URL'); ?>" class="button" onclick="add();" /></div>
 			</form>
 			<div id="feedback" style="display:none"></div>
 		</div>
@@ -169,52 +169,52 @@ function yourls_html_tfooter( $params = array() ) {
 			<div id="filter_form">
 				<form action="" method="get">
 					<div id="filter_options">
-						Search&nbsp;for&nbsp;
+						<?php yourls_e('Search&nbsp;for&nbsp;'); ?>
 						<input type="text" name="s_search" class="text" size="12" value="<?php echo $search_text; ?>" />
-						&nbsp;in&nbsp;
+						<?php yourls_e('&nbsp;in&nbsp;'); ?>
 						<select name="s_in" size="1">
-							<option value="keyword"<?php if($search_in_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
-							<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-							<option value="title"<?php if($search_in_sql == 'title') { echo ' selected="selected"'; } ?>>Title</option>
-							<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
+							<option value="keyword"<?php if($search_in_sql == 'keyword') { echo ' selected="selected"'; } ?>><?php yourls_e('Short URL'); ?></option>
+							<option value="url"<?php if($search_in_sql == 'url') { echo ' selected="selected"'; } ?>><?php yourls_e('URL'); ?></option>
+							<option value="title"<?php if($search_in_sql == 'title') { echo ' selected="selected"'; } ?>><?php yourls_e('Title'); ?></option>
+							<option value="ip"<?php if($search_in_sql == 'ip') { echo ' selected="selected"'; } ?>><?php yourls_e('IP'); ?></option>
 						</select>
-						&ndash;&nbsp;Order&nbsp;by&nbsp;
+						&ndash;&nbsp;<?php yourls_e('Order&nbsp;by'); ?>&nbsp;
 						<select name="s_by" size="1">
-							<option value="id"<?php if($sort_by_sql == 'keyword') { echo ' selected="selected"'; } ?>>Short URL</option>
-							<option value="url"<?php if($sort_by_sql == 'url') { echo ' selected="selected"'; } ?>>URL</option>
-							<option value="timestamp"<?php if($sort_by_sql == 'timestamp') { echo ' selected="selected"'; } ?>>Date</option>
-							<option value="ip"<?php if($sort_by_sql == 'ip') { echo ' selected="selected"'; } ?>>IP</option>
-							<option value="clicks"<?php if($sort_by_sql == 'clicks') { echo ' selected="selected"'; } ?>>Clicks</option>
+							<option value="id"<?php if($sort_by_sql == 'keyword') { echo ' selected="selected"'; } ?>><?php yourls_e('Short URL'); ?></option>
+							<option value="url"<?php if($sort_by_sql == 'url') { echo ' selected="selected"'; } ?>><?php yourls_e('URL'); ?></option>
+							<option value="timestamp"<?php if($sort_by_sql == 'timestamp') { echo ' selected="selected"'; } ?>><?php yourls_e('Date'); ?></option>
+							<option value="ip"<?php if($sort_by_sql == 'ip') { echo ' selected="selected"'; } ?>><?php yourls_e('IP'); ?></option>
+							<option value="clicks"<?php if($sort_by_sql == 'clicks') { echo ' selected="selected"'; } ?>><?php yourls_e('Clicks'); ?></option>
 						</select>
 						<select name="s_order" size="1">
-							<option value="asc"<?php if($sort_order_sql == 'asc') { echo ' selected="selected"'; } ?>>Ascending</option>
-							<option value="desc"<?php if($sort_order_sql == 'desc') { echo ' selected="selected"'; } ?>>Descending</option>
+							<option value="asc"<?php if($sort_order_sql == 'asc') { echo ' selected="selected"'; } ?>><?php yourls_e('Ascending'); ?></option>
+							<option value="desc"<?php if($sort_order_sql == 'desc') { echo ' selected="selected"'; } ?>><?php yourls_e('Descending'); ?></option>
 						</select>
-						&ndash;&nbsp;Show&nbsp;
-						<input type="text" name="perpage" class="text" size="2" value="<?php echo $perpage; ?>" />&nbsp;rows<br/>
+						&ndash;&nbsp;<?php yourls_e('Show'); ?>&nbsp;
+						<input type="text" name="perpage" class="text" size="2" value="<?php echo $perpage; ?>" />&nbsp;<?php yourls_e('rows'); ?><br/>
 						
-						Show links with
+						<?php yourls_e('Show links with'); ?>
 						<select name="link_filter" size="1">
-							<option value="more"<?php if($link_filter === 'more') { echo ' selected="selected"'; } ?>>more</option>
-							<option value="less"<?php if($link_filter === 'less') { echo ' selected="selected"'; } ?>>less</option>
+							<option value="more"<?php if($link_filter === 'more') { echo ' selected="selected"'; } ?>><?php yourls_e('more'); ?></option>
+							<option value="less"<?php if($link_filter === 'less') { echo ' selected="selected"'; } ?>><?php yourls_e('less'); ?></option>
 						</select>
-						than
-						<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" />clicks<br/>
+						<?php yourls_e('than'); ?>
+						<input type="text" name="link_limit" class="text" size="4" value="<?php echo $link_limit; ?>" /> <?php yourls_e('clicks'); ?><br/>
 						
-						Show links created
+						<?php yourls_e('Show links created'); ?>
 						<select name="date_filter" id="date_filter" size="1">
-							<option value="before"<?php if($date_filter === 'before') { echo ' selected="selected"'; } ?>>before</option>
-							<option value="after"<?php if($date_filter === 'after') { echo ' selected="selected"'; } ?>>after</option>
-							<option value="between"<?php if($date_filter === 'between') { echo ' selected="selected"'; } ?>> between</option>
+							<option value="before"<?php if($date_filter === 'before') { echo ' selected="selected"'; } ?>><?php yourls_e('before'); ?></option>
+							<option value="after"<?php if($date_filter === 'after') { echo ' selected="selected"'; } ?>><?php yourls_e('after'); ?></option>
+							<option value="between"<?php if($date_filter === 'between') { echo ' selected="selected"'; } ?>><?php yourls_e('between'); ?></option>
 						</select>
 						<input type="text" name="date_first" id="date_first" class="text" size="12" value="<?php echo $date_first; ?>" />
 						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> and </span>
 						<input type="text" name="date_second" id="date_second" class="text" size="12" value="<?php echo $date_second; ?>" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>/>
 						
 						<div id="filter_buttons">
-							<input type="submit" id="submit-sort" value="Search" class="button primary" />
+							<input type="submit" id="submit-sort" value="<?php yourls_e('Search'); ?>" class="button primary" />
 							&nbsp;
-							<input type="button" id="submit-clear-filter" value="Clear" class="button" onclick="window.parent.location.href = 'index.php'" />
+							<input type="button" id="submit-clear-filter" value="<?php yourls_e('Clear'); ?>" class="button" onclick="window.parent.location.href = 'index.php'" />
 						</div>
 				
 					</div>
@@ -223,7 +223,7 @@ function yourls_html_tfooter( $params = array() ) {
 			<div id="pagination">
 				<span class="navigation">
 				<?php if( $total_pages > 1 ) { ?>
-					<span class="nav_total"><?php echo $total_pages .' '. yourls_plural( 'page', $total_pages ); ?></span>
+					<span class="nav_total"><?php echo $total_pages .' '. yourls_plural( yourls__('page'), $total_pages ); ?></span>
 					<?php
 					$base_page = yourls_admin_url( 'index.php' );
 					// Pagination offsets: min( max ( zomg! ) );
@@ -231,7 +231,7 @@ function yourls_html_tfooter( $params = array() ) {
 					$p_end = min( max( 5, $page + 2 ), $total_pages );
 					if( $p_start >= 2 ) {
 						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => 1 ) ), $base_page );
-						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="Go to First Page">&laquo; First</a></span>';
+						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="' . yourls__('Go to First Page') . '">&laquo; First</a></span>';
 						echo '<span class="nav_link nav_prev"></span>';
 					}
 					for( $i = $p_start ; $i <= $p_end; $i++ ) {
@@ -245,7 +245,7 @@ function yourls_html_tfooter( $params = array() ) {
 					if( ( $p_end ) < $total_pages ) {
 						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
 						echo '<span class="nav_link nav_next"></span>';
-						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="Go to Last Page">Last &raquo;</a></span>';
+						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls__('Go to First Page') . '">Last &raquo;</a></span>';
 					}
 					?>
 				<?php } ?>
@@ -259,8 +259,13 @@ function yourls_html_tfooter( $params = array() ) {
 }
 
 // Display the Quick Share box
-function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_title = '<h2>Your short link</h2>', $share_title = '<h2>Quick Share</h2>', $hidden = false ) {
-	// Allow plugins to short-circuit the whole function
+function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
+	if ($shortlink_title == '')
+        $shortlink_title = '<h2>' . yourls__('Your short link') . '</h2>';
+   	if ($share_title == '')
+        $share_title = '<h2>' . yourls__('Quick Share') . '</h2>';
+    
+    // Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_share_box', false );
 	if ( false !== $pre )
 		return $pre;
@@ -287,9 +292,9 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
 			<p><input id="copylink" class="text" size="32" value="<?php echo yourls_esc_url( $shorturl ); ?>" /></p>
-			<p><small>Long link: <a id="origlink" href="<?php echo yourls_esc_url( $longurl ); ?>"><?php echo yourls_esc_url( $longurl ); ?></a></small>
+			<p><small><?php yourls_e('Long link'); ?>: <a id="origlink" href="<?php echo yourls_esc_url( $longurl ); ?>"><?php echo yourls_esc_url( $longurl ); ?></a></small>
 			<?php if( yourls_do_log_redirect() ) { ?>
-			<br/><small>Stats: <a id="statlink" href="<?php echo yourls_esc_url( $shorturl ); ?>+"><?php echo yourls_esc_url( $shorturl ); ?>+</a></small>
+			<br/><small><?php yourls_e('Stats'); ?>: <a id="statlink" href="<?php echo yourls_esc_url( $shorturl ); ?>+"><?php echo yourls_esc_url( $shorturl ); ?>+</a></small>
 			<input type="hidden" id="titlelink" value="<?php echo yourls_esc_attr( $title ); ?>" />
 			<?php } ?>
 			</p>
@@ -303,7 +308,7 @@ function yourls_share_box( $longurl, $shorturl, $title='', $text='', $shortlink_
 				<span id="charcount" class="hide-if-no-js"><?php echo $count; ?></span>
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
 			</div>
-			<p id="share_links">Share with 
+			<p id="share_links"><?php yourls_e('Share with'); ?> 
 				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="Tweet this!" onclick="share('tw');return false">Twitter</a>
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
@@ -363,7 +368,7 @@ function yourls_table_edit_row( $keyword ) {
 <tr id="edit-$id" class="edit-row"><td colspan="5"><strong>Long URL</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>Short URL</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>Title</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="Save" title="Save new values" class="button" onclick="edit_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="X" title="Cancel editing" class="button" onclick="hide_edit('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 	} else {
-		$return = '<tr><td colspan="6">Error, URL not found</td></tr>';
+		$return = '<tr><td colspan="6">' . yourls__('Error, URL not found') . '</td></tr>';
 	}
 	
 	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
@@ -392,28 +397,28 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		'stats' => array(
 			'href'    => $statlink,
 			'id'      => "statlink-$id",
-			'title'   => 'Stats',
-			'anchor'  => 'Stats',
+			'title'   => yourls_esc_attr__( 'Stats' ),
+			'anchor'  => yourls__( 'Stats' ),
 		),
 		'share' => array(
 			'href'    => '',
 			'id'      => "share-button-$id",
-			'title'   => 'Share',
-			'anchor'  => 'Share',
+			'title'   => yourls_esc_attr__( 'Share' ),
+			'anchor'  => yourls__( 'Share' ),
 			'onclick' => "toggle_share('$id');return false;",
 		),
 		'edit' => array(
 			'href'    => $edit_link,
 			'id'      => "edit-button-$id",
-			'title'   => 'Edit',
-			'anchor'  => 'Edit',
+			'title'   => yourls_esc_attr__( 'Edit' ),
+			'anchor'  => yourls__( 'Edit' ),
 			'onclick' => "edit('$id');return false;",
 		),
 		'delete' => array(
 			'href'    => $delete_link,
 			'id'      => "delete-button-$id",
-			'title'   => 'Delete',
-			'anchor'  => 'Delete',
+			'title'   => yourls_esc_attr__( 'Delete' ),
+			'anchor'  => yourls__( 'Delete' ),
 			'onclick' => "remove('$id');return false;",
 		)
 	);
@@ -491,12 +496,12 @@ function yourls_table_head() {
 	echo yourls_apply_filter( 'table_head_start', $start );
 	
 	$cells = yourls_apply_filter( 'table_head_cells', array(
-		'shorturl' => 'Short URL&nbsp;',
-		'longurl'  => 'Original URL',
-		'date'     => 'Date',
-		'ip'       => 'IP',
-		'clicks'   => 'Clicks&nbsp;&nbsp;',
-		'actions'  => 'Actions'
+		'shorturl' => yourls__('Short URL&nbsp;'),
+		'longurl'  => yourls__('Original URL'),
+		'date'     => yourls__('Date'),
+		'ip'       => yourls__('IP'),
+		'clicks'   => yourls__('Clicks&nbsp;&nbsp;'),
+		'actions'  => yourls__('Actions')
 	) );
 	foreach( $cells as $k => $v ) {
 		echo "<th id='main_table_head_$k'>$v</th>\n";
@@ -547,15 +552,15 @@ function yourls_login_screen( $error_msg = '' ) {
 				}
 			?>
 			<p>
-				<label for="username">Username</label><br />
+				<label for="username"><?php yourls_e('Username'); ?></label><br />
 				<input type="text" id="username" name="username" size="30" class="text" />
 			</p>
 			<p>
-				<label for="password">Password</label><br />
+				<label for="password"><?php yourls_e('Password'); ?></label><br />
 				<input type="password" id="password" name="password" size="30" class="text" />
 			</p>
 			<p style="text-align: right;">
-				<input type="submit" id="submit" name="submit" value="Login" class="button" />
+				<input type="submit" id="submit" name="submit" value="<?php yourls_e('Login'); ?>" class="button" />
 			</p>
 		</form>
 		<script type="text/javascript">$('#username').focus();</script>
@@ -570,29 +575,29 @@ function yourls_html_menu() {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', 'Hello <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">Logout</a>)' );
+		$logout_link = yourls_apply_filter( 'logout_link', yourls__('Hello') . ' <strong>' . YOURLS_USER . '</strong> (<a href="?action=logout" title="Logout">' . yourls__('Logout') . '</a>)' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">Help</a>' );
+	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__('Help') . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
 	
 	$admin_links['admin'] = array(
 		'url'    => yourls_admin_url( 'index.php' ),
-		'title'  => 'Go to the admin interface',
-		'anchor' => 'Admin interface'
+		'title'  => yourls__('Go to the admin interface'),
+		'anchor' => yourls__('Admin interface')
 	);
 	
 	if( yourls_is_admin() ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
-			'anchor' => 'Tools',
+			'anchor' => yourls__('Tools')
 		);
 		$admin_links['plugins'] = array(
 			'url'    => yourls_admin_url( 'plugins.php' ),
-			'anchor' => 'Manage Plugins',
+			'anchor' => yourls__('Manage Plugins')
 		);
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
 	}
