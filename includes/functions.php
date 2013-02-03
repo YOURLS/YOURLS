@@ -1726,3 +1726,37 @@ function yourls_get_relative_url( $url, $strict = true ) {
 
 	return yourls_apply_filter( 'get_relative_url', $_url, $url );
 }
+
+/**
+ * Marks a function as deprecated and informs when it has been used. Stolen from WP.
+ *
+ * There is a hook deprecated_function that will be called that can be used
+ * to get the backtrace up to what file and function called the deprecated
+ * function.
+ *
+ * The current behavior is to trigger a user error if YOURLS_DEBUG is true.
+ *
+ * This function is to be used in every function that is deprecated.
+ *
+ * @since 1.6.1
+ * @uses yourls_do_action() Calls 'deprecated_function' and passes the function name, what to use instead,
+ *   and the version the function was deprecated in.
+ * @uses yourls_apply_filters() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
+ *   trigger or false to not trigger error.
+ *
+ * @param string $function The function that was called
+ * @param string $version The version of WordPress that deprecated the function
+ * @param string $replacement Optional. The function that should have been called
+ */
+function yourls_deprecated_function( $function, $version, $replacement = null ) {
+
+	yourls_do_action( 'deprecated_function', $function, $replacement, $version );
+
+	// Allow plugin to filter the output error trigger
+	if ( WP_DEBUG && yourls_apply_filters( 'deprecated_function_trigger_error', true ) ) {
+		if ( ! is_null($replacement) )
+			trigger_error( sprintf( __('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
+		else
+			trigger_error( sprintf( __('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
+	}
+}
