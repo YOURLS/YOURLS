@@ -94,7 +94,7 @@ if( !defined( 'YOURLS_DEBUG' ) )
 	
 // Error reporting
 if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-	error_reporting( E_ALL );
+	error_reporting( E_ALL | E_STRICT );
 } else {
 	error_reporting( E_ERROR | E_PARSE );
 }
