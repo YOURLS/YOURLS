@@ -236,7 +236,7 @@ if ( !$is_bookmark ) {
 	$params = array(
 		'search_text'    => $search_text,
 		'search_in_sql'  => $search_in_sql,
-		'sort_by_sql'    => $sort_by_sql,
+		's_by'           => $sort_by_sql,
 		'sort_order_sql' => $sort_order_sql,
 		'page'           => $page,
 		'perpage'        => $perpage,
