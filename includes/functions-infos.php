@@ -98,17 +98,22 @@ function yourls_build_list_of_days( $dates ) {
 
 	// Get first & last years from our range. In our example: 2009 & 2009
 	$first_year = key( $dates );
-	$last_year  = end( array_keys( $dates ) );
+	$_keys      = array_keys( $dates );
+	$last_year  = end( $_keys );
 	reset( $dates );
 
 	// Get first & last months from our range. In our example: 08 & 09
 	$first_month = key( $dates[ $first_year ] );
-	$last_month  = end( array_keys( $dates[ $last_year ] ) );
+	$_keys       = array_keys( $dates[ $last_year ] );
+	$last_month  = end( $_keys );
 	reset( $dates );
 	
 	// Get first & last days from our range. In our example: 29 & 05
 	$first_day = key( $dates[ $first_year ][ $first_month ] );
-	$last_day  = end( array_keys( $dates[ $last_year ][ $last_month ] ) );
+	$_keys     = array_keys( $dates[ $last_year ][ $last_month ] );
+	$last_day  = end( $_keys );
+	
+	unset( $_keys );
 
 	// Now build a list of all years (2009), month (08 & 09) and days (all from 2009-08-29 to 2009-09-05)
 	$list_of_years  = array();
