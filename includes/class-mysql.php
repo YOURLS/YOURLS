@@ -919,4 +919,7 @@ class ezSQL_mysql extends ezSQLcore
 		@mysql_close($this->dbh);	
 	}
 
+	function mysql_version() {
+		return  mysql_get_server_info( $this->dbh ) ;
+	}
 }
