@@ -1760,3 +1760,16 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
 	}
 }
+
+/**
+ * Return the value if not an empty string
+ *
+ * Used with array_filter(), to remove empty keys but not keys with value 0 or false
+ *
+ * @since 1.6
+ * @param mixed $val Value to test against ''
+ * @return bool True if not an empty string
+ */
+function yourls_return_if_not_empty_string( $val ) {
+	return( $val !== '' );
+}
