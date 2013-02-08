@@ -140,7 +140,13 @@ function yourls_html_footer() {
 	$num_queries = $ydb->num_queries > 1 ? $ydb->num_queries.' queries' : $ydb->num_queries.' query';
 	?>
 	</div> <?php // wrap ?>
-	<div id="footer"><p>Powered by <a href="http://yourls.org/" title="YOURLS">YOURLS</a> v<?php echo YOURLS_VERSION; echo ' &ndash; '.$num_queries; ?></p></div>
+	<div id="footer"><p>
+		<?php
+		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
+		$footer .= ' &ndash; '.$num_queries;
+		echo yourls_apply_filters( 'html_footer_text', $footer );
+		?>
+	</p></div>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
@@ -162,8 +168,8 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<div><strong><?php yourls_e('Enter the URL'); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
-				<?php yourls_e('Optional'); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+				<div><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
+				<?php yourls_e( 'Optional '); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
 				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				<input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add();" /></div>
 			</form>
