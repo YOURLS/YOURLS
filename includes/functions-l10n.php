@@ -105,6 +105,70 @@ function yourls__( $text, $domain = 'default' ) {
 }
 
 /**
+ * Return a translated sprintf() string (mix yourls__() and sprintf() in one func)
+ *
+ * Instead of doing sprintf( yourls__( 'string %s' ), $arg ) you can simply use:
+ * yourls_s( 'string %s', $arg )
+ * This function accepts an arbitrary number of arguments:
+ * - first one will be the string to translate, eg "hello %s my name is %s"
+ * - following ones will be the sprintf arguments, eg "world" and "Ozh"
+ * - if there are more arguments passed than needed, the last one will be used as the translation domain
+ *
+ * @see sprintf()
+ * @since 1.6
+ *
+ * @param string $text Text to translate
+ * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
+ * @return string Translated text
+ */
+function yourls_s( $pattern ) {
+	// Get pattern and pattern arguments 
+	$args = func_get_args();
+	// If yourls_s() called by yourls_se(), all arguments are wrapped in the same array key
+	if( count( $args ) == 1 && is_array( $args ) ) {
+		$args = $args[0];
+	}
+	$pattern = $args[0];
+	
+	// get list of sprintf tokens (%s and such)
+	$num_of_tokens = substr_count( $pattern, '%' ) - 2 * substr_count( $pattern, '%%' );
+	
+	$domain = 'default';
+	// More arguments passed than needed for the sprintf? The last one will be the domain
+	if( $num_of_tokens < ( count( $args ) - 1 ) ) {
+		$domain = array_pop( $args );
+	}
+	
+	// Translate text
+	$args[0] = yourls__( $pattern, $domain );
+	
+	return call_user_func_array( 'sprintf', $args );	
+}
+
+/**
+ * Echo a translated sprintf() string (mix yourls__() and sprintf() in one func)
+ *
+ * Instead of doing printf( yourls__( 'string %s' ), $arg ) you can simply use:
+ * yourls_se( 'string %s', $arg )
+ * This function accepts an arbitrary number of arguments:
+ * - first one will be the string to translate, eg "hello %s my name is %s"
+ * - following ones will be the sprintf arguments, eg "world" and "Ozh"
+ * - if there are more arguments passed than needed, the last one will be used as the translation domain
+ *
+ * @see yourls_s()
+ * @see sprintf()
+ * @since 1.6
+ *
+ * @param string $text Text to translate
+ * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
+ * @return string Translated text
+ */
+function yourls_se( $pattern ) {
+	echo yourls_s( func_get_args() );
+}
+
+
+/**
  * Retrieves the translation of $text and escapes it for safe use in an attribute.
  * If there is no translation, or the domain isn't loaded, the original text is returned.
  *
