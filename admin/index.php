@@ -48,7 +48,7 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 			$search_in      = 'ip';
 			break;
 	}
-	$search_sentence = sprintf( yourls__( 'Searching for <strong>%s</strong> in <strong>%s</strong>.' ), yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
+	$search_sentence = yourls_s( 'Searching for <strong>%s</strong> in <strong>%s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
 	$search_url      = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );

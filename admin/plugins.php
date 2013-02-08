@@ -35,11 +35,11 @@ if( isset( $_GET['action'] ) ) {
 				break;
 				
 			default:
-				$result = 'Unsupported action';
+				$result = yourls__( 'Unsupported action' );
 				break;
 		}
 	} else {
-		$result = 'No plugin specified, or not a valid plugin';
+		$result = yourls__( 'No plugin specified, or not a valid plugin' );
 	}
 	
 	yourls_add_notice( $result );
@@ -48,16 +48,16 @@ if( isset( $_GET['action'] ) ) {
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) ) {
 	if( $_GET['success'] == 'activated' OR $_GET['success'] == 'deactivated' ) {
-		yourls_add_notice( 'Plugin '.yourls__($_GET['success']) );
+		yourls_add_notice( yourls_s( 'Plugin has been %s', $_GET['success'] ) );
 	}
 }
 
-yourls_html_head( 'plugins', 'Manage Plugins' );
+yourls_html_head( 'plugins', yourls__( 'Manage Plugins' ) );
 yourls_html_logo();
 yourls_html_menu();
 ?>
 
-	<h2><?php yourls_e("Plugins"); ?></h2>
+	<h2><?php yourls_e( 'Plugins' ); ?></h2>
 	
 	<?php
 	$plugins = (array)yourls_get_plugins();
@@ -68,16 +68,16 @@ yourls_html_menu();
     $plugins_count = $count.' '.yourls_plural( yourls__('plugin'), $count );
 	?>
 	
-	<p id="plugin_summary"><?php printf(yourls__('You currently have <strong>%d</strong> installed, and <strong>%d</strong> activated'), $plugins_count, $count_active ); ?></p>
+	<p id="plugin_summary"><?php yourls_se( 'You currently have <strong>%d</strong> installed, and <strong>%d</strong> activated', $plugins_count, $count_active ); ?></p>
 
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>
 		<tr>
-			<th><?php yourls_e('Plugin Name'); ?></th>
-			<th><?php yourls_e('Version'); ?></th>
-			<th><?php yourls_e('Description'); ?></th>
-			<th><?php yourls_e('Author'); ?></th>
-			<th><?php yourls_e('Action'); ?></th>
+			<th><?php yourls_e( 'Plugin Name' ); ?></th>
+			<th><?php yourls_e( 'Version' ); ?></th>
+			<th><?php yourls_e( 'Description' ); ?></th>
+			<th><?php yourls_e( 'Author' ); ?></th>
+			<th><?php yourls_e( 'Action' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -112,11 +112,11 @@ yourls_html_menu();
 		if( yourls_is_active_plugin( $file ) ) {
 			$class = 'active';
 			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
-			$action_anchor = yourls__('Deactivate');
+			$action_anchor = yourls__( 'Deactivate' );
 		} else {
 			$class = 'inactive';
 			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
-			$action_anchor = yourls__('Activate');
+			$action_anchor = yourls__( 'Activate' );
 		}
 			
 		// Other "Fields: Value" in the header? Get them too
@@ -127,7 +127,7 @@ yourls_html_menu();
 			}
 		}
 		
-		$data['desc'] .= "<br/><small>plugin file location: $file</small>";
+		$data['desc'] .= '<br/><small>' . yourls_s( 'plugin file location: %s', $file) . '</small>';
 		
 		printf( "<tr class='plugin %s'><td class='plugin_name'><a href='%s'>%s</a></td><td class='plugin_version'>%s</td><td class='plugin_desc'>%s</td><td class='plugin_author'><a href='%s'>%s</a></td><td class='plugin_actions actions'><a href='%s'>%s</a></td></tr>",
 			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $action_url, $action_anchor
@@ -151,11 +151,11 @@ yourls_html_menu();
 	<?php } ?>
 	</script>
 	
-	<p><?php yourls_e('If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.'); ?></p>
+	<p><?php yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' ); ?></p>
 	
-	<h3><?php yourls_e('More plugins'); ?></h3>
+	<h3><?php yourls_e( 'More plugins' ); ?></h3>
 	
-	<p><?php yourls_e('For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.'); ?></p>
+	<p><?php yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
 
 	
 <?php yourls_html_footer(); ?>
