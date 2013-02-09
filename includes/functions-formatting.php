@@ -475,3 +475,17 @@ function yourls_esc_textarea( $text ) {
 }
 
 
+/**
+* PHP emulation of JS's encodeURI
+*
+* @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
+* @param $url
+* @return string
+*/
+function yourls_encodeURI( $url ) {
+    return strtr( rawurlencode( $url ), array (
+        '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
+		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
+		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
+    ) );
+}

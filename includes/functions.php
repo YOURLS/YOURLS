@@ -147,8 +147,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
 		return $pre;
-
-	$url = yourls_escape( yourls_sanitize_url( $url ) );		
+		
+	$url = yourls_encodeURI( $url );
+	$url = yourls_escape( yourls_sanitize_url( $url ) );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';

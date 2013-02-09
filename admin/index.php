@@ -137,9 +137,10 @@ if ( isset( $_GET['u'] ) ) {
 	$is_bookmark = true;
 	yourls_do_action( 'bookmarklet' );
 
-	$url     = yourls_sanitize_url( $_GET['u'] );
-	$keyword = ( isset( $_GET['k'] ) ? yourls_sanitize_keyword( $_GET['k'] ) : '' );
-	$title   = ( isset( $_GET['t'] ) ? yourls_sanitize_title( $_GET['t'] ) : '' );
+	// No sanitization needed here: everything happens in yourls_add_new_link()
+	$url     = ( $_GET['u'] );
+	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
+	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
 	
 	// If fails because keyword already exist, retry with no keyword
@@ -158,7 +159,9 @@ if ( isset( $_GET['u'] ) ) {
 		
 		die();
 	}
-
+	
+	// Now use the URL that has been sanitized and returned by yourls_add_new_link()
+	$url = $return['url']['url'];
 	$where  = sprintf( " AND `url` LIKE '%s' ", yourls_escape( $url ) );
 	
 	$page   = $total_pages = $perpage = 1;
