@@ -48,9 +48,9 @@ if( isset( $_GET['action'] ) ) {
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GET['success'] == 'deactivated' ) ) ) {
 	if( $_GET['success'] == 'activated' ) {
-		$message = yourls_s( 'Plugin has been activated' );
+		$message = yourls__( 'Plugin has been activated' );
 	} elseif ( $_GET['success'] == 'deactivated' ) {
-		$message = yourls_s( 'Plugin has been deactivated' );
+		$message = yourls__( 'Plugin has been deactivated' );
 	}
 	yourls_add_notice( $message );
 }

@@ -456,7 +456,7 @@ function yourls_deactivate_plugin( $plugin ) {
 
 	// Check plugin is active
 	if( !yourls_is_active_plugin( $plugin ) )
-		return 'Plugin not active';
+		return yourls__( 'Plugin not active' );
 	
 	// Deactivate the plugin
 	global $ydb;
