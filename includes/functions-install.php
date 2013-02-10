@@ -210,9 +210,9 @@ function yourls_create_sql_tables() {
 		$create_success = $ydb->query( "SHOW TABLES LIKE '$table_name'" );
 		if( $create_success ) {
 			$create_table_count++;
-			$success_msg[] = "Table '$table_name' created."; 
+			$success_msg[] = yourls_s( "Table '%s' created.", $table_name ); 
 		} else {
-			$error_msg[] = "Error creating table '$table_name'."; 
+			$error_msg[] = yourls_s( "Error creating table '%s'.", $table_name ); 
 		}
 	}
 		
@@ -228,9 +228,9 @@ function yourls_create_sql_tables() {
 		
 	// Check results of operations
 	if ( sizeof( $create_tables ) == $create_table_count ) {
-		$success_msg[] = 'YOURLS tables successfully created.';
+		$success_msg[] = yourls__( 'YOURLS tables successfully created.' );
 	} else {
-		$error_msg[] = "Error creating YOURLS tables."; 
+		$error_msg[] = yourls__( 'Error creating YOURLS tables.' ); 
 	}
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );

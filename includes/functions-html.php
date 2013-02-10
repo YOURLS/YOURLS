@@ -137,7 +137,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 function yourls_html_footer() {
 	global $ydb;
 	
-	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries, 'appthemes' ), $ydb->num_queries );
+	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
 	?>
 	</div> <?php // wrap ?>
 	<div id="footer"><p>

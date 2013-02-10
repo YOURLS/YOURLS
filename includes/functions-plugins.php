@@ -382,10 +382,10 @@ function yourls_load_plugins() {
 	
 	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
 	if( count( $active_plugins ) ) {
-		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
 		yourls_update_option( 'active_plugins', $ydb->plugins );
-		$message = 'Could not find and deactivated '. yourls_plural( 'plugin', count( $active_plugins ) ) .' '. $missing;
-		yourls_add_notice( $message );
+		$message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', count( $active_plugins ) );
+		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
+		yourls_add_notice( $message .' '. $missing );
 	}
 }
 
@@ -420,12 +420,12 @@ function yourls_activate_plugin( $plugin ) {
 	$plugin = yourls_plugin_basename( $plugin );
 	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	if( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) )
-		return 'Not a valid plugin file';
+		return yourls__( 'Not a valid plugin file' );
 		
 	// check not activated already
 	global $ydb;
 	if( yourls_has_active_plugins() && in_array( $plugin, $ydb->plugins ) )
-		return 'Plugin already activated';
+		return yourls__( 'Plugin already activated' );
 	
 	// attempt activation. TODO: uber cool fail proof sandbox like in WP.
 	ob_start();
@@ -433,7 +433,7 @@ function yourls_activate_plugin( $plugin ) {
 	if ( ob_get_length() > 0 ) {
 		// there was some output: error
 		$output = ob_get_clean();
-		return 'Plugin generated expected output. Error was: <br/><pre>'.$output.'</pre>';
+		return yourls_s( 'Plugin generated expected output. Error was: <br/><pre>%s</pre>', $output );
 	}
 	
 	// so far, so good: update active plugin list
@@ -536,7 +536,7 @@ function yourls_plugin_admin_page( $plugin_page ) {
 
 	// Check the plugin page is actually registered
 	if( !isset( $ydb->plugin_pages[$plugin_page] ) ) {
-		yourls_die( 'This page does not exist. Maybe a plugin you thought was activated is inactive?', 'Invalid link' );
+		yourls_die( yourls__( 'This page does not exist. Maybe a plugin you thought was activated is inactive?' ), yourls__( 'Invalid link' ) );
 	}
 	
 	// Draw the page itself
