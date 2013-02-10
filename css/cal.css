@@ -1,5 +1,5 @@
 /* Calendar */
-.datepicker { border-collapse: collapse; border: 2px solid #999; position: absolute; }
+.datepicker { border-collapse: collapse; border: 2px solid #999; position: absolute; width: 215px }
 .datepicker tr.controls th { height: 22px; font-size: 11px; }
 .datepicker select { font-size: 11px; }
 .datepicker tr.days th { height: 18px; }
