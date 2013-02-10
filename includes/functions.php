@@ -359,7 +359,7 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
 		or !class_exists( 'ezSQL_mysql' )
-	) yourls_die ( 'DB config missing, or could not find DB class', 'Fatal error', 503 );
+	) yourls_die ( yourls__( 'DB config missing, or could not find DB class' ), yourls__( 'Fatal error' ), 503 );
 	
 	// Are we standalone or in the WordPress environment?
 	if ( class_exists( 'wpdb' ) ) {
@@ -368,7 +368,7 @@ function yourls_db_connect() {
 		$ydb =  new ezSQL_mysql( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	}
 	if ( $ydb->last_error )
-		yourls_die( $ydb->last_error, 'Fatal error', 503 );
+		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
 	
 	if ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG === true )
 		$ydb->show_errors = true;
@@ -622,16 +622,15 @@ function yourls_redirect_javascript( $location, $dontwait = true ) {
 	yourls_do_action( 'pre_redirect_javascript', $location, $dontwait );
 	$location = yourls_apply_filter( 'redirect_javascript', $location, $dontwait );
 	if( $dontwait ) {
+		$message = yourls_s( 'if you are not redirected after 10 seconds, please <a href="%s">click here</a>', $location );
 		echo <<<REDIR
 		<script type="text/javascript">
 		window.location="$location";
 		</script>
-		<small>(if you are not redirected after 10 seconds, please <a href="$location">click here</a>)</small>
+		<small>($message)</small>
 REDIR;
 	} else {
-		echo <<<MANUAL
-		<p>Please <a href="$location">click here</a></p>
-MANUAL;
+		echo '<p>' . yourls_s( 'Please <a href="%s">click here</a>', $location ) . '</p>';
 	}
 	yourls_do_action( 'post_redirect_javascript', $location );
 }
@@ -1072,7 +1071,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
 			// Flood!
 			yourls_do_action( 'ip_flood', $ip, $now - $then );
-			yourls_die( 'Too many URLs added too fast. Slow down please.', 'Forbidden', 403 );
+			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Forbidden' ), 403 );
 		}
 	}
 	
@@ -1314,7 +1313,7 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 	} else {
 		if( $return )
 			die( $return );
-		yourls_die( 'Unauthorized action or expired link', 'Error', 403 );
+		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
 	}
 }
 
@@ -1634,9 +1633,9 @@ function yourls_check_maintenance_mode() {
 	}
 	
 	// https://www.youtube.com/watch?v=Xw-m4jEY-Ns
-	$title   = 'Service temporarily unavailable';
-	$message = 'Our service is currently undergoing scheduled maintenance.</p>
-	<p>Things should not last very long, thank you for your patience and please excuse the inconvenience';
+	$title   = yourls__( 'Service temporarily unavailable' );
+	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p>\n<p>" .
+	yourls__( 'Things should not last very long, thank you for your patience and please excuse the inconvenience' );
 	yourls_die( $message, $title , 503 );
 
 }
