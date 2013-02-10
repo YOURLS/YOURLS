@@ -12,7 +12,7 @@ function yourls_is_valid_user() {
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
-		return 'Logged out successfully';
+		return yourls__( 'Logged out successfully' );
 	}
 	
 	// Check cookies or login request. Login form has precedence.
@@ -78,9 +78,9 @@ function yourls_is_valid_user() {
 	yourls_do_action( 'login_failed' );
 
 	if ( isset( $_REQUEST['username'] ) || isset( $_REQUEST['password'] ) ) {
-		return 'Invalid username or password';
+		return yourls__( 'Invalid username or password' );
 	} else {
-		return 'Please log in';
+		return yourls__( 'Please log in' );
 	}
 }
 
@@ -103,9 +103,11 @@ function yourls_check_password_hash( $stored, $plaintext ) {
 		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
 	} else {
 		// Password was sent in clear
-		yourls_add_notice( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>.
-		Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?
-		See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details', 'notice' );
+		$message  = '';
+		$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
+		$message .= yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+		$message .= yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
+		yourls_add_notice( $message, 'notice' );
 		return( $stored == $plaintext );
 	}
 }
