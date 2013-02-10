@@ -272,7 +272,7 @@ function yourls_html_tfooter( $params = array() ) {
 					$p_end = min( max( 5, $page + 2 ), $total_pages );
 					if( $p_start >= 2 ) {
 						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => 1 ) ), $base_page );
-						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls_( '&laquo; First' ) . '</a></span>';
+						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( '&laquo; First' ) . '</a></span>';
 						echo '<span class="nav_link nav_prev"></span>';
 					}
 					for( $i = $p_start ; $i <= $p_end; $i++ ) {
@@ -353,9 +353,9 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
 			</div>
 			<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
-				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="Tweet this!" onclick="share('tw');return false">Twitter</a>
-				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="Share on Facebook" onclick="share('fb');return false;">Facebook</a>
-				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="Share on Friendfeed" onclick="javascript:share('ff');return false;">FriendFeed</a>
+				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
+				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
+				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="<?php yourls_e( 'Share on Friendfeed' ); ?>" onclick="javascript:share('ff');return false;">FriendFeed</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.

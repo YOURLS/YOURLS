@@ -489,3 +489,18 @@ function yourls_encodeURI( $url ) {
 		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
     ) );
 }
+
+/**
+ * Adds backslashes before letters and before a number at the start of a string. Stolen from WP.
+ *
+ * @since 1.6
+ *
+ * @param string $string Value to which backslashes will be added.
+ * @return string String with backslashes inserted.
+ */
+function yourls_backslashit($string) {
+    $string = preg_replace('/^([0-9])/', '\\\\\\\\\1', $string);
+    $string = preg_replace('/([a-z])/i', '\\\\\1', $string);
+    return $string;
+}
+

@@ -1,4 +1,12 @@
 <?php
+/*
+ * YOURLS API
+ *
+ * Note about translation : this file should NOT be translation ready
+ * API messages and returns are supposed to be programmatically tested, so default English is expected
+ *
+ */
+
 define( 'YOURLS_API', true );
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 yourls_maybe_require_auth();
