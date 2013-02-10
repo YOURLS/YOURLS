@@ -2,6 +2,10 @@
 /*
  * YOURLS
  * Functions for the API
+ *
+ * Note about translation : this file should NOT be translation ready
+ * API messages and returns are supposed to be programmatically tested, so default English is expected
+ *
  */
 
 /**
