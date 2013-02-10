@@ -264,7 +264,7 @@ function yourls_html_tfooter( $params = array() ) {
 			<div id="pagination">
 				<span class="navigation">
 				<?php if( $total_pages > 1 ) { ?>
-					<span class="nav_total"><?php echo $total_pages .' '. yourls_plural( yourls__('page'), $total_pages ); ?></span>
+					<span class="nav_total"><?php echo sprintf( yourls_n( '1 page', '%s pages', $total_pages ), $total_pages ); ?></span>
 					<?php
 					$base_page = yourls_admin_url( 'index.php' );
 					// Pagination offsets: min( max ( zomg! ) );

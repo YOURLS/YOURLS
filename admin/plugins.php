@@ -67,11 +67,11 @@ yourls_html_menu();
 	uasort( $plugins, 'yourls_plugins_sort_callback' );
 	
 	$count = count( $plugins );
+    $plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
 	$count_active = yourls_has_active_plugins();
-    $plugins_count = $count.' '.yourls_plural( yourls__('plugin'), $count );
 	?>
 	
-	<p id="plugin_summary"><?php yourls_se( 'You currently have <strong>%d</strong> installed, and <strong>%d</strong> activated', $plugins_count, $count_active ); ?></p>
+	<p id="plugin_summary"><?php /* //translators: "you have '3 plugins' installed and '1' activated" */ yourls_se( 'You currently have <strong>%s</strong> installed, and <strong>%s</strong> activated', $plugins_count, $count_active ); ?></p>
 
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>

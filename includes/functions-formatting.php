@@ -126,6 +126,7 @@ function yourls_sanitize_date_for_sql( $date ) {
 
 // Return word or words if more than one
 function yourls_plural( $word, $count=1 ) {
+	yourls_deprecated_function( __FUNCTION__, '1.6', 'yourls_n' );
 	return $word . ($count > 1 ? 's' : '');
 }
 

@@ -220,7 +220,7 @@ if ( !$is_bookmark ) { ?>
 	<p><?php
 		printf( yourls__('Display <strong>%d</strong> to <strong class="increment">%d</strong> of <strong class="increment">%d</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )
-			echo ", " . yourls__('counting') . " <strong>$total_items_clicks</strong> " . yourls_plural(yourls__('click'), $total_items_clicks);
+			echo ", " . sprintf( yourls__('counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), $total_items_clicks );
 	?>.</p>
 <?php } ?>
 <p><?php printf( yourls__('Overall, tracking <strong class="increment">%d</strong> links, <strong>%d</strong> clicks, and counting!' ), number_format( $total_urls ), number_format( $total_clicks ) ); ?></p>

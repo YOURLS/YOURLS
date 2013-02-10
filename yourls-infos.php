@@ -444,7 +444,7 @@ yourls_html_menu();
 					<ul id="details_countries" style="display:none" class="no_bullet">
 					<?php
 					foreach( $countries as $code=>$count ) {
-						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ).") : $count ".yourls_plural('hit', $count)."</li>\n";
+						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ) . ') : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
 					}		
 					?>
 					</ul>
