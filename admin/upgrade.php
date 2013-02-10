@@ -6,16 +6,16 @@ require_once( YOURLS_INC.'/functions-upgrade.php' );
 require_once( YOURLS_INC.'/functions-install.php' );
 yourls_maybe_require_auth();
 
-yourls_html_head( 'upgrade', 'Upgrade YOURLS' );
+yourls_html_head( 'upgrade', yourls__( 'Upgrade YOURLS' ) );
 yourls_html_logo();
 yourls_html_menu();
 ?>
-		<h2>Upgrade YOURLS</h2>
+		<h2><?php yourls_e( 'Upgrade YOURLS' ); ?></h2>
 <?php
 
 // Check if upgrade is needed
 if ( !yourls_upgrade_is_needed() ) {
-	echo '<p>Upgrade not required. Go <a href="'.yourls_admin_url('index.php').'">back to play</a>!</p>';
+	echo '<p>' . yourls_s( 'Upgrade not required. Go <a href="%s">back to play</a>!', yourls_admin_url('index.php') ) . '</p>';
 
 
 } else {
@@ -47,21 +47,22 @@ if ( !yourls_upgrade_is_needed() ) {
 
 		default:
 		case 0:
+			?>
+			<p><?php yourls_e( 'Your current installation needs to be upgraded.' ); ?></p>
+			<p><?php yourls_e( 'Please, pretty please, it is recommended that you <strong>backup</strong> your database<br/>(you should do this regularly anyway)' ); ?></p>
+			<p><?php yourls_e( "Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)" ); ?></p>
+			<p><?php yourls_e( "On every step, if <span class='error'>something goes wrong</span>, you'll see a message and hopefully a way to fix." ); ?></p>
+			<p><?php yourls_e( 'If everything goes too fast and you cannot read, <span class="success">good for you</span>, let it go :)' ); ?></p>
+			<p><?php yourls_e( 'Once you are ready, press "Upgrade" !' ); ?></p>
+			<?php
 			echo "
-			<p>Your current installation needs to be upgraded.</p>
-			<p>Please, pretty please, it is recommended that
-			you <strong>backup</strong> your database<br/>(you should do this regularly anyway)</p>
-			<p>Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)</p>
-			<p>On every step, if <span class='error'>something goes wrong</span>, you'll see a message and hopefully a way to fix</p>
-			<p>If everything goes too fast and you cannot read, <span class='success'>good for you</span>, let it go :)</p>
-			<p>Once you are ready, press Upgrade!</p>
 			<form action='upgrade.php?' method='get'>
 			<input type='hidden' name='step' value='1' />
 			<input type='hidden' name='oldver' value='$oldver' />
 			<input type='hidden' name='newver' value='$newver' />
 			<input type='hidden' name='oldsql' value='$oldsql' />
 			<input type='hidden' name='newsql' value='$newsql' />
-			<input type='submit' class='primary' value='Upgrade' />
+			<input type='submit' class='primary' value='" . yourls_esc_attr__( 'Upgrade' ) . "' />
 			</form>";
 			
 			break;
@@ -73,11 +74,8 @@ if ( !yourls_upgrade_is_needed() ) {
 			
 		case 3:
 			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
-			$admin = yourls_admin_url('index.php');
-			echo "
-			<p>Your installation is now up to date !</p>
-			<p>Go back to <a href='$admin'>the admin interface</a></p>
-			";
+			echo '<p>' . yourls__( 'Your installation is now up to date ! ' ) . '</p>';
+			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>', yourls_admin_url('index.php') ) . '</p>';
 	}
 	
 }
