@@ -123,6 +123,9 @@ if( yourls_is_private() )
 if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
 	require_once( YOURLS_USERDIR.'/cache.php' );
 
+// Load locale
+yourls_load_default_textdomain();
+
 // Check if we are in maintenance mode - if yes, it will die here.
 yourls_check_maintenance_mode();
 	
@@ -168,9 +171,6 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 // Init all plugins
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
-
-// Load locale
-yourls_load_default_textdomain();
 
 if( yourls_is_admin() )
 	yourls_do_action( 'admin_init' );
