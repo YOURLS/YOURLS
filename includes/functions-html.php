@@ -209,7 +209,7 @@ function yourls_html_tfooter( $params = array() ) {
 						&ndash; <?php yourls_e( 'Order by' ); ?>
 						<?php $sort_by = isset( $sort_by ) ? $sort_by : 'timestamp' ; ?>
 						<select name="sort_by" size="1">
-							<option value="id"<?php if( $sort_by == 'keyword' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Short URL' ); ?></option>
+							<option value="keyword"<?php if( $sort_by == 'keyword' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Short URL' ); ?></option>
 							<option value="url"<?php if( $sort_by == 'url' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'URL' ); ?></option>
 							<option value="timestamp"<?php if( $sort_by == 'timestamp' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Date' ); ?></option>
 							<option value="ip"<?php if( $sort_by == 'ip' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'IP' ); ?></option>
