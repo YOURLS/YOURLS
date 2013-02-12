@@ -91,7 +91,7 @@ function yourls_create_htaccess() {
 		    'RewriteBase '.$path.'/',
 		    'RewriteCond %{REQUEST_FILENAME} !-f',
 		    'RewriteCond %{REQUEST_FILENAME} !-d',
-		    'RewriteRule ^(.*)$ '.$path.'/yourls-loader.php [L]',
+		    'RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
 		    '</IfModule>',
 	    );
 	
