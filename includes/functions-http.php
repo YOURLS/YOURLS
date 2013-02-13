@@ -3,9 +3,12 @@
 // yourls_get_http_transport: use static vars
 // yourls_get_remote_content: return array( content, status, code )
 
-// Determine best transport for GET request.
-// Order of preference: curl, fopen, fsockopen.
-// Return 'curl', 'fopen', 'fsockopen' or false if nothing works
+/**
+ * Determine best transport for GET request. Return 'curl', 'fopen', 'fsockopen' or false if nothing works
+ *
+ * Order of preference: curl, fopen, fsockopen.
+ *
+ */
 function yourls_get_http_transport( $url ) {
 
 	$transports = array();
@@ -32,8 +35,12 @@ function yourls_get_http_transport( $url ) {
 	return yourls_apply_filter( 'get_http_transport', $best, $transports );
 }
 
-// Get remote content via a GET request using best transport available
-// Returns $content (might be an error message) or false if no transport available
+/**
+ * Get remote content via a GET request using best transport available
+ *
+ * Returns $content (might be an error message) or false if no transport available
+ *
+ */
 function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	$url = yourls_sanitize_url( $url );
 
@@ -47,7 +54,10 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	return yourls_apply_filter( 'get_remote_content', $content, $url, $maxlen, $timeout );
 }
 
-// Get remote content using curl. Needs sanitized $url. Returns $content or false
+/**
+ * Get remote content using curl. Needs sanitized $url. Returns $content or false
+ *
+ */
 function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 	
     $ch = curl_init();
@@ -74,7 +84,10 @@ function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 	return substr( $response, 0, $maxlen ); // substr in case CURLOPT_RANGE not supported
 }
 
-// Get remote content using fopen. Needs sanitized $url. Returns $content or false
+/**
+ * Get remote content using fopen. Needs sanitized $url. Returns $content or false
+ *
+ */
 function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	$content = false;
 	
@@ -110,7 +123,10 @@ function yourls_get_remote_content_fopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	return $content;
 }
 
-// Get remote content using fsockopen. Needs sanitized $url. Returns $content or false
+/**
+ * Get remote content using fsockopen. Needs sanitized $url. Returns $content or false
+ *
+ */
 function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5 ) {
 	// get the host name and url path
 	$parsed_url = parse_url( $url );
@@ -165,7 +181,10 @@ function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5
 	return $response;
 }
 
-// Return funky user agent string
+/**
+ * Return funky user agent string
+ *
+ */
 function yourls_http_user_agent() {
 	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.YOURLS_SITE.')' );
 }

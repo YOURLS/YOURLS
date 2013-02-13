@@ -1,27 +1,42 @@
 <?php
 
-// Check if mod_rewrite is enabled. Note: unused, not reliable enough.
+/**
+ * Check if mod_rewrite is enabled. Note: unused, not reliable enough.
+ *
+ */
 function yourls_check_mod_rewrite() {
 	return yourls_apache_mod_loaded( 'mod_rewrite' );
 }
 
-// Check if extension cURL is enabled
+/**
+ * Check if extension cURL is enabled
+ *
+ */
 function yourls_check_curl() {
 	return function_exists( 'curl_init' );
 }
 
-// Check if server has MySQL 4.1+
+/**
+ * Check if server has MySQL 4.1+
+ *
+ */
 function yourls_check_database_version() {
 	global $ydb;
 	return ( version_compare( '4.1', $ydb->mysql_version() ) <= 0 );
 }
 
-// Check if PHP > 4.3
+/**
+ * Check if PHP > 4.3
+ *
+ */
 function yourls_check_php_version() {
 	return ( version_compare( '4.3', phpversion() ) <= 0 );
 }
 
-// Check if server is an Apache
+/**
+ * Check if server is an Apache
+ *
+ */
 function yourls_is_apache() {
 	return (
 	   strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache' ) !== false
@@ -29,12 +44,18 @@ function yourls_is_apache() {
 	);
 }
 
-// Check if server is running IIS
+/**
+ * Check if server is running IIS
+ *
+ */
 function yourls_is_iis() {
 	return ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false );
 }
 
-// Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
+/**
+ * Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
+ *
+ */
 function yourls_apache_mod_loaded( $mod, $default = false ) {
 	if ( !yourls_is_apache() )
 		return false;
@@ -53,7 +74,10 @@ function yourls_apache_mod_loaded( $mod, $default = false ) {
 	return $default;
 }
 
-// Create .htaccess or web.config. Returns boolean
+/**
+ * Create .htaccess or web.config. Returns boolean
+ *
+ */
 function yourls_create_htaccess() {
 	$host = parse_url( YOURLS_SITE );
 	$path = ( isset( $host['path'] ) ? $host['path'] : '' );
@@ -103,7 +127,10 @@ function yourls_create_htaccess() {
 	return ( yourls_insert_with_markers( $filename, $marker, $content ) );
 }
 
-// Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
+/**
+ * Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
+ *
+ */
 function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 	if ( !file_exists( $filename ) || is_writeable( $filename ) ) {
 		if ( !file_exists( $filename ) ) {
@@ -155,7 +182,10 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 	}
 }
 
-// Create MySQL tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
+/**
+ * Create MySQL tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
+ *
+ */
 function yourls_create_sql_tables() {
 	global $ydb;
 	
@@ -237,7 +267,10 @@ function yourls_create_sql_tables() {
 }
 
 
-// Toggle maintenance mode. Inspired from WP. Returns true for success, false otherwise
+/**
+ * Toggle maintenance mode. Inspired from WP. Returns true for success, false otherwise
+ *
+ */
 function yourls_maintenance_mode( $maintenance = true ) {
 
 	$file = YOURLS_ABSPATH . '/.maintenance' ;

@@ -4,7 +4,10 @@
  * Function library for anything related to formatting / validating / sanitizing
  */
 
-// function to convert an integer (1337) to a string (3jk).
+/**
+ * Convert an integer (1337) to a string (3jk).
+ *
+ */
 function yourls_int2string( $num, $chars = null ) {
 	if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
@@ -20,7 +23,10 @@ function yourls_int2string( $num, $chars = null ) {
 	return yourls_apply_filter( 'int2string', $string, $num, $chars );
 }
 
-// function to convert a string (3jk) to an integer (1337)
+/**
+ * Convert a string (3jk) to an integer (1337)
+ *
+ */
 function yourls_string2int( $string, $chars = null ) {
 	if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
@@ -36,12 +42,18 @@ function yourls_string2int( $string, $chars = null ) {
 	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
 }
 
-// return a unique(ish) hash for a string to be used as a valid HTML id
+/**
+ * Return a unique(ish) hash for a string to be used as a valid HTML id
+ *
+ */
 function yourls_string2htmlid( $string ) {
 	return yourls_apply_filter( 'string2htmlid', 'y'.abs( crc32( $string ) ) );
 }
 
-// Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
+/**
+ * Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
+ *
+ */
 function yourls_sanitize_string( $string ) {
 	// make a regexp pattern with the shorturl charset, and remove everything but this
 	$pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
@@ -50,12 +62,18 @@ function yourls_sanitize_string( $string ) {
 	return yourls_apply_filter( 'sanitize_string', $valid, $string );
 }
 
-// Alias function. I was always getting it wrong.
+/**
+ * Alias function. I was always getting it wrong.
+ *
+ */
 function yourls_sanitize_keyword( $keyword ) {
 	return yourls_sanitize_string( $keyword );
 }
 
-// Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
+/**
+ * Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
+ *
+ */
 function yourls_sanitize_title( $unsafe_title ) {
 	$title = $unsafe_title;
 	$title = strip_tags( $title );
@@ -63,14 +81,21 @@ function yourls_sanitize_title( $unsafe_title ) {
 	return yourls_apply_filter( 'sanitize_title', $title, $unsafe_title );
 }
 
-// A few sanity checks on the URL. Used for redirection or DB. For display purpose, see yourls_esc_url()
+/**
+ * A few sanity checks on the URL. Used for redirection or DB. For display purpose, see yourls_esc_url()
+ *
+ */
 function yourls_sanitize_url( $unsafe_url ) {
 	$url = yourls_esc_url( $unsafe_url, 'redirection' );	
 	return yourls_apply_filter( 'sanitize_url', $url, $unsafe_url );
 }
 
-// Perform a replacement while a string is found, eg $subject = '%0%0%0DDD', $search ='%0D' -> $result =''
-// Stolen from WP's _deep_replace
+/**
+ * Perform a replacement while a string is found, eg $subject = '%0%0%0DDD', $search ='%0D' -> $result =''
+ *
+ * Stolen from WP's _deep_replace
+ *
+ */
 function yourls_deep_replace( $search, $subject ){
 	$found = true;
 	while($found) {
@@ -86,30 +111,45 @@ function yourls_deep_replace( $search, $subject ){
 	return $subject;
 }
 
-// Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
-// TODO FIXME FFS: unused ?
+/**
+ * Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
+ *
+ */
 function yourls_sanitize_int( $in ) {
 	return ( substr( preg_replace( '/[^0-9]/', '', strval( $in ) ), 0, 20 ) );
 }
 
-// Make sure a integer is safe
-// Note: this is not checking for integers, since integers on 32bits system are way too limited
-// TODO: find a way to validate as integer
+/**
+ * Make sure a integer is safe
+ * 
+ * Note: this is not checking for integers, since integers on 32bits system are way too limited
+ * TODO: find a way to validate as integer
+ *
+ */
 function yourls_intval( $in ) {
 	return yourls_escape( $in );
 }
 
-// Escape a string
+/**
+ * Escape a string
+ *
+ */
 function yourls_escape( $in ) {
 	return mysql_real_escape_string( $in );
 }
 
-// Sanitize an IP address
+/**
+ * Sanitize an IP address
+ *
+ */
 function yourls_sanitize_ip( $ip ) {
 	return preg_replace( '/[^0-9a-fA-F:., ]/', '', $ip );
 }
 
-// Make sure a date is m(m)/d(d)/yyyy, return false otherwise
+/**
+ * Make sure a date is m(m)/d(d)/yyyy, return false otherwise
+ *
+ */
 function yourls_sanitize_date( $date ) {
 	if( !preg_match( '!^\d{1,2}/\d{1,2}/\d{4}$!' , $date ) ) {
 		return false;
@@ -117,20 +157,29 @@ function yourls_sanitize_date( $date ) {
 	return $date;
 }
 
-// Sanitize a date for SQL search. Return false if malformed input.
+/**
+ * Sanitize a date for SQL search. Return false if malformed input.
+ *
+ */
 function yourls_sanitize_date_for_sql( $date ) {
 	if( !yourls_sanitize_date( $date ) )
 		return false;
 	return date( 'Y-m-d', strtotime( $date ) );
 }
 
-// Return word or words if more than one
+/**
+ * Return word or words if more than one
+ *
+ */
 function yourls_plural( $word, $count=1 ) {
 	yourls_deprecated_function( __FUNCTION__, '1.6', 'yourls_n' );
 	return $word . ($count > 1 ? 's' : '');
 }
 
-// Return trimmed string
+/**
+ * Return trimmed string
+ *
+ */
 function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	$newstring = $string;
 	if( function_exists( 'mb_substr' ) ) {
@@ -145,19 +194,28 @@ function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	return yourls_apply_filter( 'trim_long_string', $newstring, $string, $length, $append );
 }
 
-// Sanitize a version number (1.4.1-whatever -> 1.4.1)
+/**
+ * Sanitize a version number (1.4.1-whatever -> 1.4.1)
+ *
+ */
 function yourls_sanitize_version( $ver ) {
 	return preg_replace( '/[^0-9.]/', '', $ver );
 }
 
-// Sanitize a filename (no Win32 stuff)
+/**
+ * Sanitize a filename (no Win32 stuff)
+ *
+ */
 function yourls_sanitize_filename( $file ) {
 	$file = str_replace( '\\', '/', $file ); // sanitize for Win32 installs
 	$file = preg_replace( '|/+|' ,'/', $file ); // remove any duplicate slash
 	return $file;
 }
 
-// Check if a string seems to be UTF-8. Stolen from WP.
+/**
+ * Check if a string seems to be UTF-8. Stolen from WP.
+ *
+ */
 function yourls_seems_utf8( $str ) {
 	$length = strlen( $str );
 	for ( $i=0; $i < $length; $i++ ) {

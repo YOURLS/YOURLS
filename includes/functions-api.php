@@ -82,7 +82,10 @@ function yourls_api_action_version() {
 	return yourls_apply_filter( 'api_result_version', $return );
 }
  
-// Return API result. Dies after this
+/**
+ * Return API result. Dies after this
+ *
+ */
 function yourls_api_output( $mode, $return ) {
 	if( isset( $return['simple'] ) ) {
 		$simple = $return['simple'];
@@ -128,7 +131,10 @@ function yourls_api_output( $mode, $return ) {
 	die();
 }
 
-// Return array for API stat requests
+/**
+ * Return array for API stat requests
+ *
+ */
 function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	$return = yourls_get_stats( $filter, $limit, $start );
 	$return['simple']  = 'Need either XML or JSON format for stats';
@@ -136,7 +142,10 @@ function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	return yourls_apply_filter( 'api_stats', $return, $filter, $limit, $start );
 }
 
-// Return array for counts of shorturls and clicks
+/**
+ * Return array for counts of shorturls and clicks
+ *
+ */
 function yourls_api_db_stats() {
 	$return = array(
 		'db-stats'   => yourls_get_db_stats(),
@@ -148,7 +157,10 @@ function yourls_api_db_stats() {
 	return yourls_apply_filter( 'api_db_stats', $return );
 }
 
-// Return array for API stat requests
+/**
+ * Return array for API stat requests
+ *
+ */
 function yourls_api_url_stats( $shorturl ) {
 	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
 	$keyword = yourls_sanitize_string( $keyword );
@@ -158,7 +170,10 @@ function yourls_api_url_stats( $shorturl ) {
 	return yourls_apply_filter( 'api_url_stats', $return, $shorturl );
 }
 
-// Expand short url to long url
+/**
+ * Expand short url to long url
+ *
+ */
 function yourls_api_expand( $shorturl ) {
 	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
 	$keyword = yourls_sanitize_string( $keyword );

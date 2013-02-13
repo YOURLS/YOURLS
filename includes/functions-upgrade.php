@@ -1,6 +1,9 @@
 <?php
 
-// Upgrade YOURLS and DB schema
+/**
+ * Upgrade YOURLS and DB schema
+ *
+ */
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 	// special case for 1.3: the upgrade is a multi step procedure
 	if( $oldsql == 100 ) {
@@ -36,7 +39,10 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 	}
 }
 
-// Upgrade r482
+/**
+ * Upgrade r482
+ *
+ */
 function yourls_upgrade_482() {
 	// Change URL title charset to UTF8
 	global $ydb;
@@ -48,7 +54,10 @@ function yourls_upgrade_482() {
 
 /************************** 1.4.3 -> 1.5 **************************/
 
-// Main func for upgrade from 1.4.3 to 1.5
+/**
+ * Main func for upgrade from 1.4.3 to 1.5
+ *
+ */
 function yourls_upgrade_to_15( ) {
 	// Create empty 'active_plugins' entry in the option if needed
 	if( yourls_get_option( 'active_plugins' ) === false )
@@ -69,7 +78,10 @@ function yourls_upgrade_to_15( ) {
 
 /************************** 1.4.1 -> 1.4.3 **************************/
 
-// Main func for upgrade from 1.4.1 to 1.4.3
+/**
+ * Main func for upgrade from 1.4.1 to 1.4.3
+ *
+ */
 function yourls_upgrade_to_143( ) {
 	// Check if we have 'keyword' (borked install) or 'shorturl' (ok install)
 	global $ydb;
@@ -85,7 +97,10 @@ function yourls_upgrade_to_143( ) {
 
 /************************** 1.4 -> 1.4.1 **************************/
 
-// Main func for upgrade from 1.4 to 1.4.1
+/**
+ * Main func for upgrade from 1.4 to 1.4.1
+ *
+ */
 function yourls_upgrade_to_141( ) {
 	// Kill old cookies from 1.3 and prior
 	setcookie('yourls_username', null, time() - 3600 );
@@ -96,7 +111,10 @@ function yourls_upgrade_to_141( ) {
 	yourls_create_htaccess();
 }
 
-// Alter table URL to 1.4.1
+/**
+ * Alter table URL to 1.4.1
+ *
+ */
 function yourls_alter_url_table_to_141() {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
@@ -108,7 +126,10 @@ function yourls_alter_url_table_to_141() {
 
 /************************** 1.3 -> 1.4 **************************/
 
-// Main func for upgrade from 1.3-RC1 to 1.4
+/**
+ * Main func for upgrade from 1.3-RC1 to 1.4
+ *
+ */
 function yourls_upgrade_to_14( $step ) {
 	
 	switch( $step ) {
@@ -142,7 +163,10 @@ function yourls_upgrade_to_14( $step ) {
 	}
 }
 
-// Update options to reflect new version
+/**
+ * Update options to reflect new version
+ *
+ */
 function yourls_update_options_to_14() {
 	yourls_update_option( 'version', '1.4' );
 	yourls_update_option( 'db_version', '200' );
@@ -158,7 +182,10 @@ function yourls_update_options_to_14() {
 	}
 }
 
-// Create new tables for YOURLS 1.4: options & log
+/**
+ * Create new tables for YOURLS 1.4: options & log
+ *
+ */
 function yourls_create_tables_for_14() {
 	global $ydb;
 
@@ -194,7 +221,10 @@ function yourls_create_tables_for_14() {
 
 }
 
-// Alter table structure, part 1 (change schema, drop index)
+/**
+ * Alter table structure, part 1 (change schema, drop index)
+ *
+ */
 function yourls_alter_url_table_to_14() {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
@@ -212,7 +242,10 @@ function yourls_alter_url_table_to_14() {
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
 }
 
-// Alter table structure, part 2 (recreate indexes after the table is up to date)
+/**
+ * Alter table structure, part 2 (recreate indexes after the table is up to date)
+ *
+ */
 function yourls_alter_url_table_to_14_part_two() {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
@@ -229,7 +262,10 @@ function yourls_alter_url_table_to_14_part_two() {
 	echo "<p>New table index created</p>";
 }
 
-// Convert each link from 1.3 (id) to 1.4 (keyword) structure
+/**
+ * Convert each link from 1.3 (id) to 1.4 (keyword) structure
+ *
+ */
 function yourls_update_table_to_14() {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
@@ -281,7 +317,10 @@ function yourls_update_table_to_14() {
 	
 }
 
-// Clean .htaccess as it existed before 1.4. Returns boolean
+/**
+ * Clean .htaccess as it existed before 1.4. Returns boolean
+ *
+ */
 function yourls_clean_htaccess_for_14() {
 	$filename = YOURLS_ABSPATH.'/.htaccess';
 	

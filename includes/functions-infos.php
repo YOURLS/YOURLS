@@ -1,6 +1,9 @@
 <?php
 
-// Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
+/**
+ * Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
+ *
+ */
 function yourls_stats_countries_map( $countries, $id = null ) {
 
 	yourls_do_action( 'pre_stats_countries_map' );
@@ -26,7 +29,10 @@ function yourls_stats_countries_map( $countries, $id = null ) {
 	echo yourls_apply_filter( 'stats_countries_map', $map, $countries, $options, $id );
 }
 
-// Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
+/**
+ * Echoes an image tag of Google Charts pie from sorted array of 'data' => 'value' (sort by DESC). Optional $limit = (integer) limit list of X first countries, sorted by most visits
+ *
+ */
 function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 
 	yourls_do_action( 'pre_stats_pie' );
@@ -74,7 +80,10 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 	echo yourls_apply_filter( 'stats_pie', $pie, $data, $limit, $size, $options, $id );
 }
 
-// Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
+/**
+ * Build a list of all daily values between d1/m1/y1 to d2/m2/y2.
+ *
+ */
 function yourls_build_list_of_days( $dates ) {
 	/* Say we have an array like:
 	$dates = array (
@@ -144,8 +153,12 @@ function yourls_build_list_of_days( $dates ) {
 	);
 }
 
-// Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks').
-// $legend1_list & legend2_list are values used for the 2 x-axis labels. $id is an HTML/JS id
+/**
+ * Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks').
+ * 
+ * $legend1_list & legend2_list are values used for the 2 x-axis labels. $id is an HTML/JS id
+ *
+ */
 function yourls_stats_line( $values, $id = null ) {
 
 	yourls_do_action( 'pre_stats_line' );
@@ -182,13 +195,19 @@ function yourls_stats_line( $values, $id = null ) {
 	echo yourls_apply_filter( 'stats_line', $lineChart, $values, $options, $id );
 }
 
-// Return the number of days in a month. From php.net, used if PHP built without calendar functions
+/**
+ * Return the number of days in a month. From php.net, used if PHP built without calendar functions
+ *
+ */
 function yourls_days_in_month( $month, $year ) {
 	// calculate number of days in a month
 	return $month == 2 ? ( $year % 4 ? 28 : ( $year % 100 ? 29 : ( $year % 400 ? 28 : 29 ) ) ) : ( ( $month - 1 ) % 7 % 2 ? 30 : 31 );
 }
 
-// Get max value from date array of 'Aug 12, 2012' = '1337'
+/**
+ * Get max value from date array of 'Aug 12, 2012' = '1337'
+ *
+ */
 function yourls_stats_get_best_day( $list_of_days ) {
 	$max = 0; $day = 0;
 	$max = max( $list_of_days );
@@ -198,7 +217,10 @@ function yourls_stats_get_best_day( $list_of_days ) {
 	}
 }
 
-// Return domain of a URL
+/**
+ * Return domain of a URL
+ *
+ */
 function yourls_get_domain( $url, $include_scheme = false ) {
 	$parse = @parse_url( $url ); // Hiding ugly stuff coming from malformed referrer URLs
 
@@ -215,12 +237,18 @@ function yourls_get_domain( $url, $include_scheme = false ) {
 	return $host;
 }
 
-// Return favicon URL
+/**
+ * Return favicon URL
+ *
+ */
 function yourls_get_favicon_url( $url ) {
 	return yourls_match_current_protocol( 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false ) );
 }
 
-// Scale array of data from 0 to 100 max
+/**
+ * Scale array of data from 0 to 100 max
+ *
+ */
 function yourls_scale_data( $data ) {
 	$max = max( $data );
 	if( $max > 100 ) {
@@ -231,7 +259,10 @@ function yourls_scale_data( $data ) {
 	return $data;
 }
 
-// Tweak granularity of array $array: keep only $grain values. This make less accurate but less messy graphs when too much values. See http://code.google.com/apis/chart/formats.html#granularity
+/**
+ * Tweak granularity of array $array: keep only $grain values. This make less accurate but less messy graphs when too much values. See http://code.google.com/apis/chart/formats.html#granularity
+ *
+ */
 function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) {
 	if ( count( $array ) > $grain ) {
 		$max = max( $array );
@@ -253,7 +284,10 @@ function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) 
 	return $array;
 }
 
-// Transform data array to data table for Google API
+/**
+ * Transform data array to data table for Google API
+ *
+ */
 function yourls_google_array_to_data_table( $data ){
 	$str  = "var data = google.visualization.arrayToDataTable([\n";
 	foreach( $data as $label => $values ){
@@ -274,7 +308,10 @@ function yourls_google_array_to_data_table( $data ){
 	return $str;
 }
 
-// Return javascript code that will display the Google Chart
+/**
+ * Return javascript code that will display the Google Chart
+ *
+ */
 function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 	$function_name = 'yourls_graph' . $id;
 	$code  = "\n<script id=\"$function_name\" type=\"text/javascript\">\n";

@@ -1,6 +1,9 @@
 <?php
 
-// json_encode for PHP prior to 5.2
+/**
+ * json_encode for PHP prior to 5.2
+ *
+ */
 if( !function_exists( 'json_encode' ) ) {
 	function json_encode( $array ) {
 		return yourls_array_to_json( $array );
@@ -73,14 +76,22 @@ function yourls_array_to_json( $array ){
     return $result;
 }
 
-// Compat http_build_query for PHP4
+/**
+ * Compat http_build_query for PHP4
+ *
+ */
 if ( !function_exists( 'http_build_query' ) ) {
 	function http_build_query( $data, $prefix=null, $sep=null ) {
 		return yourls_http_build_query( $data, $prefix, $sep );
 	}
 }
 
-// from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
+/**
+ * Compat http_build_query for PHP4. Stolen from WP.
+ *
+ * from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
+ * 
+ */
 function yourls_http_build_query( $data, $prefix=null, $sep=null, $key='', $urlencode=true ) {
 	$ret = array();
 
@@ -110,14 +121,20 @@ function yourls_http_build_query( $data, $prefix=null, $sep=null, $key='', $urle
 	return implode( $sep, $ret );
 }
 
-// htmlspecialchars_decode for PHP < 5.1
+/**
+ * htmlspecialchars_decode for PHP < 5.1
+ *
+ */
 if ( !function_exists( 'htmlspecialchars_decode' ) ) {
 	function htmlspecialchars_decode( $text ) {
 		return strtr( $text, array_flip( get_html_translation_table( HTML_SPECIALCHARS ) ) );
 	}
 }
 
-// BC Math functions (assuming if one doesn't exist, none does)
+/**
+ * BC Math functions (assuming if one doesn't exist, none does)
+ *
+ */
 if ( !function_exists( 'bcdiv' ) ) {
 	function bcdiv( $dividend, $divisor ) {
 		$quotient = floor( $dividend/$divisor );
@@ -138,7 +155,10 @@ if ( !function_exists( 'bcdiv' ) ) {
 	}
 }
 
-// Replacement for property_exists() (5.1+)
+/**
+ * Replacement for property_exists() (5.1+)
+ *
+ */
 if ( !function_exists( 'property_exists' ) ) {
 	function property_exists( $class, $property ) {
 		if ( is_object( $class ) ) {

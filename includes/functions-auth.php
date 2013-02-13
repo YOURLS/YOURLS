@@ -1,5 +1,8 @@
 <?php
-// Check for valid user. Returns true or an error message
+/**
+ * Check for valid user. Returns true or an error message
+ *
+ */
 function yourls_is_valid_user() {
 	static $valid = false;
 	
@@ -84,7 +87,10 @@ function yourls_is_valid_user() {
 	}
 }
 
-// Check auth against list of login=>pwd. Sets user if applicable, returns bool
+/**
+ * Check auth against list of login=>pwd. Sets user if applicable, returns bool
+ *
+ */
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
 	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $yourls_user_passwords[ $_REQUEST['username'] ], $_REQUEST['password'] ) ) {
@@ -94,7 +100,10 @@ function yourls_check_username_password() {
 	return false;
 }
 
-// Check a REQUEST password sent in plain text against stored password which can be a salted hash
+/**
+ * Check a REQUEST password sent in plain text against stored password which can be a salted hash
+ *
+ */
 function yourls_check_password_hash( $stored, $plaintext ) {
 	if ( substr( $stored, 0, 4 ) == 'md5:' and strlen( $stored ) == 42 ) {
 		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
@@ -113,7 +122,10 @@ function yourls_check_password_hash( $stored, $plaintext ) {
 }
 
 
-// Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
+/**
+ * Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
+ *
+ */
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
@@ -128,7 +140,10 @@ function yourls_check_auth_cookie() {
 	return false;
 }
 
-// Check auth against signature and timestamp. Sets user if applicable, returns bool
+/**
+ * Check auth against signature and timestamp. Sets user if applicable, returns bool
+ *
+ */
 function yourls_check_signature_timestamp() {
 	// Timestamp in PHP : time()
 	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
@@ -150,7 +165,10 @@ function yourls_check_signature_timestamp() {
 	return false;
 }
 
-// Check auth against signature. Sets user if applicable, returns bool
+/**
+ * Check auth against signature. Sets user if applicable, returns bool
+ *
+ */
 function yourls_check_signature() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
@@ -162,7 +180,10 @@ function yourls_check_signature() {
 	return false;
 }
 
-// Generate secret signature hash
+/**
+ * Generate secret signature hash
+ *
+ */
 function yourls_auth_signature( $username = false ) {
 	if( !$username && defined('YOURLS_USER') ) {
 		$username = YOURLS_USER;
@@ -170,14 +191,20 @@ function yourls_auth_signature( $username = false ) {
 	return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
 }
 
-// Check if timestamp is not too old
+/**
+ * Check if timestamp is not too old
+ *
+ */
 function yourls_check_timestamp( $time ) {
 	$now = time();
 	// Allow timestamp to be a little in the future or the past -- see Issue 766
 	return yourls_apply_filter( 'check_timestamp', abs( $now - $time ) < YOURLS_NONCE_LIFE, $time );
 }
 
-// Store new cookie. No $user will delete the cookie.
+/**
+ * Store new cookie. No $user will delete the cookie.
+ *
+ */
 function yourls_store_cookie( $user = null ) {
 	if( !$user ) {
 		$pass = null;
@@ -208,7 +235,10 @@ function yourls_store_cookie( $user = null ) {
 	}
 }
 
-// Set user name
+/**
+ * Set user name
+ *
+ */
 function yourls_set_user( $user ) {
 	if( !defined( 'YOURLS_USER' ) )
 		define( 'YOURLS_USER', $user );
