@@ -523,7 +523,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		),
 		'clicks' => array(
 			'template' => '%clicks%',
-			'clicks'   => number_format( $clicks, 0, '', '' ),
+			'clicks'   => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		),
 		'actions' => array(
 			'template' => '%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/>',

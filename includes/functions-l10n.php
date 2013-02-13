@@ -575,8 +575,8 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
-    $formatted = number_format( $number, absint( $decimals ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
-    return apply_filters( 'number_format_i18n', $formatted );
+    $formatted = number_format( $number, abs( intval( $decimals ) ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
+    return yourls_apply_filters( 'number_format_i18n', $formatted );
 }
 
 /**
