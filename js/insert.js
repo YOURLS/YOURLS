@@ -1,16 +1,16 @@
 // Init some stuff
 $(document).ready(function(){
 	$('#add-url, #add-keyword').keypress(function(e){
-		if (e.which == 13) {add();}
+		if (e.which == 13) {add_link();}
 	});
-	reset_url();
-	$('#new_url_form').attr('action', 'javascript:add();');
+	add_link_reset();
+	$('#new_url_form').attr('action', 'javascript:add_link();');
 	
 	$('input.text').focus(function(){
 		$(this).select();
 	});
 	
-	// this one actually has little impact, the .hasClass('disabled') in each edit(), remove() etc... fires faster
+	// this one actually has little impact, the .hasClass('disabled') in each edit_link_display(), remove() etc... fires faster
 	$('a.button').live('click', function() {
 		if( $(this).hasClass('disabled') ) {
 			return false;
@@ -19,7 +19,7 @@ $(document).ready(function(){
 });
 
 // Create new link and add to table
-function add() {
+function add_link() {
 	if( $('#add-button').hasClass('disabled') ) {
 		return false;
 	}
@@ -38,11 +38,11 @@ function add() {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
 				$('#nourl_found').css('display', 'none');
 				zebra_table();
-				increment();
+				increment_counter();
 				toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
 			}
 
-			reset_url();
+			add_link_reset();
 			end_loading("#add-button");
 			end_disable("#add-button");
 
@@ -63,7 +63,7 @@ function toggle_share_fill_boxes( url, shorturl, title ) {
 }
 
 // Display the edition interface
-function edit(id) {
+function edit_link_display(id) {
 	if( $('#edit-button-'+id).hasClass('disabled') ) {
 		return false;
 	}
@@ -82,7 +82,7 @@ function edit(id) {
 }
 
 // Delete a link
-function remove(id) {
+function remove_link(id) {
 	if( $('#delete-button-'+id).hasClass('disabled') ) {
 		return false;
 	}
@@ -104,7 +104,7 @@ function remove(id) {
 
 					zebra_table();
 				});
-				decrement();
+				decrement_counter();
 			} else {
 				alert('something wrong happened while deleting :/');
 			}
@@ -113,19 +113,19 @@ function remove(id) {
 }
 
 // Redirect to stat page
-function stats(link) {
+function go_stats(link) {
 	window.location=link;
 }
 
 // Cancel edition of a link
-function hide_edit(id) {
+function edit_link_hide(id) {
 	$("#edit-" + id).fadeOut(200, function(){
 		end_disable('#actions-'+id+' .button');
 	});
 }
 
 // Save edition of a link
-function edit_save(id) {
+function edit_link_save(id) {
 	add_loading("#edit-close-" + id);
 	var newurl = encodeURI( $("#edit-url-" + id).val() );
 	var newkeyword = $("#edit-keyword-" + id).val();
@@ -169,20 +169,20 @@ function zebra_table() {
 }
 
 // Ready to add another URL
-function reset_url() {
+function add_link_reset() {
 	$('#add-url').val('http://').focus();
 	$('#add-keyword').val('');
 }
 
 // Increment URL counters
-function increment() {
+function increment_counter() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) + 1);
 	});
 }
 
 // Decrement URL counters
-function decrement() {
+function decrement_counter() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
