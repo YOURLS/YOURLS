@@ -682,7 +682,8 @@ function yourls_get_user_agent() {
  */
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
-	$location = yourls_apply_filter( 'redirect', $location, $code );
+	$location = yourls_apply_filter( 'redirect_location', $location, $code );
+	$code     = yourls_apply_filter( 'redirect_code', $code, $location );
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
