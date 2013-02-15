@@ -33,10 +33,11 @@ define( 'YOURLS_SITE', 'http://site.com' );
 /** Timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
-/** YOURLS language or "locale"
- ** If a translation file is available (usually in user/language) it will be used.
+/** YOURLS language or "locale".
+ ** Change this setting to "localize" YOURLS (use a translation instead of the default English). A corresponding .mo file
+ ** must be installed in the user/language directory.
  ** See http://yourls.org/translation for more information */
-define( 'YOURLS_LANG', 'en_US' ); 
+define( 'YOURLS_LANG', '' ); 
 
 /** Allow multiple short URLs for a same long URL
  ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
