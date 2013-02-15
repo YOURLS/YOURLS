@@ -185,7 +185,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';
-		$return['message']   = 'Missing or malformed URL';
+		$return['message']   = yourls__( 'Missing or malformed URL' );
 		$return['errorCode'] = '400';
 		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
@@ -199,7 +199,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		if( yourls_is_shorturl( $url ) ) {
 			$return['status']    = 'fail';
 			$return['code']      = 'error:noloop';
-			$return['message']   = 'URL is a short URL';
+			$return['message']   = yourls__( 'URL is a short URL' );
 			$return['errorCode'] = '400';
 			return yourls_apply_filter( 'add_new_link_fail_noloop', $return, $url, $keyword, $title );
 		}
@@ -231,13 +231,13 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				// This shorturl either reserved or taken already
 				$return['status']  = 'fail';
 				$return['code']    = 'error:keyword';
-				$return['message'] = 'Short URL '.$keyword.' already exists in database or is reserved';
+				$return['message'] = yourls_s( 'Short URL %s already exists in database or is reserved', $keyword );
 			} else {
 				// all clear, store !
 				yourls_insert_link_in_db( $url, $keyword, $title );
 				$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
 				$return['status']   = 'success';
-				$return['message']  = yourls_trim_long_string( $strip_url ).' added to database';
+				$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
 				$return['title']    = $title;
 				$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 				$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
@@ -265,7 +265,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 					// everything ok, populate needed vars
 					$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 					$return['status']   = 'success';
-					$return['message']  = yourls_trim_long_string( $strip_url ).' added to database';
+					$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
 					$return['title']    = $title;
 					$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 					$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
@@ -283,7 +283,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['status']   = 'fail';
 		$return['code']     = 'error:url';
 		$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-		$return['message']  = yourls_trim_long_string( $strip_url ).' already exists in database';
+		$return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $strip_url ) );
 		$return['title']    = $url_exists->title; 
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
@@ -333,16 +333,16 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 		if( $update_url ) {
 			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status']  = 'success';
-			$return['message'] = 'Link updated in database';
+			$return['message'] = yourls__( 'Link updated in database' );
 		} else {
 			$return['status']  = 'fail';
-			$return['message'] = 'Error updating '. yourls_trim_long_string( $strip_url ).' (Short URL: '.$keyword.') to database';
+			$return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_trim_long_string( $strip_url ), $keyword ) ;
 		}
 	
 	// Nope
 	} else {
 		$return['status']  = 'fail';
-		$return['message'] = 'URL or keyword already exists in database';
+		$return['message'] = yourls__( 'URL or keyword already exists in database' );
 	}
 	
 	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title, $new_url_already_there, $keyword_is_ok );
