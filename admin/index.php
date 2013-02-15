@@ -218,12 +218,12 @@ yourls_do_action( 'admin_page_before_content' );
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_sentence; ?></p>
 	<p><?php
-		printf( yourls__('Display <strong>%s</strong> to <strong class="increment">%s</strong> of <strong class="increment">%s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
+		printf( yourls__( 'Display <strong>%s</strong> to <strong class="increment">%s</strong> of <strong class="increment">%s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )
-			echo ", " . sprintf( yourls__('counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), $total_items_clicks );
+			echo ", " . sprintf( yourls__( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), $total_items_clicks );
 	?>.</p>
 <?php } ?>
-<p><?php printf( yourls__('Overall, tracking <strong class="increment">%s</strong> links, <strong>%s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
+<p><?php printf( yourls__( 'Overall, tracking <strong class="increment">%s</strong> links, <strong>%s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
 <?php yourls_do_action( 'admin_page_before_form' ); ?>
 
 <?php yourls_html_addnew(); ?>

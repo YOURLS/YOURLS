@@ -238,7 +238,7 @@ function yourls_html_tfooter( $params = array() ) {
 							<option value="between"<?php if($date_filter === 'between') { echo ' selected="selected"'; } ?>><?php yourls_e( 'between' ); ?></option>
 						</select>
 						<input type="text" name="date_first" id="date_first" class="text" size="12" value="<?php echo $date_first; ?>" />
-						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> and </span>
+						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> &amp; </span>
 						<input type="text" name="date_second" id="date_second" class="text" size="12" value="<?php echo $date_second; ?>" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>/>
 						
 						<div id="filter_buttons">

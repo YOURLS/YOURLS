@@ -27,7 +27,8 @@ yourls_html_menu();
 		</ul>
 		
 		<p><?php
-		yourls_e( 'With the Standard Bookmarklets you will also get a <span>Quick Share</span> tool box to make posting to Twitter, Facebook or Friendfeed a snap.' );
+		yourls_e( "With the Standard Bookmarklets you will also get a <span>Quick Share</span> tool box to make posting to Twitter, Facebook or Friendfeed a snap." );
+		echo "\n";
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
 		
@@ -74,6 +75,7 @@ yourls_html_menu();
 	
 		<p><?php
 		yourls_e( 'YOURLS allows API calls the old fashioned way, using <tt>username</tt> and <tt>password</tt> parameters.' );
+		echo "\n";
 		yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 		?></p>
 
