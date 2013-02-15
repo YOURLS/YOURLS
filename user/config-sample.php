@@ -36,7 +36,7 @@ define( 'YOURLS_HOURS_OFFSET', 0 );
 /** YOURLS language or "locale".
  ** Change this setting to "localize" YOURLS (use a translation instead of the default English). A corresponding .mo file
  ** must be installed in the user/language directory.
- ** See http://yourls.org/translation for more information */
+ ** See http://yourls.org/translations for more information */
 define( 'YOURLS_LANG', '' ); 
 
 /** Allow multiple short URLs for a same long URL
