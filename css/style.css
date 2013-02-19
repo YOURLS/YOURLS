@@ -8,7 +8,7 @@ body {
 	padding-top:10px;
 }
 #wrap {
-	width:950px;
+	max-width:950px;
 	min-height:150px;
 	margin:0 auto;
 	background:white;
@@ -34,7 +34,7 @@ a, a:link, a:active, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-h1 {height:50px;margin:0;float:right;width:500px;}
+h1 {height:50px;margin:0;float:right;max-width:500px;}
 h1 a {text-align:right;font-size:20px;float:right;}
 h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2a85b3}
 h1 a:hover{text-decoration:none;}
@@ -224,7 +224,7 @@ td.actions .button_stats {
 	background:transparent url(../images/accept.png) top left no-repeat;
 }
 .sub_wrap {
-	width:580px;
+	max-width:580px;
 	padding-bottom:30px;
 	text-align:justify;
 }
@@ -240,8 +240,7 @@ a.bookmarklet {
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.gif) 2px center no-repeat;
 	margin:3px;
-	display:block;
-	float:left;
+	display:inline-block;
 }
 a.bookmarklet:hover {
 	text-decoration:none;
@@ -255,7 +254,7 @@ a.bookmarklet:hover {
 	padding:10px;
 	background:white;
 	margin:0 auto;
-	width:950px;
+	max-width:950px;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
 	border-radius:10px;
