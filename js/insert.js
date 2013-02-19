@@ -11,7 +11,7 @@ $(document).ready(function(){
 	});
 	
 	// this one actually has little impact, the .hasClass('disabled') in each edit_link_display(), remove() etc... fires faster
-	$('a.button').live('click', function() {
+	$(document).on( 'click', 'a.button', function() {
 		if( $(this).hasClass('disabled') ) {
 			return false;
 		}
