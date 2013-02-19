@@ -16,15 +16,16 @@ table.tblSorter thead tr th, table.tblSorter tfoot tr th, table.tblSorter th.hea
 table.tblSorter tfoot tr th {
 	background-color: #E3F3FF;
 }
-table.tblSorter thead tr .header {
+table.tblSorter thead tr .tablesorter-header {
 	background-image: url('../images/bg.gif');
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
 	padding-right:10px;
 }
-table.tblSorter tbody tr:hover td {
-	background-color:#F3FAFD;
+table.tblSorter thead tr .sorter-false {
+	background-image: none;
+	cursor:default;
 }
 table.tblSorter tbody td {
 	color: #3D3D3D;
@@ -32,20 +33,30 @@ table.tblSorter tbody td {
 	background-color: #FFF;
 	vertical-align: top;
 }
-table.tblSorter tbody tr.even td {
+table.tblSorter tbody tr.normal-row td {
+	background: #F1F9FF;
+}
+table.tblSorter tbody tr.alt-row td {
 
 }
-table.tblSorter tbody tr.odd td {
-
+table.tblSorter tbody tr.normal-row:hover td  {
+	background-color:#F1FFF6;
 }
-table.tblSorter thead tr .headerSortUp {
+table.tblSorter tbody tr.alt-row:hover td  {
+	background-color:#F1FFF6;
+}
+table.tblSorter thead tr .tablesorter-headerDesc {
 	background-image: url('../images/desc.gif');
+	background-repeat: no-repeat;
+	background-position: center right;
 }
-table.tblSorter thead tr .headerSortDown {
+table.tblSorter thead tr .tablesorter-headerAsc {
 	background-image: url('../images/asc.gif');
+	background-repeat: no-repeat;
+	background-position: center right;
 }
-table.tblSorter thead tr .headerSortDown, table.tblSorter thead tr .headerSortUp {
-	background-color: #88c0eb;
+table.tblSorter thead tr .tablesorter-headerAsc, table.tblSorter thead tr .tablesorter-headerDesc {
+	background-color: #91C7F2;
 }
 table.tblSorter tfoot tr {
 	background-color: #BCD9E8;
