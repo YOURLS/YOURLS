@@ -981,3 +981,22 @@ class YOURLS_Locale_Formats {
 		return 'rtl' == $this->text_direction;
 	}
 }
+
+/**
+ * Loads a custom translation file (for a plugin, a theme, a public interface...)
+ *
+ * The .mo file should be named based on the domain with a dash, and then the locale exactly,
+ * eg 'myplugin-pt_BR.mo'
+ *
+ * @since 1.6
+ *
+ * @param string $domain Unique identifier (the "domain") for retrieving translated strings
+ * @param string $path Full path to directory containing MO files.
+ */
+function yourls_load_custom_textdomain( $domain, $path ) {
+	$locale = yourls_apply_filters( 'load_custom_textdomain', yourls_get_locale(), $domain );
+    $mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
+
+    return yourls_load_textdomain( $domain, $mofile );
+}
+
