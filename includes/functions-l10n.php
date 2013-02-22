@@ -113,6 +113,7 @@ function yourls__( $text, $domain = 'default' ) {
  * - first one will be the string to translate, eg "hello %s my name is %s"
  * - following ones will be the sprintf arguments, eg "world" and "Ozh"
  * - if there are more arguments passed than needed, the last one will be used as the translation domain
+ * This function will not accept a textdomain argument: do not use in plugins or outside YOURLS core.
  *
  * @see sprintf()
  * @since 1.6
