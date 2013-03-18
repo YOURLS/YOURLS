@@ -433,7 +433,7 @@ function yourls_activate_plugin( $plugin ) {
 	if ( ob_get_length() > 0 ) {
 		// there was some output: error
 		$output = ob_get_clean();
-		return yourls_s( 'Plugin generated expected output. Error was: <br/><pre>%s</pre>', $output );
+		return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
 	}
 	
 	// so far, so good: update active plugin list
