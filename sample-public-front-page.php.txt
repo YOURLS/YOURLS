@@ -1,8 +1,13 @@
 <?php
-/* This is an example file for a public interface and a bookmarklet. It
+
+/*
+ * This is an example file for a public interface and a bookmarklet. It
  * is provided so you can build from it and customize to suit your needs.
  * It's not really part of the project. Don't submit feature requests 
  * about this file. It's _your_ job to make it what you need it to be :)
+ *
+ * Rename to .php
+ *
  */
 
 // Start YOURLS engine
