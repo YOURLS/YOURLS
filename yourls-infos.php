@@ -377,7 +377,7 @@ yourls_html_menu();
 				$best_time['month'] = date( "m", strtotime( $best['day'] ) );
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
-				<p><strong><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%s</strong> hit on %s', '<strong>%s</strong> hits on %s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>. 
+				<p><strong><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>. 
 				<a href="" class='details hide-if-no-js' id="more_clicks"><?php yourls_e( 'Click for more details' ); ?></a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php

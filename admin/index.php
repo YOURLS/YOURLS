@@ -48,7 +48,7 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 			$search_in      = 'ip';
 			break;
 	}
-	$search_sentence = yourls_s( 'Searching for <strong>%s</strong> in <strong>%s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
+	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
 	$search_url      = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
@@ -218,12 +218,12 @@ yourls_do_action( 'admin_page_before_content' );
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_sentence; ?></p>
 	<p><?php
-		printf( yourls__( 'Display <strong>%s</strong> to <strong class="increment">%s</strong> of <strong class="increment">%s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
+		printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )
-			echo ", " . sprintf( yourls__( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), $total_items_clicks );
+			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
 	?>.</p>
 <?php } ?>
-<p><?php printf( yourls__( 'Overall, tracking <strong class="increment">%s</strong> links, <strong>%s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
+<p><?php printf( yourls__( 'Overall, tracking <strong class="increment">%1$s</strong> links, <strong>%2$s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
 <?php yourls_do_action( 'admin_page_before_form' ); ?>
 
 <?php yourls_html_addnew(); ?>

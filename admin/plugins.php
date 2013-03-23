@@ -71,7 +71,7 @@ yourls_html_menu();
 	$count_active = yourls_has_active_plugins();
 	?>
 	
-	<p id="plugin_summary"><?php /* //translators: "you have '3 plugins' installed and '1' activated" */ yourls_se( 'You currently have <strong>%s</strong> installed, and <strong>%s</strong> activated', $plugins_count, $count_active ); ?></p>
+	<p id="plugin_summary"><?php /* //translators: "you have '3 plugins' installed and '1' activated" */ yourls_se( 'You currently have <strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ); ?></p>
 
 	<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1">
 	<thead>
