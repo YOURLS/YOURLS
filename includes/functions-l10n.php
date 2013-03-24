@@ -834,7 +834,7 @@ class YOURLS_Locale_Formats {
 		// Set text direction.
 		if ( isset( $GLOBALS['text_direction'] ) )
 			$this->text_direction = $GLOBALS['text_direction'];
-		/* //translators: 'rtl' or 'ltr'. This sets the text direction for WordPress. */
+		/* //translators: 'rtl' or 'ltr'. This sets the text direction for YOURLS. */
 		elseif ( 'rtl' == yourls_x( 'ltr', 'text direction' ) )
 			$this->text_direction = 'rtl';
 	}

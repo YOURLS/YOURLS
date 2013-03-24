@@ -197,50 +197,70 @@ function yourls_html_tfooter( $params = array() ) {
 			<div id="filter_form">
 				<form action="" method="get">
 					<div id="filter_options">
-						<?php yourls_e( 'Search for' ); ?>
-						<input type="text" name="search" class="text" size="12" value="<?php echo yourls_esc_attr( $search_text ); ?>" />
-						<?php yourls_e( 'in' ); ?>
-						<select name="search_in" size="1">
-							<option value="keyword"<?php if( $search_in == 'keyword' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Short URL' ); ?></option>
-							<option value="url"<?php if( $search_in == 'url' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'URL' ); ?></option>
-							<option value="title"<?php if( $search_in == 'title' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Title' ); ?></option>
-							<option value="ip"<?php if( $search_in == 'ip' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'IP' ); ?></option>
-						</select>
-						&ndash; <?php yourls_e( 'Order by' ); ?>
-						<?php $sort_by = isset( $sort_by ) ? $sort_by : 'timestamp' ; ?>
-						<select name="sort_by" size="1">
-							<option value="keyword"<?php if( $sort_by == 'keyword' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Short URL' ); ?></option>
-							<option value="url"<?php if( $sort_by == 'url' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'URL' ); ?></option>
-							<option value="timestamp"<?php if( $sort_by == 'timestamp' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Date' ); ?></option>
-							<option value="ip"<?php if( $sort_by == 'ip' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'IP' ); ?></option>
-							<option value="clicks"<?php if( $sort_by == 'clicks' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Clicks' ); ?></option>
-						</select>
-						<?php $sort_order = isset( $sort_order ) ? $sort_order : 'desc' ; ?>
-						<select name="sort_order" size="1">
-							<option value="asc" <?php if( $sort_order == 'asc' )  { echo ' selected="selected"'; } ?>><?php yourls_e( 'Ascending' ); ?></option>
-							<option value="desc"<?php if( $sort_order == 'desc' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'Descending' ); ?></option>
-						</select>
-						&ndash; <?php yourls_e( 'Show' ); ?>
-						<input type="text" name="perpage" class="text" size="2" value="<?php echo $perpage; ?>" /> <?php yourls_e('rows'); ?><br/>
+						<?php
 						
-						<?php yourls_e( 'Show links with' ); ?>
-						<select name="click_filter" size="1">
-							<option value="more"<?php if( $click_filter === 'more' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'more' ); ?></option>
-							<option value="less"<?php if( $click_filter === 'less' ) { echo ' selected="selected"'; } ?>><?php yourls_e( 'less' ); ?></option>
-						</select>
-						<?php yourls_e( 'than' ); ?>
-						<input type="text" name="click_limit" class="text" size="4" value="<?php echo $click_limit; ?>" /> <?php yourls_e('clicks'); ?><br/>
+						// First search control: text to search
+						$_input = '<input type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
+						$_options = array(
+							'keyword' => yourls__( 'Short URL' ),
+							'url'     => yourls__( 'URL' ),
+							'title'   => yourls__( 'Title' ),
+							'ip'      => yourls__( 'IP' ),
+						);							
+						$_select = yourls_html_select( 'search_in', $_options, $search_in );
+						/* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
+						yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
+						echo "&ndash;\n";
 						
-						<?php yourls_e( 'Show links created' ); ?>
-						<select name="date_filter" id="date_filter" size="1">
-							<option value="before"<?php if($date_filter === 'before') { echo ' selected="selected"'; } ?>><?php yourls_e('before'); ?></option>
-							<option value="after"<?php if($date_filter === 'after') { echo ' selected="selected"'; } ?>><?php yourls_e('after'); ?></option>
-							<option value="between"<?php if($date_filter === 'between') { echo ' selected="selected"'; } ?>><?php yourls_e( 'between' ); ?></option>
-						</select>
-						<input type="text" name="date_first" id="date_first" class="text" size="12" value="<?php echo $date_first; ?>" />
-						<span id="date_and" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>> &amp; </span>
-						<input type="text" name="date_second" id="date_second" class="text" size="12" value="<?php echo $date_second; ?>" <?php if($date_filter === 'between') { echo ' style="display:inline"'; } ?>/>
+						// Second search control: order by
+						$_options = array(
+							'keyword'      => yourls__( 'Short URL' ),
+							'url'          => yourls__( 'URL' ),
+							'timestamp'    => yourls__( 'Date' ),
+							'ip'           => yourls__( 'IP' ),
+							'clicks'       => yourls__( 'Clicks' ),
+						);
+						$_select = yourls_html_select( 'sort_by', $_options, $sort_by );
+						$sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
+						$_options = array(
+							'asc'  => yourls__( 'Ascending' ),
+							'desc' => yourls__( 'Descending' ),
+						);
+						$_select2 = yourls_html_select( 'sort_order', $_options, $sort_order );
+						/* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
+						yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
+						echo "&ndash;\n";
 						
+						// Third search control: Show XX rows
+						/* //translators: "Show <text field> rows" */
+						yourls_se( 'Show %s rows',  '<input type="text" name="perpage" class="text" size="2" value="' . $perpage . '" />' );
+						echo "<br/>\n";
+
+						// Fourth search control: Show links with more than XX clicks
+						$_options = array(
+							'more' => yourls__( 'more' ),
+							'less' => yourls__( 'less' ),
+						);
+						$_select = yourls_html_select( 'click_filter', $_options, $click_filter );
+						$_input  = '<input type="text" name="click_limit" class="text" size="4" value="' . $click_limit . '" /> ';
+						/* //translators: "Show links with <more/less> than <text field> clicks" */
+						yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
+						echo "<br/>\n";
+
+						// Fifth search control: Show links created before/after/between ...
+						$_options = array(
+							'before'  => yourls__('before'),
+							'after'   => yourls__('after'),
+							'between' => yourls__('between'),
+						);
+						$_select = yourls_html_select( 'date_filter', $_options, $date_filter );
+						$_input  = '<input type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
+						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> and </span>';
+						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						/* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
+						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
+						?>
+
 						<div id="filter_buttons">
 							<input type="submit" id="submit-sort" value="<?php yourls_e('Search'); ?>" class="button primary" />
 							&nbsp;
@@ -297,6 +317,31 @@ function yourls_html_tfooter( $params = array() ) {
 		<?php yourls_do_action( 'html_tfooter' ); ?>
 	</tfoot>
 	<?php
+}
+
+/**
+ * Return a select box
+ *
+ * @since 1.6
+ *
+ * @param string $name HTML 'name' (also use as the HTML 'id')
+ * @param array $options array of 'value' => 'Text displayed'
+ * @param string $selected optional 'value' from the $options array that will be highlighted
+ * @param boolean $display false (default) to return, true to echo
+ * @return HTML content of the select element
+ */
+function yourls_html_select( $name, $options, $selected = '', $display = false ) {
+	$html = "<select name='$name' id='$name' size='1'>\n";
+	foreach( $options as $value => $text ) {
+		$html .= "<option value='$value' ";
+		$html .= $selected == $value ? ' selected="selected"' : '';
+		$html .= ">$text</option>\n";
+	}
+	$html .= "</select>\n";
+	$html  = yourls_apply_filters( 'html_select', $html, $name, $options, $selected, $display );
+	if( $display )
+		echo $html;
+	return $html;
 }
 
 /**

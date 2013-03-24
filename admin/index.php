@@ -14,7 +14,6 @@ $search_in_text  = yourls__( 'URL' );
 $search_in       = 'url';
 $sort_by_text    = yourls__( 'Short URL' );
 $sort_by         = 'timestamp';
-$sort_order_text = yourls__( 'Descending Order' );
 $sort_order      = 'desc';
 $page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
 $search          = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
@@ -113,11 +112,9 @@ if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
 	}
 	switch( $_GET['sort_order'] ) {
 		case 'asc':
-			$sort_order_text = yourls__( 'Ascending Order' );
 			$sort_order      = 'asc';
 			break;
 		case 'desc':
-			$sort_order_text = yourls__( 'Descending Order' );
 			$sort_order      = 'desc';
 			break;
 	}
