@@ -37,16 +37,14 @@ require_once dirname(__FILE__) . '/pomo/translations.php';
 function yourls_get_locale() {
 	global $yourls_locale;
 
-	if ( isset( $yourls_locale ) )
-		return yourls_apply_filters( 'get_locale', $yourls_locale );
+	if ( !isset( $yourls_locale ) ) {
+		// YOURLS_LANG is defined in config.
+		if ( defined( 'YOURLS_LANG' ) )
+			$yourls_locale = YOURLS_LANG;
 
-	// YOURLS_LANG is defined in config.
-	if ( defined( 'YOURLS_LANG' ) )
-		$yourls_locale = YOURLS_LANG;
-
-	if ( empty( $yourls_locale ) )
-		$yourls_locale = 'en_US';
-
+		if ( empty( $yourls_locale ) )
+			$yourls_locale = 'en_US';
+	}
 	return yourls_apply_filters( 'get_locale', $yourls_locale );
 }
 
