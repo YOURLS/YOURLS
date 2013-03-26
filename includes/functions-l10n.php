@@ -973,7 +973,7 @@ class YOURLS_Locale_Formats {
 	/**
 	 * Checks if current locale is RTL.
 	 *
-	 * @since 3.0.0
+	 * @since 1.6
 	 * @return bool Whether locale is RTL.
 	 */
 	function is_rtl() {
@@ -997,5 +997,19 @@ function yourls_load_custom_textdomain( $domain, $path ) {
     $mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
 
     return yourls_load_textdomain( $domain, $mofile );
+}
+
+/**
+ * Checks if current locale is RTL. Stolen from WP.
+ *
+ * @since 1.6
+ * @return bool Whether locale is RTL.
+ */
+function yourls_is_rtl() {
+    global $yourls_locale_formats;
+	if( !isset( $yourls_locale_formats ) )
+		$yourls_locale_formats = new YOURLS_Locale_Formats();
+		
+	return $yourls_locale_formats->is_rtl();
 }
 

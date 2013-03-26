@@ -77,8 +77,8 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
 	?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" <?php yourls_html_language_attributes(); ?>>
 <head>
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
@@ -801,4 +801,33 @@ function yourls_page( $page ) {
 	include($include);
 	yourls_do_action( 'post_page', $page );
 	die();	
+}
+
+/**
+ * Display the language attributes for the HTML tag.
+ *
+ * Builds up a set of html attributes containing the text direction and language
+ * information for the page. Stolen from WP.
+ *
+ * @since 1.6
+ */
+function yourls_html_language_attributes() {
+    $attributes = array();
+    $output = '';
+	
+	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
+	
+	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
+	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
+    if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
+		if( $doctype == 'xhtml' ) {
+			$attributes[] = "xml:lang=\"$lang\"";
+		} else {
+			$attributes[] = "lang=\"$lang\"";
+		}
+    }
+
+    $output = implode( ' ', $attributes );
+    $output = yourls_apply_filters( 'html_language_attributes', $output );
+    echo $output;
 }
