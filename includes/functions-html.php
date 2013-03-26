@@ -255,7 +255,7 @@ function yourls_html_tfooter( $params = array() ) {
 						);
 						$_select = yourls_html_select( 'date_filter', $_options, $date_filter );
 						$_input  = '<input type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
-						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> and </span>';
+						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
 						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
 						/* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
 						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
