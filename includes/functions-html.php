@@ -842,6 +842,8 @@ function yourls_l10n_calendar_strings() {
 	echo "\n<script>\n";
 	echo "var l10n_cal_month = " . json_encode( array_values( yourls_l10n_months() ) ) . ";\n";
 	echo "var l10n_cal_days = " . json_encode( array_values( yourls_l10n_weekday_initial() ) ) . ";\n";
+	echo "var l10n_cal_today = \"" . yourls_esc_js( yourls__( 'Today' ) ) . "\";\n";
+	echo "var l10n_cal_close = \"" . yourls_esc_js( yourls__( 'Close' ) ) . "\";\n";
 	echo "</script>\n";
 	
 	// Dummy returns, to initialize l10n strings used in the calendar

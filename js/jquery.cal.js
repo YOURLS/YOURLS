@@ -96,7 +96,7 @@
 			
 			jQuery("thead",table).append('<tr class="controls"><th colspan="7"><span class="prevMonth">&laquo;</span>&nbsp;'+monthselect+yearselect+'&nbsp;<span class="nextMonth">&raquo;</span></th></tr>');
 			jQuery("thead",table).append('<tr class="days"><th>'+l10n_cal_days[0]+'</th><th>'+l10n_cal_days[1]+'</th><th>'+l10n_cal_days[2]+'</th><th>'+l10n_cal_days[3]+'</th><th>'+l10n_cal_days[4]+'</th><th>'+l10n_cal_days[5]+'</th><th>'+l10n_cal_days[6]+'</th></tr>');
-			jQuery("tfoot",table).append('<tr><td colspan="2"><span class="today">today</span></td><td colspan="3">&nbsp;</td><td colspan="2"><span class="close">close</span></td></tr>');
+			jQuery("tfoot",table).append('<tr><td colspan="2"><span class="today">'+l10n_cal_today+'</span></td><td colspan="3">&nbsp;</td><td colspan="2"><span class="close">'+l10n_cal_close+'</span></td></tr>');
 			for (var i = 0; i < 6; i++) jQuery("tbody",table).append('<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');	
 			return table;
 		}
