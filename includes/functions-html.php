@@ -78,7 +78,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	
 	?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" <?php yourls_html_language_attributes(); ?>>
+<html <?php yourls_html_language_attributes(); ?>>
 <head>
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
@@ -109,6 +109,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php } ?>
 	<?php if ( $cal ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<?php yourls_l10n_calendar_strings(); ?>
 		<script src="<?php yourls_site_url(); ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $charts ) { ?>
@@ -830,4 +831,20 @@ function yourls_html_language_attributes() {
     $output = implode( ' ', $attributes );
     $output = yourls_apply_filters( 'html_language_attributes', $output );
     echo $output;
+}
+
+/**
+ * Output translated strings used by the Javascript calendar
+ *
+ * @since 1.6
+ */
+function yourls_l10n_calendar_strings() {
+	echo "\n<script>\n";
+	echo "var l10n_cal_month = " . json_encode( array_values( yourls_l10n_months() ) ) . ";\n";
+	echo "var l10n_cal_days = " . json_encode( array_values( yourls_l10n_weekday_initial() ) ) . ";\n";
+	echo "</script>\n";
+	
+	// Dummy returns, to initialize l10n strings used in the calendar
+	yourls__( 'Today' );
+	yourls__( 'Close' );
 }

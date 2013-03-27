@@ -601,7 +601,7 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 
     if ( false === $i ) {
         if ( ! $gmt )
-            $i = current_time( 'timestamp' );
+            $i = yourls_current_time( 'timestamp' );
         else
             $i = time();
         // we should not let date() interfere with our
@@ -657,6 +657,33 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
     $j = yourls_apply_filters('date_i18n', $j, $req_format, $i, $gmt);
     return $j;
 }
+
+/**
+ * Retrieve the current time based on specified type. Stolen from WP.
+ *
+ * The 'mysql' type will return the time in the format for MySQL DATETIME field.
+ * The 'timestamp' type will return the current timestamp.
+ *
+ * If $gmt is set to either '1' or 'true', then both types will use GMT time.
+ * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
+ *
+ * @since 1.6
+ *
+ * @param string $type Either 'mysql' or 'timestamp'.
+ * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
+ * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
+ */
+function yourls_current_time( $type, $gmt = 0 ) {
+    switch ( $type ) {
+        case 'mysql':
+            return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * 3600 );
+            break;
+        case 'timestamp':
+            return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * 3600;
+            break;
+    }
+}
+
 
 /**
  * Class that loads the calendar locale.
@@ -1013,3 +1040,94 @@ function yourls_is_rtl() {
 	return $yourls_locale_formats->is_rtl();
 }
 
+/**
+ * Return translated weekday abbreviation (3 letters, eg 'Fri' for 'Friday')
+ *
+ * The $weekday var can be a textual string ('Friday'), a integer (0 to 6) or an empty string
+ * If $weekday is an empty string, the function returns an array of all translated weekday abbrev
+ *
+ * @since 1.6
+ * @param mixed $weekday A full textual weekday, eg "Friday", or an integer (0 = Sunday, 1 = Monday, .. 6 = Saturday)
+ * @return mixed Translated weekday abbreviation, eg "Ven" (abbrev of "Vendredi") for "Friday" or 5, or array of all weekday abbrev
+ */
+function yourls_l10n_weekday_abbrev( $weekday = '' ){
+    global $yourls_locale_formats;
+	if( !isset( $yourls_locale_formats ) )
+		$yourls_locale_formats = new YOURLS_Locale_Formats();
+		
+	if( $weekday === '' )
+		return $yourls_locale_formats->weekday_abbrev;
+	
+	if( is_int( $weekday ) ) {
+		$day = $yourls_locale_formats->weekday[ $weekday ];
+		return $yourls_locale_formats->weekday_abbrev[ $day ];
+	} else {
+		return $yourls_locale_formats->weekday_abbrev[ yourls__( $weekday ) ];
+	}
+}
+
+/**
+ * Return translated weekday initial (1 letter, eg 'F' for 'Friday')
+ *
+ * The $weekday var can be a textual string ('Friday'), a integer (0 to 6) or an empty string
+ * If $weekday is an empty string, the function returns an array of all translated weekday initials
+ *
+ * @since 1.6
+ * @param mixed $weekday A full textual weekday, eg "Friday", an integer (0 = Sunday, 1 = Monday, .. 6 = Saturday) or empty string
+ * @return mixed Translated weekday initial, eg "V" (initial of "Vendredi") for "Friday" or 5, or array of all weekday initials
+ */
+function yourls_l10n_weekday_initial( $weekday = '' ){
+    global $yourls_locale_formats;
+	if( !isset( $yourls_locale_formats ) )
+		$yourls_locale_formats = new YOURLS_Locale_Formats();
+		
+	if( $weekday === '' )
+		return $yourls_locale_formats->weekday_initial;
+	
+	if( is_int( $weekday ) ) {
+		$weekday = $yourls_locale_formats->weekday[ $weekday ];
+		return $yourls_locale_formats->weekday_initial[ $weekday ];
+	} else {
+		return $yourls_locale_formats->weekday_initial[ yourls__( $weekday ) ];
+	}
+}
+
+/**
+ * Return translated month abbrevation (3 letters, eg 'Nov' for 'November')
+ *
+ * The $month var can be a textual string ('November'), a integer (1 to 12), a two digits strings ('01' to '12), or an empty string
+ * If $month is an empty string, the function returns an array of all translated abbrev months ('January' => 'Jan', ...)
+ *
+ * @since 1.6
+ * @param mixed $month Empty string, a full textual weekday, eg "November", or an integer (1 = January, .., 12 = December)
+ * @return mixed Translated month abbrev (eg "Nov"), or array of all translated abbrev months
+ */
+function yourls_l10n_month_abbrev( $month = '' ){
+    global $yourls_locale_formats;
+	if( !isset( $yourls_locale_formats ) )
+		$yourls_locale_formats = new YOURLS_Locale_Formats();
+	
+	if( $month === '' )
+		return $yourls_locale_formats->month_abbrev;
+	
+	if( intval( $month ) > 0 ) {
+		$month = $yourls_locale_formats->month[ $month ];
+		return $yourls_locale_formats->month_abbrev[ $month ];
+	} else {
+		return $yourls_locale_formats->month_abbrev[ yourls__( $month ) ];
+	}
+}
+
+/**
+ * Return array of all translated months
+ *
+ * @since 1.6
+ * @return array Array of all translated months
+ */
+function yourls_l10n_months(){
+    global $yourls_locale_formats;
+	if( !isset( $yourls_locale_formats ) )
+		$yourls_locale_formats = new YOURLS_Locale_Formats();
+	
+	return $yourls_locale_formats->month;
+}
