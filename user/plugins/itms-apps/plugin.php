@@ -20,7 +20,7 @@ function suculent_itms_apps( $args ) {
 	$evil = 'http://itms-services://';
 	$good = 'itms-services://';
 	
-	if (strpos($url, 'http://itms-services://') !== FALSE) {
+	if (strpos($url, $evil) !== FALSE) {
 		
 			// Fix the problem and redirect
 			$itmsurl = str_replace($evil, $good, $url);
