@@ -1,6 +1,4 @@
-[[https://raw.github.com/wiki/YOURLS/YOURLS/images/logo.png]]
-
-# Contributing to this project
+# Contributing to YOURLS
 
 Please take a moment to review this document, or see your issue / pull request closed with *harsh comments* :-)
 
@@ -25,7 +23,6 @@ a bug report, a feature request or a pull request.
 
 ## Bug report
 
-A bug is a _demonstrable problem_ that is caused by the code in the repository.
 Good bug reports are extremely helpful - thank you! Good bug reports are also quite rare.  
 To help and raise the bug report quality, you must read the wiki document about [Bug Reports](https://github.com/YOURLS/YOURLS/wiki/Bug-Report)
 
