@@ -3,12 +3,12 @@
 
 # Contributing to this project
 
-Please take a moment to review this document, or see your issue / pull request closed with *harsh comments*.
+Please take a moment to review this document, or see your issue / pull request closed with *harsh comments* :-)
 
 Following these guidelines helps to communicate that you respect the time of
-the developers managing and developing for free this open source project during their free time. In return,
-they will reciprocate that respect in addressing your issue or assessing
-patches and features. Right?
+the developers managing and developing for free this open source project during their free time.
+Thank you for this, and in return we will reciprocate that respect in addressing your issue
+or assessing patches with goodwill.
 
 # Using the issue tracker = search before
 
@@ -19,42 +19,31 @@ requests, but please respect the following restrictions:
   [Stack Overflow](http://stackoverflow.com) instead.
 * Please, please, please, **SEARCH** before you file a new issue or request.
 
+# Using the issue tracker = read before
 
-# Bug reports
+Before using the issue tracker, we require you read the specific guidelines, depending on the topic:
+a bug report, a feature request or a pull request.
+
+## Bug report
 
 A bug is a _demonstrable problem_ that is caused by the code in the repository.
-Good bug reports are extremely helpful - thank you!
+Good bug reports are extremely helpful - thank you! Good bug reports are also quite rare.  
+To help and raise the bug report quality, please read the wiki document about [Bug Reports](https://github.com/YOURLS/YOURLS/wiki/Bug-Report)
 
-Guidelines for bug reports:
+## Feature request
 
-1. **Use the GitHub issue search** &mdash; check if the issue has already been
-   reported.
-2. **Check if the issue has been fixed** &mdash; try to reproduce it using the
-   latest [master](https://github.com/YOURLS/YOURLS/archive/master.zip)
-3. **Isolate the problem** &mdash; create a reduced step-by-step test
-   case
-4. **Give details** that are relevant to the bug: OS used? browser and server software versions?
-   What is the   expected output? What do you see instead? 
-   
-A good bug report **must not** leave others needing to chase you up for more
-information. Or your issue will be closed with *harsh comments*.
+Feature requests are welcome. But take a moment to find out whether your idea fits the scope and
+goals of the project. Check also the [Roadmap](https://github.com/YOURLS/YOURLS/wiki/Road-Map),
+maybe your idea is already planned.
 
-# Feature requests
+It's up to you to make a strong case to convince the project's developers of the merits of this feature.
+Please provide as much detail and context as possible and get in touch. Feel free to detail how you envision
+things, be they about (pseudo)code, interface, mockup, etc...
 
-Feature requests are welcome. But take a moment to find out whether your idea
-fits with the scope and aims of the project. It's up to *you* to make a strong
-case to convince the project's developers of the merits of this feature. Please
-provide as much detail and context as possible and get in touch.
+## Pull request
 
-# Pull requests
-
-Good pull requests - patches, improvements, new features - are a fantastic
-help. They should remain focused in scope and avoid containing unrelated
-commits.
-
-**Please ask first** before embarking on any significant pull request (e.g.
-implementing features, refactoring code... ), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
-
-By submitting a patch, you agree to allow the project owner to
-license your work under the same license as that used by the project.
+Good pull requests are a fantastic help. But please get in touch before you start working,
+it's always a sad moment to dismiss a patch for which a coder has spent a lot of time because
+it simply does not fit the project. Please read the wiki
+document about [Pull requests](https://github.com/YOURLS/YOURLS/wiki/Pull-Request)
 
