@@ -1,21 +1,27 @@
-*** YOURLS Changelog ***
+YOURLS Changelog
+================
 
 This file attempts to list the main changes through all versions of YOURLS. For a much more detailed
 list, simply refer to the commit messages: http://code.google.com/p/yourls/source/list
 
 1.0
+---
 - initial release
 
 1.0.1
+-----
 - don't remember. Trivial stuff probably.
 
 1.1
+---
 - don't remember. Some little bugs I guess.
 
 1.2
+---
 - don't remember. A few tiny stuff for sure.
 
 1.3-RC1
+-------
 - added bookmarklet and tools page
 - improved XSS filter when adding new URL
 - code cleanup in admin/index.php to separate code and display
@@ -24,6 +30,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - hide PHP notices & SQL errors & warnings, unless YOURLS_DEBUG constant set to true
 
 1.4
+---
 - added an upgrader from 1.3 to 1.4
 - change in logic: now using a global object $ydb for everything related to DB and other globally needed stuff
 - change in logic: include "load-yourls.php" instead of "config.php" to start engine
@@ -35,6 +42,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - stats! OMG stats!
 
 1.4.1
+-----
 - fixed base 62 URLs (keywords with MiXeD CaSe)
 - new & secure auth method for API calls, with no need to use login & password combo
 - allow SSL enforcement for admin pages
@@ -43,16 +51,19 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - filter and search URLs & short URLs by date
 
 1.4.2
+-----
 - fixed bug in auth function
 - added sample public API file
 - added check in API requests for WordPress plugin when adding a new short URL
 - prettier sample public interface
 
 1.4.3
+-----
 - fixed bug no-stats-showing-ffs due to inconsistency in DB schema
 - improve error reporting with API method url-stat
 
 1.5
+---
 - added: plugin architecture! OMG plugins!!1!!1!
 - added: directory /user, config.php can be moved there
 - added: new "instant bookmarklets"
@@ -70,6 +81,7 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - fixed: lots of bugs
 
 1.5.1
+-----
 - added: full jsonp support
 - added: ability to use encrypted passwords in the config file
 - fixed: support for http://www.sho.rt/bleh and http://sho.rt/bleh
@@ -80,4 +92,5 @@ list, simply refer to the commit messages: http://code.google.com/p/yourls/sourc
 - improved: things, things, things
 
 1.6
+---
 - added: custom API actions
