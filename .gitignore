@@ -1,0 +1,37 @@
+############
+## YOURLS
+############
+
+# Configuration
+user/config.php
+
+# Languages
+user/languages/*
+!user/languages/
+
+# Plugins
+user/plugins/*
+# Core plugins
+!user/plugins/hyphens-in-urls/
+!user/plugins/random-bg/
+!user/plugins/sample-page/
+!user/plugins/sample-plugin/
+!user/plugins/sample-toolbar/
+
+# Pages
+pages/*
+!pages/examplepage.php
+
+
+############
+## Environnement
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Mac crap
+.DS_Store
