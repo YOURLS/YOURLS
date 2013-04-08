@@ -63,7 +63,7 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 	// Include the Copy box and the Quick Share box
 	yourls_share_box( $url, $shorturl, $title, $text );
 	
-	// Initialize clipboard -- requires js/share.js and js/jquery.zclip.min.js to be properly loaded in the <head>
+	// Initialize clipboard -- requires assets/js/share.js and assets/js/jquery.zclip.min.js to be properly loaded in the <head>
 	echo <<<JS
 	<script>
 	init_clipboard();

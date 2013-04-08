@@ -166,20 +166,20 @@ td.actions .button.disabled, #add-button.disabled {
 	background:#ccc;
 }
 td.actions .button.loading, #add-button.loading {
-	background:#cc7 url(../images/loading.gif) center center no-repeat;
+	background:#cc7 url(../img/loading.gif) center center no-repeat;
 	color:#cc7;
 }
 td.actions .button_share {
-	background:transparent url(../images/share.png) 2px center no-repeat;
+	background:transparent url(../img/share.png) 2px center no-repeat;
 }
 td.actions .button_edit {
-	background:transparent url(../images/pencil.png) 2px center no-repeat;
+	background:transparent url(../img/pencil.png) 2px center no-repeat;
 }
 td.actions .button_delete {
-	background:transparent url(../images/delete.png) 2px center no-repeat;
+	background:transparent url(../img/delete.png) 2px center no-repeat;
 }
 td.actions .button_stats {
-	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
+	background:transparent url(../img/chart_bar.png) 2px center no-repeat;
 }
 #main_table tfoot th, #main_table tfoot th div {
 	font-size:10px;
@@ -215,13 +215,13 @@ td.actions .button_stats {
 	padding:0 0 5px 20px;
 }
 #login ul.error li {
-	background:transparent url(../images/cancel.png) top left no-repeat;
+	background:transparent url(../img/cancel.png) top left no-repeat;
 }
 #login ul.warning li {
-	background:transparent url(../images/error.png) top left no-repeat;
+	background:transparent url(../img/error.png) top left no-repeat;
 }
 #login ul.success li {
-	background:transparent url(../images/accept.png) top left no-repeat;
+	background:transparent url(../img/accept.png) top left no-repeat;
 }
 .sub_wrap {
 	max-width:580px;
@@ -238,7 +238,7 @@ a.bookmarklet {
 	-webkit-border-radius:3px;
 	border-radius:3px;
 	padding:5px 5px 5px 20px;
-	background:#eef url(../images/favicon.gif) 2px center no-repeat;
+	background:#eef url(../img/favicon.gif) 2px center no-repeat;
 	margin:3px;
 	display:inline-block;
 }
@@ -267,7 +267,7 @@ a.bookmarklet:hover {
 	border-bottom-right-radius:25px;
 }
 #footer p a {
-	background:#fff url(../images/favicon.gif) 2px center no-repeat;
+	background:#fff url(../img/favicon.gif) 2px center no-repeat;
 	padding-left:20px;
 }
 
@@ -310,10 +310,10 @@ a.bookmarklet:hover {
   background-color:#fdd;
 }
 .jquery-notify-bar.error span,.jquery-notify-bar.fail span{
-	background:transparent url("../images/error.png") no-repeat left center;
+	background:transparent url("../img/error.png") no-repeat left center;
 	padding-left:20px;
 }.jquery-notify-bar.success span{
-	background:transparent url("../images/accept.png") no-repeat left center;
+	background:transparent url("../img/accept.png") no-repeat left center;
 	padding-left:20px;
 }
 .jquery-notify-bar.success {

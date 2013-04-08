@@ -9,7 +9,7 @@ function yourls_html_logo() {
 	?>
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		<img src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
 	yourls_do_action( 'html_logo' );
@@ -87,30 +87,30 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-1.9.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+	<script src="<?php yourls_site_url(); ?>/assets/js/jquery-1.9.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/assets/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/assets/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 	<?php if ( $tabs ) { ?>
-		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php yourls_site_url(); ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/assets/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $tablesorter ) { ?>
-		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php yourls_site_url(); ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/assets/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $insert ) { ?>
-		<script src="<?php yourls_site_url(); ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/assets/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $share ) { ?>
-		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php yourls_site_url(); ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-		<script src="<?php yourls_site_url(); ?>/js/jquery.zclip.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<script src="<?php yourls_site_url(); ?>/assets/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/assets/js/jquery.zclip.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $cal ) { ?>
-		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 		<?php yourls_l10n_calendar_strings(); ?>
-		<script src="<?php yourls_site_url(); ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/assets/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $charts ) { ?>
 	        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -121,7 +121,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<script type="text/javascript">
 	//<![CDATA[
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
-		var zclipurl = '<?php yourls_site_url(); ?>/js/ZeroClipboard.swf';
+		var zclipurl = '<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf';
 	//]]>
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
