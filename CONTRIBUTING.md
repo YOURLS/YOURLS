@@ -1,4 +1,5 @@
-# Contributing to YOURLS
+Contributing to YOURLS
+======================
 
 Please take a moment to review this document, or see your issue / pull request closed with *harsh comments* :-)
 
@@ -7,7 +8,8 @@ the developers managing and developing for free this open source project during 
 Thank you for this, and in return we will reciprocate that respect in addressing your issue
 or assessing patches with goodwill.
 
-# Using the issue tracker = search before
+Using the issue tracker = search before
+---------------------------------------
 
 The issue tracker is the preferred channel for bug reports, features requests and submitting pull
 requests, but please respect the following restrictions:
@@ -16,17 +18,18 @@ requests, but please respect the following restrictions:
   [Stack Overflow](http://stackoverflow.com) instead.
 * Please, please, please, **SEARCH** before you file a new issue or request.
 
-# Using the issue tracker = read before
+Using the issue tracker = read before
+-------------------------------------
 
 Before using the issue tracker, we require you read the specific guidelines, depending on the topic:
 a bug report, a feature request or a pull request.
 
-## Bug report
+### Bug report
 
 Good bug reports are extremely helpful - thank you! Good bug reports are also quite rare.  
 To help and raise the bug report quality, you must read the wiki document about [Bug Reports](https://github.com/YOURLS/YOURLS/wiki/Bug-Report)
 
-## Feature request
+### Feature request
 
 Feature requests are welcome. But take a moment to find out whether your idea fits the scope and
 goals of the project. Check also the [Roadmap](https://github.com/YOURLS/YOURLS/wiki/Road-Map),
@@ -36,7 +39,7 @@ It's up to you to make a strong case to convince the project's developers of the
 Please provide as much detail and context as possible and get in touch. Feel free to detail how you envision
 things, be they about (pseudo)code, interface, mockup, etc...
 
-## Pull request
+### Pull request
 
 Good pull requests are a fantastic help. But please get in touch before you start working,
 it's always a sad moment to dismiss a patch for which a coder has spent a lot of time because
