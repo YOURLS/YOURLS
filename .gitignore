@@ -6,7 +6,7 @@
 user/config.php
 .htaccess
 *.config
-robot.txt
+robots.txt
 
 # Languages
 user/languages/*
