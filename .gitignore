@@ -4,6 +4,9 @@
 
 # Configuration
 user/config.php
+.htaccess
+*.config
+robot.txt
 
 # Languages
 user/languages/*
