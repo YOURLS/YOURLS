@@ -570,12 +570,12 @@ function yourls_get_available_languages( $dir = null ) {
  * @return string Converted number in string format.
  */
 function yourls_number_format_i18n( $number, $decimals = 0 ) {
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
-    $formatted = number_format( $number, abs( intval( $decimals ) ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
-    return yourls_apply_filters( 'number_format_i18n', $formatted );
+	$formatted = number_format( $number, abs( intval( $decimals ) ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
+	return yourls_apply_filters( 'number_format_i18n', $formatted );
 }
 
 /**
@@ -593,69 +593,69 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
  * @return string The date, translated if locale specifies it.
  */
 function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = false ) {
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 
 	$i = $unixtimestamp;
 
-    if ( false === $i ) {
-        if ( ! $gmt )
-            $i = yourls_current_time( 'timestamp' );
-        else
-            $i = time();
-        // we should not let date() interfere with our
-        // specially computed timestamp
-        $gmt = true;
-    }
+	if ( false === $i ) {
+		if ( ! $gmt )
+			$i = yourls_current_time( 'timestamp' );
+		else
+			$i = time();
+		// we should not let date() interfere with our
+		// specially computed timestamp
+		$gmt = true;
+	}
 
-    // store original value for language with untypical grammars
-    // see http://core.trac.wordpress.org/ticket/9396
-    $req_format = $dateformatstring;
+	// store original value for language with untypical grammars
+	// see http://core.trac.wordpress.org/ticket/9396
+	$req_format = $dateformatstring;
 
-    $datefunc = $gmt? 'gmdate' : 'date';
+	$datefunc = $gmt? 'gmdate' : 'date';
 
-    if ( ( !empty( $yourls_locale_formats->month ) ) && ( !empty( $yourls_locale_formats->weekday ) ) ) {
-        $datemonth            = $yourls_locale_formats->get_month( $datefunc( 'm', $i ) );
-        $datemonth_abbrev     = $yourls_locale_formats->get_month_abbrev( $datemonth );
-        $dateweekday          = $yourls_locale_formats->get_weekday( $datefunc( 'w', $i ) );
-        $dateweekday_abbrev   = $yourls_locale_formats->get_weekday_abbrev( $dateweekday );
-        $datemeridiem         = $yourls_locale_formats->get_meridiem( $datefunc( 'a', $i ) );
-        $datemeridiem_capital = $yourls_locale_formats->get_meridiem( $datefunc( 'A', $i ) );
+	if ( ( !empty( $yourls_locale_formats->month ) ) && ( !empty( $yourls_locale_formats->weekday ) ) ) {
+		$datemonth            = $yourls_locale_formats->get_month( $datefunc( 'm', $i ) );
+		$datemonth_abbrev     = $yourls_locale_formats->get_month_abbrev( $datemonth );
+		$dateweekday          = $yourls_locale_formats->get_weekday( $datefunc( 'w', $i ) );
+		$dateweekday_abbrev   = $yourls_locale_formats->get_weekday_abbrev( $dateweekday );
+		$datemeridiem         = $yourls_locale_formats->get_meridiem( $datefunc( 'a', $i ) );
+		$datemeridiem_capital = $yourls_locale_formats->get_meridiem( $datefunc( 'A', $i ) );
 		
-        $dateformatstring = ' '.$dateformatstring;
-        $dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . yourls_backslashit( $dateweekday_abbrev ), $dateformatstring );
-        $dateformatstring = preg_replace( "/([^\\\])F/", "\\1" . yourls_backslashit( $datemonth ), $dateformatstring );
-        $dateformatstring = preg_replace( "/([^\\\])l/", "\\1" . yourls_backslashit( $dateweekday ), $dateformatstring );
-        $dateformatstring = preg_replace( "/([^\\\])M/", "\\1" . yourls_backslashit( $datemonth_abbrev ), $dateformatstring );
-        $dateformatstring = preg_replace( "/([^\\\])a/", "\\1" . yourls_backslashit( $datemeridiem ), $dateformatstring );
-        $dateformatstring = preg_replace( "/([^\\\])A/", "\\1" . yourls_backslashit( $datemeridiem_capital ), $dateformatstring );
+		$dateformatstring = ' '.$dateformatstring;
+		$dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . yourls_backslashit( $dateweekday_abbrev ), $dateformatstring );
+		$dateformatstring = preg_replace( "/([^\\\])F/", "\\1" . yourls_backslashit( $datemonth ), $dateformatstring );
+		$dateformatstring = preg_replace( "/([^\\\])l/", "\\1" . yourls_backslashit( $dateweekday ), $dateformatstring );
+		$dateformatstring = preg_replace( "/([^\\\])M/", "\\1" . yourls_backslashit( $datemonth_abbrev ), $dateformatstring );
+		$dateformatstring = preg_replace( "/([^\\\])a/", "\\1" . yourls_backslashit( $datemeridiem ), $dateformatstring );
+		$dateformatstring = preg_replace( "/([^\\\])A/", "\\1" . yourls_backslashit( $datemeridiem_capital ), $dateformatstring );
 
-        $dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
-    }
-    $timezone_formats = array( 'P', 'I', 'O', 'T', 'Z', 'e' );
-    $timezone_formats_re = implode( '|', $timezone_formats );
-    if ( preg_match( "/$timezone_formats_re/", $dateformatstring ) ) {
+		$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
+	}
+	$timezone_formats = array( 'P', 'I', 'O', 'T', 'Z', 'e' );
+	$timezone_formats_re = implode( '|', $timezone_formats );
+	if ( preg_match( "/$timezone_formats_re/", $dateformatstring ) ) {
 	
 		// TODO: implement a timezone option
-        $timezone_string = yourls_get_option( 'timezone_string' );
-        if ( $timezone_string ) {
-            $timezone_object = timezone_open( $timezone_string );
-            $date_object = date_create( null, $timezone_object );
-            foreach( $timezone_formats as $timezone_format ) {
-                if ( false !== strpos( $dateformatstring, $timezone_format ) ) {
-                    $formatted = date_format( $date_object, $timezone_format );
-                    $dateformatstring = ' '.$dateformatstring;
-                    $dateformatstring = preg_replace( "/([^\\\])$timezone_format/", "\\1" . yourls_backslashit( $formatted ), $dateformatstring );
-                    $dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
-                }
-            }
-        }
-    }
-    $j = @$datefunc( $dateformatstring, $i );
-    // allow plugins to redo this entirely for languages with untypical grammars
-    $j = yourls_apply_filters('date_i18n', $j, $req_format, $i, $gmt);
-    return $j;
+		$timezone_string = yourls_get_option( 'timezone_string' );
+		if ( $timezone_string ) {
+			$timezone_object = timezone_open( $timezone_string );
+			$date_object = date_create( null, $timezone_object );
+			foreach( $timezone_formats as $timezone_format ) {
+				if ( false !== strpos( $dateformatstring, $timezone_format ) ) {
+					$formatted = date_format( $date_object, $timezone_format );
+					$dateformatstring = ' '.$dateformatstring;
+					$dateformatstring = preg_replace( "/([^\\\])$timezone_format/", "\\1" . yourls_backslashit( $formatted ), $dateformatstring );
+					$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
+				}
+			}
+		}
+	}
+	$j = @$datefunc( $dateformatstring, $i );
+	// allow plugins to redo this entirely for languages with untypical grammars
+	$j = yourls_apply_filters('date_i18n', $j, $req_format, $i, $gmt);
+	return $j;
 }
 
 /**
@@ -674,14 +674,14 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
  * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
  */
 function yourls_current_time( $type, $gmt = 0 ) {
-    switch ( $type ) {
-        case 'mysql':
-            return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * 3600 );
-            break;
-        case 'timestamp':
-            return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * 3600;
-            break;
-    }
+	switch ( $type ) {
+		case 'mysql':
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * 3600 );
+			break;
+		case 'timestamp':
+			return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * 3600;
+			break;
+	}
 }
 
 
@@ -1021,9 +1021,9 @@ class YOURLS_Locale_Formats {
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filters( 'load_custom_textdomain', yourls_get_locale(), $domain );
-    $mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
+	$mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
 
-    return yourls_load_textdomain( $domain, $mofile );
+	return yourls_load_textdomain( $domain, $mofile );
 }
 
 /**
@@ -1033,7 +1033,7 @@ function yourls_load_custom_textdomain( $domain, $path ) {
  * @return bool Whether locale is RTL.
  */
 function yourls_is_rtl() {
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
@@ -1051,7 +1051,7 @@ function yourls_is_rtl() {
  * @return mixed Translated weekday abbreviation, eg "Ven" (abbrev of "Vendredi") for "Friday" or 5, or array of all weekday abbrev
  */
 function yourls_l10n_weekday_abbrev( $weekday = '' ){
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
@@ -1077,7 +1077,7 @@ function yourls_l10n_weekday_abbrev( $weekday = '' ){
  * @return mixed Translated weekday initial, eg "V" (initial of "Vendredi") for "Friday" or 5, or array of all weekday initials
  */
 function yourls_l10n_weekday_initial( $weekday = '' ){
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
@@ -1103,7 +1103,7 @@ function yourls_l10n_weekday_initial( $weekday = '' ){
  * @return mixed Translated month abbrev (eg "Nov"), or array of all translated abbrev months
  */
 function yourls_l10n_month_abbrev( $month = '' ){
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 	
@@ -1125,7 +1125,7 @@ function yourls_l10n_month_abbrev( $month = '' ){
  * @return array Array of all translated months
  */
 function yourls_l10n_months(){
-    global $yourls_locale_formats;
+	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 	
