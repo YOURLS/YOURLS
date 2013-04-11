@@ -82,44 +82,44 @@ function yourls_create_htaccess() {
 	$host = parse_url( YOURLS_SITE );
 	$path = ( isset( $host['path'] ) ? $host['path'] : '' );
 
-    if ( yourls_is_iis() ) {
+	if ( yourls_is_iis() ) {
 		// Prepare content for a web.config file
-	    $content = array(
-            '<?'.'xml version="1.0" encoding="UTF-8"?>',
-            '<configuration>', 
-            '    <system.webServer>',
-            '        <rewrite>',
-            '            <rules>',
-            '                <rule name="YOURLS" stopProcessing="true">',
-            '                    <match url="^(.*)$" ignoreCase="false" />',
-            '                    <conditions>',
-            '                        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />',
-            '                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />',
-            '                    </conditions>',
-            '                    <action type="Rewrite" url="'.$path.'/yourls-loader.php" appendQueryString="true" />',
-            '                </rule>',
-            '            </rules>',
-            '        </rewrite>',
-            '    </system.webServer>',
-            '</configuration>',
-	    );
+		$content = array(
+			'<?'.'xml version="1.0" encoding="UTF-8"?>',
+			'<configuration>', 
+			'    <system.webServer>',
+			'        <rewrite>',
+			'            <rules>',
+			'                <rule name="YOURLS" stopProcessing="true">',
+			'                    <match url="^(.*)$" ignoreCase="false" />',
+			'                    <conditions>',
+			'                        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />',
+			'                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />',
+			'                    </conditions>',
+			'                    <action type="Rewrite" url="'.$path.'/yourls-loader.php" appendQueryString="true" />',
+			'                </rule>',
+			'            </rules>',
+			'        </rewrite>',
+			'    </system.webServer>',
+			'</configuration>',
+		);
 	
-	    $filename = YOURLS_ABSPATH.'/web.config';
+		$filename = YOURLS_ABSPATH.'/web.config';
 		$marker = 'none';
 
-    } else {
+	} else {
 		// Prepare content for a .htaccess file
-	    $content = array(
-		    '<IfModule mod_rewrite.c>',
-		    'RewriteEngine On',
-		    'RewriteBase '.$path.'/',
-		    'RewriteCond %{REQUEST_FILENAME} !-f',
-		    'RewriteCond %{REQUEST_FILENAME} !-d',
-		    'RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
-		    '</IfModule>',
-	    );
+		$content = array(
+			'<IfModule mod_rewrite.c>',
+			'RewriteEngine On',
+			'RewriteBase '.$path.'/',
+			'RewriteCond %{REQUEST_FILENAME} !-f',
+			'RewriteCond %{REQUEST_FILENAME} !-d',
+			'RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
+			'</IfModule>',
+		);
 	
-	    $filename = YOURLS_ABSPATH.'/.htaccess';
+		$filename = YOURLS_ABSPATH.'/.htaccess';
 		$marker = 'YOURLS';
 		
 	}

@@ -60,19 +60,19 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
  */
 function yourls_get_remote_content_curl( $url, $maxlen = 4096, $timeout = 5 ) {
 	
-    $ch = curl_init();
+	$ch = curl_init();
 	curl_setopt( $ch, CURLOPT_URL, $url );
-    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
-    curl_setopt( $ch, CURLOPT_TIMEOUT, $timeout );
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 ); // follow redirects...
-    curl_setopt( $ch, CURLOPT_MAXREDIRS, 3 ); // ... but not more than 3
-    curl_setopt( $ch, CURLOPT_USERAGENT, yourls_http_user_agent() );
-    curl_setopt( $ch, CURLOPT_RANGE, "0-{$maxlen}" ); // Get no more than $maxlen
-    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 ); // dont check SSL certificates
+	curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+	curl_setopt( $ch, CURLOPT_TIMEOUT, $timeout );
+	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+	curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 ); // follow redirects...
+	curl_setopt( $ch, CURLOPT_MAXREDIRS, 3 ); // ... but not more than 3
+	curl_setopt( $ch, CURLOPT_USERAGENT, yourls_http_user_agent() );
+	curl_setopt( $ch, CURLOPT_RANGE, "0-{$maxlen}" ); // Get no more than $maxlen
+	curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 ); // dont check SSL certificates
 	curl_setopt( $ch, CURLOPT_HEADER, 0 );
 
-    $response = curl_exec( $ch );
+	$response = curl_exec( $ch );
 	
 	if( !$response || curl_error( $ch ) ) {
 		//$response = 'Error: '.curl_error( $ch );

@@ -113,10 +113,10 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		<script src="<?php yourls_site_url(); ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $charts ) { ?>
-	        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	        <script type="text/javascript">
-	                 google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
-	        </script>
+			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<script type="text/javascript">
+					 google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
+			</script>
 	<?php } ?>
 	<script type="text/javascript">
 	//<![CDATA[
@@ -351,11 +351,11 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
 	if ( $shortlink_title == '' )
-        $shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
-   	if ( $share_title == '' )
-        $share_title = '<h2>' . yourls__( 'Quick Share' ) . '</h2>';
-    
-    // Allow plugins to short-circuit the whole function
+		$shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
+	if ( $share_title == '' )
+		$share_title = '<h2>' . yourls__( 'Quick Share' ) . '</h2>';
+	
+	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_share_box', false );
 	if ( false !== $pre )
 		return $pre;
@@ -813,24 +813,24 @@ function yourls_page( $page ) {
  * @since 1.6
  */
 function yourls_html_language_attributes() {
-    $attributes = array();
-    $output = '';
+	$attributes = array();
+	$output = '';
 	
 	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
 	
 	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
 	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
-    if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
+	if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
 		if( $doctype == 'xhtml' ) {
 			$attributes[] = "xml:lang=\"$lang\"";
 		} else {
 			$attributes[] = "lang=\"$lang\"";
 		}
-    }
+	}
 
-    $output = implode( ' ', $attributes );
-    $output = yourls_apply_filters( 'html_language_attributes', $output );
-    echo $output;
+	$output = implode( ' ', $attributes );
+	$output = yourls_apply_filters( 'html_language_attributes', $output );
+	echo $output;
 }
 
 /**

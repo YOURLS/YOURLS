@@ -67,7 +67,7 @@ yourls_html_menu();
 	uasort( $plugins, 'yourls_plugins_sort_callback' );
 	
 	$count = count( $plugins );
-    $plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
+	$plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
 	$count_active = yourls_has_active_plugins();
 	?>
 	
