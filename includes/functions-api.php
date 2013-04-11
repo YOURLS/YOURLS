@@ -108,7 +108,7 @@ function yourls_api_output( $mode, $return ) {
 			header( 'Content-type: application/javascript' );
 			echo $return['callback'] . '(' . json_encode( $return ) . ')';
 			break;
-    
+	
 		case 'json':
 			header( 'Content-type: application/json' );
 			echo json_encode( $return );
