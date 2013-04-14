@@ -532,7 +532,6 @@ function yourls_kses_allowed_protocols() {
 		'ssh://', 'svn://', 'svn+ssh://', 'git://', 'cvs://',
 		'apt:',
 		'market://', // Google Play
-		'data:',
 		'view-source:',
 		
 		// P2P
@@ -557,6 +556,7 @@ function yourls_kses_allowed_protocols() {
 		/*
 		'about:', 'chrome://', 'chrome-extension://',
 		'javascript:', 
+		'data:',
 		*/
 	);
 }
