@@ -1,6 +1,6 @@
 <?php
 /**
- * Check for valid user. Returns true or an error message
+ * Check for valid user via login form or stored cookie. Returns true or an error message
  *
  */
 function yourls_is_valid_user() {

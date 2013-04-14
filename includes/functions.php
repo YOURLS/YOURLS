@@ -1151,8 +1151,12 @@ function yourls_is_private() {
  *
  */
 function yourls_maybe_require_auth() {
-	if( yourls_is_private() )
+	if( yourls_is_private() ) {
+		yourls_do_action( 'require_auth' );
 		require_once( YOURLS_INC.'/auth.php' );
+	} else {
+		yourls_do_action( 'require_no_auth' );
+	}
 }
 
 /**
