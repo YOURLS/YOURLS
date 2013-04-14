@@ -18,7 +18,7 @@ function yourls_int2string( $num, $chars = null ) {
 		$num = bcdiv( $num, $len );
 		$string = $chars[ $mod ] . $string;
 	}
-	$string = $chars[ $num ] . $string;
+	$string = $chars[ intval( $num ) ] . $string;
 	
 	return yourls_apply_filter( 'int2string', $string, $num, $chars );
 }
