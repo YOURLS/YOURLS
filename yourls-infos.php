@@ -364,7 +364,7 @@ yourls_html_menu();
 							}
 						}
 						$hits = sprintf( yourls_n( '%s hit', '%s hits', ${'hits_'.$graph} ), ${'hits_'.$graph} );
-						echo "<li><span class='historical_link'>$link</span> <span class='historical_count'>${'hits_'.$graph} $hits</span> $stat</li>\n";
+						echo "<li><span class='historical_link'>$link</span> <span class='historical_count'>$hits</span> $stat</li>\n";
 					}
 					?>
 					</ul>
