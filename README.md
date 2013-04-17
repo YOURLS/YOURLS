@@ -6,10 +6,17 @@
 Useful links
 ------------
 * [Project home & doc](http://yourls.org)
-* [Official blog](http://blog.yourls.org)
 * [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/)
 * [Issue tracker](https://github.com/YOURLS/YOURLS/issues)
 * [Release archive](https://github.com/YOURLS/YOURLS/tags)
+
+News
+----
+Keep track of development and community news.
+
+* Follow [@yourls on Twitter](http://twitter.com/yourls).
+* Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org).
+* Check [commit messages](https://github.com/YOURLS/YOURLS/commits/master).
 
 License
 -------
