@@ -27,7 +27,7 @@ function yourls_set_DB_driver( ) {
 		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php' );
 		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php' );
 	}
-	$class = 'ezSQL_' . $driver;
+	$class = 'ezSQL_' . $driver . '_yourls';
 
 	global $ydb;
 
@@ -39,8 +39,10 @@ function yourls_set_DB_driver( ) {
 			503
 		);
 	}
-
+	
+	yourls_do_action( 'set_DB_driver', $driver );
+	
 	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-
+	$ydb->driver = $driver;
 }
 

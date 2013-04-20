@@ -1,6 +1,6 @@
 <?php
 
-class ezSQL_mysql_YOURLS extends ezSQL_mysql {
+class ezSQL_mysqli_YOURLS extends ezSQL_mysqli {
 
 	/**
 	 * Return MySQL server version
@@ -8,8 +8,7 @@ class ezSQL_mysql_YOURLS extends ezSQL_mysql {
 	 * @since 1.7
 	 */
 	function mysql_version() {
-		var_dump( $this->dbh );
-		return  mysql_get_server_info( $this->dbh ) ;
+		return  mysqli_get_server_info( $this->dbh ) ;
 	}
 	
 	/**
