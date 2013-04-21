@@ -29,4 +29,3 @@ class ezSQL_mysql_YOURLS extends ezSQL_mysql {
 	
 }
 
-

@@ -6,4 +6,3 @@ class ezSQLcore_YOURLS extends ezSQLcore {
 	
 }
 
-
