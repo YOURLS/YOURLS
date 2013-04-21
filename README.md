@@ -3,12 +3,10 @@
 ======
 **YOURLS** is a set of PHP script that will allow you to run your own URL shortener. You'll have full control over your data, detailed stats and analytics, plugins, and more. It's free.
 
-Useful links
-------------
-* [Project home & doc](http://yourls.org)
-* [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/)
-* [Issue tracker](https://github.com/YOURLS/YOURLS/issues)
-* [Release archive](https://github.com/YOURLS/YOURLS/tags)
+Quick Start
+-----------
+To get started, checkout [yourls.org](http://yourls.org)!  
+Learn more tweaks in the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
 
 News
 ----
@@ -28,6 +26,8 @@ And constructed with the following guidelines:
 * Breaking backward compatibility bumps the major (and resets the minor and patch)
 * New additions without breaking backward compatibility bumps the minor (and resets the patch)
 * Bug fixes and misc changes bumps the patch
+
+*[Release Archive](https://github.com/YOURLS/YOURLS/tags)*
 
 Bug Tracker
 -----------
