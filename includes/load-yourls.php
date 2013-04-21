@@ -109,19 +109,10 @@ require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
-// Allow drop-in replacement for the DB engine
-if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
-	require_once( YOURLS_USERDIR.'/db.php' );
-} else {
-	require_once( YOURLS_INC.'/class-mysql.php' );
-}
+
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once( YOURLS_INC.'/functions-auth.php' );
-
-// Allow early inclusion of a cache layer
-if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
-	require_once( YOURLS_USERDIR.'/cache.php' );
 
 // Load locale
 yourls_load_default_textdomain();
@@ -145,7 +136,18 @@ yourls_fix_request_uri();
 
 // Create the YOURLS object $ydb that will contain everything we globally need
 global $ydb;
-yourls_db_connect();
+
+// Allow drop-in replacement for the DB engine
+if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
+	require_once( YOURLS_USERDIR.'/db.php' );
+} else {
+	require_once( YOURLS_INC.'/class-mysql.php' );
+	yourls_db_connect();
+}
+
+// Allow early inclusion of a cache layer
+if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
+	require_once( YOURLS_USERDIR.'/cache.php' );
 
 // Read options right from start
 yourls_get_all_options();
