@@ -405,15 +405,16 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-		or !class_exists( 'ezSQL_mysql' )
 	) yourls_die ( yourls__( 'DB config missing, or could not find DB class' ), yourls__( 'Fatal error' ), 503 );
 	
 	// Are we standalone or in the WordPress environment?
 	if ( class_exists( 'wpdb' ) ) {
+		/* TODO: should we deprecate this? Follow WP dev in that area */
 		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	} else {
-		$ydb =  new ezSQL_mysql( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
+		yourls_set_DB_driver();
 	}
+	
 	if ( $ydb->last_error )
 		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
 	
