@@ -2,7 +2,7 @@
 
 class ezSQLcore_YOURLS extends ezSQLcore {
 
-	var $all_queries      = '';
+	var $debug_log = array();
 	
 }
 

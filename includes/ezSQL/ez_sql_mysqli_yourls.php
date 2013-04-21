@@ -14,14 +14,14 @@ class ezSQL_mysqli_YOURLS extends ezSQL_mysqli {
 	/**
 	 * Perform mySQL query
 	 *
-	 * Just added to the original function: logging of all queries
+	 * Added to the original function: logging of all queries
 	 *
 	 * @since 1.7
 	 */
 	function query( $query ) {
 	
 		// Keep history of all queries
-		$this->all_queries .= $query.'<br />';
+		$this->debug_log[] = $query;
 
 		// Original function
 		return parent::query( $query );

@@ -34,7 +34,7 @@ function yourls_set_DB_driver( ) {
 	if ( !class_exists( $class ) ) {
 		$ydb = new stdClass();
 		yourls_die(
-			yourls__( 'YOURLS requires the mysql, mysqli or pdo_mysql PHP extension. No extension found. Check your server config, or contact your host' ),
+			yourls__( 'YOURLS requires the mysql, mysqli or pdo_mysql PHP extension. No extension found. Check your server config, or contact your host.' ),
 			yourls__( 'Fatal error' ),
 			503
 		);
@@ -43,6 +43,6 @@ function yourls_set_DB_driver( ) {
 	yourls_do_action( 'set_DB_driver', $driver );
 	
 	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-	$ydb->driver = $driver;
+	$ydb->debug_log[] = "DB driver: $driver";
 }
 

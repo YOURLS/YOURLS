@@ -82,7 +82,7 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 	function query( $query ) {
 	
 		// Keep history of all queries
-		$this->all_queries .= $query.'<br />';
+		$this->debug_log[] = $query;
 
 		// Original function
 		return parent::query( $query );
