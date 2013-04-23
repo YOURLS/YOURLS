@@ -1,0 +1,15 @@
+<phpunit
+	bootstrap="includes/bootstrap.php"
+        backupGlobals="false"
+        colors="false"
+        >
+    <testsuites>
+        <!-- Default test suite to run all tests -->
+        <testsuite>
+            <directory suffix=".php">tests</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+    </logging>
+</phpunit>
