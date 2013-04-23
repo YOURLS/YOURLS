@@ -1,17 +1,17 @@
 <?php
 
 /*** YOURLS code base you want to test */
-define( 'YOURLS_ABSPATH', '/home/planetozh/yourlsgit' );
+define( 'YOURLS_ABSPATH', '/home/you/yourls_directory' );
 
 /*** MySQL settings */
-define( 'YOURLS_DB_USER', 'root' );
-define( 'YOURLS_DB_PASS', '' );
-define( 'YOURLS_DB_NAME', 'yourls_unit' );
+define( 'YOURLS_DB_USER', 'your DB username' );
+define( 'YOURLS_DB_PASS', 'your DB password' );
+define( 'YOURLS_DB_NAME', 'the DB name for YOURLS -- an empty one' );
 define( 'YOURLS_DB_HOST', 'localhost' );
 define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*** Site options */
-define( 'YOURLS_SITE', 'http://127.0.0.1/yourlsgit' );
+define( 'YOURLS_SITE', 'http://127.0.0.1/yourls_directory' );
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 define( 'YOURLS_LANG', '' ); 
 define( 'YOURLS_UNIQUE_URLS', true );
@@ -20,7 +20,7 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
 $yourls_user_passwords = array(
 	'username' => 'password',
-	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
+	'username2' => 'password2'
 	);
 
 define( 'YOURLS_URL_CONVERT', 36 );
