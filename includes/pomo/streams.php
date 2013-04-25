@@ -8,7 +8,7 @@
  * @subpackage streams
  */
 
-if ( !class_exists( 'POMO_Reader' ) ):
+if ( !class_exists( 'POMO_Reader', false ) ):
 class POMO_Reader {
 
 	var $endian = 'little';
@@ -102,7 +102,7 @@ class POMO_Reader {
 }
 endif;
 
-if ( !class_exists( 'POMO_FileReader' ) ):
+if ( !class_exists( 'POMO_FileReader', false ) ):
 class POMO_FileReader extends POMO_Reader {
 	function POMO_FileReader($filename) {
 		parent::POMO_Reader();
@@ -142,7 +142,7 @@ class POMO_FileReader extends POMO_Reader {
 }
 endif;
 
-if ( !class_exists( 'POMO_StringReader' ) ):
+if ( !class_exists( 'POMO_StringReader', false ) ):
 /**
  * Provides file-like methods for manipulating a string instead
  * of a physical file.
@@ -182,7 +182,7 @@ class POMO_StringReader extends POMO_Reader {
 }
 endif;
 
-if ( !class_exists( 'POMO_CachedFileReader' ) ):
+if ( !class_exists( 'POMO_CachedFileReader', false ) ):
 /**
  * Reads the contents of the file in the beginning.
  */
@@ -197,7 +197,7 @@ class POMO_CachedFileReader extends POMO_StringReader {
 }
 endif;
 
-if ( !class_exists( 'POMO_CachedIntFileReader' ) ):
+if ( !class_exists( 'POMO_CachedIntFileReader', false ) ):
 /**
  * Reads the contents of the file in the beginning.
  */

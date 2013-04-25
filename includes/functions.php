@@ -405,11 +405,11 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-		or !class_exists( 'ezSQL_mysql' )
+		or !class_exists( 'ezSQL_mysql', false )
 	) yourls_die ( yourls__( 'DB config missing, or could not find DB class' ), yourls__( 'Fatal error' ), 503 );
 	
 	// Are we standalone or in the WordPress environment?
-	if ( class_exists( 'wpdb' ) ) {
+	if ( class_exists( 'wpdb', false ) ) {
 		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	} else {
 		$ydb =  new ezSQL_mysql( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
@@ -873,11 +873,11 @@ function yourls_geo_countrycode_to_countryname( $code ) {
 		return $country;
 
 	// Load the Geo class if not already done
-	if( !class_exists( 'GeoIP' ) ) {
+	if( !class_exists( 'GeoIP', false ) ) {
 		$temp = yourls_geo_ip_to_countrycode( '127.0.0.1' );
 	}
 	
-	if( class_exists( 'GeoIP' ) ) {
+	if( class_exists( 'GeoIP', false ) ) {
 		$geo  = new GeoIP;
 		$id   = $geo->GEOIP_COUNTRY_CODE_TO_NUMBER[ $code ];
 		$long = $geo->GEOIP_COUNTRY_NAMES[ $id ];
