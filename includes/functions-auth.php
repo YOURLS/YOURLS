@@ -9,6 +9,13 @@ function yourls_is_valid_user() {
 	if( $valid )
 		return true;
 		
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_is_valid_user', null );
+	if ( null !== $pre ) {
+		$valid = ( $pre === true ) ;
+		return $pre;
+	}
+
 	$unfiltered_valid = false;
 
 	// Logout request
