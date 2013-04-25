@@ -166,6 +166,13 @@ if ( isset( $_GET['u'] ) ) {
 	
 	$text   = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
 	
+	// Sharing with social bookmarklets
+	if ( !empty($_GET['share']) ) {
+		if ( !empty($_GET['type']) && $_GET['type'] == 'tw' )
+			header( 'Location:' . urldecode($_GET['share']) . urlencode($_GET['title'] . ' - ' . $return['shorturl']) );
+		else
+			header( 'Location:' . urldecode($_GET['share']) . urlencode($return['shorturl']) );
+	}
 
 // This is not a bookmarklet
 } else {
