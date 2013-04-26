@@ -467,7 +467,7 @@ function yourls_table_edit_row( $keyword ) {
 RETURN;
 		$return = sprintf( urldecode( $return ), yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
-		$return = '<tr class="edit-row notfound">><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
+		$return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
 	
 	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
