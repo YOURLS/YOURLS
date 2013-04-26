@@ -387,7 +387,7 @@ function yourls_keyword_is_taken( $keyword ) {
 	$pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
 	if ( false !== $pre )
 	return $pre;
-
+	
 	global $ydb;
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$taken = false;
