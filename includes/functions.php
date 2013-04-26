@@ -386,7 +386,7 @@ function yourls_keyword_is_taken( $keyword ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
 	if ( false !== $pre )
-	return $pre;
+		return $pre;
 	
 	global $ydb;
 	$keyword = yourls_sanitize_keyword( $keyword );
