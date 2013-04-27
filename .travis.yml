@@ -8,4 +8,6 @@ env:
 
 before_script:
   - mysql -e "create database IF NOT EXISTS yourls;" -uroot;
-  - ./tests/travis_yourls.sh
+  - git clone git://github.com/YOURLS/YOURLS.git
+  - git checkout master
+  
