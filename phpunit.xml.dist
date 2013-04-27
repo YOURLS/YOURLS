@@ -8,7 +8,7 @@
 
     <testsuites>
         <testsuite name="YOURLS Test Suite">
-            <directory suffix=".php">tests</directory>
+            <directory>YOURLS</directory>
         </testsuite>
     </testsuites>
     <logging>
