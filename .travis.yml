@@ -3,5 +3,8 @@ php:
   - 5.3
   - 5.4
 
+env:
+  - DB=mysql
+
 before_script:
-- ./tests/travis_yourls.sh
+  - ./tests/travis_yourls.sh
