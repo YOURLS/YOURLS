@@ -7,4 +7,5 @@ env:
   - DB=mysql
 
 before_script:
+  - mysql -e "create database IF NOT EXISTS yourls;" -uroot;
   - ./tests/travis_yourls.sh
