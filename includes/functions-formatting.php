@@ -541,7 +541,9 @@ function yourls_esc_textarea( $text ) {
 * @param $url
 * @return string
 */
-function yourls_encodeURI( $url ) {
+function yourls_encodeURI( $url, $decoding = true ) {
+	if ( $decoding )
+		$url = rawurldecode( $url );
 	return strtr( rawurlencode( $url ), array (
 		'%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
 		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
