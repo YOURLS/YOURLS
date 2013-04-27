@@ -180,6 +180,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	if ( false !== $pre )
 		return $pre;
 		
+	$url = urldecode( $url ); //make sure url is decoded before encoding to avoid double encoding
 	$url = yourls_encodeURI( $url );
 	$url = yourls_escape( yourls_sanitize_url( $url ) );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
