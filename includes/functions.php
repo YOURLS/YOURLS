@@ -382,6 +382,12 @@ function yourls_keyword_is_free( $keyword ) {
  *
  */
 function yourls_keyword_is_taken( $keyword ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
+	if ( false !== $pre )
+		return $pre;
+	
 	global $ydb;
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$taken = false;
