@@ -42,14 +42,22 @@ function yourls_make_regexp_pattern( $string ) {
 }
 
 /**
- * Is a URL a short URL?
+ * Is a URL a short URL? Accept either 'http://sho.rt/abc' or 'abc'
  * 
  */
 function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
 	
 	$is_short = false;
-	$keyword = yourls_get_relative_url( $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
+	
+	// Is $shorturl a URL (http://sho.rt/abc) or a keyword (abc) ?
+	if( yourls_get_protocol( $shorturl ) ) {
+		$keyword = yourls_get_relative_url( $shorturl );
+	} else {
+		$keyword = $shorturl;
+	}
+	
+	// Check if it's a valid && used keyword
 	if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
 		$is_short = true;
 	}
@@ -1985,7 +1993,7 @@ function yourls_get_protocol( $url ) {
  */
 function yourls_get_relative_url( $url, $strict = true ) {
 	$url = yourls_sanitize_url( $url );
-
+	
 	// Remove protocols to make it easier
 	$noproto_url  = str_replace( 'https:', 'http:', $url );
 	$noproto_site = str_replace( 'https:', 'http:', YOURLS_SITE );
