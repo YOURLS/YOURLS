@@ -411,9 +411,8 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-		or !class_exists( 'ezSQL_mysql', false )
-	) yourls_die ( yourls__( 'DB config missing, or could not find DB class' ), yourls__( 'Fatal error' ), 503 );
-	
+	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
+
 	// Are we standalone or in the WordPress environment?
 	if ( class_exists( 'wpdb', false ) ) {
 		/* TODO: should we deprecate this? Follow WP dev in that area */

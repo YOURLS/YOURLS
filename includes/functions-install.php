@@ -9,20 +9,17 @@ function yourls_check_mod_rewrite() {
 }
 
 /**
- * Check if extension cURL is enabled
- *
- */
-function yourls_check_curl() {
-	return function_exists( 'curl_init' );
-}
-
-/**
  * Check if server has MySQL 4.1+
  *
  */
 function yourls_check_database_version() {
 	global $ydb;
-	return ( version_compare( '4.1', $ydb->mysql_version() ) <= 0 );
+	$version = $ydb->mysql_version();
+	// Check there was actually a connection to the DB
+	if( count( $ydb->captured_errors ) ) {
+		yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
+	}
+	return ( version_compare( '4.1', $version ) <= 0 );
 }
 
 /**
