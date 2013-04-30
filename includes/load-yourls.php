@@ -10,7 +10,7 @@ if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	require_once( dirname( __FILE__ ) . '/config.php' );
 } else {
 	// config.php not found :(
-	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>' );
+	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
 }
 
 // Check if config.php was properly updated for 1.4
