@@ -416,10 +416,12 @@ function yourls_db_connect() {
 	
 	// Are we standalone or in the WordPress environment?
 	if ( class_exists( 'wpdb', false ) ) {
+		/* TODO: should we deprecate this? Follow WP dev in that area */
 		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	} else {
-		$ydb =  new ezSQL_mysql( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
+		yourls_set_DB_driver();
 	}
+	
 	if ( $ydb->last_error )
 		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
 	

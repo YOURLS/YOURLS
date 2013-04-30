@@ -149,7 +149,9 @@ function yourls_html_footer() {
 		?>
 	</p></div>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-		echo '<p>'. $ydb->all_queries .'<p>';
+		echo '<div style="text-align:left"><pre>';
+		echo join( "\n", $ydb->debug_log );
+		echo '</div>';
 	} ?>
 	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
 	</body>
