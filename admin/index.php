@@ -60,7 +60,7 @@ if( !empty( $_GET['date_filter'] ) ) {
 		case 'before':
 			$date_filter = 'before';
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
-				$date_first	 = yourls_sanitize_date( $_GET['date_first'] );
+				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
 				$where .= " AND `timestamp` < '$date_first_sql'";
 			}
@@ -69,7 +69,7 @@ if( !empty( $_GET['date_filter'] ) ) {
 			$date_filter = 'after';
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$date_first	 = yourls_sanitize_date( $_GET['date_first'] );
+				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
 				$where .= " AND `timestamp` > '$date_first_sql'";
 			}
 			break;
@@ -78,8 +78,8 @@ if( !empty( $_GET['date_filter'] ) ) {
 			if( isset( $_GET['date_first'] ) && isset( $_GET['date_second'] ) && yourls_sanitize_date( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_second'] ) ) {
 				$date_first_sql  = yourls_sanitize_date_for_sql( $_GET['date_first'] );
 				$date_second_sql = yourls_sanitize_date_for_sql( $_GET['date_second'] );
-				$date_first	  = yourls_sanitize_date( $_GET['date_first'] );
-				$date_second	 = yourls_sanitize_date( $_GET['date_second'] );
+				$date_first      = yourls_sanitize_date( $_GET['date_first'] );
+				$date_second     = yourls_sanitize_date( $_GET['date_second'] );
 				$where .= " AND `timestamp` BETWEEN '$date_first_sql' AND '$date_second_sql'";
 			}
 			break;
@@ -91,31 +91,31 @@ if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
 	switch( $_GET['sort_by'] ) {
 		case 'keyword':
 			$sort_by_text = yourls__( 'Short URL' );
-			$sort_by	  = 'keyword';
+			$sort_by      = 'keyword';
 			break;
 		case 'url':
 			$sort_by_text = yourls__( 'URL' );
-			$sort_by	  = 'url';
+			$sort_by      = 'url';
 			break;
 		case 'timestamp':
 			$sort_by_text = yourls__( 'Date' );
-			$sort_by	  = 'timestamp';
+			$sort_by      = 'timestamp';
 			break;
 		case 'ip':
 			$sort_by_text = yourls__( 'IP Address' );
-			$sort_by	  = 'ip';
+			$sort_by      = 'ip';
 			break;
 		case 'clicks':
 			$sort_by_text = yourls__( 'Clicks' );
-			$sort_by	  = 'clicks';
+			$sort_by      = 'clicks';
 			break;
 	}
 	switch( $_GET['sort_order'] ) {
 		case 'asc':
-			$sort_order	  = 'asc';
+			$sort_order      = 'asc';
 			break;
 		case 'desc':
-			$sort_order	  = 'desc';
+			$sort_order      = 'desc';
 			break;
 	}
 }
@@ -125,7 +125,7 @@ list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 if ( $where ) {
 	list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
 } else {
-	$total_items		= $total_urls;
+	$total_items        = $total_urls;
 	$total_items_clicks = false;
 }
 
@@ -135,7 +135,7 @@ if ( isset( $_GET['u'] ) ) {
 	yourls_do_action( 'bookmarklet' );
 
 	// No sanitization needed here: everything happens in yourls_add_new_link()
-	$url	 = ( $_GET['u'] );
+	$url     = ( $_GET['u'] );
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
