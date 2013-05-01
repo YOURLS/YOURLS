@@ -11,18 +11,18 @@ $base_page   = yourls_admin_url( 'index.php' );
 
 // Default SQL behavior
 $search_in_text  = yourls__( 'URL' );
-$search_in	   = 'url';
-$sort_by_text	= yourls__( 'Short URL' );
-$sort_by		 = 'timestamp';
-$sort_order	  = 'desc';
-$page			= ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
-$search		  = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
-$perpage		 = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
-$click_limit	 = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
+$search_in       = 'url';
+$sort_by_text    = yourls__( 'Short URL' );
+$sort_by         = 'timestamp';
+$sort_order      = 'desc';
+$page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
+$search          = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
+$perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
+$click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
 if ( $click_limit !== '' ) {
 	$click_filter   = ( isset( $_GET['click_filter'] ) && $_GET['click_filter'] == 'more' ? 'more' : 'less' ) ;
 	$click_moreless = ( $click_filter == 'more' ? '>' : '<' );
-	$where		  = " AND clicks $click_moreless $click_limit";
+	$where          = " AND clicks $click_moreless $click_limit";
 } else {
 	$click_filter   = '';
 }
@@ -32,25 +32,25 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	switch( $_GET['search_in'] ) {
 		case 'keyword':
 			$search_in_text = yourls__( 'Short URL' );
-			$search_in	  = 'keyword';
+			$search_in      = 'keyword';
 			break;
 		case 'url':
 			$search_in_text = yourls__( 'URL' );
-			$search_in	  = 'url';
+			$search_in      = 'url';
 			break;
 		case 'title':
 			$search_in_text = yourls__( 'Title' );
-			$search_in	  = 'title';
+			$search_in      = 'title';
 			break;
 		case 'ip':
 			$search_in_text = yourls__( 'IP Address' );
-			$search_in	  = 'ip';
+			$search_in      = 'ip';
 			break;
 	}
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
-	$search_url	  = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
-	$search_text	 = $search;
-	$search		  = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
+	$search_url      = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
+	$search_text     = $search;
+	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
 	$where .= " AND `$search_in` LIKE ('$search')";
 }
 
