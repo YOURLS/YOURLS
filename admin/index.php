@@ -166,6 +166,43 @@ if ( isset( $_GET['u'] ) ) {
 	
 	$text   = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
 	
+	// Sharing with social bookmarklets
+	if( !empty($_GET['share']) ) {
+		yourls_do_action( 'pre_share_redirect' );
+		switch ( $_GET['share'] ) {
+			case 'twitter':
+				// share with Twitter
+				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", $return['shorturl'], $_GET['t'] );
+				yourls_redirect( $destination, 303 );
+
+				// Deal with the case when redirection failed:
+				$return['status']    = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Twitter' );
+				break;
+
+			case 'facebook':
+				// share with Facebook
+				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", $return['shorturl'], $_GET['t'] );
+				yourls_redirect( $destination, 303 );
+
+				// Deal with the case when redirection failed:
+				$return['status']    = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Facebook' );
+				break;
+
+			default:
+				// Is there a custom registered social bookmark?
+				yourls_do_action( 'share_redirect_' . $_GET['share'], $return );
+				
+				// Still here? That was an unknown 'share' method, then.
+				$return['status']    = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls__( 'Unknown "Share" bookmarklet' );
+				break;
+		}
+	}
 
 // This is not a bookmarklet
 } else {
@@ -242,19 +279,19 @@ yourls_table_head();
 
 if ( !$is_bookmark ) {
 	$params = array(
-		'search'      => $search,
-		'search_text' => $search_text,
-		'search_in'   => $search_in,
-		'sort_by'     => $sort_by,
-		'sort_order'  => $sort_order,
-		'page'        => $page,
-		'perpage'     => $perpage,
+		'search'       => $search,
+		'search_text'  => $search_text,
+		'search_in'    => $search_in,
+		'sort_by'      => $sort_by,
+		'sort_order'   => $sort_order,
+		'page'         => $page,
+		'perpage'      => $perpage,
 		'click_filter' => $click_filter,
 		'click_limit'  => $click_limit,
-		'total_pages' => $total_pages,
-		'date_filter' => $date_filter,
-		'date_first'  => $date_first,
-		'date_second' => $date_second,
+		'total_pages'  => $total_pages,
+		'date_filter'  => $date_filter,
+		'date_first'   => $date_first,
+		'date_second'  => $date_second,
 	);
 	yourls_html_tfooter( $params );
 }

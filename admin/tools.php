@@ -12,7 +12,7 @@ yourls_html_menu();
 	
 	<h2><?php yourls_e( 'Bookmarklets' ); ?></h2>
 	
-		<p><?php yourls_e( 'YOURLS comes with <span>four</span> handy <span>bookmarklets</span> for easier link shortening.' ); ?></p>
+		<p><?php yourls_e( 'YOURLS comes with handy <span>bookmarklets</span> for easier link shortening and sharing.' ); ?></p>
 
 		<h3><?php yourls_e( 'Standard or Instant, Simple or Custom' ); ?></h3>
 		
@@ -27,8 +27,6 @@ yourls_html_menu();
 		</ul>
 		
 		<p><?php
-		yourls_e( "With the Standard Bookmarklets you will also get a <span>Quick Share</span> tool box to make posting to Twitter, Facebook or Friendfeed a snap." );
-		echo "\n";
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
 		
@@ -58,6 +56,22 @@ yourls_html_menu();
 			</tbody>
 		</table>
 		
+		<h3><?php yourls_e( 'Social Bookmarklets' ); ?></h3>
+		
+		<p><?php yourls_e( 'Create a short URL and share it on social networks, all in one click!' ); ?> 	
+		<?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
+
+		<p><?php yourls_e( 'Shorten and share:' ); ?>
+		<a href="javascript:(function(){var%20d=document,enc=encodeURIComponent,share='facebook',f='<?php echo yourls_admin_url('index.php'); ?>',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!window.open(u,'Share','width=500,height=340,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'YOURLS &amp; Facebook' ); ?></a>
+
+		<a href="javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='twitter',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='<?php echo yourls_admin_url("index.php"); ?>',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=780,height=265,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'YOURLS &amp; Twitter' ); ?></a>
+		
+		<?php // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656 ?>
+		
+		<?php yourls_do_action( 'social_bookmarklet_buttons_after' ); ?>
+		
+		</p>
+
 	<h2><?php yourls_e( 'Prefix-n-Shorten' ); ?></h2>
 		
 		<p><?php yourls_se( "When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add \"<span>%s</span>\" to the beginning of the current URL (right before its 'http://' part) and hit enter.", preg_replace('@https?://@', '', YOURLS_SITE) . '/' ); ?></p>
