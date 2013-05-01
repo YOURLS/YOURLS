@@ -11,18 +11,18 @@ $base_page   = yourls_admin_url( 'index.php' );
 
 // Default SQL behavior
 $search_in_text  = yourls__( 'URL' );
-$search_in       = 'url';
-$sort_by_text    = yourls__( 'Short URL' );
-$sort_by         = 'timestamp';
-$sort_order      = 'desc';
-$page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
-$search          = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
-$perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
-$click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
+$search_in	   = 'url';
+$sort_by_text	= yourls__( 'Short URL' );
+$sort_by		 = 'timestamp';
+$sort_order	  = 'desc';
+$page			= ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
+$search		  = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
+$perpage		 = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
+$click_limit	 = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
 if ( $click_limit !== '' ) {
 	$click_filter   = ( isset( $_GET['click_filter'] ) && $_GET['click_filter'] == 'more' ? 'more' : 'less' ) ;
 	$click_moreless = ( $click_filter == 'more' ? '>' : '<' );
-	$where          = " AND clicks $click_moreless $click_limit";
+	$where		  = " AND clicks $click_moreless $click_limit";
 } else {
 	$click_filter   = '';
 }
@@ -32,25 +32,25 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	switch( $_GET['search_in'] ) {
 		case 'keyword':
 			$search_in_text = yourls__( 'Short URL' );
-			$search_in      = 'keyword';
+			$search_in	  = 'keyword';
 			break;
 		case 'url':
 			$search_in_text = yourls__( 'URL' );
-			$search_in      = 'url';
+			$search_in	  = 'url';
 			break;
 		case 'title':
 			$search_in_text = yourls__( 'Title' );
-			$search_in      = 'title';
+			$search_in	  = 'title';
 			break;
 		case 'ip':
 			$search_in_text = yourls__( 'IP Address' );
-			$search_in      = 'ip';
+			$search_in	  = 'ip';
 			break;
 	}
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
-	$search_url      = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
-	$search_text     = $search;
-	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
+	$search_url	  = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
+	$search_text	 = $search;
+	$search		  = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
 	$where .= " AND `$search_in` LIKE ('$search')";
 }
 
@@ -60,7 +60,7 @@ if( !empty( $_GET['date_filter'] ) ) {
 		case 'before':
 			$date_filter = 'before';
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
-				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
+				$date_first	 = yourls_sanitize_date( $_GET['date_first'] );
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
 				$where .= " AND `timestamp` < '$date_first_sql'";
 			}
@@ -69,7 +69,7 @@ if( !empty( $_GET['date_filter'] ) ) {
 			$date_filter = 'after';
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
+				$date_first	 = yourls_sanitize_date( $_GET['date_first'] );
 				$where .= " AND `timestamp` > '$date_first_sql'";
 			}
 			break;
@@ -78,8 +78,8 @@ if( !empty( $_GET['date_filter'] ) ) {
 			if( isset( $_GET['date_first'] ) && isset( $_GET['date_second'] ) && yourls_sanitize_date( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_second'] ) ) {
 				$date_first_sql  = yourls_sanitize_date_for_sql( $_GET['date_first'] );
 				$date_second_sql = yourls_sanitize_date_for_sql( $_GET['date_second'] );
-				$date_first      = yourls_sanitize_date( $_GET['date_first'] );
-				$date_second     = yourls_sanitize_date( $_GET['date_second'] );
+				$date_first	  = yourls_sanitize_date( $_GET['date_first'] );
+				$date_second	 = yourls_sanitize_date( $_GET['date_second'] );
 				$where .= " AND `timestamp` BETWEEN '$date_first_sql' AND '$date_second_sql'";
 			}
 			break;
@@ -91,31 +91,31 @@ if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
 	switch( $_GET['sort_by'] ) {
 		case 'keyword':
 			$sort_by_text = yourls__( 'Short URL' );
-			$sort_by      = 'keyword';
+			$sort_by	  = 'keyword';
 			break;
 		case 'url':
 			$sort_by_text = yourls__( 'URL' );
-			$sort_by      = 'url';
+			$sort_by	  = 'url';
 			break;
 		case 'timestamp':
 			$sort_by_text = yourls__( 'Date' );
-			$sort_by      = 'timestamp';
+			$sort_by	  = 'timestamp';
 			break;
 		case 'ip':
 			$sort_by_text = yourls__( 'IP Address' );
-			$sort_by      = 'ip';
+			$sort_by	  = 'ip';
 			break;
 		case 'clicks':
 			$sort_by_text = yourls__( 'Clicks' );
-			$sort_by      = 'clicks';
+			$sort_by	  = 'clicks';
 			break;
 	}
 	switch( $_GET['sort_order'] ) {
 		case 'asc':
-			$sort_order      = 'asc';
+			$sort_order	  = 'asc';
 			break;
 		case 'desc':
-			$sort_order      = 'desc';
+			$sort_order	  = 'desc';
 			break;
 	}
 }
@@ -125,7 +125,7 @@ list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 if ( $where ) {
 	list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
 } else {
-	$total_items        = $total_urls;
+	$total_items		= $total_urls;
 	$total_items_clicks = false;
 }
 
@@ -135,7 +135,7 @@ if ( isset( $_GET['u'] ) ) {
 	yourls_do_action( 'bookmarklet' );
 
 	// No sanitization needed here: everything happens in yourls_add_new_link()
-	$url     = ( $_GET['u'] );
+	$url	 = ( $_GET['u'] );
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
@@ -166,6 +166,43 @@ if ( isset( $_GET['u'] ) ) {
 	
 	$text   = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
 	
+	// Sharing with social bookmarklets
+	if( !empty($_GET['share']) ) {
+		yourls_do_action( 'pre_share_redirect' );
+		switch ( $_GET['share'] ) {
+			case 'twitter':
+				// share with Twitter
+				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", $return['shorturl'], $_GET['t'] );
+				yourls_redirect( $destination, 303 );
+
+				// Deal with the case when redirection failed:
+				$return['status']	 = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Twitter' );
+				break;
+
+			case 'facebook':
+				// share with Facebook
+				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", $return['shorturl'], $_GET['t'] );
+				yourls_redirect( $destination, 303 );
+
+				// Deal with the case when redirection failed:
+				$return['status']	 = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Facebook' );
+				break;
+
+			default:
+				// Is there a custom registered social bookmark?
+				yourls_do_action( 'share_redirect_' . $_GET['share'], $return );
+				
+				// Still here? That was an unknown 'share' method, then.
+				$return['status']	 = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls__( 'Unknown "Share" bookmarklet' );
+				break;
+		}
+	}
 
 // This is not a bookmarklet
 } else {
@@ -242,13 +279,13 @@ yourls_table_head();
 
 if ( !$is_bookmark ) {
 	$params = array(
-		'search'      => $search,
+		'search'	  => $search,
 		'search_text' => $search_text,
 		'search_in'   => $search_in,
-		'sort_by'     => $sort_by,
+		'sort_by'	 => $sort_by,
 		'sort_order'  => $sort_order,
-		'page'        => $page,
-		'perpage'     => $perpage,
+		'page'		=> $page,
+		'perpage'	 => $perpage,
 		'click_filter' => $click_filter,
 		'click_limit'  => $click_limit,
 		'total_pages' => $total_pages,
