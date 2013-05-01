@@ -176,7 +176,7 @@ if ( isset( $_GET['u'] ) ) {
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
-				$return['status']	 = 'error';
+				$return['status']    = 'error';
 				$return['errorCode'] = 400;
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Twitter' );
 				break;
@@ -187,7 +187,7 @@ if ( isset( $_GET['u'] ) ) {
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
-				$return['status']	 = 'error';
+				$return['status']    = 'error';
 				$return['errorCode'] = 400;
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Facebook' );
 				break;
@@ -197,7 +197,7 @@ if ( isset( $_GET['u'] ) ) {
 				yourls_do_action( 'share_redirect_' . $_GET['share'], $return );
 				
 				// Still here? That was an unknown 'share' method, then.
-				$return['status']	 = 'error';
+				$return['status']    = 'error';
 				$return['errorCode'] = 400;
 				$return['message']   = yourls__( 'Unknown "Share" bookmarklet' );
 				break;
@@ -279,19 +279,19 @@ yourls_table_head();
 
 if ( !$is_bookmark ) {
 	$params = array(
-		'search'	  => $search,
-		'search_text' => $search_text,
-		'search_in'   => $search_in,
-		'sort_by'	 => $sort_by,
-		'sort_order'  => $sort_order,
-		'page'		=> $page,
-		'perpage'	 => $perpage,
+		'search'       => $search,
+		'search_text'  => $search_text,
+		'search_in'    => $search_in,
+		'sort_by'      => $sort_by,
+		'sort_order'   => $sort_order,
+		'page'         => $page,
+		'perpage'      => $perpage,
 		'click_filter' => $click_filter,
 		'click_limit'  => $click_limit,
-		'total_pages' => $total_pages,
-		'date_filter' => $date_filter,
-		'date_first'  => $date_first,
-		'date_second' => $date_second,
+		'total_pages'  => $total_pages,
+		'date_filter'  => $date_filter,
+		'date_first'   => $date_first,
+		'date_second'  => $date_second,
 	);
 	yourls_html_tfooter( $params );
 }
