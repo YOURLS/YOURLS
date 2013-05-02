@@ -15,7 +15,15 @@
 		<whitelist>
 			<directory>./YOURLS/</directory>
 		</whitelist>
+		<blacklist>
+			<directory>./YOURLS/includes/ezSQL/</directory>
+			<directory>./YOURLS/includes/pomo/</directory>
+			<directory>./YOURLS/includes/geo/</directory>
+		</blacklist>
 	</filter>
+	<php>
+		<const name="PHPUNIT_TESTSUITE" value="true"/>
+	</php>
 	<logging>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
 	</logging>
