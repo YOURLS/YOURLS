@@ -12,17 +12,18 @@
 		</testsuite>
 	</testsuites>
 	<filter>
-		<whitelist>
-			<directory>./YOURLS/</directory>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">./YOURLS/</directory>
+			<directory suffix=".php">./YOURLS/includes/</directory>
+			<exclude>
+				<directory suffix=".php">./YOURLS/includes/ezSQL/</directory>
+				<directory suffix=".php">./YOURLS/includes/geo/</directory>
+				<directory suffix=".php">./YOURLS/includes/pomo/</directory>
+			</exclude>
 		</whitelist>
-		<blacklist>
-			<directory>./YOURLS/includes/ezSQL/</directory>
-			<directory>./YOURLS/includes/pomo/</directory>
-			<directory>./YOURLS/includes/geo/</directory>
-		</blacklist>
 	</filter>
 	<php>
-		<const name="PHPUNIT_TESTSUITE" value="true"/>
+		<const name="PHPUNIT_TESTSUITE" value="true" />
 	</php>
 	<logging>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
