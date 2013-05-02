@@ -12,7 +12,14 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - git clone git://github.com/YOURLS/YOURLS.git
 
-script: 
-  - phpunit -c phpunit.xml.dist
+script:
+  - phpunit --configuration ./phpunit.xml.dist
 
 after_script: rm yourls-tests-config.php
+
+notifications:
+  email: false
+  irc:
+    channels:
+      - "irc.freenode.org#YOURLS"
+    use_notice: true
