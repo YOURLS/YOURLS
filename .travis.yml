@@ -1,0 +1,17 @@
+language: php
+php:
+  - 5.4
+
+env:
+  - DB=mysql
+
+before_script:
+  - cp yourls-tests-config-travis.php yourls-tests-config.php
+  - mysql -e "create database IF NOT EXISTS yourls_tests;";
+  - sh -c "cd includes && git clone git://github.com/YOURLS/YOURLS.git"
+
+script:
+  - phpunit -c phpunit.xml.dist
+
+after_script:
+  - rm yourls-tests-config.php
