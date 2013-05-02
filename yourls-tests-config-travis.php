@@ -1,5 +1,5 @@
 <?php
-define( 'YOURLS_ABSPATH', dirname( __FILE__ ) . '/includes/YOURLS' );
+define( 'YOURLS_ABSPATH', dirname( __FILE__ ) . '/YOURLS' );
 
 define( 'YOURLS_DB_USER', 'root' );
 define( 'YOURLS_DB_PASS', '' );
