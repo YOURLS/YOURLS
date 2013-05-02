@@ -7,7 +7,7 @@ define( 'YOURLS_DB_NAME', 'yourls_tests' );
 define( 'YOURLS_DB_HOST', 'localhost' );
 define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
-define( 'YOURLS_SITE', 'http://localhost/tests/YOURLS' );
+define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 define( 'YOURLS_LANG', '' ); 
 define( 'YOURLS_UNIQUE_URLS', true );
