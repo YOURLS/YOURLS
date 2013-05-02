@@ -1,5 +1,8 @@
 #!/bin/bash
 
 # Install YOURLS
-wget https://github.com/YOURLS/YOURLS/archive/master.tar.gz
-tar -xzf master
+mysql -e "create database IF NOT EXISTS yourls;" -uroot;
+git clone git://github.com/YOURLS/YOURLS.git
+cd YOURLS
+git checkout master
+copy ../yourls-tests-config-travis.php user/config.php
