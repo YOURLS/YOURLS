@@ -1,11 +1,15 @@
 language: php
 php:
-  - 5.3
   - 5.4
 
 env:
   - DB=mysql
 
 before_script:
-  - ./tests/travis_yourls.sh
-  
+  - tests/travis_yourls.sh
+
+script:
+  - phpunit -c phpunit.xml.dist
+
+after_script:
+  - rm YOURLS/
