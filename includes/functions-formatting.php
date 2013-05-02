@@ -126,9 +126,8 @@ function yourls_sanitize_int( $in ) {
  * TODO: find a way to validate as integer
  *
  */
-function yourls_escape( $in ) {
-	global $ydb;
-	return $ydb->escape( $in );
+function yourls_intval( $in ) {
+	return yourls_escape( $in );
 }
 
 /**
@@ -136,7 +135,8 @@ function yourls_escape( $in ) {
  *
  */
 function yourls_escape( $in ) {
-	return mysql_real_escape_string( $in );
+	global $ydb;
+	return $ydb->escape( $in );
 }
 
 /**
