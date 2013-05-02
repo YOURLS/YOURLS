@@ -8,7 +8,7 @@ env:
 before_script:
   - cp yourls-tests-config-travis.php yourls-tests-config.php
   - mysql -e "create database IF NOT EXISTS yourls_tests;";
-  - sh -c "cd tests && git clone git://github.com/YOURLS/YOURLS.git"
+  - sh -c "cd includes && git clone git://github.com/YOURLS/YOURLS.git"
 
 script:
   - phpunit -c phpunit.xml.dist
