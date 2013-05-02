@@ -135,7 +135,8 @@ function yourls_intval( $in ) {
  *
  */
 function yourls_escape( $in ) {
-	return mysql_real_escape_string( $in );
+	global $ydb;
+	return $ydb->escape( $in );
 }
 
 /**
