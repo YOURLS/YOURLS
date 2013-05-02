@@ -2,6 +2,7 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
 
 env:
   - DB=mysql
@@ -11,6 +12,7 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - git clone git://github.com/YOURLS/YOURLS.git
 
-script: phpunit --coverage-text
+script: 
+  - phpunit -c phpunit.xml.dist
 
 after_script: rm yourls-tests-config.php
