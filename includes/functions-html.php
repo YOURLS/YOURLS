@@ -108,6 +108,15 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php
 }
 
+function yourls_html_title( $title, $subtitle = null ) {
+	$result = "<h1>$title";
+	if ( $subtitle )
+		$result .= " <small>&mdash; $subtitle</small>";
+	$result .= "</h1>";
+	echo $result;
+}
+
+
 /**
  * Display HTML footer (including closing body & html tags)
  *
@@ -174,7 +183,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @param array $params Array of all required parameters
  * @return string Result
  */
-function yourls_html_tfooter( $params = array() ) {
+function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
 			<div id="filter_form">
@@ -261,6 +270,7 @@ function yourls_html_tfooter( $params = array() ) {
 				$params['search'] = $search_text;
 				unset( $params['search_text'] );
 			}
+			yourls_do_action( 'html_search' );
 }
 
 function yourls_html_pagination( $params = array() ) {

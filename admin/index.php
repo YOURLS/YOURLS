@@ -248,11 +248,8 @@ yourls_html_logo();
 yourls_html_menu() ;
 
 yourls_do_action( 'admin_page_before_content' );
-?>
+yourls_html_title( 'YOURLS', 'Your Own URL Shortener' );
 
-	<h1>YOURLS <small>&mdash; Your Own URL Shortener</small></h1>
-
-<?php
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_sentence; ?></p>
 	<p><?php
@@ -262,11 +259,10 @@ if ( !$is_bookmark ) { ?>
 	?>.</p>
 <?php } ?>
 <p><?php printf( yourls__( 'Overall, tracking <strong class="increment">%1$s</strong> links, <strong>%2$s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
-<?php yourls_do_action( 'admin_page_before_form' ); ?>
-
-<?php yourls_html_addnew(); ?>
-
-<?php
+<?php yourls_do_action( 'admin_page_before_form' ); 
+	  
+yourls_html_addnew(); 
+	  
 // If bookmarklet, add message. Otherwise, hide hidden share box.
 if ( !$is_bookmark ) {
 	yourls_share_box( '', '', '', '', '', '', true );
@@ -306,6 +302,7 @@ echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">' . yourls__('No
 
 yourls_table_tbody_end();
 yourls_table_end();
+yourls_do_action( 'admin_page_after_table' );
 
 if ( !$is_bookmark ) {
 	$params_pagination = array(
@@ -314,7 +311,7 @@ if ( !$is_bookmark ) {
 	);
 	yourls_html_pagination( $params_pagination );
 
-	$params_tfooter = array(
+	$params_search = array(
 		'search'       => $search,
 		'search_text'  => $search_text,
 		'search_in'    => $search_in,
@@ -327,14 +324,11 @@ if ( !$is_bookmark ) {
 		'date_first'   => $date_first,
 		'date_second'  => $date_second,
 	);
-	yourls_html_tfooter( $params_tfooter );
-}
-
-
-yourls_do_action( 'admin_page_after_table' );
-
-if ( $is_bookmark )
+	yourls_html_search( $params_search );
+} else
 	yourls_share_box( $url, $return['shorturl'], $title, $text );
+
+yourls_do_action( 'admin_page_after_content' );
+
+yourls_html_footer( );
 ?>
-	
-<?php yourls_html_footer( ); ?>

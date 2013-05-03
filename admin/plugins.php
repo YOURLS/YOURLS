@@ -65,9 +65,8 @@ uasort( $plugins, 'yourls_plugins_sort_callback' );
 $count = count( $plugins );
 $plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
 $count_active = yourls_has_active_plugins();
-?>
 	
-	<h1><?php yourls_e( 'Plugins' ); ?> <small>&mdash; <?php /* //translators: "'3 plugins' installed and '1' activated" */ yourls_se( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ); ?></small></h1>
+yourls_html_title( yourls__( 'Plugins' ), /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ) ); ?>
 
 	<p><span class="label label-info"><?php yourls_e( 'More plugins' ); ?></span> <?php yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
 	
