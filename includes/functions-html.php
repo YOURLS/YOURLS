@@ -345,23 +345,20 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
-			<div id="filter_form">
-				<form action="" method="get">
-					<div id="filter_options">
+			<div class="filter-form">
+				<form action="" method="get" class="form-actions form-horizontal">
 						<?php
 						
 						// First search control: text to search
-						$_input = '<input type="text" name="search" class="text" value="' . yourls_esc_attr( $search_text ) . '" />';
+						$_input = '<input type="text" name="search" class="text col-lg-7" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
 							'keyword' => yourls__( 'Short URL' ),
 							'url'     => yourls__( 'URL' ),
 							'title'   => yourls__( 'Title' ),
 							'ip'      => yourls__( 'IP' ),
 						);							
-						$_select = yourls_html_select( 'search_in', $_options, $search_in );
-						/* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
-						yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
-						echo "&ndash;\n";
+						$_select_search = yourls_html_select( 'search_in', $_options, $search_in );
+						$_button = '<span class="input-group-btn"><button type="submit" id="submit-sort" class="btn btn-primary">' . yourls__( 'Search' ) . '</button></span>';
 						
 						// Second search control: order by
 						$_options = array(
@@ -371,32 +368,21 @@ function yourls_html_search( $params = array() ) {
 							'ip'           => yourls__( 'IP' ),
 							'clicks'       => yourls__( 'Clicks' ),
 						);
-						$_select = yourls_html_select( 'sort_by', $_options, $sort_by );
+						$_select_order = yourls_html_select( 'sort_by', $_options, $sort_by );
 						$sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
 						$_options = array(
 							'asc'  => yourls__( 'Ascending' ),
 							'desc' => yourls__( 'Descending' ),
 						);
-						$_select2 = yourls_html_select( 'sort_order', $_options, $sort_order );
-						/* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
-						yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
-						echo "&ndash;\n";
+						$_select2_order = yourls_html_select( 'sort_order', $_options, $sort_order );
 						
-						// Third search control: Show XX rows
-						/* //translators: "Show <text field> rows" */
-						yourls_se( 'Show %s rows',  '<input type="text" name="perpage" class="text" size="2" value="' . $perpage . '" />' );
-						echo "<br/>\n";
-
 						// Fourth search control: Show links with more than XX clicks
 						$_options = array(
 							'more' => yourls__( 'more' ),
 							'less' => yourls__( 'less' ),
 						);
-						$_select = yourls_html_select( 'click_filter', $_options, $click_filter );
-						$_input  = '<input type="text" name="click_limit" class="text" value="' . $click_limit . '" /> ';
-						/* //translators: "Show links with <more/less> than <text field> clicks" */
-						yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
-						echo "<br/>\n";
+						$_select_clicks = yourls_html_select( 'click_filter', $_options, $click_filter );
+						$_input_clicks  = '<input type="text" name="click_limit" class="text col-lg-7" value="' . $click_limit . '" /> ';
 
 						// Fifth search control: Show links created before/after/between ...
 						$_options = array(
@@ -404,20 +390,36 @@ function yourls_html_search( $params = array() ) {
 							'after'   => yourls__('after'),
 							'between' => yourls__('between'),
 						);
-						$_select = yourls_html_select( 'date_filter', $_options, $date_filter );
-						$_input  = '<input type="text" name="date_first" id="date_first" class="text" value="' . $date_first . '" />';
-						$_and    = '<span id="date_and"> &amp; </span>';
-						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
-						/* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
-						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
+						$_select_creation = yourls_html_select( 'date_filter', $_options, $date_filter );
+						$_input_creation  = '<input type="text" name="date_first" id="date_first" class="text col-lg-7" value="' . $date_first . '" />';
+						$_input2_creation = '<input type="text" name="date_second" id="date_second" class="text col-lg-7" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						
+						$advanced_search = array(
+							yourls__( 'Search' )        => array( $_input, $_select_search, $_button ),
+							yourls__( 'Order by' )      => array( $_select_order, $_select2_order ),
+							yourls__( 'Links with' )    => array( $_select_clicks, $_input_clicks ),
+							yourls__( 'Links created' ) => array( $_select_creation, $_input_creation, $_input2_creation )
+						);
+						foreach( $advanced_search as $title => $options ) {
+                            ?>
+                            <div class="control-group">
+                                <label class="control-label"><?php echo $title; ?></label>
+                                <div class="controls input-group col-lg-9">
+                                    <?php
+                                    foreach( $options as $option )
+                                        echo $option
+                                    ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
 						?>
 
 						<div class="pull-right">
-							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e('Clear'); ?></button>
-							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e('Search'); ?></button>
+							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e( 'Clear' ); ?></button>
+							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e( 'Search' ); ?></button>
 						</div>
 				
-					</div>
 				</form>
 			</div>
 			
@@ -479,7 +481,7 @@ function yourls_html_pagination( $params = array() ) {
  * @return HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
-	$html = "<select name='$name' id='$name' size='1'>\n";
+	$html = "<select name='$name' id='$name' class='input-group-addon col-lg-5'>\n";
 	foreach( $options as $value => $text ) {
 		$html .= "<option value='$value' ";
 		$html .= $selected == $value ? ' selected="selected"' : '';
@@ -648,6 +650,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'href'    => $statlink,
 			'id'      => "statlink-$id",
 			'title'   => yourls_esc_attr__( 'Stats' ),
+			'icon'    => "zoom-in",
 			'anchor'  => yourls__( 'Stats' ),
 		),
 		'share' => array(
@@ -655,6 +658,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "share-button-$id",
 			'title'   => yourls_esc_attr__( 'Share' ),
 			'anchor'  => yourls__( 'Share' ),
+			'icon'    => "share-alt",
 			'onclick' => "toggle_share('$id');return false;",
 		),
 		'edit' => array(
@@ -662,6 +666,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "edit-button-$id",
 			'title'   => yourls_esc_attr__( 'Edit' ),
 			'anchor'  => yourls__( 'Edit' ),
+			'icon'    => "edit",
 			'onclick' => "edit_link_display('$id');return false;",
 		),
 		'delete' => array(
@@ -669,19 +674,21 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "delete-button-$id",
 			'title'   => yourls_esc_attr__( 'Delete' ),
 			'anchor'  => yourls__( 'Delete' ),
+			'icon'    => "trash",
 			'onclick' => "remove_link('$id');return false;",
 		)
 	);
 	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
 	
 	// Action link buttons: the HTML
-	$action_links = '';
+	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
 		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
-		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s>%s</a>',
-			$action['href'], $action['id'], $action['title'], 'button button_'.$key, $onclick, $action['anchor']
+		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="glyphicon glyphicon-%s"></i></a>',
+			$action['href'], $action['id'], $action['title'], 'btn btn-inverse btn-'.$key, $onclick, $action['icon']
 		);
 	}
+	$action_links .= '</div>';
 	$action_links = yourls_apply_filter( 'action_links', $action_links, $keyword, $url, $ip, $clicks, $timestamp );
 
 	if( ! $title )
