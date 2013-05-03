@@ -108,11 +108,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php
 }
 
-function yourls_html_title( $title, $subtitle = null ) {
-	$result = "<h1>$title";
+function yourls_html_title( $title, $rang, $subtitle = null ) {
+	$result = "<h$rang>$title";
 	if ( $subtitle )
 		$result .= " <small>&mdash; $subtitle</small>";
-	$result .= "</h1>";
+	$result .= "</h$rang>";
 	echo $result;
 }
 

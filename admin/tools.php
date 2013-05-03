@@ -6,15 +6,15 @@ yourls_maybe_require_auth();
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
 yourls_html_logo();
 yourls_html_menu();
-yourls_html_title( yourls__( 'Tools' ) ); ?>
+yourls_html_title( yourls__( 'Tools' ), 1 ); ?>
 
 	<div class="page-header">
-		<h2><?php yourls_e( 'Bookmarklets' ); ?></h2>
+		<?php yourls_html_title( yourls__( 'Bookmarklets' ), 2 ); ?>
 	</div>
 	
 		<p><?php yourls_e( 'YOURLS comes with handy <span>bookmarklets</span> for easier link shortening and sharing.' ); ?></p>
 
-		<h3><?php yourls_e( 'Standard or Instant, Simple or Custom' ); ?></h3>
+		<?php yourls_html_title( yourls__( 'Standard or Instant, Simple or Custom' ), 3 ); ?>
 		
 		<ul>
 			<li><?php yourls_e( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ); ?></li>
@@ -30,7 +30,7 @@ yourls_html_title( yourls__( 'Tools' ) ); ?>
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
 		
-		<h3><?php yourls_e( 'The Bookmarklets' ); ?></h3>
+		<?php yourls_html_title( yourls__( 'The Bookmarklets' ), 3 ); ?>
 		
 		<p><?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
 		
@@ -56,7 +56,7 @@ yourls_html_title( yourls__( 'Tools' ) ); ?>
 			</tbody>
 		</table>
 		
-		<h3><?php yourls_e( 'Social Bookmarklets' ); ?></h3>
+		<?php yourls_html_title( yourls__( 'Social Bookmarklets' ), 3 ); ?>
 		
 		<p><?php yourls_e( 'Create a short URL and share it on social networks, all in one click!' ); ?> 	
 		<?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
@@ -73,7 +73,7 @@ yourls_html_title( yourls__( 'Tools' ) ); ?>
 		</p>
 
 	<div class="page-header">
-		<h2><?php yourls_e( 'Prefix-n-Shorten' ); ?></h2>
+		<?php yourls_html_title( yourls__( 'Prefix-n-Shorten' ), 2 ); ?>
 	</div>
 		
 		<p><?php yourls_se( "When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add <code>%s</code> to the beginning of the current URL (right before its <code>http://</code> part) and hit enter.", preg_replace('@https?://@', '', YOURLS_SITE) . '/' ); ?></p>
@@ -88,7 +88,7 @@ yourls_html_title( yourls__( 'Tools' ) ); ?>
 	<?php if( yourls_is_private() ) { ?>
 
 	<div class="page-header">
-		<h2><?php yourls_e( 'Secure API' ); ?></h2>
+		<?php yourls_html_title( yourls__( 'Secure API' ), 2 ); ?>
 	</div>
 	
 		<p><?php
@@ -105,12 +105,12 @@ yourls_html_title( yourls__( 'Tools' ) ); ?>
 		<p><?php yourls_e( 'This signature token can only be used with the API, not with the admin interface.' ); ?></p>
 		
 		<ul>
-			<li><h3><?php yourls_e( 'Usage of the signature token' ); ?></h3>
+			<li><?php yourls_html_title( yourls__( 'Usage of the signature token' ), 3 ); ?>
 			<p><?php yourls_e( 'Simply use parameter <code>signature</code> in your API requests. Example:' ); ?></p>
 			<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
 			</li>
 		
-			<li><h3><?php yourls_e( 'Usage of a time limited signature token' ); ?></h3>
+			<li><?php yourls_html_title( yourls__( 'Usage of a time limited signature token' ), 3 ); ?>
 <pre><code>&lt;?php
 $timestamp = time();
 // <?php yourls_e( 'actual value:' ); ?> $time = <?php $time = time(); echo $time; ?> 
