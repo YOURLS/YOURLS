@@ -27,6 +27,9 @@ user/plugins/*
 pages/*
 !pages/examplepage.php
 
+# Temp
+assets/css/less/*
+
 # Keep index.html
 !user/index.html
 !user/*/index.html
