@@ -401,18 +401,18 @@ function yourls_html_search( $params = array() ) {
 							yourls__( 'Links created' ) => array( $_select_creation, $_input_creation, $_input2_creation )
 						);
 						foreach( $advanced_search as $title => $options ) {
-                            ?>
-                            <div class="control-group">
-                                <label class="control-label"><?php echo $title; ?></label>
-                                <div class="controls input-group col-lg-9">
-                                    <?php
-                                    foreach( $options as $option )
-                                        echo $option
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
-                        }
+							?>
+							<div class="control-group">
+								<label class="control-label"><?php echo $title; ?></label>
+								<div class="controls input-group col-lg-9">
+									<?php
+									foreach( $options as $option )
+										echo $option
+									?>
+								</div>
+							</div>
+							<?php
+						}
 						?>
 
 						<div class="pull-right">
