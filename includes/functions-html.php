@@ -442,11 +442,11 @@ function yourls_table_edit_row( $keyword ) {
 	
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 		$return = sprintf( urldecode( $return ), yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
-		$return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
+		$return = '<tr class="edit-row notfound"><td class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
 	
 	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
@@ -577,7 +577,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
  *
  */
 function yourls_table_head() {
-	$start = '<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1"><thead><tr>'."\n";
+	$start = '<table class="table table-striped table-hover"><thead><tr>'."\n";
 	echo yourls_apply_filter( 'table_head_start', $start );
 	
 	$cells = yourls_apply_filter( 'table_head_cells', array(
@@ -648,7 +648,7 @@ function yourls_login_screen( $error_msg = '' ) {
 		<form method="post" class="form-horizontal" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
 				if( !empty( $error_msg ) ) {
-					echo '<div class="alert alert-danger"><p>'.$error_msg.'</p></div>';
+					yourls_add_notice( $error_msg );
 				}
 			?>
 			<div class="control-group">
@@ -768,9 +768,7 @@ function yourls_add_notice( $message, $style = 'notice' ) {
  */
 function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
-	<div class="$style">
-	<p>$message</p>
-	</div>
+	<div class="alert alert-$style">$message</div>
 HTML;
 }
 
