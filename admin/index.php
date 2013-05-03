@@ -305,6 +305,7 @@ $display = $found_rows ? 'display:none' : '';
 echo '<tr id="nourl_found" style="'.$display.'"><td colspan="6">' . yourls__('No URL') . '</td></tr>';
 
 yourls_table_tbody_end();
+yourls_table_end();
 
 if ( !$is_bookmark ) {
 	$params = array(
@@ -325,7 +326,6 @@ if ( !$is_bookmark ) {
 	yourls_html_tfooter( $params );
 }
 
-yourls_table_end();
 
 yourls_do_action( 'admin_page_after_table' );
 

@@ -177,16 +177,13 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_html_tfooter( $params = array() ) {
 	extract( $params ); // extract $search_text, $page, $search_in ...
 	?>
-	<tfoot>
-		<tr>
-			<th colspan="6">
 			<div id="filter_form">
 				<form action="" method="get">
 					<div id="filter_options">
 						<?php
 						
 						// First search control: text to search
-						$_input = '<input type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
+						$_input = '<input type="text" name="search" class="text" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
 							'keyword' => yourls__( 'Short URL' ),
 							'url'     => yourls__( 'URL' ),
@@ -228,7 +225,7 @@ function yourls_html_tfooter( $params = array() ) {
 							'less' => yourls__( 'less' ),
 						);
 						$_select = yourls_html_select( 'click_filter', $_options, $click_filter );
-						$_input  = '<input type="text" name="click_limit" class="text" size="4" value="' . $click_limit . '" /> ';
+						$_input  = '<input type="text" name="click_limit" class="text" value="' . $click_limit . '" /> ';
 						/* //translators: "Show links with <more/less> than <text field> clicks" */
 						yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
 						echo "<br/>\n";
@@ -240,16 +237,16 @@ function yourls_html_tfooter( $params = array() ) {
 							'between' => yourls__('between'),
 						);
 						$_select = yourls_html_select( 'date_filter', $_options, $date_filter );
-						$_input  = '<input type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
-						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
-						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						$_input  = '<input type="text" name="date_first" id="date_first" class="text" value="' . $date_first . '" />';
+						$_and    = '<span id="date_and"> &amp; </span>';
+						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
 						/* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
 						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
 						?>
 
 						<div class="pull-right">
-							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e('Search'); ?></button>
 							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e('Clear'); ?></button>
+							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e('Search'); ?></button>
 						</div>
 				
 					</div>
@@ -297,11 +294,7 @@ function yourls_html_tfooter( $params = array() ) {
 				<?php } ?>
 				</span>
 			</div>
-			</th>
-		</tr>
-		<?php yourls_do_action( 'html_tfooter' ); ?>
-	</tfoot>
-	<?php
+		<?php yourls_do_action( 'html_tfooter' );
 }
 
 /**
