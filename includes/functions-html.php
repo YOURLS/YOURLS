@@ -7,7 +7,7 @@
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
-	<div class="menu col col-lg-2 col-offset-2">
+	<div class="menu col col-lg-2 col-offset-2 affix">
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
 	</h1>
@@ -689,11 +689,11 @@ function yourls_html_menu() {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' (<a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -711,7 +711,11 @@ function yourls_html_menu() {
 		);
 		$admin_links['plugins'] = array(
 			'url'    => yourls_admin_url( 'plugins.php' ),
-			'anchor' => yourls__( 'Manage Plugins' )
+			'anchor' => yourls__( 'Plugins' )
+		);
+		$admin_links['themes'] = array(
+			'url'    => yourls_admin_url( 'themes.php' ),
+			'anchor' => yourls__( 'Themes' )
 		);
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
 	}
@@ -721,8 +725,10 @@ function yourls_html_menu() {
 	
 	// Now output menu
 	echo '<ul class="nav nav-list">'."\n";
-	if ( yourls_is_private() && !empty( $logout_link ) )
-		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
+	if ( yourls_is_private() && !empty( $logout_link ) ) {
+		echo $logout_link;
+		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
+	}
 
 	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
@@ -748,7 +754,7 @@ function yourls_html_menu() {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 		
 	yourls_do_action( 'admin_menu' );
-	echo "</ul></div><div class='col col-lg-6'>\n";
+	echo "</ul></div><div class='col col-lg-6 col-push-4'>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
@@ -775,6 +781,14 @@ function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
 	<div class="alert alert-$style">$message</div>
 HTML;
+}
+
+/**
+ * Wrapper function to display admin notices
+ *
+ */
+function yourls_add_label( $message, $style = 'normal' ) {
+	echo '<span class="label label-' . $style . '">' . $message . '</span>';
 }
 
 /**

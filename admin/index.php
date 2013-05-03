@@ -248,7 +248,11 @@ yourls_html_logo();
 yourls_html_menu() ;
 
 yourls_do_action( 'admin_page_before_content' );
+?>
 
+	<h1>YOURLS <small>&mdash; Your Own URL Shortener</small></h1>
+
+<?php
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_sentence; ?></p>
 	<p><?php
