@@ -8,8 +8,7 @@ function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
 	<h1>
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
 	yourls_do_action( 'html_logo' );
@@ -72,22 +71,23 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
 	
 	// Page title
-	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . yourls_link();
-	$title = $title ? $title . " &laquo; " . $_title : $_title;
+	$_title = 'YOURLS &middot; Your Own URL Shortener | ' . yourls_link();
+	$title = $title ? $title . " &mdash; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
 	?>
 <!DOCTYPE html>
 <html <?php yourls_html_language_attributes(); ?>>
 <head>
+	<meta charset="utf-8">
 	<title><?php echo $title ?></title>
-	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<meta charset="utf-8" />
-	<meta name="author" content="Ozh RICHARD & Lester CHAN for yourls.org" />
-	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+	<meta name="description" content="YOURLS &middot; Your Own URL Shortener' | <?php yourls_site_url(); ?>">
+	<meta name="author" content="Ozh RICHARD & Lester CHAN for yourls.org">
+	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>">
+	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
+	<script src="<?php yourls_site_url(); ?>/assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php if ( $charts ) { ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -103,7 +103,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
-<div id="wrap">
+	<div class="container">
 	<?php
 }
 
@@ -114,24 +114,23 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 function yourls_html_footer() {
 	global $ydb;
 	
-	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
 	?>
-	</div> <?php // wrap ?>
-	<div id="footer"><p>
-		<?php
-		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
-		$footer .= ' &ndash; '.$num_queries;
-		echo yourls_apply_filters( 'html_footer_text', $footer );
-		?>
-	</p></div>
-	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-		echo '<div style="text-align:left"><pre>';
-		echo join( "\n", $ydb->debug_log );
-		echo '</div>';
-	} ?>
-	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
-	</body>
-	</html>
+		<div class="footer"><p>
+			<?php
+			$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
+			echo yourls_apply_filters( 'html_footer_text', $footer );
+			?>
+		</p></div>
+		<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+			echo '<pre class="debug-info">';
+			echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
+			echo join( "\n", $ydb->debug_log );
+			echo '</pre>';
+		} ?>
+		<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
+	</div>
+</body>
+</html>
 	<?php
 }
 
@@ -142,17 +141,19 @@ function yourls_html_footer() {
  * @param string $keyword Keyword to prefill the input with
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
-	$url = $url ? $url : 'http://';
 	?>
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<div><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
-				<?php yourls_e( 'Optional '); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
-				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-				<input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" /></div>
+				<div>
+					<p><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:
+					<input type="text" id="add-url" name="url" placeholder="http://&hellip;" size="80">
+					<p><?php yourls_e( 'Optional '); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?></p>
+					<button type="submit" id="add-button" name="add-button" class="btn" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
+				</div>
 			</form>
-			<div id="feedback" style="display:none"></div>
+			<div id="feedback" style="display:none;"></div>
 		</div>
 		<?php yourls_do_action( 'html_addnew' ); ?>
 	</div>
@@ -644,23 +645,29 @@ function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_logo();
 	?>
 	<div id="login">
-		<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
+		<form method="post" class="form-horizontal" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
 				if( !empty( $error_msg ) ) {
-					echo '<p class="error">'.$error_msg.'</p>';
+					echo '<div class="alert alert-danger"><p>'.$error_msg.'</p></div>';
 				}
 			?>
-			<p>
-				<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
-				<input type="text" id="username" name="username" size="30" class="text" />
-			</p>
-			<p>
-				<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
-				<input type="password" id="password" name="password" size="30" class="text" />
-			</p>
-			<p style="text-align: right;">
-				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
-			</p>
+			<div class="control-group">
+				<label class="control-label" for="username"><?php yourls_e( 'Username' ); ?></label>
+				<div class="controls">
+					<input type="text" id="username" name="username" size="30" class="text">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="password"><?php yourls_e( 'Password' ); ?></label>
+				<div class="controls">
+					<input type="password" id="password" name="password" size="30" class="text">
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn" name="submit"><?php yourls_e( 'Login' ); ?></button>
+				</div>
+			</div>
 		</form>
 		<script type="text/javascript">$('#username').focus();</script>
 	</div>
@@ -708,7 +715,7 @@ function yourls_html_menu() {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul id="admin_menu">'."\n";
+	echo '<ul class="nav nav-list">'."\n";
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
