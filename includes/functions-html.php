@@ -163,6 +163,11 @@ function yourls_html_menu() {
 	echo '<hr /><ul class="nav nav-list">'."\n";
 	if ( yourls_is_private() && !empty( $logout_link ) ) {
 		echo $logout_link;
+		list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
+
+		echo '<li class="nav-header">' . yourls__('Status') . '</li><li class="disabled"><a href="#">';
+		echo '<strong>' . yourls_number_format_i18n( $total_urls ) . '</strong> ' . yourls__( 'links' ) . ' &middot; <strong>' . yourls_number_format_i18n( $total_clicks ) . '</strong> ' . yourls__( 'clicks' );
+		echo '</a></li>';
 		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
 	}
 
@@ -174,7 +179,7 @@ function yourls_html_menu() {
 		}
 		// Output submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
-			echo "<ul>\n";
+			echo '<li class="divider">\n';
 			foreach( $admin_sublinks[$link] as $link => $ar ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
@@ -182,7 +187,7 @@ function yourls_html_menu() {
 					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a>', $link, $link, $ar['url'], $title, $anchor );
 				}
 			}
-			echo "</ul>\n";
+			echo '<li class="divider">\n';
 		}
 	}
 	
