@@ -7,8 +7,9 @@
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
+	<div class="menu col col-lg-2 col-offset-2">
 	<h1>
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
 	</h1>
 	<?php
 	yourls_do_action( 'html_logo' );
@@ -103,7 +104,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
-	<div class="container">
+	<div class="row">
 	<?php
 }
 
@@ -128,7 +129,7 @@ function yourls_html_footer() {
 			echo '</pre>';
 		} ?>
 		<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
-	</div>
+	</div></div>
 </body>
 </html>
 	<?php
@@ -144,13 +145,18 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 	?>
 	<div id="new_url">
 		<div>
-			<form id="new_url_form" action="" method="get">
-				<div>
-					<p><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:
+			<form id="new_url_form" class="form-actions" action="" method="get">
+				<div class="col col-lg-6">
+					<label><?php yourls_e( 'Enter the URL' ); ?></label>
 					<input type="text" id="add-url" name="url" placeholder="http://&hellip;" size="80">
-					<p><?php yourls_e( 'Optional '); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
-					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?></p>
-					<button type="submit" id="add-button" name="add-button" class="btn" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
+				</div>
+				<div class="col col-lg-3">
+					<label><span class="label label-info"><?php yourls_e( 'Optional'); ?></span> <?php yourls_e('Short URL'); ?></label>
+					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword'); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
+					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
+				</div>
+				<div class="col col-lg-2">
+					<button type="submit" id="add-button" name="add-button" class="btn btn-primary" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
 				</div>
 			</form>
 			<div id="feedback" style="display:none;"></div>
@@ -241,10 +247,9 @@ function yourls_html_tfooter( $params = array() ) {
 						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
 						?>
 
-						<div id="filter_buttons">
-							<input type="submit" id="submit-sort" value="<?php yourls_e('Search'); ?>" class="button primary" />
-							&nbsp;
-							<input type="button" id="submit-clear-filter" value="<?php yourls_e('Clear'); ?>" class="button" onclick="window.parent.location.href = 'index.php'" />
+						<div class="pull-right">
+							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e('Search'); ?></button>
+							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e('Clear'); ?></button>
 						</div>
 				
 					</div>
@@ -665,7 +670,7 @@ function yourls_login_screen( $error_msg = '' ) {
 			</div>
 			<div class="control-group">
 				<div class="controls">
-					<button type="submit" class="btn" name="submit"><?php yourls_e( 'Login' ); ?></button>
+					<button type="submit" class="btn btn-primary" name="submit"><?php yourls_e( 'Login' ); ?></button>
 				</div>
 			</div>
 		</form>
@@ -743,7 +748,7 @@ function yourls_html_menu() {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 		
 	yourls_do_action( 'admin_menu' );
-	echo "</ul>\n";
+	echo "</ul></div><div class='col col-lg-6'>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
