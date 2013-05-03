@@ -991,10 +991,12 @@ function yourls_get_all_options() {
 	$allopt = $ydb->get_results( "SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1" );
 	
 	foreach( (array)$allopt as $option ) {
-		$ydb->option[$option->option_name] = yourls_maybe_unserialize( $option->option_value );
+		$ydb->option[ $option->option_name ] = yourls_maybe_unserialize( $option->option_value );
 	}
-	
-	$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
+
+	if( property_exists( $ydb, 'option' ) ) {
+		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
+	}
 }
 
 /**
