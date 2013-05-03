@@ -4,6 +4,7 @@
 	backupGlobals="false"
 	colors="true"
 	stopOnFailure="false"
+	verbose="true"
 	bootstrap="includes/bootstrap.php"
 	>
 	<testsuites>
