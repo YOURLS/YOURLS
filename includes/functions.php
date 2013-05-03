@@ -88,6 +88,8 @@ function yourls_keyword_is_reserved( $keyword ) {
  *
  */
 function yourls_get_IP() {
+	$ip = '';
+
 	// Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
 	$headers = array( 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' );
 	foreach( $headers as $header ) {
@@ -181,8 +183,6 @@ function yourls_url_exists( $url ) {
  *
  */
 function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
-	global $ydb;
-
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
@@ -267,7 +267,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$ok = ($free && $add_url);
 				if ( $ok === false && $add_url === 1 ) {
 					// we stored something, but shouldn't have (ie reserved id)
-					$delete = yourls_delete_link_by_keyword( $keyword );
+					yourls_delete_link_by_keyword( $keyword );
 					$return['extra_info'] .= '(deleted '.$keyword.')';
 				} else {
 					// everything ok, populate needed vars
@@ -449,7 +449,7 @@ function yourls_xml_encode( $array ) {
 }
 
 /**
- * Return array of all informations associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
+ * Return array of all information associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
  *
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
@@ -1068,7 +1068,7 @@ function yourls_delete_option( $name ) {
 	if ( is_null( $option ) || !$option->option_id )
 		return false;
 		
-	yourls_do_action( 'delete_option', $option_name );
+	yourls_do_action( 'delete_option', $name );
 		
 	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
 	return true;
@@ -1349,7 +1349,7 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 
 	$i = 0;
 	while ($i < $length) {
-		$str .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
+		$str .= substr( $possible, mt_rand( 0, strlen( $possible )-1 ), 1 );
 		$i++;
 	}
 	
@@ -1373,7 +1373,7 @@ function yourls_salt( $string ) {
  *     array( 'var' => 'value' ), $url
  *     'var', 'value'
  *     'var', 'value', $url 
- * If $url ommited, uses $_SERVER['REQUEST_URI']
+ * If $url omitted, uses $_SERVER['REQUEST_URI']
  *
  */
 function yourls_add_query_arg() {

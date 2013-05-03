@@ -331,7 +331,7 @@ function yourls_html_tfooter( $params = array() ) {
  * @param array $options array of 'value' => 'Text displayed'
  * @param string $selected optional 'value' from the $options array that will be highlighted
  * @param boolean $display false (default) to return, true to echo
- * @return HTML content of the select element
+ * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
 	$html = "<select name='$name' id='$name' size='1'>\n";
@@ -445,9 +445,6 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
-	global $ydb;
-	
-	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
@@ -456,10 +453,6 @@ function yourls_table_edit_row( $keyword ) {
 	$safe_url = yourls_esc_attr( $url );
 	$safe_title = yourls_esc_attr( $title );
 	$www = yourls_link();
-	
-	$save_link = yourls_nonce_url( 'save-link_'.$id,
-		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
-	);
 	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 	
@@ -797,11 +790,11 @@ HTML;
  */
 function yourls_page( $page ) {
 	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if( !file_exists($include) ) {
+	if( !file_exists( $include ) ) {
 		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
-	include($include);
+	include( $include );
 	yourls_do_action( 'post_page', $page );
 	die();	
 }
