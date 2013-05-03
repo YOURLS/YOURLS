@@ -175,7 +175,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @return string Result
  */
 function yourls_html_tfooter( $params = array() ) {
-	extract( $params ); // extract $search_text, $page, $search_in ...
+	extract( $params ); // extract $search_text, $search_in ...
 	?>
 			<div id="filter_form">
 				<form action="" method="get">
@@ -261,40 +261,41 @@ function yourls_html_tfooter( $params = array() ) {
 				$params['search'] = $search_text;
 				unset( $params['search_text'] );
 			}
-			?>
-			
-			<div id="pagination">
-				<span class="navigation">
-				<?php if( $total_pages > 1 ) { ?>
-					<span class="nav_total"><?php echo sprintf( yourls_n( '1 page', '%s pages', $total_pages ), $total_pages ); ?></span>
-					<?php
-					$base_page = yourls_admin_url( 'index.php' );
-					// Pagination offsets: min( max ( zomg! ) );
-					$p_start = max(  min( $total_pages - 4, $page - 2 ), 1 );
-					$p_end = min( max( 5, $page + 2 ), $total_pages );
-					if( $p_start >= 2 ) {
-						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => 1 ) ), $base_page );
-						echo '<span class="nav_link nav_first"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( '&laquo; First' ) . '</a></span>';
-						echo '<span class="nav_link nav_prev"></span>';
+}
+
+function yourls_html_pagination( $params = array() ) {
+	extract( $params ); // extract $page, ...
+	if( $total_pages > 1 ) { 
+		?>
+		<div>
+			<ul class="pagination">
+			<?php 
+				// Pagination offsets: min( max ( zomg! ) );
+				$p_start = max( min( $total_pages - 4, $page - 2 ), 1 );
+				$p_end = min( max( 5, $page + 2 ), $total_pages );
+				if( $p_start >= 2 ) {
+					$link = yourls_add_query_arg( array( 'page' => 1 ) );
+					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">&laquo;</a></li>';
+					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page - 1 ) ).'">&lsaquo;</a></li>';
+				}
+				for( $i = $p_start ; $i <= $p_end; $i++ ) {
+					if( $i == $page ) {
+						echo '<li class="active"><a href="#">' . $i . '</a></li>';
+					} else {
+						$link = yourls_add_query_arg( array( 'page' => $i ) );
+						echo '<li><a href="' . $link . '" title="' . sprintf( yourls_esc_attr( 'Page %s' ), $i ) .'">'.$i.'</a></li>';
 					}
-					for( $i = $p_start ; $i <= $p_end; $i++ ) {
-						if( $i == $page ) {
-							echo "<span class='nav_link nav_current'>$i</span>";
-						} else {
-							$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $i ) ), $base_page );
-							echo '<span class="nav_link nav_goto"><a href="' . $link . '" title="' . sprintf( yourls_esc_attr( 'Page %s' ), $i ) .'">'.$i.'</a></span>';
-						}
-					}
-					if( ( $p_end ) < $total_pages ) {
-						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
-						echo '<span class="nav_link nav_next"></span>';
-						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
-					}
-					?>
-				<?php } ?>
-				</span>
-			</div>
-		<?php yourls_do_action( 'html_tfooter' );
+				}
+				if( ( $p_end ) < $total_pages ) {
+					$link = yourls_add_query_arg( array( 'page' => $total_pages ) );
+					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page + 1 ) ).'">&rsaquo;</a></li>';
+					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">&raquo;</a></li>';
+				}
+				?>
+			</ul>
+		</div>
+		<?php }
+		yourls_do_action( 'html_pagination' );
 }
 
 /**
@@ -717,7 +718,7 @@ function yourls_html_menu() {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul class="nav nav-list">'."\n";
+	echo '<hr /><ul class="nav nav-list">'."\n";
 	if ( yourls_is_private() && !empty( $logout_link ) ) {
 		echo $logout_link;
 		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
@@ -747,7 +748,7 @@ function yourls_html_menu() {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 		
 	yourls_do_action( 'admin_menu' );
-	echo "</ul></div><div class='col col-lg-6 col-push-4'>\n";
+	echo "</ul><hr /></div><div class='col col-lg-6 col-push-4'>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*

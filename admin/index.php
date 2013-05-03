@@ -308,22 +308,26 @@ yourls_table_tbody_end();
 yourls_table_end();
 
 if ( !$is_bookmark ) {
-	$params = array(
+	$params_pagination = array(
+		'page'         => $page,
+		'total_pages'  => $total_pages,
+	);
+	yourls_html_pagination( $params_pagination );
+
+	$params_tfooter = array(
 		'search'       => $search,
 		'search_text'  => $search_text,
 		'search_in'    => $search_in,
 		'sort_by'      => $sort_by,
 		'sort_order'   => $sort_order,
-		'page'         => $page,
 		'perpage'      => $perpage,
 		'click_filter' => $click_filter,
 		'click_limit'  => $click_limit,
-		'total_pages'  => $total_pages,
 		'date_filter'  => $date_filter,
 		'date_first'   => $date_first,
 		'date_second'  => $date_second,
 	);
-	yourls_html_tfooter( $params );
+	yourls_html_tfooter( $params_tfooter );
 }
 
 
