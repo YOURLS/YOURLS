@@ -1,21 +1,6 @@
 <?php
 
 /**
- * Display <h1> header and logo
- *
- */
-function yourls_html_logo() {
-	yourls_do_action( 'pre_html_logo' );
-	?>
-	<div class="menu col col-lg-2 col-offset-2 affix">
-	<h1>
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
-	</h1>
-	<?php
-	yourls_do_action( 'html_logo' );
-}
-
-/**
  * Display HTML head and <body> tag
  *
  * @param string $context Context of the page (stats, index, infos, ...)
@@ -33,15 +18,15 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		case 'infos':
 			$share = $tabs = $charts = true;
 			break;
-			
+		
 		case 'bookmark':
 			$share = $insert = $tablesorter = true;
 			break;
-			
+		
 		case 'index':
 			$insert = $tablesorter = $cal = $share = true;
 			break;
-			
+		
 		case 'plugins':
 		case 'tools':
 			$tablesorter = true;
@@ -108,6 +93,22 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php
 }
 
+/**
+ * Display <h1> header and logo
+ *
+ */
+function yourls_html_logo() {
+	yourls_do_action( 'pre_html_logo' );
+	?>
+	<div class="menu col col-lg-2 col-offset-2 affix">
+	<h1>
+		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
+	</h1>
+	<?php
+	yourls_do_action( 'html_logo' );
+}
+
+
 function yourls_html_title( $title, $rang, $subtitle = null ) {
 	$result = "<h$rang>$title";
 	if ( $subtitle )
@@ -116,6 +117,159 @@ function yourls_html_title( $title, $rang, $subtitle = null ) {
 	echo $result;
 }
 
+/**
+ * Display the admin menu
+ *
+ */
+function yourls_html_menu() {
+
+	// Build menu links
+	if( defined( 'YOURLS_USER' ) ) {
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>' );
+	} else {
+		$logout_link = yourls_apply_filter( 'logout_link', '' );
+	}
+	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
+	
+	$admin_links    = array();
+	$admin_sublinks = array();
+	
+	$admin_links['admin'] = array(
+		'url'    => yourls_admin_url( 'index.php' ),
+		'title'  => yourls__( 'Go to the admin interface' ),
+		'anchor' => yourls__( 'Admin interface' )
+	);
+	
+	if( yourls_is_admin() ) {
+		$admin_links['tools'] = array(
+			'url'    => yourls_admin_url( 'tools.php' ),
+			'anchor' => yourls__( 'Tools' )
+		);
+		$admin_links['plugins'] = array(
+			'url'    => yourls_admin_url( 'plugins.php' ),
+			'anchor' => yourls__( 'Plugins' )
+		);
+		$admin_links['themes'] = array(
+			'url'    => yourls_admin_url( 'themes.php' ),
+			'anchor' => yourls__( 'Themes' )
+		);
+		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
+	}
+	
+	$admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
+	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
+	
+	// Now output menu
+	echo '<hr /><ul class="nav nav-list">'."\n";
+	if ( yourls_is_private() && !empty( $logout_link ) ) {
+		echo $logout_link;
+		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
+	}
+
+	foreach( (array)$admin_links as $link => $ar ) {
+		if( isset( $ar['url'] ) ) {
+			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
+			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
+			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel"><a href="%s" %s>%s</a>', $link, $ar['url'], $title, $anchor );
+		}
+		// Output submenu if any. TODO: clean up, too many code duplicated here
+		if( isset( $admin_sublinks[$link] ) ) {
+			echo "<ul>\n";
+			foreach( $admin_sublinks[$link] as $link => $ar ) {
+				if( isset( $ar['url'] ) ) {
+					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
+					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
+					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a>', $link, $link, $ar['url'], $title, $anchor );
+				}
+			}
+			echo "</ul>\n";
+		}
+	}
+	
+	if ( isset( $help_link ) )
+		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
+	
+	yourls_do_action( 'admin_menu' );
+	echo "</ul><hr /></div><div class='col col-lg-6 col-push-4'>\n";
+	yourls_do_action( 'admin_notices' );
+	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
+	/*
+	To display a notice:
+	$message = "<div>OMG, dude, I mean!</div>" );
+	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	 */
+}
+
+/**
+ * Wrapper function to display admin notices
+ *
+ */
+function yourls_add_notice( $message, $style = 'notice' ) {
+	$message = yourls_notice_box( $message, $style );
+	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+}
+
+/**
+ * Return a formatted notice
+ *
+ */
+function yourls_notice_box( $message, $style = 'notice' ) {
+	return <<<HTML
+	<div class="alert alert-$style">$message</div>
+HTML;
+}
+
+/**
+ * Wrapper function to display admin notices
+ *
+ */
+function yourls_add_label( $message, $style = 'normal' ) {
+	echo '<span class="label label-' . $style . '">' . $message . '</span>';
+}
+
+/**
+ * Display a page
+ *
+ */
+function yourls_page( $page ) {
+	$include = YOURLS_ABSPATH . "/pages/$page.php";
+	if( !file_exists($include) ) {
+		yourls_die( "Page '$page' not found", 'Not found', 404 );
+	}
+	yourls_do_action( 'pre_page', $page );
+	include($include);
+	yourls_do_action( 'post_page', $page );
+	die();	
+}
+
+/**
+ * Display the language attributes for the HTML tag.
+ *
+ * Builds up a set of html attributes containing the text direction and language
+ * information for the page. Stolen from WP.
+ *
+ * @since 1.6
+ */
+function yourls_html_language_attributes() {
+	$attributes = array();
+	$output = '';
+	
+	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
+	
+	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
+	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
+	if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
+		if( $doctype == 'xhtml' ) {
+			$attributes[] = "xml:lang=\"$lang\"";
+		} else {
+			$attributes[] = "lang=\"$lang\"";
+		}
+	}
+
+	$output = implode( ' ', $attributes );
+	$output = yourls_apply_filters( 'html_language_attributes', $output );
+	echo $output;
+}
 
 /**
  * Display HTML footer (including closing body & html tags)
@@ -683,160 +837,6 @@ function yourls_login_screen( $error_msg = '' ) {
 	<?php
 	yourls_html_footer();
 	die();
-}
-
-/**
- * Display the admin menu
- *
- */
-function yourls_html_menu() {
-
-	// Build menu links
-	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>' );
-	} else {
-		$logout_link = yourls_apply_filter( 'logout_link', '' );
-	}
-	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
-	
-	$admin_links    = array();
-	$admin_sublinks = array();
-	
-	$admin_links['admin'] = array(
-		'url'    => yourls_admin_url( 'index.php' ),
-		'title'  => yourls__( 'Go to the admin interface' ),
-		'anchor' => yourls__( 'Admin interface' )
-	);
-	
-	if( yourls_is_admin() ) {
-		$admin_links['tools'] = array(
-			'url'    => yourls_admin_url( 'tools.php' ),
-			'anchor' => yourls__( 'Tools' )
-		);
-		$admin_links['plugins'] = array(
-			'url'    => yourls_admin_url( 'plugins.php' ),
-			'anchor' => yourls__( 'Plugins' )
-		);
-		$admin_links['themes'] = array(
-			'url'    => yourls_admin_url( 'themes.php' ),
-			'anchor' => yourls__( 'Themes' )
-		);
-		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
-	}
-	
-	$admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
-	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
-	
-	// Now output menu
-	echo '<hr /><ul class="nav nav-list">'."\n";
-	if ( yourls_is_private() && !empty( $logout_link ) ) {
-		echo $logout_link;
-		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
-	}
-
-	foreach( (array)$admin_links as $link => $ar ) {
-		if( isset( $ar['url'] ) ) {
-			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
-			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel"><a href="%s" %s>%s</a>', $link, $ar['url'], $title, $anchor );
-		}
-		// Output submenu if any. TODO: clean up, too many code duplicated here
-		if( isset( $admin_sublinks[$link] ) ) {
-			echo "<ul>\n";
-			foreach( $admin_sublinks[$link] as $link => $ar ) {
-				if( isset( $ar['url'] ) ) {
-					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
-					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a>', $link, $link, $ar['url'], $title, $anchor );
-				}
-			}
-			echo "</ul>\n";
-		}
-	}
-	
-	if ( isset( $help_link ) )
-		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
-		
-	yourls_do_action( 'admin_menu' );
-	echo "</ul><hr /></div><div class='col col-lg-6 col-push-4'>\n";
-	yourls_do_action( 'admin_notices' );
-	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
-	/*
-	To display a notice:
-	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
-	*/
-}
-
-/**
- * Wrapper function to display admin notices
- *
- */
-function yourls_add_notice( $message, $style = 'notice' ) {
-	$message = yourls_notice_box( $message, $style );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
-}
-
-/**
- * Return a formatted notice
- *
- */
-function yourls_notice_box( $message, $style = 'notice' ) {
-	return <<<HTML
-	<div class="alert alert-$style">$message</div>
-HTML;
-}
-
-/**
- * Wrapper function to display admin notices
- *
- */
-function yourls_add_label( $message, $style = 'normal' ) {
-	echo '<span class="label label-' . $style . '">' . $message . '</span>';
-}
-
-/**
- * Display a page
- *
- */
-function yourls_page( $page ) {
-	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if( !file_exists($include) ) {
-		yourls_die( "Page '$page' not found", 'Not found', 404 );
-	}
-	yourls_do_action( 'pre_page', $page );
-	include($include);
-	yourls_do_action( 'post_page', $page );
-	die();	
-}
-
-/**
- * Display the language attributes for the HTML tag.
- *
- * Builds up a set of html attributes containing the text direction and language
- * information for the page. Stolen from WP.
- *
- * @since 1.6
- */
-function yourls_html_language_attributes() {
-	$attributes = array();
-	$output = '';
-	
-	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
-	
-	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
-	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
-	if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
-		if( $doctype == 'xhtml' ) {
-			$attributes[] = "xml:lang=\"$lang\"";
-		} else {
-			$attributes[] = "lang=\"$lang\"";
-		}
-	}
-
-	$output = implode( ' ', $attributes );
-	$output = yourls_apply_filters( 'html_language_attributes', $output );
-	echo $output;
 }
 
 /**
