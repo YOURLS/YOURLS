@@ -125,11 +125,11 @@ function yourls_html_menu( $current_page = null ) {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="glyphicon glyphicon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -137,21 +137,25 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_links['admin'] = array(
 		'url'    => yourls_admin_url( 'index.php' ),
 		'title'  => yourls__( 'Go to the admin interface' ),
-		'anchor' => yourls__( 'Admin interface' )
+		'anchor' => yourls__( 'Admin interface' ),
+		'icon'   => 'home'
 	);
 	
 	if( yourls_is_admin() ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
-			'anchor' => yourls__( 'Tools' )
+			'anchor' => yourls__( 'Tools' ),
+			'icon'   => 'wrench'
 		);
 		$admin_links['plugins'] = array(
 			'url'    => yourls_admin_url( 'plugins.php' ),
-			'anchor' => yourls__( 'Plugins' )
+			'anchor' => yourls__( 'Plugins' ),
+			'icon'   => 'cog'
 		);
 		$admin_links['themes'] = array(
 			'url'    => yourls_admin_url( 'themes.php' ),
-			'anchor' => yourls__( 'Themes' )
+			'anchor' => yourls__( 'Themes' ),
+			'icon'   => 'picture'
 		);
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
 	}
@@ -161,22 +165,18 @@ function yourls_html_menu( $current_page = null ) {
 	
 	// Now output menu
 	echo '<hr /><ul class="nav nav-list">'."\n";
-	if ( yourls_is_private() && !empty( $logout_link ) ) {
+	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo $logout_link;
-		list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 
-		echo '<li class="nav-header">' . yourls__( 'Status' ) . '</li><li class="disabled"><a href="#">';
-		echo '<strong>' . yourls_number_format_i18n( $total_urls ) . '</strong> ' . yourls__( 'links' ) . ' &middot; <strong>' . yourls_number_format_i18n( $total_clicks ) . '</strong> ' . yourls__( 'clicks' );
-		echo '</a></li>';
-		echo '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
-	}
+	yourls_add_html_status();
+	echo '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
 
 	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
 			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-            $class_active  = $current_page == $link ? ' active' : '';
-			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s>%s</a>', $link, $class_active, $ar['url'], $title, $anchor );
+			$class_active  = $current_page == $link ? ' active' : '';
+			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s><i class="glyphicon glyphicon-%s"></i> %s</a>', $link, $class_active, $ar['url'], $title, $ar['icon'], $anchor );
 		}
 		// Output submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
@@ -199,11 +199,15 @@ function yourls_html_menu( $current_page = null ) {
 	echo "</ul><hr /></div><div class='col col-lg-6 col-push-4'>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
-	/*
-	To display a notice:
-	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
-	 */
+}
+
+function yourls_add_html_status() {
+	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
+	$html = '<div class="form-actions" style="text-align:center"><div class="col col-lg-6">';
+	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . yourls__( 'Links' );
+	$html .= '</p></div><div class="col col-lg-6">';
+	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . yourls__( 'Clicks' ) . '</p></div></div>';
+	echo yourls_apply_filters( 'add_html_status', $html );
 }
 
 /**
@@ -226,7 +230,7 @@ HTML;
 }
 
 /**
- * Wrapper function to display admin notices
+ * Wrapper function to display label
  *
  */
 function yourls_add_label( $message, $style = 'normal' ) {
