@@ -429,6 +429,7 @@ function yourls_db_connect() {
 		yourls_set_DB_driver();
 	}
 	
+	// Check if connection attempt raised an error. It seems that only PDO does, though.
 	if ( $ydb->last_error )
 		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
 	
@@ -996,6 +997,9 @@ function yourls_get_all_options() {
 
 	if( property_exists( $ydb, 'option' ) ) {
 		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
+	} else {
+		// Zero option found: assume YOURLS is not installed
+		$ydb->installed = false;
 	}
 }
 
@@ -1287,18 +1291,21 @@ function yourls_is_upgrading() {
 /**
  * Check if YOURLS is installed
  *
+ * Checks property $ydb->installed that is created and set to false by yourls_get_all_options() if no
+ * option was readable. The property doesn't exist otherwise.
+ *
+ * See inline comment for updating from 1.3 or prior.
+ *
  */
 function yourls_is_installed() {
-	static $is_installed = false;
-	if ( $is_installed === false ) {
-		$check_14 = $check_13 = false;
-		global $ydb;
-		if( defined('YOURLS_DB_TABLE_NEXTDEC') )
-			$check_13 = $ydb->get_var('SELECT `next_id` FROM '.YOURLS_DB_TABLE_NEXTDEC);
-		$check_14 = yourls_get_option( 'version' );
-		$is_installed = $check_13 || $check_14;
-	}
+	global $ydb;
+	$is_installed = ( property_exists( $ydb, 'installed' ) && $ydb->installed == true );
 	return yourls_apply_filter( 'is_installed', $is_installed );
+	
+	/* Note: this test won't work on YOURLS 1.3 or older (Aug 2009...)
+	   Should someone complain that they cannot upgrade directly from
+	   1.3 to 1.7: first, laugh at them, then ask them to install 1.6 first.
+	*/
 }
 
 /**
