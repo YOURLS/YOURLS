@@ -997,6 +997,7 @@ function yourls_get_all_options() {
 
 	if( property_exists( $ydb, 'option' ) ) {
 		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
+		$ydb->installed = true;
 	} else {
 		// Zero option found: assume YOURLS is not installed
 		$ydb->installed = false;
@@ -1291,8 +1292,7 @@ function yourls_is_upgrading() {
 /**
  * Check if YOURLS is installed
  *
- * Checks property $ydb->installed that is created and set to false by yourls_get_all_options() if no
- * option was readable. The property doesn't exist otherwise.
+ * Checks property $ydb->installed that is created by yourls_get_all_options()
  *
  * See inline comment for updating from 1.3 or prior.
  *
