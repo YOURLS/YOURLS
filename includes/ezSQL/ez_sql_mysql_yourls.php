@@ -8,7 +8,7 @@ class ezSQL_mysql_YOURLS extends ezSQL_mysql {
 	 * @since 1.7
 	 */
 	function mysql_version() {
-		return  mysql_get_server_info( $this->dbh ) ;
+		return mysql_get_server_info( $this->dbh ) ;
 	}
 	
 	/**
