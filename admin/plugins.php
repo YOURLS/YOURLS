@@ -57,7 +57,7 @@ if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GE
 
 yourls_html_head( 'plugins', yourls__( 'Manage Plugins' ) );
 yourls_html_logo();
-yourls_html_menu();
+yourls_html_menu( 'plugins' );
 
 $plugins = (array)yourls_get_plugins();
 uasort( $plugins, 'yourls_plugins_sort_callback' );

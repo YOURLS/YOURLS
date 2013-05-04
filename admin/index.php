@@ -245,7 +245,7 @@ if ( isset( $_GET['u'] ) ) {
 $context = ( $is_bookmark ? 'bookmark' : 'index' );
 yourls_html_head( $context );
 yourls_html_logo();
-yourls_html_menu() ;
+yourls_html_menu( 'admin' ) ;
 
 yourls_do_action( 'admin_page_before_content' );
 yourls_html_title( 'YOURLS', 1, 'Your Own URL Shortener' );

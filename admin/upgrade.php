@@ -9,9 +9,8 @@ yourls_maybe_require_auth();
 yourls_html_head( 'upgrade', yourls__( 'Upgrade YOURLS' ) );
 yourls_html_logo();
 yourls_html_menu();
-?>
-		<h2><?php yourls_e( 'Upgrade YOURLS' ); ?></h2>
-<?php
+
+yourls_html_title( yourls__( 'Upgrade YOURLS' ), 2 ); 
 
 // Check if upgrade is needed
 if ( !yourls_upgrade_is_needed() ) {

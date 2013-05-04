@@ -5,7 +5,7 @@ yourls_maybe_require_auth();
 
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
 yourls_html_logo();
-yourls_html_menu();
+yourls_html_menu( 'tools' );
 yourls_html_title( yourls__( 'Tools' ), 1 ); ?>
 
 	<div class="page-header">

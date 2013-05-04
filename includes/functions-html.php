@@ -121,7 +121,7 @@ function yourls_html_title( $title, $rang, $subtitle = null ) {
  * Display the admin menu
  *
  */
-function yourls_html_menu() {
+function yourls_html_menu( $current_page = null ) {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
@@ -165,17 +165,18 @@ function yourls_html_menu() {
 		echo $logout_link;
 		list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 
-		echo '<li class="nav-header">' . yourls__('Status') . '</li><li class="disabled"><a href="#">';
+		echo '<li class="nav-header">' . yourls__( 'Status' ) . '</li><li class="disabled"><a href="#">';
 		echo '<strong>' . yourls_number_format_i18n( $total_urls ) . '</strong> ' . yourls__( 'links' ) . ' &middot; <strong>' . yourls_number_format_i18n( $total_clicks ) . '</strong> ' . yourls__( 'clicks' );
 		echo '</a></li>';
-		echo '<li class="nav-header">' . yourls__('Administration') . '</li>';
+		echo '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
 	}
 
 	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
 			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel"><a href="%s" %s>%s</a>', $link, $ar['url'], $title, $anchor );
+            $class_active  = $current_page == $link ? ' active' : '';
+			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s>%s</a>', $link, $class_active, $ar['url'], $title, $anchor );
 		}
 		// Output submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
