@@ -89,7 +89,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
-	<div class="row">
+	<div class="wrap">
 	<?php
 }
 
