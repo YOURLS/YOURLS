@@ -48,6 +48,10 @@ if( !defined( 'YOURLS_PLUGINDIR' ) )
 if( !defined( 'YOURLS_PLUGINURL' ) )
 	define( 'YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins' );
 	
+// physical path of themes directory
+if( !defined( 'YOURLS_THEMEDIR' ) )
+	define( 'YOURLS_THEMEDIR', YOURLS_USERDIR.'/themes' );
+
 // physical path of pages directory
 if( !defined( 'YOURLS_PAGEDIR' ) )
 	define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );
@@ -109,6 +113,7 @@ require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
+require_once( YOURLS_INC.'/functions-themes.php' );
 
 // Load auth functions if needed
 if( yourls_is_private() )
