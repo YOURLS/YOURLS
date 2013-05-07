@@ -101,9 +101,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
-	<h1>
+	<div style="text-align: center;">
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
-	</h1>
+	</div>
 	<?php
 	yourls_do_action( 'html_logo' );
 }
