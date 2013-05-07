@@ -96,6 +96,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 /**
  * Display <h1> header and logo
  *
+ * @param bool $linked true if a link is wanted
  */
 function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
@@ -122,6 +123,7 @@ function yourls_html_title( $title, $rang, $subtitle = null ) {
 /**
  * Display the admin menu
  *
+ * @param string $current_page Which page is loaded?
  */
 function yourls_html_menu( $current_page = null ) {
 
@@ -215,6 +217,8 @@ function yourls_add_html_status() {
 /**
  * Wrapper function to display admin notices
  *
+ * @param string $message The message showed
+ * @param string $style notice / error / info / warning / success
  */
 function yourls_add_notice( $message, $style = 'notice' ) {
 	$message = yourls_notice_box( $message, $style );
@@ -223,7 +227,9 @@ function yourls_add_notice( $message, $style = 'notice' ) {
 
 /**
  * Return a formatted notice
- *
+ * 
+ * @param string $message The message showed
+ * @param string $style notice / error / info / warning / success
  */
 function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
@@ -234,6 +240,9 @@ HTML;
 /**
  * Wrapper function to display label
  *
+ * 
+ * @param string $message The message showed
+ * @param string $style notice / error / info / warning / success
  */
 function yourls_add_label( $message, $style = 'normal' ) {
 	echo '<span class="label label-' . $style . '">' . $message . '</span>';
@@ -245,11 +254,11 @@ function yourls_add_label( $message, $style = 'normal' ) {
  */
 function yourls_page( $page ) {
 	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if( !file_exists($include) ) {
+	if( !file_exists( $include ) ) {
 		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
-	include($include);
+	include( $include );
 	yourls_do_action( 'post_page', $page );
 	die();	
 }
@@ -441,6 +450,11 @@ function yourls_html_search( $params = array() ) {
 			yourls_do_action( 'html_search' );
 }
 
+/**
+ * Wrapper function to display the global pagination on interface
+ * 
+ * @param array $params
+ */
 function yourls_html_pagination( $params = array() ) {
 	extract( $params ); // extract $page, ...
 	if( $total_pages > 1 ) { 
