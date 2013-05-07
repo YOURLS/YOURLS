@@ -46,3 +46,12 @@ Desktop.ini
 
 # Mac crap
 .DS_Store
+
+############
+## Developpement
+############
+
+# Visual Studio
+*.sln
+*.suo
+*.phpproj
