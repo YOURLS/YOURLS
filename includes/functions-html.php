@@ -856,7 +856,10 @@ function yourls_login_screen( $error_msg = '' ) {
 	
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
+	yourls_sidebar_start();
 	yourls_html_logo();
+	yourls_sidebar_end();
+	yourls_wrapper_start();
 	?>
 	<div id="login">
 		<form method="post" class="form-horizontal" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
@@ -886,7 +889,7 @@ function yourls_login_screen( $error_msg = '' ) {
 		<script type="text/javascript">$('#username').focus();</script>
 	</div>
 	<?php
-	yourls_html_footer();
+	yourls_wrapper_end();
 	die();
 }
 
