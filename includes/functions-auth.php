@@ -15,7 +15,8 @@ function yourls_is_valid_user() {
 		$valid = ( $pre === true ) ;
 		return $pre;
 	}
-
+	
+	// $unfiltered_valid : are credentials valid? Boolean value. It's "unfiltered" to allow plugins to eventually filter it.
 	$unfiltered_valid = false;
 
 	// Logout request
@@ -72,15 +73,23 @@ function yourls_is_valid_user() {
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
 		}
-
+	
+	// Regardless of validity, allow plugins to filter the boolean and have final word
 	$valid = yourls_apply_filter( 'is_valid_user', $unfiltered_valid );
 
 	// Login for the win!
 	if ( $valid ) {
 		yourls_do_action( 'login' );
-		// (Re)store encrypted cookie if needed and tell it's ok
-		if ( !yourls_is_API() && $unfiltered_valid ) 
+		// (Re)store encrypted cookie if needed
+		if ( !yourls_is_API() ) {
 			yourls_store_cookie( YOURLS_USER );
+			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
+			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
+				yourls_redirect( $_SERVER['REQUEST_URI'] );
+			}
+		}
+		
+		// Login successful
 		return true;
 	}
 	
@@ -119,11 +128,6 @@ function yourls_check_password_hash( $stored, $plaintext ) {
 		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
 	} else {
 		// Password was sent in clear
-		$message  = '';
-		$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
-		$message .= yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-		$message .= yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
-		yourls_add_notice( $message, 'notice' );
 		return( $stored == $plaintext );
 	}
 }
@@ -239,6 +243,9 @@ function yourls_store_cookie( $user = null ) {
 			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
 			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure );
 		}
+	} else {
+		// For some reason cookies were not stored: action to be able to debug that
+		yourls_do_action( 'setcookie_failed', $user );
 	}
 }
 
