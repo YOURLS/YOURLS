@@ -8,6 +8,6 @@
  *
  */
 
-define('YOURLS_PRIVATE', false);
+define( 'YOURLS_PRIVATE', false );
 
-require_once( dirname(__FILE__).'/yourls-api.php' );
+require_once dirname( __FILE__ ) . '/yourls-api.php';
