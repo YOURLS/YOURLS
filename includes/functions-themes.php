@@ -18,7 +18,7 @@
  * @param string $context_page Explain which page is loaded
  */
 function yourls_html_template_content( $context_body, $context_page = null ) {
-    $elements =array (
+    $elements = array (
         'before' => array(
             'sidebar_start',
             'html_logo',
@@ -26,6 +26,9 @@ function yourls_html_template_content( $context_body, $context_page = null ) {
             'html_footer',
             'sidebar_end',
             'wrapper_start'
+        ),
+        'after' => array(
+            'wrapper_end'
         )
     );
     $elements = yourls_apply_filter( 'html_template', $elements );

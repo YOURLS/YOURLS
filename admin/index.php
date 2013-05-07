@@ -327,5 +327,5 @@ if ( !$is_bookmark ) {
 
 yourls_do_action( 'admin_page_after_content' );
 
-yourls_wrapper_end();
+yourls_html_template_content( 'after' );
 ?>
