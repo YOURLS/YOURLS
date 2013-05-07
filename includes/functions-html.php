@@ -166,7 +166,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul class="nav nav-list">'."\n";
+	echo '<ul class="nav nav-list">';
 	yourls_add_html_status();
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo $logout_link;
@@ -178,19 +178,19 @@ function yourls_html_menu( $current_page = null ) {
 			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
 			$class_active  = $current_page == $link ? ' active' : '';
-			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s><i class="glyphicon glyphicon-%s"></i> %s</a>', $link, $class_active, $ar['url'], $title, $ar['icon'], $anchor );
+			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s><i class="glyphicon glyphicon-%s"></i> %s</a></li>', $link, $class_active, $ar['url'], $title, $ar['icon'], $anchor );
 		}
 		// Output submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
-			echo '<li class="divider">\n';
+			echo '<ul class="nav">';
 			foreach( $admin_sublinks[$link] as $link => $ar ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a>', $link, $link, $ar['url'], $title, $anchor );
+					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a></li>', $link, $link, $ar['url'], $title, $anchor );
 				}
 			}
-			echo '<li class="divider">\n';
+			echo '</ul>';
 		}
 	}
 	
@@ -291,7 +291,7 @@ function yourls_html_footer() {
 	global $ydb;
 	
 	?>
-		<div class="footer"><p>
+		<div class="footer"><p style="text-align:center;">
 			<?php
 			$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
 			echo yourls_apply_filters( 'html_footer_text', $footer );
