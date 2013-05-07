@@ -9,35 +9,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	yourls_do_action( 'pre_html_head', $context, $title );
 	
-	// All components to false, except when specified true
-	$share = $insert = $tablesorter = $tabs = $cal = $charts = false;
-	
-	// Load components as needed
-	switch ( $context ) {
-		case 'infos':
-			$share = $tabs = $charts = true;
-			break;
+	// Load charts component as needed
+	$charts = ( $context == 'infos' );
 		
-		case 'bookmark':
-			$share = $insert = $tablesorter = true;
-			break;
-		
-		case 'index':
-			$insert = $tablesorter = $cal = $share = true;
-			break;
-		
-		case 'plugins':
-		case 'tools':
-			$tablesorter = true;
-			break;
-		
-		case 'install':
-		case 'login':
-		case 'new':
-		case 'upgrade':
-			break;
-	}
-	
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
 		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
@@ -77,7 +51,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php if ( $charts ) { ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
-					 google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
+					google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
 			</script>
 	<?php } ?>
 	<script type="text/javascript">
@@ -129,7 +103,7 @@ function yourls_html_menu( $current_page = null ) {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="glyphicon glyphicon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="glyphicon glyphicon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
@@ -335,8 +309,8 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 					<input type="text" id="add-url" name="url" placeholder="http://&hellip;" size="80">
 				</div>
 				<div class="col col-lg-3">
-					<label><?php yourls_e('Short URL'); ?> <span class="label label-info"><?php yourls_e( 'Optional'); ?></span></label>
-					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword'); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
+					<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
+					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
 					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				</div>
 				<div class="col col-lg-2">
@@ -402,9 +376,9 @@ function yourls_html_search( $params = array() ) {
 
 						// Fifth search control: Show links created before/after/between ...
 						$_options = array(
-							'before'  => yourls__('before'),
-							'after'   => yourls__('after'),
-							'between' => yourls__('between'),
+							'before'  => yourls__( 'before' ),
+							'after'   => yourls__( 'after' ),
+							'between' => yourls__( 'between' ),
 						);
 						$_select_creation = yourls_html_select( 'date_filter', $_options, $date_filter );
 						$_input_creation  = '<input type="text" name="date_first" id="date_first" class="text col-lg-7" value="' . $date_first . '" />';
@@ -467,7 +441,7 @@ function yourls_html_pagination( $params = array() ) {
 				$p_end = min( max( 5, $page + 2 ), $total_pages );
 				if( $p_start >= 2 ) {
 					$link = yourls_add_query_arg( array( 'page' => 1 ) );
-					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">&laquo;</a></li>';
+					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__( 'Go to First Page' ) . '">&laquo;</a></li>';
 					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page - 1 ) ).'">&lsaquo;</a></li>';
 				}
 				for( $i = $p_start ; $i <= $p_end; $i++ ) {
@@ -481,7 +455,7 @@ function yourls_html_pagination( $params = array() ) {
 				if( ( $p_end ) < $total_pages ) {
 					$link = yourls_add_query_arg( array( 'page' => $total_pages ) );
 					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page + 1 ) ).'">&rsaquo;</a></li>';
-					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">&raquo;</a></li>';
+					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__( 'Go to First Page' ) . '">&raquo;</a></li>';
 				}
 				?>
 			</ul>

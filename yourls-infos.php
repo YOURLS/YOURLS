@@ -207,7 +207,7 @@ yourls_html_template_content( 'before', 'stats' );
 yourls_html_title( yourls__( 'Statistics Panel' ), 1);
 yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 
-<span class="label"><?php yourls_e( 'Short URL'); ?></span> <img src="<?php echo yourls_favicon(); ?>"/>
+<span class="label"><?php yourls_e( 'Short URL' ); ?></span> <img src="<?php echo yourls_favicon(); ?>"/>
 <?php if( $aggregate ) {
 	$i = 0;
 	foreach( $keyword_list as $k ) {
@@ -225,24 +225,22 @@ yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 	if( isset( $keyword_list ) && count( $keyword_list ) > 1 )
 		echo ' <a href="'. yourls_link($keyword).'+all" title="' . yourls_esc_attr__( 'Aggregate stats for duplicate short URLs' ) . '"><img src="' . yourls_match_current_protocol( YOURLS_SITE ) . '/images/chart_bar_add.png" border="0" /></a>';
 } ?></h3>
-<h3 id="longurl"><span class="label"><?php yourls_e( 'Long URL'); ?></span> <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl ); ?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
+<span class="label"><?php yourls_e( 'Long URL' ); ?></span> <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl ); ?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?>
 
 <div id="tabs">
-	<div class="wrap_unfloat">
-	<ul id="headers" class="toggle_display stat_tab">
+	<ul class="nav nav-tabs">
 		<?php if( yourls_do_log_redirect() ) { ?>
-		<li class="selected"><a href="#stat_tab_stats"><h2><?php yourls_e( 'Traffic statistics'); ?></h2></a></li>
-		<li><a href="#stat_tab_location"><h2><?php yourls_e( 'Traffic location'); ?></h2></a></li>
-		<li><a href="#stat_tab_sources"><h2><?php yourls_e( 'Traffic sources'); ?></h2></a></li>
+		<li class="active"><a href="#stat-tab-stats"><?php yourls_e( 'Traffic statistics' ); ?></a></li>
+		<li><a href="#stat-tab-location"><?php yourls_e( 'Traffic location' ); ?></a></li>
+		<li><a href="#stat-tab-sources"><?php yourls_e( 'Traffic sources' ); ?></a></li>
 		<?php } ?>
-		<li><a href="#stat_tab_share"><h2><?php yourls_e( 'Share'); ?></h2></a></li>
+		<li class="pull-right"><a href="#stat-tab-share"><?php yourls_e( 'Share' ); ?></a></li>
 	</ul>
-	</div>
 
 			
 <?php if( yourls_do_log_redirect() ) { ?>
 	<div id="stat_tab_stats" class="tab">
-		<h2><?php yourls_e( 'Traffic statistics'); ?></h2>
+		<h3><?php yourls_e( 'Traffic statistics' ); ?></h3>
 		
 		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword ); ?>
 		
@@ -253,7 +251,7 @@ yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 				'24' => yourls__( 'Last 24 hours' ),
 				'7'  => yourls__( 'Last 7 days' ),
 				'30' => yourls__( 'Last 30 days' ),
-				'all'=> yourls__( 'All time' ),
+				'all'=> yourls__( 'All time' )
 			);
 			
 			// Which graph to generate ?
@@ -422,7 +420,7 @@ yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 		<?php yourls_do_action( 'post_yourls_info_stats', $keyword ); ?>
 		
 		<?php } else {
-			echo '<p>' . yourls__( 'No traffic yet. Get some clicks first!' ) . '</p>';
+			yourls_add_notice( yourls__( 'No traffic yet. Get some clicks first!' ), 'error' );
 		} ?>
 	</div>
 
@@ -443,7 +441,7 @@ yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 					<ul id="details_countries" style="display:none" class="no_bullet">
 					<?php
 					foreach( $countries as $code=>$count ) {
-						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ) . ') : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
+						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
 					}		
 					?>
 					</ul>
@@ -538,7 +536,7 @@ yourls_html_title( yourls_esc_html( $title ), 2 ); ?>
 	<div id="stat_tab_share" class="tab">
 		<h2><?php yourls_e( 'Share' ); ?></h2>
 		
-		<?php yourls_share_box( $longurl, yourls_link($keyword), $title, '', '<h3>' . yourls__( 'Short link' ) . '</h3>', '<h3>' . yourls__( 'Quick Share' ) . '</h3>'); ?>
+		<?php yourls_share_box( $longurl, yourls_link($keyword), $title, '', '<h3>' . yourls__( 'Short link' ) . '</h3>', '<h3>' . yourls__( 'Quick Share' ) . '</h3>' ); ?>
 
 	</div>
 	

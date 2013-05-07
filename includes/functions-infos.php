@@ -165,7 +165,7 @@ function yourls_stats_line( $values, $id = null ) {
 	
 	// if $id is null then assign a random string
 	if( $id === null )
-		$id = uniqid ( 'yourls_stats_line_' );
+		$id = uniqid( 'yourls_stats_line_' );
 		
 	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
 	if ( count( $values ) == 1 )

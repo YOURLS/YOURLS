@@ -299,7 +299,7 @@ function yourls_has_active_plugins( ) {
 function yourls_get_plugins( ) {
 	global $ydb;
 	
-	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
+	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php' );
 	
 	if( !$plugins )
 		return array();

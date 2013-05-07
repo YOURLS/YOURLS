@@ -2034,9 +2034,9 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 	// Allow plugin to filter the output error trigger
 	if ( YOURLS_DEBUG && yourls_apply_filters( 'deprecated_function_trigger_error', true ) ) {
 		if ( ! is_null( $replacement ) )
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
+			trigger_error( sprintf( yourls__( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.' ), $function, $version, $replacement ) );
 		else
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
+			trigger_error( sprintf( yourls__( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.' ), $function, $version ) );
 	}
 }
 
