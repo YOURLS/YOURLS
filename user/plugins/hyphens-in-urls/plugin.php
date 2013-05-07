@@ -2,7 +2,7 @@
 /*
 Plugin Name: Allow Hyphens in Short URLs
 Plugin URI: http://yourls.org/
-Description: Allow hyphens in short URLs (like <tt>http://sho.rt/hello-world</tt>)
+Description: Allow hyphens in short URLs (like <code>http://sho.rt/hello-world</code>)
 Version: 1.0
 Author: Ozh
 Author URI: http://ozh.org/

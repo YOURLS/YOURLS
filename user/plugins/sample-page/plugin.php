@@ -41,8 +41,8 @@ function ozh_yourls_samplepage_do_page() {
 		<p>This plugin stores an integer in the option database</p>
 		<form method="post">
 		<input type="hidden" name="nonce" value="$nonce" />
-		<p><label for="test_option">Enter an integer</label> <input type="text" id="test_option" name="test_option" value="$test_option" /></p>
-		<p><input type="submit" value="Update value" /></p>
+		<label for="test_option">Enter an integer</label> <input type="text" id="test_option" name="test_option" value="$test_option" />
+		<input type="submit" class="btn btn-info" value="Update value" />
 		</form>
 
 HTML;
