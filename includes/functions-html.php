@@ -845,3 +845,23 @@ function yourls_l10n_calendar_strings() {
 	yourls__( 'Today' );
 	yourls__( 'Close' );
 }
+
+/**
+ * Display custom message based on query string parameter 'login_msg'
+ *
+ * @since 1.7
+ */
+function yourls_display_login_message() {
+	if( !isset( $_GET['login_msg'] ) )
+		return;
+	
+	switch( $_GET['login_msg'] ) {
+		case 'pwdclear':
+			$message  = '';
+			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
+			$message .= yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
+			yourls_add_notice( $message, 'notice' );
+			break;
+	}
+}
