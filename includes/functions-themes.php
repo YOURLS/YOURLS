@@ -4,7 +4,7 @@
  * The filter/theme API is located in this file, which allows for designing 
  * and customize the interface.
  * 
- * Inspired by and used some functions in functions-plugins.
+ * Inspired by some functions in functions-plugins.php
  *
  * @author Leo Colombaro
  * @since 1.7
@@ -31,7 +31,10 @@ function yourls_html_template_content( $context_body, $context_page = null ) {
             'wrapper_end'
         )
     );
+    
+    // Allow theming!
     $elements = yourls_apply_filter( 'html_template', $elements );
+    
     foreach( $elements[ $context_body ] as $element ) {
         if( is_array( $element ) ) {
             $function = 'yourls_' . $element[0];
