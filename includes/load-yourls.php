@@ -4,10 +4,10 @@
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	require_once( dirname( dirname( __FILE__ ) ) . '/user/config.php' );
+	require_once dirname( dirname( __FILE__ ) ) . '/user/config.php';
 } elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
 	// config.php in /includes/
-	require_once( dirname( __FILE__ ) . '/config.php' );
+	require_once dirname( __FILE__ ) . '/config.php';
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
@@ -104,20 +104,20 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 }
 
 // Include all functions
-require_once( YOURLS_INC.'/version.php' );
-require_once( YOURLS_INC.'/functions.php');
-require_once( YOURLS_INC.'/functions-plugins.php' );
-require_once( YOURLS_INC.'/functions-formatting.php' );
-require_once( YOURLS_INC.'/functions-api.php' );
-require_once( YOURLS_INC.'/functions-kses.php' );
-require_once( YOURLS_INC.'/functions-l10n.php' );
-require_once( YOURLS_INC.'/functions-compat.php' );
-require_once( YOURLS_INC.'/functions-html.php' );
-require_once( YOURLS_INC.'/functions-themes.php' );
+require_once YOURLS_INC . '/version.php';
+require_once YOURLS_INC . '/functions.php';
+require_once YOURLS_INC . '/functions-plugins.php';
+require_once YOURLS_INC . '/functions-formatting.php';
+require_once YOURLS_INC . '/functions-api.php';
+require_once YOURLS_INC . '/functions-kses.php';
+require_once YOURLS_INC . '/functions-l10n.php';
+require_once YOURLS_INC . '/functions-compat.php';
+require_once YOURLS_INC . '/functions-html.php';
+require_once YOURLS_INC . '/functions-themes.php';
 
 // Load auth functions if needed
 if( yourls_is_private() )
-	require_once( YOURLS_INC.'/functions-auth.php' );
+	require_once YOURLS_INC.'/functions-auth.php';
 
 // Load locale
 yourls_load_default_textdomain();
@@ -143,16 +143,16 @@ yourls_fix_request_uri();
 global $ydb;
 
 // Allow drop-in replacement for the DB engine
-if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
-	require_once( YOURLS_USERDIR.'/db.php' );
+if( file_exists( YOURLS_USERDIR . '/db.php' ) ) {
+	require_once YOURLS_USERDIR . '/db.php';
 } else {
-	require_once( YOURLS_INC.'/class-mysql.php' );
+	require_once YOURLS_INC . '/class-mysql.php';
 	yourls_db_connect();
 }
 
 // Allow early inclusion of a cache layer
-if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
-	require_once( YOURLS_USERDIR.'/cache.php' );
+if( file_exists( YOURLS_USERDIR . '/cache.php' ) )
+	require_once YOURLS_USERDIR . '/cache.php';
 
 // Read options right from start
 yourls_get_all_options();

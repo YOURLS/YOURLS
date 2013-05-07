@@ -22,10 +22,10 @@ function yourls_set_DB_driver( ) {
 
 	// Get the new driver
 	if ( in_array( $driver, array( 'mysql', 'mysqli', 'pdo' ) ) ) {
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_core.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php' );
+		require_once YOURLS_INC . '/ezSQL/ez_sql_core.php';
+		require_once YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php';
+		require_once YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php';
+		require_once YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php';
 	}
 	$class = 'ezSQL_' . $driver . '_yourls';
 

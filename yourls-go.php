@@ -4,7 +4,7 @@
  */
 
 define( 'YOURLS_GO', true );
-require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 
 // Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-go.php)
 if( !isset( $keyword ) && isset( $_GET['id'] ) )

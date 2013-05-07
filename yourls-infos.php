@@ -1,8 +1,8 @@
 <?php
 // TODO: make things cleaner. This file is an awful HTML/PHP soup.
 define( 'YOURLS_INFOS', true );
-require_once( dirname( __FILE__ ).'/includes/load-yourls.php' );
-require_once( YOURLS_INC.'/functions-infos.php' );
+require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
+require_once YOURLS_INC . '/functions-infos.php';
 yourls_maybe_require_auth();
 
 // Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-infos.php)
