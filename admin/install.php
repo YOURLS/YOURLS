@@ -44,31 +44,28 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 
 // Start output
 yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
+yourls_html_logo( false );
 yourls_wrapper_start();
 ?>
 <div id="login">
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>
-		<p>
-			<img src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS" />
-		</p>
 		<?php
 			// Print errors, warnings and success messages
 			foreach ( array ('error', 'warning', 'success') as $info ) {
 				if ( count( $$info ) > 0 ) {
-					echo "<ul class='$info'>";
+					echo "<div class='alert alert-$info'><ul>";
 					foreach( $$info as $msg ) {
 						echo '<li>'.$msg."</li>\n";
 					}
-					echo '</ul>';
+					echo '</ul></div>';
 				}
 			}
 
 			// Display install button or link to admin area if applicable
-			if( !yourls_is_installed() && !isset($_REQUEST['install']) ) {
-				echo '<p style="text-align: center;"><input type="submit" name="install" value="' . yourls__( 'Install YOURLS') .'" class="button" /></p>';
+			if( !yourls_is_installed() && !isset( $_REQUEST['install'] ) ) {
+				echo '<p><input type="submit" name="install" value="' . yourls__( 'Install YOURLS' ) . '" class="btn" /></p>';
 			} else {
-				if( count($error) == 0 )
-					echo '<p style="text-align: center;">&raquo; <a href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page') . '">' . yourls__( 'YOURLS Administration Page') . '</a></p>';
+				echo '<p><a class="btn" href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page' ) . '">' . yourls__( 'YOURLS Administration Page') . '</a></p>';
 			}
 		?>
 	</form>

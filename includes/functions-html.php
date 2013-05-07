@@ -98,11 +98,14 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  * Display <h1> header and logo
  *
  */
-function yourls_html_logo() {
+function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
+	$logo = '<img class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
+	if ( $linked )
+	$logo = '<a href="' . yourls_admin_url( 'index.php' ) . '" title="YOURLS">' . $logo . '</a>';
 	?>
 	<div style="text-align: center;">
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
+		<?php echo $logo; ?>
 	</div>
 	<?php
 	yourls_do_action( 'html_logo' );
