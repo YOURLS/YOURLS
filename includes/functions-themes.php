@@ -38,7 +38,7 @@ function yourls_html_template_content( $context_body, $context_page = null ) {
             $function( $element[1] );
         } else {
             $function = 'yourls_' . $element;
-            $function( $element );
+            $function();
         }
     }
 }
