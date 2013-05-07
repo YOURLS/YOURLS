@@ -44,11 +44,12 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 
 // Start output
 yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
+yourls_wrapper_start();
 ?>
 <div id="login">
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>
 		<p>
-			<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" />
+			<img src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS" />
 		</p>
 		<?php
 			// Print errors, warnings and success messages
@@ -72,4 +73,5 @@ yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
 		?>
 	</form>
 </div>
-<?php yourls_html_footer(); ?>
+<?php 
+yourls_wrapper_end(); ?>

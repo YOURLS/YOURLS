@@ -4,8 +4,13 @@ require_once( dirname( dirname( __FILE__ ) ).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
+yourls_sidebar_start();
 yourls_html_logo();
 yourls_html_menu( 'tools' );
+yourls_html_footer();
+yourls_sidebar_end();
+
+yourls_wrapper_start();
 yourls_html_title( yourls__( 'Tools' ), 1 ); ?>
 
 	<div class="page-header">
@@ -130,4 +135,5 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 
 	<?php } // end is private ?>
 
-<?php yourls_html_footer(); ?>
+<?php 
+yourls_wrapper_end(); ?>

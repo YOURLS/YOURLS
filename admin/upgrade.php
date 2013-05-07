@@ -9,6 +9,7 @@ yourls_maybe_require_auth();
 yourls_html_head( 'upgrade', yourls__( 'Upgrade YOURLS' ) );
 yourls_html_logo();
 yourls_html_menu();
+yourls_wrapper_start();
 
 yourls_html_title( yourls__( 'Upgrade YOURLS' ), 2 ); 
 
@@ -79,7 +80,6 @@ if ( !yourls_upgrade_is_needed() ) {
 	
 }
 
-		
-?>	
-
-<?php yourls_html_footer(); ?>
+yourls_wrapper_end();
+yourls_html_footer(); 
+?>

@@ -71,6 +71,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for yourls.org">
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="canonical" href="<?php yourls_site_url(); ?>/">
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>">
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
 	<script src="<?php yourls_site_url(); ?>/assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
@@ -100,7 +101,6 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
-	<div class="menu col col-lg-2 col-offset-2 affix">
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img class="logo" src="<?php yourls_site_url(); ?>/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
 	</h1>
@@ -137,7 +137,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_links['admin'] = array(
 		'url'    => yourls_admin_url( 'index.php' ),
 		'title'  => yourls__( 'Go to the admin interface' ),
-		'anchor' => yourls__( 'Admin interface' ),
+		'anchor' => yourls__( 'Interface' ),
 		'icon'   => 'home'
 	);
 	
@@ -164,11 +164,11 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<hr /><ul class="nav nav-list">'."\n";
+	echo '<ul class="nav nav-list">'."\n";
+	yourls_add_html_status();
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo $logout_link;
 
-	yourls_add_html_status();
 	echo '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
 
 	foreach( (array)$admin_links as $link => $ar ) {
@@ -196,7 +196,7 @@ function yourls_html_menu( $current_page = null ) {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 	
 	yourls_do_action( 'admin_menu' );
-	echo "</ul><hr /></div><div class='col col-lg-6 col-push-4'>\n";
+	echo "</ul><hr />\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 }
@@ -798,6 +798,38 @@ function yourls_table_tbody_end() {
  */
 function yourls_table_end() {
 	echo yourls_apply_filter( 'table_end', '</table>' );
+}
+
+/**
+ * Echo the content start tag
+ *
+ */
+function yourls_wrapper_start() {
+	echo yourls_apply_filter( 'wrapper_start', '<div class="col col-lg-6 col-push-4">' );
+}
+
+/**
+ * Echo the content end tag
+ *
+ */
+function yourls_wrapper_end() {
+	echo yourls_apply_filter( 'wrapper_end', '</div>' );
+}
+
+/**
+ * Echo the sidebar start tag
+ *
+ */
+function yourls_sidebar_start() {
+	echo yourls_apply_filter( 'sidebar_start', '<div class="menu col col-lg-2 col-offset-2 affix">' );
+}
+
+/**
+ * Echo the sidebar end tag
+ *
+ */
+function yourls_sidebar_end() {
+	echo yourls_apply_filter( 'sidebar_end', '</div>' );
 }
 
 /**
