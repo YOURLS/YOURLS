@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * YOURLS API
  *
  * Note about translation : this file should NOT be translation ready

@@ -1,4 +1,8 @@
 <?php
+/**
+ * YOURLS Switch
+ */
+
 define( 'YOURLS_GO', true );
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
