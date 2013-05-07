@@ -47,6 +47,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<link rel="canonical" href="<?php yourls_site_url(); ?>/">
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>">
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
+	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/fonts-yourls-temp.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
 	<script src="<?php yourls_site_url(); ?>/assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php if ( $charts ) { ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>

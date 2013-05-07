@@ -27,9 +27,6 @@ user/plugins/*
 pages/*
 !pages/examplepage.php
 
-# Temp
-assets/css/less/*
-
 # Keep index.html
 !user/index.html
 !user/*/index.html
@@ -55,3 +52,7 @@ Desktop.ini
 *.sln
 *.suo
 *.phpproj
+
+# Temp
+assets/css/less/*
+*-temp.*
