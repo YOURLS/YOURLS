@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Display HTML head and <body> tag
  *
@@ -327,7 +326,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 					<input type="text" id="add-url" name="url" placeholder="http://&hellip;" size="80">
 				</div>
 				<div class="col col-lg-3">
-					<label><span class="label label-info"><?php yourls_e( 'Optional'); ?></span> <?php yourls_e('Short URL'); ?></label>
+					<label><?php yourls_e('Short URL'); ?> <span class="label label-info"><?php yourls_e( 'Optional'); ?></span></label>
 					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword'); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
 					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				</div>
@@ -869,13 +868,13 @@ function yourls_login_screen( $error_msg = '' ) {
 			<div class="control-group">
 				<label class="control-label" for="username"><?php yourls_e( 'Username' ); ?></label>
 				<div class="controls">
-					<input type="text" id="username" name="username" size="30" class="text">
+					<input type="text" id="username" name="username" class="text">
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="password"><?php yourls_e( 'Password' ); ?></label>
 				<div class="controls">
-					<input type="password" id="password" name="password" size="30" class="text">
+					<input type="password" id="password" name="password" class="text">
 				</div>
 			</div>
 			<div class="control-group">
