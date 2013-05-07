@@ -865,3 +865,4 @@ function yourls_display_login_message() {
 			break;
 	}
 }
+
