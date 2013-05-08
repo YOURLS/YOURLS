@@ -49,4 +49,7 @@ function yourls_html_template_content( $template_part ) {
             call_user_func_array( 'yourls_' . $element, array() );
         }
     }
+    
+    if( $context_body == 'after' );
+        yourls_html_ending();
 }
