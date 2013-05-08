@@ -768,7 +768,8 @@ function yourls_html_menu() {
  *
  */
 function yourls_add_notice( $message, $style = 'notice' ) {
-	$message = yourls_notice_box( $message, $style );
+	// Escape single quotes in $message to avoid breaking the anonymous function
+	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style );
 	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 }
 
@@ -859,8 +860,8 @@ function yourls_display_login_message() {
 		case 'pwdclear':
 			$message  = '';
 			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
-			$message .= yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-			$message .= yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
+			$message .= ' ' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= ' ' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
 			yourls_add_notice( $message, 'notice' );
 			break;
 	}
