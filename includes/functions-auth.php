@@ -15,7 +15,8 @@ function yourls_is_valid_user() {
 		$valid = ( $pre === true ) ;
 		return $pre;
 	}
-
+	
+	// $unfiltered_valid : are credentials valid? Boolean value. It's "unfiltered" to allow plugins to eventually filter it.
 	$unfiltered_valid = false;
 
 	// Logout request
@@ -26,8 +27,7 @@ function yourls_is_valid_user() {
 	}
 	
 	// Check cookies or login request. Login form has precedence.
-	global $yourls_user_passwords;
-	
+
 	yourls_do_action( 'pre_login' );
 
 	// Determine auth method and check credentials
@@ -72,15 +72,30 @@ function yourls_is_valid_user() {
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
 		}
-
+	
+	// Regardless of validity, allow plugins to filter the boolean and have final word
 	$valid = yourls_apply_filter( 'is_valid_user', $unfiltered_valid );
 
 	// Login for the win!
 	if ( $valid ) {
 		yourls_do_action( 'login' );
-		// (Re)store encrypted cookie if needed and tell it's ok
-		if ( !yourls_is_API() && $unfiltered_valid ) 
+		
+		// (Re)store encrypted cookie if needed
+		if ( !yourls_is_API() ) {
 			yourls_store_cookie( YOURLS_USER );
+			
+			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
+			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
+				$url = $_SERVER['REQUEST_URI'];
+				// If password stored unencrypted, append query string. TODO: deprecate this when there's proper user management
+				if( !yourls_has_hashed_password( $_REQUEST['username'] ) ) {
+					$url = yourls_add_query_arg( array( 'login_msg' => 'pwdclear' ) );
+				}
+				yourls_redirect( $url );
+			}
+		}
+		
+		// Login successful
 		return true;
 	}
 	
@@ -100,7 +115,7 @@ function yourls_is_valid_user() {
  */
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
-	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $yourls_user_passwords[ $_REQUEST['username'] ], $_REQUEST['password'] ) ) {
+	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
 		yourls_set_user( $_REQUEST['username'] );
 		return true;
 	}
@@ -108,26 +123,42 @@ function yourls_check_username_password() {
 }
 
 /**
- * Check a REQUEST password sent in plain text against stored password which can be a salted hash
+ * Check a submitted password sent in plain text against stored password which can be a salted hash
  *
  */
-function yourls_check_password_hash( $stored, $plaintext ) {
-	if ( substr( $stored, 0, 4 ) == 'md5:' and strlen( $stored ) == 42 ) {
+function yourls_check_password_hash( $user, $submitted_password ) {
+	global $yourls_user_passwords;
+	
+	if( !isset( $yourls_user_passwords[ $user ] ) )
+		return false;
+		
+	if( yourls_has_hashed_password( $user ) ) {
 		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
-		// And 42. Of course. http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
-		list( $temp, $salt, $md5 ) = explode( ':', $stored );
-		return( $stored == 'md5:'.$salt.':'.md5( $salt.$plaintext ) );
+		list( , $salt, ) = explode( ':', $yourls_user_passwords[ $user ] );
+		return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
 	} else {
-		// Password was sent in clear
-		$message  = '';
-		$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
-		$message .= yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-		$message .= yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
-		yourls_add_notice( $message, 'notice' );
-		return( $stored == $plaintext );
+		// Password stored in clear text
+		return( $yourls_user_passwords[ $user ] == $submitted_password );
 	}
 }
 
+/**
+ * Check if a user has a hashed password
+ *
+ * Check if a user password is 'md5:[38 chars]'. TODO: deprecate this when/if we have proper user management with
+ * password hashes stored in the DB
+ *
+ * @since 1.7
+ * @param string $user user login
+ * @return bool true if password hashed, false otherwise
+ */
+function yourls_has_hashed_password( $user ) {
+	global $yourls_user_passwords;
+	return(    isset( $yourls_user_passwords[ $user ] )
+	        && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
+		    && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+		   );
+}
 
 /**
  * Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
@@ -239,6 +270,9 @@ function yourls_store_cookie( $user = null ) {
 			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
 			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure );
 		}
+	} else {
+		// For some reason cookies were not stored: action to be able to debug that
+		yourls_do_action( 'setcookie_failed', $user );
 	}
 }
 
@@ -250,3 +284,4 @@ function yourls_set_user( $user ) {
 	if( !defined( 'YOURLS_USER' ) )
 		define( 'YOURLS_USER', $user );
 }
+

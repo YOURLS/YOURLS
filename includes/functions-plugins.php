@@ -31,6 +31,7 @@ $yourls_filters = array();
  * @param callback $function_name the name of the function that is to be called.
  * @param integer $priority optional. Used to specify the order in which the functions associated with a particular action are executed (default=10, lower=earlier execution, and functions with the same priority are executed in the order in which they were added to the filter)
  * @param int $accepted_args optional. The number of arguments the function accept (default is the number provided).
+ * @param string $type
  */
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
 	global $yourls_filters;
@@ -72,7 +73,6 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  * @param string $hook hook to which the function is attached
  * @param string|array $function used for creating unique id
  * @param int|bool $priority used in counting how many hooks were applied.  If === false and $function is an object reference, we return the unique id only if it already has one, false otherwise.
- * @param string $type filter or action
  * @return string unique ID for usage as array key
  */
 function yourls_filter_unique_id( $hook, $function, $priority ) {
@@ -293,13 +293,11 @@ function yourls_has_active_plugins( ) {
 /**
  * List plugins in /user/plugins
  *
- * @global $ydb Storage of mostly everything YOURLS needs to know
+ * @global object $ydb Storage of mostly everything YOURLS needs to know
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
 function yourls_get_plugins( ) {
-	global $ydb;
-	
-	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php' );
+	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
 	
 	if( !$plugins )
 		return array();
@@ -316,7 +314,7 @@ function yourls_get_plugins( ) {
 /**
  * Check if a plugin is active
  *
- * @param string $file Physical path to plugin file
+ * @param string $plugin Physical path to plugin file
  * @return bool
  */
 function yourls_is_active_plugin( $plugin ) {
@@ -364,13 +362,13 @@ function yourls_get_plugin_data( $file ) {
 
 // Include active plugins
 function yourls_load_plugins() {
+	// Don't load plugins when installing or updating
+	if( yourls_is_installing() OR yourls_is_upgrading() )
+		return;
+	
 	global $ydb;
 	$ydb->plugins = array();
 	$active_plugins = yourls_get_option( 'active_plugins' );
-	
-	// Don't load plugins when installing or updating
-	if( !$active_plugins OR yourls_is_installing() OR yourls_upgrade_is_needed() )
-		return;
 	
 	foreach( (array)$active_plugins as $key=>$plugin ) {
 		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
@@ -393,6 +391,7 @@ function yourls_load_plugins() {
  * Check if a file is safe for inclusion (well, "safe", no guarantee)
  *
  * @param string $file Full pathname to a file
+ * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
 	if (
@@ -446,7 +445,7 @@ function yourls_activate_plugin( $plugin ) {
 }
 
 /**
- * Dectivate a plugin
+ * Deactivate a plugin
  *
  * @param string $plugin Plugin filename (full relative to plugins directory)
  * @return mixed string if error or true if success

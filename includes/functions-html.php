@@ -49,7 +49,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php if ( $context == 'infos' ) { 	// Load charts component as needed ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
-					google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
+					 google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
 			</script>
 	<?php } ?>
 	<script type="text/javascript">
@@ -193,7 +193,8 @@ function yourls_add_html_status() {
  * @param string $style notice / error / info / warning / success
  */
 function yourls_add_notice( $message, $style = 'notice' ) {
-	$message = yourls_notice_box( $message, $style );
+	// Escape single quotes in $message to avoid breaking the anonymous function 
+	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style ); 
 	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 }
 
@@ -273,21 +274,21 @@ function yourls_html_footer() {
 	
 	?>
 		<div class="footer"><p style="text-align:center;">
-			<?php
+		<?php
 			$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
-			echo yourls_apply_filters( 'html_footer_text', $footer );
-			?>
-		</p></div>
-		<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+		echo yourls_apply_filters( 'html_footer_text', $footer );
+		?>
+	</p></div>
+	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 			echo '<pre class="debug-info">';
 			echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
-			echo join( "\n", $ydb->debug_log );
+		echo join( "\n", $ydb->debug_log );
 			echo '</pre>';
-		} ?>
-		<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
+	} ?>
+	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
 	</div></div>
-</body>
-</html>
+	</body>
+	</html>
 	<?php
 }
 
@@ -309,7 +310,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 				<div class="col col-lg-3">
 					<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
 					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
-					<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
+				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				</div>
 				<div class="col col-lg-2">
 					<button type="submit" id="add-button" name="add-button" class="btn btn-primary" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
@@ -363,7 +364,7 @@ function yourls_html_search( $params = array() ) {
 							'desc' => yourls__( 'Descending' ),
 						);
 						$_select2_order = yourls_html_select( 'sort_order', $_options, $sort_order );
-						
+
 						// Fourth search control: Show links with more than XX clicks
 						$_options = array(
 							'more' => yourls__( 'more' ),
@@ -430,34 +431,34 @@ function yourls_html_search( $params = array() ) {
 function yourls_html_pagination( $params = array() ) {
 	extract( $params ); // extract $page, ...
 	if( $total_pages > 1 ) { 
-		?>
+			?>
 		<div>
 			<ul class="pagination">
-			<?php 
-				// Pagination offsets: min( max ( zomg! ) );
+					<?php
+					// Pagination offsets: min( max ( zomg! ) );
 				$p_start = max( min( $total_pages - 4, $page - 2 ), 1 );
-				$p_end = min( max( 5, $page + 2 ), $total_pages );
-				if( $p_start >= 2 ) {
+					$p_end = min( max( 5, $page + 2 ), $total_pages );
+					if( $p_start >= 2 ) {
 					$link = yourls_add_query_arg( array( 'page' => 1 ) );
 					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__( 'Go to First Page' ) . '">&laquo;</a></li>';
 					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page - 1 ) ).'">&lsaquo;</a></li>';
-				}
-				for( $i = $p_start ; $i <= $p_end; $i++ ) {
-					if( $i == $page ) {
+					}
+					for( $i = $p_start ; $i <= $p_end; $i++ ) {
+						if( $i == $page ) {
 						echo '<li class="active"><a href="#">' . $i . '</a></li>';
-					} else {
+						} else {
 						$link = yourls_add_query_arg( array( 'page' => $i ) );
 						echo '<li><a href="' . $link . '" title="' . sprintf( yourls_esc_attr( 'Page %s' ), $i ) .'">'.$i.'</a></li>';
+						}
 					}
-				}
-				if( ( $p_end ) < $total_pages ) {
+					if( ( $p_end ) < $total_pages ) {
 					$link = yourls_add_query_arg( array( 'page' => $total_pages ) );
 					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page + 1 ) ).'">&rsaquo;</a></li>';
 					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__( 'Go to First Page' ) . '">&raquo;</a></li>';
-				}
-				?>
+					}
+					?>
 			</ul>
-		</div>
+			</div>
 		<?php }
 		yourls_do_action( 'html_pagination' );
 }
@@ -471,7 +472,7 @@ function yourls_html_pagination( $params = array() ) {
  * @param array $options array of 'value' => 'Text displayed'
  * @param string $selected optional 'value' from the $options array that will be highlighted
  * @param boolean $display false (default) to return, true to echo
- * @return HTML content of the select element
+ * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
 	$html = "<select name='$name' id='$name' class='input-group-addon col-lg-5'>\n";
@@ -585,9 +586,6 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
-	global $ydb;
-	
-	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
@@ -596,10 +594,6 @@ function yourls_table_edit_row( $keyword ) {
 	$safe_url = yourls_esc_attr( $url );
 	$safe_title = yourls_esc_attr( $title );
 	$www = yourls_link();
-	
-	$save_link = yourls_nonce_url( 'save-link_'.$id,
-		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
-	);
 	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 	
@@ -876,7 +870,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	</div>
 	<?php
 	yourls_wrapper_end();
-	die();
+	die();	
 }
 
 /**
@@ -896,3 +890,24 @@ function yourls_l10n_calendar_strings() {
 	yourls__( 'Today' );
 	yourls__( 'Close' );
 }
+
+/**
+ * Display custom message based on query string parameter 'login_msg'
+ *
+ * @since 1.7
+ */
+function yourls_display_login_message() {
+	if( !isset( $_GET['login_msg'] ) )
+		return;
+	
+	switch( $_GET['login_msg'] ) {
+		case 'pwdclear':
+			$message  = '';
+			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
+			$message .= ' ' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= ' ' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
+			yourls_add_notice( $message, 'notice' );
+			break;
+	}
+}
+

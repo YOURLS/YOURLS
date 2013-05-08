@@ -11,13 +11,15 @@ function yourls_set_DB_driver( ) {
 
 	// Auto-pick the driver. Priority: user defined, then PDO, then mysqli, then mysql
 	if ( defined( 'YOURLS_DB_DRIVER' ) ) {
-		$driver = YOURLS_DB_DRIVER;
+		$driver = strtolower( YOURLS_DB_DRIVER ); // accept 'MySQL', 'mySQL', etc
 	} elseif ( extension_loaded( 'pdo_mysql' ) ) {
 		$driver = 'pdo';
 	} elseif ( extension_loaded( 'mysqli' ) ) {
 		$driver = 'mysqli';
 	} elseif ( extension_loaded( 'mysql' ) ) {
 		$driver = 'mysql';
+	} else {
+		$driver = '';
 	}
 
 	// Get the new driver
