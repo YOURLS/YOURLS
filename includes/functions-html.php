@@ -173,8 +173,6 @@ function yourls_html_menu( $current_page = null ) {
 	
 	yourls_do_action( 'admin_menu' );
 	echo "</ul><hr />\n";
-	yourls_do_action( 'admin_notices' );
-	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 }
 
 function yourls_add_html_status() {
@@ -187,7 +185,7 @@ function yourls_add_html_status() {
 }
 
 /**
- * Wrapper function to display admin notices
+ * Wrapper function to display admin notice
  *
  * @param string $message The message showed
  * @param string $style notice / error / info / warning / success
@@ -195,7 +193,7 @@ function yourls_add_html_status() {
 function yourls_add_notice( $message, $style = 'notice' ) {
 	// Escape single quotes in $message to avoid breaking the anonymous function 
 	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style ); 
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notice', create_function( '', "echo '$message';" ) );
 }
 
 /**
@@ -785,6 +783,7 @@ function yourls_table_end() {
  */
 function yourls_wrapper_start() {
 	echo yourls_apply_filter( 'wrapper_start', '<div class="col col-lg-6 col-push-4">' );
+	yourls_do_action( 'admin_notice' );
 }
 
 /**
