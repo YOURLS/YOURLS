@@ -54,5 +54,5 @@ Desktop.ini
 *.phpproj
 
 # Temp
-assets/css/less/*
+*.less
 *-temp.*
