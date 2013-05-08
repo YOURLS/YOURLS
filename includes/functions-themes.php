@@ -50,6 +50,6 @@ function yourls_html_template_content( $template_part ) {
         }
     }
     
-    if( $context_body == 'after' );
+    if( $template_part == 'after' );
         yourls_html_ending();
 }
