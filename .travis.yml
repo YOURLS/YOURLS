@@ -11,6 +11,7 @@ before_script:
   - cp yourls-tests-config-travis.php yourls-tests-config.php
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - git clone git://github.com/YOURLS/YOURLS.git
+  - cp yourls-tests-config-travis.php YOURLS/user/config.php
 
 script: phpunit --coverage-text --configuration ./phpunit.xml.dist
 
