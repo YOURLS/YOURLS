@@ -9,9 +9,6 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	yourls_do_action( 'pre_html_head', $context, $title );
 	
-	// Load charts component as needed
-	$charts = ( $context == 'infos' );
-		
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
 		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
@@ -49,7 +46,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/assets/css/fonts-yourls-temp.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
 	<script src="<?php yourls_site_url(); ?>/assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-	<?php if ( $charts ) { ?>
+	<?php if ( $context == 'infos' ) { 	// Load charts component as needed ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
 					google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});

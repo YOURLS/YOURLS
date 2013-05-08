@@ -131,5 +131,5 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 	<?php } // end is private ?>
 
 <?php 
-yourls_html_template_content( 'after' );
+yourls_html_template_content( 'after', 'tools' );
 ?>

@@ -242,9 +242,9 @@ if ( isset( $_GET['u'] ) ) {
 
 
 // Begin output of the page
-$context = ( $is_bookmark ? 'bookmark' : 'index' );
+$context = ( $is_bookmark ? 'bookmark' : 'admin' );
 yourls_html_head( $context );
-yourls_html_template_content( 'before', 'admin' );
+yourls_html_template_content( 'before', $context );
 
 yourls_do_action( 'admin_page_before_content' );
 yourls_html_title( 'YOURLS', 1, 'Your Own URL Shortener' );
@@ -327,5 +327,5 @@ if ( !$is_bookmark ) {
 
 yourls_do_action( 'admin_page_after_content' );
 
-yourls_html_template_content( 'after' );
+yourls_html_template_content( 'after', $context );
 ?>
