@@ -1,24 +1,29 @@
 <?php
 
 /**
- * The filter/theme API is located in this file, which allows for designing 
- * and customize the interface.
+ * The theme API, which allows designing and customizing the interface.
  * 
- * Inspired by some functions in functions-plugins.php
- *
  * @author Leo Colombaro
  * @since 1.7
  */
 
 /**
- * Load HTML elements as requested, as designed and allow customization 
- * about interface.
+ * Draw page with HTML functions in requested order
  * 
- * @param string $context_body Say if template loading is before or after content
+ * Page structure is the following: the 'before' part, the 'main' part and the 'after' part,
+ * for instance:
+ * - 'before' elements: sidebar, logo, title, ...
+ * - 'main' elements: the main content of the page: plugin list, short URL list, plugin sub page...
+ * - 'after' elements: footer, ...
+ * The 'before' and 'after' elements can be modified with filter 'html_template_content'
+ * 
+ * @param string $template_part what template part (eg 'before' or 'after' the page main content)
  */
-function yourls_html_template_content( $context_body ) {
+function yourls_html_template_content( $template_part ) {
+	// Collect additional optional arguments, for instance the page context ('admin', 'plugins'...)
     $args = func_get_args();
     
+	// Page structure
     $elements = array (
         'before' => array(
             'sidebar_start',
@@ -26,17 +31,18 @@ function yourls_html_template_content( $context_body ) {
             [ 'html_menu', array( $args[1] ) ],
             'html_footer',
             'sidebar_end',
-            'wrapper_start'
+            'wrapper_start',   // themes should probably not remove this
         ),
         'after' => array(
-            'wrapper_end'
+            'wrapper_end',     // themes should probably not remove this
         )
     );
     
     // Allow theming!
-    $elements = yourls_apply_filter( 'html_template', $elements );
+    $elements = yourls_apply_filter( 'html_template_content', $elements, $template_part, $args );
     
-    foreach( $elements[ $context_body ] as $element ) {
+	// 'Draw' page
+    foreach( $elements[ $template_part ] as $element ) {
         if( is_array( $element ) ) {
             call_user_func_array( 'yourls_' . $element[0], $element[1] );
         } else {
