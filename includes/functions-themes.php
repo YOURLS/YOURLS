@@ -15,14 +15,15 @@
  * about interface.
  * 
  * @param string $context_body Say if template loading is before or after content
- * @param string $context_page Explain which page is loaded
  */
-function yourls_html_template_content( $context_body, $context_page = null ) {
+function yourls_html_template_content( $context_body ) {
+    $args = func_get_args();
+    
     $elements = array (
         'before' => array(
             'sidebar_start',
             'html_logo',
-            [ 'html_menu', $context_page ],
+            [ 'html_menu', array( $args[1] ) ],
             'html_footer',
             'sidebar_end',
             'wrapper_start'
@@ -37,11 +38,9 @@ function yourls_html_template_content( $context_body, $context_page = null ) {
     
     foreach( $elements[ $context_body ] as $element ) {
         if( is_array( $element ) ) {
-            $function = 'yourls_' . $element[0];
-            $function( $element[1] );
+            call_user_func_array( 'yourls_' . $element[0], $element[1] );
         } else {
-            $function = 'yourls_' . $element;
-            $function();
+            call_user_func_array( 'yourls_' . $element, array() );
         }
     }
 }
