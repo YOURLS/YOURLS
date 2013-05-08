@@ -270,26 +270,23 @@ function yourls_html_language_attributes() {
  *
  */
 function yourls_html_footer() {
+	echo '<div class="footer"><p style="text-align:center;">';
+	$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
+	echo yourls_apply_filters( 'html_footer_text', $footer );
+	echo '</p></div>';
+}
+
+/**
+ * Display HTML debug infos
+ *
+ */
+function yourls_html_debug() {
 	global $ydb;
-	
-	?>
-		<div class="footer"><p style="text-align:center;">
-		<?php
-			$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
-		echo yourls_apply_filters( 'html_footer_text', $footer );
-		?>
-	</p></div>
-	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-			echo '<pre class="debug-info">';
-			echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
-		echo join( "\n", $ydb->debug_log );
-			echo '</pre>';
-	} ?>
-	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
-	</div></div>
-	</body>
-	</html>
-	<?php
+	echo '<pre class="debug-info">';
+	echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
+	echo join( "\n", $ydb->debug_log );
+	echo '</pre>';
+	yourls_do_action( 'html_debug', $ydb->context );
 }
 
 /**
@@ -324,9 +321,9 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 }
 
 /**
- * Display main table's footer
+ * Display main search form
  *
- * The $param array is defined in /admin/index.php, check the yourls_html_tfooter() call
+ * The $param array is defined in /admin/index.php
  *
  * @param array $params Array of all required parameters
  * @return string Result
@@ -795,6 +792,8 @@ function yourls_wrapper_start() {
  *
  */
 function yourls_wrapper_end() {
+	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
+		yourls_html_debug();
 	echo yourls_apply_filter( 'wrapper_end', '</div>' );
 }
 
@@ -904,10 +903,16 @@ function yourls_display_login_message() {
 		case 'pwdclear':
 			$message  = '';
 			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
-			$message .= ' ' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-			$message .= ' ' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
+			$message .= '<p>' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= '<br />' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' ) . '</p>';
 			yourls_add_notice( $message, 'notice' );
 			break;
 	}
 }
 
+/**
+ * Close html page
+ */
+function yourls_html_ending() {
+	echo '</body></html>';
+}
