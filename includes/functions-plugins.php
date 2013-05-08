@@ -271,6 +271,13 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
 	return false;
 }
 
+/**
+ * Check if a funtion has a specific action
+ * 
+ * @param string $hook The name of the filter hook.
+ * @param string $function_to_check
+ * @return bool
+ */
 function yourls_has_action( $hook, $function_to_check = false ) {
 	return yourls_has_filter( $hook, $function_to_check );
 }
@@ -360,7 +367,9 @@ function yourls_get_plugin_data( $file ) {
 	return $plugin_data;
 }
 
-// Include active plugins
+/**
+ * Include active plugins
+ */
 function yourls_load_plugins() {
 	// Don't load plugins when installing or updating
 	if( yourls_is_installing() OR yourls_is_upgrading() )
