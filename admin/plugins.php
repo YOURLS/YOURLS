@@ -152,5 +152,5 @@ yourls_html_title( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' inst
 	<p><?php yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' ); ?></p>
 	
 <?php 
-yourls_html_template_content( 'after', 'tools' );
+yourls_html_template_content( 'after', 'plugins' );
 ?>
