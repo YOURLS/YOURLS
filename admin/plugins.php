@@ -132,25 +132,12 @@ yourls_html_title( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' inst
 			);
 		
 	}
-	?>
-	</tbody>
-	</table>
+	yourls_table_tbody_end();
+	yourls_table_end();
 	
-	<script type="text/javascript">
-	yourls_defaultsort = 0;
-	yourls_defaultorder = 0;
-	<?php if ($count_active) { ?>
-	$('#plugin_summary').append('<span id="toggle_plugins">filter</span>');
-	$('#toggle_plugins').css({'background':'transparent url("../images/filter.gif") top left no-repeat','display':'inline-block','text-indent':'-9999px','width':'16px','height':'16px','margin-left':'3px','cursor':'pointer'})
-		.attr('title', '<?php echo yourls_esc_attr__( 'Toggle active/inactive plugins' ); ?>')
-		.click(function(){
-			$('#main_table tr.inactive').toggle();
-		});
-	<?php } ?>
-	</script>
+	echo '<p>';
+	yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
+	echo '</p>';
 	
-	<p><?php yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' ); ?></p>
-	
-<?php 
-yourls_html_template_content( 'after', 'plugins' );
+	yourls_html_template_content( 'after', 'plugins' );
 ?>
