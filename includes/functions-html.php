@@ -840,7 +840,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	yourls_wrapper_start();
 	?>
 	<div id="login">
-		<form method="post" class="form-horizontal" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
+		<form method="post" class="form-horizontal col-lg-7" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
 				if( !empty( $error_msg ) ) {
 					yourls_add_notice( $error_msg );
@@ -858,10 +858,8 @@ function yourls_login_screen( $error_msg = '' ) {
 					<input type="password" id="password" name="password" class="text">
 				</div>
 			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-primary" name="submit"><?php yourls_e( 'Login' ); ?></button>
-				</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" name="submit"><?php yourls_e( 'Login' ); ?></button>
 			</div>
 		</form>
 		<script type="text/javascript">$('#username').focus();</script>
