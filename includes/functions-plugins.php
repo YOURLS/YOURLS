@@ -303,14 +303,17 @@ function yourls_has_active_plugins( ) {
  * @global object $ydb Storage of mostly everything YOURLS needs to know
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
-function yourls_get_plugins( ) {
-	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
+function yourls_get_plugins( $category = 'plugins' ) {
+	if( $category == 'themes' )
+		$plugins = (array) glob( YOURLS_THEMEDIR .'/*/theme.php');
+	else
+		$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
 	
 	if( !$plugins )
 		return array();
 	
 	foreach( $plugins as $key => $plugin ) {
-		$_plugin = yourls_plugin_basename( $plugin );
+		$_plugin = yourls_plugin_basename( $plugin, $category );
 		$plugins[ $_plugin ] = yourls_get_plugin_data( $plugin );
 		unset( $plugins[ $key ] );
 	}
@@ -483,9 +486,12 @@ function yourls_deactivate_plugin( $plugin ) {
 /**
  * Return the path of a plugin file, relative to the plugins directory
  */
-function yourls_plugin_basename( $file ) {
+function yourls_plugin_basename( $file, $category = 'plugins' ) {
 	$file = yourls_sanitize_filename( $file );
-	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+    if( $category == 'themes' )
+        $plugindir = yourls_sanitize_filename( YOURLS_THEMEDIR );
+    else
+	    $plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	$file = str_replace( $plugindir, '', $file );
 	return trim( $file, '/' );
 }
