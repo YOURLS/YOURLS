@@ -964,7 +964,7 @@ function yourls_get_option( $option_name, $default = false ) {
 		$table = YOURLS_DB_TABLE_OPTIONS;
 		$option_name = yourls_escape( $option_name );
 		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
-		if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
+		if ( is_object( $row ) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
 			$value = $row->option_value;
 		} else { // option does not exist, so we must cache its non-existence
 			$value = $default;
