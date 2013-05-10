@@ -1882,13 +1882,13 @@ function yourls_favicon( $echo = true ) {
 	foreach( array( 'png', 'ico', 'gif' ) as $ext ) {
 		if( file_exists( YOURLS_USERDIR. '/favicon.' . $ext ) ) {
 			$favicon = yourls_site_url( false, YOURLS_USERURL . '/favicon.' . $ext );
-            break;
-        }
-    }
+			break;
+		}
+	}
 	if ( $favicon === null )
 		$favicon = yourls_site_url( false ) . '/assets/img/favicon.ico';
 	
-    if( $echo )
+	if( $echo )
 			echo '<link rel="shortcut icon" href="'. $favicon . '">';
 	else
 		return $favicon;
