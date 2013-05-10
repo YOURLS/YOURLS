@@ -1878,19 +1878,20 @@ function yourls_favicon( $echo = true ) {
 	if( $favicon !== null )
 		return $favicon;
 	
-	$custom = null;
 	// search for favicon.(ico|png)
-	foreach( array( 'png', 'ico' ) as $ext ) {
+	foreach( array( 'png', 'ico', 'gif' ) as $ext ) {
 		if( file_exists( YOURLS_USERDIR. '/favicon.' . $ext ) ) {
 			$favicon = yourls_site_url( false, YOURLS_USERURL . '/favicon.' . $ext );
-		} else {
-			$favicon = yourls_site_url( false ) . '/assets/img/favicon.' . $ext;
-		}
-		if( $echo )
+            break;
+        }
+    }
+	if ( $favicon === null )
+		$favicon = yourls_site_url( false ) . '/assets/img/favicon.ico';
+	
+    if( $echo )
 			echo '<link rel="shortcut icon" href="'. $favicon . '">';
-		else
-			return $favicon;
-	}
+	else
+		return $favicon;
 }
 
 /**
