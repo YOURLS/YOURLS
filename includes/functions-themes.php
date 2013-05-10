@@ -28,7 +28,7 @@ function yourls_html_template_content( $template_part ) {
 		'before' => array(
 			'yourls_sidebar_start',
 			'yourls_html_logo',
-            'yourls_add_html_status',
+			'yourls_add_html_status',
 			[ 'yourls_html_menu', array( $args[1] ) ],
 			'yourls_html_footer',
 			'yourls_sidebar_end',
@@ -79,7 +79,7 @@ function yourls_html_assets_queue() {
 		foreach( $files as $file ) {
 			if( substr( $file, 0, 7 ) == 'yourls_' )
 				$file = yourls_site_url( false ) . "/assets/$type/" . substr( $file, 7 ) . ".min.$type?v=" . YOURLS_VERSION;
-			else
+			elseif ( !preg_match( '/^(https?:)?\/\//', $file ) )
 				$file = yourls_site_url( false ) . "/user/themes/" . yourls_get_active_theme() . "/$type/" . $file . "." . $type;
 			if( $type == 'css' ) {
 				if( is_array( $file ) )
