@@ -28,6 +28,7 @@ function yourls_html_template_content( $template_part ) {
 		'before' => array(
 			'yourls_sidebar_start',
 			'yourls_html_logo',
+            'yourls_add_html_status',
 			[ 'yourls_html_menu', array( $args[1] ) ],
 			'yourls_html_footer',
 			'yourls_sidebar_end',
@@ -71,7 +72,7 @@ function yourls_html_assets_queue() {
 	);
 	
 	// Allow theming!
-	$assets = yourls_apply_filter( 'html_html_assets_queue', $assets );
+	$assets = yourls_apply_filter( 'html_assets_queue', $assets );
 
 	// Include assets
 	foreach( $assets as $type => $files ) {
@@ -79,7 +80,7 @@ function yourls_html_assets_queue() {
 			if( substr( $file, 0, 7 ) == 'yourls_' )
 				$file = yourls_site_url( false ) . "/assets/$type/" . substr( $file, 7 ) . ".min.$type?v=" . YOURLS_VERSION;
 			else
-				$file = yourls_site_url( false ) . "/user/themes/" . yourls_get_active_theme( true ) . "/$type/" . $file . "." . $type;
+				$file = yourls_site_url( false ) . "/user/themes/" . yourls_get_active_theme() . "/$type/" . $file . "." . $type;
 			if( $type == 'css' ) {
 				if( is_array( $file ) )
 					echo '<link rel="stylesheet" href="' . $file[0] . '" type="text/css" media="' . $file[1] . '">';
@@ -89,4 +90,39 @@ function yourls_html_assets_queue() {
 				echo '<script src="' . $file . '" type="text/javascript"></script>';
 		}
 	}
+}
+
+/**
+ * Include active theme
+ */
+function yourls_load_theme() {
+	// Don't load theme when installing or updating
+	if( yourls_is_installing() OR yourls_is_upgrading() )
+		return;
+	
+	global $ydb;
+	$ydb->theme = '';
+	$active_theme = yourls_get_option( 'active_theme' );
+	
+	if( yourls_validate_plugin_file( YOURLS_THEMEDIR . '/' . $active_theme . '/theme.php' ) ) {
+		include_once( YOURLS_THEMEDIR . '/' . $active_theme . '/theme.php' );
+		$ydb->theme = $active_theme;
+		unset( $active_theme );
+	} else {
+		yourls_update_option( 'active_theme', $ydb->theme );
+		$message = yourls__( 'Could not find and deactivated theme:' );
+		$missing = '<strong>' . $active_theme . '</strong>';
+		yourls_add_notice( $message .' '. $missing, 'error' );
+	}
+}
+
+/**
+ * Summary of yourls_get_active_theme
+ * @return
+ */
+function yourls_get_active_theme() {
+	global $ydb;
+	if( !property_exists( $ydb, 'theme' ) || !$ydb->theme )
+		$ydb->theme = '';
+	return $ydb->theme;
 }

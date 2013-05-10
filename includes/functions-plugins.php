@@ -411,7 +411,7 @@ function yourls_validate_plugin_file( $file ) {
 		OR
 		false !== strpos( $file, './' )
 		OR
-		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
+		( 'plugin.php' !== substr( $file, -10 )	&& 'theme.php' !== substr( $file, -9 ) )	// a plugin must be named 'plugin.php', a theme must be named 'theme.php'
 		OR
 		!is_readable( $file )
 	)

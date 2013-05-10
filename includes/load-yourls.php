@@ -179,6 +179,9 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
 
-if( yourls_is_admin() )
+if( yourls_is_admin() ) {
 	yourls_do_action( 'admin_init' );
-
+    // Init theme
+    yourls_load_theme();
+    yourls_do_action( 'theme_loaded' );
+}

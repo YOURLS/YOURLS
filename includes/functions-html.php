@@ -138,8 +138,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul class="nav nav-list">';
-	yourls_add_html_status();
+	echo '<ul class="nav">';
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo $logout_link;
 
