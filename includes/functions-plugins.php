@@ -488,10 +488,10 @@ function yourls_deactivate_plugin( $plugin ) {
  */
 function yourls_plugin_basename( $file, $category = 'plugins' ) {
 	$file = yourls_sanitize_filename( $file );
-    if( $category == 'themes' )
-        $plugindir = yourls_sanitize_filename( YOURLS_THEMEDIR );
-    else
-	    $plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+	if( $category == 'themes' )
+		$plugindir = yourls_sanitize_filename( YOURLS_THEMEDIR );
+	else
+		$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	$file = str_replace( $plugindir, '', $file );
 	return trim( $file, '/' );
 }
