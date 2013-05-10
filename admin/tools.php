@@ -126,7 +126,7 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 		</li>
 	</ul>
 	
-	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/readme.html#API' ); ?></p>
+	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/docs/#api' ); ?></p>
 
 	<?php } // end is private ?>
 
