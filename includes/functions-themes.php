@@ -53,3 +53,40 @@ function yourls_html_template_content( $template_part ) {
 	if( $template_part == 'after' );
 		yourls_html_ending();
 }
+
+/**
+ * Summary of yourls_html_assets_queue
+ */
+function yourls_html_assets_queue() {
+
+	// Assets files
+	$assets = array (
+		'css' => array(
+			'yourls_style',
+			'yourls_fonts-yourls-temp',
+		),
+		'js' => array(
+			'yourls_jquery',
+		)
+	);
+	
+	// Allow theming!
+	$assets = yourls_apply_filter( 'html_html_assets_queue', $assets );
+
+	// Include assets
+	foreach( $assets as $type => $files ) {
+		foreach( $files as $file ) {
+			if( substr( $file, 0, 7 ) == 'yourls_' )
+				$file = yourls_site_url( false ) . "/assets/$type/" . substr( $file, 7 ) . ".min.$type?v=" . YOURLS_VERSION;
+			else
+				$file = yourls_site_url( false ) . "/user/themes/" . yourls_get_active_theme( true ) . "/$type/" . $file . "." . $type;
+			if( $type == 'css' ) {
+				if( is_array( $file ) )
+					echo '<link rel="stylesheet" href="' . $file[0] . '" type="text/css" media="' . $file[1] . '">';
+				else
+					echo '<link rel="stylesheet" href="' . $file . '" type="text/css" media="screen">';
+			} elseif ( $type == 'js' )
+				echo '<script src="' . $file . '" type="text/javascript"></script>';
+		}
+	}
+}
