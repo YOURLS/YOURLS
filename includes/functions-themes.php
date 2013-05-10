@@ -108,7 +108,7 @@ function yourls_load_theme() {
 		include_once( YOURLS_THEMEDIR . '/' . $active_theme . '/theme.php' );
 		$ydb->theme = $active_theme;
 		unset( $active_theme );
-	} else {
+	} elseif ( $active_theme != '' ) {
 		yourls_update_option( 'active_theme', $ydb->theme );
 		$message = yourls__( 'Could not find and deactivated theme:' );
 		$missing = '<strong>' . $active_theme . '</strong>';
