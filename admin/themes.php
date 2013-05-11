@@ -55,7 +55,7 @@ $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
 	
 yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
 
-	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themeslist">Themes list</a>.' ); ?></p>
+	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Themes list</a>.' ); ?></p>
 	
 	<div class="row">
 	<?php
