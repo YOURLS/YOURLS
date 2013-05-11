@@ -48,7 +48,7 @@ yourls_html_head( 'themes', yourls__( 'Manage Themes' ) );
 yourls_html_template_content( 'before', 'themes' );
 
 $themes = (array)yourls_get_plugins( 'themes' );
-uasort( $themes, 'yourls_plugins_sort_callback' );
+uasort( $themes, 'yourls_themes_sort_callback' );
 	
 $count = count( $themes );
 $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
@@ -107,7 +107,7 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 		
 		$data['desc'] .= '<br/><small>' . yourls_s( 'Theme file location: %s', $file) . '</small>';
 		
-		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="' . yourls_site_url( false ) . YOURLS_THEMEDIR . $themedir  . '/screenshot.png" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
+		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="' . yourls_site_url( false ) . '/user/themes/' . $themedir  . '/screenshot.png" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
 			$class, $data['uri'], $data['name'], $data['version'], $data['author_uri'], $data['author'], $data['desc'], $class, $action_url, $action_anchor
 			);
 		$conting++;

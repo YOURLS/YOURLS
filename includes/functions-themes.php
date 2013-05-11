@@ -128,3 +128,28 @@ function yourls_get_active_theme() {
 		$ydb->theme = '';
 	return $ydb->theme;
 }
+
+/**
+ * Callback function: Sort themes 
+ *
+ * @link http://php.net/uasort
+ *
+ * @param array $plugin_a
+ * @param array $plugin_b
+ * @return int 0, 1 or -1, see uasort()
+ */
+function yourls_themes_sort_callback( $theme_a, $theme_b ) {
+	$orderby = yourls_apply_filters( 'themes_sort_callback', 'Theme Name' );
+	$order   = yourls_apply_filters( 'themes_sort_callback', 'ASC' );
+
+	$a = $theme_a[$orderby];
+	$b = $theme_b[$orderby];
+
+	if ( $a == $b )
+		return 0;
+
+	if ( 'DESC' == $order )
+		return ( $a < $b ) ? 1 : -1;
+	else
+		return ( $a < $b ) ? -1 : 1;		
+}
