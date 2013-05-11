@@ -60,10 +60,10 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 	<div class="row">
 	<?php
 	
-	$nonce = yourls_create_nonce( 'manage_plugins' );
+	$nonce = yourls_create_nonce( 'manage_themes' );
 	
 	$conting = 0;
-	foreach( $themes as $file=>$plugin ) {
+	foreach( $themes as $file=>$theme ) {
 		
 		// default fields to read from the plugin header
 		$fields = array(
@@ -77,37 +77,37 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 		
 		// Loop through all default fields, get value if any and reset it
 		foreach( $fields as $field=>$value ) {
-			if( isset( $plugin[ $value ] ) ) {
-				$data[ $field ] = $plugin[ $value ];
+			if( isset( $theme[ $value ] ) ) {
+				$data[ $field ] = $theme[ $value ];
 			} else {
 				$data[ $field ] = '(no info)';
 			}
-			unset( $plugin[$value] );
+			unset( $theme[$value] );
 		}
 		
 		$themedir = trim( dirname( $file ), '/' );
-		
+
 		if( yourls_is_active_plugin( $file ) ) {
 			$class = 'success';
 			$action_url = '#';
 			$action_anchor = yourls__( 'Applied' );
 		} else {
 			$class = 'warning';
-			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array( 'action' => 'activate', 'theme' => $themedir ) ) );
+			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'activate', 'theme' => $themedir ) ) );
 			$action_anchor = yourls__( 'Apply' );
 		}
 			
 		// Other "Fields: Value" in the header? Get them too
-		if( $plugin ) {
-			foreach( $plugin as $extra_field=>$extra_value ) {
+		if( $theme ) {
+			foreach( $theme as $extra_field=>$extra_value ) {
 				$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
-				unset( $plugin[$extra_value] );
+				unset( $theme[$extra_value] );
 			}
 		}
 		
-		$data['desc'] .= '<br/><small>' . yourls_s( 'Plugin file location: %s', $file) . '</small>';
+		$data['desc'] .= '<br/><small>' . yourls_s( 'Theme file location: %s', $file) . '</small>';
 		
-		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="http://clmb.fr/198x130?c=5BC0DE" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
+		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="' . yourls_site_url( false ) . YOURLS_THEMEDIR . $themedir  . '/screenshot.png" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
 			$class, $data['uri'], $data['name'], $data['version'], $data['author_uri'], $data['author'], $data['desc'], $class, $action_url, $action_anchor
 			);
 		$conting++;
