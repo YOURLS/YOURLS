@@ -105,7 +105,7 @@ function yourls_html_menu( $current_page = null ) {
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/readme.html"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
