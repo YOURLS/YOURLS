@@ -899,7 +899,7 @@ function yourls_display_login_message() {
 	switch( $_GET['login_msg'] ) {
 		case 'pwdclear':
 			$message  = '';
-			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
+			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <code>config.php</code>' );
 			$message .= '<p>' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
 			$message .= '<br />' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' ) . '</p>';
 			yourls_add_notice( $message, 'notice' );

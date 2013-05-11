@@ -28,9 +28,9 @@ if ( yourls_is_installed() ) {
 if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 	// Create/update .htaccess file
 	if ( yourls_create_htaccess() ) {
-		$success[] = yourls__( 'File <tt>.htaccess</tt> successfully created/updated.' );
+		$success[] = yourls__( 'File <code>.htaccess</code> successfully created/updated.' );
 	} else {
-		$warning[] = yourls__( 'Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will have to do it manually. See <a href="http://yourls.org/htaccess">how</a>.' );
+		$warning[] = yourls__( 'Could not write file <code>.htaccess</code> in YOURLS root directory. You will have to do it manually. See <a href="http://yourls.org/htaccess">how</a>.' );
 	}
 
 	// Create SQL tables

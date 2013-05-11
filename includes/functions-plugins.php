@@ -203,7 +203,7 @@ function yourls_do_action( $hook, $arg = '' ) {
 * Retrieve the number times an action is fired.
 *
 * @param string $hook Name of the action hook.
-* @return int The number of times action hook <tt>$hook</tt> is fired
+* @return int The number of times action hook $hook is fired
 */
 function yourls_did_action( $hook ) {
 	global $yourls_actions;

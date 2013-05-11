@@ -15,7 +15,7 @@ if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 
 // Check if config.php was properly updated for 1.4
 if( !defined( 'YOURLS_DB_PREFIX' ) )
-	die( '<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>' );
+	die( '<p class="error">Your <code>config.php</code> does not contain all the required constant definitions.</p><p>Please check <code>config-sample.php</code> and update your config accordingly, there are new stuffs!</p>' );
 
 	
 // Define core constants that have not been user defined in config.php
@@ -181,7 +181,7 @@ yourls_do_action( 'plugins_loaded' );
 
 if( yourls_is_admin() ) {
 	yourls_do_action( 'admin_init' );
-    // Init theme
-    yourls_load_theme();
-    yourls_do_action( 'theme_loaded' );
+	// Init theme
+	yourls_load_theme();
+	yourls_do_action( 'theme_loaded' );
 }
