@@ -542,10 +542,10 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
 }
 
 /**
- * Handle plugin administration page
+ * Handle plugin or theme administration page
  *
  */
-function yourls_plugin_admin_page( $plugin_page ) {
+function yourls_plugin_admin_page( $plugin_page, $type = 'plugin' ) {
 	global $ydb;
 
 	// Check the plugin page is actually registered
@@ -555,17 +555,14 @@ function yourls_plugin_admin_page( $plugin_page ) {
 	
 	// Draw the page itself
 	yourls_do_action( 'load-' . $plugin_page);
-	yourls_html_head( 'plugin_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
-	yourls_html_logo();
-	yourls_html_menu();
+	yourls_html_head( $type . '_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
+	yourls_html_template_content( 'before', $type );
 	
 	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
 	
-	yourls_html_footer();
-	
+	yourls_html_template_content( 'after', $type . '_page_' . $plugin_page );
 	die();
 }
-
 
 /**
  * Callback function: Sort plugins 

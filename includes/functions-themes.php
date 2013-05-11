@@ -2,6 +2,8 @@
 
 /**
  * The theme API, which allows designing and customizing the interface.
+ *
+ * Several functions used by themes are shared with plugins: see functions-plugins.php
  * 
  * @author Leo Colombaro
  * @since 1.7

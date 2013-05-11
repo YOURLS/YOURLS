@@ -160,7 +160,8 @@ function yourls_html_menu( $current_page = null ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
-					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s"><a href="%s" %s>%s</a></li>', $link, $link, $ar['url'], $title, $anchor );
+					$class_active  = ( isset( $_GET['page'] ) && $_GET['page'] == $link ) ? ' active' : '';
+					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s%s"><a href="%s" %s>%s</a></li>', $link, $link, $class_active, $ar['url'], $title, $anchor );
 				}
 			}
 			echo '</ul>';
