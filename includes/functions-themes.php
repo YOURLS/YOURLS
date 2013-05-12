@@ -19,6 +19,7 @@
  * - 'after' elements: footer, ...
  * The 'before' and 'after' elements can be modified with filter 'html_template_content'
  * 
+ * @since 1.7
  * @param string $template_part what template part (eg 'before' or 'after' the page main content)
  */
 function yourls_html_template_content( $template_part ) {
@@ -58,43 +59,146 @@ function yourls_html_template_content( $template_part ) {
 }
 
 /**
- * Enqueue assets (CSS or JS files)
+ * Process asset queue (CSS or JS files)
  *
  * @since 1.7
  */
 function yourls_html_assets_queue() {
-
-	// Assets files
-	$assets = array (
-		'css' => array(
-			'yourls_style',
-			'yourls_fonts-yourls-temp',
-		),
-		'js' => array(
-			'yourls_jquery',
-		)
-	);
+	global $ydb;
 	
-	// Allow theming!
-	$assets = yourls_apply_filter( 'html_assets_queue', $assets );
-
+	// Filter the asset list before echoing links
+	$assets = yourls_apply_filter( 'html_assets_queue', $ydb->assets );
+	
 	// Include assets
 	foreach( $assets as $type => $files ) {
-		foreach( $files as $file ) {
-			if( substr( $file, 0, 7 ) == 'yourls_' )
-				$file = yourls_site_url( false ) . "/assets/$type/" . substr( $file, 7 ) . ".min.$type?v=" . YOURLS_VERSION;
-			elseif ( !preg_match( '/^(https?:)?\/\//', $file ) )
-				$file = yourls_site_url( false ) . "/user/themes/" . yourls_get_active_theme() . "/$type/" . $file . "." . $type;
-			if( $type == 'css' ) {
-				if( is_array( $file ) )
-					echo '<link rel="stylesheet" href="' . $file[0] . '" type="text/css" media="' . $file[1] . '">';
-				else
-					echo '<link rel="stylesheet" href="' . $file . '" type="text/css" media="screen">';
-			} elseif ( $type == 'js' )
-				echo '<script src="' . $file . '" type="text/javascript"></script>';
+		foreach( $files as $filename => $src ) {
+			// If not src provided, assume it's a core asset
+			if( !$src ) {
+				// @TODO: allow inclusion of non minified scripts or CSS for debugging
+				// Something like: $min = ( defined and true ( 'YOURLS_SCRIPT_DEBUG' ) ? '' : 'min' );
+				$src = yourls_site_url( false ) . "/assets/$type/" . $filename . ".min.$type?v=" . YOURLS_VERSION;
+			}
+			
+			$src = yourls_sanitize_url( $src );
+			
+			// Output asset HTML tag
+			switch( $type ) {
+				case 'css':
+					echo '<link rel="stylesheet" href="' . $src . '" type="text/css" media="screen">' . "\n";
+					break;
+				
+				case 'js':
+					echo '<script src="' . $src . '" type="text/javascript"></script>' . "\n";
+					break;
+				
+				default:
+					yourls_add_notice( yourls__( 'You can only enqueue "css" or "js" files' ) ); 
+			}
 		}
 	}
 }
+
+/**
+ * Dequeue an asset (remove it from the queue of needed assets)
+ *
+ * @since 1.7
+ * @param $string $name  name of the asset
+ * @param $string $type  type of asset ('css' or 'js')
+ * @return bool          true if asset dequeued, false if unfound
+ */
+function yourls_dequeue_asset( $name, $type ) {
+	// Check file type
+	if( !in_array( $type, array( 'css', 'js' ) ) ) {
+		return false;
+	}
+	
+	global $ydb;
+	if( property_exists( $ydb, 'assets' ) || isset( $ydb->assets[ $type ][ $name ] ) ) {
+		unset( $ydb->assets[ $type ][ $name ] );
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Enqueue an asset (add it to the list of needed assets)
+ *
+ * @since 1.7
+ * @param string $name  name of the asset
+ * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
+ * @param string $type  type of asset ('css' or 'js')
+ * @return bool         false on error, true otherwise
+ */
+function yourls_enqueue_asset( $name, $src = '', $type ) {
+	// Check file type
+	if( !in_array( $type, array( 'css', 'js' ) ) ) {
+		yourls_add_notice( yourls__( 'You can only enqueue "css" or "js" files' ) );
+		return false;
+	}
+	
+	global $ydb;
+	$ydb->assets[ $type ][ $name ] = $src;
+	return true;
+}
+
+/**
+ * Enqueue a stylesheet
+ *
+ * Wrapper function for yourls_enqueue_asset()
+ *
+ * @since 1.7
+ * @see yourls_enqueue_asset()
+ * @param string $name  name of the asset
+ * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
+ * @return bool         false on error, true otherwise
+ */
+function yourls_enqueue_style( $name, $src = '' ) {
+	return yourls_enqueue_asset( $name, $src, 'css' );
+}
+
+/**
+ * Enqueue a script
+ *
+ * Wrapper function for yourls_enqueue_asset()
+ *
+ * @since 1.7
+ * @see yourls_enqueue_asset()
+ * @param string $name  name of the asset
+ * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
+ * @return bool         false on error, true otherwise
+ */
+function yourls_enqueue_script( $name, $src = '' ) {
+	return yourls_enqueue_asset( $name, $src, 'js' );
+}
+
+/**
+ * Dequeue a stylesheet
+ *
+ * Wrapper function for yourls_dequeue_asset()
+ *
+ * @since 1.7
+ * @see yourls_enqueue_asset()
+ * @param string $name  name of the asset
+ * @return bool         false on error, true otherwise
+ */
+function yourls_dequeue_style( $name ) {
+	return yourls_dequeue_asset( $name, 'css' );
+}
+
+/**
+ * Dequeue a script
+ *
+ * Wrapper function for yourls_dequeue_asset()
+ *
+ * @since 1.7
+ * @see yourls_enqueue_asset()
+ * @param string $name  name of the asset
+ * @return bool         false on error, true otherwise
+ */
+function yourls_dequeue_script( $name ) {
+	return yourls_dequeue_asset( $name, 'js' );
+}
+
 
 /**
  * List themes in /user/themes
@@ -108,16 +212,23 @@ function yourls_get_themes() {
 }
 
 /**
- * Include active theme
+ * Init theme and load active theme if any
  *
  * @since 1.7
  */
 function yourls_load_theme() {
-	// Don't load theme when installing or updating
+	global $ydb;
+
+	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
+	yourls_enqueue_style(  'style' );
+	yourls_enqueue_style(  'fonts-yourls-temp' );
+	yourls_enqueue_script( 'jquery' );
+	
+	// Don't load theme when installing or updating. @TODO: 
 	if( yourls_is_installing() OR yourls_is_upgrading() )
 		return;
 	
-	global $ydb;
+	// Load theme
 	$ydb->theme = '';
 	$active_theme = yourls_get_option( 'active_theme' );
 	
