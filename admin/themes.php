@@ -47,7 +47,7 @@ if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
 yourls_html_head( 'themes', yourls__( 'Manage Themes' ) );
 yourls_html_template_content( 'before', 'themes' );
 
-$themes = (array)yourls_get_plugins( 'themes' );
+$themes = (array)yourls_get_themes();
 uasort( $themes, 'yourls_themes_sort_callback' );
 	
 $count = count( $themes );
@@ -62,7 +62,7 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 	
 	$nonce = yourls_create_nonce( 'manage_themes' );
 	
-	$counting = 0;
+	$count = 0;
 	foreach( $themes as $file=>$theme ) {
 		
 		// default fields to read from the plugin header
@@ -90,11 +90,11 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 		if( yourls_is_active_plugin( $file ) ) {
 			$class = 'success';
 			$action_url = '#';
-			$action_anchor = yourls__( 'Applied' );
+			$action_anchor = yourls__( 'Deactivate' );
 		} else {
 			$class = 'warning';
 			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'activate', 'theme' => $themedir ) ) );
-			$action_anchor = yourls__( 'Apply' );
+			$action_anchor = yourls__( 'Activate' );
 		}
 			
 		// Other "Fields: Value" in the header? Get them too
@@ -105,18 +105,48 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 			}
 		}
 		
-		$data['desc'] .= '<br/><small>' . yourls_s( 'Theme file location: %s', $file) . '</small>';
+		$data['desc'] .= '<br/><small>' . yourls_s( 'Theme directory: %s', '<code>themes/' . $themedir . '</code>' ) . '</small>';
 		
-		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="' . yourls_site_url( false ) . '/user/themes/' . $themedir  . '/screenshot.png" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
-			$class, $data['uri'], $data['name'], $data['version'], $data['author_uri'], $data['author'], $data['desc'], $class, $action_url, $action_anchor
-			);
-		$counting++;
-		if( $counting == 4 ) {
+		// Get theme screenshot, or a default div otherwise
+		if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
+			$screenshot = '<img src="' . $screenshot . '" class="img-thumbnail" alt=""/>';
+		} else {
+			$screenshot = '<span class="img-thumbnail" style="display:block;border:1px solid #aaa;font-size:40px;height:180px;width:100%;background:#e1e1e1;color:#aaa;padding-top:20%;text-align:center;"><i class="glyphicon glyphicon-question-sign"></i></span>'; // @TODO Leo CSS me! :)
+		}
+		
+		// Author link
+		$by = sprintf( '<span class="plugin_author"><a href="%s">%s</a></span>', $data['author_uri'], $data['author'] );
+		$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'By %s', $by );
+		
+		printf( '
+		<div class="col col-lg-6 theme %s">
+			<div class="thumbnail">%s
+				<h4 class="plugin_name"><a href="%s">%s</a> <span class="label plugin_version">%s</span></h4>
+				<p>					
+					%s
+				</p>
+				<p class="plugin_desc">%s</p>
+				<div class="plugin_actions actions">
+					<a class="btn btn-%s" href="%s">%s</a>
+				</div>
+			</div>
+		</div>',
+			$class, $screenshot, $data['uri'], $data['name'], $data['version'],
+			$by, $data['desc'], $class, $action_url, $action_anchor
+		);
+		
+		$count++;
+		if( $count == 4 ) {
 			echo '<div class="clearfix"></div>';
-			$counting = 0;
+			$count = 0;
 		}
 		
 	}
 	echo '</div>';
+	
+	echo '<p>';
+	yourls_e( 'If something goes wrong after you activate a theme and you cannot use YOURLS or access this page, simply rename or delete its directory.' );
+	echo '</p>';
+	
 	yourls_html_template_content( 'after', 'themes' );
 ?>

@@ -52,6 +52,10 @@ if( !defined( 'YOURLS_PLUGINURL' ) )
 if( !defined( 'YOURLS_THEMEDIR' ) )
 	define( 'YOURLS_THEMEDIR', YOURLS_USERDIR.'/themes' );
 
+// URL of themes directory
+if( !defined( 'YOURLS_THEMEURL' ) )
+	define( 'YOURLS_THEMEURL', YOURLS_USERURL.'/themes' );
+
 // physical path of pages directory
 if( !defined( 'YOURLS_PAGEDIR' ) )
 	define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );

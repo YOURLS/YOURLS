@@ -58,7 +58,9 @@ function yourls_html_template_content( $template_part ) {
 }
 
 /**
- * Summary of yourls_html_assets_queue
+ * Enqueue assets (CSS or JS files)
+ *
+ * @since 1.7
  */
 function yourls_html_assets_queue() {
 
@@ -95,7 +97,20 @@ function yourls_html_assets_queue() {
 }
 
 /**
+ * List themes in /user/themes
+ *
+ * @since 1.7
+ * @global object $ydb Storage of mostly everything YOURLS needs to know
+ * @return array Array of [/themedir/theme.css]=>array('Name'=>'Leo', 'Title'=>'My Theme', ... )
+ */
+function yourls_get_themes() {
+	return yourls_get_plugins( 'themes' );
+}
+
+/**
  * Include active theme
+ *
+ * @since 1.7
  */
 function yourls_load_theme() {
 	// Don't load theme when installing or updating
@@ -119,8 +134,10 @@ function yourls_load_theme() {
 }
 
 /**
- * Summary of yourls_get_active_theme
- * @return
+ * Get active theme
+ *
+ * @since 1.7
+ * @return string name of theme directory
  */
 function yourls_get_active_theme() {
 	global $ydb;
@@ -134,6 +151,7 @@ function yourls_get_active_theme() {
  *
  * @link http://php.net/uasort
  *
+ * @since 1.7
  * @param array $plugin_a
  * @param array $plugin_b
  * @return int 0, 1 or -1, see uasort()
@@ -152,4 +170,27 @@ function yourls_themes_sort_callback( $theme_a, $theme_b ) {
 		return ( $a < $b ) ? 1 : -1;
 	else
 		return ( $a < $b ) ? -1 : 1;		
+}
+
+/**
+ * Get theme screenshot
+ *
+ * Search in a given directory for a file named screenshot.(png|jpg|gif)
+ *
+ * @since 1.7
+ * @param string $theme_dir Theme directory to search
+ * @return string screenshot filename, empty string if not found
+ */
+function yourls_get_theme_screenshot( $theme_dir ) {
+	$screenshot = '';
+	
+	// search for screenshot.(gif|jpg|png)
+	foreach( array( 'png', 'jpg', 'gif' ) as $ext ) {
+		if( file_exists( YOURLS_THEMEDIR . '/' . $theme_dir . '/screenshot.' . $ext ) ) {
+			$screenshot = yourls_site_url( false, YOURLS_THEMEURL . '/' . $theme_dir . '/screenshot.' . $ext );
+			break;
+		}
+	}
+	
+	return $screenshot;	
 }

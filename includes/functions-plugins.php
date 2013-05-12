@@ -305,7 +305,7 @@ function yourls_has_active_plugins( ) {
  */
 function yourls_get_plugins( $category = 'plugins' ) {
 	if( $category == 'themes' )
-		$plugins = (array) glob( YOURLS_THEMEDIR .'/*/theme.php');
+		$plugins = (array) glob( YOURLS_THEMEDIR .'/*/theme.css');
 	else
 		$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
 	

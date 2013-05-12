@@ -1878,7 +1878,7 @@ function yourls_favicon( $echo = true ) {
 	if( $favicon !== null )
 		return $favicon;
 	
-	// search for favicon.(ico|png)
+	// search for favicon.(ico|png|gif)
 	foreach( array( 'png', 'ico', 'gif' ) as $ext ) {
 		if( file_exists( YOURLS_USERDIR. '/favicon.' . $ext ) ) {
 			$favicon = yourls_site_url( false, YOURLS_USERURL . '/favicon.' . $ext );
