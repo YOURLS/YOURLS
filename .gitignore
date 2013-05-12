@@ -23,6 +23,12 @@ user/plugins/*
 !user/plugins/sample-plugin/
 !user/plugins/sample-toolbar/
 
+# Themes
+user/themes/*
+# Core themes
+!user/theme/sample-theme/
+
+
 # Pages
 pages/*
 !pages/examplepage.php

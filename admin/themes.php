@@ -55,14 +55,14 @@ $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
 	
 yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
 
-	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Themes list</a>.' ); ?></p>
+	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' ); ?></p>
 	
 	<div class="row">
 	<?php
 	
 	$nonce = yourls_create_nonce( 'manage_themes' );
 	
-	$conting = 0;
+	$counting = 0;
 	foreach( $themes as $file=>$theme ) {
 		
 		// default fields to read from the plugin header
@@ -110,10 +110,10 @@ yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' insta
 		printf( '<div class="col col-lg-3 theme %s"><div class="thumbnail"><img src="' . yourls_site_url( false ) . '/user/themes/' . $themedir  . '/screenshot.png" alt=""><h4 class="plugin_name"><a href="%s">%s</a></h4><p><span class="label plugin_version">%s</span> &mdash; <span class="plugin_author"><a href="%s">%s</a></span></p><p class="plugin_desc">%s</p><div class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></div></div></div>',
 			$class, $data['uri'], $data['name'], $data['version'], $data['author_uri'], $data['author'], $data['desc'], $class, $action_url, $action_anchor
 			);
-		$conting++;
-		if( $conting == 4 ) {
+		$counting++;
+		if( $counting == 4 ) {
 			echo '<div class="clearfix"></div>';
-			$conting = 0;
+			$counting = 0;
 		}
 		
 	}
