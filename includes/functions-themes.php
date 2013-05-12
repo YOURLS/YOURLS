@@ -31,7 +31,7 @@ function yourls_html_template_content( $template_part ) {
 		'before' => array(
 			'yourls_sidebar_start',
 			'yourls_html_logo',
-			'yourls_add_html_status',
+			'yourls_html_global_stats',
 			[ 'yourls_html_menu', array( $args[1] ) ],
 			'yourls_html_footer',
 			'yourls_sidebar_end',

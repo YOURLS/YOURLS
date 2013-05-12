@@ -38,7 +38,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta charset="utf-8">
 	<title><?php echo $title ?></title>
 	<meta name="description" content="YOURLS &middot; Your Own URL Shortener' | <?php yourls_site_url(); ?>">
-	<meta name="author" content="Ozh RICHARD & Lester CHAN for yourls.org">
+	<meta name="author" content="The YOURLS project - http://yourls.org/">
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="canonical" href="<?php yourls_site_url(); ?>/">
@@ -72,7 +72,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  */
 function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
-	$logo = '<img class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
+	$logo = '<img id="logo" class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
 	$logo = '<a href="' . yourls_admin_url( 'index.php' ) . '" title="YOURLS">' . $logo . '</a>';
 	?>
@@ -83,12 +83,39 @@ function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'html_logo' );
 }
 
-
-function yourls_html_title( $title, $rang, $subtitle = null ) {
-	$result = "<h$rang>$title";
-	if ( $subtitle )
+/**
+ * Display HTML header (h1 .. h6) tag
+ *
+ * @since 1.7
+ * @param string $title     Title to display
+ * @param int    $size      Optional size, 1 to 6, defaults to 6
+ * @param string $subtitle  Optional subtitle to be echoed after the title
+ * @param string $id        Optional html id
+ * @param string $class     Optional html class
+ */
+function yourls_html_title( $title, $size = 1, $subtitle = null, $id = null, $class = null ) {
+	$size = intval( $size );
+	if( $size < 1 )
+		$size = 1;
+	elseif( $size > 6 )
+		$size = 6;
+		
+	$title = yourls_esc_html( $title );
+	
+	if( $id ) {
+		$id = 'id="' . yourls_esc_attr( $id ) . '"';
+	}
+	
+	if( $class ) {
+		$class = 'class="' . yourls_esc_attr( $class ) . '"';
+	}
+	
+	$result = "<h$size$id$class>$title";
+	if ( $subtitle ) {
+		$subtitle = yourls_esc_html( $subtitle );
 		$result .= " <small>&mdash; $subtitle</small>";
-	$result .= "</h$rang>";
+	}
+	$result .= "</h$size>\n";
 	echo $result;
 }
 
@@ -175,13 +202,19 @@ function yourls_html_menu( $current_page = null ) {
 	echo "</ul><hr />\n";
 }
 
-function yourls_add_html_status() {
+/**
+ * Display global stats in a div
+ *
+ * @since 1.7
+ */
+function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
-	$html = '<div class="form-actions" style="text-align:center"><div class="col col-lg-6">';
+	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
+	$html  = '<div id="global_stats" class="form-actions" style="text-align:center"><div class="col col-lg-6">';
 	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . yourls__( 'Links' );
 	$html .= '</p></div><div class="col col-lg-6">';
 	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . yourls__( 'Clicks' ) . '</p></div></div>';
-	echo yourls_apply_filters( 'add_html_status', $html );
+	echo yourls_apply_filters( 'html_global_stats', $html );
 }
 
 /**
@@ -211,7 +244,7 @@ HTML;
 /**
  * Wrapper function to display label
  *
- * 
+ * @since 1.7
  * @param string $message The message showed
  * @param string $style notice / error / info / warning / success
  */
@@ -268,7 +301,7 @@ function yourls_html_language_attributes() {
  *
  */
 function yourls_html_footer() {
-	echo '<div class="footer"><p style="text-align:center;">';
+	echo '<div id="footer" class="footer"><p style="text-align:center;">';
 	$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
 	echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
@@ -280,7 +313,7 @@ function yourls_html_footer() {
  */
 function yourls_html_debug() {
 	global $ydb;
-	echo '<pre class="debug-info">';
+	echo '<pre id="debug-info" class="debug-info">';
 	echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
 	echo join( "\n", $ydb->debug_log );
 	echo '</pre>';
@@ -329,7 +362,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
-			<div class="filter-form">
+			<div id="search_form" class="filter-form">
 				<form action="" method="get" class="form-actions form-horizontal">
 						<?php
 						
@@ -780,15 +813,17 @@ function yourls_table_end() {
 /**
  * Echo the content start tag
  *
+ * @since 1.7
  */
 function yourls_wrapper_start() {
-	echo yourls_apply_filter( 'wrapper_start', '<div class="col col-lg-6 col-push-4">' );
+	echo yourls_apply_filter( 'wrapper_start', '<div id="content" class="col col-lg-6 col-push-4">' );
 	yourls_do_action( 'admin_notice' );
 }
 
 /**
  * Echo the content end tag
  *
+ * @since 1.7
  */
 function yourls_wrapper_end() {
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
@@ -799,14 +834,16 @@ function yourls_wrapper_end() {
 /**
  * Echo the sidebar start tag
  *
+ * @since 1.7
  */
 function yourls_sidebar_start() {
-	echo yourls_apply_filter( 'sidebar_start', '<div class="menu col col-lg-2 col-offset-2 affix">' );
+	echo yourls_apply_filter( 'sidebar_start', '<div id="sidebar" class="menu col col-lg-2 col-offset-2 affix">' );
 }
 
 /**
  * Echo the sidebar end tag
  *
+ * @since 1.7
  */
 function yourls_sidebar_end() {
 	echo yourls_apply_filter( 'sidebar_end', '</div>' );
@@ -909,7 +946,10 @@ function yourls_display_login_message() {
 
 /**
  * Close html page
+ *
+ * @since 1.7
  */
 function yourls_html_ending() {
+	yourls_do_action( 'html_ending' );
 	echo '</body></html>';
 }
