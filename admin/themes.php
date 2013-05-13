@@ -8,39 +8,43 @@ if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
 	yourls_plugin_admin_page( $_GET['page'] );
 }
 
-// Handle activation/deactivation of plugins
-if( isset( $_GET['action'] ) ) {
+// Handle activation/deactivation of theme
+if( isset( $_GET['action'] ) && isset( $_GET['theme'] ) ) {
 
 	// Check nonce
-	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] );
+	yourls_verify_nonce( 'manage_themes', $_REQUEST['nonce'] );
+	
+	// Activate / Deactivate
+	switch( $_GET['action'] ) {
+		case 'activate':
+			$result = yourls_activate_theme( $_GET['theme'] );
+			if( $result === true )
+				yourls_redirect( yourls_admin_url( 'themes.php?success=activated' ), 302 );
 
-	// Check plugin file is valid
-	if( isset( $_GET['theme'] ) && yourls_validate_plugin_file( YOURLS_THEMEDIR.'/'.$_GET['theme'].'/theme.php') ) {
-		
-		global $ydb;
-		// Activate / Deactive
-		switch( $_GET['action'] ) {
-			case 'activate':
-				$result = yourls_activate_plugin( $_GET['theme'].'/theme.php' );
-				if( $result === true )
-					yourls_redirect( yourls_admin_url( 'themes.php?success=activated' ), 302 );
+			break;
+			
+		case 'deactivate':
+			$result = yourls_deactivate_theme( $_GET['theme'] );
+			if( $result === true )
+				yourls_redirect( yourls_admin_url( 'themes.php?success=deactivated' ), 302 );
 
-				break;
-				
-			default:
-				$result = yourls__( 'Unsupported action' );
-				break;
-		}
-	} else {
-		$result = yourls__( 'No theme specified, or not a valid theme' );
+			break;
+
+		default:
+			$result = yourls__( 'Unsupported action' );
+			break;
 	}
 	
 	yourls_add_notice( $result, 'danger' );
 }
-
+	
 // Handle message upon succesfull (de)activation
-if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
-	$message = yourls__( 'Theme has been activated' );
+if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GET['success'] == 'deactivated' ) ) ) {
+	if( $_GET['success'] == 'activated' ) {
+		$message = yourls__( 'Theme has been activated' );
+	} elseif ( $_GET['success'] == 'deactivated' ) {
+		$message = yourls__( 'Theme has been deactivated' );
+	}
 	yourls_add_notice( $message, 'success' );
 }
 
@@ -63,8 +67,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 	$nonce = yourls_create_nonce( 'manage_themes' );
 	
 	$count = 0;
-	foreach( $themes as $file=>$theme ) {
-		
+	foreach( $themes as $file => $theme_data ) {
 		// default fields to read from the plugin header
 		$fields = array(
 			'name'       => 'Theme Name',
@@ -76,20 +79,20 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 		);
 		
 		// Loop through all default fields, get value if any and reset it
-		foreach( $fields as $field=>$value ) {
-			if( isset( $theme[ $value ] ) ) {
-				$data[ $field ] = $theme[ $value ];
+		foreach( $fields as $field => $value ) {
+			if( isset( $theme_data[ $value ] ) ) {
+				$data[ $field ] = $theme_data[ $value ];
 			} else {
 				$data[ $field ] = '(no info)';
 			}
-			unset( $theme[$value] );
+			unset( $theme_data[$value] );
 		}
 		
 		$themedir = trim( dirname( $file ), '/' );
 
-		if( yourls_is_active_plugin( $file ) ) {
+		if( $themedir == yourls_get_active_theme() ) {
 			$class = 'success';
-			$action_url = '#';
+			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'deactivate', 'theme' => $themedir ) ) );
 			$action_anchor = yourls__( 'Deactivate' );
 		} else {
 			$class = 'warning';
@@ -98,10 +101,10 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 		}
 			
 		// Other "Fields: Value" in the header? Get them too
-		if( $theme ) {
-			foreach( $theme as $extra_field=>$extra_value ) {
+		if( $theme_data ) {
+			foreach( $theme_data as $extra_field => $extra_value ) {
 				$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
-				unset( $theme[$extra_value] );
+				unset( $theme_data[$extra_value] );
 			}
 		}
 		

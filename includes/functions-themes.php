@@ -212,11 +212,11 @@ function yourls_get_themes() {
 }
 
 /**
- * Init theme and load active theme if any
+ * Init theme API and load active theme if any
  *
  * @since 1.7
  */
-function yourls_load_theme() {
+function yourls_init_theme() {
 	global $ydb;
 
 	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
@@ -224,37 +224,157 @@ function yourls_load_theme() {
 	yourls_enqueue_style(  'fonts-yourls-temp' );
 	yourls_enqueue_script( 'jquery' );
 	
-	// Don't load theme when installing or updating. @TODO: 
+	// Don't load theme when installing or updating.
 	if( yourls_is_installing() OR yourls_is_upgrading() )
 		return;
 	
-	// Load theme
-	$ydb->theme = '';
-	$active_theme = yourls_get_option( 'active_theme' );
-	
-	if( yourls_validate_plugin_file( YOURLS_THEMEDIR . '/' . $active_theme . '/theme.php' ) ) {
-		include_once( YOURLS_THEMEDIR . '/' . $active_theme . '/theme.php' );
-		$ydb->theme = $active_theme;
-		unset( $active_theme );
-	} elseif ( $active_theme != '' ) {
-		yourls_update_option( 'active_theme', $ydb->theme );
-		$message = yourls__( 'Could not find and deactivated theme:' );
-		$missing = '<strong>' . $active_theme . '</strong>';
-		yourls_add_notice( $message .' '. $missing, 'error' );
+	// Load theme if applicable
+	yourls_load_active_theme();
+}
+
+/**
+ * Check if there is an active theme and attempt to load it
+ *
+ * @since 1.7
+ * @return mixed  true if active theme loaded, false if no active theme, error message if problem
+ */
+function yourls_load_active_theme() {
+
+	yourls_do_action( 'pre_load_active_theme' );
+
+	// is there an active theme ?
+	$active_theme = yourls_get_active_theme();
+	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+		global $ydb;
+		$ydb->debug_log[] = 'theme: ' . $active_theme;
 	}
+	if( !$active_theme ) {
+		yourls_do_action( 'load_active_theme_empty' );
+		return false;
+	}
+	
+	// Try to load the active theme
+	$load = yourls_load_theme( $active_theme );
+	if( $load === true ) {
+		yourls_do_action( 'load_active_theme' );
+		return true;
+	}
+	
+	// There was a problem : deactivate theme and report error
+	yourls_deactivate_theme( $active_theme );
+	yourls_add_notice( $load );
+	yourls_add_notice( yourls_s( 'Deactivated theme: %s' ), $active_theme );
+	return $load;
+}
+
+/**
+ * Attempt to load a theme
+ *
+ * @since 1.7
+ * @param string $theme   theme directory inside YOURLS_THEMEDIR
+ * @return mixed          true, or an error message
+ */
+function yourls_load_theme( $theme ) {
+	$theme_php     = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.php' );
+	$theme_css     = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.css' );
+	$theme_css_url = yourls_sanitize_url( YOURLS_THEMEURL . '/' . $theme . '/theme.css' );
+
+	if( !is_readable( $theme_css ) )
+		return yourls_s( 'Cannot find <code>theme.css</code> in <code>%s</code>', $theme );
+
+	// attempt activation of the theme's function file if there is one
+	if( is_readable( $theme_php ) ) {
+		ob_start();
+		include( $theme_php );
+		if ( ob_get_length() > 0 ) {
+			// there was some output: error
+			$output = ob_get_clean();
+			return yourls_s( 'Theme generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
+		}
+	}
+
+	// Enqueue theme.css
+	yourls_enqueue_style( $theme, yourls_sanitize_url( YOURLS_THEMEURL . '/' . $theme . '/theme.css' ) );
+	
+	// Success !
+	yourls_do_action( 'theme_loaded' );
+	return true;
+}
+
+/**
+ * Activate a theme
+ *
+ * @since 1.7
+ * @param string $theme   theme directory inside YOURLS_THEMEDIR
+ * @return mixed          true, or an error message
+ */
+function yourls_activate_theme( $theme ) {
+	$theme_php = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.php' );
+	$theme_css = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.css' );
+
+	// Check if the theme has a theme.css
+	if( !is_readable( $theme_css ) )
+		return yourls_s( 'Cannot find <code>theme.css</code> in <code>%s</code>', $theme );
+
+	// Validate theme.php file if exists
+	if( is_readable( $theme_php ) && !yourls_validate_plugin_file( $theme_php ) )
+		return yourls_s( 'Not a valid <code>theme.php</code> file in <code>%s</code>', $theme );
+		
+	// Check that it's not activated already
+	if( $theme == yourls_get_active_theme() )
+		return yourls__( 'Theme already activated' );
+		
+	// Attempt to load the theme
+	$load = yourls_load_theme( $theme );
+	
+	if( $load === true ) {
+		// so far, so good
+		yourls_update_option( 'active_theme', $theme );
+		yourls_do_action( 'activated_theme', $theme );
+		yourls_do_action( 'activated_' . $theme );
+		return true;
+	} else {
+		// oops.
+		yourls_add_notice( $load );
+		return $load;
+	}
+}
+
+/**
+ * Deactivate a theme
+ *
+ * @since 1.7
+ * @param string $theme   theme directory inside YOURLS_THEMEDIR
+ * @return mixed          true, or an error message
+ */
+function yourls_deactivate_theme( $theme ) {
+	// Check theme is active
+	if( $theme != yourls_get_active_theme() )
+		return yourls__( 'Theme not active' );
+	
+	// Deactivate the theme
+	yourls_update_option( 'active_theme', '' );
+	yourls_do_action( 'deactivated_theme', $theme );
+	yourls_do_action( 'deactivated_' . $theme );
+	
+	return true;
+	
 }
 
 /**
  * Get active theme
  *
  * @since 1.7
- * @return string name of theme directory
+ * @return string name of theme directory, or empty string if no theme
  */
 function yourls_get_active_theme() {
 	global $ydb;
-	if( !property_exists( $ydb, 'theme' ) || !$ydb->theme )
-		$ydb->theme = '';
-	return $ydb->theme;
+	if( !property_exists( $ydb, 'theme' ) || !isset( $ydb->theme ) ) {
+		$ydb->theme = ( yourls_get_option( 'active_theme' ) ? yourls_get_option( 'active_theme' ) : '' );
+		// Update option to save one query on next page load
+		yourls_update_option( 'active_theme', $ydb->theme );
+	}
+	return yourls_apply_filter( 'get_active_theme', $ydb->theme );
 }
 
 /**
