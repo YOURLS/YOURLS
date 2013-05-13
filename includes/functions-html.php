@@ -66,7 +66,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 }
 
 /**
- * Display <h1> header and logo
+ * Display YOURLS logo
  *
  * @param bool $linked true if a link is wanted
  */
@@ -84,7 +84,7 @@ function yourls_html_logo( $linked = true ) {
 }
 
 /**
- * Display HTML header (h1 .. h6) tag
+ * Display HTML heading (h1 .. h6) tag
  *
  * @since 1.7
  * @param string $title     Title to display
@@ -93,15 +93,13 @@ function yourls_html_logo( $linked = true ) {
  * @param string $id        Optional html id
  * @param string $class     Optional html class
  */
-function yourls_html_title( $title, $size = 1, $subtitle = null, $id = null, $class = null ) {
+function yourls_html_htag( $title, $size = 1, $subtitle = null, $id = null, $class = null ) {
 	$size = intval( $size );
 	if( $size < 1 )
 		$size = 1;
 	elseif( $size > 6 )
 		$size = 6;
 		
-	$title = yourls_esc_html( $title );
-	
 	if( $id ) {
 		$id = 'id="' . yourls_esc_attr( $id ) . '"';
 	}
@@ -112,7 +110,6 @@ function yourls_html_title( $title, $size = 1, $subtitle = null, $id = null, $cl
 	
 	$result = "<h$size$id$class>$title";
 	if ( $subtitle ) {
-		$subtitle = yourls_esc_html( $subtitle );
 		$result .= " <small>&mdash; $subtitle</small>";
 	}
 	$result .= "</h$size>\n";

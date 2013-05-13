@@ -40,7 +40,7 @@ if( isset( $_GET['action'] ) ) {
 
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
-	$message = yourls__( 'Theme has been applied' );
+	$message = yourls__( 'Theme has been activated' );
 	yourls_add_notice( $message, 'success' );
 }
 
@@ -53,7 +53,7 @@ uasort( $themes, 'yourls_themes_sort_callback' );
 $count = count( $themes );
 $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
 	
-yourls_html_title( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
+yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
 
 	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' ); ?></p>
 	

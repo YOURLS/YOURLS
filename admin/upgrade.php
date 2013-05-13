@@ -11,7 +11,7 @@ yourls_html_logo();
 yourls_html_menu();
 yourls_wrapper_start();
 
-yourls_html_title( yourls__( 'Upgrade YOURLS' ), 2 ); 
+yourls_html_htag( yourls__( 'Upgrade YOURLS' ), 2 ); 
 
 // Check if upgrade is needed
 if ( !yourls_upgrade_is_needed() ) {
