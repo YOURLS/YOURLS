@@ -273,10 +273,15 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
                         $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
                         $return['shorturl'] = YOURLS_SITE .'/'. $keyword;
                     }else{
-                        // we stored something, but shouldn't have (ie reserved id)
-                        yourls_delete_link_by_keyword( $keyword );
-                        $return['extra_info'] .= '(deleted '.$keyword.')';
+                        // Database error, couldnt store result 
+                        $return['status']   = 'fail';
+                        $return['code']     = 'error:db';
+                        $return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
+                        $return['message']  = /* //translators: eg "Database error saving url: http://someurl/" */ yourls_s( 'Database error saving url: %s', yourls_trim_long_string( $strip_url ) );
+                        $return['title']    = $url_exists->title; 
+                        $return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
                     }
+                    $ok = true;
 				}
 				$id++;
 			} while ( !$ok );
