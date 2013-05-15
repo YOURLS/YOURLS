@@ -281,7 +281,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 					}
 					$ok = true;
 				}
-            $id++;
+				$id++;
 			} while ( !$ok );
 			@yourls_update_next_decimal( $id );
 		}
