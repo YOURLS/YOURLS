@@ -262,28 +262,26 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			do {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
-				$free = yourls_keyword_is_free($keyword);
-				if ( $free ) {
-                    if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
-                        // everything ok, populate needed vars
-                        $return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
-                        $return['status']   = 'success';
-                        $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
-                        $return['title']    = $title;
-                        $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-                        $return['shorturl'] = YOURLS_SITE .'/'. $keyword;
-                    }else{
-                        // Database error, couldnt store result 
-                        $return['status']   = 'fail';
-                        $return['code']     = 'error:db';
-                        $return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-                        $return['message']  = /* //translators: eg "Database error saving url: http://someurl/" */ yourls_s( 'Database error saving url: %s', yourls_trim_long_string( $strip_url ) );
-                        $return['title']    = $url_exists->title; 
-                        $return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
-                    }
-                    $ok = true;
+				if ( yourls_keyword_is_free($keyword) ) {
+					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
+						// everything ok, populate needed vars
+						$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
+						$return['status']   = 'success';
+						$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
+						$return['title']    = $title;
+						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
+						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
+					}else{
+						// database error, couldnt store result 
+						$return['status']   = 'fail';
+						$return['code']     = 'error:db';
+						$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
+						$return['message']  = /* //translators: eg "Error saving url to database" */ yourls_s( 'Error saving url to database' );
+						$return['title']    = /* //translators: eg "Error saving url to database" */ yourls_s( 'Error saving url to database' ); 
+					}
+					$ok = true;
 				}
-				$id++;
+            $id++;
 			} while ( !$ok );
 			@yourls_update_next_decimal( $id );
 		}
