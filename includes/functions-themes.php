@@ -32,7 +32,7 @@ function yourls_html_template_content( $template_part ) {
 			'yourls_sidebar_start',
 			'yourls_html_logo',
 			'yourls_html_global_stats',
-			[ 'yourls_html_menu', array( $args[1] ) ],
+			'yourls_html_menu',
 			'yourls_html_footer',
 			'yourls_sidebar_end',
 			'yourls_wrapper_start',   // themes should probably not remove this
@@ -45,12 +45,12 @@ function yourls_html_template_content( $template_part ) {
 	// Allow theming!
 	$elements = yourls_apply_filter( 'html_template_content', $elements, $template_part, $args );
 	
-	// 'Draw' page
+	// 'Draw' page. Each template function is passed all arguments passed to yourls_html_template_content()
 	foreach( $elements[ $template_part ] as $element ) {
-		if( is_array( $element ) ) {
-			call_user_func_array( $element[0], $element[1] );
+		if( is_callable( $element ) ) {
+			call_user_func_array( $element, func_get_args() );
 		} else {
-			call_user_func_array( $element, array() );
+			yourls_add_notice( yourls_s( 'Undefined template function <code>%s</code>', $element ), 'error' ); //@TODO notice style
 		}
 	}
 	
@@ -218,6 +218,8 @@ function yourls_get_themes() {
  */
 function yourls_init_theme() {
 	global $ydb;
+	
+	yourls_add_action( 'init_theme' );
 
 	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
 	yourls_enqueue_style(  'style' );
