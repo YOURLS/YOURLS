@@ -329,9 +329,9 @@ function yourls_load_active_theme() {
  * @return mixed          true, or an error message
  */
 function yourls_load_theme( $theme ) {
-	$theme_php     = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.php' );
-	$theme_css     = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.css' );
-	$theme_css_url = yourls_sanitize_url( YOURLS_THEMEURL . '/' . $theme . '/theme.css' );
+	$theme_php     = yourls_get_theme_dir( $theme ) . '/theme.php';
+	$theme_css     = yourls_get_theme_dir( $theme ) . '/theme.css';
+	$theme_css_url = yourls_get_theme_url( $theme ) . '/theme.css';
 
 	if( !is_readable( $theme_css ) )
 		return yourls_s( 'Cannot find <code>theme.css</code> in <code>%s</code>', $theme );
@@ -348,7 +348,7 @@ function yourls_load_theme( $theme ) {
 	}
 
 	// Enqueue theme.css
-	yourls_enqueue_style( $theme, yourls_sanitize_url( YOURLS_THEMEURL . '/' . $theme . '/theme.css' ) );
+	yourls_enqueue_style( $theme, $theme_css_url );
 	
 	// Success !
 	yourls_do_action( 'theme_loaded' );
@@ -363,8 +363,8 @@ function yourls_load_theme( $theme ) {
  * @return mixed          true, or an error message
  */
 function yourls_activate_theme( $theme ) {
-	$theme_php = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.php' );
-	$theme_css = yourls_sanitize_filename( YOURLS_THEMEDIR . '/' . $theme . '/theme.css' );
+	$theme_php = yourls_get_theme_dir( $theme ) . '/theme.php';
+	$theme_css = yourls_get_theme_dir( $theme ) . '/theme.css';
 
 	// Check if the theme has a theme.css
 	if( !is_readable( $theme_css ) )
@@ -432,6 +432,50 @@ function yourls_get_active_theme() {
 }
 
 /**
+ * Return the base directory of a given theme
+ *
+ * @since 1.7
+ * @param string $theme  theme (its directory)
+ * @return string        sanitized physical path
+ */
+function yourls_get_theme_dir( $theme ) {
+	return yourls_sanitize_filename( YOURLS_THEMEDIR . "/$theme" );
+}
+
+/**
+ * Return the base URL of a given theme
+ *
+ * @since 1.7
+ * @param string $theme  theme (its directory)
+ * @return string        sanitized URL
+ */
+function yourls_get_theme_url( $theme ) {
+	return yourls_sanitize_url( YOURLS_THEMEURL . "/$theme" );
+}
+
+/**
+ * Return the base directory of the active theme, if any
+ *
+ * @since 1.7
+ * @return string        sanitized physical path, or an empty string
+ */
+function yourls_get_active_theme_dir( ) {
+	return ( yourls_get_active_theme() ? yourls_get_theme_dir( yourls_get_active_theme() ) : '' );
+}
+
+/**
+ * Return the base URL of the active theme, if any
+ *
+ * @since 1.7
+ * @return string        sanitized URL,  or an empty string
+ */
+function yourls_get_active_theme_url( ) {
+	return ( yourls_get_active_theme() ? yourls_get_theme_url( yourls_get_active_theme() ) : '' );
+}
+
+
+
+/**
  * Callback function: Sort themes 
  *
  * @link http://php.net/uasort
@@ -471,8 +515,8 @@ function yourls_get_theme_screenshot( $theme_dir ) {
 	
 	// search for screenshot.(gif|jpg|png)
 	foreach( array( 'png', 'jpg', 'gif' ) as $ext ) {
-		if( file_exists( YOURLS_THEMEDIR . '/' . $theme_dir . '/screenshot.' . $ext ) ) {
-			$screenshot = yourls_site_url( false, YOURLS_THEMEURL . '/' . $theme_dir . '/screenshot.' . $ext );
+		if( file_exists( yourls_get_theme_dir( $theme_dir ) . '/screenshot.' . $ext ) ) {
+			$screenshot = yourls_get_theme_url( $theme_dir ) . '/screenshot.' . $ext;
 			break;
 		}
 	}
