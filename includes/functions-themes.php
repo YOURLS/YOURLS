@@ -113,7 +113,7 @@ function yourls_dequeue_asset( $name, $type ) {
 	}
 	
 	global $ydb;
-	if( property_exists( $ydb, 'assets' ) || isset( $ydb->assets[ $type ][ $name ] ) ) {
+	if( yourls_is_asset_queued( $name, $type ) ) {
 		unset( $ydb->assets[ $type ][ $name ] );
 		return true;
 	}
@@ -127,13 +127,25 @@ function yourls_dequeue_asset( $name, $type ) {
  * @param string $name  name of the asset
  * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
  * @param string $type  type of asset ('css' or 'js')
+ * @param mixed  $deps  dependencies required first - a string or an array of strings
  * @return bool         false on error, true otherwise
  */
-function yourls_enqueue_asset( $name, $src = '', $type ) {
+function yourls_enqueue_asset( $name, $type, $src = '', $deps = array() ) {
 	// Check file type
 	if( !in_array( $type, array( 'css', 'js' ) ) ) {
 		yourls_add_notice( yourls__( 'You can only enqueue "css" or "js" files' ) );
 		return false;
+	}
+	
+	// Already in queue?
+	if( yourls_is_asset_queued( $name, $type ) )
+		return false;
+		
+	// Are there any (core) dependencies needed first?
+	if( $deps ) {
+		foreach( (array)$deps as $dep ) {
+			yourls_enqueue_asset( $dep, $type );
+		}
 	}
 	
 	global $ydb;
@@ -150,10 +162,11 @@ function yourls_enqueue_asset( $name, $src = '', $type ) {
  * @see yourls_enqueue_asset()
  * @param string $name  name of the asset
  * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
+ * @param mixed  $deps  dependencies required first - a string or an array of strings
  * @return bool         false on error, true otherwise
  */
-function yourls_enqueue_style( $name, $src = '' ) {
-	return yourls_enqueue_asset( $name, $src, 'css' );
+function yourls_enqueue_style( $name, $src = '', $deps = array() ) {
+	return yourls_enqueue_asset( $name, 'css', $src, $deps  );
 }
 
 /**
@@ -165,10 +178,11 @@ function yourls_enqueue_style( $name, $src = '' ) {
  * @see yourls_enqueue_asset()
  * @param string $name  name of the asset
  * @param string $src   source (full URL) of the asset. If ommitted, assumed it's a core asset
+ * @param mixed  $deps  dependencies required first - a string or an array of strings
  * @return bool         false on error, true otherwise
  */
-function yourls_enqueue_script( $name, $src = '' ) {
-	return yourls_enqueue_asset( $name, $src, 'js' );
+function yourls_enqueue_script( $name, $src = '', $deps = array() ) {
+	return yourls_enqueue_asset( $name, 'js', $src, $deps );
 }
 
 /**
@@ -177,7 +191,7 @@ function yourls_enqueue_script( $name, $src = '' ) {
  * Wrapper function for yourls_dequeue_asset()
  *
  * @since 1.7
- * @see yourls_enqueue_asset()
+ * @see yourls_dequeue_asset()
  * @param string $name  name of the asset
  * @return bool         false on error, true otherwise
  */
@@ -191,7 +205,7 @@ function yourls_dequeue_style( $name ) {
  * Wrapper function for yourls_dequeue_asset()
  *
  * @since 1.7
- * @see yourls_enqueue_asset()
+ * @see yourls_dequeue_asset()
  * @param string $name  name of the asset
  * @return bool         false on error, true otherwise
  */
@@ -199,6 +213,44 @@ function yourls_dequeue_script( $name ) {
 	return yourls_dequeue_asset( $name, 'js' );
 }
 
+/**
+ * Check if an asset is queued
+ *
+ * @since 1.7
+ * @param string $name  name of the asset
+ * @param string $type  type of the asset ('css' or 'js')
+ * @return bool         true if the asset is in the queue, false otherwise
+ */
+function yourls_is_asset_queued( $name, $type ) {
+	global $ydb;
+	return( property_exists( $ydb, 'assets' ) && isset( $ydb->assets[ $type ][ $name ] ) );
+}
+
+/**
+ * Check if a script is queued
+ *
+ * Wrapper function for yourls_is_asset_queued()
+ *
+ * @since 1.7
+ * @param string $name  name of the script
+ * @return bool         true if the script is in the queue, false otherwise
+ */
+function yourls_is_script_queued( $name ) {
+	return yourls_is_asset_queued( $name, 'js' );
+}
+
+/**
+ * Check if a stylesheet is queued
+ *
+ * Wrapper function for yourls_is_asset_queued()
+ *
+ * @since 1.7
+ * @param string $name  name of the stylesheet
+ * @return bool         true if the stylesheet is in the queue, false otherwise
+ */
+function yourls_is_style_queued( $name ) {
+	return yourls_is_asset_queued( $name, 'css' );
+}
 
 /**
  * List themes in /user/themes
@@ -219,7 +271,7 @@ function yourls_get_themes() {
 function yourls_init_theme() {
 	global $ydb;
 	
-	yourls_add_action( 'init_theme' );
+	yourls_do_action( 'init_theme' );
 
 	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
 	yourls_enqueue_style(  'style' );
