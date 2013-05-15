@@ -271,7 +271,7 @@ function yourls_get_themes() {
 function yourls_init_theme() {
 	global $ydb;
 	
-	yourls_do_action( 'init_theme' );
+	yourls_do_action( 'pre_init_theme' );
 
 	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
 	yourls_enqueue_style(  'style' );

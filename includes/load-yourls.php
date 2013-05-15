@@ -186,6 +186,7 @@ yourls_do_action( 'plugins_loaded' );
 // Init themes if applicable
 if( yourls_has_interface() ) {
 	yourls_init_theme();
+	yourls_do_action( 'init_theme' );
 }
 
 if( yourls_is_admin() ) {
