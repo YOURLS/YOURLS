@@ -563,3 +563,36 @@ function yourls_backslashit($string) {
 	return $string;
 }
 
+/**
+ * Sort of sprintf() where '%stuff%' is replaced with $array['stuff']
+ *
+ * Pass this function two arguments:
+ *  - a format string with tokens: "hello %hello% my name is %name%"
+ *  - an associative array: array( 'name' => 'Ozh', 'hello' => 'World', 'unused' => 'whatever' )
+ * The function will then replace every %token% with $array['token']
+ *
+ * The idea is to avoid using sprintf like this:
+ * $str = sprintf( 'hello %s my %s %s is %s and %s is %s', $who, $attr, $name, $blah, $where_am_i, $which_one_is_it, etc...)
+ *
+ * @TODO:
+ * - find a better name for this function? Not entirely pleased with it at the moment
+ * - add an option to convert return value to a one liner? (for ajax responses?)
+ *
+ * @since 1.7
+ * @param string $format   format string with %tokens%
+ * @param array $tokens    array of 'tokens' => 'values'
+ * @param array $default   optional, defaults to '', string to replace unfound tokens
+ * @return string          the formatted string
+ */
+function yourls_replace_string_tokens( $format, array $tokens, $default = '' ) {
+	preg_match_all( '/%([a-zA-Z0-9-_]+)%/', $format, $matches );
+	
+	foreach( (array)$matches[1] as $token ) {
+		if( !isset( $tokens[ $token ] ) ) {
+			$tokens[ $token ] = $default;
+		}
+		$format = str_replace( "%$token%", $tokens[ $token ], $format );
+	}
+	
+	return $format;
+}
