@@ -60,6 +60,28 @@ function yourls_html_template_content( $template_part ) {
 }
 
 /**
+ * Set list of core assets (arrays of handle => filename)
+ *
+ * Register the list of core assets and their handle. These assets are then
+ * enqueueable as needed.
+ *
+ * @since 1.7
+ * @return array   arrays of core assets
+ */
+function yourls_core_assets() {
+	return array(
+		'js'  => array(
+			// 'handle' => 'file basename without extension'
+			'jquery'    => 'jquery',
+			'clipboard' => 'ZeroClipboard',
+		),
+		'css' => array(
+			'style'     => 'style',		
+		),
+	);
+}
+
+/**
  * Process asset queue (CSS or JS files)
  *
  * @since 1.7
@@ -70,14 +92,18 @@ function yourls_html_assets_queue() {
 	// Filter the asset list before echoing links
 	$assets = yourls_apply_filter( 'html_assets_queue', $ydb->assets );
 	
+	$core = yourls_core_assets();
+	
 	// Include assets
 	foreach( $assets as $type => $files ) {
-		foreach( $files as $filename => $src ) {
-			// If not src provided, assume it's a core asset
+		foreach( $files as $name => $src ) {
+			// If no src provided, assume it's a core asset
 			if( !$src ) {
-				// @TODO: allow inclusion of non minified scripts or CSS for debugging
-				// Something like: $min = ( defined and true ( 'YOURLS_SCRIPT_DEBUG' ) ? '' : 'min' );
-				$src = yourls_site_url( false ) . "/assets/$type/" . $filename . ".min.$type?v=" . YOURLS_VERSION;
+				if( isset( $core[ $type ][ $name ] ) ) {
+					// @TODO: allow inclusion of non minified scripts or CSS for debugging
+					// Something like: $min = ( defined and true ( 'YOURLS_SCRIPT_DEBUG' ) ? '' : 'min' );
+					$src = yourls_site_url( false ) . "/assets/$type/" . $core[ $type ][ $name ] . ".min.$type?v=" . YOURLS_VERSION;
+				}
 			}
 			
 			$src = yourls_sanitize_url( $src );
@@ -274,7 +300,8 @@ function yourls_init_theme() {
 	
 	yourls_do_action( 'pre_init_theme' );
 
-	// Define default asset files - $ydb->assets will keep a list of needed CSS and JS
+	// Enqueue default asset files - $ydb->assets will keep a list of needed CSS and JS
+	// Asset src are defined in yourls_core_assets()
 	yourls_enqueue_style(  'style' );
 	yourls_enqueue_style(  'fonts-yourls-temp' );
 	yourls_enqueue_script( 'jquery' );
