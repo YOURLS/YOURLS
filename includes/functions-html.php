@@ -122,7 +122,6 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $id = null, $cla
  * @param string $current_page Which page is loaded?
  */
 function yourls_html_menu( $current_page = null ) {
-
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
 		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="glyphicon glyphicon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
@@ -163,40 +162,67 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
-	// Now output menu
-	echo '<ul class="nav">';
+	// Build menu HTML
+	$menu = '<ul class="nav" id="admin_menu">';
 	if ( yourls_is_private() && !empty( $logout_link ) )
-		echo $logout_link;
+		$menu .= $logout_link;
 
-	echo '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
+	$menu .= '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
 
 	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
 			$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
 			$class_active  = $current_page == $link ? ' active' : '';
-			printf( '<li id="admin_menu_%s_link" class="admin_menu_toplevel%s"><a href="%s" %s><i class="glyphicon glyphicon-%s"></i> %s</a></li>', $link, $class_active, $ar['url'], $title, $ar['icon'], $anchor );
+			
+			$format = '<li id="admin_menu_%link%_link" class="admin_menu_toplevel%class%">
+				<a href="%url%" %title%><i class="glyphicon glyphicon-%icon%"></i> %anchor%</a></li>';
+			$data   = array( 
+				'link'   => $link,
+				'class'  => $class_active,
+				'url'    => $ar['url'],
+				'title'  => $title,
+				'icon'   => $ar['icon'],
+				'anchor' => $anchor,
+			);
+			
+			$menu .= yourls_apply_filter( 'admin_menu_link_' . $link, yourls_replace_string_tokens( $format, $data ), $format, $data );
 		}
-		// Output submenu if any. TODO: clean up, too many code duplicated here
+		
+		// Submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
-			echo '<ul class="nav">';
+			$menu .= '<ul class="nav admin_submenu" id="admin_submenu_' . $link . '">';
 			foreach( $admin_sublinks[$link] as $link => $ar ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
 					$class_active  = ( isset( $_GET['page'] ) && $_GET['page'] == $link ) ? ' active' : '';
-					printf( '<li id="admin_menu_%s_link" class="admin_menu_sublevel admin_menu_sublevel_%s%s"><a href="%s" %s>%s</a></li>', $link, $link, $class_active, $ar['url'], $title, $anchor );
+					
+					$format = '<li id="admin_menu_%link%_link" class="admin_menu_sublevel admin_menu_sublevel_%link%%class%">
+						<a href="%url%" %itle%>%anchor%</a></li>';
+					$data   = array(
+						'link'   => $link,
+						'class'  => $class_active,
+						'url'    => $ar['url'],
+						'title'  => $title,
+						'anchor' => $anchor,
+					);
+					
+					$menu .= yourls_apply_filter( 'admin_menu_sublink_' . $link, yourls_replace_string_tokens( $format, $data ), $format, $data );
 				}
 			}
-			echo '</ul>';
+			$menu .=  '</ul>';
 		}
 	}
 	
 	if ( isset( $help_link ) )
-		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
+		$menu .=  '<li id="admin_menu_help_link">' . $help_link .'</li>';
 	
-	yourls_do_action( 'admin_menu' );
-	echo "</ul><hr />\n";
+	$menu .=  "</ul><hr />\n";
+	
+	yourls_do_action( 'pre_admin_menu' );
+	echo yourls_apply_filter( 'html_admin_menu', $menu );
+	yourls_do_action( 'post_admin_menu' );
 }
 
 /**
@@ -623,15 +649,42 @@ function yourls_table_edit_row( $keyword ) {
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 	
 	if( $url ) {
-		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
-RETURN;
-		$return = sprintf( urldecode( $return ), yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+		$return = '
+		<tr id="edit-%id%" class="edit-row">
+			<td class="edit-row">
+				<strong>%l10n_long_url%</strong>:<input type="text" id="edit-url-%id%" name="edit-url-%id%" value="%safe_url%" class="text" size="70" /><br/>
+				<strong>%l10n_short_url%</strong>: %www%<input type="text" id="edit-keyword-%id%" name="edit-keyword-%id%" value="%keyword%" class="text" size="10" /><br/>
+				<strong>%l10n_title%</strong>: <input type="text" id="edit-title-%id%" name="edit-title-%id%" value="%safe_title%" class="text" size="60" />
+			</td>
+			<td colspan="1">
+				<input type="button" id="edit-submit-%id%" name="edit-submit-%id%" value="%l10n_save%" title="%l10n_save%" class="button" onclick="edit_link_save(\'%id%\');" />
+				&nbsp;<input type="button" id="edit-close-$id" name="edit-close-%id%" value="%l10n_edit%" title="%l10n_edit%" class="button" onclick="edit_link_hide(\'%id%\');" />
+				<input type="hidden" id="old_keyword_%id%" value="%keyword%"/><input type="hidden" id="nonce_%id%" value="%nonce%"/>
+			</td>
+		</tr>
+		';
+		
+		$data = array(
+			'id' => $id,
+			'keyword' => $keyword,
+			'safe_url' => $safe_url,
+			'safe_title' => $safe_title,
+			'nonce' => $nonce,
+			'www' => yourls_link(),
+			'l10n_long_url' => yourls__( 'Long URL' ),
+			'l10n_short_url' => yourls__( 'Short URL' ),
+			'l10n_title' => yourls__( 'Title' ), 
+			'l10n_save' => yourls__( 'Save' ),
+			'l10n_edit' => yourls__( 'Cancel' ),
+		);
+
+		$return = yourls_replace_string_tokens( $format, $data );
 	} else {
 		$return = '<tr class="edit-row notfound"><td class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
 	
-	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
+	$return = yourls_apply_filter( 'table_edit_row', $return, $format, $data );
+	// Compat note : up to YOURLS 1.6 the values passed to this filter where: $return, $keyword, $url, $title
 
 	return $return;
 }
@@ -701,7 +754,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		);
 	}
 	$action_links .= '</div>';
-	$action_links = yourls_apply_filter( 'action_links', $action_links, $keyword, $url, $ip, $clicks, $timestamp );
+	$action_links  = yourls_apply_filter( 'action_links', $action_links, $keyword, $url, $ip, $clicks, $timestamp );
 
 	if( ! $title )
 		$title = $url;
@@ -710,51 +763,38 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
 		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
-	// Row cells: the array
-	$cells = array(
-		'keyword' => array(
-			'template'      => '<a href="%shorturl%">%keyword_html%</a>',
-			'shorturl'      => yourls_esc_url( $shorturl ),
-			'keyword_html'  => yourls_esc_html( $keyword ),
-		),
-		'url' => array(
-			'template'      => '<a href="%long_url%" title="%title_attr%">%title_html%</a><br/><small>%warning%<a href="%long_url%">%long_url_html%</a></small>',
-			'long_url'      => yourls_esc_url( $url ),
-			'title_attr'    => yourls_esc_attr( $title ),
-			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
-			'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
-			'warning'       => $protocol_warning,
-		),
-		'timestamp' => array(
-			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
-		),
-		'ip' => array(
-			'template' => '%ip%',
-			'ip'       => $ip,
-		),
-		'clicks' => array(
-			'template' => '%clicks%',
-			'clicks'   => yourls_number_format_i18n( $clicks, 0, '', '' ),
-		),
-		'actions' => array(
-			'template' => '%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/>',
-			'actions'  => $action_links,
-			'id'       => $id,
-			'keyword'  => $keyword,
-		),
-	);
-	$cells = yourls_apply_filter( 'table_add_row_cell_array', $cells, $keyword, $url, $title, $ip, $clicks, $timestamp );
+	// Row template that you can filter before it's parsed (don't remove HTML classes & id attributes)
+	$format = '<tr id="id-%id%">
+	<td class="keyword" id="keyword-%id%"><a href="%shorturl%">%keyword_html%</a></td>
+	<td class="url" id="url-%id%">
+		<a href="%long_url%" title="%title_attr%">%title_html%</a><br/>
+		<small>%warning%<a href="%long_url%">%long_url_html%</a></small>
+	</td>
+	<td class="timestamp" id="timestamp-%id%">%date%</td>
+	<td class="ip" id="ip-%id%">%ip%</td>
+	<td class="clicks" id="clicks-%id%">%clicks%</td>
+	<td class="actions" id="actions-%id%">%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/></td>
+	</tr>';
 	
-	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
-	$row = "<tr id=\"id-$id\">";
-	foreach( $cells as $cell_id => $elements ) {
-		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace( '/%([^%]+)?%/e', '$elements["$1"]', $elements['template'] );
-		$row .= '</td>';
-	}
-	$row .= "</tr>";
-	$row  = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
+	$data = array(
+		'id'            => $id,
+		'shorturl'      => yourls_esc_url( $shorturl ),
+		'keyword'       => yourls_esc_attr( $keyword ),
+		'keyword_html'  => yourls_esc_html( $keyword ),
+		'long_url'      => yourls_esc_url( $url ),
+		'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
+		'title_attr'    => yourls_esc_attr( $title ),
+		'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
+		'warning'       => $protocol_warning,
+		'date'          => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
+		'ip'            => $ip,
+		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
+		'actions'       => $action_links,
+	);
+	
+	$row = yourls_replace_string_tokens( $format, $data );
+	$row = yourls_apply_filter( 'table_add_row', $row, $format, $data );
+	// Compat note : up to YOURLS 1.6 the values passed to this filter where: $keyword, $url, $title, $ip, $clicks, $timestamp
 	
 	return $row;
 }
