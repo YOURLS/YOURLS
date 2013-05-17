@@ -117,6 +117,7 @@ require_once YOURLS_INC . '/functions-kses.php';
 require_once YOURLS_INC . '/functions-l10n.php';
 require_once YOURLS_INC . '/functions-compat.php';
 require_once YOURLS_INC . '/functions-html.php';
+require_once YOURLS_INC . '/functions-infos.php';
 require_once YOURLS_INC . '/functions-themes.php';
 
 // Load auth functions if needed
