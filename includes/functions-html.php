@@ -807,17 +807,24 @@ function yourls_table_head() {
 	$start = '<table class="table table-striped table-hover"><thead><tr>'."\n";
 	echo yourls_apply_filter( 'table_head_start', $start );
 	
-	$cells = yourls_apply_filter( 'table_head_cells', array(
+	$format = '<th id="main_table_head_shorturl">%shorturl%</th>
+	<th id="main_table_head_longurl">%longurl%</th>
+	<th id="main_table_head_date">%date%</th>
+	<th id="main_table_head_ip">%ip%</th>
+	<th id="main_table_head_clicks">%clicks%</th>
+	<th id="main_table_head_actions">%actions%</th>';
+	
+	$data = array(
 		'shorturl' => yourls__( 'Short URL' ),
 		'longurl'  => yourls__( 'Original URL' ),
 		'date'     => yourls__( 'Date' ),
 		'ip'       => yourls__( 'IP' ),
 		'clicks'   => yourls__( 'Clicks' ),
-		'actions'  => yourls__( 'Actions' )
-	) );
-	foreach( $cells as $k => $v ) {
-		echo "<th id='main_table_head_$k'>$v</th>\n";
-	}
+		'actions'  => yourls__( 'Actions' ),
+	);
+
+	$cells = yourls_replace_string_tokens( $format, $data );
+	echo yourls_apply_filter( 'table_head_cells', $cells, $format, $data );
 	
 	$end = "</tr></thead>\n";
 	echo yourls_apply_filter( 'table_head_end', $end );
