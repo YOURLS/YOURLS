@@ -678,7 +678,7 @@ function yourls_table_edit_row( $keyword ) {
 			'l10n_edit' => yourls__( 'Cancel' ),
 		);
 
-		$return = yourls_replace_string_tokens( $format, $data );
+		$return = urldecode( yourls_replace_string_tokens( $format, $data ) );
 	} else {
 		$return = '<tr class="edit-row notfound"><td class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
