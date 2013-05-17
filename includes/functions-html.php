@@ -604,16 +604,17 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$row .= "</tr>";
 	$row  = yourls_apply_filter( 'table_add_row_template', $row );
 	
-	// Start substitution
-	// replace %stuff% with $cells[stuff][template] mais avant process le template
-	$row = preg_replace( '/%([^%]+)?%/e', '$elements["$1"]', $row )
+	// Process the %tokens% in each cell template
+	$tokens = array();
+	foreach( $cells as $cell_id => $elements ) {
+		$tokens[ $cell_id ] = preg_replace( '/%([^%]+)?%/e', '$elements["$1"]', $elements['template'] );
+	}
 	
+	// Now replace %stuff% in the row template with the processed value
+	$row = preg_replace( '/%([^%]+)?%/e', '$tokens["$1"]', $row );
+	$row  = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
 	
 	return $row;
-}
-
-function yourls_table_add_row_template( $template, $element ) {
-
 }
 
 /**
