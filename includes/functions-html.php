@@ -496,6 +496,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'href'    => $statlink,
 			'id'      => "statlink-$id",
 			'title'   => yourls_esc_attr__( 'Stats' ),
+			'icon'    => "zoom-in",
 			'anchor'  => yourls__( 'Stats' ),
 		),
 		'share' => array(
@@ -503,6 +504,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "share-button-$id",
 			'title'   => yourls_esc_attr__( 'Share' ),
 			'anchor'  => yourls__( 'Share' ),
+			'icon'    => "share-alt",
 			'onclick' => "toggle_share('$id');return false;",
 		),
 		'edit' => array(
@@ -510,6 +512,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "edit-button-$id",
 			'title'   => yourls_esc_attr__( 'Edit' ),
 			'anchor'  => yourls__( 'Edit' ),
+			'icon'    => "edit",
 			'onclick' => "edit_link_display('$id');return false;",
 		),
 		'delete' => array(
@@ -517,19 +520,21 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "delete-button-$id",
 			'title'   => yourls_esc_attr__( 'Delete' ),
 			'anchor'  => yourls__( 'Delete' ),
+			'icon'    => "trash",
 			'onclick' => "remove_link('$id');return false;",
 		)
 	);
 	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
 	
 	// Action link buttons: the HTML
-	$action_links = '';
+	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
 		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
-		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s>%s</a>',
-			$action['href'], $action['id'], $action['title'], 'button button_'.$key, $onclick, $action['anchor']
+		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="glyphicon glyphicon-%s"></i></a>',
+			$action['href'], $action['id'], $action['title'], 'btn btn-inverse btn-'.$key, $onclick, $action['icon']
 		);
 	}
+	$action_links .= '</div>';
 	$action_links = yourls_apply_filter( 'action_links', $action_links, $keyword, $url, $ip, $clicks, $timestamp );
 
 	if( ! $title )
@@ -575,6 +580,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	);
 	$cells = yourls_apply_filter( 'table_add_row_cell_array', $cells, $keyword, $url, $title, $ip, $clicks, $timestamp );
 	
+	/*
 	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
 	$row = "<tr id=\"id-$id\">";
 	foreach( $cells as $cell_id => $elements ) {
@@ -584,8 +590,30 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	}
 	$row .= "</tr>";
 	$row  = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
+	*/
+	
+	// Row template that you can filter before it's parsed
+	// Attention: - don't remove HTML class or id attributes - don't add newline ("\n") chars
+	$row  = "<tr id=\"id-$id\">";
+	$row .= "<td class=\"keyword\" id=\"keyword-$id\">%keyword%</td>";
+	$row .= "<td class=\"url\" id=\"url-$id\">%url%</td>";
+	$row .= "<td class=\"timestamp\" id=\"timestamp-$id\">%timestamp%</td>";
+	$row .= "<td class=\"ip\" id=\"ip-$id\">%ip%</td>";
+	$row .= "<td class=\"clicks\" id=\"clicks-$id\">%clicks%</td>";
+	$row .= "<td class=\"actions\" id=\"actions-$id\">%actions%</td>";
+	$row .= "</tr>";
+	$row  = yourls_apply_filter( 'table_add_row_template', $row );
+	
+	// Start substitution
+	// replace %stuff% with $cells[stuff][template] mais avant process le template
+	$row = preg_replace( '/%([^%]+)?%/e', '$elements["$1"]', $row )
+	
 	
 	return $row;
+}
+
+function yourls_table_add_row_template( $template, $element ) {
+
 }
 
 /**
