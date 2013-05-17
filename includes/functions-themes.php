@@ -25,6 +25,7 @@
 function yourls_html_template_content( $template_part ) {
 	// Collect additional optional arguments, for instance the page context ('admin', 'plugins'...)
 	$args = func_get_args();
+	array_shift( $args ); // remove first element which is $template_part
 	
 	// Page structure
 	$elements = array (
@@ -48,7 +49,7 @@ function yourls_html_template_content( $template_part ) {
 	// 'Draw' page. Each template function is passed all arguments passed to yourls_html_template_content()
 	foreach( $elements[ $template_part ] as $element ) {
 		if( is_callable( $element ) ) {
-			call_user_func_array( $element, func_get_args() );
+			call_user_func_array( $element, $args );
 		} else {
 			yourls_add_notice( yourls_s( 'Undefined template function <code>%s</code>', $element ), 'error' ); //@TODO notice style
 		}
