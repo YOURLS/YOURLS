@@ -11,50 +11,49 @@ yourls_html_htag( yourls__( 'Tools' ), 1 ); ?>
 	<div class="page-header">
 		<?php yourls_html_htag( yourls__( 'Bookmarklets' ), 2 ); ?>
 	</div>
-	
-		<p><?php yourls_e( 'YOURLS comes with handy <span>bookmarklets</span> for easier link shortening and sharing.' ); ?></p>
+			<p><?php yourls_e( 'YOURLS comes with handy <span>bookmarklets</span> for easier link shortening and sharing.' ); ?></p>
 
-		<?php yourls_html_htag( yourls__( 'Standard or Instant, Simple or Custom' ), 3 ); ?>
-		
-		<ul>
-			<li><?php yourls_e( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ); ?></li>
-			
-			<li><?php yourls_e( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing.' ); ?></li>
-			
-			<li><?php yourls_e( 'The <span>Simple Bookmarklets</span> will generate a short URL with a random or sequential keyword.' ); ?></li>
-			
-			<li><?php yourls_e( 'The <span>Custom Keyword Bookmarklets</span> will prompt you for a custom keyword first.' ); ?></li>
-		</ul>
-		
+	<?php
+
+	$bookmarks = array (
+		'simple' => array (
+			'name' => yourls__( 'Simple' ),
+			'color' => 'info',
+			'description' => yourls__( 'The <span>Simple Bookmarklets</span> will generate a short URL with a random or sequential keyword.' ),
+			'link' => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url('index.php') . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
+		),
+		'standard' => array (
+			'name' => yourls__( 'Standard' ),
+			'color' => 'success',
+			'description' => yourls__( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ),
+			'link' => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url('index.php') . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
+		),
+		'instant' => array (
+			'name' => yourls__( 'Instant' ),
+			'color' => 'warning',
+			'description' => yourls__( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing.' ),
+			'link' => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo yourls_admin_url('index.php'); ?>?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
+		),
+		'custom' => array (
+			'name' => yourls__( 'Custom' ),
+			'color' => 'danger',
+			'description' => yourls__( 'The <span>Custom Keyword Bookmarklets</span> will prompt you for a custom keyword first.' ),
+			'link' => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo yourls_admin_url('index.php'); ?>?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
+		),
+	);
+	
+foreach ($bookmarks as $bookmark){
+	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<div class="panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
+	echo $bookmark[ 'description' ] . '</div></a>';
+}
+
+?>		
 		<p><?php
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
 		
-		<?php yourls_html_htag( yourls__( 'The Bookmarklets' ), 3 ); ?>
-		
 		<p><?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
-		
-		<table class="table table-striped table-hover">
-			<thead>
-			<tr>
-				<td>&nbsp;</td>
-				<th><?php yourls_e( 'Standard (new page)' ); ?></th>
-				<th><?php yourls_e( 'Instant (popup)' ); ?></th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr>
-				<th class="header"><?php yourls_e( 'Simple' ); ?></th>
-				<td><a href="javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo yourls_admin_url('index.php'); ?>',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()" class="btn btn-primary btn-small" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Shorten' ); ?></a></td>
-				<td><a href="javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo yourls_admin_url('index.php'); ?>?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();" class="btn btn-small btn-info" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Instant Shorten' ); ?></a></td>
-			</tr>
-			<tr>
-				<th class="header"><?php yourls_e( 'Custom Keyword' ); ?></th>
-				<td><a href="javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo yourls_admin_url('index.php'); ?>',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()" class="btn btn-small btn-danger" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Custom shorten' ); ?></a></td>
-				<td><a href="javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo yourls_admin_url('index.php'); ?>?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();" class="btn btn-small btn-warning" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Instant Custom Shorten' ); ?></a></td>
-			</tr>
-			</tbody>
-		</table>
 		
 		<?php yourls_html_htag( yourls__( 'Social Bookmarklets' ), 3 ); ?>
 		
