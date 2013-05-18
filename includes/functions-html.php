@@ -91,8 +91,9 @@ function yourls_html_logo( $linked = true ) {
  * @param int    $size      Optional size, 1 to 6, defaults to 6
  * @param string $subtitle  Optional subtitle to be echoed after the title
  * @param string $class     Optional html class
+ * @param bool   $echo      
  */
-function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null ) {
+function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $echo = true ) {
 	$size = intval( $size );
 	if( $size < 1 )
 		$size = 1;
@@ -108,7 +109,10 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null ) 
 		$result .= " <small>&mdash; $subtitle</small>";
 	}
 	$result .= "</h$size>\n";
-	echo $result;
+	if ( $echo )
+		echo $result;
+	else
+		return $result;
 }
 
 /**
@@ -135,7 +139,7 @@ function yourls_html_menu( $current_page = null ) {
 		'icon'   => 'home'
 	);
 	
-	if( yourls_is_admin() ) {
+	if( yourls_is_admin() && ( defined( 'YOURLS_USER' ) && yourls_is_private() ) ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
 			'anchor' => yourls__( 'Tools' ),
@@ -927,13 +931,11 @@ function yourls_login_screen( $error_msg = '' ) {
 	
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
-	yourls_sidebar_start();
-	yourls_html_logo();
-	yourls_sidebar_end();
-	yourls_wrapper_start();
+	yourls_html_template_content( 'before' );
+
 	?>
 	<div id="login">
-		<form method="post" class="form-horizontal col-lg-7" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
+		<form method="post" class="login-screen" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 			<?php
 				if( !empty( $error_msg ) ) {
 					yourls_add_notice( $error_msg );
@@ -958,7 +960,9 @@ function yourls_login_screen( $error_msg = '' ) {
 		<script type="text/javascript">$('#username').focus();</script>
 	</div>
 	<?php
-	yourls_wrapper_end();
+	
+	yourls_html_template_content( 'after' );
+
 	die();	
 }
 
@@ -991,10 +995,10 @@ function yourls_display_login_message() {
 	
 	switch( $_GET['login_msg'] ) {
 		case 'pwdclear':
-			$message  = '';
-			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <code>config.php</code>' );
-			$message .= '<p>' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-			$message .= '<br />' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' ) . '</p>';
+			$message  = yourls_html_htag( yourls__( 'Warning' ), 4, null, null, false );
+			$message .= '<p>' . yourls__( 'Your password is stored as clear text in your <code>config.php</code>' );
+			$message .= '<br >' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= '<br />' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details.' ) . '</p>';
 			yourls_add_notice( $message, 'notice' );
 			break;
 	}
