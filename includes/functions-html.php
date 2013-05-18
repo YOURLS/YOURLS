@@ -905,13 +905,13 @@ function yourls_sidebar_end() {
  */
 function yourls_html_link( $href, $content = '', $title = '', $class = false, $echo = true ) {
 	if( !$content )
-		$content = $href;
+		$content = yourls_esc_html( $href );
 	if( $title ) {
 		$title = sprintf( ' title="%s"', yourls_esc_attr( $title ) );
 		if( $class )
 			$class = sprintf( ' class="%s"', yourls_esc_attr( $title ) );
 	}
-	$link = sprintf( '<a href="%s"%s%s>%s</a>', yourls_esc_url( $href ), $class, $title, yourls_esc_html( $content ) );
+	$link = sprintf( '<a href="%s"%s%s>%s</a>', yourls_esc_url( $href ), $class, $title, $content );
 	if ( $echo )
 		echo yourls_apply_filter( 'html_link', $link );
 	else 
