@@ -756,7 +756,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	foreach( $actions as $key => $action ) {
 		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
 		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="glyphicon glyphicon-%s"></i></a>',
-			$action['href'], $action['id'], $action['title'], 'btn btn-inverse btn-'.$key, $onclick, $action['icon']
+			$action['href'], $action['id'], $action['title'], 'btn btn-'.$key, $onclick, $action['icon']
 		);
 	}
 	$action_links .= '</div>';
