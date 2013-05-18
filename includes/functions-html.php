@@ -876,9 +876,10 @@ function yourls_wrapper_start() {
  * @since 1.7
  */
 function yourls_wrapper_end() {
-	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
 	echo yourls_apply_filter( 'wrapper_end', '</div>' );
-	yourls_html_debug();
+	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+		yourls_html_debug();
+	}
 }
 
 /**
