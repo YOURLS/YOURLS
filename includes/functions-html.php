@@ -22,7 +22,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	global $ydb;
 	$ydb->context = $context;
 	
-    // @TODO: @ozh Cette $bodyclass a vraiment une utilite ?
+	// @TODO: @ozh Cette $bodyclass a vraiment une utilite ?
 	// Body class
 	$bodyclass = yourls_apply_filter( 'bodyclass', '' );
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
@@ -539,7 +539,7 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
  *
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
-    // @TODO: HTML Clean up
+	// @TODO: HTML Clean up
 	if ( $shortlink_title == '' )
 		$shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
 	if ( $share_title == '' )
@@ -646,7 +646,7 @@ function yourls_table_edit_row( $keyword ) {
 	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 
-    // @TODO: HTML Clean up
+	// @TODO: HTML Clean up
 	if( $url ) {
 		$return = '
 		<tr id="edit-%id%" class="edit-row">
@@ -744,7 +744,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	);
 	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
 	
-    // @TODO: HTML Clean up
+	// @TODO: HTML Clean up
 	// Action link buttons: the HTML
 	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
@@ -897,13 +897,19 @@ function yourls_sidebar_end() {
  * Echo HTML tag for a link
  *
  */
-function yourls_html_link( $href, $title = '', $element = '' ) {
-	if( !$title )
-		$title = $href;
-	if( $element )
-		$element = sprintf( 'id="%s"', yourls_esc_attr( $element ) );
-	$link = sprintf( '<a href="%s" %s>%s</a>', yourls_esc_url( $href ), $element, yourls_esc_html( $title ) );
-	echo yourls_apply_filter( 'html_link', $link );
+function yourls_html_link( $href, $content = '', $title = '', $class = false, $echo = true ) {
+	if( !$content )
+		$content = $href;
+	if( $title ) {
+		$title = sprintf( ' title="%s"', yourls_esc_attr( $title ) );
+		if( $class )
+			$class = sprintf( ' class="%s"', yourls_esc_attr( $title ) );
+	}
+	$link = sprintf( '<a href="%s"%s%s>%s</a>', yourls_esc_url( $href ), $class, $title, yourls_esc_html( $content ) );
+	if ( $echo )
+		echo yourls_apply_filter( 'html_link', $link );
+	else 
+		return yourls_apply_filter( 'html_link', $link );
 }
 
 /**
