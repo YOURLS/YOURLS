@@ -337,7 +337,7 @@ function yourls_html_footer() {
  */
 function yourls_html_debug() {
 	global $ydb;
-	echo '<pre class="debug-info">';
+	echo '<pre class="debug-info"><a href="#" style="float:right;background:#fff;padding:1px 5px;margin-top:-5px" onclick="$(this).parent().fadeOut();return false;" title="Dismiss">X</a>';
 	echo  'Queries: ' . $ydb->num_queries . "\n";
 	echo join( "\n", $ydb->debug_log );
 	echo '</pre>';
