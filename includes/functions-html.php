@@ -72,7 +72,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  */
 function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
-	$logo = '<img class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
+	$logo = '<img class="yourls-logo-img" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
 		$logo = yourls_html_link( yourls_admin_url( 'index.php' ), $logo, 'YOURLS', false, false );
 	?>
@@ -235,9 +235,9 @@ function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
 	$html  = '<div class="global-stats"><div class="global-stats-data">';
-	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . yourls__( 'Links' );
+	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . strtoupper( yourls__( 'Links' ) );
 	$html .= '</p></div><div class="global-stats-data">';
-	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . yourls__( 'Clicks' ) . '</p></div></div>';
+	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . strtoupper( yourls__( 'Clicks' ) ) . '</p></div></div>';
 	echo yourls_apply_filters( 'html_global_stats', $html );
 }
 
