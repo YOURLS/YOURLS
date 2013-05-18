@@ -139,7 +139,7 @@ function yourls_html_menu( $current_page = null ) {
 		'icon'   => 'home'
 	);
 	
-	if( yourls_is_admin() && yourls_is_valid_session ) {
+	if( yourls_is_admin() && yourls_is_valid_session() ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
 			'anchor' => yourls__( 'Tools' ),
@@ -230,6 +230,8 @@ function yourls_html_menu( $current_page = null ) {
  * @since 1.7
  */
 function yourls_html_global_stats() {
+	if ( !yourls_is_valid_session() )
+		return;
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
 	$html  = '<div class="global-stats"><div class="global-stats-data">';
