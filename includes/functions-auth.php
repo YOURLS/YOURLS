@@ -155,8 +155,8 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 function yourls_has_hashed_password( $user ) {
 	global $yourls_user_passwords;
 	return(    isset( $yourls_user_passwords[ $user ] )
-	        && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
-		    && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+			&& substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
+			&& strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
 		   );
 }
 
