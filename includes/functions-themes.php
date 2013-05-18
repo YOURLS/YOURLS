@@ -343,9 +343,9 @@ function yourls_load_active_theme() {
 	}
 	
 	// There was a problem : deactivate theme and report error
-	yourls_deactivate_theme( $active_theme );
+	yourls_activate_theme( 'default' );
 	yourls_add_notice( $load );
-	yourls_add_notice( yourls_s( 'Deactivated theme: %s' ), $active_theme );
+	/*yourls_add_notice( yourls_s( 'Deactivated theme: %s' ), $active_theme );*/
 	return $load;
 }
 
@@ -391,6 +391,13 @@ function yourls_load_theme( $theme ) {
  * @return mixed          true, or an error message
  */
 function yourls_activate_theme( $theme ) {
+	if ( $theme == 'default' ) {
+		yourls_update_option( 'active_theme', '' );
+		yourls_do_action( 'activated_theme', $theme );
+		yourls_do_action( 'activated_' . $theme );
+		return true;
+	}
+		
 	$theme_php = yourls_get_theme_dir( $theme ) . '/theme.php';
 	$theme_css = yourls_get_theme_dir( $theme ) . '/theme.css';
 
@@ -420,27 +427,6 @@ function yourls_activate_theme( $theme ) {
 		yourls_add_notice( $load );
 		return $load;
 	}
-}
-
-/**
- * Deactivate a theme
- *
- * @since 1.7
- * @param string $theme   theme directory inside YOURLS_THEMEDIR
- * @return mixed          true, or an error message
- */
-function yourls_deactivate_theme( $theme ) {
-	// Check theme is active
-	if( $theme != yourls_get_active_theme() )
-		return yourls__( 'Theme not active' );
-	
-	// Deactivate the theme
-	yourls_update_option( 'active_theme', '' );
-	yourls_do_action( 'deactivated_theme', $theme );
-	yourls_do_action( 'deactivated_' . $theme );
-	
-	return true;
-	
 }
 
 /**

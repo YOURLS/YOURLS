@@ -3,11 +3,6 @@ define( 'YOURLS_ADMIN', true );
 require_once dirname( dirname( __FILE__ ) ) . '/includes/load-yourls.php';
 yourls_maybe_require_auth();
 
-// Handle plugin administration pages
-if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
-	yourls_plugin_admin_page( $_GET['page'] );
-}
-
 // Handle activation/deactivation of theme
 if( isset( $_GET['action'] ) && isset( $_GET['theme'] ) ) {
 
@@ -22,13 +17,6 @@ if( isset( $_GET['action'] ) && isset( $_GET['theme'] ) ) {
 				yourls_redirect( yourls_admin_url( 'themes.php?success=activated' ), 302 );
 
 			break;
-			
-		case 'deactivate':
-			$result = yourls_deactivate_theme( $_GET['theme'] );
-			if( $result === true )
-				yourls_redirect( yourls_admin_url( 'themes.php?success=deactivated' ), 302 );
-
-			break;
 
 		default:
 			$result = yourls__( 'Unsupported action' );
@@ -39,12 +27,10 @@ if( isset( $_GET['action'] ) && isset( $_GET['theme'] ) ) {
 }
 	
 // Handle message upon succesfull (de)activation
-if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GET['success'] == 'deactivated' ) ) ) {
-	if( $_GET['success'] == 'activated' ) {
+if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
+	if( $_GET['success'] == 'activated' )
 		$message = yourls__( 'Theme has been activated' );
-	} elseif ( $_GET['success'] == 'deactivated' ) {
-		$message = yourls__( 'Theme has been deactivated' );
-	}
+
 	yourls_add_notice( $message, 'success' );
 }
 
@@ -57,7 +43,7 @@ uasort( $themes, 'yourls_themes_sort_callback' );
 $count = count( $themes );
 $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
 	
-yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
+yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) ); ?>
 
 	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' ); ?></p>
 	
@@ -68,7 +54,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 	
 	$count = 0;
 	foreach( $themes as $file => $theme_data ) {
-		// default fields to read from the plugin header
+		// default fields to read from the theme header
 		$fields = array(
 			'name'       => 'Theme Name',
 			'uri'        => 'Theme URI',
@@ -92,8 +78,8 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 
 		if( $themedir == yourls_get_active_theme() ) {
 			$class = 'success';
-			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'deactivate', 'theme' => $themedir ) ) );
-			$action_anchor = yourls__( 'Deactivate' );
+			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'activate', 'theme' => 'default' ) ) );
+			$action_anchor = yourls__( 'Reset' );
 		} else {
 			$class = 'warning';
 			$action_url = yourls_nonce_url( 'manage_themes', yourls_add_query_arg( array( 'action' => 'activate', 'theme' => $themedir ) ) );
@@ -118,20 +104,20 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 		}
 		
 		// Author link
-		$by = sprintf( '<span class="plugin_author"><a href="%s">%s</a></span>', $data['author_uri'], $data['author'] );
+		$by = sprintf( '<span class="theme-author"><a href="%s">%s</a></span>', $data['author_uri'], $data['author'] );
 		$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'By %s', $by );
 		
 		printf( '
 		<div class="col col-lg-6 theme %s">
 			<div class="thumbnail">%s
 				<div class="caption">
-					<h4 class="plugin_name"><a href="%s">%s</a></h4>
+					<h4 class="theme-name"><a href="%s">%s</a></h4>
 					<p>
-						<span class="label plugin_version">%s</span>
+						<span class="label theme-version">%s</span>
 						%s
 					</p>
-					<p class="plugin_desc">%s</p>
-					<p class="plugin_actions actions">
+					<p class="theme-desc">%s</p>
+					<p class="theme-actions actions">
 						<a class="btn btn-%s" href="%s">%s</a>
 					</p>
 				</div>
