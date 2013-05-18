@@ -42,8 +42,8 @@ foreach( $files as $file ) {
 </head>
 <body>
 	<div class="wrap">
-		<div class="menu col col-lg-2 col-offset-2 affix">
-			<div style="text-align: center;">
+		<div class="sidebar">
+			<div class="yourls-logo">
 				<img class="logo" src="../assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>
 				<p>Your Own URL Shortener</p>
 			</div>
@@ -52,7 +52,7 @@ foreach( $files as $file ) {
 			<?php echo $menu; ?>
 			</ul>
 		</div>
-		<div class="col col-lg-6 col-push-4">
+		<div class="content">
 			<?php echo $html; ?>
 		</div>
 	</div>
