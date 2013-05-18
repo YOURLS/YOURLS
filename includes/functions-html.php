@@ -74,7 +74,7 @@ function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
 	$logo = '<img class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
-	$logo = yourls_html_link( yourls_admin_url( 'index.php' ), 'YOURLS', $logo, false );
+		$logo = yourls_html_link( yourls_admin_url( 'index.php' ), $logo, 'YOURLS', false, false );
 	?>
 	<div class="yourls-logo">
 		<?php echo $logo; ?>
@@ -895,7 +895,13 @@ function yourls_sidebar_end() {
 
 /**
  * Echo HTML tag for a link
- *
+ * 
+ * @param string $href Where the link point
+ * @param string $content
+ * @param string $title Optionnal "title" attribut
+ * @param bool $class Optionnal "class" attribut
+ * @param bool $echo 
+ * @return HTML tag with all contents
  */
 function yourls_html_link( $href, $content = '', $title = '', $class = false, $echo = true ) {
 	if( !$content )
