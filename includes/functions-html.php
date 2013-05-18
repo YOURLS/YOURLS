@@ -139,7 +139,7 @@ function yourls_html_menu( $current_page = null ) {
 		'icon'   => 'home'
 	);
 	
-	if( yourls_is_admin() && ( defined( 'YOURLS_USER' ) && yourls_is_private() ) ) {
+	if( yourls_is_admin() && yourls_is_valid_session ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
 			'anchor' => yourls__( 'Tools' ),
