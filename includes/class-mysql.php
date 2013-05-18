@@ -45,6 +45,6 @@ function yourls_set_DB_driver( ) {
 	yourls_do_action( 'set_DB_driver', $driver );
 	
 	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-	$ydb->debug_log[] = "DB driver: $driver";
+	$ydb->debug_log[] = "Database Driver: $driver";
 }
 

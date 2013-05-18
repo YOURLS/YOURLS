@@ -328,7 +328,7 @@ function yourls_load_active_theme() {
 	$active_theme = yourls_get_active_theme();
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		global $ydb;
-		$ydb->debug_log[] = 'theme: ' . $active_theme;
+		$ydb->debug_log[] = 'Theme: ' . $active_theme;
 	}
 	if( !$active_theme ) {
 		yourls_do_action( 'load_active_theme_empty' );

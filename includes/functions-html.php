@@ -337,8 +337,8 @@ function yourls_html_footer() {
  */
 function yourls_html_debug() {
 	global $ydb;
-	echo '<pre id="debug-info" class="debug-info">';
-	echo sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries ) . "\n";
+	echo '<pre class="debug-info">';
+	echo  'Queries: ' . $ydb->num_queries . "\n";
 	echo join( "\n", $ydb->debug_log );
 	echo '</pre>';
 	yourls_do_action( 'html_debug', $ydb->context );
@@ -877,8 +877,8 @@ function yourls_wrapper_start() {
  */
 function yourls_wrapper_end() {
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
-		yourls_html_debug();
 	echo yourls_apply_filter( 'wrapper_end', '</div>' );
+	yourls_html_debug();
 }
 
 /**

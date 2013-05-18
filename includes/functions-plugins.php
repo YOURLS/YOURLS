@@ -381,7 +381,9 @@ function yourls_load_plugins() {
 	global $ydb;
 	$ydb->plugins = array();
 	$active_plugins = yourls_get_option( 'active_plugins' );
-	
+	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
+		$ydb->debug_log[] = 'Plugins: ' . count( $active_plugins );
+
 	foreach( (array)$active_plugins as $key=>$plugin ) {
 		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
 			include_once( YOURLS_PLUGINDIR.'/'.$plugin );
