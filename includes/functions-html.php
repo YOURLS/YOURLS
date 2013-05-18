@@ -763,7 +763,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$protocol_warning = '';
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
-		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
+		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<i class="warning protocol_warning glyphicon glyphicon-exclamation-sign" title="' . yourls__( 'Not a common link' ) . '"></i> ' );
 
 	// Row template that you can filter before it's parsed (don't remove HTML classes & id attributes)
 	$format = '<tr id="id-%id%">
