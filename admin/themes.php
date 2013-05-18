@@ -112,9 +112,9 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 		
 		// Get theme screenshot, or a default div otherwise
 		if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
-			$screenshot = '<img src="' . $screenshot . '" class="img-thumbnail" alt=""/>';
+			$screenshot = '<img src="' . $screenshot . '" alt=""/>';
 		} else {
-			$screenshot = '<span class="img-thumbnail" style="display:block;border:1px solid #aaa;font-size:40px;height:180px;width:100%;background:#e1e1e1;color:#aaa;padding-top:20%;text-align:center;"><i class="glyphicon glyphicon-question-sign"></i></span>'; // @TODO Leo CSS me! :)
+			$screenshot = '<span style="display:block;border:1px solid #aaa;font-size:40px;height:180px;width:100%;background:#e1e1e1;color:#aaa;padding-top:20%;text-align:center;"><i class="glyphicon glyphicon-question-sign"></i></span>'; // @TODO Leo CSS me! :)
 		}
 		
 		// Author link
@@ -124,13 +124,16 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 plugins' instal
 		printf( '
 		<div class="col col-lg-6 theme %s">
 			<div class="thumbnail">%s
-				<h4 class="plugin_name"><a href="%s">%s</a> <span class="label plugin_version">%s</span></h4>
-				<p>					
-					%s
-				</p>
-				<p class="plugin_desc">%s</p>
-				<div class="plugin_actions actions">
-					<a class="btn btn-%s" href="%s">%s</a>
+				<div class="caption">
+					<h4 class="plugin_name"><a href="%s">%s</a></h4>
+					<p>
+						<span class="label plugin_version">%s</span>
+						%s
+					</p>
+					<p class="plugin_desc">%s</p>
+					<p class="plugin_actions actions">
+						<a class="btn btn-%s" href="%s">%s</a>
+					</p>
 				</div>
 			</div>
 		</div>',
