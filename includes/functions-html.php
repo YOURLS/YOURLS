@@ -22,6 +22,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	global $ydb;
 	$ydb->context = $context;
 	
+    // @TODO: @ozh Cette $bodyclass a vraiment une utilite ?
 	// Body class
 	$bodyclass = yourls_apply_filter( 'bodyclass', '' );
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
@@ -45,8 +46,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php  
 	yourls_favicon();
 	yourls_html_assets_queue();
-	?>
-	<?php if ( $context == 'infos' ) { 	// Load charts component as needed ?>
+	if ( $context == 'infos' ) { 	// Load charts component as needed ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
 					 google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});
@@ -60,7 +60,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
-<body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
+<body class="<?php echo $context .' '. $bodyclass; ?>">
 	<div class="wrap">
 	<?php
 }
@@ -72,11 +72,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  */
 function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
-	$logo = '<img id="logo" class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
+	$logo = '<img class="logo" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
-	$logo = '<a href="' . yourls_admin_url( 'index.php' ) . '" title="YOURLS">' . $logo . '</a>';
+	$logo = yourls_html_link( yourls_admin_url( 'index.php' ), 'YOURLS', $logo, false );
 	?>
-	<div style="text-align: center;">
+	<div class="yourls-logo">
 		<?php echo $logo; ?>
 	</div>
 	<?php
@@ -90,25 +90,20 @@ function yourls_html_logo( $linked = true ) {
  * @param string $title     Title to display
  * @param int    $size      Optional size, 1 to 6, defaults to 6
  * @param string $subtitle  Optional subtitle to be echoed after the title
- * @param string $id        Optional html id
  * @param string $class     Optional html class
  */
-function yourls_html_htag( $title, $size = 1, $subtitle = null, $id = null, $class = null ) {
+function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null ) {
 	$size = intval( $size );
 	if( $size < 1 )
 		$size = 1;
 	elseif( $size > 6 )
 		$size = 6;
 		
-	if( $id ) {
-		$id = 'id="' . yourls_esc_attr( $id ) . '"';
-	}
-	
 	if( $class ) {
 		$class = 'class="' . yourls_esc_attr( $class ) . '"';
 	}
 	
-	$result = "<h$size$id$class>$title";
+	$result = "<h$size$class>$title";
 	if ( $subtitle ) {
 		$result .= " <small>&mdash; $subtitle</small>";
 	}
@@ -128,7 +123,7 @@ function yourls_html_menu( $current_page = null ) {
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -159,11 +154,11 @@ function yourls_html_menu( $current_page = null ) {
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
 	}
 	
-	$admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
-	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
+	$admin_links    = yourls_apply_filter( 'admin-links',    $admin_links );
+	$admin_sublinks = yourls_apply_filter( 'admin-sublinks', $admin_sublinks );
 	
 	// Build menu HTML
-	$menu = '<ul class="nav" id="admin_menu">';
+	$menu = '<ul class="nav" id="admin-menu">';
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
@@ -175,7 +170,7 @@ function yourls_html_menu( $current_page = null ) {
 			$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
 			$class_active  = $current_page == $link ? ' active' : '';
 			
-			$format = '<li id="admin_menu_%link%_link" class="admin_menu_toplevel%class%">
+			$format = '<li id="admin-menu-%link%-link" class="admin-menu-toplevel%class%">
 				<a href="%url%" %title%><i class="glyphicon glyphicon-%icon%"></i> %anchor%</a></li>';
 			$data   = array( 
 				'link'   => $link,
@@ -186,19 +181,19 @@ function yourls_html_menu( $current_page = null ) {
 				'anchor' => $anchor,
 			);
 			
-			$menu .= yourls_apply_filter( 'admin_menu_link_' . $link, yourls_replace_string_tokens( $format, $data ), $format, $data );
+			$menu .= yourls_apply_filter( 'admin-menu-link-' . $link, yourls_replace_string_tokens( $format, $data ), $format, $data );
 		}
 		
 		// Submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
-			$menu .= '<ul class="nav admin_submenu" id="admin_submenu_' . $link . '">';
+			$menu .= '<ul class="submenu" id="admin-submenu-' . $link . '">';
 			foreach( $admin_sublinks[$link] as $link => $ar ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
 					$title  = isset( $ar['title'] ) ? 'title="' . $ar['title'] . '"' : '';
 					$class_active  = ( isset( $_GET['page'] ) && $_GET['page'] == $link ) ? ' active' : '';
 					
-					$format = '<li id="admin_menu_%link%_link" class="admin_menu_sublevel admin_menu_sublevel_%link%%class%">
+					$format = '<li id="admin-menu-%link%-link" class="admin-menu-sublevel admin-menu-sublevel-%link%%class%">
 						<a href="%url%" %itle%>%anchor%</a></li>';
 					$data   = array(
 						'link'   => $link,
@@ -216,7 +211,7 @@ function yourls_html_menu( $current_page = null ) {
 	}
 	
 	if ( isset( $help_link ) )
-		$menu .=  '<li id="admin_menu_help_link">' . $help_link .'</li>';
+		$menu .=  '<li id="admin-menu-help-link">' . $help_link .'</li>';
 	
 	$menu .=  "</ul><hr />\n";
 	
@@ -233,9 +228,9 @@ function yourls_html_menu( $current_page = null ) {
 function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
-	$html  = '<div id="global_stats" class="form-actions" style="text-align:center"><div class="col col-lg-6">';
+	$html  = '<div class="global-stats"><div class="global-stats-data">';
 	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . yourls__( 'Links' );
-	$html .= '</p></div><div class="col col-lg-6">';
+	$html .= '</p></div><div class="global-stats-data">';
 	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . yourls__( 'Clicks' ) . '</p></div></div>';
 	echo yourls_apply_filters( 'html_global_stats', $html );
 }
@@ -324,7 +319,7 @@ function yourls_html_language_attributes() {
  *
  */
 function yourls_html_footer() {
-	echo '<div id="footer" class="footer"><p style="text-align:center;">';
+	echo '<div class="footer"><p>';
 	$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
 	echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
@@ -351,23 +346,23 @@ function yourls_html_debug() {
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
 	?>
-	<div id="new_url">
+	<div class="new-url">
 		<div>
-			<form id="new_url_form" class="form-actions" action="" method="get">
-				<div class="col col-lg-6">
+			<form class="new-url-form" action="" method="get">
+				<div class="new-url-long">
 					<label><?php yourls_e( 'Enter the URL' ); ?></label>
-					<input type="text" id="add-url" name="url" placeholder="http://&hellip;" size="80">
+					<input type="text" class="add-url" name="url" placeholder="http://&hellip;" size="80">
 				</div>
-				<div class="col col-lg-3">
+				<div class="new-url-short">
 					<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
-					<input type="text" id="add-keyword" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8">
+					<input type="text" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text add-keyword" size="8">
 				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				</div>
-				<div class="col col-lg-2">
-					<button type="submit" id="add-button" name="add-button" class="btn btn-primary" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
+				<div class="new-url-action">
+					<button type="submit" name="add-button" class="btn btn-primary add-button" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
 				</div>
 			</form>
-			<div id="feedback" style="display:none;"></div>
+			<div class="feedback"></div>
 		</div>
 		<?php yourls_do_action( 'html_addnew' ); ?>
 	</div>
@@ -385,10 +380,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
-			<div id="search_form" class="filter-form">
-				<form action="" method="get" class="form-actions form-horizontal">
+			<div class="search-form">
+				<form action="" method="get">
 						<?php
-						
+						// @TODO: Clean up HTML - CSS
 						// First search control: text to search
 						$_input = '<input type="text" name="search" class="text col-lg-7" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
@@ -504,7 +499,7 @@ function yourls_html_pagination( $params = array() ) {
 					}
 					if( ( $p_end ) < $total_pages ) {
 					$link = yourls_add_query_arg( array( 'page' => $total_pages ) );
-					echo '<li><a href="'.yourls_add_query_arg( array( 'page' => $page + 1 ) ).'">&rsaquo;</a></li>';
+					echo '<li><a href="' . yourls_add_query_arg( array( 'page' => $page + 1 ) ) . '">&rsaquo;</a></li>';
 					echo '<li><a href="' . $link . '" title="' . yourls_esc_attr__( 'Go to First Page' ) . '">&raquo;</a></li>';
 					}
 					?>
@@ -526,9 +521,9 @@ function yourls_html_pagination( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
-	$html = "<select name='$name' id='$name' class='input-group-addon col-lg-5'>\n";
+	$html = '<select name="' . $name . '" class="input-group-addon col-lg-5">';
 	foreach( $options as $value => $text ) {
-		$html .= "<option value='$value' ";
+		$html .= '"<option value"' . $value .'"';
 		$html .= $selected == $value ? ' selected="selected"' : '';
 		$html .= ">$text</option>\n";
 	}
@@ -544,6 +539,7 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
  *
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
+    // @TODO: HTML Clean up
 	if ( $shortlink_title == '' )
 		$shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
 	if ( $share_title == '' )
@@ -554,7 +550,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	if ( false !== $pre )
 		return $pre;
 		
-	$text   = ( $text ? '"'.$text.'" ' : '' );
+	$text   = ( $text ? '"' . $text . '" ' : '' );
 	$title  = ( $title ? "$title " : '' );
 	$share  = yourls_esc_textarea( $title.$text.$shorturl );
 	$count  = 140 - strlen( $share );
@@ -649,7 +645,8 @@ function yourls_table_edit_row( $keyword ) {
 	$www = yourls_link();
 	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
-	
+
+    // @TODO: HTML Clean up
 	if( $url ) {
 		$return = '
 		<tr id="edit-%id%" class="edit-row">
@@ -703,11 +700,11 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$statlink = yourls_statlink( $keyword );
 		
-	$delete_link = yourls_nonce_url( 'delete-link_'.$id,
+	$delete_link = yourls_nonce_url( 'delete-link-'.$id,
 		yourls_add_query_arg( array( 'id' => $id, 'action' => 'delete', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
 	);
 	
-	$edit_link = yourls_nonce_url( 'edit-link_'.$id,
+	$edit_link = yourls_nonce_url( 'edit-link-'.$id,
 		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
 	);
 	
@@ -747,6 +744,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	);
 	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
 	
+    // @TODO: HTML Clean up
 	// Action link buttons: the HTML
 	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
@@ -806,15 +804,15 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
  *
  */
 function yourls_table_head() {
-	$start = '<table class="table table-striped table-hover"><thead><tr>'."\n";
+	$start = '<table class="admin-main-table"><thead><tr>'."\n";
 	echo yourls_apply_filter( 'table_head_start', $start );
 	
-	$format = '<th id="main_table_head_shorturl">%shorturl%</th>
-	<th id="main_table_head_longurl">%longurl%</th>
-	<th id="main_table_head_date">%date%</th>
-	<th id="main_table_head_ip">%ip%</th>
-	<th id="main_table_head_clicks">%clicks%</th>
-	<th id="main_table_head_actions">%actions%</th>';
+	$format = '<th id="main-table-head-shorturl">%shorturl%</th>
+	<th id="main-table-head-longurl">%longurl%</th>
+	<th id="main-table-head-date">%date%</th>
+	<th id="main-table-head-ip">%ip%</th>
+	<th id="main-table-head-clicks">%clicks%</th>
+	<th id="main-table-head-actions">%actions%</th>';
 	
 	$data = array(
 		'shorturl' => yourls__( 'Short URL' ),
@@ -862,7 +860,7 @@ function yourls_table_end() {
  * @since 1.7
  */
 function yourls_wrapper_start() {
-	echo yourls_apply_filter( 'wrapper_start', '<div id="content" class="col col-lg-6 col-push-4">' );
+	echo yourls_apply_filter( 'wrapper_start', '<div class="content">' );
 	yourls_do_action( 'admin_notice' );
 }
 
@@ -883,7 +881,7 @@ function yourls_wrapper_end() {
  * @since 1.7
  */
 function yourls_sidebar_start() {
-	echo yourls_apply_filter( 'sidebar_start', '<div id="sidebar" class="menu col col-lg-2 col-offset-2 affix">' );
+	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">' );
 }
 
 /**
