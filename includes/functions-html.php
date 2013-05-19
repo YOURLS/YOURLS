@@ -43,7 +43,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<link rel="canonical" href="<?php yourls_site_url(); ?>/">
 	<?php  
 	yourls_favicon();
-	yourls_html_assets_queue();
+	yourls_output_asset_queue();
 	if ( $context == 'infos' ) { 	// Load charts component as needed ?>
 			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -622,7 +622,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	
 	if( !$head = yourls_did_action( 'html_head' ) ) {
 		yourls_html_head( 'die', yourls__( 'Fatal error' ) );
-		yourls_html_template_content( 'before', 'die' );
+		yourls_template_content( 'before', 'die' );
 	}
 	
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
@@ -630,7 +630,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	yourls_do_action( 'yourls_die' );
 	
 	if( !$head ) {
-		yourls_html_template_content( 'after', 'die' );
+		yourls_template_content( 'after', 'die' );
 	}
 	die();
 }
@@ -935,7 +935,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
-	yourls_html_template_content( 'before' );
+	yourls_template_content( 'before' );
 
 	?>
 	<div id="login">
@@ -965,7 +965,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	</div>
 	<?php
 	
-	yourls_html_template_content( 'after' );
+	yourls_template_content( 'after' );
 
 	die();	
 }

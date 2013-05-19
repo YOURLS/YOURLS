@@ -22,7 +22,7 @@
  * @since 1.7
  * @param string $template_part what template part (eg 'before' or 'after' the page main content)
  */
-function yourls_html_template_content( $template_part ) {
+function yourls_template_content( $template_part ) {
 	// Collect additional optional arguments, for instance the page context ('admin', 'plugins'...)
 	$args = func_get_args();
 	array_shift( $args ); // remove first element which is $template_part
@@ -46,7 +46,7 @@ function yourls_html_template_content( $template_part ) {
 	// Allow theming!
 	$elements = yourls_apply_filter( 'html_template_content', $elements, $template_part, $args );
 	
-	// 'Draw' page. Each template function is passed all arguments passed to yourls_html_template_content()
+	// 'Draw' page. Each template function is passed all arguments passed to yourls_template_content()
 	foreach( $elements[ $template_part ] as $element ) {
 		if( is_callable( $element ) ) {
 			call_user_func_array( $element, $args );
@@ -82,11 +82,11 @@ function yourls_core_assets() {
 }
 
 /**
- * Process asset queue (CSS or JS files)
+ * Process and output asset queue (CSS or JS files)
  *
  * @since 1.7
  */
-function yourls_html_assets_queue() {
+function yourls_output_asset_queue() {
 	global $ydb;
 	
 	// Filter the asset list before echoing links

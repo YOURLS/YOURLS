@@ -26,7 +26,7 @@ function sample_theme_add_css() {
 function sample_theme_template( $elements ) {
 
 	// $elements is an array containing the page structure
-	// See function yourls_html_template_content() in includes/functions-themes.php
+	// See function yourls_template_content() in includes/functions-themes.php
 	
 	// Remove YOURLS' logo
 	sample_theme_remove_from_array( $elements, 'yourls_html_logo' );

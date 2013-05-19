@@ -558,11 +558,11 @@ function yourls_plugin_admin_page( $plugin_page, $type = 'plugin' ) {
 	// Draw the page itself
 	yourls_do_action( 'load-' . $plugin_page);
 	yourls_html_head( $type . '_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
-	yourls_html_template_content( 'before', $type );
+	yourls_template_content( 'before', $type );
 	
 	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
 	
-	yourls_html_template_content( 'after', $type . '_page_' . $plugin_page );
+	yourls_template_content( 'after', $type . '_page_' . $plugin_page );
 	die();
 }
 

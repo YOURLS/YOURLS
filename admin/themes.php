@@ -35,7 +35,7 @@ if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
 }
 
 yourls_html_head( 'themes', yourls__( 'Manage Themes' ) );
-yourls_html_template_content( 'before', 'themes' );
+yourls_template_content( 'before', 'themes' );
 
 $themes = (array)yourls_get_themes();
 uasort( $themes, 'yourls_themes_sort_callback' );
@@ -133,5 +133,5 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 	yourls_e( 'If something goes wrong after you activate a theme and you cannot use YOURLS or access this page, simply rename or delete its directory.' );
 	echo '</p>';
 	
-	yourls_html_template_content( 'after', 'themes' );
+	yourls_template_content( 'after', 'themes' );
 ?>

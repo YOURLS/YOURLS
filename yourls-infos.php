@@ -202,7 +202,7 @@ if( yourls_do_log_redirect() ) {
 }
 
 yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
-yourls_html_template_content( 'before', 'stats' );
+yourls_template_content( 'before', 'stats' );
 
 yourls_html_htag( yourls__( 'Statistics Panel' ), 1);
 yourls_html_htag( yourls_esc_html( $title ), 2 ); ?>
@@ -543,4 +543,4 @@ yourls_html_htag( yourls_esc_html( $title ), 2 ); ?>
 </div>
 
 
-<?php yourls_html_template_content( 'after' ); ?>
+<?php yourls_template_content( 'after' ); ?>

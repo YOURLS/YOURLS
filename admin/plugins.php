@@ -55,7 +55,7 @@ if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GE
 }
 
 yourls_html_head( 'plugins', yourls__( 'Manage Plugins' ) );
-yourls_html_template_content( 'before', 'plugins' );
+yourls_template_content( 'before', 'plugins' );
 
 $plugins = (array)yourls_get_plugins();
 uasort( $plugins, 'yourls_plugins_sort_callback' );
@@ -138,5 +138,5 @@ yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' insta
 	yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
 	echo '</p>';
 	
-	yourls_html_template_content( 'after', 'plugins' );
+	yourls_template_content( 'after', 'plugins' );
 ?>
