@@ -289,7 +289,7 @@ function yourls_set_user( $user ) {
  * Check if current session is valid and secure as configurated
  *
  */
-function yourls_is_valid_session() {
+function yourls_is_public_or_logged() {
 	// TODO; @ozh J'avoue que je suis perdu dans les fonctions de verification. Comment verifier que la session active est loggee ?
 	if ( !yourls_is_private() )
 		return true;
