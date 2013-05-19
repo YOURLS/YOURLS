@@ -17,7 +17,7 @@
  * - 'before' elements: sidebar, logo, title, ...
  * - 'main' elements: the main content of the page: plugin list, short URL list, plugin sub page...
  * - 'after' elements: footer, ...
- * The 'before' and 'after' elements can be modified with filter 'html_template_content'
+ * The 'before' and 'after' elements can be modified with filter 'template_content'
  * 
  * @since 1.7
  * @param string $template_part what template part (eg 'before' or 'after' the page main content)
@@ -44,7 +44,7 @@ function yourls_template_content( $template_part ) {
 	);
 	
 	// Allow theming!
-	$elements = yourls_apply_filter( 'html_template_content', $elements, $template_part, $args );
+	$elements = yourls_apply_filter( 'template_content', $elements, $template_part, $args );
 	
 	// 'Draw' page. Each template function is passed all arguments passed to yourls_template_content()
 	foreach( $elements[ $template_part ] as $element ) {

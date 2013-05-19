@@ -5,7 +5,7 @@
 // Is there things to display? If so, let's add our stuff
 yourls_add_action( 'init_theme', 'sample_theme_init' );
 function sample_theme_init() {
-	yourls_add_filter( 'html_template_content', 'sample_theme_template' );
+	yourls_add_filter( 'template_content', 'sample_theme_template' );
 	yourls_add_filter( 'html_footer_text', 'sample_theme_footer' );
 	sample_theme_add_js();
 	sample_theme_add_css();
