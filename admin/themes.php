@@ -98,7 +98,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 		
 		// Get theme screenshot, or a default div otherwise
 		if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
-			$screenshot = '<img src="' . $screenshot . '" alt=""/>';
+			$screenshot = '<img src="' . $screenshot . '" alt="Screenshot"/>';
 		} else {
 			$screenshot = '<span style="display:block;border:1px solid #aaa;font-size:40px;height:180px;width:100%;background:#e1e1e1;color:#aaa;padding-top:20%;text-align:center;"><i class="glyphicon glyphicon-question-sign"></i></span>'; // @TODO Leo CSS me! :)
 		}
