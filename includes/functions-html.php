@@ -228,8 +228,6 @@ function yourls_html_menu( $current_page = null ) {
  * @since 1.7
  */
 function yourls_html_global_stats() {
-	if ( !yourls_is_public_or_logged() )
-		return;
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
 	$html  = '<div class="global-stats"><div class="global-stats-data">';
@@ -931,12 +929,14 @@ function yourls_html_link( $href, $content = '', $title = '', $class = false, $e
  *
  */
 function yourls_login_screen( $error_msg = '' ) {
+	// Since the user is not authed, we don't disclose any kind of stats
+	yourls_remove_from_template( 'yourls_html_global_stats' );
+
 	yourls_html_head( 'login' );
 	
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
 	yourls_template_content( 'before' );
-
 	?>
 	<div id="login">
 		<form method="post" class="login-screen" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>

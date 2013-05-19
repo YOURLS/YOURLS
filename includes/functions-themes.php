@@ -10,8 +10,8 @@
  */
 
 /**
- * Draw page with HTML functions in requested order
- * 
+ * Define default page structure (ie callable functions to render a page)
+ *
  * Page structure is the following: the 'before' part, the 'main' part and the 'after' part,
  * for instance:
  * - 'before' elements: sidebar, logo, title, ...
@@ -20,12 +20,9 @@
  * The 'before' and 'after' elements can be modified with filter 'template_content'
  * 
  * @since 1.7
- * @param string $template_part what template part (eg 'before' or 'after' the page main content)
  */
-function yourls_template_content( $template_part ) {
-	// Collect additional optional arguments, for instance the page context ('admin', 'plugins'...)
-	$args = func_get_args();
-	array_shift( $args ); // remove first element which is $template_part
+function yourls_set_template_content() {
+	global $ydb;
 	
 	// Page structure
 	$elements = array (
@@ -43,11 +40,70 @@ function yourls_template_content( $template_part ) {
 		)
 	);
 	
+	$ydb->template = yourls_apply_filter( 'set_template_content', $elements );
+}
+
+/**
+ * Remove an element (ie callable function) from the page template, or replace it with another one
+ *
+ * @since 1.7
+ * @param string $function      Callable function to remove from the template
+ * @param string $replace_with  Optional, callable function to replace with
+ * @param string $where         Optional, only remove/replace $function in $where part ('before' or 'after')
+ */
+function yourls_remove_from_template( $function, $replace_with = null, $where = null ) {
+	global $ydb;
+	
+	if( $where ) {
+		yourls_remove_from_array_deep( $ydb->template[ $where ], $function, $replace_with );
+	} else {
+		yourls_remove_from_array_deep( $ydb->template, $function, $replace_with );
+	}
+}
+
+/**
+ * Helper function: remove an element, based on its value, from a multidimensional array
+ *
+ * @since 1.7
+ * @param string $remove        element to remove from the array
+ * @param string $replace_with  Optional, element to replace with
+ * @return unknown
+ */
+function yourls_remove_from_array_deep( &$array, $remove, $replace_with = null ) { 
+	foreach( $array as $key => &$value ) {
+		if( is_array( $value ) ) { 
+			yourls_remove_from_array_deep( $value, $remove, $replace_with );
+		} else {
+			if( $remove == $value ) {
+				if( $replace_with ) {
+					$array[ $key ] = $replace_with;
+				} else {
+					unset( $array[ $key ] );
+				}
+			}
+		}
+	}
+}
+
+
+/**
+ * Draw page with HTML functions in requested order
+ * 
+ * @since 1.7
+ * @param string $template_part what template part (eg 'before' or 'after' the page main content)
+ */
+function yourls_template_content( $template_part ) {
+	global $ydb;
+
+	// Collect additional optional arguments, for instance the page context ('admin', 'plugins'...)
+	$args = func_get_args();
+	array_shift( $args ); // remove first element which is $template_part
+	
 	// Allow theming!
-	$elements = yourls_apply_filter( 'template_content', $elements, $template_part, $args );
+	$elements = yourls_apply_filter( 'template_content', $ydb->template, $template_part, $args );
 	
 	// 'Draw' page. Each template function is passed all arguments passed to yourls_template_content()
-	foreach( $elements[ $template_part ] as $element ) {
+	foreach( (array) $elements[ $template_part ] as $element ) {
 		if( is_callable( $element ) ) {
 			call_user_func_array( $element, $args );
 		} else {
@@ -296,8 +352,6 @@ function yourls_get_themes() {
  * @since 1.7
  */
 function yourls_init_theme() {
-	global $ydb;
-	
 	yourls_do_action( 'pre_init_theme' );
 
 	// Enqueue default asset files - $ydb->assets will keep a list of needed CSS and JS
@@ -305,6 +359,9 @@ function yourls_init_theme() {
 	yourls_enqueue_style(  'style' );
 	yourls_enqueue_style(  'fonts-yourls-temp' );
 	yourls_enqueue_script( 'jquery' );
+	
+	// Set default template structure
+	yourls_set_template_content();
 	
 	// Don't load theme when installing or updating.
 	if( yourls_is_installing() OR yourls_is_upgrading() )
