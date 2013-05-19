@@ -190,7 +190,7 @@ function yourls_html_menu( $current_page = null ) {
 		
 		// Submenu if any. TODO: clean up, too many code duplicated here
 		if( isset( $admin_sublinks[$link] ) ) {
-			$menu .= '<ul class="submenu" id="admin-submenu-' . $link . '">';
+			$menu .= '<ul class="admin-menu submenu" id="admin-submenu-' . $link . '">';
 			foreach( $admin_sublinks[$link] as $link => $ar ) {
 				if( isset( $ar['url'] ) ) {
 					$anchor = isset( $ar['anchor'] ) ? $ar['anchor'] : $link;
