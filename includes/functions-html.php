@@ -162,7 +162,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin-sublinks', $admin_sublinks );
 	
 	// Build menu HTML
-	$menu = '<ul class="nav" id="admin-menu">';
+	$menu = '<ul class="admin-menu" role="navigation">';
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
@@ -325,8 +325,8 @@ function yourls_html_language_attributes() {
  *
  */
 function yourls_html_footer() {
-	echo '<div class="footer"><p>';
-	$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v' . YOURLS_VERSION );
+	echo '<div class="footer" role="contentinfo"><p>';
+	$footer  = yourls_s( 'Powered by %s', yourls_html_link( 'http://yourls.org/', 'YOURLS', 'YOURLS', false, false ) . ' v' . YOURLS_VERSION );
 	echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
 }
@@ -387,7 +387,7 @@ function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
 			<div class="search-form">
-				<form action="" method="get">
+				<form action="" method="get" role="search">
 						<?php
 						// @TODO: Clean up HTML - CSS
 						// First search control: text to search
@@ -866,7 +866,7 @@ function yourls_table_end() {
  * @since 1.7
  */
 function yourls_wrapper_start() {
-	echo yourls_apply_filter( 'wrapper_start', '<div class="content">' );
+	echo yourls_apply_filter( 'wrapper_start', '<div class="content" role="main">' );
 	yourls_do_action( 'admin_notice' );
 }
 
@@ -1000,7 +1000,7 @@ function yourls_display_login_message() {
 		case 'pwdclear':
 			$message  = yourls_html_htag( yourls__( 'Warning' ), 4, null, null, false );
 			$message .= '<p>' . yourls__( 'Your password is stored as clear text in your <code>config.php</code>' );
-			$message .= '<br >' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
+			$message .= '<br />' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
 			$message .= '<br />' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details.' ) . '</p>';
 			yourls_add_notice( $message, 'notice' );
 			break;
