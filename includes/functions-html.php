@@ -36,7 +36,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <head>
 	<meta charset="utf-8">
 	<title><?php echo $title ?></title>
-	<meta name="description" content="YOURLS &middot; Your Own URL Shortener' | <?php yourls_site_url(); ?>">
+	<meta name="description" content="YOURLS is Your Own URL Shortener. Get it at http://yourls.org/">
 	<meta name="author" content="The YOURLS project - http://yourls.org/">
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">

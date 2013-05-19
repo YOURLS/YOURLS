@@ -36,7 +36,7 @@ foreach( $files as $file ) {
 <head>
 	<meta charset="utf-8">
 	<title>YOURLS Documentation</title>
-	<meta name="description" content="YOURLS &middot; Your Own URL Shortener' | Documentation">
+	<meta name="description" content="YOURLS is Your Own URL Shortener. Get it at http://yourls.org/">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../assets/css/style.min.css" type="text/css" media="screen">
 </head>
