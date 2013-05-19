@@ -52,7 +52,6 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 	
 	$nonce = yourls_create_nonce( 'manage_themes' );
 	
-	$count = 0;
 	foreach( $themes as $file => $theme_data ) {
 		// default fields to read from the theme header
 		$fields = array(
@@ -100,7 +99,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 		if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
 			$screenshot = '<img src="' . $screenshot . '" alt="Screenshot"/>';
 		} else {
-			$screenshot = '<span style="display:block;border:1px solid #aaa;font-size:40px;height:180px;width:100%;background:#e1e1e1;color:#aaa;padding-top:20%;text-align:center;"><i class="glyphicon glyphicon-question-sign"></i></span>'; // @TODO Leo CSS me! :)
+			$screenshot = '<span class="screenshot-missing"><i class="glyphicon glyphicon-question-sign"></i></span>';
 		}
 		
 		// Author link
@@ -108,7 +107,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 		$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'By %s', $by );
 		
 		printf( '
-		<div class="col col-lg-6 theme %s">
+		<div class="col col-lg-4 theme %s">
 			<div class="thumbnail">%s
 				<div class="caption">
 					<h4 class="theme-name"><a href="%s">%s</a></h4>
@@ -126,12 +125,6 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 			$class, $screenshot, $data['uri'], $data['name'], $data['version'],
 			$by, $data['desc'], $class, $action_url, $action_anchor
 		);
-		
-		$count++;
-		if( $count == 4 ) {
-			echo '<div class="clearfix"></div>';
-			$count = 0;
-		}
 		
 	}
 	echo '</div>';
