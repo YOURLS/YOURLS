@@ -22,10 +22,8 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	global $ydb;
 	$ydb->context = $context;
 	
-	// @TODO: @ozh Cette $bodyclass a vraiment une utilite ?
 	// Body class
 	$bodyclass = yourls_apply_filter( 'bodyclass', '' );
-	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
 	
 	// Page title
 	$_title = 'YOURLS &middot; Your Own URL Shortener | ' . yourls_link();
