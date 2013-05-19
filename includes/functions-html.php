@@ -272,8 +272,11 @@ HTML;
  * @param string $message The message showed
  * @param string $style notice / error / info / warning / success
  */
-function yourls_add_label( $message, $style = 'normal' ) {
-	echo '<span class="label label-' . $style . '">' . $message . '</span>';
+function yourls_add_label( $message, $style = 'normal', $space = null ) {
+	$label = '<span class="label label-' . $style . '">' . $message . '</span>';
+	if ( $space )
+		$label = $space == 'before' ? ' ' . $label : $label . ' ';
+	echo $label;
 }
 
 /**
