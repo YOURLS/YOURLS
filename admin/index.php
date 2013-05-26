@@ -249,8 +249,9 @@ yourls_template_content( 'before', $context );
 yourls_do_action( 'admin_page_before_content' );
 yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
 
-if ( !$is_bookmark ) { ?>
-	<p><?php echo $search_sentence; ?></p>
+if ( !$is_bookmark ) { 
+	if ( $search_sentence )
+		echo '<p>' . $search_sentence . '</p>'; ?>
 	<p><?php
 		printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )

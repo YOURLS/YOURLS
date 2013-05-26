@@ -422,7 +422,7 @@ function yourls_html_search( $params = array() ) {
 							'less' => yourls__( 'less' ),
 						);
 						$_select_clicks = yourls_html_select( 'click_filter', $_options, $click_filter );
-						$_input_clicks  = '<input type="text" name="click_limit" class="text col-lg-7" value="' . $click_limit . '" /> ';
+						$_input_clicks  = '<input type="text" name="click_limit" class="text" value="' . $click_limit . '" /> ';
 
 						// Fifth search control: Show links created before/after/between ...
 						$_options = array(
@@ -431,20 +431,20 @@ function yourls_html_search( $params = array() ) {
 							'between' => yourls__( 'between' ),
 						);
 						$_select_creation = yourls_html_select( 'date_filter', $_options, $date_filter );
-						$_input_creation  = '<input type="text" name="date_first" id="date_first" class="text col-lg-7" value="' . $date_first . '" />';
-						$_input2_creation = '<input type="text" name="date_second" id="date_second" class="text col-lg-7" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						$_input_creation  = '<input type="text" name="date-first" class="text date-first" value="' . $date_first . '" />';
+						$_input2_creation = '<input type="text" name="date-second" class="text date-second" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
 						
 						$advanced_search = array(
-							yourls__( 'Search' )        => array( $_input, $_select_search, $_button ),
-							yourls__( 'Order by' )      => array( $_select_order, $_select2_order ),
-							yourls__( 'Links with' )    => array( $_select_clicks, $_input_clicks ),
-							yourls__( 'Links created' ) => array( $_select_creation, $_input_creation, $_input2_creation )
+							yourls__( 'Search' )   => array( $_input, $_select_search, $_button ),
+							yourls__( 'Order by' ) => array( $_select_order, $_select2_order ),
+							yourls__( 'Clicks' )   => array( $_select_clicks, $_input_clicks ),
+							yourls__( 'Created' )  => array( $_select_creation, $_input_creation, $_input2_creation )
 						);
 						foreach( $advanced_search as $title => $options ) {
 							?>
 							<div class="control-group">
 								<label class="control-label"><?php echo $title; ?></label>
-								<div class="controls input-group col-lg-9">
+								<div class="controls input-group">
 									<?php
 									foreach( $options as $option )
 										echo $option
@@ -455,7 +455,7 @@ function yourls_html_search( $params = array() ) {
 						}
 						?>
 
-						<div class="pull-right">
+						<div class="">
 							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e( 'Clear' ); ?></button>
 							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e( 'Search' ); ?></button>
 						</div>
@@ -526,7 +526,7 @@ function yourls_html_pagination( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
-	$html = '<select name="' . $name . '" class="input-group-addon col-lg-5">';
+	$html = '<select name="' . $name . '" class="input-group-addon">';
 	foreach( $options as $value => $text ) {
 		$html .= '<option value"' . $value .'"';
 		$html .= $selected == $value ? ' selected="selected"' : '';
