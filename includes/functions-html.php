@@ -528,7 +528,7 @@ function yourls_html_pagination( $params = array() ) {
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
 	$html = '<select name="' . $name . '" class="input-group-addon col-lg-5">';
 	foreach( $options as $value => $text ) {
-		$html .= '"<option value"' . $value .'"';
+		$html .= '<option value"' . $value .'"';
 		$html .= $selected == $value ? ' selected="selected"' : '';
 		$html .= ">$text</option>\n";
 	}
