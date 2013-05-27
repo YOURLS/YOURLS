@@ -44,11 +44,11 @@ $bookmarks = array (
 	
 foreach ( $bookmarks as $bookmark ){
 	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<div class="panel panel-' . $bookmark[ 'color' ] . ' col col-lg-3"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
+	echo '<div class="tools panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
 	echo $bookmark[ 'description' ] . '</div></a>';
 }
 
-echo '<p>';
+echo '<div class="clearfix"></div><p>';
 yourls_add_label( yourls__( 'Heads up!' ), 'info', 'after' );
 yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 	
@@ -75,13 +75,13 @@ $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.
 	
 foreach ( $bookmarks as $bookmark ){
 	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<div class="panel panel-' . $bookmark[ 'color' ] . ' col col-lg-6"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
+	echo '<div class="tools panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
 	echo $bookmark[ 'description' ] . '</div></a>';
 }
 
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
-echo '<p>';
+echo '<div class="clearfix"></div><p>';
 yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
 yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ) . '</p>';
 ?>

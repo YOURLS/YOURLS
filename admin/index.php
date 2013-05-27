@@ -249,6 +249,11 @@ yourls_template_content( 'before', $context );
 yourls_do_action( 'admin_page_before_content' );
 yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
 
+yourls_do_action( 'admin_page_before_form' ); 
+	  
+yourls_html_addnew();
+echo '<hr />';
+
 if ( !$is_bookmark ) { 
 	if ( $search_sentence )
 		echo '<p>' . $search_sentence . '</p>'; ?>
@@ -257,12 +262,8 @@ if ( !$is_bookmark ) {
 		if( $total_items_clicks !== false )
 			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
 	?>.</p>
-<?php } yourls_do_action( 'admin_page_before_form' ); 
-	  
-yourls_html_addnew(); 
-	  
+<?php 
 // If bookmarklet, add message. Otherwise, hide hidden share box.
-if ( !$is_bookmark ) {
 	yourls_share_box( '', '', '', '', '', '', true );
 } else {
 	echo '<script type="text/javascript">$(document).ready(function(){
@@ -308,7 +309,7 @@ if ( !$is_bookmark ) {
 		'total_pages'  => $total_pages,
 	);
 	yourls_html_pagination( $params_pagination );
-
+echo '<hr />';
 	$params_search = array(
 		'search'       => $search,
 		'search_text'  => $search_text,

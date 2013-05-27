@@ -364,7 +364,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				</div>
 				<div class="new-url-action">
-					<button type="submit" name="add-button" class="btn btn-primary add-button" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
+					<button type="submit" name="add-button" class="add-button" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
 				</div>
 			</form>
 			<div class="feedback"></div>
