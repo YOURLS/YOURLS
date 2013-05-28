@@ -1,22 +1,28 @@
 <?php
 
 /**
+ * Check if mod_rewrite is enabled. Note: unused, not reliable enough.
+ *
+ */
+function yourls_check_mod_rewrite() {
+	return yourls_apache_mod_loaded( 'mod_rewrite' );
+}
+
+/**
+ * Check if extension cURL is enabled
+ *
+ */
+function yourls_check_curl() {
+	return function_exists( 'curl_init' );
+}
+
+/**
  * Check if server has MySQL 4.1+
  *
  */
 function yourls_check_database_version() {
 	global $ydb;
-	
-	// Attempt to get MySQL server version, check result and if error count increased
-	$num_errors1 = count( $ydb->captured_errors );
-	$version     = $ydb->mysql_version();
-	$num_errors2 = count( $ydb->captured_errors );
-	
-	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
-		yourls_die( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
-	}
-	
-	return ( version_compare( '4.1', $version ) <= 0 );
+	return ( version_compare( '4.1', $ydb->mysql_version() ) <= 0 );
 }
 
 /**
@@ -46,6 +52,27 @@ function yourls_is_iis() {
 	return ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false );
 }
 
+/**
+ * Check if module exists in Apache config. Input string eg 'mod_rewrite', return true or $default. Stolen from WordPress
+ *
+ */
+function yourls_apache_mod_loaded( $mod, $default = false ) {
+	if ( !yourls_is_apache() )
+		return false;
+
+	if ( function_exists( 'apache_get_modules' ) ) {
+		$mods = apache_get_modules();
+		if ( in_array( $mod, $mods ) )
+			return true;
+	} elseif ( function_exists( 'phpinfo' ) ) {
+			ob_start();
+			phpinfo( 8 );
+			$phpinfo = ob_get_clean();
+			if ( false !== strpos( $phpinfo, $mod ) )
+				return true;
+	}
+	return $default;
+}
 
 /**
  * Create .htaccess or web.config. Returns boolean

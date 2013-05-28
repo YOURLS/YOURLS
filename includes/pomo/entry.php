@@ -7,7 +7,7 @@
  * @subpackage entry
  */
 
-if ( !class_exists( 'Translation_Entry', false ) ):
+if ( !class_exists( 'Translation_Entry' ) ):
 /**
  * Translation_Entry class encapsulates a translatable string
  */

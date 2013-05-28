@@ -149,9 +149,7 @@ function yourls_html_footer() {
 		?>
 	</p></div>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-		echo '<div style="text-align:left"><pre>';
-		echo join( "\n", $ydb->debug_log );
-		echo '</div>';
+		echo '<p>'. $ydb->all_queries .'<p>';
 	} ?>
 	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
 	</body>
@@ -331,7 +329,7 @@ function yourls_html_tfooter( $params = array() ) {
  * @param array $options array of 'value' => 'Text displayed'
  * @param string $selected optional 'value' from the $options array that will be highlighted
  * @param boolean $display false (default) to return, true to echo
- * @return string HTML content of the select element
+ * @return HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
 	$html = "<select name='$name' id='$name' size='1'>\n";
@@ -445,6 +443,9 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
+	global $ydb;
+	
+	$table = YOURLS_DB_TABLE_URL;
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
@@ -454,6 +455,10 @@ function yourls_table_edit_row( $keyword ) {
 	$safe_title = yourls_esc_attr( $title );
 	$www = yourls_link();
 	
+	$save_link = yourls_nonce_url( 'save-link_'.$id,
+		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit_save', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) ) 
+	);
+	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 	
 	if( $url ) {
@@ -462,7 +467,7 @@ function yourls_table_edit_row( $keyword ) {
 RETURN;
 		$return = sprintf( urldecode( $return ), yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
-		$return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
+		$return = '<tr class="edit-row notfound">><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
 	
 	$return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
@@ -694,7 +699,7 @@ function yourls_html_menu() {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' (<a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
+		$logout_link = yourls_apply_filter( 'logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' </strong> (<a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
@@ -768,8 +773,7 @@ function yourls_html_menu() {
  *
  */
 function yourls_add_notice( $message, $style = 'notice' ) {
-	// Escape single quotes in $message to avoid breaking the anonymous function
-	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style );
+	$message = yourls_notice_box( $message, $style );
 	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
 }
 
@@ -791,11 +795,11 @@ HTML;
  */
 function yourls_page( $page ) {
 	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if( !file_exists( $include ) ) {
+	if( !file_exists($include) ) {
 		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
-	include( $include );
+	include($include);
 	yourls_do_action( 'post_page', $page );
 	die();	
 }
@@ -846,24 +850,3 @@ function yourls_l10n_calendar_strings() {
 	yourls__( 'Today' );
 	yourls__( 'Close' );
 }
-
-/**
- * Display custom message based on query string parameter 'login_msg'
- *
- * @since 1.7
- */
-function yourls_display_login_message() {
-	if( !isset( $_GET['login_msg'] ) )
-		return;
-	
-	switch( $_GET['login_msg'] ) {
-		case 'pwdclear':
-			$message  = '';
-			$message .= yourls__( '<strong>Notice</strong>: your password is stored as clear text in your <tt>config.php</tt>' );
-			$message .= ' ' . yourls__( 'Did you know you can easily improve the security of your YOURLS install by <strong>encrypting</strong> your password?' );
-			$message .= ' ' . yourls__( 'See <a href="http://yourls.org/userpassword">UsernamePassword</a> for details' );
-			yourls_add_notice( $message, 'notice' );
-			break;
-	}
-}
-

@@ -116,7 +116,7 @@ function yourls__( $text, $domain = 'default' ) {
  * @see sprintf()
  * @since 1.6
  *
- * @param string $pattern Text to translate
+ * @param string $text Text to translate
  * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
  * @return string Translated text
  */
@@ -284,11 +284,8 @@ function yourls_ex( $text, $context, $domain = 'default' ) {
  * @see yourls_x()
  * @since 1.6
  *
- * @param string   $single
- * @param string   $context
- * @param string   $domain Optional. Domain to retrieve the translated text
- * @internal param string $text Text to translate
- * @return string
+ * @param string $text Text to translate
+ * @param string $domain Optional. Domain to retrieve the translated text
  */
 function yourls_esc_attr_x( $single, $context, $domain = 'default' ) {
 	return yourls_esc_attr( yourls_translate_with_context( $single, $context, $domain ) );
@@ -302,11 +299,8 @@ function yourls_esc_attr_x( $single, $context, $domain = 'default' ) {
  * @see yourls_x()
  * @since 1.6
  *
- * @param string   $single
- * @param string   $context
- * @param string   $domain Optional. Domain to retrieve the translated text
- * @internal param string $text Text to translate
- * @return string
+ * @param string $text Text to translate
+ * @param string $domain Optional. Domain to retrieve the translated text
  */
 function yourls_esc_html_x( $single, $context, $domain = 'default' ) {
 	return yourls_esc_html( yourls_translate_with_context( $single, $context, $domain ) );
@@ -412,7 +406,6 @@ function yourls_nx_noop( $singular, $plural, $context, $domain = null ) {
  * @param int $count Number of objects
  * @param string $domain Optional. The domain identifier the text should be retrieved in. If $nooped_plural contains
  * 	a domain passed to yourls_n_noop() or yourls_nx_noop(), it will override this value.
- * @return string
  */
 function yourls_translate_nooped_plural( $nooped_plural, $count, $domain = 'default' ) {
 	if ( $nooped_plural['domain'] )
@@ -594,9 +587,9 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
  *
  * @since 1.6
  *
- * @param string   $dateformatstring Format to display the date.
- * @param bool|int $unixtimestamp    Optional. Unix timestamp.
- * @param bool     $gmt              Optional, default is false. Whether to convert to GMT for time.
+ * @param string $dateformatstring Format to display the date.
+ * @param int $unixtimestamp Optional. Unix timestamp.
+ * @param bool $gmt Optional, default is false. Whether to convert to GMT for time.
  * @return string The date, translated if locale specifies it.
  */
 function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = false ) {
@@ -758,15 +751,6 @@ class YOURLS_Locale_Formats {
 	 * @access private
 	 */
 	var $meridiem;
-
-	/**
-	 * Stores the translated number format
-	 *
-	 * @since 1.6
-	 * @var array
-	 * @access private
-	 */
-	var $number_format;
 
 	/**
 	 * The text direction of the locale language.
@@ -1034,7 +1018,6 @@ class YOURLS_Locale_Formats {
  *
  * @param string $domain Unique identifier (the "domain") for retrieving translated strings
  * @param string $path Full path to directory containing MO files.
- * @return bool
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filters( 'load_custom_textdomain', yourls_get_locale(), $domain );

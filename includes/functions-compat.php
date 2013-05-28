@@ -13,7 +13,7 @@ if( !function_exists( 'json_encode' ) ) {
 /**
  * Converts an associative array of arbitrary depth and dimension into JSON representation. Used for compatibility with older PHP builds.
  *
- * @param array $array the array to convert.
+ * @param $array The array to convert.
  * @return mixed The resulting JSON string, or false if the argument was not an array.
  * @author Andy Rusterholz
  * @link http://php.net/json_encode (see comments)

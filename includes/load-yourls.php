@@ -10,7 +10,7 @@ if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	require_once( dirname( __FILE__ ) . '/config.php' );
 } else {
 	// config.php not found :(
-	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
+	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt>readme.html</tt> to learn how to install YOURLS</p>' );
 }
 
 // Check if config.php was properly updated for 1.4
@@ -109,11 +109,19 @@ require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
-require_once( YOURLS_INC.'/functions-infos.php' );
-
+// Allow drop-in replacement for the DB engine
+if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
+	require_once( YOURLS_USERDIR.'/db.php' );
+} else {
+	require_once( YOURLS_INC.'/class-mysql.php' );
+}
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once( YOURLS_INC.'/functions-auth.php' );
+
+// Allow early inclusion of a cache layer
+if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
+	require_once( YOURLS_USERDIR.'/cache.php' );
 
 // Load locale
 yourls_load_default_textdomain();
@@ -137,18 +145,7 @@ yourls_fix_request_uri();
 
 // Create the YOURLS object $ydb that will contain everything we globally need
 global $ydb;
-
-// Allow drop-in replacement for the DB engine
-if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
-	require_once( YOURLS_USERDIR.'/db.php' );
-} else {
-	require_once( YOURLS_INC.'/class-mysql.php' );
-	yourls_db_connect();
-}
-
-// Allow early inclusion of a cache layer
-if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
-	require_once( YOURLS_USERDIR.'/cache.php' );
+yourls_db_connect();
 
 // Read options right from start
 yourls_get_all_options();

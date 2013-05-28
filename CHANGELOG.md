@@ -1,8 +1,8 @@
 YOURLS Changelog
 ================
 
-_This file lists the main changes through all versions of YOURLS.  
-For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
+This file lists the main changes through all versions of YOURLS. For a much more detailed
+list, simply refer to the commit messages: https://github.com/YOURLS/YOURLS/commits/master
 
 1.6
 ---

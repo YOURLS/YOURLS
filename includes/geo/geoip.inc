@@ -53,7 +53,7 @@ define("GEOIP_DIALUP_SPEED", 1);
 define("GEOIP_CABLEDSL_SPEED", 2);
 define("GEOIP_CORPORATE_SPEED", 3);
 
-if( !class_exists('GeoIP', false) ) {
+if( !class_exists('GeoIP') ) {
 class GeoIP {
     var $flags;
     var $filehandle;

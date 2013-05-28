@@ -26,8 +26,3 @@ if( $auth !== true ) {
 }
 
 yourls_do_action( 'auth_successful' );
-
-// Deal with query string message added upon login
-if( isset( $_GET['login_msg'] ) )
-	yourls_display_login_message();
-

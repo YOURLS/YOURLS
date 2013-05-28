@@ -42,22 +42,14 @@ function yourls_make_regexp_pattern( $string ) {
 }
 
 /**
- * Is a URL a short URL? Accept either 'http://sho.rt/abc' or 'abc'
+ * Is a URL a short URL?
  * 
  */
 function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
 	
 	$is_short = false;
-	
-	// Is $shorturl a URL (http://sho.rt/abc) or a keyword (abc) ?
-	if( yourls_get_protocol( $shorturl ) ) {
-		$keyword = yourls_get_relative_url( $shorturl );
-	} else {
-		$keyword = $shorturl;
-	}
-	
-	// Check if it's a valid && used keyword
+	$keyword = yourls_get_relative_url( $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
 	if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
 		$is_short = true;
 	}
@@ -88,8 +80,6 @@ function yourls_keyword_is_reserved( $keyword ) {
  *
  */
 function yourls_get_IP() {
-	$ip = '';
-
 	// Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
 	$headers = array( 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' );
 	foreach( $headers as $header ) {
@@ -183,6 +173,8 @@ function yourls_url_exists( $url ) {
  *
  */
 function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
+	global $ydb;
+
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
@@ -267,7 +259,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$ok = ($free && $add_url);
 				if ( $ok === false && $add_url === 1 ) {
 					// we stored something, but shouldn't have (ie reserved id)
-					yourls_delete_link_by_keyword( $keyword );
+					$delete = yourls_delete_link_by_keyword( $keyword );
 					$return['extra_info'] .= '(deleted '.$keyword.')';
 				} else {
 					// everything ok, populate needed vars
@@ -390,12 +382,6 @@ function yourls_keyword_is_free( $keyword ) {
  *
  */
 function yourls_keyword_is_taken( $keyword ) {
-
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
-	if ( false !== $pre )
-		return $pre;
-	
 	global $ydb;
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$taken = false;
@@ -419,17 +405,15 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
-
+		or !class_exists( 'ezSQL_mysql' )
+	) yourls_die ( yourls__( 'DB config missing, or could not find DB class' ), yourls__( 'Fatal error' ), 503 );
+	
 	// Are we standalone or in the WordPress environment?
-	if ( class_exists( 'wpdb', false ) ) {
-		/* TODO: should we deprecate this? Follow WP dev in that area */
+	if ( class_exists( 'wpdb' ) ) {
 		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	} else {
-		yourls_set_DB_driver();
+		$ydb =  new ezSQL_mysql( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
 	}
-	
-	// Check if connection attempt raised an error. It seems that only PDO does, though.
 	if ( $ydb->last_error )
 		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
 	
@@ -450,7 +434,7 @@ function yourls_xml_encode( $array ) {
 }
 
 /**
- * Return array of all information associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
+ * Return array of all informations associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
  *
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
@@ -889,11 +873,11 @@ function yourls_geo_countrycode_to_countryname( $code ) {
 		return $country;
 
 	// Load the Geo class if not already done
-	if( !class_exists( 'GeoIP', false ) ) {
+	if( !class_exists( 'GeoIP' ) ) {
 		$temp = yourls_geo_ip_to_countrycode( '127.0.0.1' );
 	}
 	
-	if( class_exists( 'GeoIP', false ) ) {
+	if( class_exists( 'GeoIP' ) ) {
 		$geo  = new GeoIP;
 		$id   = $geo->GEOIP_COUNTRY_CODE_TO_NUMBER[ $code ];
 		$long = $geo->GEOIP_COUNTRY_NAMES[ $id ];
@@ -992,16 +976,10 @@ function yourls_get_all_options() {
 	$allopt = $ydb->get_results( "SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1" );
 	
 	foreach( (array)$allopt as $option ) {
-		$ydb->option[ $option->option_name ] = yourls_maybe_unserialize( $option->option_value );
+		$ydb->option[$option->option_name] = yourls_maybe_unserialize( $option->option_value );
 	}
-
-	if( property_exists( $ydb, 'option' ) ) {
-		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
-		$ydb->installed = true;
-	} else {
-		// Zero option found: assume YOURLS is not installed
-		$ydb->installed = false;
-	}
+	
+	$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
 }
 
 /**
@@ -1075,7 +1053,7 @@ function yourls_delete_option( $name ) {
 	if ( is_null( $option ) || !$option->option_id )
 		return false;
 		
-	yourls_do_action( 'delete_option', $name );
+	yourls_do_action( 'delete_option', $option_name );
 		
 	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
 	return true;
@@ -1292,20 +1270,18 @@ function yourls_is_upgrading() {
 /**
  * Check if YOURLS is installed
  *
- * Checks property $ydb->installed that is created by yourls_get_all_options()
- *
- * See inline comment for updating from 1.3 or prior.
- *
  */
 function yourls_is_installed() {
-	global $ydb;
-	$is_installed = ( property_exists( $ydb, 'installed' ) && $ydb->installed == true );
+	static $is_installed = false;
+	if ( $is_installed === false ) {
+		$check_14 = $check_13 = false;
+		global $ydb;
+		if( defined('YOURLS_DB_TABLE_NEXTDEC') )
+			$check_13 = $ydb->get_var('SELECT `next_id` FROM '.YOURLS_DB_TABLE_NEXTDEC);
+		$check_14 = yourls_get_option( 'version' );
+		$is_installed = $check_13 || $check_14;
+	}
 	return yourls_apply_filter( 'is_installed', $is_installed );
-	
-	/* Note: this test won't work on YOURLS 1.3 or older (Aug 2009...)
-	   Should someone complain that they cannot upgrade directly from
-	   1.3 to 1.7: first, laugh at them, then ask them to install 1.6 first.
-	*/
 }
 
 /**
@@ -1358,7 +1334,7 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 
 	$i = 0;
 	while ($i < $length) {
-		$str .= substr( $possible, mt_rand( 0, strlen( $possible )-1 ), 1 );
+		$str .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
 		$i++;
 	}
 	
@@ -1382,7 +1358,7 @@ function yourls_salt( $string ) {
  *     array( 'var' => 'value' ), $url
  *     'var', 'value'
  *     'var', 'value', $url 
- * If $url omitted, uses $_SERVER['REQUEST_URI']
+ * If $url ommited, uses $_SERVER['REQUEST_URI']
  *
  */
 function yourls_add_query_arg() {
@@ -2002,7 +1978,7 @@ function yourls_get_protocol( $url ) {
  */
 function yourls_get_relative_url( $url, $strict = true ) {
 	$url = yourls_sanitize_url( $url );
-	
+
 	// Remove protocols to make it easier
 	$noproto_url  = str_replace( 'https:', 'http:', $url );
 	$noproto_site = str_replace( 'https:', 'http:', YOURLS_SITE );

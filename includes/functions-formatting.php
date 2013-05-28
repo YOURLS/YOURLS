@@ -135,8 +135,7 @@ function yourls_intval( $in ) {
  *
  */
 function yourls_escape( $in ) {
-	global $ydb;
-	return $ydb->escape( $in );
+	return mysql_real_escape_string( $in );
 }
 
 /**
@@ -287,6 +286,7 @@ function yourls_check_invalid_utf8( $string, $strip = false ) {
  *
  * @param string $string The text which is to be encoded.
  * @param mixed $quote_style Optional. Converts double quotes if set to ENT_COMPAT, both single and double if set to ENT_QUOTES or none if set to ENT_NOQUOTES. Also compatible with old values; converting single quotes if set to 'single', double if set to 'double' or both if otherwise set. Default is ENT_NOQUOTES.
+ * @param string $charset Optional. The character encoding of the string. Default is false.
  * @param boolean $double_encode Optional. Whether to encode existing html entities. Default is false.
  * @return string The encoded text with HTML entities.
  */
