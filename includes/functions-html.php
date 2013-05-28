@@ -8,7 +8,6 @@ function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
 	<h1>
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
 	<?php
@@ -72,7 +71,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	$bodyclass .= ( yourls_is_mobile_device() ? 'mobile' : 'desktop' );
 	
 	// Page title
-	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . yourls_link();
+	$_title = 'de Souza Institute Link Shortener | ' . yourls_link();
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
@@ -136,25 +135,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  *
  */
 function yourls_html_footer() {
-	global $ydb;
 	
-	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
-	?>
-	</div> <?php // wrap ?>
-	<div id="footer"><p>
-		<?php
-		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
-		$footer .= ' &ndash; '.$num_queries;
-		echo yourls_apply_filters( 'html_footer_text', $footer );
-		?>
-	</p></div>
-	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-		echo '<p>'. $ydb->all_queries .'<p>';
-	} ?>
-	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
-	</body>
-	</html>
-	<?php
 }
 
 /**
@@ -392,22 +373,28 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 
 		<?php yourls_do_action( 'shareboxes_middle', $longurl, $shorturl, $title, $text ); ?>
 
-		<div id="sharebox" class="share">
-			<?php echo $share_title; ?>
+		<!-- <div 
+		<!-- id="sharebox" class="share" -->
+		<!-- > -->
+		<!--	<?php //echo $share_title; ?>
 			<div id="tweet">
 				<span id="charcount" class="hide-if-no-js"><?php echo $count; ?></span>
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
 			</div>
-			<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
+	    -->
+		<!--	<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
 				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
 				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="<?php yourls_e( 'Share on Friendfeed' ); ?>" onclick="share('ff');return false;">FriendFeed</a>
+				-->
+				
 				<?php
-				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
+				//yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
 				?>
 			</p>
 		</div>
+
 		
 		<?php yourls_do_action( 'shareboxes_after', $longurl, $shorturl, $title, $text ); ?>
 	
@@ -703,7 +690,9 @@ function yourls_html_menu() {
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
+	
+	// Took away the help link
+	//	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -711,7 +700,7 @@ function yourls_html_menu() {
 	$admin_links['admin'] = array(
 		'url'    => yourls_admin_url( 'index.php' ),
 		'title'  => yourls__( 'Go to the admin interface' ),
-		'anchor' => yourls__( 'Admin interface' )
+		'anchor' => yourls__( 'Add/Edit Shortlinks' )
 	);
 	
 	if( yourls_is_admin() ) {

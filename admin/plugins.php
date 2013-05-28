@@ -156,9 +156,7 @@ yourls_html_menu();
 	
 	<p><?php yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' ); ?></p>
 	
-	<h3><?php yourls_e( 'More plugins' ); ?></h3>
-	
-	<p><?php yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
+
 
 	
 <?php yourls_html_footer(); ?>
