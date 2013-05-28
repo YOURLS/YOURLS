@@ -13,7 +13,9 @@ user/languages/*
 !user/languages/
 
 # Plugins
-user/plugins/*
+# user/plugins/*
+# We want to backup the plugins we used
+
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
