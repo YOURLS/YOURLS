@@ -1216,13 +1216,18 @@ function yourls_maybe_cron() {
 		$conn_port = $url_parts['port'];
 		$real_host = $url_parts['host'];
 		
-		// Confirm that the hostname is resolvable
-		$resolved = gethostbyname( $real_host );
-		if ( $resolved === $real_host ) {
-			error_log( "DNS resolution failed for host $conn_host" );
-			return;
+		if ( preg_match( '/^[\d\.]*$/', $real_host ) ) {
+			// If ServerName is an IP address, that's fine.
+			$conn_host = $real_host;
 		} else {
-			$conn_host = $resolved;
+			// Confirm that the hostname is resolvable
+			$resolved = gethostbyname( $real_host );
+			if ( $resolved === $real_host ) {
+				error_log( "DNS resolution failed for host $real_host" );
+				return;
+			} else {
+				$conn_host = $resolved;
+			}
 		}
 		
 		$request   = "GET $conn_path HTTP/1.1\r\n";
