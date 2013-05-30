@@ -175,7 +175,7 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
 
-// Check for scheduled work
+// Fire cron action during page load, if enough time has elapsed since last cron
 yourls_maybe_cron();
 
 if( yourls_is_admin() )
