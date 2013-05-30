@@ -1220,7 +1220,7 @@ function yourls_maybe_cron() {
 		$resolved = gethostbyname( $real_host );
 		if ( $resolved === $real_host ) {
 			error_log( "DNS resolution failed for host $conn_host" );
-			return
+			return;
 		} else {
 			$conn_host = $resolved;
 		}
