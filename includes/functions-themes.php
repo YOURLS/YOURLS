@@ -430,6 +430,7 @@ function yourls_load_theme( $theme ) {
 			$output = ob_get_clean();
 			return yourls_s( 'Theme generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
 		}
+		ob_end_clean();
 	}
 
 	// Enqueue theme.css
