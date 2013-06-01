@@ -137,7 +137,7 @@ function yourls_html_menu( $current_page = null ) {
 		'icon'   => 'home'
 	);
 	
-	if( yourls_is_admin() && yourls_is_public_or_logged() ) {
+	if( ( yourls_is_admin() && yourls_is_public_or_logged() ) || defined( 'YOURLS_USER' ) ) {
 		$admin_links['tools'] = array(
 			'url'    => yourls_admin_url( 'tools.php' ),
 			'anchor' => yourls__( 'Tools' ),
@@ -352,24 +352,22 @@ function yourls_html_debug() {
 function yourls_html_addnew( $url = '', $keyword = '' ) {
 	?>
 	<div class="new-url">
-		<div>
-			<form class="new-url-form" action="" method="get">
-				<div class="new-url-long">
-					<label><?php yourls_e( 'Enter the URL' ); ?></label>
-					<input type="text" class="add-url" name="url" placeholder="http://&hellip;" size="80">
-				</div>
-				<div class="new-url-short">
-					<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
-					<input type="text" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text add-keyword" size="8">
-				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-				</div>
-				<div class="new-url-action">
-					<button type="submit" name="add-button" class="add-button" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
-				</div>
-			</form>
-			<div class="feedback"></div>
-		</div>
-		<?php yourls_do_action( 'html_addnew' ); ?>
+		<form class="new-url-form" action="" method="get">
+			<div class="new-url-long">
+				<label><?php yourls_e( 'Enter the URL' ); ?></label>
+				<input type="text" class="add-url" name="url" placeholder="http://&hellip;" size="80">
+			</div>
+			<div class="new-url-short">
+				<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
+				<input type="text" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="text add-keyword" size="8">
+			<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
+			</div>
+			<div class="new-url-action">
+				<button type="submit" name="add-button" class="add-button" onclick="add_link();"><?php yourls_e( 'Shorten The URL' ); ?></button>
+			</div>
+		</form>
+		<div class="feedback"></div>
+	<?php yourls_do_action( 'html_addnew' ); ?>
 	</div>
 	<?php 
 }
