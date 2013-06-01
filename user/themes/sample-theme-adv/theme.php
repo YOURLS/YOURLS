@@ -90,15 +90,13 @@ function sample_theme_menu() {
 	// The menu
 	echo <<<MENU
 	<div id="custom_menu" class="col col-lg-8 col-push-2">
-	<ul>
-		<li><a href="$intranet">Intranet</a></li>
-		<li><a href="$yourls">Short URLS</a></li>
-		<li><a href="$themes">Themes</a></li>
-	</ul>
+	    <ul>
+		    <li><a href="$intranet">Intranet</a></li>
+		    <li><a href="$yourls">Short URLS</a></li>
+		    <li><a href="$themes">Themes</a></li>
+	    </ul>
 	</div>
 	<div class="clearfix"></div>
-	
-	
 MENU;
 }
 
