@@ -44,10 +44,9 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 
 // Start output
 yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
-yourls_html_logo( false );
-yourls_wrapper_start();
 ?>
-<div id="login">
+<div class="install-form">
+<?php yourls_html_logo( false ); ?>
 	<form method="post" action="?"><?php // reset any QUERY parameters ?>
 		<?php
 			// Print errors, warnings and success messages
@@ -63,12 +62,10 @@ yourls_wrapper_start();
 
 			// Display install button or link to admin area if applicable
 			if( !yourls_is_installed() && !isset( $_REQUEST['install'] ) ) {
-				echo '<p><input type="submit" name="install" value="' . yourls__( 'Install YOURLS' ) . '" class="btn" /></p>';
+				echo '<input type="submit" name="install" value="' . yourls__( 'Install YOURLS' ) . '" class="start" />';
 			} else {
-				echo '<p><a class="btn" href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page' ) . '">' . yourls__( 'YOURLS Administration Page') . '</a></p>';
+				echo '<p><a class="start" href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page' ) . '">' . yourls__( 'YOURLS Administration Page') . '</a></p>';
 			}
 		?>
 	</form>
 </div>
-<?php 
-yourls_wrapper_end(); ?>
