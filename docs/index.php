@@ -52,7 +52,7 @@ foreach( $files as $file ) {
 			<?php echo $menu; ?>
 			</ul>
 		</div>
-		<div class="content">
+		<div class="content docs">
 			<?php echo $html; ?>
 		</div>
 	</div>
