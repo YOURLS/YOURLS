@@ -37,12 +37,17 @@ function ozh_yourls_samplepage_do_page() {
 	$nonce = yourls_create_nonce( 'sample_page' );
 
 	echo <<<HTML
-		<h2>Sample Plugin Administration Page</h2>
+		<h1>Sample Plugin Administration Page</h1>
 		<p>This plugin stores an integer in the option database</p>
 		<form method="post">
-		<input type="hidden" name="nonce" value="$nonce" />
-		<label for="test_option">Enter an integer</label> <input type="text" id="test_option" name="test_option" value="$test_option" />
-		<input type="submit" class="btn btn-info" value="Update value" />
+			<input type="hidden" name="nonce" value="$nonce" />
+			<label for="test_option">Enter an integer</label>
+			<div class="input-group">
+			<input type="text" id="test_option" name="test_option" value="$test_option" />
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="submit">Update value</button>
+				</span>
+			</div>
 		</form>
 
 HTML;
