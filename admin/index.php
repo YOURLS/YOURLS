@@ -252,7 +252,6 @@ yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
 yourls_do_action( 'admin_page_before_form' ); 
 	  
 yourls_html_addnew();
-echo '<hr />';
 
 if ( !$is_bookmark ) { 
 	if ( $search_sentence )
