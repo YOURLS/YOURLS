@@ -148,7 +148,7 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 	?></p>
 
 	<hr />
-	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/docs/#api' ); ?></p>
+	<p><em><?php yourls_se( 'See the <a href="%s">API documentation</a> for more.', YOURLS_SITE . '/docs/#api' ); ?><em></p>
 
 <?php } // end is private 
 		  
