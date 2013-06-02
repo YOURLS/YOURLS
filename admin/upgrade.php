@@ -14,15 +14,15 @@ yourls_html_htag( yourls__( 'Upgrade YOURLS' ), 2 );
 
 // Check if upgrade is needed
 if ( !yourls_upgrade_is_needed() ) {
-	echo '<p>' . yourls_s( 'Upgrade not required. Go <a href="%s">back to play</a>!', yourls_admin_url('index.php') ) . '</p>';
-
+	echo yourls_notice_box( yourls__( 'Upgrade not required.' ), 'success' );
+	echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>.', yourls_admin_url( 'index.php' ) ) . '</p>';
 
 } else {
 	/*
 	step 1: create new tables and populate them, update old tables structure, 
 	step 2: convert each row of outdated tables if needed
-	step 3: - if applicable finish updating outdated tables (indexes etc)
-			- update version & db_version in options, this is all done!
+	step 3:	- if applicable finish updating outdated tables (indexes etc)
+		- update version & db_version in options, this is all done!
 	*/
 	
 	// From what are we upgrading?
@@ -50,7 +50,8 @@ if ( !yourls_upgrade_is_needed() ) {
 			echo '<p>';
 			yourls_e( 'Please, pretty please, it is recommended that you <strong>backup</strong> your database.' );
 			echo '<br />';
-			yourls_add_label( 'Note', 'info', 'after' ) . yourls_e( 'You should do this regularly anyway.' );
+			yourls_add_label( 'Note', 'info', 'after' );
+			yourls_e( 'You should do this regularly anyway.' );
 			echo '</p><p>';
 			yourls_e( "Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)" );
 			echo '<br />';
@@ -77,8 +78,8 @@ if ( !yourls_upgrade_is_needed() ) {
 			
 		case 3:
 			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
-			echo '<p>' . yourls__( 'Your installation is now up to date !' ) . '</p>';
-			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>', yourls_admin_url( 'index.php' ) ) . '</p>';
+			echo '<p>' . yourls__( 'Your installation is now up to date!' ) . '</p>';
+			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>.', yourls_admin_url( 'index.php' ) ) . '</p>';
 	}
 	
 }
