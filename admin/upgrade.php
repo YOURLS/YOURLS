@@ -7,9 +7,8 @@ require_once YOURLS_INC . '/functions-install.php';
 yourls_maybe_require_auth();
 
 yourls_html_head( 'upgrade', yourls__( 'Upgrade YOURLS' ) );
-yourls_html_logo();
-yourls_html_menu();
-yourls_wrapper_start();
+yourls_template_content( 'before' );
+yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
 
 yourls_html_htag( yourls__( 'Upgrade YOURLS' ), 2 ); 
 
@@ -23,7 +22,7 @@ if ( !yourls_upgrade_is_needed() ) {
 	step 1: create new tables and populate them, update old tables structure, 
 	step 2: convert each row of outdated tables if needed
 	step 3: - if applicable finish updating outdated tables (indexes etc)
-	        - update version & db_version in options, this is all done!
+			- update version & db_version in options, this is all done!
 	*/
 	
 	// From what are we upgrading?
@@ -47,23 +46,27 @@ if ( !yourls_upgrade_is_needed() ) {
 
 		default:
 		case 0:
-			?>
-			<p><?php yourls_e( 'Your current installation needs to be upgraded.' ); ?></p>
-			<p><?php yourls_e( 'Please, pretty please, it is recommended that you <strong>backup</strong> your database<br/>(you should do this regularly anyway)' ); ?></p>
-			<p><?php yourls_e( "Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)" ); ?></p>
-			<p><?php yourls_e( "On every step, if <span class='error'>something goes wrong</span>, you'll see a message and hopefully a way to fix." ); ?></p>
-			<p><?php yourls_e( 'If everything goes too fast and you cannot read, <span class="success">good for you</span>, let it go :)' ); ?></p>
-			<p><?php yourls_e( 'Once you are ready, press "Upgrade" !' ); ?></p>
-			<?php
-			echo "
-			<form action='upgrade.php?' method='get'>
-			<input type='hidden' name='step' value='1' />
-			<input type='hidden' name='oldver' value='$oldver' />
-			<input type='hidden' name='newver' value='$newver' />
-			<input type='hidden' name='oldsql' value='$oldsql' />
-			<input type='hidden' name='newsql' value='$newsql' />
-			<input type='submit' class='primary' value='" . yourls_esc_attr__( 'Upgrade' ) . "' />
-			</form>";
+			echo yourls_notice_box( yourls__( 'Your current installation needs to be upgraded.' ) );
+			echo '<p>';
+			yourls_e( 'Please, pretty please, it is recommended that you <strong>backup</strong> your database.' );
+			echo '<br />';
+			yourls_add_label( 'Note', 'info', 'after' ) . yourls_e( 'You should do this regularly anyway.' );
+			echo '</p><p>';
+			yourls_e( "Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</em> happen, right? ;)" );
+			echo '<br />';
+			yourls_e( 'On every step, if <span class="error">something goes wrong</span>, you\'ll see a message and hopefully a way to fix. If everything goes too fast and you cannot read, <span class="success">good for you</span>, let it go :)' );
+			echo '</p><p><em>';
+			yourls_e( 'Once you are ready, press "Upgrade"!' );
+			echo '</em></p>';
+
+			echo '<form action="upgrade.php?" method="get">
+				<input type="hidden" name="step" value="1" />
+				<input type="hidden" name="oldver" value="' . $oldver . '" />
+				<input type="hidden" name="newver" value="' . $newver . '" />
+				<input type="hidden" name="oldsql" value="' . $oldsql . '" />
+				<input type="hidden" name="newsql" value="' . $newsql . '" />
+				<input type="submit" class="btn btn-warning btn-large" value="' . yourls_esc_attr__( 'Upgrade' ) . '" />
+			</form>';
 			
 			break;
 			
@@ -74,12 +77,11 @@ if ( !yourls_upgrade_is_needed() ) {
 			
 		case 3:
 			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
-			echo '<p>' . yourls__( 'Your installation is now up to date ! ' ) . '</p>';
-			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>', yourls_admin_url('index.php') ) . '</p>';
+			echo '<p>' . yourls__( 'Your installation is now up to date !' ) . '</p>';
+			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>', yourls_admin_url( 'index.php' ) ) . '</p>';
 	}
 	
 }
 
-yourls_wrapper_end();
-yourls_html_footer(); 
+yourls_template_content( 'after' ); 
 ?>
