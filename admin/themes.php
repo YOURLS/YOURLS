@@ -29,7 +29,7 @@ if( isset( $_GET['action'] ) && isset( $_GET['theme'] ) ) {
 // Handle message upon succesfull (de)activation
 if( isset( $_GET['success'] ) && ( $_GET['success'] == 'activated' ) ) {
 	if( $_GET['success'] == 'activated' )
-		$message = yourls__( 'Theme has been activated' );
+		$message = yourls__( 'Theme has been activated!' );
 
 	yourls_add_notice( $message, 'success' );
 }
@@ -47,12 +47,14 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 
 	<p><span class="label label-info"><?php yourls_e( 'More themes' ); ?></span> <?php yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' ); ?></p>
 	
-	<div class="row">
+	<div class="themes-list">
 	<?php
 	
 	$nonce = yourls_create_nonce( 'manage_themes' );
 	
+	$i = 0;
 	foreach( $themes as $file => $theme_data ) {
+		$i++;
 		// default fields to read from the theme header
 		$fields = array(
 			'name'       => 'Theme Name',
@@ -107,7 +109,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 		$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'By %s', $by );
 		
 		printf( '
-		<div class="col col-lg-4 theme %s">
+		<div class="theme">
 			<div class="thumbnail">%s
 				<div class="caption">
 					<h4 class="theme-name"><a href="%s">%s</a></h4>
@@ -122,10 +124,14 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 				</div>
 			</div>
 		</div>',
-			$class, $screenshot, $data['uri'], $data['name'], $data['version'],
+			$screenshot, $data['uri'], $data['name'], $data['version'],
 			$by, $data['desc'], $class, $action_url, $action_anchor
 		);
 		
+		if ($i == 3) {
+			echo '<div class="clearfix"></div>';
+			$i = 0;
+		}
 	}
 	echo '</div>';
 	
