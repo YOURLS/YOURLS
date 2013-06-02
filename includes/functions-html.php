@@ -935,6 +935,8 @@ function yourls_login_screen( $error_msg = '' ) {
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
 
 	yourls_template_content( 'before' );
+	yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
+
 	?>
 	<div id="login">
 		<form method="post" class="login-screen" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
@@ -946,7 +948,7 @@ function yourls_login_screen( $error_msg = '' ) {
 			<div class="control-group">
 				<label class="control-label" for="username"><?php yourls_e( 'Username' ); ?></label>
 				<div class="controls">
-					<input type="text" id="username" name="username" class="text">
+					<input type="text" id="username" name="username" class="text" autofocus="autofocus">
 				</div>
 			</div>
 			<div class="control-group">
@@ -956,10 +958,9 @@ function yourls_login_screen( $error_msg = '' ) {
 				</div>
 			</div>
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary" name="submit"><?php yourls_e( 'Login' ); ?></button>
+				<button type="submit" class="submit" name="submit"><?php yourls_e( 'Login' ); ?></button>
 			</div>
 		</form>
-		<script type="text/javascript">$('#username').focus();</script>
 	</div>
 	<?php
 	
