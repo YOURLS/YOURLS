@@ -38,12 +38,12 @@ function ozh_yourls_samplepage_do_page() {
 
 	echo <<<HTML
 		<h1>Sample Plugin Administration Page</h1>
-		<p>This plugin stores an integer in the option database</p>
+		<p>This plugin stores an integer in the <code>options</code> database.</p>
 		<form method="post">
 			<input type="hidden" name="nonce" value="$nonce" />
 			<label for="test_option">Enter an integer</label>
 			<div class="input-group">
-			<input type="text" id="test_option" name="test_option" value="$test_option" />
+			<input type="text" class="test-option" name="test_option" value="$test_option" />
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="submit">Update value</button>
 				</span>
