@@ -66,7 +66,7 @@ $count_active = yourls_has_active_plugins();
 	
 yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ) ); ?>
 
-	<p><span class="label label-info"><?php yourls_e( 'More plugins' ); ?></span> <?php yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
+	<p><?php yourls_add_label( yourls__( 'More plugins' ), 'info', 'after' ) . yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
 	
 	<table class="table table-striped table-hover">
 	<thead>
@@ -126,9 +126,15 @@ yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' insta
 		
 		$data['desc'] .= '<br/><small>' . yourls_s( 'Plugin file location: %s', $file) . '</small>';
 		
-		printf( '<tr class="plugin %s"><td class="plugin_name"><a href="%s">%s</a></td><td class="plugin_version">%s</td><td class="plugin_desc">%s</td><td class="plugin_author"><a href="%s">%s</a></td><td class="plugin_actions actions"><a class="btn btn-%s" href="%s">%s</a></td></tr>',
+		printf( '<tr class="plugin %s">
+					<td class="plugin-name"><a href="%s">%s</a></td>
+					<td class="plugin-version">%s</td>
+					<td class="plugin-desc">%s</td>
+					<td class="plugin-author"><a href="%s">%s</a></td>
+					<td class="plugin-actions actions"><a class="btn btn-%s" href="%s">%s</a></td>
+				</tr>',
 			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $class, $action_url, $action_anchor
-			);
+		);
 		
 	}
 	yourls_table_tbody_end();
