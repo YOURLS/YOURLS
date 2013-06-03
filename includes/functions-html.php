@@ -53,7 +53,10 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<script type="text/javascript">
 	//<![CDATA[
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
-		var zclipurl = '<?php yourls_site_url(); ?>/js/ZeroClipboard.swf';
+		$(document).ready(function() {
+			ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
+			var zclipurl = new ZeroClipboard($("#btn-zclip"));
+		});
 	//]]>
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>

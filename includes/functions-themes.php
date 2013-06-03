@@ -356,9 +356,9 @@ function yourls_init_theme() {
 
 	// Enqueue default asset files - $ydb->assets will keep a list of needed CSS and JS
 	// Asset src are defined in yourls_core_assets()
-	yourls_enqueue_style(  'style' );
-	yourls_enqueue_style(  'fonts-yourls-temp' );
+	yourls_enqueue_style( 'style' );
 	yourls_enqueue_script( 'jquery' );
+	yourls_enqueue_script( 'clipboard' );
 	
 	// Set default template structure
 	yourls_set_template_content();
