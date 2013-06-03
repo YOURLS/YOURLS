@@ -1,4 +1,5 @@
 <?php
+require('PasswordHash.php');
 /**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
@@ -131,14 +132,53 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 	
 	if( !isset( $yourls_user_passwords[ $user ] ) )
 		return false;
-		
-	if( yourls_has_hashed_password( $user ) ) {
+	
+	if ( yourls_user_has_phppass( $user ) ) {
+		$hasher = new PasswordHash(8, false);
+		list( , $hash ) = explode( ':', $yourls_user_passwords[ $user ] );
+		return ( $hasher->CheckPassword( $submitted_password, $hash ) );
+	} else if( yourls_has_hashed_password( $user ) ) {
 		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
 		list( , $salt, ) = explode( ':', $yourls_user_passwords[ $user ] );
 		return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
 	} else {
 		// Password stored in clear text
 		return( $yourls_user_passwords[ $user ] == $submitted_password );
+	}
+}
+
+/**
+ * Check if a user's password is hashed with PHPASS.
+ * @since 1.7
+ * @param string $user user login
+ * @return bool true if password hashed with PHPASS, otherwise false
+ */
+function yourls_user_has_phppass( $user ) {
+	global $yourls_user_passwords;
+	if ( !isset( $yourls_user_passwords[ $user ] ) ) {
+		return false;
+	}
+
+	$hash = $yourls_user_passwords[ $user ];
+	return ( substr( $hash, 0, 7 ) === 'phpass:' );
+}
+
+/**
+ * Overwrite plaintext passwords in config file with hashed versions.
+ * @since 1.7
+ * @return true if overwrite was successful, otherwise false
+ */
+function yourls_hash_passwords_now() {
+	global $yourls_user_passwords;
+	$hasher = new PasswordHash(8, false);
+	foreach ( $yourls_user_passwords as $user => $pwvalue ) {
+		if ( !yourls_user_has_phppass( $user ) && !yourls_has_hashed_password( $user ) ) {
+			$clearpass = $pwvalue;
+			$hash = $hasher->HashPassword($clearpass);
+			// TODO: use sed/awk to rewrite entry in config file, carefully!
+			// something like this
+			// sed -i "s/'root' *=> *'1234234134'/'root' => '123412341241234'/" config.php
+		}
 	}
 }
 
