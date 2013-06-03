@@ -53,7 +53,6 @@
 
 		function connect($dsn='', $user='', $password='', $ssl=array())
 		{
-		
 			global $ezsql_pdo_str; $return_val = false;
 			
 			// Must have a user and a password
