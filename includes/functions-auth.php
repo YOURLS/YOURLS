@@ -88,10 +88,6 @@ function yourls_is_valid_user() {
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
 				$url = $_SERVER['REQUEST_URI'];
-				// If password stored unencrypted, append query string. TODO: deprecate this when there's proper user management
-				if( !yourls_has_hashed_password( $_REQUEST['username'] ) ) {
-					$url = yourls_add_query_arg( array( 'login_msg' => 'pwdclear' ) );
-				}
 				yourls_redirect( $url );
 			}
 		}
@@ -136,6 +132,7 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 	if ( yourls_user_has_phppass( $user ) ) {
 		$hasher = new PasswordHash(8, false);
 		list( , $hash ) = explode( ':', $yourls_user_passwords[ $user ] );
+		$hash = str_replace( '!', '$', $hash );
 		return ( $hasher->CheckPassword( $submitted_password, $hash ) );
 	} else if( yourls_has_hashed_password( $user ) ) {
 		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
@@ -165,21 +162,55 @@ function yourls_user_has_phppass( $user ) {
 
 /**
  * Overwrite plaintext passwords in config file with hashed versions.
+ * This has the unfortunate side effect of invalidating the session cookie
+ * for any user whose password is changed.
  * @since 1.7
  * @return true if overwrite was successful, otherwise false
  */
 function yourls_hash_passwords_now() {
 	global $yourls_user_passwords;
 	$hasher = new PasswordHash(8, false);
+	$configdata = file_get_contents( YOURLS_CONFIGFILE );
+	// TODO: check mode for writability
 	foreach ( $yourls_user_passwords as $user => $pwvalue ) {
 		if ( !yourls_user_has_phppass( $user ) && !yourls_has_hashed_password( $user ) ) {
 			$clearpass = $pwvalue;
-			$hash = $hasher->HashPassword($clearpass);
-			// TODO: use sed/awk to rewrite entry in config file, carefully!
-			// something like this
-			// sed -i "s/'root' *=> *'1234234134'/'root' => '123412341241234'/" config.php
+			$hash = $hasher->HashPassword( $clearpass );
+			// PHP would interpret $ as a variable, so replace it in storage.
+			$hash = str_replace( '$', '!', $hash );
+			$pattern = "/'$user'[\t ]*=>[\t ]*'$clearpass'/";
+			$replace = "'$user' => 'phpass:$hash'";
+			$count = 0;
+			$configdata = preg_replace( $pattern, $replace, $configdata, -1, $count );
+			// There should be exactly one replacement. Otherwise, fast fail.
+			if ( $count != 1 ) {
+				yourls_add_notice( $count . $pattern );
+				return false;
+			}
 		}
 	}
+	$success = file_put_contents( YOURLS_CONFIGFILE, $configdata );
+	if ( $success === FALSE ) {
+		yourls_add_notice( 'Failed writing password hashes to config.php' );
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Check to see if any passwords are stored as cleartext.
+ * 
+ * @since 1.7
+ * @return bool true if any passwords are cleartext
+ */
+function yourls_has_cleartext_passwords() {
+	global $yourls_user_passwords;
+	foreach ( $yourls_user_passwords as $user => $pwdata ) {
+		if ( !yourls_has_hashed_password( $user ) && !yourls_user_has_phppass( $user ) ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
