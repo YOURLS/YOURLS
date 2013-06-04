@@ -68,7 +68,7 @@ function yourls_is_valid_user() {
 	elseif
 		// Normal only: cookies
 		( !yourls_is_API() && 
-		  isset( $_COOKIE['yourls_username'] ) && isset( $_COOKIE['yourls_password'] ) )
+		  isset( $_COOKIE['yourls_session_id'] ) && isset( $_COOKIE['yourls_session_id'] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
@@ -237,11 +237,9 @@ function yourls_has_hashed_password( $user ) {
  */
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
+	$session_id = $_COOKIE['yourls_session_id'];
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if( 
-			yourls_salt( $valid_user ) == $_COOKIE['yourls_username']
-			&& yourls_salt( $valid_password ) == $_COOKIE['yourls_password'] 
-		) {
+		if ( yourls_salt( $valid_user . $session_id ) == $_COOKIE['yourls_session_key'] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
@@ -331,15 +329,18 @@ function yourls_store_cookie( $user = null ) {
 	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, 1 ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
+
+	$session_id = bin2hex( openssl_random_pseudo_bytes( 8 ) );
+	$session_key = yourls_salt( $user . $session_id );
 		
 	if ( !headers_sent() ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
-			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure, $httponly );
+			setcookie('yourls_session_id',  $session_id , $time, '/', $domain, $secure, $httponly );
+			setcookie('yourls_session_key', $session_key, $time, '/', $domain, $secure, $httponly );
 		} else {
-			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
-			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure );
+			setcookie('yourls_session_id',  $session_id,  $time, '/', $domain, $secure );
+			setcookie('yourls_session_key', $session_key, $time, '/', $domain, $secure );
 		}
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
