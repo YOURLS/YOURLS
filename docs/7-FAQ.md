@@ -4,7 +4,7 @@ FAQ
 ## Server requirements
 
 1.  A server with **mod_rewrite** enabled
-2.  At least **PHP 4.3**
+2.  At least **PHP 5.2**
 3.  At least **MYSQL 4.1**
 4.  _Note_: YOURLS can also run on [Nginx](http://www.packetcollision.com/2012/01/27/yourls-and-nginx-an-updated-config/) and [Cherokee](http://www.ututech.com/2010/10/configuring-yourls-to-work-with-cherokee-web-server/)
 
