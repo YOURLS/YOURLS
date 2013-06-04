@@ -114,7 +114,7 @@ if( yourls_is_windows() )
 
 	<p><?php
 			yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
-			echo '<button id="btn-zclip" data-clipboard-target="signature">Copy</button>';
+			echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="glyphicon glyphicon-paperclip"></i></button>';
 			yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'warning', 'before' );
 	?></p>
 
@@ -149,7 +149,7 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 	?></p>
 
 	<hr />
-	<p><em><?php yourls_se( 'See the <a href="%s">API documentation</a> for more.', YOURLS_SITE . '/docs/#api' ); ?><em></p>
+	<p><em><?php yourls_se( 'See the <a href="%s">API documentation</a> for more.', YOURLS_SITE . '/docs/#api' ); ?></em></p>
 
 <?php } // end is private 
 		  
