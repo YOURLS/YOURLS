@@ -68,7 +68,7 @@ function yourls_is_valid_user() {
 	elseif
 		// Normal only: cookies
 		( !yourls_is_API() && 
-		  isset( $_COOKIE['yourls_username'] ) && isset( $_COOKIE['yourls_username'] ) )
+		  isset( $_COOKIE['yourls_username'] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
@@ -332,9 +332,9 @@ function yourls_store_cookie( $user = null ) {
 	if ( !headers_sent() ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie('yourls_username', yourls_salt( $user ) , $time, '/', $domain, $secure, $httponly );
+			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 		} else {
-			setcookie('yourls_username', yourls_salt( $user ),  $time, '/', $domain, $secure );
+			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
 		}
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
