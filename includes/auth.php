@@ -33,11 +33,24 @@ yourls_do_action( 'auth_successful' );
  * 
  * TODO: Remove this once real user management is implemented.
  */
+$dismiss_url = yourls_admin_url( 'index.php?dismiss=hasherror' );
+$message = <<<EOD
+Something went wrong with automatic password hashing. Maybe <tt>config.php</tt> isn't writable?<br>
+You may <a href="$dismiss_url">dismiss this message for one week.</a> or see <a href="http://yourls.org/userpassword">UsernamePassword</a> for details.
+EOD;
+
+if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
+	yourls_update_option( 'defer_hashing_error', time() + 86400 * 7 );
+}
+
 if ( !defined( 'YOURLS_NO_HASH_PASSWORD' ) ) {
 	if ( yourls_has_cleartext_passwords() ) {
 		$success = yourls_hash_passwords_now();
 		if ( !$success ) {
-			yourls_add_notice( 'Automatic password hashing failed.' );
+			$ignore_time = yourls_get_option( 'defer_hashing_error' );
+			if ( time() > $ignore_time ) {
+				yourls_add_notice( $message );
+			}
 		}
 	}
 }
