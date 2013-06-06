@@ -441,7 +441,7 @@ yourls_html_htag( yourls_esc_html( $title ), 2 ); ?>
 					<ul id="details_countries" style="display:none" class="no_bullet">
 					<?php
 					foreach( $countries as $code=>$count ) {
-						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
+						echo '<li><i class="' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
 					}		
 					?>
 					</ul>

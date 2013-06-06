@@ -908,12 +908,7 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  *
  */
 function yourls_geo_get_flag( $code ) {
-	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-		$img = yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
-	} else {
-		$img = false;
-	}
-	return yourls_apply_filter( 'geo_get_flag', $img, $code );
+	return yourls_apply_filter( 'geo_get_flag', 'flag-' . strtolower( $code ), $code );
 }
 
 
