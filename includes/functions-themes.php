@@ -111,7 +111,7 @@ function yourls_template_content( $template_part ) {
 		}
 	}
 	
-	if( $template_part == 'after' );
+	if( $template_part == 'after' )
 		yourls_html_ending();
 }
 
