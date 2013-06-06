@@ -124,11 +124,11 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $
 function yourls_html_menu( $current_page = null ) {
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="glyphicon glyphicon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="icon icon-remove-circle"></i> ' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="glyphicon glyphicon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="icon icon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -176,7 +176,7 @@ function yourls_html_menu( $current_page = null ) {
 			$class_active  = $current_page == $link ? ' active' : '';
 			
 			$format = '<li id="admin-menu-%link%-link" class="admin-menu-toplevel%class%">
-				<a href="%url%" %title%><i class="glyphicon glyphicon-%icon%"></i> %anchor%</a></li>';
+				<a href="%url%" %title%><i class="icon icon-%icon%"></i> %anchor%</a></li>';
 			$data   = array( 
 				'link'   => $link,
 				'class'  => $class_active,
@@ -755,7 +755,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
 		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
-		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="glyphicon glyphicon-%s"></i></a>',
+		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="icon icon-%s"></i></a>',
 			$action['href'], $action['id'], $action['title'], 'btn btn-'.$key, $onclick, $action['icon']
 		);
 	}
@@ -767,7 +767,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$protocol_warning = '';
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
-		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<i class="warning protocol_warning glyphicon glyphicon-exclamation-sign" title="' . yourls__( 'Not a common link' ) . '"></i> ' );
+		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<i class="warning protocol_warning icon icon-exclamation-sign" title="' . yourls__( 'Not a common link' ) . '"></i> ' );
 
 	// Row template that you can filter before it's parsed (don't remove HTML classes & id attributes)
 	$format = '<tr id="id-%id%">

@@ -101,7 +101,7 @@ yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' install
 		if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
 			$screenshot = '<img src="' . $screenshot . '" alt="Screenshot"/>';
 		} else {
-			$screenshot = '<span class="screenshot-missing"><i class="glyphicon glyphicon-question-sign"></i></span>';
+			$screenshot = '<span class="screenshot-missing"><i class="icon icon-question-sign"></i></span>';
 		}
 		
 		// Author link
