@@ -149,7 +149,7 @@ function yourls_html_menu( $current_page = null ) {
 		$admin_links['plugins'] = array(
 			'url'    => yourls_admin_url( 'plugins.php' ),
 			'anchor' => yourls__( 'Plugins' ),
-			'icon'   => 'cog'
+			'icon'   => 'cogs'
 		);
 		$admin_links['themes'] = array(
 			'url'    => yourls_admin_url( 'themes.php' ),

@@ -114,7 +114,7 @@ if( yourls_is_windows() )
 
 	<p><?php
 			yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
-			echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="icon icon-paperclip"></i></button>';
+			echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="icon icon-paste"></i></button>';
 			yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'warning', 'before' );
 	?></p>
 
