@@ -272,12 +272,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
 					}else{
-						// database error, couldnt store result 
+						// database error, couldnt store result
 						$return['status']   = 'fail';
 						$return['code']     = 'error:db';
-						$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-						$return['message']  = /* //translators: eg "Error saving url to database" */ yourls_s( 'Error saving url to database' );
-						$return['title']    = /* //translators: eg "Error saving url to database" */ yourls_s( 'Error saving url to database' ); 
+						$return['message']  = yourls_s( 'Error saving url to database' );
 					}
 					$ok = true;
 				}
