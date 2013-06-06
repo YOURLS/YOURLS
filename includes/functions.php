@@ -262,21 +262,22 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			do {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
-				$free = yourls_keyword_is_free($keyword);
-				$add_url = @yourls_insert_link_in_db( $url, $keyword, $title );
-				$ok = ($free && $add_url);
-				if ( $ok === false && $add_url === 1 ) {
-					// we stored something, but shouldn't have (ie reserved id)
-					yourls_delete_link_by_keyword( $keyword );
-					$return['extra_info'] .= '(deleted '.$keyword.')';
-				} else {
-					// everything ok, populate needed vars
-					$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
-					$return['status']   = 'success';
-					$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
-					$return['title']    = $title;
-					$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-					$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
+				if ( yourls_keyword_is_free($keyword) ) {
+					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
+						// everything ok, populate needed vars
+						$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
+						$return['status']   = 'success';
+						$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
+						$return['title']    = $title;
+						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
+						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
+					}else{
+						// database error, couldnt store result 
+						$return['status']   = 'fail';
+						$return['code']     = 'error:db';
+						$return['message']  = yourls_s( 'Error saving url to database' );
+					}
+					$ok = true;
 				}
 				$id++;
 			} while ( !$ok );
