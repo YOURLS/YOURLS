@@ -867,8 +867,8 @@ function yourls_table_end() {
  * @since 1.7
  */
 function yourls_wrapper_start() {
-	echo yourls_apply_filter( 'wrapper_start', '<div class="content" role="main">' );
 	yourls_do_action( 'admin_notice' );
+	echo yourls_apply_filter( 'wrapper_start', '<div class="content" role="main">' );
 }
 
 /**
