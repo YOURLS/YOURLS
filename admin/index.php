@@ -255,14 +255,14 @@ yourls_html_addnew();
 
 if ( !$is_bookmark ) { 
 	if ( $search_sentence )
-		echo '<p>' . $search_sentence . '</p>'; ?>
-	<p><?php
+		echo '<p>' . $search_sentence . '</p>';
+	echo '<p>';
 		printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )
 			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
-	?>.</p>
-<?php 
-// If bookmarklet, add message. Otherwise, hide hidden share box.
+	echo '.</p>';
+
+	// If bookmarklet, add message. Otherwise, hide hidden share box.
 	yourls_share_box( '', '', '', '', '', '', true );
 } else {
 	echo '<script type="text/javascript">$(document).ready(function(){
@@ -273,8 +273,8 @@ if ( !$is_bookmark ) {
 
 yourls_do_action( 'admin_page_before_table' );
 
+yourls_table_start( 'admin-table', 'admin-main-table' );
 yourls_table_head();
-
 yourls_table_tbody_start();
 
 // Main Query

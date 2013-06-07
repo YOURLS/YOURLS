@@ -64,85 +64,87 @@ $count = count( $plugins );
 $plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
 $count_active = yourls_has_active_plugins();
 	
-yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ) ); ?>
+yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ) );
 
-	<p><?php yourls_add_label( yourls__( 'More plugins' ), 'info', 'after' ) . yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ); ?></p>
+echo '<p>';
+yourls_add_label( yourls__( 'More plugins' ), 'info', 'after' ) . yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' );
+echo '</p>';
+
+yourls_table_start( 'plugins-table', 'table table-striped table-hover' );
 	
-	<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th><?php yourls_e( 'Plugin Name' ); ?></th>
-			<th><?php yourls_e( 'Version' ); ?></th>
-			<th><?php yourls_e( 'Description' ); ?></th>
-			<th><?php yourls_e( 'Author' ); ?></th>
-		</tr>
-	</thead>
-	<tbody>
-	<?php
+$table_head = array(
+	'name'    => yourls__( 'Plugin Name' ),
+	'version' => yourls__( 'Version' ),
+	'desc'    => yourls__( 'Description' ),
+	'author'  => yourls__( 'Author' ),
+	'actions' => '',
+);
+yourls_table_head( $table_head );
+yourls_table_tbody_start();
 	
-	$nonce = yourls_create_nonce( 'manage_plugins' );
+$nonce = yourls_create_nonce( 'manage_plugins' );
 	
-	foreach( $plugins as $file=>$plugin ) {
+foreach( $plugins as $file=>$plugin ) {
 		
-		// default fields to read from the plugin header
-		$fields = array(
-			'name'       => 'Plugin Name',
-			'uri'        => 'Plugin URI',
-			'desc'       => 'Description',
-			'version'    => 'Version',
-			'author'     => 'Author',
-			'author_uri' => 'Author URI'
-		);
+	// default fields to read from the plugin header
+	$fields = array(
+		'name'       => 'Plugin Name',
+		'uri'        => 'Plugin URI',
+		'desc'       => 'Description',
+		'version'    => 'Version',
+		'author'     => 'Author',
+		'author_uri' => 'Author URI'
+	);
 		
-		// Loop through all default fields, get value if any and reset it
-		foreach( $fields as $field=>$value ) {
-			if( isset( $plugin[ $value ] ) ) {
-				$data[ $field ] = $plugin[ $value ];
-			} else {
-				$data[ $field ] = '(no info)';
-			}
-			unset( $plugin[$value] );
-		}
-		
-		$plugindir = trim( dirname( $file ), '/' );
-		
-		if( yourls_is_active_plugin( $file ) ) {
-			$class = 'success';
-			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
-			$action_anchor = yourls__( 'Deactivate' );
+	// Loop through all default fields, get value if any and reset it
+	foreach( $fields as $field=>$value ) {
+		if( isset( $plugin[ $value ] ) ) {
+			$data[ $field ] = $plugin[ $value ];
 		} else {
-			$class = 'warning';
-			$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
-			$action_anchor = yourls__( 'Activate' );
+			$data[ $field ] = '(no info)';
 		}
-			
-		// Other "Fields: Value" in the header? Get them too
-		if( $plugin ) {
-			foreach( $plugin as $extra_field=>$extra_value ) {
-				$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
-				unset( $plugin[$extra_value] );
-			}
-		}
-		
-		$data['desc'] .= '<br/><small>' . yourls_s( 'Plugin file location: %s', $file) . '</small>';
-		
-		printf( '<tr class="plugin %s">
-					<td class="plugin-name"><a href="%s">%s</a></td>
-					<td class="plugin-version">%s</td>
-					<td class="plugin-desc">%s</td>
-					<td class="plugin-author"><a href="%s">%s</a></td>
-					<td class="plugin-actions actions"><a class="btn btn-%s" href="%s">%s</a></td>
-				</tr>',
-			$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $class, $action_url, $action_anchor
-		);
-		
+		unset( $plugin[$value] );
 	}
-	yourls_table_tbody_end();
-	yourls_table_end();
+		
+	$plugindir = trim( dirname( $file ), '/' );
+		
+	if( yourls_is_active_plugin( $file ) ) {
+		$class = 'success';
+		$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
+		$action_anchor = yourls__( 'Deactivate' );
+	} else {
+		$class = 'warning';
+		$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
+		$action_anchor = yourls__( 'Activate' );
+	}
+			
+	// Other "Fields: Value" in the header? Get them too
+	if( $plugin ) {
+		foreach( $plugin as $extra_field=>$extra_value ) {
+			$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
+			unset( $plugin[$extra_value] );
+		}
+	}
+		
+	$data['desc'] .= '<br/><small>' . yourls_s( 'Plugin file location: %s', $file) . '</small>';
+		
+	printf( '<tr class="plugin %s">
+				<td class="plugin-name"><a href="%s">%s</a></td>
+				<td class="plugin-version">%s</td>
+				<td class="plugin-desc">%s</td>
+				<td class="plugin-author"><a href="%s">%s</a></td>
+				<td class="plugin-actions actions"><a class="btn btn-%s" href="%s">%s</a></td>
+			</tr>',
+		$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $class, $action_url, $action_anchor
+	);
+		
+}
+yourls_table_tbody_end();
+yourls_table_end();
 	
-	echo '<p>';
-	yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
-	echo '</p>';
+echo '<p>';
+yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
+echo '</p>';
 	
-	yourls_template_content( 'after', 'plugins' );
+yourls_template_content( 'after', 'plugins' );
 ?>
