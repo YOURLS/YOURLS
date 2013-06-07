@@ -1618,6 +1618,17 @@ function yourls_is_admin() {
 }
 
 /**
+ * Check if current session is valid and secure as configurated
+ *
+ */
+function yourls_is_public_or_logged() {
+	if ( !yourls_is_private() )
+		return true;
+	else
+		return defined( 'YOURLS_USER' );
+}
+
+/**
  * Check if the server seems to be running on Windows. Not exactly sure how reliable this is.
  *
  */
