@@ -57,6 +57,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		$(document).ready(function() {
 			ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
 			var zclip = new ZeroClipboard($("#btn-zclip"));
+			$('details').details();
 		});
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
@@ -575,7 +576,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
-			<p><input id="copylink" class="text" size="32" value="<?php echo yourls_esc_url( $shorturl ); ?>" /></p>
+			<div class="input-group col col-lg-4"><input id="copylink" type="text" value="<?php echo yourls_esc_url( $shorturl ); ?>" disabled/><span class="input-group-btn"><button id="btn-zclip" data-clipboard-target="copylink"><i class="icon-paste"></i></button></span></div>
 			<p><small><?php yourls_e( 'Long link' ); ?>: <a id="origlink" href="<?php echo yourls_esc_url( $longurl ); ?>"><?php echo yourls_esc_url( $longurl ); ?></a></small>
 			<?php if( yourls_do_log_redirect() ) { ?>
 			<br/><small><?php yourls_e( 'Stats' ); ?>: <a id="statlink" href="<?php echo yourls_esc_url( $shorturl ); ?>+"><?php echo yourls_esc_url( $shorturl ); ?>+</a></small>
