@@ -112,7 +112,7 @@ if( yourls_is_windows() )
 			yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 	?></p>
 
-	<p><?php
+	<p id="signature-zone"><?php
 			yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
 			echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="icon-paste"></i></button>';
 			yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'warning', 'before' );
