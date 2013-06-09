@@ -164,7 +164,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin-sublinks', $admin_sublinks );
 	
 	// Build menu HTML
-	$menu = '<ul class="admin-menu">';
+	$menu = '<div class="sidebar-responsive-collapse"><ul class="admin-menu">';
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
@@ -219,7 +219,7 @@ function yourls_html_menu( $current_page = null ) {
 	if ( isset( $help_link ) )
 		$menu .=  '<li id="admin-menu-help-link">' . $help_link .'</li>';
 	
-	$menu .=  "</ul><hr />\n";
+	$menu .=  "</ul></div><hr />\n";
 	
 	yourls_do_action( 'pre_admin_menu' );
 	echo yourls_apply_filter( 'html_admin_menu', $menu );
@@ -261,7 +261,7 @@ function yourls_add_notice( $message, $style = 'notice' ) {
  */
 function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
-	<div class="alert alert-$style">$message</div>
+	<div class="alert alert-$style"><a class="close" data-dismiss="alert" href="#">&times;</a>$message</div>
 HTML;
 }
 
@@ -890,7 +890,12 @@ function yourls_wrapper_end() {
  * @since 1.7
  */
 function yourls_sidebar_start() {
-	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">' );
+	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-responsive-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>' );
 }
 
 /**
@@ -944,10 +949,10 @@ function yourls_login_screen( $error_msg = '' ) {
 
 	?>
 	<div id="login">
-		<form method="post" class="login-screen" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
-			<?php
+		<form method="post" class="login-screen" action="<?php echo $action; // reset any QUERY parameters ?>">
+            <?php 
 				if( !empty( $error_msg ) ) {
-					yourls_add_notice( $error_msg );
+					echo yourls_notice_box( $error_msg[0], $error_msg[1] );
 				}
 			?>
 			<div class="control-group">
