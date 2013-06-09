@@ -109,11 +109,11 @@ foreach( $plugins as $file=>$plugin ) {
 	$plugindir = trim( dirname( $file ), '/' );
 		
 	if( yourls_is_active_plugin( $file ) ) {
-		$class = 'success';
+		$class = 'active';
 		$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'deactivate', 'plugin' => $plugindir ) ) );
 		$action_anchor = yourls__( 'Deactivate' );
 	} else {
-		$class = 'warning';
+		$class = 'unactive';
 		$action_url = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( array('action' => 'activate', 'plugin' => $plugindir ) ) );
 		$action_anchor = yourls__( 'Activate' );
 	}
