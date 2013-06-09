@@ -15,48 +15,95 @@ yourls_html_htag( yourls__( 'Tools' ), 1 ); ?>
 <?php
 yourls_html_htag( yourls__( 'Classic Bookmarklets' ), 3 );
 
+echo <<<TEXT
+<p class='bookmarklet'>Type: <strong>Simple</strong> (no question asked) or <strong>Custom</strong> (prompt for a custom keyword first)</p>
+<p class='bookmarklet'>Behavior: <strong>Standard</strong> (take you to a page to manage your brand new short URL) or <strong>Instant</strong> (pop the short URL without leaving the page you are viewing)</p>
+
+<style>
+div.panel.tools {width:23%; float: left; margin:1%}
+.bookmarklet-hilite {border:1px solid #1F669C}
+.booktype-help {cursor: pointer}
+.booktype-help:hover {background: #ccc }
+</style>
+
+<script>
+$(document).ready(function(){
+
+$('p.bookmarklet strong').each( function( i, e ) {
+	var booktype = $(e).text().toLowerCase();
+	$(e).attr( 'id', 'booktype-'+booktype ).addClass('booktype-help');
+	$(e).append(' <span class="booktype-help"><i class="icon-question-sign"></i></span>');
+	$('#booktype-'+booktype).hover(
+		function() {
+			$('.bookmarklet-type-'+booktype).addClass('bookmarklet-hilite');
+		},
+		function() {
+			$('.bookmarklet-type-'+booktype).removeClass('bookmarklet-hilite');
+		}
+	);
+});
+
+});
+</script>
+TEXT;
+
 $bookmarks = array (
-	'simple'    => array (
-		'name'        => yourls__( 'Simple' ),
-		'color'       => 'info',
-		'description' => yourls__( 'The <span>Simple Bookmarklets</span> will generate a short URL with a random or sequential keyword.' ),
-		'link'        => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
+	'simple-standard'    => array (
+		'name'  => 'Standard + Simple',
+		'type'  => array( 'standard', 'simple' ),
+		'color' => 'info',
+		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
 	),
-	'standard'  => array (
-		'name'        => yourls__( 'Standard' ),
-		'color'       => 'success',
-		'description' => yourls__( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ),
-		'link'        => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
+	'custom-standard'  => array (
+		'name'  => 'Standard + Custom',
+		'type'  => array( 'standard', 'custom' ),
+		'color' => 'success',
+		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
 	),
-	'instant'   => array (
-		'name'        => yourls__( 'Instant' ),
-		'color'       => 'warning',
-		'description' => yourls__( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing.' ),
-		'link'        => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
+	'simple-instant'   => array (
+		'name'  => 'Instant + Simple',
+		'type'  => array( 'instant', 'simple' ),
+		'color' => 'warning',
+		'link'  => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
 	),
-	'custom'    => array (
-		'name'        => yourls__( 'Custom' ),
-		'color'       => 'danger',
-		'description' => yourls__( 'The <span>Custom Keyword Bookmarklets</span> will prompt you for a custom keyword first.' ),
-		'link'        => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
+	'custom-instant'    => array (
+		'name'  => 'Instant + Custom',
+		'type'  => array( 'instant', 'custom' ),
+		'color' => 'danger',
+		'link'  => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
 	),
 );
-	
-foreach ( $bookmarks as $bookmark ){
-	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<div class="tools panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
-	echo $bookmark[ 'description' ] . '</div></a>';
+
+foreach( $bookmarks as $bookmark ) {
+	echo '<div class="tools panel panel-' . $bookmark['color'] . ' bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
+	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
+	echo '<a class="btn" href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<i class="icon-move"></i> YOURLS Shorten';
+	echo '</a>';
+	echo '</div>';
 }
 
-echo '<div class="clearfix"></div><p>';
-yourls_add_label( yourls__( 'Heads up!' ), 'info', 'after' );
-yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
-	
-echo '</p><p>';
+echo '<div class="clearfix"></div>';
+
+echo '<p>';
 yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
-echo yourls__( 'Click and drag links to your toolbar (or right-click and bookmark it)' ) . '</p>';
+yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' );
+echo '</p>';
+
+echo '<p>';
+echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
+echo '</p>';
+	
+echo '<p>';
+yourls_add_label( yourls__( 'Tip' ), 'info', 'after' );
+yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
+echo '</p>';
 		
 yourls_html_htag( yourls__( 'Social Bookmarklets' ), 3 );
+
+echo '<p>';
+yourls_e( 'Create a short URL and share it on social networks, all in one click!' );
+echo '</p>';
 		
 $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656
 	'facebook'        => array (
@@ -72,12 +119,23 @@ $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.
 		'link'        => "javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='twitter',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=780,height=265,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();",
 	),
 );
-	
+
+foreach( $bookmarks as $bookmark ) {
+	echo '<div class="tools panel panel-' . $bookmark['color'] . '">';
+	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
+	echo '<a class="btn" href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<i class="icon-move"></i> ' . $bookmark['name'];
+	echo '</a>';
+	echo '</div>';
+}
+
+/**
 foreach ( $bookmarks as $bookmark ){
 	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
 	echo '<div class="tools panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
 	echo $bookmark[ 'description' ] . '</div></a>';
 }
+/**/
 
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
@@ -125,31 +183,7 @@ if( yourls_is_windows() )
 		
 	<?php yourls_html_htag( yourls__( 'Usage of the signature token' ), 3 ); ?>
 		
-	<p><?php yourls_e( 'Simply use parameter <code>signature</code> in your API requests. Example:' ); ?><br />
-	<code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
-				
-	<?php yourls_html_htag( yourls__( 'Usage of a time limited signature token' ), 3 ); ?>
-		
-<pre>&lt;?php
-$timestamp = time();
-// <?php yourls_e( 'actual value:' ); ?> $time = <?php $time = time(); echo $time; ?> 
-$signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
-// <?php yourls_e( 'actual value:' ); ?> $signature = "<?php $sign = md5( $time. yourls_auth_signature() ); echo $sign; ?>"
-?></pre>
-
-	<p><?php yourls_e( 'Now use parameters <code>signature</code> and <code>timestamp</code> in your API requests. Example:' ); ?><br />
-	<code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
-	<p><?php yourls_e( 'Actual values:' ); ?><br/>
-	<code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</code></p>
-		
-		
-	<p><?php 
-			yourls_add_label( yourls__( 'Info' ), 'success', 'after' );
-			yourls_se( 'This URL would be valid for only %s seconds.', '<strong>' . YOURLS_NONCE_LIFE . '</strong>' ); 
-	?></p>
-
-	<hr />
-	<p><em><?php yourls_se( 'See the <a href="%s">API documentation</a> for more.', YOURLS_SITE . '/docs/#api' ); ?></em></p>
+	<p><?php echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI' ); ?></p>
 
 <?php } // end is private 
 		  
