@@ -130,6 +130,8 @@ function yourls_core_assets() {
 			// 'handle' => 'file basename without extension'
 			'jquery'    => 'jquery',
 			'clipboard' => 'ZeroClipboard',
+			'scripts'   => 'bootstrap',
+			'details'   => 'details',
 		),
 		'css' => array(
 			'style'     => 'style',		
@@ -359,6 +361,8 @@ function yourls_init_theme() {
 	yourls_enqueue_style( 'style' );
 	yourls_enqueue_script( 'jquery' );
 	yourls_enqueue_script( 'clipboard' );
+	yourls_enqueue_script( 'scripts' );
+	yourls_enqueue_script( 'details' );
 	
 	// Set default template structure
 	yourls_set_template_content();
