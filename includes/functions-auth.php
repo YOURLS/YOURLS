@@ -23,7 +23,7 @@ function yourls_is_valid_user() {
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
-		return yourls__( 'Logged out successfully' );
+		return [ yourls__( 'Logged out successfully' ), 'success' ];
 	}
 	
 	// Check cookies or login request. Login form has precedence.
@@ -103,9 +103,9 @@ function yourls_is_valid_user() {
 	yourls_do_action( 'login_failed' );
 
 	if ( isset( $_REQUEST['username'] ) || isset( $_REQUEST['password'] ) ) {
-		return yourls__( 'Invalid username or password' );
+		return [ yourls__( 'Invalid username or password' ), 'error' ];
 	} else {
-		return yourls__( 'Please log in' );
+		return [ yourls__( 'Please log in' ), 'warning' ];
 	}
 }
 

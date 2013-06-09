@@ -11,8 +11,8 @@ if( $auth !== true ) {
 		$format = ( isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml' );
 		$callback = ( isset($_REQUEST['callback']) ? $_REQUEST['callback'] : '' );
 		yourls_api_output( $format, array(
-			'simple' => $auth,
-			'message' => $auth,
+			'simple' => $auth[1],
+			'message' => $auth[0],
 			'errorCode' => 403,
 			'callback' => $callback,
 		) );
