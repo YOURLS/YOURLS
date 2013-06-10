@@ -6,33 +6,45 @@ yourls_maybe_require_auth();
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
 yourls_template_content( 'before', 'tools' );
 
-yourls_html_htag( yourls__( 'Tools' ), 1 ); ?>
+yourls_html_htag( yourls__( 'Tools' ), 1, yourls__( 'For easy shortening and sharing' ) ); ?>
 
 <div class="page-header">
-	<?php yourls_html_htag( yourls__( 'Bookmarklets' ), 2, yourls__( 'Handy bookmarklets for easier link shortening and sharing' ) ); ?>
+	<?php yourls_html_htag( yourls__( 'Bookmarklets' ), 2 ); ?>
 </div>
 
 <?php
 yourls_html_htag( yourls__( 'Classic Bookmarklets' ), 3 );
 
-echo <<<TEXT
-<p class='bookmarklet'>Type: <strong>Simple</strong> (no question asked) or <strong>Custom</strong> (prompt for a custom keyword first)</p>
-<p class='bookmarklet'>Behavior: <strong>Standard</strong> (take you to a page to manage your brand new short URL) or <strong>Instant</strong> (pop the short URL without leaving the page you are viewing)</p>
+echo '<p class="bookmarklet-help">';
+yourls_e( 'Short URL can be <strong class="default">Default</strong> or <strong class="custom">Custom</strong> (prompt for a custom keyword first)' );
+echo '</p>';
 
+echo '<p class="bookmarklet-help">';
+yourls_e( 'Behavior can be <strong class="standard">Standard</strong> (opens a new page to manage your brand new short URL) or <strong class="popup">Popup</strong> (shows the short URL in a popup within the current page)' );
+echo '</p>';
+
+echo '<p>';
+echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
+echo '</p>';
+
+// @TODO: offload this to proper CSS & JS files
+echo <<<TEXT
 <style>
 div.panel.tools {width:23%; float: left; margin:1%}
-.bookmarklet-hilite {border:1px solid #1F669C}
-.booktype-help {cursor: pointer}
-.booktype-help:hover {background: #ccc }
+div.bookmarklet-hilite {border:1px solid #1F669C}
+.booktype-help {cursor: default}
+strong.booktype-help:hover, .bookmarklet-help strong.bookmarklet-hilite {background: #ccc; border: 1px solid #aaa; }
+.bookmarklet-help strong { padding:1px 3px; border-radius: 3px; border:1px solid transparent; }
 </style>
 
 <script>
 $(document).ready(function(){
 
-$('p.bookmarklet strong').each( function( i, e ) {
-	var booktype = $(e).text().toLowerCase();
+// Highlight bookmarklets matching a <strong> element
+$('p.bookmarklet-help strong').each( function( i, e ) {
+	var booktype = $(e).attr('class');
 	$(e).attr( 'id', 'booktype-'+booktype ).addClass('booktype-help');
-	$(e).append(' <span class="booktype-help"><i class="icon-question-sign"></i></span>');
+	$(e).append(' <i class="booktype-help icon-info-sign"></i>');
 	$('#booktype-'+booktype).hover(
 		function() {
 			$('.bookmarklet-type-'+booktype).addClass('bookmarklet-hilite');
@@ -43,45 +55,71 @@ $('p.bookmarklet strong').each( function( i, e ) {
 	);
 });
 
+// Highlight <strong> elements matching a bookmarklet
+$('div.tools.panel').hover(
+	function() {
+		// Get "bookmarklet-type-" classes of hovered element
+		var types = $(this).attr('class').split(' ').filter( function( el ){
+			return el.match(/bookmarklet-type-.*/);
+		}).map( function(e){ return e.replace('bookmarklet-type-', '') ;} );
+		$( types ).each( function( i, e ) {
+			$('p.bookmarklet-help strong.'+e).addClass('bookmarklet-hilite');
+		});
+	},
+	function() {
+		var types = $(this).attr('class').split(' ').filter( function( el ){
+			return el.match(/bookmarklet-type-.*/);
+		}).map( function(e){ return e.replace('bookmarklet-type-', '') ;} );
+		$( types ).each( function( i, e ) {
+			$('p.bookmarklet-help strong.'+e).removeClass('bookmarklet-hilite');
+		});
+	}
+);
+
 });
 </script>
+
 TEXT;
 
 $bookmarks = array (
-	'simple-standard'    => array (
-		'name'  => 'Standard + Simple',
-		'type'  => array( 'standard', 'simple' ),
+	'simple' => array (
+		'name'  => yourls__( 'Default + Standard' ),
+		'type'  => array( 'default', 'standard' ),
 		'color' => 'info',
 		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
 	),
-	'custom-standard'  => array (
-		'name'  => 'Standard + Custom',
+	'custom' => array (
+		'name'  => yourls__( 'Custom + Standard' ),
 		'type'  => array( 'standard', 'custom' ),
 		'color' => 'success',
 		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
 	),
-	'simple-instant'   => array (
-		'name'  => 'Instant + Simple',
-		'type'  => array( 'instant', 'simple' ),
+	'simple-pop' => array (
+		'name'  => yourls__( 'Default + Popup' ),
+		'type'  => array( 'default', 'popup' ),
 		'color' => 'warning',
 		'link'  => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
 	),
-	'custom-instant'    => array (
-		'name'  => 'Instant + Custom',
-		'type'  => array( 'instant', 'custom' ),
+	'custom-pop' => array (
+		'name'  => yourls__( 'Custom + Popup' ),
+		'type'  => array( 'popup', 'custom' ),
 		'color' => 'danger',
 		'link'  => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
 	),
 );
 
+$bookmarks = yourls_apply_filter( 'classic_bookmarklet_data', $bookmarks );
+
 foreach( $bookmarks as $bookmark ) {
 	echo '<div class="tools panel panel-' . $bookmark['color'] . ' bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
 	echo '<a class="btn" href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<i class="icon-move"></i> YOURLS Shorten';
+	echo '<i class="icon-move"></i> ' . yourls__( 'YOURLS Shorten' );
 	echo '</a>';
 	echo '</div>';
 }
+
+yourls_do_action( 'classic_bookmarklets_buttons_after' ); 
 
 echo '<div class="clearfix"></div>';
 
@@ -90,10 +128,6 @@ yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
 yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' );
 echo '</p>';
 
-echo '<p>';
-echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
-echo '</p>';
-	
 echo '<p>';
 yourls_add_label( yourls__( 'Tip' ), 'info', 'after' );
 yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
@@ -106,7 +140,7 @@ yourls_e( 'Create a short URL and share it on social networks, all in one click!
 echo '</p>';
 		
 $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656
-	'facebook'        => array (
+	'facebook'  => array (
 		'name'        => yourls__( 'YOURLS &amp; Facebook' ),
 		'color'       => 'info',
 		'description' => yourls__( 'Create a short URL and share it on social networks, all in one click!' ),
@@ -120,6 +154,8 @@ $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.
 	),
 );
 
+$bookmarks = yourls_apply_filter( 'social_bookmarklets_data', $bookmarks );
+
 foreach( $bookmarks as $bookmark ) {
 	echo '<div class="tools panel panel-' . $bookmark['color'] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
@@ -128,14 +164,6 @@ foreach( $bookmarks as $bookmark ) {
 	echo '</a>';
 	echo '</div>';
 }
-
-/**
-foreach ( $bookmarks as $bookmark ){
-	echo '<a href="' . $bookmark[ 'link' ] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<div class="tools panel panel-' . $bookmark[ 'color' ] . '"><div class="panel-heading">' . $bookmark[ 'name' ] . '</div>';
-	echo $bookmark[ 'description' ] . '</div></a>';
-}
-/**/
 
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
@@ -165,20 +193,20 @@ if( yourls_is_windows() )
 	</div>
 	
 	<p><?php
-			yourls_e( 'YOURLS allows API calls the old fashioned way, using <code>username</code> and <code>password</code> parameters.' );
-			echo "\n";
-			yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
+		yourls_e( 'YOURLS allows API calls the old fashioned way, using <code>username</code> and <code>password</code> parameters.' );
+		echo "\n";
+		yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 	?></p>
 
 	<p id="signature-zone"><?php
-			yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
-			echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="icon-paste"></i></button>';
-			yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'warning', 'before' );
+		yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
+		echo '<button id="btn-zclip" data-clipboard-target="signature"><i class="icon-copy"></i></button>';
+		yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'danger', 'before' );
 	?></p>
 
 	<p><?php
-			yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
-			yourls_e( 'This signature token can only be used with the API, not with the admin interface.' );
+		yourls_add_label( yourls__( 'Note' ), 'warning', 'after' );
+		yourls_e( 'This signature token can only be used with the API, not with the admin interface.' );
 	?></p>
 		
 	<?php yourls_html_htag( yourls__( 'Usage of the signature token' ), 3 ); ?>
@@ -188,4 +216,3 @@ if( yourls_is_windows() )
 <?php } // end is private 
 		  
 yourls_template_content( 'after', 'tools' );
-?>
