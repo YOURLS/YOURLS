@@ -784,6 +784,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	// Highlight domain in displayed URL
 	$domain = parse_url( $url, PHP_URL_HOST );
 	if( $domain ) {
+		if( substr( $domain, 0, 4 ) == 'www.' ) {
+			$domain = substr( $domain, 4 );
+		}
 		$display_url = preg_replace( "/$domain/", '<strong class="domain">' . $domain . '</strong>', $url, 1 );
 	} else {
 		$display_url = $url;
