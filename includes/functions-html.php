@@ -772,14 +772,22 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$format = '<tr id="id-%id%">
 	<td class="keyword" id="keyword-%id%"><a href="%shorturl%">%keyword_html%</a></td>
 	<td class="url" id="url-%id%">
+		<div class="actions" id="actions-%id%">%actions%</div>
 		<a href="%long_url%" title="%title_attr%">%title_html%</a><br/>
-		<small>%warning%<a href="%long_url%">%long_url_html%</a></small>
+		<small class="longurl">%warning%<a href="%long_url%">%long_url_html%</a></small><br/>
+		<small class="added_on">%added_on_from%</small>
+		<input type="hidden" id="keyword_%id%" value="%keyword%"/>
 	</td>
-	<td class="timestamp" id="timestamp-%id%">%date%</td>
-	<td class="ip" id="ip-%id%">%ip%</td>
 	<td class="clicks" id="clicks-%id%">%clicks%</td>
-	<td class="actions" id="actions-%id%">%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/></td>
 	</tr>';
+	
+	// Highlight domain in displayed URL
+	$domain = parse_url( $url, PHP_URL_HOST );
+	if( $domain ) {
+		$display_url = preg_replace( "/$domain/", '<strong class="domain">' . $domain . '</strong>', $url, 1 );
+	} else {
+		$display_url = $url;
+	}
 	
 	$data = array(
 		'id'            => $id,
@@ -787,12 +795,11 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		'keyword'       => yourls_esc_attr( $keyword ),
 		'keyword_html'  => yourls_esc_html( $keyword ),
 		'long_url'      => yourls_esc_url( $url ),
-		'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
+		'long_url_html' => yourls_trim_long_string( $display_url, 100 ),
 		'title_attr'    => yourls_esc_attr( $title ),
 		'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
 		'warning'       => $protocol_warning,
-		'date'          => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
-		'ip'            => $ip,
+		'added_on_from' => yourls_s( 'Added on <span class="timestamp">%s</span> from <span class="ip">%s</span>', date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ), $ip ),
 		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		'actions'       => $action_links,
 	);
@@ -815,10 +822,7 @@ function yourls_table_head( $data = null ) {
 		$data = array(
 			'shorturl' => yourls__( 'Short URL' ),
 			'longurl'  => yourls__( 'Original URL' ),
-			'date'     => yourls__( 'Date' ),
-			'ip'       => yourls__( 'IP' ),
 			'clicks'   => yourls__( 'Clicks' ),
-			'actions'  => '',
 		);
 	}
 	
