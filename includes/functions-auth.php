@@ -153,14 +153,18 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 function yourls_hash_passwords_now() {
 	global $yourls_user_passwords;
 	
+	if( !is_readable( YOURLS_CONFIGFILE ) )
+		return 'cannot read file'; // not sure that can actually happen...
+		
+	if( !is_writable( YOURLS_CONFIGFILE ) )
+		return 'cannot write file';	
+	
 	$configdata = file_get_contents( YOURLS_CONFIGFILE );
 	if( $configdata == false )
 		return 'could not read file';
 
 	$to_hash = 0; // keep track of number of passwords that need hashing
 	$hasher  = new PasswordHash( 8, false );
-	
-	// TODO: check mode for writability
 	foreach ( $yourls_user_passwords as $user => $password ) {
 		if ( !yourls_has_phpass_password( $user ) && !yourls_has_md5_password( $user ) ) {
 			$to_hash++;
@@ -212,8 +216,8 @@ function yourls_has_cleartext_passwords() {
 /**
  * Check if a user has a hashed password
  *
- * Check if a user password is 'md5:[38 chars]'. TODO: deprecate this when/if we have proper user management with
- * password hashes stored in the DB
+ * Check if a user password is 'md5:[38 chars]'.
+ * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
  *
  * @since 1.7
  * @param string $user user login
@@ -229,6 +233,9 @@ function yourls_has_md5_password( $user ) {
 
 /**
  * Check if a user's password is hashed with PHPASS.
+ *
+ * Check if a user password is 'phpass:[lots of chars]'.
+ * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
  *
  * @since 1.7
  * @param string $user user login
