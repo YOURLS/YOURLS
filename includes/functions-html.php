@@ -898,11 +898,11 @@ function yourls_wrapper_end() {
  */
 function yourls_sidebar_start() {
 	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-responsive-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>' );
+	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-responsive-collapse">
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	</button>' );
 }
 
 /**
@@ -957,7 +957,7 @@ function yourls_login_screen( $error_msg = '' ) {
 	?>
 	<div id="login">
 		<form method="post" class="login-screen" action="<?php echo $action; // reset any QUERY parameters ?>">
-            <?php 
+			<?php 
 				if( !empty( $error_msg ) ) {
 					echo yourls_notice_box( $error_msg[0], $error_msg[1] );
 				}
