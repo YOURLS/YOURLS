@@ -67,7 +67,7 @@ function yourls_is_valid_user() {
 	elseif
 		// Normal only: cookies
 		( !yourls_is_API() && 
-		  isset( $_COOKIE['yourls_username'] ) && isset( $_COOKIE['yourls_password'] ) )
+		  isset( $_COOKIE['yourls_username'] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
@@ -87,10 +87,6 @@ function yourls_is_valid_user() {
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
 				$url = $_SERVER['REQUEST_URI'];
-				// If password stored unencrypted, append query string. TODO: deprecate this when there's proper user management
-				if( !yourls_has_hashed_password( $_REQUEST['username'] ) ) {
-					$url = yourls_add_query_arg( array( 'login_msg' => 'pwdclear' ) );
-				}
 				yourls_redirect( $url );
 			}
 		}
@@ -131,15 +127,86 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 	
 	if( !isset( $yourls_user_passwords[ $user ] ) )
 		return false;
-		
-	if( yourls_has_hashed_password( $user ) ) {
-		// Stored password is a salted hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
+	
+	if ( yourls_has_phpass_password( $user ) ) {
+		// Stored password is hashed with phpass
+		$hasher = new PasswordHash( 8, false );
+		list( , $hash ) = explode( ':', $yourls_user_passwords[ $user ] );
+		$hash = str_replace( '!', '$', $hash );
+		return ( $hasher->CheckPassword( $submitted_password, $hash ) );
+	} else if( yourls_has_md5_password( $user ) ) {
+		// Stored password is a salted md5 hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
 		list( , $salt, ) = explode( ':', $yourls_user_passwords[ $user ] );
 		return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
 	} else {
 		// Password stored in clear text
 		return( $yourls_user_passwords[ $user ] == $submitted_password );
 	}
+}
+
+/**
+ * Overwrite plaintext passwords in config file with phpassed versions.
+ *
+ * @since 1.7
+ * @return true if overwrite was successful, an error message otherwise
+ */
+function yourls_hash_passwords_now() {
+	global $yourls_user_passwords;
+	
+	$configdata = file_get_contents( YOURLS_CONFIGFILE );
+	if( $configdata == false )
+		return 'could not read file';
+
+	$to_hash = 0; // keep track of number of passwords that need hashing
+	$hasher  = new PasswordHash( 8, false );
+	
+	// TODO: check mode for writability
+	foreach ( $yourls_user_passwords as $user => $password ) {
+		if ( !yourls_has_phpass_password( $user ) && !yourls_has_md5_password( $user ) ) {
+			$to_hash++;
+			$hash = $hasher->HashPassword( $password );
+			// PHP would interpret $ as a variable, so replace it in storage.
+			$hash = str_replace( '$', '!', $hash );
+			$quotes = "'" . '"';
+			$pattern = "/[$quotes]${user}[$quotes]\s*=>\s*[$quotes]" . preg_quote( $password, '-' ) . "[$quotes]/";
+			$replace = "'$user' => 'phpass:$hash' /* Password encrypted by YOURLS */ ";
+			$count = 0;
+			$configdata = preg_replace( $pattern, $replace, $configdata, -1, $count );
+			// There should be exactly one replacement. Otherwise, fast fail.
+			if ( $count != 1 ) {
+				global $ydb;
+				$ydb->debug_log[] = "Problem with preg_replace for password hash of user $user";
+				return 'preg_replace problem';
+			}
+		}
+	}
+	
+	if( $to_hash == 0 )
+		return true; // There was no password to encrypt
+	
+	$success = file_put_contents( YOURLS_CONFIGFILE, $configdata );
+	if ( $success === FALSE ) {
+		global $ydb;
+		$ydb->debug_log[] = "Failed writing to " . YOURLS_CONFIGFILE;
+		return 'could not write file';
+	}
+	return true;
+}
+
+/**
+ * Check to see if any passwords are stored as cleartext.
+ * 
+ * @since 1.7
+ * @return bool true if any passwords are cleartext
+ */
+function yourls_has_cleartext_passwords() {
+	global $yourls_user_passwords;
+	foreach ( $yourls_user_passwords as $user => $pwdata ) {
+		if ( !yourls_has_md5_password( $user ) && !yourls_has_phpass_password( $user ) ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -152,12 +219,26 @@ function yourls_check_password_hash( $user, $submitted_password ) {
  * @param string $user user login
  * @return bool true if password hashed, false otherwise
  */
-function yourls_has_hashed_password( $user ) {
+function yourls_has_md5_password( $user ) {
 	global $yourls_user_passwords;
 	return(    isset( $yourls_user_passwords[ $user ] )
 	        && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
 		    && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
 		   );
+}
+
+/**
+ * Check if a user's password is hashed with PHPASS.
+ *
+ * @since 1.7
+ * @param string $user user login
+ * @return bool true if password hashed with PHPASS, otherwise false
+ */
+function yourls_has_phpass_password( $user ) {
+	global $yourls_user_passwords;
+	return( isset( $yourls_user_passwords[ $user ] )
+	        && substr( $yourls_user_passwords[ $user ], 0, 7 ) == 'phpass:'
+	);
 }
 
 /**
@@ -167,10 +248,7 @@ function yourls_has_hashed_password( $user ) {
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if( 
-			yourls_salt( $valid_user ) == $_COOKIE['yourls_username']
-			&& yourls_salt( $valid_password ) == $_COOKIE['yourls_password'] 
-		) {
+		if ( yourls_salt( $valid_user ) == $_COOKIE['yourls_username'] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
@@ -260,15 +338,13 @@ function yourls_store_cookie( $user = null ) {
 	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, 1 ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
-		
+
 	if ( !headers_sent() ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
 			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
-			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure, $httponly );
 		} else {
 			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
-			setcookie('yourls_password', yourls_salt( $pass ), $time, '/', $domain, $secure );
 		}
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
