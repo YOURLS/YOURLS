@@ -115,7 +115,6 @@ require_once( YOURLS_INC.'/functions-infos.php' );
 // Load auth functions if needed
 if( yourls_is_private() ) {
 	require_once( YOURLS_INC.'/functions-auth.php' );
-	require_once( YOURLS_INC.'/phpass/PasswordHash.php' );
 }
 
 // Load locale

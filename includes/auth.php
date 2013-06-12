@@ -43,7 +43,11 @@ if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
 	// Encrypt passwords that are clear text
 	if ( !defined( 'YOURLS_NO_HASH_PASSWORD' ) && yourls_has_cleartext_passwords() ) {
 		$hash = yourls_hash_passwords_now();
-		if ( $hash !== true ) {
+		if ( $hash === true ) {
+			// Hashing succesful. Remove flag from DB if any.
+			if( yourls_get_option( 'defer_hashing_error' ) )
+				yourls_delete_option( 'defer_hashing_error' );
+		} else {
 			// It failed, display message for first time or if last time was a week ago
 			if ( time() > yourls_get_option( 'defer_hashing_error' ) or !yourls_get_option( 'defer_hashing_error' ) ) {
 				$message  = yourls_s( 'Could not auto-encrypt passwords. Error was: "%s".', $hash );
