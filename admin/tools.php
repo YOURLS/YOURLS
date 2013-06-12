@@ -6,7 +6,7 @@ yourls_maybe_require_auth();
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
 yourls_template_content( 'before', 'tools' );
 
-yourls_html_htag( yourls__( 'Tools' ), 1, yourls__( 'For easy shortening and sharing' ) ); ?>
+yourls_html_htag( yourls__( 'Tools' ), 1, yourls__( 'Easy shortening and sharing' ) ); ?>
 
 <div class="page-header">
 	<?php yourls_html_htag( yourls__( 'Bookmarklets' ), 2 ); ?>
@@ -16,35 +16,30 @@ yourls_html_htag( yourls__( 'Tools' ), 1, yourls__( 'For easy shortening and sha
 yourls_html_htag( yourls__( 'Classic Bookmarklets' ), 3 );
 
 echo '<p class="bookmarklet-help">';
-yourls_e( 'Short URL can be <strong class="default">Default</strong> or <strong class="custom">Custom</strong> (prompt for a custom keyword first)' );
-echo '</p>';
-
-echo '<p class="bookmarklet-help">';
-yourls_e( 'Behavior can be <strong class="standard">Standard</strong> (opens a new page to manage your brand new short URL) or <strong class="popup">Popup</strong> (shows the short URL in a popup within the current page)' );
+yourls_se( 'Short URL can be %1$sDefault%2$s or %3$sCustom%2$s. Behavior can be %4$sStandard%2$s or %5$sPopup%2$s',
+	'<strong class="default">', '</strong>', 
+    '<strong class="custom" title="' . yourls__( 'Prompt for a custom keyword first' ) . '">', 
+    '<strong class="standard" title="' . yourls__( 'Opens a new page to manage your brand new short URL' ) . '">',
+    '<strong class="popup" title="'. yourls__( 'Shows the short URL in a popup within the current page' ) . '">' );
 echo '</p>';
 
 echo '<p>';
-echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
+yourls_se( 'For more info, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
 echo '</p>';
 
 // @TODO: offload this to proper CSS & JS files
 echo <<<TEXT
-<style>
-div.panel.tools {width:23%; float: left; margin:1%}
-div.bookmarklet-hilite {border:1px solid #1F669C}
-.booktype-help {cursor: default}
-strong.booktype-help:hover, .bookmarklet-help strong.bookmarklet-hilite {background: #ccc; border: 1px solid #aaa; }
-.bookmarklet-help strong { padding:1px 3px; border-radius: 3px; border:1px solid transparent; }
-</style>
-
 <script>
 $(document).ready(function(){
+$('.bookmarklet-help .custom').tooltip();
+$('.bookmarklet-help .standard').tooltip();
+$('.bookmarklet-help .popup').tooltip();
 
 // Highlight bookmarklets matching a <strong> element
 $('p.bookmarklet-help strong').each( function( i, e ) {
 	var booktype = $(e).attr('class');
 	$(e).attr( 'id', 'booktype-'+booktype ).addClass('booktype-help');
-	$(e).append(' <i class="booktype-help icon-info-sign"></i>');
+	$(e).append(' <i class="icon-info-sign"></i>');
 	$('#booktype-'+booktype).hover(
 		function() {
 			$('.bookmarklet-type-'+booktype).addClass('bookmarklet-hilite');
@@ -56,14 +51,14 @@ $('p.bookmarklet-help strong').each( function( i, e ) {
 });
 
 // Highlight <strong> elements matching a bookmarklet
-$('div.tools.panel').hover(
+$('div.bookmarklet').hover(
 	function() {
 		// Get "bookmarklet-type-" classes of hovered element
 		var types = $(this).attr('class').split(' ').filter( function( el ){
 			return el.match(/bookmarklet-type-.*/);
 		}).map( function(e){ return e.replace('bookmarklet-type-', '') ;} );
 		$( types ).each( function( i, e ) {
-			$('p.bookmarklet-help strong.'+e).addClass('bookmarklet-hilite');
+			$('.bookmarklet-help .'+e).addClass('bookmarklet-hilite');
 		});
 	},
 	function() {
@@ -71,13 +66,13 @@ $('div.tools.panel').hover(
 			return el.match(/bookmarklet-type-.*/);
 		}).map( function(e){ return e.replace('bookmarklet-type-', '') ;} );
 		$( types ).each( function( i, e ) {
-			$('p.bookmarklet-help strong.'+e).removeClass('bookmarklet-hilite');
+			$('.bookmarklet-help .'+e).removeClass('bookmarklet-hilite');
 		});
 	}
 );
 
 });
-</script>
+</script><div>
 
 TEXT;
 
@@ -111,9 +106,9 @@ $bookmarks = array (
 $bookmarks = yourls_apply_filter( 'classic_bookmarklet_data', $bookmarks );
 
 foreach( $bookmarks as $bookmark ) {
-	echo '<div class="tools panel panel-' . $bookmark['color'] . ' bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
+	echo '<div class="bookmarklet panel-' . $bookmark['color'] . ' bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
-	echo '<a class="btn" href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
 	echo '<i class="icon-move"></i> ' . yourls__( 'YOURLS Shorten' );
 	echo '</a>';
 	echo '</div>';
@@ -121,11 +116,11 @@ foreach( $bookmarks as $bookmark ) {
 
 yourls_do_action( 'classic_bookmarklets_buttons_after' ); 
 
-echo '<div class="clearfix"></div>';
+echo '</div>';
 
 echo '<p>';
 yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
-yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' );
+yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' );
 echo '</p>';
 
 echo '<p>';
@@ -157,9 +152,9 @@ $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.
 $bookmarks = yourls_apply_filter( 'social_bookmarklets_data', $bookmarks );
 
 foreach( $bookmarks as $bookmark ) {
-	echo '<div class="tools panel panel-' . $bookmark['color'] . '">';
+	echo '<div class="bookmarklet panel-' . $bookmark['color'] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
-	echo '<a class="btn" href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
 	echo '<i class="icon-move"></i> ' . $bookmark['name'];
 	echo '</a>';
 	echo '</div>';
@@ -169,7 +164,7 @@ yourls_do_action( 'social_bookmarklet_buttons_after' );
 		
 echo '<div class="clearfix"></div><p>';
 yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
-yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ) . '</p>';
+yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' ) . '</p>';
 ?>
 	
 <div class="page-header">
@@ -209,9 +204,7 @@ if( yourls_is_windows() )
 		yourls_e( 'This signature token can only be used with the API, not with the admin interface.' );
 	?></p>
 		
-	<?php yourls_html_htag( yourls__( 'Usage of the signature token' ), 3 ); ?>
-		
-	<p><?php echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>', 'https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI' ); ?></p>
+	<p><?php echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI' ); ?></p>
 
 <?php } // end is private 
 		  
