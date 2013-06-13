@@ -18,9 +18,9 @@ yourls_html_htag( yourls__( 'Classic Bookmarklets' ), 3 );
 echo '<p class="bookmarklet-help">';
 yourls_se( 'Short URL can be %1$sDefault%2$s or %3$sCustom%2$s. Behavior can be %4$sStandard%2$s or %5$sPopup%2$s',
 	'<strong class="default" title="' . yourls__( 'No question asked' ) . '">', '</strong>', 
-    '<strong class="custom" title="' . yourls__( 'Prompt for a custom keyword first' ) . '">', 
-    '<strong class="standard" title="' . yourls__( 'Opens a new page to manage your brand new short URL' ) . '">',
-    '<strong class="popup" title="'. yourls__( 'Shows the short URL in a popup within the current page' ) . '">' );
+	'<strong class="custom" title="' . yourls__( 'Prompt for a custom keyword first' ) . '">', 
+	'<strong class="standard" title="' . yourls__( 'Opens a new page to manage your brand new short URL' ) . '">',
+	'<strong class="popup" title="'. yourls__( 'Shows the short URL in a popup within the current page' ) . '">' );
 echo '</p>';
 
 echo '<p>';
@@ -32,7 +32,6 @@ echo <<<TEXT
 <script>
 $(document).ready(function(){
 $('.bookmarklet-help strong').tooltip();
-$('.btn-clipboard').tooltip();
 
 // Highlight bookmarklets matching a <strong> element
 $('p.bookmarklet-help strong').each( function( i, e ) {
@@ -194,7 +193,7 @@ if( yourls_is_windows() )
 
 	<p id="signature-zone"><?php
 		yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
-		echo '<button class="btn-clipboard" id="btn-zclip" data-clipboard-target="signature" data-placement="bottom" title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>';
+		echo '<button class="btn-clipboard" id="btn-zclip" data-clipboard-target="signature" data-placement="bottom" data-trigger="manual" title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>';
 		yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'danger', 'before' );
 	?></p>
 

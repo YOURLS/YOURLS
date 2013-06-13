@@ -57,6 +57,8 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		$(document).ready(function() {
 			ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
 			var zclip = new ZeroClipboard($("#btn-zclip"));
+			zclip.on( 'mouseover', function ( client, args ) { $('#btn-zclip').tooltip('show'); } );
+			zclip.on( 'mouseout', function ( client, args ) { $('#btn-zclip').tooltip('hide'); } );
 			$('details').details();
 		});
 	</script>
