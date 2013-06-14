@@ -55,10 +55,35 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
 	//]]>
 		$(document).ready(function() {
-			ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
-			var zclip = new ZeroClipboard($("#btn-zclip"));
-			zclip.on( 'mouseover', function ( client, args ) { $('#btn-zclip').tooltip('show'); } );
-			zclip.on( 'mouseout', function ( client, args ) { $('#btn-zclip').tooltip('hide'); } );
+			// TODO: move all the zclip stuff to its own .JS
+			// Begin zclip
+			if( ZeroClipboard.detectFlashSupport() ) {
+				ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
+				var zclip = new ZeroClipboard( $( ".btn-clipboard" ) );
+				zclip.on( 'wrongflash', function ( client, args ) {
+					alert( 'Your flash is too old ' + args.flashVersion );
+					// TODO: replace this with the notify JS stuff.
+				} );
+				zclip.on( 'mouseover', function () { $(this).tooltip('show'); } );
+				zclip.on( 'mouseout', function () {
+					var title = null;
+					if( title = $(this).attr( 'data-temp-title' ) ) {
+						$(this).attr( 'data-original-title', title ).attr( 'data-temp-title', '' );
+					}
+					$(this).tooltip('hide');
+				} );
+				zclip.on( 'complete', function() {
+					if( !$(this).attr( 'data-temp-title' ) ) {
+						var hint = $(this).attr( 'data-copied-hint' );
+						$(this).attr( 'data-temp-title', $(this).attr( 'data-original-title' ) );
+						$(this).attr( 'data-original-title', hint );
+						$(this).tooltip( 'show' );
+					}
+				} );
+			} else {
+				$( ".btn-clipboard" ).hide();
+			}
+			// End zclip
 			$('details').details();
 		});
 	</script>
