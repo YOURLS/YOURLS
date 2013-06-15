@@ -58,7 +58,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 			// TODO: move all the zclip stuff to its own .JS
 			// Begin zclip
 			if( ZeroClipboard.detectFlashSupport() ) {
-				ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-zclip-hover", activeClass: "btn-zclip-active" } );
+				ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-clipboard-hover", activeClass: "btn-clipboard-active" } );
 				var zclip = new ZeroClipboard( $( ".btn-clipboard" ) );
 				zclip.on( 'wrongflash', function ( client, args ) {
 					alert( 'Your flash is too old ' + args.flashVersion );
