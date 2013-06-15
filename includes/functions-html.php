@@ -603,7 +603,9 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 
 		<div id="copybox" class="share">
 		<?php echo $shortlink_title; ?>
-			<div class="input-group col col-lg-4"><input id="copylink" type="text" value="<?php echo yourls_esc_url( $shorturl ); ?>" disabled/><span class="input-group-btn"><button id="btn-zclip" data-clipboard-target="copylink"><i class="icon-paste"></i></button></span></div>
+			<div class="input-group col col-lg-4"><input id="copylink" type="text" value="<?php echo yourls_esc_url( $shorturl ); ?>"/><span class="input-group-btn">
+			<?php yourls_html_zeroclipboard( 'copylink' ); ?>
+			</span></div>
 			<p><small><?php yourls_e( 'Long link' ); ?>: <a id="origlink" href="<?php echo yourls_esc_url( $longurl ); ?>"><?php echo yourls_esc_url( $longurl ); ?></a></small>
 			<?php if( yourls_do_log_redirect() ) { ?>
 			<br/><small><?php yourls_e( 'Stats' ); ?>: <a id="statlink" href="<?php echo yourls_esc_url( $shorturl ); ?>+"><?php echo yourls_esc_url( $shorturl ); ?>+</a></small>
@@ -639,14 +641,19 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 }
 
 /**
- * Display the ZeroClipboard button, with Tooltip additions
+ * Display or return the ZeroClipboard button, with Tooltip additions
  *
+ * @since 1.7
  * @param string $clipboard_target Id of the fetched element to copy value
+ * @param bool $echo true to print, false to return
  */
-function yourls_html_zeroclipboard( $clipboard_target ) {
-	echo yourls_apply_filter( 'html_zeroclipboard',
+function yourls_html_zeroclipboard( $clipboard_target, $echo = true ) {
+	$html = yourls_apply_filter( 'html_zeroclipboard',
 	'<button class="btn-clipboard" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-clipboard-target="' . $clipboard_target . '" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>',
 	$clipboard_target );
+	if( $echo )
+		echo $html;
+	return $html;
 }
 
 /**
@@ -808,13 +815,14 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	// Row template that you can filter before it's parsed (don't remove HTML classes & id attributes)
 	$format = '<tr id="id-%id%">
-	<td class="keyword" id="keyword-%id%"><a href="%shorturl%">%keyword_html%</a></td>
+	<td class="keyword" id="keyword-%id%"><a href="%shorturl%">%keyword_html%</a> %copy%</td>
 	<td class="url" id="url-%id%">
 		<div class="actions" id="actions-%id%">%actions%</div>
 		<a href="%long_url%" title="%title_attr%">%title_html%</a><br/>
 		<small class="longurl">%warning%<a href="%long_url%">%long_url_html%</a></small><br/>
 		<small class="added_on">%added_on_from%</small>
 		<input type="hidden" id="keyword_%id%" value="%keyword%"/>
+		<input type="hidden" id="shorturl-%id%" value="%shorturl%"/>
 	</td>
 	<td class="clicks" id="clicks-%id%">%clicks%</td>
 	</tr>';
@@ -843,6 +851,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		'added_on_from' => yourls_s( 'Added on <span class="timestamp">%s</span> from <span class="ip">%s</span>', date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ), $ip ),
 		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		'actions'       => $action_links,
+		'copy'          => yourls_html_zeroclipboard( 'shorturl-' . $id, false ),
 	);
 	
 	$row = yourls_replace_string_tokens( $format, $data );
