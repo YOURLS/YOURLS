@@ -639,6 +639,17 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 }
 
 /**
+ * Display the ZeroClipboard button, with Tooltip additions
+ *
+ * @param string $clipboard_target Id of the fetched element to copy value
+ */
+function yourls_html_zeroclipboard( $clipboard_target ) {
+	echo yourls_apply_filter( 'html_zeroclipboard',
+	'<button class="btn-clipboard" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-clipboard-target="' . $clipboard_target . '" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>',
+	$clipboard_target );
+}
+
+/**
  * Die die die
  *
  */

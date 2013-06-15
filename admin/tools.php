@@ -193,7 +193,7 @@ if( yourls_is_windows() )
 
 	<p id="signature-zone"><?php
 		yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
-		echo '<button class="btn-clipboard" id="btn-zclip" data-copied-hint="Copied!" data-clipboard-target="signature" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>';
+		yourls_html_zeroclipboard( 'signature' );
 		yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'danger', 'before' );
 	?></p>
 
