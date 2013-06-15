@@ -60,5 +60,4 @@ Desktop.ini
 *.phpproj
 
 # Temp
-*.less
 *-temp.*
