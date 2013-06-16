@@ -30,6 +30,7 @@ foreach( $files as $file ) {
 		$menu .= '<li><a href="#' . string_to_HTML_ID( $file_name ) . '">' . $file_name . '</a></li>';
 	}
 }
+$html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class="icon-circle-arrow-up"></i></a></h1>', $html );
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,20 +40,23 @@ foreach( $files as $file ) {
 	<meta name="description" content="YOURLS is Your Own URL Shortener. Get it at http://yourls.org/">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../assets/css/style.min.css" type="text/css" media="screen">
+	<script src="../assets/js/jquery.min.js" type="text/javascript"></script>
+	<script src="bootstrap-scrollspy.js" type="text/javascript"></script>
 </head>
-<body>
+<body data-spy="scroll" data-target=".sidebar" class="docs">
 	<div class="wrap">
 		<div class="sidebar">
 			<div class="yourls-logo">
-				<img class="logo" src="../assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>
+				<a href="../admin/"><img class="logo" src="../assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
+			</div>
+			<div class="global-stats">
 				<p>Your Own URL Shortener</p>
 			</div>
-			<hr />
-			<ul class="nav">
+			<ul class="nav admin-menu">
 			<?php echo $menu; ?>
 			</ul>
 		</div>
-		<div class="content docs">
+		<div class="content">
 			<?php echo $html; ?>
 		</div>
 	</div>
