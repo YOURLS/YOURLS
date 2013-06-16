@@ -1128,13 +1128,14 @@ a.list-group-item.active>.badge,.nav-pills>.active>a>.badge{color:#428bca;backgr
 .content:after{clear:both;}
 .content:before,.content:after{content:" ";display:table;}
 .content:after{clear:both;}
-.content>h1,.docs h1{background-color:#1f669c;color:#ffffff;font-family:'Magra',"Helvetica Neue",Helvetica,Arial,sans-serif;margin:0 -15px 20px;padding:50px 30px;}.content>h1>small,.docs h1>small{color:#e3f3ff;}
+.content>h1,.docs h1{background-color:#1f669c;color:#ffffff;font-family:'Magra',"Helvetica Neue",Helvetica,Arial,sans-serif;margin:0 -15px 20px;padding:50px 30px;height:115px;}.content>h1>small,.docs h1>small{color:#e3f3ff;}
 .docs>div>h1{margin-top:50px;}
 .docs>div:first-of-type>h1{margin-top:0;}
 .docs li{margin-bottom:0.5em;}
 .docs .admin-menu .active{background:#e3f3ff;}
 .docs a.back{display:none;}
 .sidebar{background-color:#ffffff;border-bottom-right-radius:4px;border-bottom-left-radius:4px;position:relative;float:left;width:100%;min-height:1px;padding-left:15px;padding-right:15px;padding:15px;max-height:100%;overflow:auto;}@media (min-width:768px){.sidebar{width:20.833333333333336%;}}@media (min-width:768px){.sidebar{margin-left:8.333333333333332%;}}.sidebar>.yourls-logo,.sidebar .footer{text-align:center;}
+.sidebar>.yourls-logo{height:115px;margin:-15px;padding-top:15px;}
 .admin-menu{margin-left:0;margin-bottom:0;padding-left:0;list-style:none;}.admin-menu:before,.admin-menu:after{content:" ";display:table;}
 .admin-menu:after{clear:both;}
 .admin-menu:before,.admin-menu:after{content:" ";display:table;}
@@ -1150,7 +1151,7 @@ a.list-group-item.active>.badge,.nav-pills>.active>a>.badge{color:#428bca;backgr
 .admin-menu>.active>a,.admin-menu>.active:hover>a,.admin-menu>.active:focus>a{font-weight:500;color:#1f669c;background-color:transparent;border-right:1px solid #1f669c;}
 .admin-menu>.active>ul{display:block;}
 .admin-menu .submenu{display:block;margin-bottom:5px;}.admin-menu .submenu>li>a{padding-top:2px;padding-bottom:2px;padding-left:40px;font-size:90%;}
-.global-stats{background-color:#1f669c;color:#fff;font-size:20px;text-align:center;padding:20px 10px 12px;margin-top:15px;margin-bottom:15px;}.global-stats:before,.global-stats:after{content:" ";display:table;}
+.global-stats{background-color:#1f669c;color:#fff;font-size:20px;text-align:center;padding:30px 10px 12px;margin-top:15px;margin-bottom:15px;height:115px;}.global-stats:before,.global-stats:after{content:" ";display:table;}
 .global-stats:after{clear:both;}
 .global-stats:before,.global-stats:after{content:" ";display:table;}
 .global-stats:after{clear:both;}
@@ -1171,7 +1172,7 @@ a.list-group-item.active>.badge,.nav-pills>.active>a>.badge{color:#428bca;backgr
 .btn-edit.disabled:hover,.btn-edit[disabled]:hover,fieldset[disabled] .btn-edit:hover,.btn-edit.disabled:focus,.btn-edit[disabled]:focus,fieldset[disabled] .btn-edit:focus,.btn-edit.disabled:active,.btn-edit[disabled]:active,fieldset[disabled] .btn-edit:active,.btn-edit.disabled.active,.btn-edit[disabled].active,fieldset[disabled] .btn-edit.active{background-color:#f0ad4e;border-color:#f0ad4e;}
 .btn-delete{color:#ffffff;background-color:#d9534f;border-color:#d9534f;}.btn-delete:hover,.btn-delete:focus,.btn-delete:active,.btn-delete.active{background-color:#d43f3a;border-color:#c9302c;}
 .btn-delete.disabled:hover,.btn-delete[disabled]:hover,fieldset[disabled] .btn-delete:hover,.btn-delete.disabled:focus,.btn-delete[disabled]:focus,fieldset[disabled] .btn-delete:focus,.btn-delete.disabled:active,.btn-delete[disabled]:active,fieldset[disabled] .btn-delete:active,.btn-delete.disabled.active,.btn-delete[disabled].active,fieldset[disabled] .btn-delete.active{background-color:#d9534f;border-color:#d9534f;}
-.new-url-form{background-color:#c7e7ff;color:#2a85b3;margin:-20px -15px 30px;padding:25px 15px;}.new-url-form:before,.new-url-form:after{content:" ";display:table;}
+.new-url-form{background-color:#c7e7ff;color:#2a85b3;margin:-20px -15px 30px;padding:25px 15px;height:115px;}.new-url-form:before,.new-url-form:after{content:" ";display:table;}
 .new-url-form:after{clear:both;}
 .new-url-form:before,.new-url-form:after{content:" ";display:table;}
 .new-url-form:after{clear:both;}
