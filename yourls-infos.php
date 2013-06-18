@@ -491,6 +491,7 @@ yourls_html_menu();
 							$favicon = yourls_get_favicon_url( $site );
 							echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details hide-if-no-js' id='more_url$i'>" . yourls__( '(details)' ) . "</a></li>\n";
 							echo "<ul id='details_url$i' style='display:none'>";
+							var_dump( $referrers );
 							foreach( $referrers[$site] as $url => $count ) {
 								echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
 							}
