@@ -550,3 +550,33 @@ tbody > tr {
 		display: none;
 	}
 }
+
+// Spin stuff
+// --------------------------------------------------
+.spin {
+  -moz-animation: spin 1s infinite linear;
+  -o-animation: spin 1s infinite linear;
+  -webkit-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+  display: inherit;
+}
+@-moz-keyframes spin {
+  0%   { .rotate(0deg); }
+  100% { .rotate(359deg); }
+}
+@-webkit-keyframes spin {
+  0%   { .rotate(0deg); }
+  100% { .rotate(359deg); }
+}
+@-o-keyframes spin {
+  0%   { .rotate(0deg); }
+  100% { .rotate(359deg); }
+}
+@-ms-keyframes spin {
+  0%   { .rotate(0deg); }
+  100% { .rotate(359deg); }
+}
+@keyframes spin {
+  0%   { .rotate(0deg); }
+  100% { .rotate(359deg); }
+}

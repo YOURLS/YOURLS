@@ -232,7 +232,7 @@ function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
 	$html  = '<div class="global-stats"><div class="global-stats-data">';
-	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . strtoupper( yourls__( 'Links' ) );
+	$html .= '<strong class="status-number increment">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . strtoupper( yourls__( 'Links' ) );
 	$html .= '</p></div><div class="global-stats-data">';
 	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . strtoupper( yourls__( 'Clicks' ) ) . '</p></div></div>';
 	echo yourls_apply_filters( 'html_global_stats', $html );
@@ -793,6 +793,8 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		<small class="added_on">%added_on_from%</small>
 		<input type="hidden" id="keyword_%id%" value="%keyword%"/>
 		<input type="hidden" id="shorturl-%id%" value="%shorturl%"/>
+		<input type="hidden" id="longurl-%id%" value="%long_url%"/>
+		<input type="hidden" id="title-%id%" value="%title_attr%"/>
 	</td>
 	<td class="clicks" id="clicks-%id%">%clicks%</td>
 	</tr>';
