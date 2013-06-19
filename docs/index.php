@@ -19,6 +19,8 @@ function string_to_HTML_ID($string) {
 
 require_once dirname( __FILE__ ) . '/Markdown.php';
 
+include_once( dirname( dirname( __FILE__ ) ) . '/includes/version.php' );
+
 $files = scandir( dirname( __FILE__ ) );
 $html = $menu = '';
 foreach( $files as $file ) {
@@ -39,22 +41,30 @@ $html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class=
 	<title>YOURLS Documentation</title>
 	<meta name="description" content="YOURLS is Your Own URL Shortener. Get it at http://yourls.org/">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../assets/css/style.min.css" type="text/css" media="screen">
-	<script src="../assets/js/jquery.min.js" type="text/javascript"></script>
-	<script src="bootstrap-scrollspy.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="../assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
+	<script src="../assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="../assets/js/bootstrap.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="bootstrap-scrollspy.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 </head>
 <body data-spy="scroll" data-target=".sidebar" class="docs">
 	<div class="wrap">
 		<div class="sidebar">
+			<button data-target=".sidebar-responsive-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
 			<div class="yourls-logo">
 				<a href="../admin/"><img class="logo" src="../assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>
 			</div>
 			<div class="global-stats">
-				<p>Your Own URL Shortener</p>
+				<p>Documentation</p>
 			</div>
-			<ul class="nav admin-menu">
-			<?php echo $menu; ?>
-			</ul>
+			<div class="sidebar-responsive-collapse">
+				<ul class="nav admin-menu">
+				<?php echo $menu; ?>
+				</ul>
+			</div>
 		</div>
 		<div class="content">
 			<?php echo $html; ?>
