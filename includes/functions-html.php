@@ -52,40 +52,10 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php } ?>
 	<script type="text/javascript">
 	//<![CDATA[
-		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
+		var ajaxurl    = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
+		var moviepath  = '<?php yourls_site_url( true, YOURLS_ASSETURL . '/js/ZeroClipboard.swf' ); ?>';
+		
 	//]]>
-		$(document).ready(function() {
-			// TODO: move all the zclip stuff to its own .JS
-			// Begin zclip
-			if( ZeroClipboard.detectFlashSupport() ) {
-				ZeroClipboard.setDefaults( { moviePath: "<?php yourls_site_url(); ?>/assets/js/ZeroClipboard.swf", hoverClass: "btn-clipboard-hover", activeClass: "btn-clipboard-active" } );
-				var zclip = new ZeroClipboard( $( ".btn-clipboard" ) );
-				zclip.on( 'wrongflash', function ( client, args ) {
-					alert( 'Your flash is too old ' + args.flashVersion );
-					// TODO: replace this with the notify JS stuff.
-				} );
-				zclip.on( 'mouseover', function () { $(this).tooltip('show'); } );
-				zclip.on( 'mouseout', function () {
-					var title = null;
-					if( title = $(this).attr( 'data-temp-title' ) ) {
-						$(this).attr( 'data-original-title', title ).attr( 'data-temp-title', '' );
-					}
-					$(this).tooltip('hide');
-				} );
-				zclip.on( 'complete', function() {
-					if( !$(this).attr( 'data-temp-title' ) ) {
-						var hint = $(this).attr( 'data-copied-hint' );
-						$(this).attr( 'data-temp-title', $(this).attr( 'data-original-title' ) );
-						$(this).attr( 'data-original-title', hint );
-						$(this).tooltip( 'show' );
-					}
-				} );
-			} else {
-				$( ".btn-clipboard" ).hide();
-			}
-			// End zclip
-			$('details').details();
-		});
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
@@ -101,7 +71,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  */
 function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
-	$logo = '<img class="yourls-logo-img" src="' . yourls_site_url( false ) . '/assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/>';
+	$logo = '<img class="yourls-logo-img" src="' . yourls_site_url( false, YOURLS_ASSETURL . '/img/yourls-logo.png' ) . '" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
 		$logo = yourls_html_link( yourls_admin_url( 'index.php' ), $logo, 'YOURLS', false, false );
 	?>

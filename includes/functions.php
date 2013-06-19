@@ -1892,7 +1892,7 @@ function yourls_favicon( $echo = true ) {
 		}
 	}
 	if ( $favicon === null )
-		$favicon = yourls_site_url( false ) . '/assets/img/favicon.ico';
+		$favicon = yourls_site_url( false, YOURLS_ASSETURL . '/img/favicon.ico' );
 	
 	if( $echo )
 			echo '<link rel="shortcut icon" href="'. $favicon . '">';

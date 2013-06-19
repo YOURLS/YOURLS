@@ -127,14 +127,15 @@ function yourls_template_content( $template_part ) {
 function yourls_core_assets() {
 	return array(
 		'js'  => array(
-			// 'handle' => 'file basename without extension'
-			'jquery'    => 'jquery',
-			'clipboard' => 'ZeroClipboard',
-			'scripts'   => 'bootstrap',
-			'details'   => 'details',
+			// 'handle' => 'file basename'
+			'jquery'    => 'jquery.min',
+			'clipboard' => 'ZeroClipboard.min',
+			'scripts'   => 'bootstrap.min',
+			'details'   => 'details.min',
+			'yourls'    => 'yourls',
 		),
 		'css' => array(
-			'style'     => 'style',		
+			'style'     => 'style.min',
 		),
 	);
 }
@@ -160,7 +161,7 @@ function yourls_output_asset_queue() {
 				if( isset( $core[ $type ][ $name ] ) ) {
 					// @TODO: allow inclusion of non minified scripts or CSS for debugging
 					// Something like: $min = ( defined and true ( 'YOURLS_SCRIPT_DEBUG' ) ? '' : 'min' );
-					$src = yourls_site_url( false ) . "/assets/$type/" . $core[ $type ][ $name ] . ".min.$type?v=" . YOURLS_VERSION;
+					$src = yourls_site_url( false, YOURLS_ASSETURL . "/$type/" . $core[ $type ][ $name ] . ".$type?v=" . YOURLS_VERSION );
 				}
 			}
 			
@@ -361,6 +362,7 @@ function yourls_init_theme() {
 	yourls_enqueue_style( 'style' );
 	yourls_enqueue_script( 'jquery' );
 	yourls_enqueue_script( 'clipboard' );
+	yourls_enqueue_script( 'yourls' );
 	yourls_enqueue_script( 'scripts' );
 	yourls_enqueue_script( 'details' );
 	

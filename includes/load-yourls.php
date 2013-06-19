@@ -28,6 +28,14 @@ if( !defined( 'YOURLS_ABSPATH' ) )
 if( !defined( 'YOURLS_INC' ) )
 	define( 'YOURLS_INC', YOURLS_ABSPATH.'/includes' );
 
+// physical path of asset directory
+if( !defined( 'YOURLS_ASSETDIR' ) )
+	define( 'YOURLS_ASSETDIR', YOURLS_ABSPATH.'/assets' );
+
+// URL of asset directory
+if( !defined( 'YOURLS_ASSETURL' ) )
+	define( 'YOURLS_ASSETURL', YOURLS_SITE.'/assets' );
+	
 // physical path of user directory
 if( !defined( 'YOURLS_USERDIR' ) )
 	define( 'YOURLS_USERDIR', YOURLS_ABSPATH.'/user' );
