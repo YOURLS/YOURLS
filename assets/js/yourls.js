@@ -18,6 +18,9 @@ $(document).ready(function() {
 	$( 'button.add-button' ).on( 'click', function() {
 		add_link();
 	});
+	$('.add-url, .add-keyword').keypress(function(e){
+		if( e.which == 13 ) { setTimeout( function(){add_link();}, 350 ); }
+	});
 	
 	// When there's a share box
 	$('#tweet_body:visible').focus();
