@@ -59,6 +59,35 @@ function add_link() {
 	);
 }
 
+// Delete a link
+function remove_link( id ) {
+	// TODO: localize this
+	if ( !confirm( 'Really delete?' ) ) {
+		return;
+	}
+	var keyword = $( '#keyword_'+id ).val();
+	var nonce = get_var_from_query( $( '#delete-button-'+id ).attr( 'href' ), 'nonce' );
+	
+	$.getJSON(
+		ajaxurl,
+		{ action: "delete", keyword: keyword, nonce: nonce, id: id },
+		function( data ){
+			if ( data.success == 1 ) {
+				$( "#id-" + id ).fadeOut(function(){
+					$(this).remove();
+					if( $('#main_table tbody tr').length  == 1 ) {
+						$('#nourl_found').css('display', '');
+					}
+				});
+				decrement_counter();
+			} else {
+				// TODO: localize this
+				alert( 'Could not delete link' );
+			}
+		}
+	);
+}
+
 // Toggle Share box display
 function toggle_share( id ) {
 	var longurl  = $( '#longurl-'+id ).val();
