@@ -101,8 +101,11 @@ html {
     .make-column(2.5);
     .make-column-offset(1);
     padding: 15px;
-    max-height: 100%;
-    overflow: auto;
+	
+	&:hover {
+        max-height: 100%;
+        overflow: auto;
+	}
 
     > .yourls-logo,
     .footer {
@@ -115,6 +118,8 @@ html {
 		padding-top: 15px;
 	}
 }
+
+
 
 .admin-menu {
     .nav;
