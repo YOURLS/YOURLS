@@ -288,7 +288,7 @@ function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) 
  *
  */
 function yourls_google_array_to_data_table( $data ){
-	$str  = "var data = google.visualization.arrayToDataTable([\n";
+	$str  = "var data = google.visualization.arrayToDataTable([";
 	foreach( $data as $label => $values ){
 		if( !is_array( $values ) ) {
 			$values = array( $values );
@@ -300,10 +300,10 @@ function yourls_google_array_to_data_table( $data ){
 			}
 			$str .= "$value";
 		}		
-		$str .= "],\n";
+		$str .= "],";
 	}
-	$str = substr( $str, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
-	$str .= "]);\n"; // wrap it up	
+	$str = substr( $str, 0, -2 ); // remove the trailing comma/return, reappend the return
+	$str .= "]);"; // wrap it up	
 	return $str;
 }
 
@@ -313,26 +313,26 @@ function yourls_google_array_to_data_table( $data ){
  */
 function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 	$function_name = 'yourls_graph' . $id;
-	$code  = "\n<script id=\"$function_name\" type=\"text/javascript\">\n";
-	$code .= "function $function_name() { \n";
+	$code  = "<script id=\"$function_name\" type=\"text/javascript\">";
+	$code .= "function $function_name() { ";
 
-	$code .= "$data\n";
+	$code .= "$data";
 
-	$code .= "var options = {\n";
+	$code .= "var options = {";
 	foreach( $options as $field => $value ) {
 		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
 			$value = "\"$value\"";
 		}
-		$code .= "\t'$field': $value,\n";
+		$code .= "\t'$field': $value,";
 	}
-	$code  = substr( $code, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
-	$code .= "\t}\n";
+	$code  = substr( $code, 0, -2 ); // remove the trailing comma/return, reappend the return
+	$code .= "\t}";
 
 	$code .= "new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );";
-	$code .= "}\n";
-	$code .= "google.setOnLoadCallback( $function_name );\n";
-	$code .= "</script>\n";
-	$code .= "<div id=\"visualization_$id\"></div>\n";
+	$code .= "}";
+	$code .= "google.setOnLoadCallback( $function_name );";
+	$code .= "</script>";
+	$code .= "<div id=\"visualization_$id\"></div>";
 	
 	return $code;
 }

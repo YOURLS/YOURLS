@@ -170,11 +170,11 @@ function yourls_output_asset_queue() {
 			// Output asset HTML tag
 			switch( $type ) {
 				case 'css':
-					echo '<link rel="stylesheet" href="' . $src . '" type="text/css" media="screen">' . "\n";
+					echo '<link rel="stylesheet" href="' . $src . '" type="text/css" media="screen">';
 					break;
 				
 				case 'js':
-					echo '<script src="' . $src . '" type="text/javascript"></script>' . "\n";
+					echo '<script src="' . $src . '" type="text/javascript"></script>';
 					break;
 				
 				default:

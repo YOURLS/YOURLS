@@ -368,7 +368,7 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 						}
 					}
 					$hits = sprintf( yourls_n( '%s hit', '%s hits', ${'hits_'.$graph} ), ${'hits_'.$graph} );
-					echo "<li><span class='historical_link'>$link</span> <span class='historical_count'>$hits</span> $stat</li>\n";
+					echo "<li><span class='historical_link'>$link</span> <span class='historical_count'>$hits</span> $stat</li>";
 				}
 				?>
 				</ul>
@@ -410,11 +410,11 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 							    echo "<ul style='display:$display' id='details_month$year$month'>";
 								    foreach( $days as $day=>$hits ) {
 									    $class = ( $hits == $best['max'] ? 'class="bestday"' : '' );
-									    echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>\n";
+									    echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>";
 								    }
-							    echo "</ul>\n";
+							    echo "</ul>";
 						    }
-						    echo "</ul>\n";
+						    echo "</ul>";
 					    }
 					    ?>
 				    </ul>
@@ -436,7 +436,7 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 			<ul id="details_countries" style="display:none" class="no_bullet">
 			<?php
 			foreach( $countries as $code=>$count ) {
-				echo '<li><i class="' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
+				echo '<li><i class="' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . '</li>';
 			}		
 			?>
 			</ul>
@@ -469,22 +469,22 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 				foreach( $referrer_sort as $site => $count ) {
 					$i++;
 					$favicon = yourls_get_favicon_url( $site );
-					echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details hide-if-no-js' id='more_url$i'>" . yourls__( '(details)' ) . "</a></li>\n";
+					echo "<li class='sites_list'><img src='$favicon' class='fix_images'/> $site: <strong>$count</strong> <a href='' class='details hide-if-no-js' id='more_url$i'>" . yourls__( '(details)' ) . "</a></li>";
 					echo "<ul id='details_url$i' style='display:none'>";
 					foreach( $referrers[$site] as $url => $count ) {
-						echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>\n";
+						echo "<li>"; yourls_html_link($url); echo ": <strong>$count</strong></li>";
 					}
-					echo "</ul>\n";
+					echo "</ul>";
 					unset( $referrers[$site] );
 				}
 				// Any referrer left? Group in "various"
 				if ( $referrers ) {
-					echo "<li id='sites_various'>" . yourls__( 'Various:' ) . " <strong>". count( $referrers ). "</strong> <a href='' class='details hide-if-no-js' id='more_various'>" . yourls__( '(details)' ) . "</a></li>\n";
+					echo "<li id='sites_various'>" . yourls__( 'Various:' ) . " <strong>". count( $referrers ). "</strong> <a href='' class='details hide-if-no-js' id='more_various'>" . yourls__( '(details)' ) . "</a></li>";
 					echo "<ul id='details_various' style='display:none'>";
 					foreach( $referrers as $url ) {
-						echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
+						echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>";	
 					}
-					echo "</ul>\n";
+					echo "</ul>";
 				}
 				?>
 			</ul>

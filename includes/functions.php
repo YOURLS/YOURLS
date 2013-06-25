@@ -1496,7 +1496,7 @@ function yourls_create_nonce( $action, $user = false ) {
 function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
 	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
 	if( $echo )
-		echo $field."\n";
+		echo $field;
 	return $field;
 }
 
@@ -1925,7 +1925,7 @@ function yourls_check_maintenance_mode() {
 	
 	// https://www.youtube.com/watch?v=Xw-m4jEY-Ns
 	$title   = yourls__( 'Service temporarily unavailable' );
-	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p>\n<p>" .
+	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p><p>" .
 	yourls__( 'Things should not last very long, thank you for your patience and please excuse the inconvenience' );
 	yourls_die( $message, $title , 503 );
 

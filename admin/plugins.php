@@ -121,7 +121,7 @@ foreach( $plugins as $file=>$plugin ) {
 	// Other "Fields: Value" in the header? Get them too
 	if( $plugin ) {
 		foreach( $plugin as $extra_field=>$extra_value ) {
-			$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
+			$data['desc'] .= "<br/><em>$extra_field</em>: $extra_value";
 			unset( $plugin[$extra_value] );
 		}
 	}

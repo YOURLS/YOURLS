@@ -107,7 +107,7 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $
 	if ( $subtitle ) {
 		$result .= " <small>&mdash; $subtitle</small>";
 	}
-	$result .= "</h$size>\n";
+	$result .= "</h$size>";
 	if ( $echo )
 		echo $result;
 	else
@@ -216,7 +216,7 @@ function yourls_html_menu( $current_page = null ) {
 	if ( isset( $help_link ) )
 		$menu .=  '<li id="admin-menu-help-link">' . $help_link .'</li>';
 	
-	$menu .=  "</ul></div><hr />\n";
+	$menu .=  "</ul></div><hr />";
 	
 	yourls_do_action( 'pre_admin_menu' );
 	echo yourls_apply_filter( 'html_admin_menu', $menu );
@@ -527,9 +527,9 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
 	foreach( $options as $value => $text ) {
 		$html .= '<option value"' . $value .'"';
 		$html .= $selected == $value ? ' selected="selected"' : '';
-		$html .= ">$text</option>\n";
+		$html .= ">$text</option>";
 	}
-	$html .= "</select>\n";
+	$html .= "</select>";
 	$html  = yourls_apply_filters( 'html_select', $html, $name, $options, $selected, $display );
 	if( $display )
 		echo $html;
@@ -1011,12 +1011,12 @@ function yourls_login_screen( $error_msg = '' ) {
  * @since 1.6
  */
 function yourls_l10n_calendar_strings() {
-	echo "\n<script>\n";
-	echo "var l10n_cal_month = " . json_encode( array_values( yourls_l10n_months() ) ) . ";\n";
-	echo "var l10n_cal_days = " . json_encode( array_values( yourls_l10n_weekday_initial() ) ) . ";\n";
-	echo "var l10n_cal_today = \"" . yourls_esc_js( yourls__( 'Today' ) ) . "\";\n";
-	echo "var l10n_cal_close = \"" . yourls_esc_js( yourls__( 'Close' ) ) . "\";\n";
-	echo "</script>\n";
+	echo "<script>";
+	echo "var l10n_cal_month = " . json_encode( array_values( yourls_l10n_months() ) ) . ";";
+	echo "var l10n_cal_days = " . json_encode( array_values( yourls_l10n_weekday_initial() ) ) . ";";
+	echo "var l10n_cal_today = \"" . yourls_esc_js( yourls__( 'Today' ) ) . "\";";
+	echo "var l10n_cal_close = \"" . yourls_esc_js( yourls__( 'Close' ) ) . "\";";
+	echo "</script>";
 	
 	// Dummy returns, to initialize l10n strings used in the calendar
 	yourls__( 'Today' );

@@ -92,7 +92,7 @@ foreach( $themes as $file => $theme_data ) {
 	// Other "Fields: Value" in the header? Get them too
 	if( $theme_data ) {
 		foreach( $theme_data as $extra_field => $extra_value ) {
-			$data['desc'] .= "<br/>\n<em>$extra_field</em>: $extra_value";
+			$data['desc'] .= "<br/><em>$extra_field</em>: $extra_value";
 			unset( $theme_data[$extra_value] );
 		}
 	}

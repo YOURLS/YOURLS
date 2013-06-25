@@ -187,7 +187,6 @@ if( yourls_is_windows() )
 	
 	<p><?php
 		yourls_e( 'YOURLS allows API calls the old fashioned way, using <code>username</code> and <code>password</code> parameters.' );
-		echo "\n";
 		yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 	?></p>
 

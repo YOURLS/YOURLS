@@ -54,7 +54,7 @@ yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
 				if ( count( $$info ) > 0 ) {
 					echo "<div class='alert alert-$info'><ul>";
 					foreach( $$info as $msg ) {
-						echo '<li>'.$msg."</li>\n";
+						echo '<li>'.$msg."</li>";
 					}
 					echo '</ul></div>';
 				}
