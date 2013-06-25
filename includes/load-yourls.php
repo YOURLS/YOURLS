@@ -4,14 +4,15 @@
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	require_once dirname( dirname( __FILE__ ) ) . '/user/config.php';
+	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/user/config.php' );
 } elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
 	// config.php in /includes/
-	require_once dirname( __FILE__ ) . '/config.php';
+	define( 'YOURLS_CONFIGFILE', dirname( __FILE__ ) . '/config.php' );
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <code>config.php</code>.</p><p>Please read the <a href="../docs/#install">documentation</a> to learn how to install YOURLS</p>' );
 }
+require_once YOURLS_CONFIGFILE;
 
 // Check if config.php was properly updated for 1.4
 if( !defined( 'YOURLS_DB_PREFIX' ) )

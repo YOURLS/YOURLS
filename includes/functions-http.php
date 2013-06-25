@@ -152,7 +152,6 @@ function yourls_get_remote_content_fsockopen( $url, $maxlen = 4096, $timeout = 5
 
 	// connect to the remote server
 	$fp = @fsockopen( $host, $port, $errno, $errstr, $timeout );
-	var_dump( $errno, $errstr );
 	if( $fp !== false ) {
 		// send some fake headers to mimick a standard browser
 		fputs($fp, "GET $path HTTP/1.0\r\n" .

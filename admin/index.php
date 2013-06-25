@@ -172,7 +172,7 @@ if ( isset( $_GET['u'] ) ) {
 		switch ( $_GET['share'] ) {
 			case 'twitter':
 				// share with Twitter
-				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", $return['shorturl'], $_GET['t'] );
+				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", urlencode( $return['shorturl'] ), urlencode( $_GET['t'] ) );
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
@@ -183,7 +183,7 @@ if ( isset( $_GET['u'] ) ) {
 
 			case 'facebook':
 				// share with Facebook
-				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", $return['shorturl'], $_GET['t'] );
+				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", urlencode( $return['shorturl'] ), urlencode( $_GET['t'] ) );
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
