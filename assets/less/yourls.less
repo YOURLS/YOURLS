@@ -19,9 +19,9 @@
 // Fonts
 // --------------------------------------------------
 @font-face {
-    font-family: 'Magra';
-    src: url('@{font-path}/magra-regular.eot');
-    src: url('@{font-path}/magra-regular.eot?#iefix') format('embedded-opentype'), url('@{font-path}/magra-regular.woff') format('woff'), url('@{font-path}/magra-regular.ttf') format('truetype'), url('@{font-path}/magra-regular.svg#magraregular') format('svg');
+    font-family: 'Museo';
+    src: url('@{font-path}/museo-webfont.eot');
+    src: url('@{font-path}/museo-webfont.eot?#iefix') format('embedded-opentype'), url('@{font-path}/museo-webfont.woff') format('woff'), url('@{font-path}/museo-webfont.ttf') format('truetype'), url('@{font-path}/museo-webfont.svg#museowebfont') format('svg');
 }
 
 // HTML
@@ -54,7 +54,7 @@ html {
     .docs h1 {
         background-color: @yourls-color-dark;
         color: @bck-wrapper;
-        font-family: 'Magra', @font-family-sans-serif;
+        font-family: 'Museo', @font-family-sans-serif;
         margin: 0 -15px 20px;
         padding: 40px 30px;
         min-height: 115px;
@@ -110,8 +110,7 @@ html {
     }
 
     > .yourls-logo {
-        height: 115px;
-        padding-top: 15px;
+        min-height: 110px;
     }
 }
 
@@ -167,7 +166,6 @@ html {
     text-align: center;
     .make-row();
     padding: 30px 10px 12px;
-    margin-top: 15px;
     margin-bottom: 15px;
     height: 115px;
 
@@ -175,7 +173,7 @@ html {
         .make-column(6);
 
         > p {
-            font-family: 'Magra', @font-family-sans-serif;
+            font-family: 'Museo', @font-family-sans-serif;
             font-size: (@font-stats-big * 0.85); // ~12px
         }
     }
