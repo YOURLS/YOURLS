@@ -187,6 +187,58 @@ html {
     .table;
     .table-striped;
     .table-hover;
+
+    tbody > tr > td {
+        vertical-align: middle;
+    }
+
+    .btn-clipboard {
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        transition: all 0.3s;
+        cursor: pointer;
+        /*   &:after {
+        content: '';
+        position: relative;
+        z-index: 51;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        width: 0%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: @yourls-color-med-dark;
+    }*/
+        &.btn-clipboard-hover {
+            background-color: @yourls-color-med-light;
+        }
+
+        &.btn-clipboard-active {
+            background-color: @yourls-color-med-dark;
+
+            > a {
+                color: #fff;
+            }
+        }
+    }
+    /*
+.btn-clipboard-hover a,
+.btn-clipboard-active a {
+    color: #fff;
+}
+
+.btn-clipboard-hover:after {
+    width: 75%;
+    opacity: 1;
+}
+
+.btn-clipboard-active:after {
+    width: 100%;
+    opacity: 1;
+}
+*/
 }
 
 .btn-stats {
@@ -215,13 +267,29 @@ html {
 
 .keyword {
     text-align: center;
-    vertical-align: middle;
+    font-weight: 600;
 }
 
 .clicks {
     font-weight: 500;
-    font-size: 3em;
+    font-size: 2.5em;
 }
+
+.url {
+    .actions {
+        height: 0;
+        overflow: hidden;
+        -moz-transition: height 0.3s;
+        -o-transition: height 0.3s;
+        -webkit-transition: height 0.3s;
+        transition: height 0.3s;
+    }
+
+    &:hover .actions {
+        height: 40px;
+    }
+}
+
 
 // Forms
 // --------------------------------------------------
@@ -573,9 +641,9 @@ button.btn-clipboard-active {
 // Spin stuff
 // --------------------------------------------------
 .spin {
+    -webkit-animation: spin 1s infinite linear;
     -moz-animation: spin 1s infinite linear;
     -o-animation: spin 1s infinite linear;
-    -webkit-animation: spin 1s infinite linear;
     animation: spin 1s infinite linear;
     display: inherit;
 }

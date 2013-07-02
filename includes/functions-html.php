@@ -787,7 +787,6 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$format = '<tr id="id-%id%">
 	<td class="keyword btn-clipboard" id="keyword-%id%" %copy%><a href="%shorturl%">%keyword_html%</a></td>
 	<td class="url" id="url-%id%">
-		<div class="actions" id="actions-%id%">%actions%</div>
 		<a href="%long_url%" title="%title_attr%">%title_html%</a><br/>
 		<small class="longurl">%warning%<a href="%long_url%">%long_url_html%</a></small><br/>
 		<small class="added_on">%added_on_from%</small>
@@ -795,6 +794,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		<input type="hidden" id="shorturl-%id%" value="%shorturl%"/>
 		<input type="hidden" id="longurl-%id%" value="%long_url%"/>
 		<input type="hidden" id="title-%id%" value="%title_attr%"/>
+		<div class="actions" id="actions-%id%">%actions%</div>
 	</td>
 	<td class="clicks" id="clicks-%id%">%clicks%</td>
 	</tr>';
@@ -823,7 +823,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		'added_on_from' => yourls_s( 'Added on <span class="timestamp">%s</span> from <span class="ip">%s</span>', date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ), $ip ),
 		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		'actions'       => $action_links,
-		'copy'          => 'data-copied-hint="' . yourls__( 'Copied!' ) . '" data-clipboard-target="' . 'shorturl-' . $id . '" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"',
+		'copy'          => 'data-clipboard-target="' . 'shorturl-' . $id /*. '" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-placement="top" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) */. '"',
 	);
 	
 	$row = yourls_replace_string_tokens( $format, $data );
