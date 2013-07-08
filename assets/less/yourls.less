@@ -29,6 +29,36 @@
     src: url('@{font-path}/museo-webfont.eot?#iefix') format('embedded-opentype'), url('@{font-path}/museo-webfont.woff') format('woff'), url('@{font-path}/museo-webfont.ttf') format('truetype'), url('@{font-path}/museo-webfont.svg#museowebfont') format('svg');
 }
 
+// HTML Components
+// --------------------------------------------------
+.btn-outline(@bg-color) {
+    .btn-outline {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        padding: 18px 24px;
+        font-size: inherit;
+        font-weight: 500;
+        color: #fff;
+        background-color: transparent;
+        border-color: #fff;
+        border-color: rgba(255,255,255,.5);
+        -moz-transition: all .1s ease-in-out;
+        -o-transition: all .1s ease-in-out;
+        -webkit-transition: all .1s ease-in-out;
+        transition: all .1s ease-in-out;
+
+        &:hover,
+        &:active {
+            color: @bg-color;
+            background-color: #fff;
+            border-color: #fff;
+        }
+    }
+}
+
+.btn-outline(@yourls-color-dark);
+
+
 // HTML
 // --------------------------------------------------
 body,
@@ -38,7 +68,7 @@ html {
     background-color: @yourls-color-light;
 }
 
-.wrap {
+.container {
     height: 100%;
 }
 
@@ -46,9 +76,8 @@ html {
 // --------------------------------------------------
 .content {
     background-color: @bck-wrapper;
-    .make-column(7.5);
-    .make-column-push(3.8);
-    .container-fixed();
+    .make-column(8.5);
+    .make-column-push(3.5);
     min-height: 100%;
     padding-bottom: 50px;
 }
@@ -100,8 +129,7 @@ html {
 .sidebar {
     background-color: @sidebar;
     .border-bottom-radius(@border-radius-base);
-    .make-column(2.5);
-    .make-column-offset(1);
+    width: 100%;
     padding: 15px;
 
     &:hover {
@@ -116,6 +144,10 @@ html {
 
     > .yourls-logo {
         min-height: 110px;
+
+        img {
+            max-width: 100%;
+        }
     }
 }
 
@@ -558,45 +590,9 @@ button.btn-clipboard-active {
 
 // Responsive
 // --------------------------------------------------
-@media screen and (min-width: @screen-large-desktop) {
-    .sidebar {
-        .make-column(2);
-    }
-
-    .content {
-        padding-right: 6.25%;
-        padding-left: 6.25%;
-
-        > h1,
-        .new-url-form {
-            margin-right: -12.5%;
-            margin-left: -12.5%;
-            padding-right: 12.5%;
-            padding-left: 12.5%;
-        }
-    }
-
-    .docs h1 {
-        margin-right: -12.5%;
-        margin-left: -12.5%;
-        padding-right: 12.5%;
-        padding-left: 12.5%;
-    }
-}
-
-@media screen and (min-width: @screen-tablet) {
-    .sidebar {
-        .affix;
-
-        > .global-stats {
-            margin-left: (@grid-gutter-width / -2);
-            margin-right: (@grid-gutter-width / -2);
-        }
-    }
-}
-
 @media screen and (max-width: @screen-tablet) {
     .sidebar {
+        width: 100%;
 
         > .yourls-logo {
             display: block;
@@ -638,6 +634,44 @@ button.btn-clipboard-active {
 
     #about a.back {
         display: none;
+    }
+}
+
+@media screen and (min-width: @screen-tablet) {
+    .sidebar {
+        width: 205px;
+        .affix;
+
+        > .global-stats {
+            margin-left: (@grid-gutter-width / -2);
+            margin-right: (@grid-gutter-width / -2);
+        }
+    }
+}
+
+@media screen and (min-width: @screen-large-desktop) {
+    .sidebar {
+        width: 263px;
+    }
+
+    .content {
+        padding-right: 6.25%;
+        padding-left: 6.25%;
+
+        > h1,
+        .new-url-form {
+            margin-right: -10.7%;
+            margin-left: -10.7%;
+            padding-right: 10.7%;
+            padding-left: 10.7%;
+        }
+    }
+
+    .docs h1 {
+        margin-right: -10.7%;
+        margin-left: -10.7%;
+        padding-right: 10.7%;
+        padding-left: 10.7%;
     }
 }
 

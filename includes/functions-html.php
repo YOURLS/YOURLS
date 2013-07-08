@@ -60,7 +60,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo $context . ( $bodyclass ? ' ' . $bodyclass : '' ); ?>">
-	<div class="wrap">
+	<div class="container">
 	<?php
 }
 
