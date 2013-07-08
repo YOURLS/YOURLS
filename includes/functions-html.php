@@ -395,7 +395,10 @@ function yourls_html_search( $params = array() ) {
 							'ip'      => yourls__( 'IP' ),
 						);							
 						$_select_search = yourls_html_select( 'search_in', $_options, $search_in );
-						$_button = '<span class="input-group-btn"><button type="submit" id="submit-sort" class="btn btn-primary">' . yourls__( 'Search' ) . '</button></span>';
+						$_button = '<span class="input-group-btn">
+						<button type="submit" id="submit-sort" class="btn btn-primary">' . yourls__( 'Search' ) . '</button>
+						<button type="button" id="submit-clear-filter" class="btn btn-danger" onclick="window.parent.location.href = \'index.php\'">' . yourls__( 'Clear' ) . '</button>
+						</span>';
 						
 						// Second search control: order by
 						$_options = array(
@@ -452,11 +455,6 @@ function yourls_html_search( $params = array() ) {
 						}
 						?>
 
-						<div class="">
-							<button type="button" id="submit-clear-filter" class="btn btn-small" onclick="window.parent.location.href = 'index.php'"><?php yourls_e( 'Clear' ); ?></button>
-							<button type="submit" id="submit-sort" class="btn btn-small btn-primary"><?php yourls_e( 'Search' ); ?></button>
-						</div>
-				
 				</form>
 			</div>
 			
@@ -525,7 +523,7 @@ function yourls_html_pagination( $params = array() ) {
 function yourls_html_select( $name, $options, $selected = '', $display = false ) {
 	$html = '<select name="' . $name . '" class="input-group-addon">';
 	foreach( $options as $value => $text ) {
-		$html .= '<option value"' . $value .'"';
+		$html .= '<option value="' . $value .'"';
 		$html .= $selected == $value ? ' selected="selected"' : '';
 		$html .= ">$text</option>";
 	}
@@ -586,22 +584,10 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 
 		<?php yourls_do_action( 'shareboxes_middle', $longurl, $shorturl, $title, $text ); ?>
 
-		<div id="sharebox" class="share">
-			<?php echo $share_title; ?>
-			<div id="tweet">
-				<span id="charcount" class="hide-if-no-js"><?php echo $count; ?></span>
-				<textarea id="tweet_body"><?php echo $share; ?></textarea>
-			</div>
-			<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
-				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
-				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
-				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="<?php yourls_e( 'Share on Friendfeed' ); ?>" onclick="share('ff');return false;">FriendFeed</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
 				?>
-			</p>
-		</div>
 		
 		<?php yourls_do_action( 'shareboxes_after', $longurl, $shorturl, $title, $text ); ?>
 	
