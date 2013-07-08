@@ -47,7 +47,7 @@ $html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class=
 	<script src="bootstrap-scrollspy.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 </head>
 <body data-spy="scroll" data-target=".sidebar" class="docs">
-	<div class="wrap">
+	<div class="container">
 		<div class="sidebar">
 			<button data-target=".sidebar-responsive-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
 				<span class="icon-bar"></span>
