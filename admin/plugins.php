@@ -74,11 +74,10 @@ yourls_table_start( 'plugins-table', 'table table-striped table-hover' );
 	
 $table_head = array(
 	'name'    => yourls__( 'Plugin Name' ),
-	'version' => yourls__( 'Version' ),
 	'desc'    => yourls__( 'Description' ),
-	'author'  => yourls__( 'Author' ),
 	'actions' => '',
 );
+//@TODO: Remettre Author & Version dans la description (?), avec un effet hover (?)
 yourls_table_head( $table_head );
 yourls_table_tbody_start();
 	
@@ -130,12 +129,10 @@ foreach( $plugins as $file=>$plugin ) {
 		
 	printf( '<tr class="plugin %s">
 				<td class="plugin-name"><a href="%s">%s</a></td>
-				<td class="plugin-version">%s</td>
 				<td class="plugin-desc">%s</td>
-				<td class="plugin-author"><a href="%s">%s</a></td>
 				<td class="plugin-actions actions"><a class="btn btn-%s" href="%s">%s</a></td>
 			</tr>',
-		$class, $data['uri'], $data['name'], $data['version'], $data['desc'], $data['author_uri'], $data['author'], $class, $action_url, $action_anchor
+		$class, $data['uri'], $data['name'], $data['desc'], $class, $action_url, $action_anchor
 	);
 		
 }
