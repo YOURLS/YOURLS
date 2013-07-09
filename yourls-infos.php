@@ -243,19 +243,8 @@ yourls_template_content( 'before', 'stats' );
 yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword ) );
 ?>
 
-<div id="tabs">
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#stat-tab-home" data-toggle="tab"><?php yourls_e( 'General' ); ?></a></li>
-		<?php if( yourls_do_log_redirect() ) { ?>
-		<li><a href="#stat-tab-stats" data-toggle="tab"><?php yourls_e( 'Traffic statistics' ); ?></a></li>
-		<li><a href="#stat-tab-location" data-toggle="tab"><?php yourls_e( 'Traffic location' ); ?></a></li>
-		<li><a href="#stat-tab-sources" data-toggle="tab"><?php yourls_e( 'Traffic sources' ); ?></a></li>
-		<?php } ?>
-		<li class="pull-right"><a href="#stat-tab-share" data-toggle="tab"><?php yourls_e( 'Share' ); ?></a></li>
-	</ul>
 
-	<div class="tab-content">
-		<div class="tab-pane fade in active" id="stat-tab-home">
+		<div id="stat-tab-home">
 			<table class="table g-stats">
 				<tbody>
 					<tr>
@@ -284,13 +273,17 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 						<td><img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl ); ?>" /></td>
 						<td><?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></td>
 					</tr>
+						<td><?php yourls_e( 'Stats URL' ); ?></td>
+						<td><i class="icon-info-sign"></i></td>
+						<td><?php yourls_html_link( yourls_link( $keyword ) . '+', yourls_trim_long_string( yourls_link( $keyword ) . '+' ), 'stats' ); ?></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
 	
 
 <?php if( yourls_do_log_redirect() ) { ?>
-	<div class="tab-pane fade" id="stat-tab-stats">
+	<div id="stat-tab-stats">
 		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword );
 		if ( $list_of_days ) { ?>
 
@@ -382,42 +375,42 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 				?>
 				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>.</p>
 				<details>
-				    <summary><?php yourls_e( 'More details' ); ?></summary>
-				    <ul id="details-clicks">
-					    <?php
-					    foreach( $dates as $year=>$months ) {
-						    $css_year = ( $year == $best_time['year'] ? 'best_year' : '' );
-						    if( count( $list_of_years ) > 1 ) {
-							    $li = "<a href='' class='details' id='more_year$year'>" . yourls_s( 'Year %s', $year ) . '</a>';
-							    $display = 'none';
-						    } else {
-							    $li = yourls_s( 'Year %s', $year );
-							    $display = 'block';
-						    }
-						    echo "<li><span class='$css_year'>$li</span>";
-						    echo "<ul style='display:$display' id='details_year$year'>";
-						    foreach( $months as $month=>$days ) {
-							    $css_month = ( ( $month == $best_time['month'] && ( $css_year == 'best_year' ) ) ? 'best_month' : '' );
-							    $monthname = yourls_date_i18n( "F", mktime( 0, 0, 0, $month, 1 ) );
-							    if( count( $list_of_months ) > 1 ) {
-								    $li = "<a href='' class='details' id='more_month$year$month'>$monthname</a>";
-								    $display = 'none';
-							    } else {
-								    $li = "$monthname";
-								    $display = 'block';
-							    }
-							    echo "<li><span class='$css_month'>$li</span>";
-							    echo "<ul style='display:$display' id='details_month$year$month'>";
-								    foreach( $days as $day=>$hits ) {
-									    $class = ( $hits == $best['max'] ? 'class="bestday"' : '' );
-									    echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>";
-								    }
-							    echo "</ul>";
-						    }
-						    echo "</ul>";
-					    }
-					    ?>
-				    </ul>
+					<summary><?php yourls_e( 'More details' ); ?></summary>
+					<ul id="details-clicks">
+						<?php
+						foreach( $dates as $year=>$months ) {
+							$css_year = ( $year == $best_time['year'] ? 'best_year' : '' );
+							if( count( $list_of_years ) > 1 ) {
+								$li = "<a href='' class='details' id='more_year$year'>" . yourls_s( 'Year %s', $year ) . '</a>';
+								$display = 'none';
+							} else {
+								$li = yourls_s( 'Year %s', $year );
+								$display = 'block';
+							}
+							echo "<li><span class='$css_year'>$li</span>";
+							echo "<ul style='display:$display' id='details_year$year'>";
+							foreach( $months as $month=>$days ) {
+								$css_month = ( ( $month == $best_time['month'] && ( $css_year == 'best_year' ) ) ? 'best_month' : '' );
+								$monthname = yourls_date_i18n( "F", mktime( 0, 0, 0, $month, 1 ) );
+								if( count( $list_of_months ) > 1 ) {
+									$li = "<a href='' class='details' id='more_month$year$month'>$monthname</a>";
+									$display = 'none';
+								} else {
+									$li = "$monthname";
+									$display = 'block';
+								}
+								echo "<li><span class='$css_month'>$li</span>";
+								echo "<ul style='display:$display' id='details_month$year$month'>";
+									foreach( $days as $day=>$hits ) {
+										$class = ( $hits == $best['max'] ? 'class="bestday"' : '' );
+										echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>";
+									}
+								echo "</ul>";
+							}
+							echo "</ul>";
+						}
+						?>
+					</ul>
 				</details>
 
 		<?php yourls_do_action( 'post_yourls_info_stats', $keyword ); 
@@ -427,7 +420,7 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 		} ?>
 	</div>
 
-	<div class="tab-pane fade" id="stat-tab-location">
+	<div id="stat-tab-location">
 		<?php yourls_do_action( 'pre_yourls_info_location', $keyword ); 
 		if ( $countries ) {			
 			yourls_html_htag( yourls__( 'Top 5 countries' ), 3 );
@@ -453,7 +446,7 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 	</div>
 				
 				
-	<div class="tab-pane fade" id="stat-tab-sources">
+	<div id="stat-tab-sources">
 		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword );
 
 		if ( $referrers ) {
@@ -504,14 +497,6 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 			
 	</div>
 
-<?php } // endif do log redirect ?>
+<?php } // endif do log redirect
 
-
-	<div class="tab-pane fade" id="stat-tab-share">
-		<?php yourls_share_box( $longurl, yourls_link($keyword), $title, '', '<h3>' . yourls__( 'Short link' ) . '</h3>', '<h3>' . yourls__( 'Quick Share' ) . '</h3>' ); ?>
-	</div>
-	
-</div>
-</div>
-
-<?php yourls_template_content( 'after' ); ?>
+yourls_template_content( 'after' ); ?>
