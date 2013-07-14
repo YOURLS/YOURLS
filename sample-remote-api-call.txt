@@ -31,6 +31,7 @@ curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
 curl_setopt($ch, CURLOPT_POSTFIELDS, array(     // Data to POST
 		'url'      => $url,
 		'keyword'  => $keyword,
+		'title'    => $keyword, // If omitted, Yourls will lookup TITLE with an HTTP request
 		'format'   => $format,
 		'action'   => 'shorturl',
 		'username' => $username,
