@@ -183,11 +183,9 @@ function yourls_url_exists( $url ) {
  *
  */
 function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
-	if ( false !== $pre )
-		return $pre;
-		
+	// Calling yourls_sanitize_url BEFORE shunt_add_new_link fixes issues
+	// like missing scheme, that would otherwise prevent parse_url from
+	// working. Otherwise, plugins would have to call sanitize_url.
 	$url = yourls_encodeURI( $url );
 	$url = yourls_escape( yourls_sanitize_url( $url ) );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
@@ -198,6 +196,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
 	
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
+	if ( false !== $pre )
+		return $pre;
+		
 	// Prevent DB flood
 	$ip = yourls_get_IP();
 	yourls_check_IP_flood( $ip );
