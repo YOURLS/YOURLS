@@ -37,3 +37,5 @@ __Before opening any issue, please search for existing issues and read the [Issu
 License
 -------
 Free software. Do whatever the hell you want with it.
+The [license](LICENSE.md) under which the YOURLS software is released is the GPLv3 
+from the [Free Software Foundation](http://fsf.org/).
