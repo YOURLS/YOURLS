@@ -293,16 +293,16 @@ function yourls_google_array_to_data_table( $data ){
 		if( !is_array( $values ) ) {
 			$values = array( $values );
 		}
-		$str .= "\t['$label',"; 
+		$str .= "['$label',";
 		foreach( $values as $value ){
-			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) {
 				$value = "'$value'";
 			}
 			$str .= "$value";
-		}		
+		}
 		$str .= "],";
 	}
-	$str = substr( $str, 0, -2 ); // remove the trailing comma/return, reappend the return
+	$str = substr( $str, 0, -1 ); // remove the trailing comma/return, reappend the return
 	$str .= "]);"; // wrap it up	
 	return $str;
 }
@@ -323,13 +323,10 @@ function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
 			$value = "\"$value\"";
 		}
-		$code .= "\t'$field': $value,";
+		$code .= "'$field': $value,";
 	}
-	$code  = substr( $code, 0, -2 ); // remove the trailing comma/return, reappend the return
-	$code .= "\t}";
-
-	$code .= "new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );";
-	$code .= "}";
+	$code  = substr( $code, 0, -1 ); // remove the trailing comma/return, reappend the return
+	$code .= "};new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );}";
 	$code .= "google.setOnLoadCallback( $function_name );";
 	$code .= "</script>";
 	$code .= "<div id=\"visualization_$id\"></div>";

@@ -244,7 +244,8 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 ?>
 
 
-		<div id="stat-tab-home">
+		<div class="stat-tab" id="stat-tab-home">
+		<?php yourls_html_htag( yourls__( 'Global Info' ), 2 ); ?>
 			<table class="table g-stats">
 				<tbody>
 					<tr>
@@ -283,7 +284,8 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 	
 
 <?php if( yourls_do_log_redirect() ) { ?>
-	<div id="stat-tab-stats">
+	<div class="stat-tab" id="stat-tab-stats">
+		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
 		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword );
 		if ( $list_of_days ) { ?>
 
@@ -416,11 +418,12 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 		<?php yourls_do_action( 'post_yourls_info_stats', $keyword ); 
 		
 		} else {
-			yourls_add_notice( yourls__( 'No traffic yet. Get some clicks first!' ), 'error' );
+			echo yourls_notice_box( yourls__( 'No traffic yet. Get some clicks first!' ), 'error' );
 		} ?>
 	</div>
 
-	<div id="stat-tab-location">
+	<div class="stat-tab" id="stat-tab-location">
+		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
 		<?php yourls_do_action( 'pre_yourls_info_location', $keyword ); 
 		if ( $countries ) {			
 			yourls_html_htag( yourls__( 'Top 5 countries' ), 3 );
@@ -446,7 +449,8 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 	</div>
 				
 				
-	<div id="stat-tab-sources">
+	<div class="stat-tab" id="stat-tab-sources">
+		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
 		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword );
 
 		if ( $referrers ) {
