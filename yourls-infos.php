@@ -198,7 +198,7 @@ if( yourls_do_log_redirect() ) {
 	echo "countries: "; print_r( $countries );
 	die();
 	/**/
-	
+
 	// Day graph
 	if ( $list_of_days ) {
 		$graphs = array(
@@ -403,10 +403,10 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 								}
 								echo "<li><span class='$css_month'>$li</span>";
 								echo "<ul style='display:$display' id='details_month$year$month'>";
-									foreach( $days as $day=>$hits ) {
-										$class = ( $hits == $best['max'] ? 'class="bestday"' : '' );
-										echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>";
-									}
+								foreach( $days as $day=>$hits ) {
+									$class = ( $hits == $best['max'] ? 'class="bestday"' : '' );
+									echo "<li $class>$day: " . sprintf( yourls_n( '1 hit', '%s hits', $hits ), $hits ) ."</li>";
+								}
 								echo "</ul>";
 							}
 							echo "</ul>";
@@ -447,8 +447,8 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 			echo '<p>' . yourls__( 'No country data.' ) . '</p>';
 		} ?>
 	</div>
-				
-				
+
+
 	<div class="stat-tab" id="stat-tab-sources">
 		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
 		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword );
