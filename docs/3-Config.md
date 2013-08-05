@@ -57,4 +57,4 @@ Configuration (in `user/config.php`).
 
 ## Advanced settings
 
-File `includes/yourls-load.php` contains a few more undocumented but self explanatory and commented settings. Add them to your own `config.php` if you know what you're doing.
+File `includes/load-yourls.php` contains a few more undocumented but self explanatory and commented settings. Add them to your own `config.php` if you know what you're doing.
