@@ -48,8 +48,6 @@ YOURLS is open source, so the community of users plays a great role in its devel
 	Plugin which integrates CakePHP with Yourls
 *   [status.net](https://github.com/rthees/yourls-status-net) &mdash; 
 	A plugin for status.net to use YOURLS
-*   [Sharetronix](http://developer.sharetronix.com/mpview/12/tag:yourls) &mdash; 
-	A YOURLS addon for Sharetronix
 
 ### YOURLS works with your favorite sofware or device
 
@@ -80,8 +78,6 @@ YOURLS is open source, so the community of users plays a great role in its devel
 	&#8734;&sup2; is a public page theme for YOURLS to help you design your own public interface
 *   [John Girvin's page](https://github.com/johngirvin/yourls-index-page) &mdash; 
 	The source of [girv.in](http://girv.in/) home page
-*   [xs.ht](https://github.com/ctrloptcmd/xs.ht) &mdash; 
-	An example front end page for YOURLS
 *   [screenr.com/nTs](http://screenr.com/nTs) &mdash; 
 	A screencast explaining how to setup YOURLS
 *   [YOURLS: Short URL Widget](http://v007.me/836) &mdash; 
