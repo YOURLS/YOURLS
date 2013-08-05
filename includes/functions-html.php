@@ -579,7 +579,11 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$row = "<tr id=\"id-$id\">";
 	foreach( $cells as $cell_id => $elements ) {
 		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace( '/%([^%]+)?%/e', '$elements["$1"]', $elements['template'] );
+		$row .= preg_replace_callback( '/%([^%]+)?%/', 
+			function($match) {
+				return $elements[$match[0]];
+			},
+			$elements['template'] );
 		$row .= '</td>';
 	}
 	$row .= "</tr>";
