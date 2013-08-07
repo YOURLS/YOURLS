@@ -42,6 +42,8 @@ YOURLS is open source, so the community of users plays a great role in its devel
 	A Ruby wrapper for the YOURLS API
 *   [Python](http://tflink.github.com/python-yourls/) &mdash; 
 	A Python client for YOURLS
+*   [VB .Net](http://www.nugardt.com/open-source/yourls-api/) &mdash; 
+	A VB .Net 4.0 wrapper for the YOURLS API</li>
 *   [Javascript](http://neocotic.com/yourls-api/) &mdash; 
 	JavaScript bindings for the YOURLS API to leverage JSONP support
 *   [CakePHP](https://github.com/driflash/CakePHP-YOURLS-Plugin) &mdash; 
