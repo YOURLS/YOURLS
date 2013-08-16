@@ -78,25 +78,21 @@ $bookmarks = array (
 	'simple' => array (
 		'name'  => yourls__( 'Default + Standard' ),
 		'type'  => array( 'default', 'standard' ),
-		'color' => 'info',
 		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
 	),
 	'custom' => array (
 		'name'  => yourls__( 'Custom + Standard' ),
 		'type'  => array( 'standard', 'custom' ),
-		'color' => 'success',
 		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
 	),
 	'simple-pop' => array (
 		'name'  => yourls__( 'Default + Popup' ),
 		'type'  => array( 'default', 'popup' ),
-		'color' => 'warning',
 		'link'  => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
 	),
 	'custom-pop' => array (
 		'name'  => yourls__( 'Custom + Popup' ),
 		'type'  => array( 'popup', 'custom' ),
-		'color' => 'danger',
 		'link'  => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index.php' ) . "?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
 	),
 );
@@ -104,11 +100,11 @@ $bookmarks = array (
 $bookmarks = yourls_apply_filter( 'classic_bookmarklet_data', $bookmarks );
 
 foreach( $bookmarks as $bookmark ) {
-	echo '<div class="bookmarklet panel-' . $bookmark['color'] . ' bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
+	echo '<div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
-	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<div class="panel-body"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
 	echo '<i class="icon-move"></i> ' . yourls__( 'YOURLS Shorten' );
-	echo '</a>';
+	echo '</a></div>';
 	echo '</div>';
 }
 

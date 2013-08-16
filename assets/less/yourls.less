@@ -430,6 +430,7 @@ input, select {
 .bookmarklet {
     .panel;
     .make-lg-column(5.9);
+    padding: 0;
     margin-right: 1%;
     text-align: center;
 
@@ -449,8 +450,44 @@ input, select {
         }
     }
 
+    &.bookmarklet-type-standard {
+        &.bookmarklet-type-default {
+            .panel-variant(@panel-info-border;
+            @panel-info-text;
+            @panel-info-heading-bg;
+            @panel-info-border
+            );
+        }
+
+        &.bookmarklet-type-custom {
+            .panel-variant(@panel-success-border;
+            @panel-success-text;
+            @panel-success-heading-bg;
+            @panel-success-border
+            );
+        }
+    }
+
+    &.bookmarklet-type-popup {
+        &.bookmarklet-type-default {
+            .panel-variant(@panel-warning-border;
+            @panel-warning-text;
+            @panel-warning-heading-bg;
+            @panel-warning-border
+            );
+        }
+
+        &.bookmarklet-type-custom {
+            .panel-variant(@panel-danger-border;
+            @panel-danger-text;
+            @panel-danger-heading-bg;
+            @panel-danger-border
+            );
+        }
+    }
+
     &.bookmarklet-hilite {
-        border: 1px solid #1F669C;
+        border: 1px solid #1F669C !important;
     }
 }
 
