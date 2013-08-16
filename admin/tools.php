@@ -113,7 +113,7 @@ yourls_do_action( 'classic_bookmarklets_buttons_after' );
 echo '</div>';
 
 echo '<p>';
-yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
+yourls_add_label( yourls__( 'Help' ), 'default', 'after' );
 yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' );
 echo '</p>';
 
@@ -157,7 +157,7 @@ foreach( $bookmarks as $bookmark ) {
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
 echo '<div class="clearfix"></div><p>';
-yourls_add_label( yourls__( 'Help' ), 'normal', 'after' );
+yourls_add_label( yourls__( 'Help' ), 'default', 'after' );
 yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' ) . '</p>';
 ?>
 	
