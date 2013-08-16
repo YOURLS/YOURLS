@@ -84,7 +84,7 @@ function yourls_is_valid_user() {
 		if ( !yourls_is_API() ) {
 			yourls_store_cookie( YOURLS_USER );
 			
-			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
+			// Login form: redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
 				$url = $_SERVER['REQUEST_URI'];
 				yourls_redirect( $url );
@@ -94,7 +94,7 @@ function yourls_is_valid_user() {
 		// Login successful
 		return true;
 	}
-	
+
 	// Login failed
 	yourls_do_action( 'login_failed' );
 
