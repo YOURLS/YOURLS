@@ -101,36 +101,41 @@ foreach( $themes as $file => $theme_data ) {
 		
 	// Get theme screenshot, or a default div otherwise
 	if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
-		$screenshot = '<img src="' . $screenshot . '" alt="Screenshot"/>';
+		$screenshot = '<img src="' . $screenshot . '" alt="screenshot"/>';
 	} else {
 		$screenshot = '<span class="screenshot-missing"><i class="icon-question-sign"></i></span>';
 	}
 		
 	// Author link
 	$by = sprintf( '<span class="theme-author"><a href="%s">%s</a></span>', $data['author_uri'], $data['author'] );
-	$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'By %s', $by );
+	$by = /* //translators: "By Johnny" (the author) */ yourls_s( 'Created by %s', $by );
 		
 	printf( '
 	<div class="theme">
-		<div class="thumbnail">%s
+		<div class="thumbnail">
+			<div class="caption-hover">
+				%s
+				<p class="theme-desc">%s
+				<br />
+                <small>
+					%s
+					<span class="label theme-version">%s</span>
+				</small>
+                </p>
+			</div>
 			<div class="caption">
 				<h4 class="theme-name"><a href="%s">%s</a></h4>
-				<p>
-					<span class="label theme-version">%s</span>
-					%s
-				</p>
-				<p class="theme-desc">%s</p>
 				<p class="theme-actions actions">
 					<a class="btn btn-%s" href="%s">%s</a>
 				</p>
 			</div>
 		</div>
 	</div>',
-		$screenshot, $data['uri'], $data['name'], $data['version'],
-		$by, $data['desc'], $class, $action_url, $action_anchor
+		$screenshot, $data['desc'], $by, $data['version'], $data['uri'], 
+        $data['name'], $class, $action_url, $action_anchor
 	);
 		
-	if ($i == 3) {
+	if ($i == 2) {
 		echo '<div class="clearfix"></div>';
 		$i = 0;
 	}
