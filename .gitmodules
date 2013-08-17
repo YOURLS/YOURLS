@@ -1,0 +1,3 @@
+[submodule "user/themes/full-bootstrap"]
+	path = user/themes/full-bootstrap
+	url = git@github.com:LeoColomb/full-bootstrap-yourls.git

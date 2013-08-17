@@ -19,15 +19,13 @@ user/plugins/*
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
-!user/plugins/sample-page/
-!user/plugins/sample-plugin/
-!user/plugins/sample-toolbar/
+!user/plugins/sample-*/
 
 # Themes
 user/themes/*
 # Core themes
-!user/theme/sample-theme/
-
+!user/theme/sample-theme*/
+!user/theme/full-bootstrap/
 
 # Pages
 pages/*
