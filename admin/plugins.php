@@ -139,7 +139,7 @@ foreach( $plugins as $file=>$plugin ) {
 yourls_table_tbody_end();
 yourls_table_end();
 	
-echo '<p>';
+echo '<p class="callout callout-warning">';
 yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
 echo '</p>';
 	

@@ -142,7 +142,7 @@ foreach( $themes as $file => $theme_data ) {
 }
 echo '</div>';
 	
-echo '<p>';
+echo '<p class="callout callout-warning">';
 yourls_e( 'If something goes wrong after you activate a theme and you cannot use YOURLS or access this page, simply rename or delete its directory.' );
 echo '</p>';
 	
