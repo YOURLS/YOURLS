@@ -232,9 +232,9 @@ function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
 	// @FIXME: this SQL query is also used in admin/index.php - reduce query count
 	$html  = '<div class="global-stats"><div class="global-stats-data">';
-	$html .= '<strong class="status-number increment">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . strtoupper( yourls__( 'Links' ) );
+	$html .= '<strong class="status-number increment">' . yourls_number_format_i18n( $total_urls ) . '</strong><p>' . yourls__( 'Links' );
 	$html .= '</p></div><div class="global-stats-data">';
-	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . strtoupper( yourls__( 'Clicks' ) ) . '</p></div></div>';
+	$html .= '<strong class="status-number">' . yourls_number_format_i18n( $total_clicks ) . '</strong><p>' . yourls__( 'Clicks' ) . '</p></div></div>';
 	echo yourls_apply_filters( 'html_global_stats', $html );
 }
 
