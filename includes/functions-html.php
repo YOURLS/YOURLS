@@ -162,6 +162,7 @@ function yourls_html_menu( $current_page = null ) {
 	
 	// Build menu HTML
 	$menu = '<div class="sidebar-responsive-collapse"><ul class="admin-menu">';
+	yourls_apply_filter( 'admin_menu_start', $menu );
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
@@ -216,7 +217,7 @@ function yourls_html_menu( $current_page = null ) {
 	if ( isset( $help_link ) )
 		$menu .=  '<li id="admin-menu-help-link">' . $help_link .'</li>';
 	
-	$menu .=  "</ul></div><hr />";
+	$menu .=  "</ul></div>";
 	
 	yourls_do_action( 'pre_admin_menu' );
 	echo yourls_apply_filter( 'html_admin_menu', $menu );
@@ -325,7 +326,7 @@ function yourls_html_language_attributes() {
  *
  */
 function yourls_html_footer() {
-	echo '<div class="footer" role="contentinfo"><p>';
+	echo '<hr /><div class="footer" role="contentinfo"><p>';
 	$footer  = yourls_s( 'Powered by %s', yourls_html_link( 'http://yourls.org/', 'YOURLS', 'YOURLS', false, false ) . ' v' . YOURLS_VERSION );
 	echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
