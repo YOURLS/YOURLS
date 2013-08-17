@@ -117,11 +117,11 @@ foreach( $themes as $file => $theme_data ) {
 				%s
 				<p class="theme-desc">%s
 				<br />
-                <small>
+				<small>
 					%s
-					<span class="label theme-version">%s</span>
+					<span class="label label-default theme-version">%s</span>
 				</small>
-                </p>
+				</p>
 			</div>
 			<div class="caption">
 				<h4 class="theme-name"><a href="%s">%s</a></h4>
@@ -132,7 +132,7 @@ foreach( $themes as $file => $theme_data ) {
 		</div>
 	</div>',
 		$screenshot, $data['desc'], $by, $data['version'], $data['uri'], 
-        $data['name'], $class, $action_url, $action_anchor
+		$data['name'], $class, $action_url, $action_anchor
 	);
 		
 	if ($i == 2) {
