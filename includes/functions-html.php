@@ -122,7 +122,7 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $
 function yourls_html_menu( $current_page = null ) {
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="icon-signout"></i> ' . yourls__( 'Logout' ) . '</a>' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li class="logout"><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="icon-signout"></i> ' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
@@ -161,8 +161,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin-sublinks', $admin_sublinks );
 	
 	// Build menu HTML
-	$menu = '<div class="sidebar-responsive-collapse"><ul class="admin-menu">';
-	yourls_apply_filter( 'admin_menu_start', $menu );
+	$menu = yourls_apply_filter( 'admin_menu_start', '<div class="sidebar-responsive-collapse"><ul class="admin-menu">' );
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
