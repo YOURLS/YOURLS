@@ -58,6 +58,41 @@
 
 .btn-outline(@yourls-color-dark);
 
+.callout {
+    margin: 20px 0;
+    padding: 15px 30px 15px 15px;
+    border-left: 5px solid #eee;
+
+    h4 {
+        margin-top: 0;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    code,
+    .highlight {
+        background-color: #fff;
+    }
+}
+
+.callout-theme(@bck-color, @border-color) {
+    background-color: @bck-color;
+    border-color: @border-color;
+}
+
+.callout-danger {
+    .callout-theme(#fcf2f2, #dFb5b4);
+}
+
+.callout-warning {
+    .callout-theme(#fefbed, #f1e7bc);
+}
+
+.callout-info {
+    .callout-theme(#f0f7fd, #d0e3f0);
+}
 
 // HTML
 // --------------------------------------------------
