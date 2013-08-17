@@ -5,6 +5,7 @@
  *
  * Several functions used by themes are shared with plugins: see functions-plugins.php
  * 
+ * @author Ozh
  * @author Leo Colombaro
  * @since 1.7
  */
