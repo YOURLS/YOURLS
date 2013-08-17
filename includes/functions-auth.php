@@ -23,7 +23,7 @@ function yourls_is_valid_user() {
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
-		return [ yourls__( 'Logged out successfully' ), 'success' ];
+		return array( yourls__( 'Logged out successfully' ), 'success' );
 	}
 	
 	// Check cookies or login request. Login form has precedence.
