@@ -161,7 +161,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = yourls_apply_filter( 'admin-sublinks', $admin_sublinks );
 	
 	// Build menu HTML
-	$menu = yourls_apply_filter( 'admin_menu_start', '<div class="sidebar-responsive-collapse"><ul class="admin-menu">' );
+	$menu = yourls_apply_filter( 'admin_menu_start', '<nav class="sidebar-responsive-collapse"><ul class="admin-menu">' );
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		$menu .= $logout_link;
 
@@ -216,7 +216,7 @@ function yourls_html_menu( $current_page = null ) {
 	if ( isset( $help_link ) )
 		$menu .=  '<li id="admin-menu-help-link">' . $help_link .'</li>';
 	
-	$menu .=  "</ul></div>";
+	$menu .=  yourls_apply_filter( 'admin_menu_end', '</ul></nav>' );
 	
 	yourls_do_action( 'pre_admin_menu' );
 	echo yourls_apply_filter( 'html_admin_menu', $menu );
