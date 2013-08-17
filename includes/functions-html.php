@@ -775,12 +775,14 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	<td class="url" id="url-%id%">
 		<a href="%long_url%" title="%title_attr%">%title_html%</a><br/>
 		<small class="longurl">%warning%<a href="%long_url%">%long_url_html%</a></small><br/>
-		<small class="added_on">%added_on_from%</small>
 		<input type="hidden" id="keyword_%id%" value="%keyword%"/>
 		<input type="hidden" id="shorturl-%id%" value="%shorturl%"/>
 		<input type="hidden" id="longurl-%id%" value="%long_url%"/>
 		<input type="hidden" id="title-%id%" value="%title_attr%"/>
-		<div class="actions" id="actions-%id%">%actions%</div>
+		<div class="actions" id="actions-%id%">
+			<p><small class="added_on">%added_on_from%</small><p>
+			<p>%actions%</p>
+		</div>
 	</td>
 	<td class="clicks" id="clicks-%id%">%clicks%</td>
 	</tr>';
