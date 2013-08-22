@@ -1,14 +1,12 @@
 //
-// YOURLS
+// YOURLS STYLE
 // --------------------------------------------------
 
 // Assets path
-// -------------------------
 @font-path: "../fonts";
 @img-path: "../img";
 
 // Colors Palette
-// --------------------------------------------------
 @yourls-color-light: #e3f3ff;
 @yourls-color-med-light: #c7e7ff;
 @yourls-color-medium: #88c0eb;
@@ -16,13 +14,11 @@
 @yourls-color-dark: #1f669c;
 
 // Wrapper Variables
-// --------------------------------------------------
 @bck-wrapper: #fff;
 @sidebar: @bck-wrapper;
 @font-stats-big: 20px;
 
 // Fonts
-// --------------------------------------------------
 @font-face {
     font-family: 'Museo';
     src: url('@{font-path}/museo-webfont.eot');
@@ -30,7 +26,6 @@
 }
 
 // HTML Components
-// --------------------------------------------------
 .btn-outline(@bg-color) {
     .btn-outline {
         margin-top: 15px;
@@ -95,7 +90,6 @@
 }
 
 // HTML
-// --------------------------------------------------
 body,
 html {
     min-height: 100%;
@@ -110,8 +104,8 @@ html {
 input, select {
     .form-control;
 }
+
 // Content - Main
-// --------------------------------------------------
 .content {
     background-color: @bck-wrapper;
     .make-lg-column(8.5);
@@ -121,7 +115,6 @@ input, select {
 }
 
     // Headings
-    // --------------------------------------------------
     .content > h1,
     .docs h1 {
         background-color: @yourls-color-dark;
@@ -163,7 +156,6 @@ input, select {
 }
 
 // Nav-bar / Sidebar & Components
-// --------------------------------------------------
 .sidebar {
     background-color: @sidebar;
     .border-bottom-radius(@border-radius-base);
@@ -263,7 +255,6 @@ input, select {
 }
 
 // Main Table
-// --------------------------------------------------
 .admin-main-table {
     .table;
     .table-striped;
@@ -304,22 +295,6 @@ input, select {
             }
         }
     }
-    /*
-.btn-clipboard-hover a,
-.btn-clipboard-active a {
-    color: #fff;
-}
-
-.btn-clipboard-hover:after {
-    width: 75%;
-    opacity: 1;
-}
-
-.btn-clipboard-active:after {
-    width: 100%;
-    opacity: 1;
-}
-*/
 }
 
 .btn-stats {
@@ -373,7 +348,6 @@ input, select {
 
 
 // Forms
-// --------------------------------------------------
 .new-url-form {
     .make-row();
     .form-horizontal;
@@ -469,7 +443,6 @@ input, select {
 }
 
 // Pages & Components
-// --------------------------------------------------
 .bookmarklet {
     .panel;
     .make-lg-column(5.9);
@@ -640,7 +613,6 @@ tbody > tr {
     text-align: center;
 }
 // Notices
-// --------------------------------------------------
 .container > .alert {
     .make-lg-column(4);
     .make-lg-column-push(5);
@@ -649,8 +621,8 @@ tbody > tr {
     z-index: 999;
     .border-top-radius(0);
 }
+
 // Specials
-// --------------------------------------------------
 .login-screen {
     margin-left: auto;
     margin-right: auto;
@@ -711,7 +683,6 @@ button.btn-clipboard-active {
     .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
 }
 // Responsive
-// --------------------------------------------------
 @media screen and (max-width: @screen-tablet) {
     .sidebar {
         width: 100%;
@@ -797,7 +768,6 @@ button.btn-clipboard-active {
     }
 }
 // Spin stuff
-// --------------------------------------------------
 .spin {
     -webkit-animation: spin 1s infinite linear;
     -moz-animation: spin 1s infinite linear;
