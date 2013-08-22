@@ -73,7 +73,7 @@ echo '</p>';
 yourls_table_start( 'plugins-table', 'table table-striped table-hover' );
 	
 $table_head = array(
-	'name'    => yourls__( 'Plugin Name' ),
+	'name'    => yourls__( 'Name' ),
 	'desc'    => yourls__( 'Description' ),
 	'actions' => '',
 );
