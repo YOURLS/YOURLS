@@ -16,7 +16,8 @@ define( 'YOURLS_DB_PASS', 'your db password' );
 /** The name of the database for YOURLS */
 define( 'YOURLS_DB_NAME', 'yourls' );
 
-/** MySQL hostname */
+/** MySQL hostname.
+ ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
 define( 'YOURLS_DB_HOST', 'localhost' );
 
 /** MySQL tables prefix */

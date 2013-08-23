@@ -21,6 +21,15 @@ function yourls_set_DB_driver( ) {
 	} else {
 		$driver = '';
 	}
+	
+	/**
+	mysql_connect( "$host:$port", $user, $pass,
+
+	new mysqli( $host, $user, $pass, $dbname, $port )
+	
+	$dsn = sprintf( 'mysql:host=%1$s;port=%2$d', $host, $port );
+	new PDO( $dsn, $user, $pass );
+	/**/
 
 	// Get the new driver
 	if ( in_array( $driver, array( 'mysql', 'mysqli', 'pdo' ) ) ) {
@@ -44,7 +53,16 @@ function yourls_set_DB_driver( ) {
 	
 	yourls_do_action( 'set_DB_driver', $driver );
 	
-	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
+	$port = 3306;
+	$host = YOURLS_DB_HOST;
+	if ( false !== strpos( YOURLS_DB_HOST, ':' ) ) {
+		list( $host, $port ) = explode( ':', YOURLS_DB_HOST );
+		if ( 'pdo' == 'driver' ) {
+			$host = sprintf( '%1$s;port=%2$d', $host, $port );
+		}
+	}
+	
+	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, $host, $port );
 	$ydb->debug_log[] = "DB driver: $driver";
 }
 
