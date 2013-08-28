@@ -73,7 +73,7 @@
 			if ( false !== strpos( $host, ':' ) ) {
 				list( $host, $port ) = explode( ':', $host );
 			}
-			return array( $host, $port );
+			return array( $host, (int)$port );
 		}
 
 		/**********************************************************************

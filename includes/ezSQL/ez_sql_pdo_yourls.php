@@ -3,7 +3,7 @@
 class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 
 	/**
-	* Constructor - Overwrite original to use MySQL instead of SQLite
+	* Constructor - Overwrite original to use MySQL and handle custom port
 	* 
 	* @since 1.7
 	*/
@@ -11,6 +11,11 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		$this->dbuser = $dbuser;
 		$this->dbpassword = $dbpassword;
 		$this->dbname = $dbname;
+		// Get custom port if any
+		if ( false !== strpos( $dbhost, ':' ) ) {
+			list( $dbhost, $dbport ) = explode( ':', $dbhost );
+			$dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
+		}
 		$this->dbhost = $dbhost;
 		$this->encoding = $encoding;
 		$dsn = 'mysql:host=' . $dbhost . ';dbname=' . $dbname ;
@@ -21,46 +26,6 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		
 		$this->connect( $dsn, $dbuser, $dbpassword );
 		
-	}
-	
-
-	/**
-	* Connect to MySQL server. Override original function to allow empty passwords
-	* 
-	* @since 1.7
-	*/
-	function connect( $dsn='', $user='', $password='', $ssl=array() ) {
-	
-		global $ezsql_pdo_str; $return_val = false;
-		
-		// Must have a server/db and a user
-		if ( ! $dsn || ! $user )
-		{
-			$this->register_error( $ezsql_pdo_str[1].' in '.__FILE__.' on line '.__LINE__ );
-			$this->show_errors ? trigger_error($ezsql_pdo_str[1],E_USER_WARNING) : null;
-		}
-		
-		// Establish PDO connection
-		try 
-		{
-			if(!empty($ssl))
-			{
-				$this->dbh = new PDO($dsn, $user, $password, $ssl);
-			}
-			else
-			{
-				$this->dbh = new PDO($dsn, $user, $password);
-			}
-			
-			$return_val = true;
-		} 
-		catch (PDOException $e) 
-		{
-			$this->register_error($e->getMessage());
-			$this->show_errors ? trigger_error($e->getMessage(),E_USER_WARNING) : null;
-		}
-
-		return $return_val;			
 	}
 
 	/**
@@ -96,7 +61,6 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 	*
 	* @since 1.7
 	*/
-
 	function disconnect() {
 		// bleh
 	}	
