@@ -22,16 +22,7 @@ function yourls_set_DB_driver( ) {
 		$driver = '';
 	}
 	
-	/**
-	mysql_connect( "$host:$port", $user, $pass,
-
-	new mysqli( $host, $user, $pass, $dbname, $port )
-	
-	$dsn = sprintf( 'mysql:host=%1$s;port=%2$d', $host, $port );
-	new PDO( $dsn, $user, $pass );
-	/**/
-
-	// Get the new driver
+	// Set the new driver
 	if ( in_array( $driver, array( 'mysql', 'mysqli', 'pdo' ) ) ) {
 		require_once( YOURLS_INC . '/ezSQL/ez_sql_core.php' );
 		require_once( YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php' );
@@ -54,6 +45,7 @@ function yourls_set_DB_driver( ) {
 	yourls_do_action( 'set_DB_driver', $driver );
 		
 	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
+
 	$ydb->debug_log[] = "DB driver: $driver";
 }
 
