@@ -9,7 +9,7 @@ function yourls_check_database_version() {
 	
 	// Attempt to get MySQL server version, check result and if error count increased
 	$num_errors1 = count( $ydb->captured_errors );
-	$version     = $ydb->mysql_version();
+	$version     = preg_replace( '/[^0-9.]/', '', $ydb->mysql_version() );
 	$num_errors2 = count( $ydb->captured_errors );
 	
 	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
