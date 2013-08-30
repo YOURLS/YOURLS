@@ -8,6 +8,7 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_is_installed() );
 		$this->tester_theming();
 		$this->tester_plugining();
+		$this->tester_add_urls();
 		$this->tester_generate_hit();
 	}
 
