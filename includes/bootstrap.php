@@ -108,10 +108,11 @@ function load_yourls() {
 	}
 
 	// Include all functions
-	$files = scandir( YOURLS_INC );
+	require_once YOURLS_INC.'/version.php';
+	$files = scandir( YOURLS_INC, 1 );
 	foreach ( $files as $file ) {
-		if ( strpos( $file, 'functions-' ) && file_exists(  YOURLS_INC . $file ) ) {
-			require_once YOURLS_INC . $file;
+		if ( strpos( $file, 'functions' ) === 0 && file_exists( YOURLS_INC . '/' . $file ) ) {
+			require_once YOURLS_INC . '/' . $file;
 		}
 	}
 

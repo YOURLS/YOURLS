@@ -43,7 +43,8 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		);
 	
 		foreach( $urls as $url ) {
-			$this->assertEquals( 200, yourls_add_new_link( $url[1], $url[2], $url[3] )['statusCode'] );
+			$result = yourls_add_new_link( $url[1], $url[2], $url[3] );
+			$this->assertEquals( 200, $result['statusCode'] );
 		}
 	}
 	
