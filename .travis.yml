@@ -12,7 +12,7 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config.php user/config.php
 
-script: phpunit --coverage-text --configuration ./test/phpunit.xml.dist
+script: phpunit --coverage-text --configuration ./tests/phpunit.xml.dist
 
 after_script: rm user/config.php
 
