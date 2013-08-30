@@ -1,4 +1,4 @@
-YOURLS Unit Tests — [![Build Status](https://travis-ci.org/YOURLS/YOURLS-unit-tests.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS-unit-tests)
+YOURLS Unit Tests
 =================
 
 About
