@@ -61,6 +61,10 @@ $yourls_user_passwords = array(
 	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
 	);
 
+/** Debug mode to output some internal information
+ ** Default is false for live site. Enable when coding or before submitting a new issue */
+define( 'YOURLS_DEBUG', false );
+	
 /*
  ** URL Shortening settings
  */
