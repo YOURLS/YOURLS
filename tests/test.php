@@ -6,8 +6,8 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( yourls_is_installed() );
 		$this->tester_install();
 		$this->assertTrue( yourls_is_installed() );
-		$this->tester_theming();
-		$this->tester_plugining();
+		$this->tester_theming( 'full-bootstrap' );
+		$this->tester_plugining( 'hyphens-in-urls' );
 		$this->tester_add_urls();
 		$this->tester_generate_hit();
 	}
