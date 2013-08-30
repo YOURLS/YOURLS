@@ -110,8 +110,8 @@ function load_yourls() {
 	// Include all functions
 	$files = scandir( YOURLS_INC );
 	foreach ( $files as $file ) {
-		if ( strpos( $file, 'functions-' ) && file_exists(  YOURLS_INC . $file ) ) {
-			require_once YOURLS_INC . $file;
+		if ( strpos( $file, 'functions-' ) && file_exists( YOURLS_INC . '/' . $file ) ) {
+			require_once YOURLS_INC . '/' . $file;
 		}
 	}
 
