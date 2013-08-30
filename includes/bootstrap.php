@@ -108,22 +108,12 @@ function load_yourls() {
 	}
 
 	// Include all functions
-	require_once YOURLS_INC.'/version.php';
-	require_once YOURLS_INC.'/functions.php';
-	require_once YOURLS_INC.'/functions-plugins.php';
-	require_once YOURLS_INC.'/functions-themes.php';
-	require_once YOURLS_INC.'/functions-formatting.php';
-	require_once YOURLS_INC.'/functions-api.php';
-	require_once YOURLS_INC.'/functions-kses.php';
-	require_once YOURLS_INC.'/functions-l10n.php';
-	require_once YOURLS_INC.'/functions-compat.php';
-	require_once YOURLS_INC.'/functions-html.php';
-	require_once YOURLS_INC.'/functions-install.php';
-	require_once YOURLS_INC.'/functions-api.php';
-
-	// Load auth functions if needed
-	if( yourls_is_private() )
-		require_once YOURLS_INC.'/functions-auth.php';
+	$files = scandir( YOURLS_INC );
+	foreach ( $files as $file ) {
+		if ( strpos( $file, 'functions-' ) && file_exists(  YOURLS_INC . $file ) ) {
+			require_once YOURLS_INC . $file;
+		}
+	}
 
 	// Load locale
 	yourls_load_default_textdomain();
