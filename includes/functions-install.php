@@ -32,6 +32,8 @@ function yourls_check_php_version() {
  *
  */
 function yourls_is_apache() {
+	if( !array_key_exists( 'SERVER_SOFTWARE', $_SERVER ) )
+		return false;
 	return (
 	   strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache' ) !== false
 	|| strpos( $_SERVER['SERVER_SOFTWARE'], 'LiteSpeed' ) !== false
@@ -43,7 +45,7 @@ function yourls_is_apache() {
  *
  */
 function yourls_is_iis() {
-	return ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false );
+	return ( array_key_exists( 'SERVER_SOFTWARE', $_SERVER ) ? ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false ) : false );
 }
 
 
