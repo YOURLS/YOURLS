@@ -578,12 +578,13 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
 	$row = "<tr id=\"id-$id\">";
 	foreach( $cells as $cell_id => $elements ) {
+		$callback = new yourls_table_add_row_callback( $elements );
 		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace_callback( '/%([^%]+)?%/', 
-			function($match) {
-				return $elements[$match[0]];
-			},
-			$elements['template'] );
+		$row .= preg_replace_callback( '/%([^%]+)?%/', array( $callback, 'callback' ), $elements['template'] );
+		// For the record, in PHP 5.3+ we don't need to introduce a class in order to pass additional parameters
+		// to the callback function. Instead, we would have used the 'use' keyword :
+		// $row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
+		
 		$row .= '</td>';
 	}
 	$row .= "</tr>";
@@ -591,6 +592,26 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	
 	return $row;
 }
+
+/**
+ * Callback class for yourls_table_add_row
+ *
+ * See comment about PHP 5.3+ in yourls_table_add_row()
+ *
+ * @since 1.7
+ */
+class yourls_table_add_row_callback {
+    private $elements;
+	
+    function __construct($elements) {
+		$this->elements = $elements;
+	}
+	
+    function callback( $matches ) {
+		return $this->elements[ $matches[1] ];
+    }
+}
+
 
 /**
  * Echo the main table head
