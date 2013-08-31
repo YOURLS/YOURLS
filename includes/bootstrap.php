@@ -133,20 +133,4 @@ function load_yourls() {
 	// Allow early inclusion of a cache layer
 	if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
 		require_once YOURLS_USERDIR.'/cache.php';
-
-	// Read options right from start
-	yourls_get_all_options();
-
-	// Register shutdown function
-	register_shutdown_function( 'yourls_shutdown' );
-
-	// Core now loaded
-	yourls_do_action( 'init' ); // plugins can't see this, not loaded yet
-
-	// Init all plugins
-	yourls_load_plugins();
-	yourls_do_action( 'plugins_loaded' );
-
-	if( yourls_is_admin() )
-		yourls_do_action( 'admin_init' );
 }
