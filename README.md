@@ -1,5 +1,5 @@
 ![yourls](images/yourls-logo.png)
-[YOURLS](http://yourls.org) — [![Build Status](https://travis-ci.org/YOURLS/YOURLS-unit-tests.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS-unit-tests)
+[YOURLS](http://yourls.org) — [![Build Status](https://travis-ci.org/YOURLS/YOURLS.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS)
 ========
 **YOURLS** is a set of PHP script that will allow you to run your own URL shortener. You'll have full control over your data, detailed stats and analytics, plugins, and more. It's free.
 
@@ -27,7 +27,7 @@ And constructed with the following guidelines:
 * New additions without breaking backward compatibility bumps the minor (and resets the patch)
 * Bug fixes and misc changes bumps the patch
 
-*[Release Archive](https://github.com/YOURLS/YOURLS/tags)*
+*[Release Archive](https://github.com/YOURLS/YOURLS/releases)*
 
 Bug Tracker
 -----------
