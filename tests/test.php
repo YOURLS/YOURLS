@@ -1,39 +1,55 @@
 <?php
-
 class Tests_test extends PHPUnit_Framework_TestCase {
 
-	public function test() {
-		$this->assertFalse( yourls_is_installed() );
-		$this->tester_install();
-		$this->assertTrue( yourls_is_installed() );
-		$this->tester_theming();
-		$this->tester_plugining();
-		$this->tester_generate_hit();
+	public function tester_install() {
+		$this->assertTrue( yourls_check_database_version() );
+		$this->assertTrue( yourls_check_php_version() );
+
+		$this->assertTrue( yourls_create_htaccess() );
+		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
+
+		$this->assertArrayNotHasKey( 'error', yourls_create_sql_tables() );
 	}
 
-	public function tester_install() {
-			$this->assertTrue( yourls_check_database_version() );
-			$this->assertTrue( yourls_check_php_version() );
+	/**
+	 * @depends tester_install
+	 */
+	public function tester_load() {
+		yourls_get_all_options();
+		
+		register_shutdown_function( 'yourls_shutdown' );
+		
+		yourls_do_action( 'init' );
+		
+		yourls_load_plugins();
+		yourls_do_action( 'plugins_loaded' );
 
-			$this->assertTrue( yourls_create_htaccess() );
-			$this->assertFileExists( YOURLS_ABSPATH . '.htaccess' );
-
-			$this->assertArrayNotHasKey( 'error', yourls_create_sql_tables() );
+		$this->assertTrue( yourls_is_installed() );
 	}
 
 	public function tester_upgrade() {
 	}
 
-	public function tester_theming( $theme ) {
+
+	/**
+	 * @depends tester_load
+	 */
+	public function tester_theming( $theme = 'full-bootstrap' ) {
 		$this->assertTrue( yourls_activate_theme( $theme ) );
 		$this->assertTrue( yourls_activate_theme( 'default' ) );
 	}
 
-	public function tester_plugining( $plugin ) {
+	/**
+	 * @depends tester_load
+	 */
+	public function tester_plugining( $plugin = 'hyphens-in-urls' ) {
 		$this->assertTrue( yourls_activate_plugin( $plugin . '/plugin.php' ) );
 		$this->assertTrue( yourls_deactivate_plugin( $plugin . '/plugin.php' ) );
 	}
 
+	/**
+	 * @depends tester_load
+	 */
 	public function tester_add_urls() {
 		$urls = array(
 			array( 'http://google.com/',     'google', 'Google Here' ),
@@ -43,12 +59,15 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		);
 	
 		foreach( $urls as $url ) {
-			$result = yourls_add_new_link( $url[1], $url[2], $url[3] );
+			$result = yourls_add_new_link( $url[0], $url[1], $url[2] );
 			$this->assertEquals( 200, $result['statusCode'] );
 		}
 	}
 	
-	public function tester_generate_hit() {
+	/**
+	 * @depends tester_add_urls
+	 */
+	public function tester_generate_hits() {
 		$keywords = array(
 			'google',
 			'google',
@@ -69,9 +88,21 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+	/**
+	 * @depends tester_generate_hits
+	 */
 	public function tester_fetch_stats() {
 	}
 	
-	public function tester_test_api() {
+	/**
+	 * @depends tester_load
+	 */
+	public function tester_api() {
+	}
+
+	/**
+	 * @depends tester_load
+	 */
+	public function tester_translation() {
 	}
 }
