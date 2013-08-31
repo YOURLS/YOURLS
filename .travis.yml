@@ -1,0 +1,24 @@
+language: php
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+env:
+  - DB=mysql
+
+before_script:
+  - git clone --branch=travis-ci git://github.com/YOURLS/YOURLS-unit-tests.git tests
+  - mysql -e 'create database IF NOT EXISTS yourls_tests;'
+  - cp tests/yourls-tests-config.php user/config.php
+
+script: phpunit --coverage-text --configuration ./tests/phpunit.xml.dist
+
+after_script: rm user/config.php
+
+notifications:
+  email: false
+  irc:
+    channels:
+      - "irc.freenode.org#YOURLS"
+    use_notice: true
