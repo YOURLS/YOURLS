@@ -6,7 +6,7 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_check_php_version() );
 
 		$this->assertTrue( yourls_create_htaccess() );
-		$this->assertFileExists( YOURLS_ABSPATH . '.htaccess' );
+		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
 
 		$this->assertArrayNotHasKey( 'error', yourls_create_sql_tables() );
 	}
@@ -59,7 +59,7 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		);
 	
 		foreach( $urls as $url ) {
-			$result = yourls_add_new_link( $url[1], $url[2], $url[3] );
+			$result = yourls_add_new_link( $url[0], $url[1], $url[2] );
 			$this->assertEquals( 200, $result['statusCode'] );
 		}
 	}
