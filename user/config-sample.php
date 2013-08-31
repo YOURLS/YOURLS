@@ -16,7 +16,8 @@ define( 'YOURLS_DB_PASS', 'your db password' );
 /** The name of the database for YOURLS */
 define( 'YOURLS_DB_NAME', 'yourls' );
 
-/** MySQL hostname */
+/** MySQL hostname.
+ ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
 define( 'YOURLS_DB_HOST', 'localhost' );
 
 /** MySQL tables prefix */
@@ -60,6 +61,10 @@ $yourls_user_passwords = array(
 	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
 	);
 
+/** Debug mode to output some internal information
+ ** Default is false for live site. Enable when coding or before submitting a new issue */
+define( 'YOURLS_DEBUG', false );
+	
 /*
  ** URL Shortening settings
  */

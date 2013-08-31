@@ -4,12 +4,12 @@
 	*  Author: Justin Vincent (jv@jvmultimedia.com)
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_pdo
-	*  Desc..: SQLite component (part of ezSQL databse abstraction library)
+	*  Desc..: PDO component (part of ezSQL databse abstraction library)
 	*
 	*/
 
 	/**********************************************************************
-	*  ezSQL error strings - SQLite
+	*  ezSQL error strings - PDO
 	*/
 
 	$ezsql_pdo_str = array
@@ -18,7 +18,7 @@
 	);
 
 	/**********************************************************************
-	*  ezSQL Database specific class - SQLite
+	*  ezSQL Database specific class - PDO
 	*/
 
 	if ( ! class_exists ('PDO') ) die('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
@@ -30,10 +30,11 @@
 		var $dsn;
 		var $user;
 		var $password;
+		var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the 
-		*  same time as initialising the ezSQL_sqlite class
+		*  same time as initialising the ezSQL_pdo class
 		*/
 
 		function ezSQL_pdo($dsn='', $user='', $password='', $ssl=array())
@@ -41,22 +42,22 @@
 			// Turn on track errors 
 			ini_set('track_errors',1);
 			
-			if ( $dsn && $user && $password )
+			if ( $dsn && $user )
 			{
 				$this->connect($dsn, $user, $password);
 			}
 		}
 
 		/**********************************************************************
-		*  Try to connect to SQLite database server
+		*  Try to connect to database server
 		*/
 
 		function connect($dsn='', $user='', $password='', $ssl=array())
 		{
 			global $ezsql_pdo_str; $return_val = false;
 			
-			// Must have a user and a password
-			if ( ! $dsn || ! $user || ! $password )
+			// Must have a dsn and user
+			if ( ! $dsn || ! $user )
 			{
 				$this->register_error($ezsql_pdo_str[1].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_pdo_str[1],E_USER_WARNING) : null;
@@ -86,7 +87,7 @@
 		}
 
 		/**********************************************************************
-		*  In the case of SQLite quick_connect is not really needed
+		*  In the case of PDO quick_connect is not really needed
 		*  because std. connect already does what quick connect does - 
 		*  but for the sake of consistency it has been included
 		*/
@@ -97,7 +98,7 @@
 		}
 
 		/**********************************************************************
-		*  No real equivalent of mySQL select in SQLite 
+		*  No real equivalent of mySQL select in PDO 
 		*  once again, function included for the sake of consistency
 		*/
 
@@ -107,7 +108,7 @@
 		}
 		
 		/**********************************************************************
-		*  Format a SQLite string correctly for safe SQLite insert
+		*  Format a string correctly for safe PDO insert
 		*  (no mater if magic quotes are on or not)
 		*/
 
@@ -127,13 +128,13 @@
 		}
 
 		/**********************************************************************
-		*  Return SQLite specific system date syntax 
+		*  Return specific system date syntax 
 		*  i.e. Oracle: SYSDATE Mysql: NOW()
 		*/
 
 		function sysdate()
 		{
-			return "datetime('now')";			
+			return "NOW()";			
 		}
 
 		/**********************************************************************

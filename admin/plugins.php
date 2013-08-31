@@ -1,4 +1,16 @@
 <?php
+
+/**
+ * YOURLS - Your Own URL Shortener
+ * 
+ * Plugins Page
+ * Select, activate or desactivate a YOURLS plugin
+ *
+ * @package yourls
+ * @link http://yourls.org
+ * @license GPLv3
+ */
+
 define( 'YOURLS_ADMIN', true );
 require_once dirname( dirname( __FILE__ ) ) . '/includes/load-yourls.php';
 yourls_maybe_require_auth();

@@ -4,6 +4,14 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+HEAD
+----
+- improved: security with auto-encrypted user passwords
+- added: Support for PDO and MySQLi
+- added: Social bookmarklets
+- improved: GeoIP IPv6
+- fixed: lots of bugs
+
 1.6
 ---
 - added: مرحبا العالم! Hej verden! 你好世界! Kumusta mundo! Ciao mondo! Hello world! Translation API.
