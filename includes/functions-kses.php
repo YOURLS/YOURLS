@@ -61,7 +61,7 @@ function yourls_kses_init() {
 	
 	if( ! $yourls_allowedprotocols ) {
 		$yourls_allowedprotocols   = yourls_apply_filter( 'kses_allowed_protocols', yourls_kses_allowed_protocols() );
-	}	
+	}
 
 	/** See NOTE ABOUT GLOBALS **
 	
