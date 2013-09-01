@@ -382,12 +382,11 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_html_search( $params = array() ) {
 	extract( $params ); // extract $search_text, $search_in ...
 	?>
-			<div class="search-form">
-				<form action="" method="get" role="search">
+				<form class="search-form" action="" method="get" role="search">
 						<?php
 						// @TODO: Clean up HTML - CSS
 						// First search control: text to search
-						$_input = '<input type="text" name="search" class="text col-lg-7" value="' . yourls_esc_attr( $search_text ) . '" />';
+						$_input = '<input type="text" name="search" class="form-control search-primary" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
 							'keyword' => yourls__( 'Short URL' ),
 							'url'     => yourls__( 'URL' ),
@@ -422,7 +421,7 @@ function yourls_html_search( $params = array() ) {
 							'less' => yourls__( 'less' ),
 						);
 						$_select_clicks = yourls_html_select( 'click_filter', $_options, $click_filter );
-						$_input_clicks  = '<input type="text" name="click_limit" class="text" value="' . $click_limit . '" /> ';
+						$_input_clicks  = '<input type="text" name="click_limit" class="form-control" value="' . $click_limit . '" /> ';
 
 						// Fifth search control: Show links created before/after/between ...
 						$_options = array(
@@ -431,11 +430,12 @@ function yourls_html_search( $params = array() ) {
 							'between' => yourls__( 'between' ),
 						);
 						$_select_creation = yourls_html_select( 'date_filter', $_options, $date_filter );
-						$_input_creation  = '<input type="text" name="date-first" class="text date-first" value="' . $date_first . '" />';
-						$_input2_creation = '<input type="text" name="date-second" class="text date-second" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						$_input_creation  = '<input type="text" name="date-first" class="form-control date-first" value="' . $date_first . '" />';
+						$_input2_creation = '<input type="text" name="date-second" class="form-control date-second" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
 						
 						$advanced_search = array(
-							yourls__( 'Search' )   => array( $_input, $_select_search, $_button ),
+							yourls__( 'Search' )   => array( $_input, $_button ),
+							yourls__( 'In' )       => array( $_select_search ),
 							yourls__( 'Order by' ) => array( $_select_order, $_select2_order ),
 							yourls__( 'Clicks' )   => array( $_select_clicks, $_input_clicks ),
 							yourls__( 'Created' )  => array( $_select_creation, $_input_creation, $_input2_creation )
@@ -456,8 +456,6 @@ function yourls_html_search( $params = array() ) {
 						?>
 
 				</form>
-			</div>
-			
 			<?php
 			// Remove empty keys from the $params array so it doesn't clutter the pagination links
 			$params = array_filter( $params, 'yourls_return_if_not_empty_string' ); // remove empty keys
