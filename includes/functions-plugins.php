@@ -399,7 +399,7 @@ function yourls_load_plugins() {
 	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
 	if( count( $active_plugins ) ) {
 		yourls_update_option( 'active_plugins', $ydb->plugins );
-		$message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', count( $active_plugins ) );
+		$message = yourls_n( 'Could not find and deactivated plugin:', 'Could not find and deactivated plugins:', count( $active_plugins ) );
 		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
 		yourls_add_notice( $message .' '. $missing );
 	}
