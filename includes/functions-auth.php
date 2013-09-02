@@ -85,7 +85,7 @@ function yourls_is_valid_user() {
 			yourls_store_cookie( YOURLS_USER );
 			
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
-			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
+			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
 				$url = $_SERVER['REQUEST_URI'];
 				yourls_redirect( $url );
 			}
