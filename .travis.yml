@@ -9,6 +9,7 @@ env:
 
 before_script:
   - git clone --branch=travis-ci git://github.com/YOURLS/YOURLS-unit-tests.git tests
+  - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config.php user/config.php
 
