@@ -41,6 +41,7 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @depends tester_load
+	 * @requires function yourls_activate_theme
 	 */
 	public function tester_theming() {
 		$this->assertTrue( yourls_activate_theme( 'full-bootstrap' ) );
