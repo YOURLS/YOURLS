@@ -719,7 +719,7 @@ function yourls_status_header( $code = 200 ) {
 	if( headers_sent() )
 		return;
 		
-	$protocol = $_SERVER["SERVER_PROTOCOL"];
+	$protocol = $_SERVER['SERVER_PROTOCOL'];
 	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
 		$protocol = 'HTTP/1.0';
 
