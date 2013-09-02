@@ -78,7 +78,7 @@ function yourls_html_logo( $linked = true ) {
 	<div class="yourls-logo">
 		<?php echo $logo; ?>
 	</div>
-	<?php
+		<?php
 	yourls_do_action( 'html_logo' );
 }
 
@@ -327,7 +327,7 @@ function yourls_html_language_attributes() {
 function yourls_html_footer() {
 	echo '<hr /><div class="footer" role="contentinfo"><p>';
 	$footer  = yourls_s( 'Powered by %s', yourls_html_link( 'http://yourls.org/', 'YOURLS', 'YOURLS', false, false ) . ' v' . YOURLS_VERSION );
-	echo yourls_apply_filters( 'html_footer_text', $footer );
+		echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
 }
 
@@ -339,7 +339,7 @@ function yourls_html_debug() {
 	global $ydb;
 	echo '<pre class="debug-info"><button type="button" class="close" onclick="$(this).parent().fadeOut();return false;" title="Dismiss">&times;</button>';
 	echo  'Queries: ' . $ydb->num_queries . "\n";
-	echo join( "\n", $ydb->debug_log );
+		echo join( "\n", $ydb->debug_log );
 	echo '</pre>';
 	yourls_do_action( 'html_debug', $ydb->context );
 }
@@ -360,13 +360,13 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 			<div class="new-url-short">
 				<label><?php yourls_e( 'Short URL' ); ?> <span class="label label-info"><?php yourls_e( 'Optional' ); ?></span></label>
 				<input type="text" placeholder="<?php yourls_e( 'keyword' ); ?>" name="keyword" value="<?php echo $keyword; ?>" class="add-keyword" size="8">
-			<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-			</div>
+				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
+		</div>
 			<div class="new-url-action">
 				<button name="add-button" class="add-button"><?php yourls_e( 'Shorten The URL' ); ?></button>
 			</div>
 		<div class="feedback"></div>
-	<?php yourls_do_action( 'html_addnew' ); ?>
+		<?php yourls_do_action( 'html_addnew' ); ?>
 	</div>
 	<?php 
 }
@@ -414,7 +414,7 @@ function yourls_html_search( $params = array() ) {
 							'desc' => yourls__( 'Descending' ),
 						);
 						$_select2_order = yourls_html_select( 'sort_order', $_options, $sort_order );
-
+						
 						// Fourth search control: Show links with more than XX clicks
 						$_options = array(
 							'more' => yourls__( 'more' ),
@@ -432,7 +432,7 @@ function yourls_html_search( $params = array() ) {
 						$_select_creation = yourls_html_select( 'date_filter', $_options, $date_filter );
 						$_input_creation  = '<input type="text" name="date-first" class="form-control date-first" value="' . $date_first . '" />';
 						$_input2_creation = '<input type="text" name="date-second" class="form-control date-second" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
-						
+
 						$advanced_search = array(
 							yourls__( 'Search' )   => array( $_input, $_button ),
 							yourls__( 'In' )       => array( $_select_search ),
@@ -449,12 +449,12 @@ function yourls_html_search( $params = array() ) {
 									foreach( $options as $option )
 										echo $option
 									?>
-								</div>
-							</div>
+						</div>
+					</div>
 							<?php
 						}
 						?>
-
+			
 				</form>
 			<?php
 			// Remove empty keys from the $params array so it doesn't clutter the pagination links
@@ -466,7 +466,7 @@ function yourls_html_search( $params = array() ) {
 			}
 			yourls_do_action( 'html_search' );
 }
-
+			
 /**
  * Wrapper function to display the global pagination on interface
  * 
@@ -649,7 +649,7 @@ function yourls_table_edit_row( $keyword ) {
 	$www = yourls_link();
 	
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
-
+	
 	// @TODO: HTML Clean up
 	if( $url ) {
 		$return = '
@@ -795,29 +795,60 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	} else {
 		$display_url = $url;
 	}
-	
+
 	$data = array(
 		'id'            => $id,
-		'shorturl'      => yourls_esc_url( $shorturl ),
+			'shorturl'      => yourls_esc_url( $shorturl ),
 		'keyword'       => yourls_esc_attr( $keyword ),
-		'keyword_html'  => yourls_esc_html( $keyword ),
-		'long_url'      => yourls_esc_url( $url ),
+			'keyword_html'  => yourls_esc_html( $keyword ),
+			'long_url'      => yourls_esc_url( $url ),
 		'long_url_html' => yourls_trim_long_string( $display_url, 100 ),
-		'title_attr'    => yourls_esc_attr( $title ),
-		'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
-		'warning'       => $protocol_warning,
+			'title_attr'    => yourls_esc_attr( $title ),
+			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
+			'warning'       => $protocol_warning,
 		'added_on_from' => yourls_s( 'Added on <span class="timestamp">%s</span> from <span class="ip">%s</span>', date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ), $ip ),
 		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		'actions'       => $action_links,
 		'copy'          => 'data-clipboard-target="' . 'shorturl-' . $id /*. '" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-placement="top" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) */. '"',
 	);
 	
-	$row = yourls_replace_string_tokens( $format, $data );
-	$row = yourls_apply_filter( 'table_add_row', $row, $format, $data );
-	// Compat note : up to YOURLS 1.6 the values passed to this filter where: $keyword, $url, $title, $ip, $clicks, $timestamp
+	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
+	$row = "<tr id=\"id-$id\">";
+	foreach( $cells as $cell_id => $elements ) {
+		$callback = new yourls_table_add_row_callback( $elements );
+		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
+		$row .= preg_replace_callback( '/%([^%]+)?%/', array( $callback, 'callback' ), $elements['template'] );
+		// For the record, in PHP 5.3+ we don't need to introduce a class in order to pass additional parameters
+		// to the callback function. Instead, we would have used the 'use' keyword :
+		// $row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
+		
+		$row .= '</td>';
+	}
+	$row .= "</tr>";
+	$row  = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
 	
 	return $row;
 }
+
+/**
+ * Callback class for yourls_table_add_row
+ *
+ * See comment about PHP 5.3+ in yourls_table_add_row()
+ *
+ * @since 1.7
+ */
+class yourls_table_add_row_callback {
+    private $elements;
+	
+    function __construct($elements) {
+		$this->elements = $elements;
+	}
+	
+    function callback( $matches ) {
+		return $this->elements[ $matches[1] ];
+    }
+}
+
 
 /**
  * Echo the main table head
@@ -828,9 +859,9 @@ function yourls_table_head( $data = null ) {
 	
 	if( $data === null )  {
 		$data = array(
-			'shorturl' => yourls__( 'Short URL' ),
-			'longurl'  => yourls__( 'Original URL' ),
-			'clicks'   => yourls__( 'Clicks' ),
+		'shorturl' => yourls__( 'Short URL' ),
+		'longurl'  => yourls__( 'Original URL' ),
+		'clicks'   => yourls__( 'Clicks' ),
 		);
 	}
 	
@@ -921,7 +952,7 @@ function yourls_sidebar_end() {
 
 /**
  * Echo HTML tag for a link
- * 
+ *
  * @param string $href Where the link point
  * @param string $content
  * @param string $title Optionnal "title" attribut
@@ -955,17 +986,17 @@ function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
 	
 	$action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
-
+	
 	yourls_template_content( 'before' );
 	yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
-
+	
 	?>
 	<div id="login">
 		<form method="post" class="login-screen" action="<?php echo $action; // reset any QUERY parameters ?>">
 			<?php 
 				if( !empty( $error_msg ) ) {
 					echo yourls_notice_box( $error_msg[0], $error_msg[1] );
-				}
+	}
 			?>
 			<div class="control-group">
 				<label class="control-label" for="username"><?php yourls_e( 'Username' ); ?></label>
