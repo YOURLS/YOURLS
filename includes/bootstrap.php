@@ -44,6 +44,14 @@ function load_yourls() {
 	if( !defined( 'YOURLS_USERURL' ) )
 		define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
 		
+	// physical path of asset directory
+	if( !defined( 'YOURLS_ASSETDIR' ) )
+		define( 'YOURLS_ASSETDIR', YOURLS_ABSPATH.'/assets' );
+
+	// URL of asset directory
+	if( !defined( 'YOURLS_ASSETURL' ) )
+		define( 'YOURLS_ASSETURL', YOURLS_SITE.'/assets' );
+		
 	// physical path of translations directory
 	if( !defined( 'YOURLS_LANG_DIR' ) )
 		define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
@@ -56,6 +64,14 @@ function load_yourls() {
 	if( !defined( 'YOURLS_PLUGINURL' ) )
 		define( 'YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins' );
 		
+	// physical path of themes directory
+	if( !defined( 'YOURLS_THEMEDIR' ) )
+		define( 'YOURLS_THEMEDIR', YOURLS_USERDIR.'/themes' );
+
+	// URL of themes directory
+	if( !defined( 'YOURLS_THEMEURL' ) )
+		define( 'YOURLS_THEMEURL', YOURLS_USERURL.'/themes' );
+
 	// physical path of pages directory
 	if( !defined( 'YOURLS_PAGEDIR' ) )
 		define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );
@@ -74,7 +90,7 @@ function load_yourls() {
 
 	// minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 	if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
-		define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
+		define( 'YOURLS_FLOOD_DELAY_SECONDS', 0 );
 
 	// comma separated list of IPs that can bypass flood check.
 	if( !defined( 'YOURLS_FLOOD_IP_WHITELIST' ) )
@@ -133,4 +149,7 @@ function load_yourls() {
 	// Allow early inclusion of a cache layer
 	if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
 		require_once YOURLS_USERDIR.'/cache.php';
+		
+	// Init complete. We need to mimick the "plugins_loaded" event to load the kses lib
+	yourls_do_action( 'plugins_loaded' );
 }

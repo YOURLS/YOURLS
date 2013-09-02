@@ -7,8 +7,9 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 
 		$this->assertTrue( yourls_create_htaccess() );
 		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
-
-		$this->assertArrayNotHasKey( 'error', yourls_create_sql_tables() );
+		
+		$create = yourls_create_sql_tables();
+		$this->assertEquals( array() , $create['error'] );
 	}
 
 	/**
@@ -34,17 +35,17 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends tester_load
 	 */
-	public function tester_theming( $theme = 'full-bootstrap' ) {
-		$this->assertTrue( yourls_activate_theme( $theme ) );
+	public function tester_theming() {
+		$this->assertTrue( yourls_activate_theme( 'full-bootstrap' ) );
 		$this->assertTrue( yourls_activate_theme( 'default' ) );
 	}
 
 	/**
 	 * @depends tester_load
 	 */
-	public function tester_plugining( $plugin = 'hyphens-in-urls' ) {
-		$this->assertTrue( yourls_activate_plugin( $plugin . '/plugin.php' ) );
-		$this->assertTrue( yourls_deactivate_plugin( $plugin . '/plugin.php' ) );
+	public function tester_plugining() {
+		$this->assertTrue( yourls_activate_plugin( 'hyphens-in-urls/plugin.php' ) );
+		$this->assertTrue( yourls_deactivate_plugin( 'hyphens-in-urls/plugin.php' ) );
 	}
 
 	/**
@@ -82,8 +83,8 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 			if( !empty( $url ) ) {
 				yourls_do_action( 'redirect_shorturl', $url, $keyword );
 	
-				$this->assertTrue( yourls_update_clicks( $keyword ) );
-				$this->assertTrue( yourls_log_redirect( $keyword ) ) ;
+				$this->assertEquals( 1, yourls_update_clicks( $keyword ) );
+				$this->assertEquals( 1, yourls_log_redirect( $keyword ) ) ;
 			}
 		}
 	}
