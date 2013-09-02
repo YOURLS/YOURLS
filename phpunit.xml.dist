@@ -19,13 +19,12 @@
 	</groups>
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">../</directory>
-			<directory suffix=".php">../includes/</directory>
-			<directory suffix=".php">../admin/</directory>
+			<directory suffix=".php">./YOURLS/</directory>
+			<directory suffix=".php">./YOURLS/includes/</directory>
 			<exclude>
-				<directory suffix=".php">../includes/ezSQL/</directory>
-				<directory suffix=".php">../includes/geo/</directory>
-				<directory suffix=".php">../includes/pomo/</directory>
+				<directory suffix=".php">./YOURLS/includes/ezSQL/</directory>
+				<directory suffix=".php">./YOURLS/includes/geo/</directory>
+				<directory suffix=".php">./YOURLS/includes/pomo/</directory>
 			</exclude>
 		</whitelist>
 	</filter>
