@@ -8,13 +8,13 @@ env:
   - DB=mysql
 
 before_script:
-  - git clone --branch=travis-ci git://github.com/YOURLS/YOURLS-unit-tests.git tests
+  - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
-  - cp tests/yourls-tests-config.php user/config.php
+  - cp tests/yourls-tests-config-travis.php user/config.php
 
-script: phpunit --coverage-text --configuration ./tests/phpunit.xml.dist
+script: phpunit --coverage-text --configuration ./tests/phpunit-travis.xml.dist
 
 after_script: rm user/config.php
 
