@@ -28,9 +28,17 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_is_installed() );
 	}
 
+	/**
+	 * @depends tester_load
+	 */
+	public function tester_login() {
+		$_REQUEST['username'] = 'yourls';
+		$_REQUEST['password'] = 'travis-ci-test';
+		$this->assertTrue( yourls_is_valid_user() );
+	}
+	
 	public function tester_upgrade() {
 	}
-
 
 	/**
 	 * @depends tester_load
@@ -49,7 +57,7 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends tester_load
+	 * @depends tester_login
 	 */
 	public function tester_add_urls() {
 		$urls = array(
