@@ -1,5 +1,5 @@
 <?php
-class Tests_test extends PHPUnit_Framework_TestCase {
+class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 
 	public function tester_install() {
 		$this->assertTrue( yourls_check_database_version() );
