@@ -3,7 +3,7 @@ YOURLS Unit Tests
 
 About
 -----
-*v0.0.2* - do not use.  
+*v0.1.0* - do not use.  
 Things may not even look remotely like this when this gets somewhere.  
 If that gets somewhere.  
 
