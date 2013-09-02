@@ -38,6 +38,7 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function tester_upgrade() {
+		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 
 	/**
@@ -95,18 +96,21 @@ class Tests_test extends PHPUnit_Framework_TestCase {
 				$this->assertEquals( 1, yourls_log_redirect( $keyword ) ) ;
 			}
 		}
+		$this->markTestIncomplete( 'This test has not been fully implemented yet.' );
 	}
 
 	/**
 	 * @depends tester_generate_hits
 	 */
 	public function tester_fetch_stats() {
+		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 	
 	/**
 	 * @depends tester_load
 	 */
 	public function tester_api() {
+		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 
 	/**
