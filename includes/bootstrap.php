@@ -132,9 +132,6 @@ function load_yourls() {
 		}
 	}
 
-	// Load locale
-	yourls_load_default_textdomain();
-
 	// Create the YOURLS object $ydb that will contain everything we globally need
 	global $ydb;
 
