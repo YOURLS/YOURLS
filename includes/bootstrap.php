@@ -7,9 +7,9 @@ require_once 'PHPUnit/Autoload.php';
 
 // Include config
 if ( defined( 'TRAVIS_TESTSUITE' ) && TRAVIS_TESTSUITE == true )
-	$config_file_path = dirname( dirname( __FILE__ ) ) . '/user/config.php';
+	$config_file_path = dirname( dirname( dirname( __FILE__ ) ) ) . '/user/config.php';
 else 
-	$config_file_path = dirname( dirname( dirname( __FILE__ ) ) ) . '/yourls-tests-config.php';
+	$config_file_path = dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php';
 if ( !is_readable( $config_file_path ) ) {
 	die( "ERROR: yourls-tests-config.php is missing!\n" );
 }
