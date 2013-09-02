@@ -30,9 +30,24 @@
 		</whitelist>
 	</filter>
 	<php>
+		<!-- Consants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
+		<const name="TRAVIS_TESTSUITE" value="true" />
+		<!-- Login -->
+		<request name="username" value="yourls"/>
+		<request name="password" value="travis-ci-test"/>
+		<!-- Install -->
+		<server name="SERVER_SOFTWARE" value="TRAVIS APACHE"/>
+		<!-- Stats data -->
+		<server name="HTTP_USER_AGENT" value="Travis-CI (PHPUnit\3.7)"/>
+		<server name="HTTP_HOST" value="travis.com"/>
+		<server name="HTTP_CLIENT_IP" value="10.10.10.1"/>
+		<!-- API -->
+		<request name="format" value="simple"/>
 	</php>
 	<logging>
+		<log type="coverage-php" target="build/logs/php-cover.serialized"/>
+		<log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
 	</logging>
 </phpunit>

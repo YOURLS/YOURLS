@@ -32,8 +32,6 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	 * @depends tester_load
 	 */
 	public function tester_login() {
-		$_REQUEST['username'] = 'yourls';
-		$_REQUEST['password'] = 'travis-ci-test';
 		$this->assertTrue( yourls_is_valid_user() );
 	}
 	
