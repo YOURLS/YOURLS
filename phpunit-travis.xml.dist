@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+	backupGlobals="false"
+	colors="true"
+	stopOnFailure="false"
+	verbose="true"
+	bootstrap="includes/bootstrap.php"
+	>
+	<testsuites>
+		<testsuite name="YOURLS Test Suite">
+			<directory suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
+	<groups>
+		<exclude>
+			<group>ajax</group>
+		</exclude>
+	</groups>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">../</directory>
+			<directory suffix=".php">../includes/</directory>
+			<directory suffix=".php">../admin/</directory>
+			<exclude>
+				<directory suffix=".php">../includes/ezSQL/</directory>
+				<directory suffix=".php">../includes/geo/</directory>
+				<directory suffix=".php">../includes/pomo/</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<php>
+		<const name="PHPUNIT_TESTSUITE" value="true" />
+	</php>
+	<logging>
+		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+	</logging>
+</phpunit>
