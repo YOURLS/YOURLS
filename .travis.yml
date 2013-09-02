@@ -14,7 +14,7 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
 
-script: phpunit --coverage-text --configuration ./tests/phpunit-travis.xml.dist
+script: phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 after_script: rm user/config.php
 
