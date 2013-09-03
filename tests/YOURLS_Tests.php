@@ -1,5 +1,39 @@
 <?php
+
 class YOURLS_Tests extends PHPUnit_Framework_TestCase {
+
+	/**
+	 * Runs once before all tests start
+	 */
+	public static function setUpBeforeClass() {
+		if( !defined( 'TRAVIS_TESTSUITE' ) or TRAVIS_TESTSUITE != false )
+			return;
+	
+		// If not running in Travis environment, drop any tables from the selected database prior to starting tests
+		global $ydb;
+		$sql = sprintf( "SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema = '%s';", YOURLS_DB_NAME );
+		try {
+			$tables = $ydb->get_var( $sql );
+		} catch( Exception $e ) {
+			return;
+		}
+		if( $tables ) {
+			try {
+				// Log_in_File::log( $tables );
+				$drop = $ydb->get_var( sprintf( 'DROP TABLE %s', $tables ) );
+			} catch( Exception $e ) {
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Runs once after all tests have ended
+	 */
+	public static function tearDownAfterClass() {
+		// In case we have logged something, mark end of tests
+		Log_in_File::close_log();
+	}
 
 	public function tester_install() {
 		$this->assertTrue( yourls_check_database_version() );
@@ -122,5 +156,40 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'Raccourci' , $string_translated );
 		
 		$this->assertTrue( yourls_unload_textdomain( yourls_get_locale() ) );
+	}
+}
+
+/**
+ * Helper class : log in a local text file, in case you need to var_dump() stuff within a test
+ *
+ * Usage : anywhere you would have used a regular var_dump() you can simply add:
+ * Log_in_File::log( $something );
+ *
+ */
+class Log_in_File {
+
+	public static $has_logged = false;
+	
+	public static function log( $what ) {
+		if( ! self::$has_logged ) {
+			self::$has_logged = true;
+			self::first_log();
+		}
+		
+		ob_start();
+		var_dump( $what );
+		$what = ob_get_clean();
+	
+		error_log( $what."\n", 3, dirname( dirname( __FILE__ ) ) . '/log.txt' );
+	}
+	
+	public static function first_log() {
+		self::log( "---------------- START TESTS ----------------" );
+	}
+	
+	public static function close_log() {
+		if( self::$has_logged ) {
+			self::log( "------------------ END TESTS ----------------" );
+		}
 	}
 }

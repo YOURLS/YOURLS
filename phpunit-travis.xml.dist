@@ -30,7 +30,7 @@
 		</whitelist>
 	</filter>
 	<php>
-		<!-- Consants -->
+		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
 		<const name="TRAVIS_TESTSUITE" value="true" />
 		<!-- Login -->
