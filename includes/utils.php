@@ -5,6 +5,15 @@
  */
 
 /**
+ * Check if we are running locally (someone typed 'phpunit' in a shell) or in Travis. Return true if local.
+ *
+ * @since 0.1
+ */
+function yourls_tests_is_local() {
+	return defined( 'LOCAL_TESTSUITE' ) && LOCAL_TESTSUITE == true;
+}
+
+/**
  * Destroy tables in selected DB if tests run locally
  *
  * If not running in Travis environment, this function will drop all tables in the selected DB
@@ -12,7 +21,7 @@
  * @since 0.1
  */
 function drop_all_tables_if_local() {
-	if( !defined( 'LOCAL_TESTSUITE' ) or LOCAL_TESTSUITE != true )
+	if( !yourls_tests_is_local() )
 		return;
 
 	// If not running in Travis environment, drop any tables from the selected database prior to starting tests
@@ -45,6 +54,10 @@ class Log_in_File {
 	public static $has_logged = false;
 	
 	public static function log( $what ) {
+		// Don't mess with Travis
+		if( !yourls_tests_is_local() )
+			return;
+	
 		if( ! self::$has_logged ) {
 			self::$has_logged = true;
 			self::start_log();
