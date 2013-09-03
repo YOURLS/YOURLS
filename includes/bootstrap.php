@@ -4,6 +4,7 @@
  */
 
 require_once 'PHPUnit/Autoload.php';
+require_once dirname( __FILE__ ) . '/utils.php';
 
 // Include config
 if ( defined( 'TRAVIS_TESTSUITE' ) && TRAVIS_TESTSUITE == true )
@@ -23,22 +24,17 @@ global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object
        $yourls_allowedentitynames, $yourls_allowedprotocols,      // used by KSES
 	   $ezsql_mysql_str, $ezsql_mysqli_str, $ezsql_pdo_str;       // used by ezSQL
 
-// Load YOURLS
+
+declare_yourls_consts();
 load_yourls();
+drop_all_tables_if_local();
 
 /**
- * Load YOURLS
- *
- * This is everything from load-yourls.php except:
- * - the config.php inclusion
- * - the maintenance mode check
- * - the "redirect to https:// if applicable" part
- * - checks for need to install or update
- * Yeah -- this is rather lame. Need to avoid to duplicate so much code.
+ * Declare all needed YOURLS constants
  *
  * @since 0.1
  */
-function load_yourls() {
+function declare_yourls_consts() {
 	// physical path of YOURLS root
 	if( !defined( 'YOURLS_ABSPATH' ) )
 		define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
@@ -133,7 +129,21 @@ function load_yourls() {
 	} else {
 		error_reporting( E_ERROR | E_PARSE );
 	}
+}
 
+/**
+ * Load YOURLS
+ *
+ * This is everything from load-yourls.php except:
+ * - the config.php inclusion
+ * - the maintenance mode check
+ * - the "redirect to https:// if applicable" part
+ * - checks for need to install or update
+ * Yeah -- this is rather lame. Need to avoid to duplicate so much code.
+ *
+ * @since 0.1
+ */
+function load_yourls() {
 	// Include all functions
 	require_once YOURLS_INC.'/version.php';
 	$files = scandir( YOURLS_INC, 1 );
