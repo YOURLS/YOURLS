@@ -6,7 +6,7 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	 * Runs once before all tests start
 	 */
 	public static function setUpBeforeClass() {
-		if( !defined( 'TRAVIS_TESTSUITE' ) or TRAVIS_TESTSUITE != false )
+		if( !defined( 'LOCAL_TESTSUITE' ) or LOCAL_TESTSUITE != true )
 			return;
 	
 		// If not running in Travis environment, drop any tables from the selected database prior to starting tests

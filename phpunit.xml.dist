@@ -30,7 +30,7 @@
 	</filter>
 	<php>
 		<const name="PHPUNIT_TESTSUITE" value="true" />
-		<const name="TRAVIS_TESTSUITE" value="false" />
+		<const name="LOCAL_TESTSUITE" value="true" />
 		<!-- Login -->
 		<request name="username" value="yourls"/>
 		<request name="password" value="travis-ci-test"/>
@@ -44,6 +44,7 @@
 		<!-- API -->
 		<request name="format" value="simple"/>	</php>
 	<logging>
+		<log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
 	</logging>
 </phpunit>
