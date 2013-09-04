@@ -2,7 +2,7 @@
 
 <phpunit
 	backupGlobals="false"
-	colors="true"
+	colors="false"
 	stopOnFailure="false"
 	verbose="true"
 	bootstrap="includes/bootstrap.php"
