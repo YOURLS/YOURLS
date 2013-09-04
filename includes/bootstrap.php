@@ -8,7 +8,7 @@ require_once dirname( __FILE__ ) . '/utils.php';
 
 // Include config
 if ( defined( 'TRAVIS_TESTSUITE' ) && TRAVIS_TESTSUITE == true )
-	define( 'YOURLS_CONFIGFILE', dirname( dirname( dirname( __FILE__ ) ) ) . '/user/config.php' ); // this is a copy of yourls-tests-config-travis.php
+	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/yourls-tests-config-travis.php' );
 else 
 	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php' );
 if ( !is_readable( YOURLS_CONFIGFILE ) ) {
