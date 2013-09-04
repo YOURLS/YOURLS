@@ -7,7 +7,7 @@ if( !defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false ) {
 
 	/*** Code base and URL of that code base */
 	if( defined( 'TRAVIS_REPO_SLUG' ) ) {
-		define( 'YOURLS_ABSPATH', '/home/travis/build/' . TRAVIS_REPO_SLUG;
+		define( 'YOURLS_ABSPATH', '/home/travis/build/' . TRAVIS_REPO_SLUG );
 	} else {
 		die( 'Not in Travis' );
 	}
