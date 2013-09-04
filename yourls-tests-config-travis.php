@@ -6,7 +6,7 @@ if( !defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false ) {
 	define( 'YOURLS_TESTS_CI', true );
 
 	/*** Code base and URL of that code base */
-	define( 'YOURLS_ABSPATH', dirname( dirname( __FILE__ ) ) );
+	define( 'YOURLS_ABSPATH', '/home/travis/build/YOURLS/YOURLS' );
 	define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
 
 	/*** MySQL settings */
