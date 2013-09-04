@@ -6,11 +6,21 @@ if( !defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false ) {
 	define( 'YOURLS_TESTS_CI', true );
 
 	/*** Code base and URL of that code base */
-	if( defined( 'TRAVIS_REPO_SLUG' ) ) {
-		define( 'YOURLS_ABSPATH', '/home/travis/build/' . TRAVIS_REPO_SLUG );
+	if( $path = getenv( 'TRAVIS_REPO_SLUG' ) ) {
+		switch( $path ) {
+			case 'YOURLS/YOURLS':
+				define( 'YOURLS_ABSPATH', '/home/travis/build/YOURLS/YOURLS' );
+				break;
+			case 'YOURLS/YOURLS-unit-tests':
+				define( 'YOURLS_ABSPATH', '/home/travis/build/YOURLS/YOURLS-unit-tests/YOURLS' );
+				break;
+			default:
+				die( sprintf( 'Wrong repo: "%s"', $path ) );
+		}
 	} else {
 		die( 'Not in Travis' );
 	}
+	
 	define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
 
 	/*** MySQL settings */
