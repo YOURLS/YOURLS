@@ -7,14 +7,21 @@ require_once 'PHPUnit/Autoload.php';
 require_once dirname( __FILE__ ) . '/utils.php';
 
 // Include config
-if ( defined( 'TRAVIS_TESTSUITE' ) && TRAVIS_TESTSUITE == true )
-	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/yourls-tests-config-travis.php' );
-else 
-	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php' );
-if ( !is_readable( YOURLS_CONFIGFILE ) ) {
-	die( "ERROR: yourls-tests-config.php is missing!\n" );
+$config_locations = array(
+	dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php',        // manual, run locally
+	dirname( dirname( dirname( __FILE__ ) ) ) . '/user/config.php',     // Travis, run from YOURLS/YOURLS
+	dirname( dirname( __FILE__ ) ) . '/yourls-tests-config-travis.php', // Travis, run from YOURLS/YOURLS-unit-tests
+);
+foreach( $config_locations as $config ) {
+	if( is_readable( $config ) ) {
+		define( 'YOURLS_CONFIGFILE', $config );
+		require_once YOURLS_CONFIGFILE;
+		break;
+	}
 }
-require_once YOURLS_CONFIGFILE;
+if( !defined( 'YOURLS_CONFIGFILE' ) ) {
+	die( sprintf( "ERROR: config file missing. Current directory: %s\n", dirname( __FILE__ ) ) );
+}
 
 // Globalize some YOURLS variables because PHPUnit loads this inside a function
 // See https://github.com/sebastianbergmann/phpunit/issues/325
