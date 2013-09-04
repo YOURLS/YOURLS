@@ -17,18 +17,8 @@
 			<group>ajax</group>
 		</exclude>
 	</groups>
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">./YOURLS/</directory>
-			<directory suffix=".php">./YOURLS/includes/</directory>
-			<exclude>
-				<directory suffix=".php">./YOURLS/includes/ezSQL/</directory>
-				<directory suffix=".php">./YOURLS/includes/geo/</directory>
-				<directory suffix=".php">./YOURLS/includes/pomo/</directory>
-			</exclude>
-		</whitelist>
-	</filter>
 	<php>
+		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
 		<const name="LOCAL_TESTSUITE" value="true" />
 		<!-- Login -->
@@ -42,9 +32,9 @@
 		<server name="HTTP_HOST" value="travis.com"/>
 		<server name="HTTP_CLIENT_IP" value="10.10.10.1"/>
 		<!-- API -->
-		<request name="format" value="simple"/>	</php>
+		<request name="format" value="simple"/>
+	</php>
 	<logging>
-		<log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
 	</logging>
 </phpunit>
