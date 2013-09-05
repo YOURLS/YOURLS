@@ -37,8 +37,8 @@ $yourls_user_passwords = array(
 	'yourls'  => 'travis-ci-test',
 	'clear'   => 'somepassword',
 	'md5'     => 'md5:31712:f6cae1f032b9ae81b233866f4aa791af', // password: "md5"
-	'phpass'  => '$2a$08$UbOIKE2oyh.shrjSkOJ3Au7zN2vqTkrhsmAFgaMPomfeS0S6xHjG6', // password: "phpass"
-	'phpass2' => '!2a!08$zzwkOxZHwup7qsfSuxdFXOzRBEOtKu4b15gXqceYJ23GOJtRq.yvO', // password: also "phpass" with YOURLS' internal char substitution
+	'phpass'  => 'phpass:$2a$08$UbOIKE2oyh.shrjSkOJ3Au7zN2vqTkrhsmAFgaMPomfeS0S6xHjG6', // password: "phpass"
+	'phpass2' => 'phpass:!2a!08$zzwkOxZHwup7qsfSuxdFXOzRBEOtKu4b15gXqceYJ23GOJtRq.yvO', // password: also "phpass" with YOURLS' internal char substitution
 );
 $yourls_reserved_URL = array(
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
