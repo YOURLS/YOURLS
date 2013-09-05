@@ -4,16 +4,20 @@ define( 'YOURLS_INSTALLING', true );
 require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
 require_once( YOURLS_INC.'/functions-install.php' );
 
-$error = array();
+$error   = array();
 $warning = array();
 $success = array();
 
 // Check pre-requisites
-if ( !yourls_check_database_version() )
+if ( !yourls_check_database_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'MySQL' );
+	$ydb->debug_log[] = 'MySQL version: ' . yourls_get_database_version();
+}
 
-if ( !yourls_check_php_version() )
+if ( !yourls_check_php_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
+	$ydb->debug_log[] = 'PHP version: ' . phpversion();
+}
 
 // Is YOURLS already installed ?
 if ( yourls_is_installed() ) {
