@@ -2,7 +2,7 @@
 
 <phpunit
 	backupGlobals="false"
-	colors="true"
+	colors="false"
 	stopOnFailure="false"
 	verbose="true"
 	bootstrap="includes/bootstrap.php"
@@ -17,19 +17,22 @@
 			<group>ajax</group>
 		</exclude>
 	</groups>
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">./YOURLS/</directory>
-			<directory suffix=".php">./YOURLS/includes/</directory>
-			<exclude>
-				<directory suffix=".php">./YOURLS/includes/ezSQL/</directory>
-				<directory suffix=".php">./YOURLS/includes/geo/</directory>
-				<directory suffix=".php">./YOURLS/includes/pomo/</directory>
-			</exclude>
-		</whitelist>
-	</filter>
 	<php>
+		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
+		<const name="LOCAL_TESTSUITE" value="true" />
+		<!-- Login -->
+		<request name="username" value="yourls"/>
+		<request name="password" value="travis-ci-test"/>
+		<server name="REQUEST_URI" value="/"/>
+		<!-- Install -->
+		<server name="SERVER_SOFTWARE" value="TRAVIS APACHE"/>
+		<!-- Stats data -->
+		<server name="HTTP_USER_AGENT" value="Travis-CI (PHPUnit\3.7)"/>
+		<server name="HTTP_HOST" value="travis.com"/>
+		<server name="HTTP_CLIENT_IP" value="10.10.10.1"/>
+		<!-- API -->
+		<request name="format" value="simple"/>
 	</php>
 	<logging>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />

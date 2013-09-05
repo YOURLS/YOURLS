@@ -1,4 +1,5 @@
 <?php
+
 class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 
 	public function tester_install() {
@@ -9,6 +10,7 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
 		
 		$create = yourls_create_sql_tables();
+		// Log_in_File::log( $create );
 		$this->assertEquals( array() , $create['error'] );
 	}
 

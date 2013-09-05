@@ -4,33 +4,70 @@
  */
 
 require_once 'PHPUnit/Autoload.php';
+require_once dirname( __FILE__ ) . '/utils.php';
 
 // Include config
-if ( defined( 'TRAVIS_TESTSUITE' ) && TRAVIS_TESTSUITE == true )
-	$config_file_path = dirname( dirname( dirname( __FILE__ ) ) ) . '/user/config.php';
-else 
-	$config_file_path = dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php';
-if ( !is_readable( $config_file_path ) ) {
-	die( "ERROR: yourls-tests-config.php is missing!\n" );
+$config_locations = array(
+	dirname( dirname( __FILE__ ) ) . '/yourls-tests-config.php',        // manual, run locally
+	dirname( dirname( dirname( __FILE__ ) ) ) . '/user/config.php',     // Travis, run from YOURLS/YOURLS
+	dirname( dirname( __FILE__ ) ) . '/yourls-tests-config-travis.php', // Travis, run from YOURLS/YOURLS-unit-tests
+);
+foreach( $config_locations as $config ) {
+	if( is_readable( $config ) ) {
+		define( 'YOURLS_CONFIGFILE', $config );
+		require_once YOURLS_CONFIGFILE;
+		break;
+	}
 }
-require_once $config_file_path;
+if( !defined( 'YOURLS_CONFIGFILE' ) ) {
+	die( sprintf( "ERROR: config file missing. Current directory: %s\n", dirname( __FILE__ ) ) );
+}
 
-// Load YOURLS
+// Globalize some YOURLS variables because PHPUnit loads this inside a function
+// See https://github.com/sebastianbergmann/phpunit/issues/325
+global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object & config file
+       $yourls_filters, $yourls_actions,                          // used by plugin API
+       $yourls_locale, $yourls_l10n, $yourls_locale_formats,      // used by L10N API
+       $yourls_allowedentitynames, $yourls_allowedprotocols,      // used by KSES
+	   $ezsql_mysql_str, $ezsql_mysqli_str, $ezsql_pdo_str;       // used by ezSQL
+
+// Initialize ourselves some constants that are typically user defined
+$yourls_user_passwords = array(
+	'yourls'  => 'travis-ci-test',
+	'clear'   => 'somepassword',
+	'md5'     => 'md5:31712:f6cae1f032b9ae81b233866f4aa791af', // password: "md5"
+	'phpass'  => '$2a$08$UbOIKE2oyh.shrjSkOJ3Au7zN2vqTkrhsmAFgaMPomfeS0S6xHjG6', // password: "phpass"
+	'phpass2' => '!2a!08$zzwkOxZHwup7qsfSuxdFXOzRBEOtKu4b15gXqceYJ23GOJtRq.yvO', // password: also "phpass" with YOURLS' internal char substitution
+);
+$yourls_reserved_URL = array(
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
+);
+$yourls_user_consts = array(
+	'YOURLS_HOURS_OFFSET'     => 5,
+	'YOURLS_UNIQUE_URLS'      => true,
+	'YOURLS_PRIVATE'          => true,
+	'YOURLS_COOKIEKEY'        => 'I &hearts; unit tests',
+	'YOURLS_URL_CONVERT'      => 62,
+	'YOURLS_DB_PREFIX'        => 'yourls_',
+	'YOURLS_NO_HASH_PASSWORD' => true, // prevents rewriting config.php with encrypted passwords
+	'YOURLS_API'              => true, // prevents all internal redirections (login forms, etc)
+);
+foreach( $yourls_user_consts as $CONST => $value ) {
+	if( !defined( $CONST ) )
+		define( $CONST, $value );
+}
+
+// All set -- go.
+declare_yourls_consts();
 load_yourls();
+drop_all_tables_if_local();
 
 /**
- * Load YOURLS
- *
- * This is everything from load-yourls.php except:
- * - the config.php inclusion
- * - the maintenance mode check
- * - the "redirect to https:// if applicable" part
- * - checks for need to install or update
- * Yeah -- this is rather lame. Need to avoid to duplicate so much code.
+ * Declare all needed YOURLS constants
  *
  * @since 0.1
  */
-function load_yourls() {
+function declare_yourls_consts() {
 	// physical path of YOURLS root
 	if( !defined( 'YOURLS_ABSPATH' ) )
 		define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
@@ -125,7 +162,21 @@ function load_yourls() {
 	} else {
 		error_reporting( E_ERROR | E_PARSE );
 	}
+}
 
+/**
+ * Load YOURLS
+ *
+ * This is everything from load-yourls.php except:
+ * - the config.php inclusion
+ * - the maintenance mode check
+ * - the "redirect to https:// if applicable" part
+ * - checks for need to install or update
+ * Yeah -- this is rather lame. Need to avoid to duplicate so much code.
+ *
+ * @since 0.1
+ */
+function load_yourls() {
 	// Include all functions
 	require_once YOURLS_INC.'/version.php';
 	$files = scandir( YOURLS_INC, 1 );

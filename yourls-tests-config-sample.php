@@ -1,33 +1,21 @@
 <?php
+/**
+ * YOURLS Config for local unit tests. Copy this file to yourls-test-config.php
+ */
 
 /*** YOURLS code base you want to test */
 define( 'YOURLS_ABSPATH', '/home/you/yourls_directory' );
 
+/*** URL of that YOURLS code base */
+define( 'YOURLS_SITE', 'http://127.0.0.1/yourls_directory' );
+
 /*** MySQL settings */
 define( 'YOURLS_DB_USER', 'your DB username' );
 define( 'YOURLS_DB_PASS', 'your DB password' );
-define( 'YOURLS_DB_NAME', 'the DB name for YOURLS -- an empty one' );
+define( 'YOURLS_DB_NAME', 'DB name for tests -- an empty one' ); // Must be an EMPTY DATABASE: everything will be erased
 define( 'YOURLS_DB_HOST', 'localhost' );
-define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*** Site options */
-define( 'YOURLS_SITE', 'http://127.0.0.1/yourls_directory' );
-define( 'YOURLS_HOURS_OFFSET', 0 ); 
-define( 'YOURLS_LANG', '' ); 
-define( 'YOURLS_UNIQUE_URLS', true );
-define( 'YOURLS_PRIVATE', true );
-define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
+define( 'YOURLS_LANG', '' );  // Edit if you have installed a YOURLS translation, leave empty otherwise
 
-$yourls_user_passwords = array(
-	'username' => 'password',
-	'username2' => 'password2'
-	);
-
-define( 'YOURLS_URL_CONVERT', 36 );
-
-$yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
-);
-
-/*** Personal settings would go after here. */
 

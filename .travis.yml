@@ -1,5 +1,6 @@
 language: php
 php:
+  - 5.2
   - 5.3
   - 5.4
   - 5.5
@@ -8,16 +9,15 @@ env:
   - DB=mysql
 
 before_script:
-  - cp yourls-tests-config-travis.php yourls-tests-config.php
-  - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - git clone git://github.com/YOURLS/YOURLS.git
   - git clone git://github.com/ozh/YOURLS-fr_FR.git YOURLS/user/languages/fr
   - cp YOURLS/user/languages/fr/fr_FR.* YOURLS/user/languages
+  - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp yourls-tests-config-travis.php YOURLS/user/config.php
 
-script: phpunit --coverage-text --configuration ./phpunit.xml.dist
+script: phpunit --configuration ./phpunit-travis.xml.dist
 
-after_script: rm yourls-tests-config.php
+after_script:
 
 notifications:
   email: false

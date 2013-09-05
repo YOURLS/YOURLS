@@ -2,7 +2,7 @@
 
 <phpunit
 	backupGlobals="false"
-	colors="true"
+	colors="false"
 	stopOnFailure="false"
 	verbose="true"
 	bootstrap="includes/bootstrap.php"
@@ -17,25 +17,14 @@
 			<group>ajax</group>
 		</exclude>
 	</groups>
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">../</directory>
-			<directory suffix=".php">../includes/</directory>
-			<directory suffix=".php">../admin/</directory>
-			<exclude>
-				<directory suffix=".php">../includes/ezSQL/</directory>
-				<directory suffix=".php">../includes/geo/</directory>
-				<directory suffix=".php">../includes/pomo/</directory>
-			</exclude>
-		</whitelist>
-	</filter>
 	<php>
-		<!-- Consants -->
+		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
 		<const name="TRAVIS_TESTSUITE" value="true" />
 		<!-- Login -->
 		<request name="username" value="yourls"/>
 		<request name="password" value="travis-ci-test"/>
+		<server name="REQUEST_URI" value="/"/>
 		<!-- Install -->
 		<server name="SERVER_SOFTWARE" value="TRAVIS APACHE"/>
 		<!-- Stats data -->
@@ -46,8 +35,6 @@
 		<request name="format" value="simple"/>
 	</php>
 	<logging>
-		<log type="coverage-php" target="build/logs/php-cover.serialized"/>
-		<log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
 		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
 	</logging>
 </phpunit>
