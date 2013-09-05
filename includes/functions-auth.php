@@ -147,18 +147,19 @@ function yourls_check_password_hash( $user, $submitted_password ) {
  * Overwrite plaintext passwords in config file with phpassed versions.
  *
  * @since 1.7
+ * @param string $config_file Full path to file
  * @return true if overwrite was successful, an error message otherwise
  */
-function yourls_hash_passwords_now() {
+function yourls_hash_passwords_now( $config_file ) {
 	global $yourls_user_passwords;
 	
-	if( !is_readable( YOURLS_CONFIGFILE ) )
+	if( !is_readable( $config_file ) )
 		return 'cannot read file'; // not sure that can actually happen...
 		
-	if( !is_writable( YOURLS_CONFIGFILE ) )
+	if( !is_writable( $config_file ) )
 		return 'cannot write file';	
 	
-	$configdata = file_get_contents( YOURLS_CONFIGFILE );
+	$configdata = file_get_contents( $config_file );
 	if( $configdata == false )
 		return 'could not read file';
 
@@ -186,10 +187,10 @@ function yourls_hash_passwords_now() {
 	if( $to_hash == 0 )
 		return true; // There was no password to encrypt
 	
-	$success = file_put_contents( YOURLS_CONFIGFILE, $configdata );
+	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
 		global $ydb;
-		$ydb->debug_log[] = "Failed writing to " . YOURLS_CONFIGFILE;
+		$ydb->debug_log[] = "Failed writing to " . $config_file;
 		return 'could not write file';
 	}
 	return true;
