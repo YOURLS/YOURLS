@@ -17,8 +17,6 @@ before_script:
 
 script: phpunit --configuration ./phpunit-travis.xml.dist
 
-after_script:
-
 notifications:
   email: false
   irc:
