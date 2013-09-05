@@ -2,47 +2,11 @@
 
 class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 
-	public function tester_install() {
-		$this->assertTrue( yourls_check_database_version() );
-		$this->assertTrue( yourls_check_php_version() );
-
-		$this->assertTrue( yourls_create_htaccess() );
-		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
-		
-		// This should fail because these inserts have been taken care of during install
-		$this->assertFalse( yourls_initialize_options() );
-		$this->assertFalse( yourls_insert_sample_links() );
-	}
-
-	/**
-	 * @depends tester_install
-	 */
-	public function tester_load() {
-		yourls_get_all_options();
-		
-		register_shutdown_function( 'yourls_shutdown' );
-		
-		yourls_do_action( 'init' );
-		
-		yourls_load_plugins();
-		yourls_do_action( 'plugins_loaded' );
-
-		$this->assertTrue( yourls_is_installed() );
-	}
-
-	/**
-	 * @depends tester_load
-	 */
-	public function tester_login() {
-		$this->assertTrue( yourls_is_valid_user() );
-	}
-	
 	public function tester_upgrade() {
 		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 
 	/**
-	 * @depends tester_load
 	 * @requires function yourls_activate_theme
 	 */
 	public function tester_theming() {
@@ -51,7 +15,7 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends tester_load
+	 * 
 	 */
 	public function tester_plugining() {
 		$this->assertTrue( yourls_activate_plugin( 'hyphens-in-urls/plugin.php' ) );
@@ -108,14 +72,14 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * @depends tester_load
+	 * 
 	 */
 	public function tester_api() {
 		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 
 	/**
-	 * @depends tester_load
+	 * 
 	 */
 	public function tester_translation() {
 		$this->assertTrue( yourls_load_default_textdomain() );
