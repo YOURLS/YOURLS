@@ -1,6 +1,6 @@
 <?php
 
-class YOURLS_Tests_Install extends PHPUnit_Framework_TestCase {
+class Install_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Check if YOURLS is declared installed

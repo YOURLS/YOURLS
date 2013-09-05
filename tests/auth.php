@@ -1,6 +1,6 @@
 <?php
 
-class YOURLS_Tests_Auth extends PHPUnit_Framework_TestCase {
+class Auth_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Check that user, as submitted by REQUEST, is valid
