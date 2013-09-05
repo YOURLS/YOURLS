@@ -122,6 +122,9 @@ yourls_load_default_textdomain();
 
 // Check if we are in maintenance mode - if yes, it will die here.
 yourls_check_maintenance_mode();
+
+// Fix REQUEST_URI for IIS
+yourls_fix_request_uri();
 	
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
@@ -133,9 +136,6 @@ if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 		exit();
 	}
 }
-
-// Fix REQUEST_URI for IIS
-yourls_fix_request_uri();
 
 // Create the YOURLS object $ydb that will contain everything we globally need
 global $ydb;
