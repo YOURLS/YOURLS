@@ -9,9 +9,9 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_create_htaccess() );
 		$this->assertFileExists( YOURLS_ABSPATH . '/.htaccess' );
 		
-		$create = yourls_create_sql_tables();
-		// Log_in_File::log( $create );
-		$this->assertEquals( array() , $create['error'] );
+		// This should fail because these inserts have been taken care of during install
+		$this->assertFalse( yourls_initialize_options() );
+		$this->assertFalse( yourls_insert_sample_links() );
 	}
 
 	/**

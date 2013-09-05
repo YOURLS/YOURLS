@@ -9,36 +9,8 @@
  *
  * @since 0.1
  */
-function yourls_tests_is_local() {
+function yut_is_local() {
 	return defined( 'LOCAL_TESTSUITE' ) && LOCAL_TESTSUITE == true;
-}
-
-/**
- * Destroy tables in selected DB if tests run locally
- *
- * If not running in Travis environment, this function will drop all tables in the selected DB
- *
- * @since 0.1
- */
-function drop_all_tables_if_local() {
-	if( !yourls_tests_is_local() )
-		return;
-
-	// If not running in Travis environment, drop any tables from the selected database prior to starting tests
-	global $ydb;
-	$sql = sprintf( "SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema = '%s';", YOURLS_DB_NAME );
-	try {
-		$tables = $ydb->get_var( $sql );
-	} catch( Exception $e ) {
-		return;
-	}
-	if( $tables ) {
-		try {
-			$drop = $ydb->get_var( sprintf( 'DROP TABLE %s', $tables ) );
-		} catch( Exception $e ) {
-			return;
-		}
-	}
 }
 
 /**
@@ -55,7 +27,7 @@ class Log_in_File {
 	
 	public static function log( $what ) {
 		// Don't mess with Travis
-		if( !yourls_tests_is_local() )
+		if( !yut_is_local() )
 			return;
 	
 		if( ! self::$has_logged ) {
