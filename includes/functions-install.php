@@ -9,7 +9,7 @@ function yourls_check_database_version() {
 	
 	// Attempt to get MySQL server version, check result and if error count increased
 	$num_errors1 = count( $ydb->captured_errors );
-	$version     = preg_replace( '/[^0-9.]/', '', $ydb->mysql_version() );
+	$version     = yourls_get_database_version();
 	$num_errors2 = count( $ydb->captured_errors );
 	
 	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
@@ -17,6 +17,26 @@ function yourls_check_database_version() {
 	}
 	
 	return ( version_compare( '4.1', $version ) <= 0 );
+}
+
+/**
+ * Get DB version
+ *
+ * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
+ * follows after that.
+ *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
+ *   'mysql5.5-ubuntu-4.20'     => '5.5'
+ *   '5.5-ubuntu-4.20'          => '5.5'
+ *   '5.5-beta2'                => '5.5'
+ *   '5.5'                      => '5.5'
+ *
+ * @since 1.7
+ * @return string sanitized DB version
+ */
+function yourls_get_database_version() {
+	global $ydb;
+	
+	return preg_replace( '/(^[^0-9]*)|[^0-9.].*/', '', $ydb->mysql_version() );
 }
 
 /**
