@@ -151,13 +151,18 @@ function yourls_check_password_hash( $user, $submitted_password ) {
  * @return true if overwrite was successful, an error message otherwise
  */
 function yourls_hash_passwords_now( $config_file ) {
-	global $yourls_user_passwords;
-	
 	if( !is_readable( $config_file ) )
 		return 'cannot read file'; // not sure that can actually happen...
 		
 	if( !is_writable( $config_file ) )
 		return 'cannot write file';	
+	
+	// Include file to read value of $yourls_user_passwords
+	// Temporary suppress error reporting to avoid notices about redeclared constants
+	$errlevel = error_reporting();
+	error_reporting( 0 );
+	require $config_file;
+	error_reporting( $errlevel );
 	
 	$configdata = file_get_contents( $config_file );
 	if( $configdata == false )
@@ -185,7 +190,7 @@ function yourls_hash_passwords_now( $config_file ) {
 	}
 	
 	if( $to_hash == 0 )
-		return true; // There was no password to encrypt
+		return 0; // There was no password to encrypt
 	
 	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
