@@ -63,58 +63,58 @@ class Log_in_File {
  * @return string Result
  */
 abstract class YOURLS_Code_Coverage extends PHPUnit_Framework_TestCase {
-    private static $_codeCoverageFiles = array();
+	private static $_codeCoverageFiles = array();
 
-    public static function addDirectoryToCodeCoverageWhitelist($path) {
-        self::addFilesToCodeCoverageWhitelist(self::getFilesForDirectory($path));
-    }
+	public static function addDirectoryToCodeCoverageWhitelist($path) {
+		self::addFilesToCodeCoverageWhitelist(self::getFilesForDirectory($path));
+	}
 
-    public static function addFileToCodeCoverageWhitelist($path) {
-        self::addFilesToCodeCoverageWhitelist(array($path));
-    }
+	public static function addFileToCodeCoverageWhitelist($path) {
+		self::addFilesToCodeCoverageWhitelist(array($path));
+	}
 
-    public static function addFilesToCodeCoverageWhitelist(array $paths) {
-        self::$_codeCoverageFiles = array_merge(self::$_codeCoverageFiles, $paths);
-    }
+	public static function addFilesToCodeCoverageWhitelist(array $paths) {
+		self::$_codeCoverageFiles = array_merge(self::$_codeCoverageFiles, $paths);
+	}
 
-    public static function getFilesForDirectory($path) {
-        $facade = new File_Iterator_Facade;
-        return $facade->getFilesAsArray($path, '.php');
-    }
+	public static function getFilesForDirectory($path) {
+		$facade = new File_Iterator_Facade;
+		return $facade->getFilesAsArray($path, '.php');
+	}
 
-    private static function setCodeCoverageWhitelist(PHP_CodeCoverage $coverage = null) {
-        if ($coverage && self::$_codeCoverageFiles) {
-            $coverage->setProcessUncoveredFilesFromWhitelist(true); // pick your poison
-            $coverage->filter()->addFilesToWhitelist(self::$_codeCoverageFiles);
-            self::$_codeCoverageFiles = array();
-        }
-    }
+	private static function setCodeCoverageWhitelist(PHP_CodeCoverage $coverage = null) {
+		if ($coverage && self::$_codeCoverageFiles) {
+			$coverage->setProcessUncoveredFilesFromWhitelist(true); // pick your poison
+			$coverage->filter()->addFilesToWhitelist(self::$_codeCoverageFiles);
+			self::$_codeCoverageFiles = array();
+		}
+	}
 
-    public function runBare() {
-        self::setCodeCoverageWhitelist($this->getTestResultObject()->getCodeCoverage());
-        parent::runBare();
-    }
+	public function runBare() {
+		self::setCodeCoverageWhitelist($this->getTestResultObject()->getCodeCoverage());
+		parent::runBare();
+	}
 	
-    public static function ignoreDirectoryInStackTraces($path) {
-        self::ignoreFilesInStackTraces(self::getFilesForDirectory($path));
-    }
+	public static function ignoreDirectoryInStackTraces($path) {
+		self::ignoreFilesInStackTraces(self::getFilesForDirectory($path));
+	}
 
-    public static function ignoreFileInStackTraces($path) {
-        self::ignoreFilesInStackTraces(array($path));
-    }
+	public static function ignoreFileInStackTraces($path) {
+		self::ignoreFilesInStackTraces(array($path));
+	}
 
-    public static function ignoreFilesInStackTraces($files) {
-        static $reflector = null;
-        if (!$reflector) {
-            PHPUnit_Util_GlobalState::phpunitFiles();
-            $reflector = new ReflectionProperty('PHPUnit_Util_GlobalState', 'phpunitFiles');
-            $reflector->setAccessible(true);
-        }
-        $map = $reflector->getValue();
-        foreach ($files as $file) {
-            $map[$file] = $file;
-        }
-        $reflector->setValue($map);
-    }
+	public static function ignoreFilesInStackTraces($files) {
+		static $reflector = null;
+		if (!$reflector) {
+			PHPUnit_Util_GlobalState::phpunitFiles();
+			$reflector = new ReflectionProperty('PHPUnit_Util_GlobalState', 'phpunitFiles');
+			$reflector->setAccessible(true);
+		}
+		$map = $reflector->getValue();
+		foreach ($files as $file) {
+			$map[$file] = $file;
+		}
+		$reflector->setValue($map);
+	}
 }
 
