@@ -798,34 +798,23 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$data = array(
 		'id'            => $id,
-			'shorturl'      => yourls_esc_url( $shorturl ),
+		'shorturl'      => yourls_esc_url( $shorturl ),
 		'keyword'       => yourls_esc_attr( $keyword ),
-			'keyword_html'  => yourls_esc_html( $keyword ),
-			'long_url'      => yourls_esc_url( $url ),
+		'keyword_html'  => yourls_esc_html( $keyword ),
+		'long_url'      => yourls_esc_url( $url ),
 		'long_url_html' => yourls_trim_long_string( $display_url, 100 ),
-			'title_attr'    => yourls_esc_attr( $title ),
-			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
-			'warning'       => $protocol_warning,
+		'title_attr'    => yourls_esc_attr( $title ),
+		'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
+		'warning'       => $protocol_warning,
 		'added_on_from' => yourls_s( 'Added on <span class="timestamp">%s</span> from <span class="ip">%s</span>', date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ), $ip ),
 		'clicks'        => yourls_number_format_i18n( $clicks, 0, '', '' ),
 		'actions'       => $action_links,
 		'copy'          => 'data-clipboard-target="' . 'shorturl-' . $id /*. '" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-placement="top" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) */. '"',
 	);
 	
-	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
-	$row = "<tr id=\"id-$id\">";
-	foreach( $cells as $cell_id => $elements ) {
-		$callback = new yourls_table_add_row_callback( $elements );
-		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace_callback( '/%([^%]+)?%/', array( $callback, 'callback' ), $elements['template'] );
-		// For the record, in PHP 5.3+ we don't need to introduce a class in order to pass additional parameters
-		// to the callback function. Instead, we would have used the 'use' keyword :
-		// $row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
-		
-		$row .= '</td>';
-	}
-	$row .= "</tr>";
-	$row  = yourls_apply_filter( 'table_add_row', $row, $keyword, $url, $title, $ip, $clicks, $timestamp );
+	$row = yourls_replace_string_tokens( $format, $data );
+	$row = yourls_apply_filter( 'table_add_row', $row, $format, $data );
+	// Compat note : up to YOURLS 1.6 the values passed to this filter where: $keyword, $url, $title, $ip, $clicks, $timestamp
 	
 	return $row;
 }
