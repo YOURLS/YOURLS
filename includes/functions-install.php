@@ -9,7 +9,7 @@ function yourls_check_database_version() {
 	
 	// Attempt to get MySQL server version, check result and if error count increased
 	$num_errors1 = count( $ydb->captured_errors );
-	$version     = preg_replace( '/[^0-9.]/', '', $ydb->mysql_version() );
+	$version     = yourls_get_database_version();
 	$num_errors2 = count( $ydb->captured_errors );
 	
 	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
@@ -17,6 +17,26 @@ function yourls_check_database_version() {
 	}
 	
 	return ( version_compare( '4.1', $version ) <= 0 );
+}
+
+/**
+ * Get DB version
+ *
+ * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
+ * follows after that.
+ *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
+ *   'mysql5.5-ubuntu-4.20'     => '5.5'
+ *   '5.5-ubuntu-4.20'          => '5.5'
+ *   '5.5-beta2'                => '5.5'
+ *   '5.5'                      => '5.5'
+ *
+ * @since 1.7
+ * @return string sanitized DB version
+ */
+function yourls_get_database_version() {
+	global $ydb;
+	
+	return preg_replace( '/(^[^0-9]*)|[^0-9.].*/', '', $ydb->mysql_version() );
 }
 
 /**
@@ -221,16 +241,14 @@ function yourls_create_sql_tables() {
 		}
 	}
 		
-	// Insert data into tables
-	yourls_update_option( 'version', YOURLS_VERSION );
-	yourls_update_option( 'db_version', YOURLS_DB_VERSION );
-	yourls_update_option( 'next_id', 1 );
+	// Initializes the option table
+	if( !yourls_initialize_options() )
+		$error_msg[] = yourls__( 'Could not initialize options' );
 	
 	// Insert sample links
-	yourls_insert_link_in_db( 'http://planetozh.com/blog/', 'ozhblog', 'planetOzh: Ozh\' blog' );
-	yourls_insert_link_in_db( 'http://ozh.org/', 'ozh', 'ozh.org' );
-	yourls_insert_link_in_db( 'http://yourls.org/', 'yourls', 'YOURLS: Your Own URL Shortener' );
-		
+	if( !yourls_insert_sample_links() )
+		$error_msg[] = yourls__( 'Could not insert sample short URLs' );
+	
 	// Check results of operations
 	if ( sizeof( $create_tables ) == $create_table_count ) {
 		$success_msg[] = yourls__( 'YOURLS tables successfully created.' );
@@ -239,6 +257,41 @@ function yourls_create_sql_tables() {
 	}
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );
+}
+
+/**
+ * Initializes the option table
+ *
+ * Each yourls_update_option() returns either true on success (option updated) or false on failure (new value == old value, or 
+ * for some reason it could not save to DB).
+ * Since true & true & true = 1, we cast it to boolean type to return true (or false)
+ *
+ * @since 1.7
+ * @return bool
+ */
+function yourls_initialize_options() {
+	return ( bool ) (
+		  yourls_update_option( 'version', YOURLS_VERSION )
+		& yourls_update_option( 'db_version', YOURLS_DB_VERSION )
+		& yourls_update_option( 'next_id', 1 )
+	);
+}
+
+/**
+ * Populates the URL table with a few sample links
+ *
+ * @since 1.7
+ * @return bool
+ */
+function yourls_insert_sample_links() {
+	$link1 = yourls_add_new_link( 'http://blog.yourls.org/', 'yourlsblog', 'YOURLS\' Blog' );
+	$link2 = yourls_add_new_link( 'http://yourls.org/',      'yourls',     'YOURLS: Your Own URL Shortener' );
+	$link3 = yourls_add_new_link( 'http://ozh.org/',         'ozh',        'ozh.org' );
+	return ( bool ) ( 
+		  $link1['status'] == 'success'
+		& $link2['status'] == 'success'
+		& $link3['status'] == 'success'
+	);
 }
 
 

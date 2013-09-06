@@ -498,11 +498,12 @@ function yourls_unload_textdomain( $domain ) {
  * translated (.mo) file is named based on the locale.
  *
  * @since 1.6
+ * @return bool True on success, false on failure
  */
 function yourls_load_default_textdomain() {
 	$yourls_locale = yourls_get_locale();
 
-	yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
+	return yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
 
 }
 
@@ -1034,7 +1035,7 @@ class YOURLS_Locale_Formats {
  *
  * @param string $domain Unique identifier (the "domain") for retrieving translated strings
  * @param string $path Full path to directory containing MO files.
- * @return bool
+ * @return bool True on success, false on failure
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filters( 'load_custom_textdomain', yourls_get_locale(), $domain );

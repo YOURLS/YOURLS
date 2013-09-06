@@ -84,8 +84,8 @@ function yourls_is_valid_user() {
 		if ( !yourls_is_API() ) {
 			yourls_store_cookie( YOURLS_USER );
 			
-			// Login form: redirect to requested URL to avoid re-submitting the login form on page reload
-			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) ) {
+			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
+			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
 				$url = $_SERVER['REQUEST_URI'];
 				yourls_redirect( $url );
 			}
@@ -94,7 +94,7 @@ function yourls_is_valid_user() {
 		// Login successful
 		return true;
 	}
-
+	
 	// Login failed
 	yourls_do_action( 'login_failed' );
 
@@ -147,18 +147,24 @@ function yourls_check_password_hash( $user, $submitted_password ) {
  * Overwrite plaintext passwords in config file with phpassed versions.
  *
  * @since 1.7
+ * @param string $config_file Full path to file
  * @return true if overwrite was successful, an error message otherwise
  */
-function yourls_hash_passwords_now() {
-	global $yourls_user_passwords;
-	
-	if( !is_readable( YOURLS_CONFIGFILE ) )
+function yourls_hash_passwords_now( $config_file ) {
+	if( !is_readable( $config_file ) )
 		return 'cannot read file'; // not sure that can actually happen...
 		
-	if( !is_writable( YOURLS_CONFIGFILE ) )
+	if( !is_writable( $config_file ) )
 		return 'cannot write file';	
 	
-	$configdata = file_get_contents( YOURLS_CONFIGFILE );
+	// Include file to read value of $yourls_user_passwords
+	// Temporary suppress error reporting to avoid notices about redeclared constants
+	$errlevel = error_reporting();
+	error_reporting( 0 );
+	require $config_file;
+	error_reporting( $errlevel );
+	
+	$configdata = file_get_contents( $config_file );
 	if( $configdata == false )
 		return 'could not read file';
 
@@ -184,12 +190,12 @@ function yourls_hash_passwords_now() {
 	}
 	
 	if( $to_hash == 0 )
-		return true; // There was no password to encrypt
+		return 0; // There was no password to encrypt
 	
-	$success = file_put_contents( YOURLS_CONFIGFILE, $configdata );
+	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
 		global $ydb;
-		$ydb->debug_log[] = "Failed writing to " . YOURLS_CONFIGFILE;
+		$ydb->debug_log[] = "Failed writing to " . $config_file;
 		return 'could not write file';
 	}
 	return true;
@@ -274,8 +280,8 @@ function yourls_has_cleartext_passwords() {
 function yourls_has_md5_password( $user ) {
 	global $yourls_user_passwords;
 	return(    isset( $yourls_user_passwords[ $user ] )
-			&& substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
-			&& strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+	        && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
+		    && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
 		   );
 }
 

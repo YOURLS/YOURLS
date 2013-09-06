@@ -307,7 +307,7 @@ function yourls_get_plugins( $category = 'plugins' ) {
 	if( $category == 'themes' )
 		$plugins = (array) glob( YOURLS_THEMEDIR .'/*/theme.css');
 	else
-		$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
+	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
 	
 	if( !$plugins )
 		return array();
@@ -381,13 +381,13 @@ function yourls_load_plugins() {
 	$active_plugins = yourls_get_option( 'active_plugins' );
 	if( false === $active_plugins )
 		return;
-
+	
 	global $ydb;
 	$ydb->plugins = array();
 
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
 		$ydb->debug_log[] = 'Plugins: ' . count( $active_plugins );
-
+	
 	foreach( (array)$active_plugins as $key=>$plugin ) {
 		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
 			include_once( YOURLS_PLUGINDIR.'/'.$plugin );
@@ -497,7 +497,7 @@ function yourls_plugin_basename( $file, $category = 'plugins' ) {
 	if( $category == 'themes' )
 		$plugindir = yourls_sanitize_filename( YOURLS_THEMEDIR );
 	else
-		$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	$file = str_replace( $plugindir, '', $file );
 	return trim( $file, '/' );
 }

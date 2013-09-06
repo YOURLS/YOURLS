@@ -838,15 +838,15 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
  * @since 1.7
  */
 class yourls_table_add_row_callback {
-    private $elements;
+	private $elements;
 	
-    function __construct($elements) {
+	function __construct($elements) {
 		$this->elements = $elements;
 	}
 	
-    function callback( $matches ) {
+	function callback( $matches ) {
 		return $this->elements[ $matches[1] ];
-    }
+	}
 }
 
 
