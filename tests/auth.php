@@ -73,7 +73,7 @@ class Auth_Tests extends PHPUnit_Framework_TestCase {
 		if( yut_is_local() ) {
 			if( !copy( YOURLS_USERDIR . '/config-sample.php', YOURLS_USERDIR . '/config-test.php' ) ) {
 				// Copy failed, we cannot run this test.
-				$this->markTestIncomplete( 'Could not copy file (write permissions?) -- cannot run test' );
+				$this->markTestSkipped( 'Could not copy file (write permissions?) -- cannot run test' );
 				return;
 			} else {
 				$config_file = YOURLS_USERDIR . '/config-test.php';
@@ -95,7 +95,7 @@ class Auth_Tests extends PHPUnit_Framework_TestCase {
 		
 		// Make sure encrypted file is still valid PHP with no syntax error
 		if( !defined( 'YOURLS_PHP_BIN' ) ) {
-			$this->markTestIncomplete( 'No PHP binary defined -- cannot check file hashing' );
+			$this->markTestSkipped( 'No PHP binary defined -- cannot check file hashing' );
 			return;
 		}
 		

@@ -9,7 +9,7 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_load_default_textdomain() {
 		if( yourls_get_locale() == 'en_US' ) {
-			$this->markTestIncomplete( 'Locale not defined -- cannot run translation tests' );
+			$this->markTestSkipped( 'Locale not defined -- cannot run translation tests' );
 			return false;
 		}
 		
