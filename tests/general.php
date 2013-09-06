@@ -78,15 +78,5 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 		$this->markTestIncomplete( 'This test has not been implemented yet.' );
 	}
 
-	/**
-	 * 
-	 */
-	public function tester_translation() {
-		$this->assertTrue( yourls_load_default_textdomain() );
 
-		$string_translated = yourls__( 'Shorten' );
-		$this->assertEquals( 'Raccourci' , $string_translated );
-		
-		$this->assertTrue( yourls_unload_textdomain( yourls_get_locale() ) );
-	}
 }
