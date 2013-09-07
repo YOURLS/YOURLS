@@ -85,7 +85,7 @@ function yourls_html_logo( $linked = true ) {
 /**
  * Display HTML heading (h1 .. h6) tag
  *
- * @since 1.7
+ * @since 2.0
  * @param string $title     Title to display
  * @param int    $size      Optional size, 1 to 6, defaults to 6
  * @param string $subtitle  Optional subtitle to be echoed after the title
@@ -226,7 +226,7 @@ function yourls_html_menu( $current_page = null ) {
 /**
  * Display global stats in a div
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_html_global_stats() {
 	list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
@@ -265,7 +265,7 @@ HTML;
 /**
  * Wrapper function to display label
  *
- * @since 1.7
+ * @since 2.0
  * @param string $message The message showed
  * @param string $style notice / error / info / warning / success
  */
@@ -914,7 +914,7 @@ function yourls_table_end() {
 /**
  * Echo the content start tag
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_wrapper_start() {
 	yourls_do_action( 'admin_notice' );
@@ -924,7 +924,7 @@ function yourls_wrapper_start() {
 /**
  * Echo the content end tag
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_wrapper_end() {
 	echo yourls_apply_filter( 'wrapper_end', '</div>' );
@@ -936,7 +936,7 @@ function yourls_wrapper_end() {
 /**
  * Echo the sidebar start tag
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_sidebar_start() {
 	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">
@@ -950,7 +950,7 @@ function yourls_sidebar_start() {
 /**
  * Echo the sidebar end tag
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_sidebar_end() {
 	echo yourls_apply_filter( 'sidebar_end', '</div>' );
@@ -1069,7 +1069,7 @@ function yourls_display_login_message() {
 /**
  * Close html page
  *
- * @since 1.7
+ * @since 2.0
  */
 function yourls_html_ending() {
 	yourls_do_action( 'html_ending' );
