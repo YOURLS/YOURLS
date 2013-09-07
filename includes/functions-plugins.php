@@ -431,7 +431,7 @@ function yourls_activate_plugin( $plugin ) {
 	
 	// attempt activation. TODO: uber cool fail proof sandbox like in WP.
 	ob_start();
-	include( YOURLS_PLUGINDIR.'/'.$plugin );
+	include_once( YOURLS_PLUGINDIR.'/'.$plugin );
 	if ( ob_get_length() > 0 ) {
 		// there was some output: error
 		$output = ob_get_clean();

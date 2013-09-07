@@ -1930,14 +1930,14 @@ function yourls_check_maintenance_mode() {
 	
 	global $maintenance_start;
 
-	include( $file );
+	include_once( $file );
 	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
 	if ( ( time() - $maintenance_start ) >= 600 )
 		return;
 
 	// Use any /user/maintenance.php file
 	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
-		include( YOURLS_USERDIR.'/maintenance.php' );
+		include_once( YOURLS_USERDIR.'/maintenance.php' );
 		die();
 	}
 	

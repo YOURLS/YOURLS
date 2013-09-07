@@ -820,7 +820,7 @@ function yourls_page( $page ) {
 		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
-	include( $include );
+	include_once( $include );
 	yourls_do_action( 'post_page', $page );
 	die();	
 }
