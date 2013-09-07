@@ -508,7 +508,7 @@ function yourls_html_pagination( $params = array() ) {
 }
 
 /**
- * Wrapper function to display an item' count showed
+ * Wrapper function to display how many items are shown
  * 
  * @since 2.0
  *
