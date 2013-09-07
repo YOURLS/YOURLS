@@ -23,7 +23,7 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends tester_login
+	 *
 	 */
 	public function tester_add_urls() {
 		$urls = array(
