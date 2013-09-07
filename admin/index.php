@@ -269,7 +269,7 @@ if ( !$is_bookmark ) {
 	if ( $search_sentence )
 		echo '<p>' . $search_sentence . '</p>';
 	echo '<p>';
-		printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
+		yourls_html_displaying_count( yourls__( 'URLs' ), $display_on_page, $max_on_page, $total_items );
 		if( $total_items_clicks !== false )
 			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
 	echo '.</p>';

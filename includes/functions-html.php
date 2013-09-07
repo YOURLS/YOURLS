@@ -508,6 +508,23 @@ function yourls_html_pagination( $params = array() ) {
 }
 
 /**
+ * Wrapper function to display an item' count showed
+ * 
+ * @since 2.0
+ *
+ * @param string $item_type Type of the item (e.g. "links")
+ * @param int $min_on_page
+ * @param int $max_on_page
+ * @param int $total_items Total of items in data
+ */
+function yourls_html_displaying_count( $item_type, $min_on_page, $max_on_page, $total_items ) {
+	if( $max_on_page - $min_on_page + 1 >= $total_items )
+		printf( yourls__( 'Displaying <strong class="increment">all %1$s</strong> %2$s' ), $max_on_page, $item_type );
+	else
+		printf( yourls__( 'Displaying %1$s <strong>%2$s</strong> to <strong class="increment">%3$s</strong> of <strong class="increment">%4$s</strong> in total' ), $item_type, $min_on_page, $max_on_page, $total_items );
+}
+
+/**
  * Return a select box
  *
  * @since 1.6
