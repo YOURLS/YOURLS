@@ -117,4 +117,3 @@ abstract class YOURLS_Code_Coverage extends PHPUnit_Framework_TestCase {
 		$reflector->setValue($map);
 	}
 }
-
