@@ -7,22 +7,6 @@ class YOURLS_Tests extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @requires function yourls_activate_theme
-	 */
-	public function tester_theming() {
-		$this->assertTrue( yourls_activate_theme( 'full-bootstrap' ) );
-		$this->assertTrue( yourls_activate_theme( 'default' ) );
-	}
-
-	/**
-	 * 
-	 */
-	public function tester_plugining() {
-		$this->assertTrue( yourls_activate_plugin( 'hyphens-in-urls/plugin.php' ) );
-		$this->assertTrue( yourls_deactivate_plugin( 'hyphens-in-urls/plugin.php' ) );
-	}
-
-	/**
 	 *
 	 */
 	public function tester_add_urls() {
