@@ -431,7 +431,7 @@ function yourls_load_theme( $theme ) {
 	// attempt activation of the theme's function file if there is one
 	if( is_readable( $theme_php ) ) {
 		ob_start();
-		include( $theme_php );
+		include_once( $theme_php );
 		if ( ob_get_length() > 0 ) {
 			// there was some output: error
 			$output = ob_get_clean();
