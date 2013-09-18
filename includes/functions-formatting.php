@@ -542,11 +542,18 @@ function yourls_esc_textarea( $text ) {
 * @return string
 */
 function yourls_encodeURI( $url ) {
-    return strtr( rawurlencode( $url ), array (
+	// Decode URL all the way
+	$result = yourls_rawurldecode_while_encoded( $url );
+	// Encode once
+	$result = strtr( rawurlencode( $result ), array (
         '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
 		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
 		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
     ) );
+	// @TODO:
+	// Known limit: this will most likely break IDN URLs such as http://www.académie-française.fr/
+	// To fully support IDN URLs, advocate use of a plugin.
+	return yourls_apply_filter( 'encodeURI', $result, $url );
 }
 
 /**
@@ -563,3 +570,33 @@ function yourls_backslashit($string) {
     return $string;
 }
 
+/**
+ * Check if a string seems to be urlencoded
+ *
+ * We use rawurlencode instead of urlencode to avoid messing with '+'
+ *
+ * @since 1.7
+ * @param string $string
+ * @return bool
+ */
+function yourls_is_rawurlencoded( $string ) {
+	return rawurldecode( $string ) != $string;
+}
+
+/**
+ * rawurldecode a string till it's not encoded anymore
+ *
+ * Deals with multiple encoding (eg "%2521" => "%21" => "!").
+ * See https://github.com/YOURLS/YOURLS/issues/1303
+ *
+ * @since 1.7
+ * @param string $string
+ * @return string
+ */
+function yourls_rawurldecode_while_encoded( $string ) {
+	$string = rawurldecode( $string );
+	if( yourls_is_rawurlencoded( $string ) ) {
+		$string = yourls_rawurldecode_while_encoded( $string );
+	}
+	return $string;
+}
