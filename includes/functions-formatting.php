@@ -541,12 +541,14 @@ function yourls_esc_textarea( $text ) {
 * @param $url
 * @return string
 */
-function yourls_encodeURI( $url ) {
-    return strtr( rawurlencode( $url ), array (
-        '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
+function yourls_encodeURI( $url, $decoding = true ) {
+	if ( $decoding )
+		$url = rawurldecode( $url );
+	return strtr( rawurlencode( $url ), array (
+		'%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
 		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
 		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
-    ) );
+	) );
 }
 
 /**
@@ -558,8 +560,8 @@ function yourls_encodeURI( $url ) {
  * @return string String with backslashes inserted.
  */
 function yourls_backslashit($string) {
-    $string = preg_replace('/^([0-9])/', '\\\\\\\\\1', $string);
-    $string = preg_replace('/([a-z])/i', '\\\\\1', $string);
-    return $string;
+	$string = preg_replace('/^([0-9])/', '\\\\\\\\\1', $string);
+	$string = preg_replace('/([a-z])/i', '\\\\\1', $string);
+	return $string;
 }
 
