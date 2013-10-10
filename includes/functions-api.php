@@ -15,8 +15,12 @@
  * @return array Result of API call
  */
 function yourls_api_action_delete() {
-	yourls_do_action( 'require_auth' );
-	require_once( YOURLS_INC.'/auth.php' );
+	// We don't want unauthenticated users deleting links
+	// If YOURLS is in public mode, force authentication anyway
+	if (!yourls_is_private()) {
+		yourls_do_action( 'require_auth' );
+		require_once( YOURLS_INC.'/auth.php' );
+	}
 	
 	$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
 	if (yourls_delete_link_by_keyword( $keyword ))
