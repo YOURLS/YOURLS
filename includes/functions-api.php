@@ -39,7 +39,6 @@ function yourls_api_action_delete() {
 			'errorCode' => 404,
 		);
 	}
-	unset( $return['html'] ); // in API mode, no need for our internal HTML output
 	return yourls_apply_filter( 'api_result_delete', $return );
 }
 
