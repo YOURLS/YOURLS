@@ -31,7 +31,6 @@ function yourls_api_action_delete() {
 			'message'   => 'Error: short URL not found',
 			'errorCode' => 404,
 	}
-	die (''.var_dump($return));
 	unset( $return['html'] ); // in API mode, no need for our internal HTML output
 	return yourls_apply_filter( 'api_result_delete', $return );
 }
