@@ -18,6 +18,7 @@ yourls_do_action( 'api', $action );
 // Define standard API actions
 $api_actions = array(
 	'shorturl'  => 'yourls_api_action_shorturl',
+	'delete'	=> 'yourls_api_action_delete',
 	'stats'     => 'yourls_api_action_stats',
 	'db-stats'  => 'yourls_api_action_db_stats',
 	'url-stats' => 'yourls_api_action_url_stats',

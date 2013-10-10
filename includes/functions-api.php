@@ -9,6 +9,34 @@
  */
 
 /**
+ * API function wrapper: Delete a shorturl
+ *
+ * @since prototype
+ * @return array Result of API call
+ */
+function yourls_api_action_delete() {
+	$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
+	if (yourls_delete_link_by_keyword( $keyword ))
+	{
+		$return = array(
+			'keyword'    => $keyword,
+			'statusCode' => 200,
+			'simple'     => 'deleted',
+			'message'    => 'success',
+		);
+	} else {
+		$return = array(
+			'keyword'   => $keyword,
+			'simple'    => 'not found',
+			'message'   => 'Error: short URL not found',
+			'errorCode' => 404,
+	}
+	die (''.var_dump($return));
+	unset( $return['html'] ); // in API mode, no need for our internal HTML output
+	return yourls_apply_filter( 'api_result_delete', $return );
+}
+
+/**
  * API function wrapper: Shorten a URL
  *
  * @since 1.6
