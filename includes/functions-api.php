@@ -15,6 +15,9 @@
  * @return array Result of API call
  */
 function yourls_api_action_delete() {
+	yourls_do_action( 'require_auth' );
+	require_once( YOURLS_INC.'/auth.php' );
+	
 	$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
 	if (yourls_delete_link_by_keyword( $keyword ))
 	{
@@ -30,6 +33,7 @@ function yourls_api_action_delete() {
 			'simple'    => 'not found',
 			'message'   => 'Error: short URL not found',
 			'errorCode' => 404,
+		);
 	}
 	unset( $return['html'] ); // in API mode, no need for our internal HTML output
 	return yourls_apply_filter( 'api_result_delete', $return );
