@@ -1222,7 +1222,10 @@ function yourls_allow_duplicate_longurls() {
 function yourls_get_duplicate_keywords( $longurl ) {
 	if( !yourls_allow_duplicate_longurls() )
 		return NULL;
-	
+	return yourls_get_keywords ( $longurl );
+}
+
+function yourls_get_keywords( $longurl ) {
 	global $ydb;
 	$longurl = yourls_escape( yourls_sanitize_url($longurl) );
 	$table = YOURLS_DB_TABLE_URL;
