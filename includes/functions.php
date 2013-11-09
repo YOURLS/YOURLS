@@ -1225,12 +1225,19 @@ function yourls_get_duplicate_keywords( $longurl ) {
 	return yourls_get_keywords ( $longurl );
 }
 
-function yourls_get_keywords( $longurl ) {
+function yourls_get_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
 	global $ydb;
 	$longurl = yourls_escape( yourls_sanitize_url($longurl) );
 	$table = YOURLS_DB_TABLE_URL;
 	
-	$return = $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
+	$query = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
+	// Ensure valid keyword, update as necessary
+	if ( in_array( $sort, ('keyword','title','timestamp','clicks') ) ) {
+		$query .= " ORDER BY '".$sort."'";
+		// ASC is default
+		if ( in_array( $order, ('ASC','DESC') ) ) $query .= " ".$order;
+	}
+	$return = $ydb->get_col( $query );
 	return yourls_apply_filter( 'get_duplicate_keywords', $return, $longurl );
 }
 
