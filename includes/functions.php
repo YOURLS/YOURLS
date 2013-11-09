@@ -1222,7 +1222,7 @@ function yourls_allow_duplicate_longurls() {
 function yourls_get_duplicate_keywords( $longurl ) {
 	if( !yourls_allow_duplicate_longurls() )
 		return NULL;
-	return yourls_get_keywords ( $longurl );
+	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_keywords ( $longurl ), $longurl );
 }
 
 function yourls_get_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
@@ -1236,8 +1236,7 @@ function yourls_get_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
 		$query .= " ORDER BY '".$sort."'";
 		if ( in_array( $order, ('ASC','DESC') ) ) $query .= " ".$order;
 	}
-	$return = $ydb->get_col( $query );
-	return yourls_apply_filter( 'get_duplicate_keywords', $return, $longurl );
+	return $ydb->get_col( $query );
 }
 
 /**
