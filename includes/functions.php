@@ -1231,10 +1231,9 @@ function yourls_get_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
 	$table = YOURLS_DB_TABLE_URL;
 	
 	$query = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
-	// Ensure valid keyword, update as necessary
+	// Ensure sort is a column in database (update verification array if database changes)
 	if ( in_array( $sort, ('keyword','title','timestamp','clicks') ) ) {
 		$query .= " ORDER BY '".$sort."'";
-		// ASC is default
 		if ( in_array( $order, ('ASC','DESC') ) ) $query .= " ".$order;
 	}
 	$return = $ydb->get_col( $query );
