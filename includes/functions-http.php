@@ -63,7 +63,7 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
  */
 function yourls_http_default_options() {
 	$options = array(
-		'timeout'          => '5',
+		'timeout'          => yourls_apply_filter( 'http_default_options_timeout', 3 ),
 		'useragent'        => yourls_http_user_agent(),
 		'follow_redirects' => true,
 		'redirects'        => 3,
