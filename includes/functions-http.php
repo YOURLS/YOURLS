@@ -1,29 +1,43 @@
 <?php
-// Functions that relate to HTTP stuff
+/**
+ * Functions that relate to HTTP stuff, using library Requests
+ *
+ * The goal here is to provide convenient wrapper functions to the Requests library. There are
+ * 2 types of functions for each METHOD, where METHOD is 'get' or 'post' (implement more as needed)
+ *     - yourls_http_METHOD() :
+ *         Return a complete Response object (with ->body, ->headers, ->status_code, etc...) or
+ *         a simple string (error message)
+ *     - yourls_http_METHOD_body() :
+ *         Return a string (response body) or null if there was an error
+ *
+ * TODO: global $ydb->debug_log should store the error message if any
+ *
+ * @since 1.7
+ */
 
 /**
- * Perform a GET request, return response object
+ * Perform a GET request, return response object or error string message
  *
  * Notable object properties: body, headers, status_code
  *
  * @since 1.7
  * @see yourls_http_request
- * @return object Response
+ * @return mixed Response object, or error string
  */
 function yourls_http_get( $url, $headers = array(), $data = array(), $options = array() ) {
 	return yourls_http_request( 'GET', $url, $headers, $data, $options );
 }
 
 /**
- * Perform a GET request, return body
+ * Perform a GET request, return body or null if there was an error
  *
  * @since 1.7
  * @see yourls_http_request
- * @return string body
+ * @return mixed String (page body) or null if error
  */
 function yourls_http_get_body( $url, $headers = array(), $data = array(), $options = array() ) {
 	$return = yourls_http_get( $url, $headers, $data, $options );
-	return $return->body;
+	return isset( $return->body ) ? $return->body : null;
 }
 
 /**
@@ -33,7 +47,7 @@ function yourls_http_get_body( $url, $headers = array(), $data = array(), $optio
  *
  * @since 1.7
  * @see yourls_http_request
- * @return object Response
+ * @return mixed Response object, or error string
  */
 function yourls_http_post( $url, $headers = array(), $data = array(), $options = array() ) {
 	return yourls_http_request( 'POST', $url, $headers, $data, $options );
@@ -46,17 +60,17 @@ function yourls_http_post( $url, $headers = array(), $data = array(), $options =
  *
  * @since 1.7
  * @see yourls_http_request
- * @return string body
+ * @return mixed String (page body) or null if error
  */
 function yourls_http_post_body( $url, $headers = array(), $data = array(), $options = array() ) {
 	$return = yourls_http_post( $url, $headers, $data, $options );
-	return $return->body;
+	return isset( $return->body ) ? $return->body : null;
 }
 
 /**
  * Default HTTP requests options for YOURLS
  *
- * For a list of all available options, see function request() in Requests/Requests.php
+ * For a list of all available options, see function request() in /includes/Requests/Requests.php
  *
  * @since 1.7
  * @return array Options
@@ -83,8 +97,14 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	yourls_http_load_library();
 	
 	$options = array_merge( yourls_http_default_options(), $options );
-
-	return Requests::request( $url, $headers, $data, $type, $options );
+	
+	try {
+		$result = Requests::request( $url, $headers, $data, $type, $options );
+	} catch( Requests_Exception $e ) {
+		$result = $e->getMessage();
+	};
+	
+	return $result;
 }
 
 /**
