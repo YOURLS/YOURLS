@@ -1740,39 +1740,42 @@ function yourls_get_remote_title( $url ) {
 		return $pre;
 
 	$url = yourls_sanitize_url( $url );
+	
+	// Only deal with http(s):// 
+	if( !in_array( yourls_get_protocol( $url ), array( 'http://', 'https://' ) ) )
+		return $url;	
 
 	$title = $charset = false;
 	
 	$content = yourls_http_get_body( $url );
 	
-	// If false, return url as title.
-	// Todo: improve this with temporary title when shorturl_meta available?
-	if( false === $content )
+	// If no content, return the URL
+	if( !$content )
 		return $url;
 
-	if( $content !== false ) {
-		// look for <title>
-		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
-			$title = $found[1];
-			unset( $found );
-		}
+	// look for <title>
+	if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
+		$title = $found[1];
+		unset( $found );
+	}
 
-		// look for charset
-		// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		if ( preg_match('/<meta[^>]*?charset=([^>]*?)\/?>/is', $content, $found ) ) {
-			$charset = trim($found[1], '"\' ');
-			unset( $found );
-		}
-	}
-	
-	// if title not found, guess if returned content was actually an error message
-	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
-		$title = $content;
-	}
-	
+	// No title found? Return the URL
 	if( $title == false )
-		$title = $url;
+		return $url;
 	
+	// look for charset
+	// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	/* TODO: do we *really* need to check charset? Test with & without charset conversions below against
+	 * funky page titles and see if that helps. If there's a need, then we should also check for charset in
+	 * the response headers first ( yourls_http_get( $url )->headers->getValues( 'content-type')[0] = 'text/html;charset=UTF-8')
+	 */
+	if ( preg_match('/<meta[^>]*?charset=([^>]*?)\/?>/is', $content, $found ) ) {
+		$charset = trim($found[1], '"\' ');
+		unset( $found );
+	}
+	
+	/* TODO: is that code block useless or possibly useful? Make up your mind. */
 	/*
 	if( !yourls_seems_utf8( $title ) )
 		$title = utf8_encode( $title );
