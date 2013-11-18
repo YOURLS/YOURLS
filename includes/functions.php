@@ -1241,7 +1241,7 @@ function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' )
 		$query .= " ORDER BY '".$sort."'";
 		if ( in_array( $order, array('ASC','DESC') ) ) $query .= " ".$order;
 	}
-	return yourls_apply_filter( 'yourls_get_longurl_keywords', $ydb->get_col( $query ), $longurl );
+	return yourls_apply_filter( 'get_longurl_keywords', $ydb->get_col( $query ), $longurl );
 }
 
 /**
