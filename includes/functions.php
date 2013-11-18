@@ -1223,7 +1223,7 @@ function yourls_get_duplicate_keywords( $longurl ) {
 	yourls_deprecated_function( __FUNCTION__, 1.7, 'yourls_get_longurl_keywords' );
 	if( !yourls_allow_duplicate_longurls() )
 		return NULL;
-	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_keywords ( $longurl ), $longurl );
+	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_longurl_keywords ( $longurl ), $longurl );
 }
 
 /**
@@ -1241,7 +1241,7 @@ function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' )
 		$query .= " ORDER BY '".$sort."'";
 		if ( in_array( $order, array('ASC','DESC') ) ) $query .= " ".$order;
 	}
-	return $ydb->get_col( $query );
+	return yourls_apply_filter( 'yourls_get_longurl_keywords', $ydb->get_col( $query ), $longurl );
 }
 
 /**
