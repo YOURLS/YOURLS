@@ -192,8 +192,12 @@ function yourls_add_new_link( $url, $keyword = '', $title = '') {
 	} else {
 		$return = yourls_get_or_create_link( $url, $keyword, $title, $strict_create = true );
 	}
+	if ( $return['status'] == 'fail' ) {
+		return $return;
+	}
 	
-	
+	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
+	return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
 }
 
 /**
@@ -349,9 +353,6 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 					'message'  = yourls_s( 'YOURLS function reached an invalid location' ),
 					);
 	}
-	
-	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
-	return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
 }
 
 /**
