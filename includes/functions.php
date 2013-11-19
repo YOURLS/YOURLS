@@ -188,9 +188,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '') {
 		return $pre;
 	
 	if ( !yourls_allow_duplicate_longurls() ) {
-		$return = yourls_get_or_create_link( $url, $keyword, $title );
+		$return = yourls_get_or_create_link( $url, $keyword, $title, false, false, false, true );
 	} else {
-		$return = yourls_get_or_create_link( $url, $keyword, $title, $strict_create = true );
+		$return = yourls_get_or_create_link( $url, $keyword, $title, true, false, false, true );
 	}
 	if ( $return['status'] == 'fail' ) {
 		return $return;
@@ -210,7 +210,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '') {
  * @param bool $strict_title indicates that a resource must exist using the title provided (optional, default false).  If true, title cannot be blank.
  * @return array response values (status, code, ...)
  */
-function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_create = false, $strict_keyword = false, $strict_title = false) {
+function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_create = false, $strict_keyword = false, $strict_title = false, $pre_add_new_link_actions = false) {
 	// Clean and validate parameters (url, keyword, title)
 	$url = yourls_encodeURI( $url );
 	$url = yourls_escape( yourls_sanitize_url( $url ) );
@@ -256,7 +256,9 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		}
 	}
 	
-	yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
+	if ($pre_add_new_link_actions) {
+		yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
+	}
 	
 	$return = false;
 	
