@@ -273,10 +273,10 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 					'message' => yourls_s( 'Valid keyword must be provided when $strict_keyword is enabled.' ),
 					);
 	}
-	$title = yourls_sanitize_title( $title );
+	$title_sanitized = yourls_sanitize_title( $title );
 	// Allow caller to enforce a strict (but empty) title
-	if ( !$strict_title && empty( $title ) ) {
-		$title = yourls_get_remote_title( $url );
+	if ( !$strict_title && empty( $title_sanitized ) ) {
+		$title_sanitized = yourls_get_remote_title( $url );
 	}
 	
 	// Prevent DB flood
@@ -311,7 +311,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		if ( !$strict_create && yourls_keyword_is_taken( $keyword_sanitized ) ) {
 			// If create is not strict, see if the existing entry for the requested keyword is acceptable
 			$info = yourls_get_keyword_info ( $keyword );
-			if ( $info['url'] == $url && ( !$title_strict || $title = $info['title'] ) ) {
+			if ( $info['url'] == $url && ( !$title_strict || $title_sanitized = $info['title'] ) ) {
 				// Valid match exists
 				return array(
 							'statusCode' => 200,
