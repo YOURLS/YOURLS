@@ -189,11 +189,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		return $pre;
 	
 	// All call use the $run_add_new_link_hooks parameter to ensure -- for
-	// backwards compatiblility -- that all actions and filters are run
+	// backwards compatibility -- that all actions and filters are run
 	if ( !yourls_allow_duplicate_longurls() && yourls_url_exists( $url ) ) {
 		// Return existing link regardless of keyword status
-		// URL must exist and will be returned by the default get operation so no special options are needed
-		// The hooks for add_new were added to no-keyword branch so a blank keyword is sent to ensure this branch is used
+		// URL must exist (per if condition) and will be returned by the default get operation so no special options are needed
+		// The hooks for add_new were added to the !$keyword branch so a blank keyword is sent to ensure this branch is used
 		$return = yourls_get_or_create_link( $url, '', $title, false, false, false, true );
 		// Despite returning a shortURL, original return codes are 'fail' and 'error:url'
 		$return['status']   = 'fail';
@@ -203,7 +203,8 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		// Create successfully or return 'fail' with 200 status code
 		// The requested object (or an error) is ensured using the options strict_create and strict_keyword
 		$return = yourls_get_or_create_link( $url, $keyword, $title, true, true, false, true );
-		// The original function provided less detailed error codes and a 200 status code under three (originally two) error states
+		// The original function provided less detailed error codes (adjusted below)
+		// The original function returned a 200 status code under all three (originally two) error states
 		if ($return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken')) {
 			$return['statusCode'] = 200;
 			$return['code']    = 'error:keyword';
@@ -211,9 +212,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			$return['statusCode'] = 200;
 		}
 	} elseif ( !$keyword && (  yourls_allow_duplicate_longurls() || !yourls_url_exists( $url ) ) ) {
-		// If duplicate URLs are allowed or the URL does not yet exist and no keyword is provided
+		// If no keyword is provided and duplicate URLs are allowed or
+		// If no keyword is provided and the URL does not yet exist then
 		// Create a new link using a randomly generated keyword
 		// Creation of new link is ensured by calling strict_create
+		// Keyword will be automatically generated becuase strict_keyword is defaulted to false
 		$return = yourls_get_or_create_link( $url, $keyword, $title, true, false, false, true );
 		if ($return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken') ) {
 			$return['statusCode'] = 200;
@@ -307,8 +310,8 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 	
 	$return = false;
 	
-	// Even if it is not strictly required, prefer a shorturl using the provided keyword
-	if ( $keyword_sanitized || $strict_keyword ) { // $strict_keyword is implicit in $keyword_sanetized but included for clarity
+	// Even if it is not strictly required, prefer a shorturl using the caller's keyword
+	if ( $keyword_sanitized || $strict_keyword ) { // $strict_keyword is implicit in $keyword_sanitized but included for clarity
 		if ( !$strict_create && yourls_keyword_is_taken( $keyword_sanitized ) ) {
 			// If create is not strict, see if the existing entry for the requested keyword is acceptable
 			$info = yourls_get_keyword_infos ( $keyword );
@@ -324,7 +327,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'shortulr' => YOURLS_SITE .'/'. $keyword,
 							);
 			} elseif ($strict_keyword) {
-				// Must use keyword and valid match does not exist
+				// Must use caller's keyword and valid match does not exist
 				return array(
 							'statusCode' => 403,
 							'status' => 'fail',
@@ -348,10 +351,11 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		}
 	}
 
-	// $return should only be false if:
-	// - the keyword is not strict,
-	// - the keyword is not provided, and
-	// - the provided keyword was unacceptable
+	// $return should only be false if the following are true:
+	// - the keyword is not strict
+	// - either:
+	//   - the keyword is not provided or
+	//   - the provided keyword was unacceptable
 	if ( !$return && !$strict_create) {
 		// If create is not strict, see if an acceptable keyword already exists
 		$keywords = yourls_get_longurl_keywords ( $url);
@@ -375,10 +379,11 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		}
 	}
 	
-	// $return should only be false if:
-	// - the keyword is not strict,
-	// - the keyword is not provided, and
-	// - the provided keyword was unacceptable, and
+	// $return should only be false if the following are true:
+	// - the keyword is not strict
+	// - either:
+	//   - the keyword is not provided or
+	//   - the provided keyword was unacceptable
 	// - no existing shorturls meet the caller's requirements
 	if (!$return) {
 		// Try to create an acceptable keyword
@@ -392,7 +397,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 			$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
 			$return = yourls_create_link ($url, $keyword, $title, $run_add_new_link_hooks);
 			$id++;
-			// Only loop on keyword issues.  All other issues (illegal duplicate url, db error, success) returned to caller.
+			// Only loop on resolvable keyword issues.  All other issues (illegal duplicate url, db error, success) returned to caller.
 		} while ( $return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken' ) );
 		@yourls_update_next_decimal( $id );
 		return $return;
