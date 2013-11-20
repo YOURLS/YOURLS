@@ -180,8 +180,9 @@ function yourls_url_exists( $url ) {
 
 /**
  * Find or create a shorturl for a particular long url, with the option to specify keyword and title
+ *
  */
-function yourls_add_new_link( $url, $keyword = '', $title = '') {
+function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
@@ -314,7 +315,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'title' =>  $info['title'],
 							'message'  => /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( stripslashes($url) ) ),
 							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['date'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
-							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], 0, time() ),
+							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], $info['clicks'], $info['date'] ),
 							'shortulr' => YOURLS_SITE .'/'. $keyword,
 							);
 			} elseif ($strict_keyword) {
@@ -361,8 +362,8 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'status' => 'success',
 							'title' =>  $info['title'],
 							'message' => yourls_s( 'Keyword already exists', $keyword ),
-							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['date'] , 'ip' => $info['ip'] ),
-							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], 0, time() ),
+							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['date'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
+							'html' => yourls_table_add_row( $keyword, $url, $info['title'], $info['ip'], $info['clicks'], $info['date'] ),
 							'shortulr' => YOURLS_SITE .'/'. $keyword,
 							);
 			}
