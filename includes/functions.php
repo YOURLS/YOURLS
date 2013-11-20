@@ -204,10 +204,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		// The requested object (or an error) is ensured using the options strict_create and strict_keyword
 		$return = yourls_get_or_create_link( $url, $keyword, $title, true, true, false, true );
 		// The original function provided less detailed error codes and a 200 status code under three (originally two) error states
-		if ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken') {
+		if ($return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken')) {
 			$return['statusCode'] = 200;
 			$return['code']    = 'error:keyword';
-		} elseif ($return['code'] == 'error:db') {
+		} elseif ($return['status'] == 'fail' && $return['code'] == 'error:db') {
 			$return['statusCode'] = 200;
 		}
 	} elseif ( !$keyword && (  yourls_allow_duplicate_longurls() || !yourls_url_exists( $url ) ) ) {
@@ -215,10 +215,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		// Create a new link using a randomly generated keyword
 		// Creation of new link is ensured by calling strict_create
 		$return = yourls_get_or_create_link( $url, $keyword, $title, true, false, false, true );
-		if ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken') {
+		if ($return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken') ) {
 			$return['statusCode'] = 200;
 			$return['code']    = 'error:keyword';
-		} elseif ($return['code'] == 'error:db') {
+		} elseif ($return['status'] == 'fail' && $return['code'] == 'error:db') {
 			$return['statusCode'] = 200;
 		}
 	}
@@ -310,16 +310,16 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 	if ( $keyword_sanitized || $strict_keyword ) { // $strict_keyword is implicit in $keyword_sanetized but included for clarity
 		if ( !$strict_create && yourls_keyword_is_taken( $keyword_sanitized ) ) {
 			// If create is not strict, see if the existing entry for the requested keyword is acceptable
-			$info = yourls_get_keyword_info ( $keyword );
-			if ( $info['url'] == $url && ( !$title_strict || $title_sanitized = $info['title'] ) ) {
+			$info = yourls_get_keyword_infos ( $keyword );
+			if ( $info['url'] == $url && ( !$strict_title || $title_sanitized = $info['title'] ) ) {
 				// Valid match exists
 				return array(
 							'statusCode' => 200,
 							'status' => 'success',
 							'title' =>  $info['title'],
 							'message'  => /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( stripslashes($url) ) ),
-							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['date'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
-							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], $info['clicks'], $info['date'] ),
+							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['timestamp'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
+							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], $info['clicks'], $info['timestamp'] ),
 							'shortulr' => YOURLS_SITE .'/'. $keyword,
 							);
 			} elseif ($strict_keyword) {
@@ -355,9 +355,9 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		// If create is not strict, see if an acceptable keyword already exists
 		$keywords = yourls_get_longurl_keywords ( $url);
 		foreach ($keywords as $keyword) {
-			$info = yourls_get_keyword_info ( $keyword );
+			$info = yourls_get_keyword_infos ( $keyword );
 			// URL must be correct and keyword cannot be strict
-			if ( !$title_strict || $title = $info['title'] ) {
+			if ( !$strict_title || $title = $info['title'] ) {
 				if ($run_add_new_link_hooks) {
 					yourls_do_action( 'add_new_link_already_stored', $url, $keyword, $title );
 				}
@@ -366,8 +366,8 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'status' => 'success',
 							'title' =>  $info['title'],
 							'message' => yourls_s( 'Keyword already exists', $keyword ),
-							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['date'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
-							'html' => yourls_table_add_row( $keyword, $url, $info['title'], $info['ip'], $info['clicks'], $info['date'] ),
+							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['timestamp'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
+							'html' => yourls_table_add_row( $keyword, $url, $info['title'], $info['ip'], $info['clicks'], $info['timestamp'] ),
 							'shortulr' => YOURLS_SITE .'/'. $keyword,
 							);
 			}
@@ -392,7 +392,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 			$return = yourls_create_link ($url, $keyword, $title, $run_add_new_link_hooks);
 			$id++;
 			// Only loop on keyword issues.  All other issues (illegal duplicate url, db error, success) returned to caller.
-		} while ( $return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken' );
+		} while ( $return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken' ) );
 		@yourls_update_next_decimal( $id );
 		return $return;
 	}
