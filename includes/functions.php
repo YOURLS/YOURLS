@@ -276,6 +276,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 	$title_sanitized = yourls_sanitize_title( $title );
 	// Allow caller to enforce a strict (but empty) title
 	if ( !$strict_title && empty( $title_sanitized ) ) {
+		// Sanitized inside yourls_get_remote_title()
 		$title_sanitized = yourls_get_remote_title( $url );
 	}
 	
