@@ -356,14 +356,14 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 	// - either:
 	//   - the keyword is not provided or
 	//   - the provided keyword was unacceptable
-	if ( !$return && !$strict_create) {
+	if ( !$return && !$strict_create ) {
 		// If create is not strict, see if an acceptable keyword already exists
-		$keywords = yourls_get_longurl_keywords ( $url);
-		foreach ($keywords as $keyword) {
+		$keywords = yourls_get_longurl_keywords ( $url );
+		foreach ( $keywords as $keyword ) {
 			$info = yourls_get_keyword_infos ( $keyword );
 			// URL must be correct and keyword cannot be strict
-			if ( !$strict_title || $title = $info['title'] ) {
-				if ($run_add_new_link_hooks) {
+			if ( !$strict_title || $title_sanetized = $info['title'] ) {
+				if ( $run_add_new_link_hooks ) {
 					yourls_do_action( 'add_new_link_already_stored', $url, $keyword, $title );
 				}
 				return array(
