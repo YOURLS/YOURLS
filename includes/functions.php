@@ -341,9 +341,9 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 			//  - If keyword is available, we should be able to grab it
 			if ($run_add_new_link_hooks) {
 				yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title_sanitized );
-				$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
+				$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title_sanitized );
 			}
-			return yourls_create_link ($url, $keyword, $title, $run_add_new_link_hooks);
+			return yourls_create_link ($url, $keyword, $title_sanitized, $run_add_new_link_hooks);
 			// This could theoretically be reached under a race condition (i.e.
 			// the keyword was taken since the availability check).  This 
 			// function assumes that an error at this point is fatal, as did 
@@ -394,8 +394,8 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 		$ok = false;
 		do {
 			$keyword = yourls_int2string( $id );
-			$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
-			$return = yourls_create_link ($url, $keyword, $title, $run_add_new_link_hooks);
+			$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title_sanitized );
+			$return = yourls_create_link ($url, $keyword, $title_sanitized, $run_add_new_link_hooks);
 			$id++;
 			// Only loop on resolvable keyword issues.  All other issues (illegal duplicate url, db error, success) returned to caller.
 		} while ( $return['status'] == 'fail' && ($return['code'] == 'error:keyword_reserved' || $return['code'] == 'error:keyword_taken' ) );
