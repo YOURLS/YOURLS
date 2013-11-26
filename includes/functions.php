@@ -324,7 +324,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'message'  => /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( stripslashes($url) ) ),
 							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['timestamp'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
 							'html' => yourls_table_add_row( $keyword, $url, $info['title'],  $info['ip'], $info['clicks'], $info['timestamp'] ),
-							'shortulr' => YOURLS_SITE .'/'. $keyword,
+							'shorturl' => YOURLS_SITE .'/'. $keyword,
 							);
 			} elseif ($strict_keyword) {
 				// Must use caller's keyword and valid match does not exist
@@ -373,7 +373,7 @@ function yourls_get_or_create_link( $url, $keyword = '', $title = '', $strict_cr
 							'message' => yourls_s( 'Keyword already exists', $keyword ),
 							'url' => array('keyword' => $keyword, 'url' => stripslashes($url), 'title' =>  $info['title'], 'date' => $info['timestamp'] , 'ip' => $info['ip'], 'clicks' => $info['clicks'] ),
 							'html' => yourls_table_add_row( $keyword, $url, $info['title'], $info['ip'], $info['clicks'], $info['timestamp'] ),
-							'shortulr' => YOURLS_SITE .'/'. $keyword,
+							'shorturl' => YOURLS_SITE .'/'. $keyword,
 							);
 			}
 		}
@@ -463,7 +463,7 @@ function yourls_create_link ($url, $strict_keyword, $strict_title, $run_add_new_
 						'message' => /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( stripslashes($url) ) ),
 						'url' => array('keyword' => $strict_keyword, 'url' => stripslashes($url), 'title' => stripslashes($strict_title), 'date' => date( 'Y-m-d H:i:s' ), 'ip' => yourls_get_IP() ),
 						'html' => yourls_table_add_row( $strict_keyword, $url, $strict_title, yourls_get_IP(), 0, time() ),
-						'shortulr' => YOURLS_SITE .'/'. $strict_keyword,
+						'shorturl' => YOURLS_SITE .'/'. $strict_keyword,
 						);
 		} else {
 			// Database Error
