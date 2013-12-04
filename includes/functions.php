@@ -1833,7 +1833,7 @@ function yourls_get_request() {
  * Change protocol to match current scheme used (http or https)
  *
  */
-function yourls_match_current_protocol( $url, $normal = 'http', $ssl = 'https' ) {
+function yourls_match_current_protocol( $url, $normal = 'http://', $ssl = 'https://' ) {
 	if( yourls_is_ssl() )
 		$url = str_replace( $normal, $ssl, $url );
 	return yourls_apply_filter( 'match_current_protocol', $url );
