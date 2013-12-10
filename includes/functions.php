@@ -1816,15 +1816,7 @@ function yourls_get_request() {
 	if( $request !== null )
 		return $request;
 	
-	// Ignore protocol & www. prefix
-	$root = str_replace( array( 'https://', 'http://', 'https://www.', 'http://www.' ), '', YOURLS_SITE );
-	// Case insensitive comparison of the YOURLS root to match both http://Sho.rt/blah and http://sho.rt/blah
-	$request = preg_replace( "!$root/!i", '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 1 );
-
-	// Unless request looks like a full URL (ie request is a simple keyword) strip query string
-	if( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
-		$request = current( explode( '?', $request ) );
-	}
+        $request = $_GET['short'];
 	
 	return yourls_apply_filter( 'get_request', $request );
 }
