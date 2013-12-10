@@ -2,6 +2,9 @@
 ## YOURLS
 ############
 
+# Libraries
+vendor/
+
 # Configuration
 user/*
 !user/config-sample.php
