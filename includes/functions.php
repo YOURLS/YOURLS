@@ -1264,9 +1264,11 @@ function yourls_check_IP_flood( $ip = '' ) {
 
 	yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
+	// Raise white flag if installing or if no flood delay defined
 	if(
 		( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
-		!defined('YOURLS_FLOOD_DELAY_SECONDS')
+		!defined('YOURLS_FLOOD_DELAY_SECONDS') ||
+		yourls_is_installing()
 	)
 		return true;
 
