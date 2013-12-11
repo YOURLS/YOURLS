@@ -1216,19 +1216,32 @@ function yourls_allow_duplicate_longurls() {
 }
 
 /**
- * Return list of all shorturls associated to the same long URL. Returns NULL or array of keywords.
+ * @deprecated Return list of all shorturls associated to the same long URL. Returns NULL or array of keywords.
  *
  */
 function yourls_get_duplicate_keywords( $longurl ) {
+	yourls_deprecated_function( __FUNCTION__, 1.7, 'yourls_get_longurl_keywords' );
 	if( !yourls_allow_duplicate_longurls() )
 		return NULL;
-	
+	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_longurl_keywords ( $longurl ), $longurl );
+}
+
+/**
+ * Return list of keywords that redirect to the submitted long URL. Returns array of keywords.
+ *
+ */
+function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
 	global $ydb;
 	$longurl = yourls_escape( yourls_sanitize_url($longurl) );
 	$table = YOURLS_DB_TABLE_URL;
 	
-	$return = $ydb->get_col( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'" );
-	return yourls_apply_filter( 'get_duplicate_keywords', $return, $longurl );
+	$query = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
+	// Ensure sort is a column in database (update verification array if database changes)
+	if ( in_array( $sort, array('keyword','title','timestamp','clicks') ) ) {
+		$query .= " ORDER BY '".$sort."'";
+		if ( in_array( $order, array('ASC','DESC') ) ) $query .= " ".$order;
+	}
+	return yourls_apply_filter( 'get_longurl_keywords', $ydb->get_col( $query ), $longurl );
 }
 
 /**
