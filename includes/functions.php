@@ -1272,8 +1272,12 @@ function yourls_check_IP_flood( $ip = '' ) {
 	)
 		return true;
 
-	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
-
+	// Don't throttle logged in users
+	if( yourls_is_private() ) {
+		 if( yourls_is_valid_user() === true )
+			return true;
+	}
+	
 	// Don't throttle whitelist IPs
 	if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
 		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
@@ -1284,12 +1288,8 @@ function yourls_check_IP_flood( $ip = '' ) {
 		}
 	}
 	
-	// Don't throttle logged in users
-	if( yourls_is_private() ) {
-		 if( yourls_is_valid_user() === true )
-			return true;
-	}
-	
+	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
+
 	yourls_do_action( 'check_ip_flood', $ip );
 	
 	global $ydb;
