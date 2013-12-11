@@ -400,6 +400,10 @@ function yourls_store_cookie( $user = null ) {
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 
+	// Some browser refuse to store localhost cookie
+	if ( $domain == 'localhost' ) 
+		$domain = '';
+   
 	if ( !headers_sent() ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
