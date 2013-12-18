@@ -111,6 +111,7 @@ require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
 require_once( YOURLS_INC.'/functions-http.php' );
+require_once( YOURLS_INC.'/functions-update.php' );
 require_once( YOURLS_INC.'/functions-infos.php' );
 
 // Load auth functions if needed
