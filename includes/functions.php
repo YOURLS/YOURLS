@@ -1127,6 +1127,7 @@ function yourls_delete_option( $name ) {
 	yourls_do_action( 'delete_option', $name );
 		
 	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
+	unset( $ydb->option[ $name ] );
 	return true;
 }
 
