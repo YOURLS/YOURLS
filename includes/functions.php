@@ -1131,16 +1131,18 @@ function yourls_delete_option( $name ) {
 }
 
 
-
 /**
  * Serialize data if needed. Stolen from WordPress
  *
+ * @since 1.4
+ * @param mixed $data Data that might be serialized.
+ * @return mixed A scalar data
  */
 function yourls_maybe_serialize( $data ) {
 	if ( is_array( $data ) || is_object( $data ) )
 		return serialize( $data );
 
-	if ( yourls_is_serialized( $data ) )
+	if ( yourls_is_serialized( $data, false ) )
 		return serialize( $data );
 
 	return $data;
@@ -1149,29 +1151,57 @@ function yourls_maybe_serialize( $data ) {
 /**
  * Check value to find if it was serialized. Stolen from WordPress
  *
+ * @since 1.4
+ * @param mixed $data Value to check to see if was serialized.
+ * @param bool $strict Optional. Whether to be strict about the end of the string. Defaults true.
+ * @return bool False if not serialized and true if it was.
  */
-function yourls_is_serialized( $data ) {
+function yourls_is_serialized( $data, $strict = true ) {
 	// if it isn't a string, it isn't serialized
-	if ( !is_string( $data ) )
+	if ( ! is_string( $data ) )
 		return false;
 	$data = trim( $data );
-	if ( 'N;' == $data )
+	 if ( 'N;' == $data )
 		return true;
-	if ( !preg_match( '/^([adObis]):/', $data, $badions ) )
+	$length = strlen( $data );
+	if ( $length < 4 )
 		return false;
-	switch ( $badions[1] ) {
+	if ( ':' !== $data[1] )
+		return false;
+	if ( $strict ) {
+		$lastc = $data[ $length - 1 ];
+		if ( ';' !== $lastc && '}' !== $lastc )
+			return false;
+	} else {
+		$semicolon = strpos( $data, ';' );
+		$brace	 = strpos( $data, '}' );
+		// Either ; or } must exist.
+		if ( false === $semicolon && false === $brace )
+			return false;
+		// But neither must be in the first X characters.
+		if ( false !== $semicolon && $semicolon < 3 )
+			return false;
+		if ( false !== $brace && $brace < 4 )
+			return false;
+	}
+	$token = $data[0];
+	switch ( $token ) {
+		case 's' :
+			if ( $strict ) {
+				if ( '"' !== $data[ $length - 2 ] )
+					return false;
+			} elseif ( false === strpos( $data, '"' ) ) {
+				return false;
+			}
+			// or else fall through
 		case 'a' :
 		case 'O' :
-		case 's' :
-			if ( preg_match( "/^{$badions[1]}:[0-9]+:.*[;}]\$/s", $data ) )
-				return true;
-			break;
+			return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
 		case 'b' :
 		case 'i' :
 		case 'd' :
-			if ( preg_match( "/^{$badions[1]}:[0-9.E-]+;\$/", $data ) )
-				return true;
-			break;
+			$end = $strict ? '$' : '';
+			return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
 	}
 	return false;
 }
@@ -1179,6 +1209,9 @@ function yourls_is_serialized( $data ) {
 /**
  * Unserialize value only if it was serialized. Stolen from WP
  *
+ * @since 1.4
+ * @param string $original Maybe unserialized original, if is needed.
+ * @return mixed Unserialized data can be any type.
  */
 function yourls_maybe_unserialize( $original ) {
 	if ( yourls_is_serialized( $original ) ) // don't attempt to unserialize data that wasn't serialized going in
