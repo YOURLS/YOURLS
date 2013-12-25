@@ -20,7 +20,6 @@ class Option_Format extends PHPUnit_Framework_TestCase {
 			serialize(-25),
 			serialize(25),
 			serialize(1.1),
-			serialize(2.1E+43),
 			serialize('this string will be serialized'),
 			serialize("a\nb"),
 			serialize(array()),
