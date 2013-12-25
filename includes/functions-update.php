@@ -17,8 +17,7 @@
  *    - version_checked : installed YOURLS version that was last checked
  *
  * @since 1.7
- * @param unknown_type $a    TODO
- * @return unknown           TODO
+ * @return boolean True if api.yourls.org successfully requested, false otherwise
  */
 function yourls_check_core_version() {
 
@@ -30,9 +29,10 @@ function yourls_check_core_version() {
 	$checks = yourls_get_option( 'core_version_checks' );
 	
 	// Invalidate check data when YOURLS version changes
-	if ( is_object( $checks ) && YOURLS_VERSION != $checks->version_checked )
+	if ( is_object( $checks ) && YOURLS_VERSION != $checks->version_checked ) {
 		$checks = false;
-
+	}
+	
 	if( !is_object( $checks ) ) {
 		$checks = new stdClass;
 		$checks->failed_attempts = 0;
@@ -41,15 +41,16 @@ function yourls_check_core_version() {
 		$checks->version_checked = YOURLS_VERSION;
 	}
 
-	// Config file location ('/user' or '/includes')
+	// Config file location ('u' for '/user' or 'i' for '/includes')
 	$conf_loc = str_replace( YOURLS_ABSPATH, '', YOURLS_CONFIGFILE );
 	$conf_loc = str_replace( '/config.php', '', $conf_loc );
+	$conf_loc = ( $conf_loc == '/user' ? 'u' : 'i' );
 		
 	// The collection of stuff to report
 	$stuff = array(
 		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),
 
-		'failed_attempts'    => $checks['failed'],
+		'failed_attempts'    => $checks->failed_attempts,
 		'yourls_site'        => YOURLS_SITE,
 		'yourls_version'     => YOURLS_VERSION,
 		'php_version'        => phpversion(),
@@ -57,15 +58,15 @@ function yourls_check_core_version() {
 		'locale'             => yourls_get_locale(),
 
 		'db_driver'          => YOURLS_DB_DRIVER,
-		'db_ext_pdo'         => extension_loaded( 'pdo_mysql' ),
-		'db_ext_mysql'       => extension_loaded( 'mysql' ),
-		'db_ext_mysqli'      => extension_loaded( 'mysqli' ),
-		'ext_curl'           => extension_loaded( 'curl' ),
+		'db_ext_pdo'         => extension_loaded( 'pdo_mysql' ) ? 1 : 0,
+		'db_ext_mysql'       => extension_loaded( 'mysql' )     ? 1 : 0,
+		'db_ext_mysqli'      => extension_loaded( 'mysqli' )    ? 1 : 0,
+		'ext_curl'           => extension_loaded( 'curl' )      ? 1 : 0,
 
 		'num_users'          => count( $yourls_user_passwords ),
 		'config_location'    => $conf_loc,
-		'yourls_private'     => YOURLS_PRIVATE,
-		'yourls_unique'      => YOURLS_UNIQUE_URLS,
+		'yourls_private'     => YOURLS_PRIVATE     ? 1 : 0,
+		'yourls_unique'      => YOURLS_UNIQUE_URLS ? 1 : 0,
 		'yourls_url_convert' => YOURLS_URL_CONVERT,
 		'num_active_plugins' => yourls_has_active_plugins(),
 	);
@@ -73,14 +74,14 @@ function yourls_check_core_version() {
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
 	
 	// Send it in
+	$checks->last_attempt = time();
 	$url = 'https://api.yourls.org/core/version/1.0/';
 	$req = yourls_http_post( $url, array(), $stuff );
-	$checks->last_attempt = time();
 	
 	// Unexpected results ?
 	if( is_string( $req ) or !$req->success ) {
-		$checks->failed_attempts++;
-		$checks->last_result  = '';
+		$checks->failed_attempts = $checks->failed_attempts + 1;
+		$checks->last_result     = '';
 		yourls_update_option( 'core_version_checks', $checks );
 		return false;
 	}
@@ -88,12 +89,18 @@ function yourls_check_core_version() {
 	// Parse response
 	$json = json_decode( trim( $req->body ) );
 	
-	// All went OK - mark this down!
-	$checks->failed_attempts = 0;
-	$checks->last_result     = $json;
-	yourls_update_option( 'core_version_checks', $checks );
+	if( isset( $json->latest ) && isset( $json->zipurl ) ) {
+		// All went OK - mark this down
+		$checks->failed_attempts = 0;
+		$checks->last_result     = $json;
+		$checks->version_checked = YOURLS_VERSION;
+		yourls_update_option( 'core_version_checks', $checks );
+		
+		return true;
+	}
 	
-	return true;
+	// Request returned actual result, but not what we expected
+	return false;	
 }
 
 
@@ -108,31 +115,16 @@ function yourls_check_core_version() {
  */
 function yourls_maybe_check_core_version() {
 
-	/* We check if we're viewing an admin page and one of these cases:
-	 - no check data (never checked)
+	/* Let's check if :
+	 - we're viewing an admin page
+	 AND one of these cases:
+	 - last_result not set
 	 - failed_attempts = 0 && last_attempt > 24h  ( 24 * 3600 > ( time() - $check->last_attempt )
 	 - failed_attempts > 0 && last_attempt >  2h
 	 - version_checked != YOURLS_VERSION
 	 
-	 In the future, check with cronjob emulation instead of limiting to when viewing an admin page
+	 In the future, maybe check with cronjob emulation instead of limiting to when viewing an admin page
 	*/
 	
-	== blah i was last here ==
-
-	$checks = yourls_get_option( 'core_version_checks' );
-	
-	if( !$checks )
-		yourls_check_core_version();
-		
-	
-		
-		
-	if ( isset( $$checks->last_checked ) &&
-        12 * HOUR_IN_SECONDS > ( time() - $current->last_checked ) &&
-        isset( $current->version_checked ) &&
-        $current->version_checked == $wp_version )
-        return;
-
-	yourls_check_core_version();
 
 }
