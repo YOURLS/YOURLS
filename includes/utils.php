@@ -5,6 +5,17 @@
  */
 
 /**
+ * Return a random string (for option name, etc...)
+ *
+ * @since 0.1
+ * @param string $len Optional string length
+ * @return string Random string
+ */ 
+function rand_str( $len=32 ) {
+	return substr( md5( uniqid( rand() ) ), 0, $len );
+}
+
+/**
  * Check if we are running locally (someone typed 'phpunit' in a shell) or in Travis. Return true if local.
  *
  * @since 0.1
