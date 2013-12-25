@@ -10,7 +10,7 @@ class Themes_Tests extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */
 	public function test_get_themes() {
-		$themes = array_keys( yourls_get_plugins( 'themes' ) );
+		$themes = array_keys( yourls_get_themes() );
 		$this->assertNotEmpty( $themes );
 
 		// Pick one random theme
