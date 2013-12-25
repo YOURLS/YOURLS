@@ -1049,6 +1049,13 @@ function yourls_get_all_options() {
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
+	
+	$option_name = trim( $option_name );
+	if ( empty( $option_name ) )
+		return false;
+		
+	if ( is_object( $newvalue ) )
+		$newvalue = clone $newvalue;
 
 	$safe_option_name = yourls_escape( $option_name );
 
@@ -1089,6 +1096,14 @@ function yourls_update_option( $option_name, $newvalue ) {
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
+	
+	$name = trim( $name );
+	if ( empty( $name ) )
+		return false;
+		
+	if ( is_object( $value ) )
+		$value = clone $value;
+	
 	$safe_name = yourls_escape( $name );
 
 	// Make sure the option doesn't already exist
