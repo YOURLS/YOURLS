@@ -1057,9 +1057,9 @@ function yourls_update_option( $option_name, $newvalue ) {
 	if ( is_object( $newvalue ) )
 		$newvalue = clone $newvalue;
 
-	$safe_option_name = yourls_escape( $option_name );
+	$option_name = yourls_escape( $option_name );
 
-	$oldvalue = yourls_get_option( $safe_option_name );
+	$oldvalue = yourls_get_option( $option_name );
 
 	// If the new and old values are the same, no need to update.
 	if ( $newvalue === $oldvalue )
@@ -1104,15 +1104,15 @@ function yourls_add_option( $name, $value = '' ) {
 	if ( is_object( $value ) )
 		$value = clone $value;
 	
-	$safe_name = yourls_escape( $name );
+	$name = yourls_escape( $name );
 
 	// Make sure the option doesn't already exist
-	if ( false !== yourls_get_option( $safe_name ) )
+	if ( false !== yourls_get_option( $name ) )
 		return false;
 
 	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
 
-	yourls_do_action( 'add_option', $safe_name, $_value );
+	yourls_do_action( 'add_option', $name, $_value );
 
 	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
 	$ydb->option[ $name ] = $value;
