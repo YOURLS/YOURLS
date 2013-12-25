@@ -1054,6 +1054,7 @@ function yourls_update_option( $option_name, $newvalue ) {
 	if ( empty( $option_name ) )
 		return false;
 		
+	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
 	if ( is_object( $newvalue ) )
 		$newvalue = clone $newvalue;
 
@@ -1100,7 +1101,8 @@ function yourls_add_option( $name, $value = '' ) {
 	$name = trim( $name );
 	if ( empty( $name ) )
 		return false;
-		
+	
+	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
 	if ( is_object( $value ) )
 		$value = clone $value;
 	
