@@ -65,8 +65,12 @@ class Option_Format extends PHPUnit_Framework_TestCase {
 	public function test_string_to_int_to_string() {
 		// 10 random strings that do not start with a zero
 		$rnd = array();
-		for( $i=0; $i<10; $i++ ) {
-			$rnd[]= ltrim( rand_str( mt_rand( 2, 10 ) ), '0' );
+		$i = 0;
+		while( $i < 10 ) {
+			if( $notempty = ltrim( rand_str( mt_rand( 2, 10 ) ), '0' ) ) {
+				$rnd[]= $notempty;
+				$i++;
+			}
 		}
 	
 		foreach( $rnd as $string ) {
