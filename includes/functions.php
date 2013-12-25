@@ -971,6 +971,12 @@ function yourls_get_current_version_from_sql() {
 /**
  * Read an option from DB (or from cache if available). Return value or $default if not found
  *
+ * Pretty much stolen from WordPress
+ *
+ * @since 1.4
+ * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param mixed $default Optional value to return if option doesn't exist. Default false.
+ * @return mixed Value set for the option.
  */
 function yourls_get_option( $option_name, $default = false ) {
 	global $ydb;
@@ -999,6 +1005,11 @@ function yourls_get_option( $option_name, $default = false ) {
 /**
  * Read all options from DB at once
  *
+ * The goal is to read all option at once and then populate array $ydb->option, to prevent further
+ * SQL queries if we need to read an option value later.
+ * It's also a simple check whether YOURLS is installed or not (no option = assuming not installed)
+ *
+ * @since 1.4
  */
 function yourls_get_all_options() {
 	global $ydb;
@@ -1028,6 +1039,12 @@ function yourls_get_all_options() {
 /**
  * Update (add if doesn't exist) an option to DB
  *
+ * Pretty much stolen from WordPress
+ *
+ * @since 1.4
+ * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param mixed $newvalue Option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
+ * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
@@ -1062,6 +1079,12 @@ function yourls_update_option( $option_name, $newvalue ) {
 /**
  * Add an option to the DB
  *
+ * Pretty much stolen from WordPress
+ *
+ * @since 1.4
+ * @param string $option Name of option to add. Expected to not be SQL-escaped.
+ * @param mixed $value Optional option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
+ * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
@@ -1070,7 +1093,7 @@ function yourls_add_option( $name, $value = '' ) {
 
 	// Make sure the option doesn't already exist
 	if ( false !== yourls_get_option( $safe_name ) )
-		return;
+		return false;
 
 	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
 
@@ -1078,13 +1101,18 @@ function yourls_add_option( $name, $value = '' ) {
 
 	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
 	$ydb->option[ $name ] = $value;
-	return;
+	return true;
 }
 
 
 /**
  * Delete an option from the DB
  *
+ * Pretty much stolen from WordPress
+ *
+ * @since 1.4
+ * @param string $option Option name to delete. Expected to not be SQL-escaped.
+ * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
 	global $ydb;
