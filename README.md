@@ -1,11 +1,14 @@
-YOURLS Unit Tests
+YOURLS Unit Tests <img src="https://api.travis-ci.org/YOURLS/YOURLS-unit-tests.png?branch=master" />
 =================
+
+
 
 About
 -----
-*v0.1.0* - do not use.  
+*v0.1* - **work in progress**
+
 Things may not even look remotely like this when this gets somewhere.  
-If that gets somewhere.  
+
 
 Tests
 -----------
@@ -25,13 +28,13 @@ $ phpunit
 
 Notes
 -----
-When run locally (as opposed to when in the [Travis-CI environment](https://travis-ci.org/YOURLS/YOURLS)) the test script will
-start by dropping all tables in the selected database. Again, do not use an existing database.
+When run locally (as opposed to when in the [Travis-CI environment](https://travis-ci.org/YOURLS/YOURLS)) the
+test script will start by dropping all tables in the selected database. Again, **do not use an existing database**.
 
 Test cases live in the `tests/` subdirectory. All files in that directory will be included by default.  
-PHPUnit will initialize and install a (more or less) complete running copy of YOURLS each time it is run. This makes it possible to
-run functional interface and module tests against a fully working database and codebase, as opposed to pure unit tests with mock
-objects and stubs. Pure unit tests may be used also, of course.
+PHPUnit will initialize and install a (more or less) complete running copy of YOURLS each time it is run. This
+makes it possible to run functional interface and module tests against a fully working database and codebase,
+as opposed to pure unit tests with mock objects and stubs. Pure unit tests may be used also, of course.
 
-PHPUnit supports both `phpunit.xml` and `phpunit.xml.dist`, where `phpunit.xml` has higher priority: if you want to specify
-your own settings, copy `phpunit.xml.dist` to `phpunit.xml` and edit that file.
+PHPUnit supports both `phpunit.xml` and `phpunit.xml.dist`, where `phpunit.xml` has higher priority:
+if you want to specify your own settings, copy `phpunit.xml.dist` to `phpunit.xml` and edit that file.
