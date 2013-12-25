@@ -1,4 +1,4 @@
-YOURLS Unit Tests <img src="https://api.travis-ci.org/YOURLS/YOURLS-unit-tests.png?branch=master" />
+YOURLS Unit Tests [![Build Status](https://api.travis-ci.org/YOURLS/YOURLS-unit-tests.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS-unit-tests)
 =================
 
 
