@@ -239,9 +239,6 @@ function yourls_http_user_agent() {
  */
 function yourls_check_core_version() {
 
-	if( defined( 'YOURLS_NO_VERSION_CHECK' ) && YOURLS_NO_VERSION_CHECK )
-		return false;
-		
 	global $ydb, $yourls_user_passwords;
 	
 	$checks = yourls_get_option( 'core_version_checks' );
@@ -292,14 +289,15 @@ function yourls_check_core_version() {
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
 	
 	// Send it in
-	$checks->last_attempt = time();
 	$url = 'https://api.yourls.org/core/version/1.0/';
 	$req = yourls_http_post( $url, array(), $stuff );
 	
+	$checks->last_attempt = time();
+	$checks->version_checked = YOURLS_VERSION;
+
 	// Unexpected results ?
 	if( is_string( $req ) or !$req->success ) {
 		$checks->failed_attempts = $checks->failed_attempts + 1;
-		$checks->last_result     = '';
 		yourls_update_option( 'core_version_checks', $checks );
 		return false;
 	}
@@ -311,7 +309,6 @@ function yourls_check_core_version() {
 		// All went OK - mark this down
 		$checks->failed_attempts = 0;
 		$checks->last_result     = $json;
-		$checks->version_checked = YOURLS_VERSION;
 		yourls_update_option( 'core_version_checks', $checks );
 		
 		return true;
@@ -323,26 +320,52 @@ function yourls_check_core_version() {
 
 
 /**
- * Determine if we need to check for a newer YOURLS version
+ * Determine if we want to check for a newer YOURLS version
  *
- * Longer description
+ * Currently checks are performed every 24h and only when someone is visiting an admin page.
+ * In the future (1.8?) maybe check with cronjob emulation instead.
  *
- * @since
+ * @since 1.7
  * @param unknown_type $a    TODO
  * @return unknown           TODO
  */
 function yourls_maybe_check_core_version() {
 
-	/* Let's check if :
-	 - we're viewing an admin page
-	 AND one of these cases:
-	 - last_result not set
-	 - failed_attempts = 0 && last_attempt > 24h  ( 24 * 3600 > ( time() - $check->last_attempt )
-	 - failed_attempts > 0 && last_attempt >  2h
-	 - version_checked != YOURLS_VERSION
-	 
-	 In the future, maybe check with cronjob emulation instead of limiting to when viewing an admin page
+	if( defined( 'YOURLS_NO_VERSION_CHECK' ) && YOURLS_NO_VERSION_CHECK )
+		return false;
+
+	if( !yourls_is_admin() )
+		return false;
+
+	$checks = yourls_get_option( 'core_version_checks' );
+	
+	/* We don't want to check if :
+	 - last_result is set (a previous check was performed)
+	 - and it was less than 24h ago (or less than 2h ago if it wasn't successful)
+	 - and version checked matched version running
+	 Otherwise, we want to check.
+	*/
+	if( isset( $checks->last_result )
+		AND
+		( 
+			( $checks->failed_attempts == 0 && ( ( time() - $checks->last_attempt ) < 24 * 3600 ) )
+			OR
+			( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) < 2  * 3600 ) )
+		)
+		AND ( $checks->version_checked == YOURLS_VERSION )
+	)
+		return false;
+
+	// We want to check if there's a new version
+	
+	// TODO
+	/*
+	- $checked = yourls_check_core_version();
+	- if true, fine
+	- if false: do we have any ancient data to play with anyway?
+		- if no: exit, return false
+	- display admin notice with newer version message?
 	*/
 	
-
+	return true;
 }
