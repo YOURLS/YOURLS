@@ -15,8 +15,6 @@
  *     - yourls_http_METHOD_body() :
  *         Return a string (response body) or null if there was an error
  *
- * TODO: global $ydb->debug_log should store the error message if any
- *
  * @since 1.7
  */
 
@@ -106,7 +104,7 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {
-		$result = $e->getMessage();
+		$result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
 	};
 	
 	return $result;
