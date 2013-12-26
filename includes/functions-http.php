@@ -75,6 +75,9 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
  *
  * For a list of all available options, see function request() in /includes/Requests/Requests.php
  *
+ * @uses YOURLS_PROXY
+ * @uses YOURLS_PROXY_USERNAME
+ * @uses YOURLS_PROXY_PASSWORD
  * @since 1.7
  * @return array Options
  */
@@ -85,8 +88,71 @@ function yourls_http_default_options() {
 		'follow_redirects' => true,
 		'redirects'        => 3,
 	);
+	
+	if( defined( 'YOURLS_PROXY' ) ) {
+		if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
+			$options['proxy'] = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
+		} else {
+			$options['proxy'] = YOURLS_PROXY;
+		}
+	}
 
 	return yourls_apply_filter( 'http_default_options', $options );	
+}
+
+/**
+ * Whether URL should be sent through the proxy server.
+ *
+ * Concept stolen from WordPress. The idea is to allow some URLs, including localhost and the YOURLS install itself,
+ * to be requested directly and bypassing any defined proxy.
+ *
+ * @uses YOURLS_PROXY
+ * @uses YOURLS_PROXY_BYPASS_HOSTS
+ * @since 1.7
+ * @param string $url URL to check
+ * @return bool true to request through proxy, false to request directly
+ */
+function yourls_send_through_proxy( $url ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_send_through_proxy', null, $url );
+	if ( null !== $pre )
+		return $pre;
+
+	$check = @parse_url( $url );
+	
+	// Malformed URL, can not process, but this could mean ssl, so let through anyway.
+	if ( $check === false )
+		return true;
+	
+	// Self and loopback URLs are considered local (':' is parse_url() host on '::1')
+	$home = parse_url( YOURLS_SITE );
+	$local = array( 'localhost', '127.0.0.1', '127.1', '[::1]', ':', $home['host'] );
+	
+	if( in_array( $check['host'], $local ) )
+		return false;
+		
+	if ( !defined( 'YOURLS_PROXY_BYPASS_HOSTS' ) )
+		return true;
+	
+	// Check YOURLS_PROXY_BYPASS_HOSTS
+	static $bypass_hosts;
+	static $wildcard_regex = false;
+	if ( null == $bypass_hosts ) {
+			$bypass_hosts = preg_split( '|,\s*|', YOURLS_PROXY_BYPASS_HOSTS );
+
+			if ( false !== strpos( YOURLS_PROXY_BYPASS_HOSTS, '*' ) ) {
+					$wildcard_regex = array();
+					foreach ( $bypass_hosts as $host )
+							$wildcard_regex[] = str_replace( '\*', '.+', preg_quote( $host, '/' ) );
+					$wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
+			}
+	}
+
+	if ( !empty( $wildcard_regex ) )
+		return !preg_match( $wildcard_regex, $check['host'] );
+	else
+		return !in_array( $check['host'], $bypass_hosts );
 }
 
 /**
@@ -100,6 +166,9 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	yourls_http_load_library();
 	
 	$options = array_merge( yourls_http_default_options(), $options );
+	
+	if( defined( 'YOURLS_PROXY' ) && !yourls_send_through_proxy( $url ) )
+		unset( $options['proxy'] );
 	
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
