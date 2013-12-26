@@ -2183,3 +2183,19 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 function yourls_return_if_not_empty_string( $val ) {
 	return( $val !== '' );
 }
+
+/**
+ * Add a message to the debug log
+ *
+ * When in debug mode ( YOURLS_DEBUG == true ) the debug log is echoed in yourls_html_footer()
+ * Log messages are appended to $ydb->debug_log array, which is instanciated within class ezSQLcore_YOURLS
+ *
+ * @since 1.7
+ * @param string $msg Message to add to the debug log
+ * @return string The message itself
+ */
+function yourls_debug_log( $msg ) {
+	global $ydb;
+	$ydb->debug_log[] = $msg;
+	return $msg;
+}

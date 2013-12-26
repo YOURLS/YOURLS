@@ -182,8 +182,7 @@ function yourls_hash_passwords_now( $config_file ) {
 			$configdata = preg_replace( $pattern, $replace, $configdata, -1, $count );
 			// There should be exactly one replacement. Otherwise, fast fail.
 			if ( $count != 1 ) {
-				global $ydb;
-				$ydb->debug_log[] = "Problem with preg_replace for password hash of user $user";
+				yourls_debug_log( "Problem with preg_replace for password hash of user $user" );
 				return 'preg_replace problem';
 			}
 		}
@@ -194,8 +193,7 @@ function yourls_hash_passwords_now( $config_file ) {
 	
 	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
-		global $ydb;
-		$ydb->debug_log[] = "Failed writing to " . $config_file;
+		yourls_debug_log( 'Failed writing to ' . $config_file );
 		return 'could not write file';
 	}
 	return true;
