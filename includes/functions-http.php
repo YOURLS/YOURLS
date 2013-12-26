@@ -71,6 +71,17 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
 }
 
 /**
+ * Check if a proxy is defined for HTTP requests
+ *
+ * @uses YOURLS_PROXY
+ * @since 1.7
+ * @return bool true if a proxy is defined, false otherwise
+ */
+function yourls_http_proxy_is_defined() {
+	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
+}
+
+/**
  * Default HTTP requests options for YOURLS
  *
  * For a list of all available options, see function request() in /includes/Requests/Requests.php
@@ -89,7 +100,7 @@ function yourls_http_default_options() {
 		'redirects'        => 3,
 	);
 	
-	if( defined( 'YOURLS_PROXY' ) ) {
+	if( yourls_http_proxy_is_defined() ) {
 		if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
 			$options['proxy'] = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
 		} else {
@@ -167,7 +178,7 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	
 	$options = array_merge( yourls_http_default_options(), $options );
 	
-	if( defined( 'YOURLS_PROXY' ) && !yourls_send_through_proxy( $url ) )
+	if( yourls_http_proxy_is_defined() && !yourls_send_through_proxy( $url ) )
 		unset( $options['proxy'] );
 	
 	try {
