@@ -11,12 +11,12 @@ $success = array();
 // Check pre-requisites
 if ( !yourls_check_database_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'MySQL' );
-	$ydb->debug_log[] = 'MySQL version: ' . yourls_get_database_version();
+	yourls_debug_log( 'MySQL version: ' . yourls_get_database_version() );
 }
 
 if ( !yourls_check_php_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
-	$ydb->debug_log[] = 'PHP version: ' . phpversion();
+	yourls_debug_log( 'PHP version: ' . phpversion() );
 }
 
 // Is YOURLS already installed ?
