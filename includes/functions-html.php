@@ -885,8 +885,8 @@ function yourls_new_core_version_notice() {
 	$checks = yourls_get_option( 'core_version_checks' );
 	
 	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
-		yourls_add_notice( $checks->last_result->latest . ' : '. $checks->last_result->zipurl );
+		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $checks->last_result->latest );
+		yourls_add_notice( $msg );
 	}
 }
-
 
