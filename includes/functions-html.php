@@ -871,3 +871,22 @@ function yourls_l10n_calendar_strings() {
 	yourls__( 'Today' );
 	yourls__( 'Close' );
 }
+
+
+/**
+ * Display a notice if there is a newer version of YOURLS available
+ *
+ * @since 1.7
+ */
+function yourls_new_core_version_notice() {
+
+	yourls_debug_log( 'Check for new version: ' . ( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
+	
+	$checks = yourls_get_option( 'core_version_checks' );
+	
+	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
+		yourls_add_notice( $checks->last_result->latest . ' : '. $checks->last_result->zipurl );
+	}
+}
+
+

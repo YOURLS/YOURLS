@@ -235,7 +235,7 @@ function yourls_http_user_agent() {
  *    - version_checked : installed YOURLS version that was last checked
  *
  * @since 1.7
- * @return boolean True if api.yourls.org successfully requested, false otherwise
+ * @return mixed JSON data if api.yourls.org successfully requested, false otherwise
  */
 function yourls_check_core_version() {
 
@@ -263,7 +263,7 @@ function yourls_check_core_version() {
 		
 	// The collection of stuff to report
 	$stuff = array(
-		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),  // globally unique site identifier
+		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),  // globally unique site identifier, don't remove
 
 		'failed_attempts'    => $checks->failed_attempts,
 		'yourls_site'        => YOURLS_SITE,
@@ -311,25 +311,28 @@ function yourls_check_core_version() {
 		$checks->last_result     = $json;
 		yourls_update_option( 'core_version_checks', $checks );
 		
-		return true;
+		return $json;
 	}
 	
 	// Request returned actual result, but not what we expected
 	return false;	
 }
 
-
 /**
- * Determine if we want to check for a newer YOURLS version
+ * Determine if we want to check for a newer YOURLS version (and check if applicable)
  *
  * Currently checks are performed every 24h and only when someone is visiting an admin page.
  * In the future (1.8?) maybe check with cronjob emulation instead.
  *
  * @since 1.7
- * @param unknown_type $a    TODO
- * @return unknown           TODO
+ * @return bool true if a check was needed and successfully performed, false otherwise
  */
 function yourls_maybe_check_core_version() {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_maybe_check_core_version', null );
+	if ( null !== $pre )
+		return $pre;
 
 	if( defined( 'YOURLS_NO_VERSION_CHECK' ) && YOURLS_NO_VERSION_CHECK )
 		return false;
@@ -345,27 +348,24 @@ function yourls_maybe_check_core_version() {
 	 - and version checked matched version running
 	 Otherwise, we want to check.
 	*/
-	if( isset( $checks->last_result )
+	if( !empty( $checks->last_result )
 		AND
 		( 
 			( $checks->failed_attempts == 0 && ( ( time() - $checks->last_attempt ) < 24 * 3600 ) )
 			OR
-			( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) < 2  * 3600 ) )
+			( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) <  2 * 3600 ) )
 		)
 		AND ( $checks->version_checked == YOURLS_VERSION )
 	)
 		return false;
 
 	// We want to check if there's a new version
+	$new_check = yourls_check_core_version();
 	
-	// TODO
-	/*
-	- $checked = yourls_check_core_version();
-	- if true, fine
-	- if false: do we have any ancient data to play with anyway?
-		- if no: exit, return false
-	- display admin notice with newer version message?
-	*/
+	// Could not check for a new version, and we don't have ancient data
+	if( false == $new_check && !isset( $checks->last_result->latest ) )
+		return false;
 	
 	return true;
 }
+
