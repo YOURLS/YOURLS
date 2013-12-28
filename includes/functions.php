@@ -2199,3 +2199,40 @@ function yourls_debug_log( $msg ) {
 	$ydb->debug_log[] = $msg;
 	return $msg;
 }
+
+/**
+ * Explode a URL in an array of ( 'protocol' , 'slashes if any', 'rest of the URL' )
+ *
+ * Some hosts trip up when a query string contains 'http://' - see http://git.io/j1FlJg
+ * The idea is that instead of passing the whole URL to a bookmarklet, eg index.php?u=http://blah.com,
+ * we pass it by pieces to fool the server, eg index.php?proto=http:&slashes=//&rest=blah.com
+ *
+ * Known limitation: this won't work if the rest of the URL itself contains 'http://', for example
+ * if rest = blah.com/file.php?url=http://foo.com
+ *
+ * Sample returns:
+ *
+ *   with 'mailto:jsmith@example.com?subject=hey' :
+ *   array( 'protocol' => 'mailto:', 'slashes' => '', 'rest' => 'jsmith@example.com?subject=hey' )
+ *
+ *   with 'http://example.com/blah.html' :
+ *   array( 'protocol' => 'http:', 'slashes' => '//', 'rest' => 'example.com/blah.html' )
+ *
+ * @since 1.7
+ * @param string $url URL to be parsed
+ * @param array $array Optional, array of key names to be used in returned array
+ * @return mixed false if no protocol found, array of ('protocol' , 'slashes', 'rest') otherwise
+ */
+function yourls_get_protocol_slashes_and_rest( $url, $array = array( 'protocol', 'slashes', 'rest' ) ) {
+	$proto = yourls_get_protocol( $url );
+	
+	if( !$proto or count( $array ) != 3 )
+		return false;
+	
+	list( $null, $rest ) = explode( $proto, $url, 2 );
+	
+	list( $proto, $slashes ) = explode( ':', $proto );
+	
+	return array( $array[0] => $proto . ':', $array[1] => $slashes, $array[2] => $rest );
+}
+
