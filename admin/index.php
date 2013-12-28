@@ -130,12 +130,18 @@ if ( $where ) {
 }
 
 // This is a bookmarklet
-if ( isset( $_GET['u'] ) ) {
+if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	$is_bookmark = true;
 	yourls_do_action( 'bookmarklet' );
 
 	// No sanitization needed here: everything happens in yourls_add_new_link()
-	$url     = ( $_GET['u'] );
+	if( isset( $_GET['u'] ) ) {
+		// Old school bookmarklet: ?u=<url>
+		$url = $_GET['u'];
+	} else {
+		// New style bookmarklet: ?up=<url protocol>&us=<url slashes>&ur=<url rest>
+		$url = $_GET['up'] . $_GET['us'] . $_GET['ur'];
+	}
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
