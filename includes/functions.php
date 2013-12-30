@@ -130,6 +130,11 @@ function yourls_update_next_decimal( $int = '' ) {
  *
  */
 function yourls_delete_link_by_keyword( $keyword ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_delete_link_by_keyword', null, $keyword );
+	if ( null !== $pre )
+		return $pre;
+		
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
@@ -309,6 +314,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
  *
  */
 function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_edit_link', null, $keyword, $url, $keyword, $newkeyword, $title );
+	if ( null !== $pre )
+		return $pre;
+
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
@@ -362,6 +372,11 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
  *
  */
 function yourls_edit_link_title( $keyword, $title ) {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_edit_link_title', null, $keyword, $title );
+	if ( null !== $pre )
+		return $pre;
+
 	global $ydb;
 	
 	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
