@@ -1295,17 +1295,6 @@ function yourls_allow_duplicate_longurls() {
 }
 
 /**
- * @deprecated Return list of all shorturls associated to the same long URL. Returns NULL or array of keywords.
- *
- */
-function yourls_get_duplicate_keywords( $longurl ) {
-	yourls_deprecated_function( __FUNCTION__, 1.7, 'yourls_get_longurl_keywords' );
-	if( !yourls_allow_duplicate_longurls() )
-		return NULL;
-	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_longurl_keywords ( $longurl ), $longurl );
-}
-
-/**
  * Return array of keywords that redirect to the submitted long URL
  *
  * @since 1.7
@@ -1722,16 +1711,6 @@ function yourls_is_infos() {
 	if ( defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true )
 		return true;
 	return false;
-}
-
-/**
- * Check if we'll need interface display function (ie not API or redirection)
- *
- */
-function yourls_has_interface() {
-	if( yourls_is_API() or yourls_is_GO() )
-		return false;
-	return true;
 }
 
 /**

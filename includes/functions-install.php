@@ -40,11 +40,11 @@ function yourls_get_database_version() {
 }
 
 /**
- * Check if PHP > 4.3
+ * Check if PHP > 5.2
  *
  */
 function yourls_check_php_version() {
-	return ( version_compare( '4.3', phpversion() ) <= 0 );
+	return ( version_compare( '5.2', phpversion() ) <= 0 );
 }
 
 /**

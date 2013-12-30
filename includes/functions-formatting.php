@@ -120,17 +120,6 @@ function yourls_sanitize_int( $in ) {
 }
 
 /**
- * Make sure a integer is safe
- * 
- * Note: this is not checking for integers, since integers on 32bits system are way too limited
- * TODO: find a way to validate as integer
- *
- */
-function yourls_intval( $in ) {
-	return yourls_escape( $in );
-}
-
-/**
  * Escape a string
  *
  */
@@ -166,15 +155,6 @@ function yourls_sanitize_date_for_sql( $date ) {
 	if( !yourls_sanitize_date( $date ) )
 		return false;
 	return date( 'Y-m-d', strtotime( $date ) );
-}
-
-/**
- * Return word or words if more than one
- *
- */
-function yourls_plural( $word, $count=1 ) {
-	yourls_deprecated_function( __FUNCTION__, '1.6', 'yourls_n' );
-	return $word . ($count > 1 ? 's' : '');
 }
 
 /**
