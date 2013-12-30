@@ -206,18 +206,10 @@ function yourls_http_load_library() {
 }
 
 /**
- * Deprecated. Get remote content via a GET request using best transport available
- * Returns $content (might be an error message) or false if no transport available
- *
- */
-function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_http_get' );
-	return yourls_http_get_body( $url );
-}
-
-/**
  * Return funky user agent string
  *
+ * @since 1.5
+ * @return string UA string
  */
 function yourls_http_user_agent() {
 	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.YOURLS_SITE.')' );

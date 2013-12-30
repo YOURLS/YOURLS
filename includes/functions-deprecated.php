@@ -48,3 +48,13 @@ function yourls_intval( $in ) {
 	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_sanitize_int' );
 	return yourls_escape( $in );
 }
+
+/**
+ * Get remote content via a GET request using best transport available
+ *
+ */
+function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_http_get_body' );
+	return yourls_http_get_body( $url );
+}
+
