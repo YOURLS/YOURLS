@@ -1,11 +1,11 @@
 ![yourls](images/yourls-logo.png)
 [YOURLS](http://yourls.org) — [![Build Status](https://travis-ci.org/YOURLS/YOURLS.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS)
 ========
-**YOURLS** is a set of PHP script that will allow you to run your own URL shortener. You'll have full control over your data, detailed stats and analytics, plugins, and more. It's free.
+**YOURLS** is a set of PHP scripts that will allow you to run Your Own URL Shortener. You'll have full control over your data, detailed stats and analytics, plugins, and more. It's free.
 
 Quick Start
 -----------
-To get started, checkout [yourls.org](http://yourls.org)!  
+To get started, check [yourls.org](http://yourls.org)!  
 Learn more tweaks in the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
 
 News
@@ -37,5 +37,4 @@ __Before opening any issue, please search for existing issues and read the [Issu
 License
 -------
 Free software. Do whatever the hell you want with it.  
-The [license](LICENSE.md) under which the YOURLS software is released is the GPLv3 
-from the [Free Software Foundation](http://fsf.org/).
+The [license](LICENSE.md) under which YOURLS is released is the MIT license.

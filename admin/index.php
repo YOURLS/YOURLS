@@ -130,12 +130,18 @@ if ( $where ) {
 }
 
 // This is a bookmarklet
-if ( isset( $_GET['u'] ) ) {
+if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	$is_bookmark = true;
 	yourls_do_action( 'bookmarklet' );
 
 	// No sanitization needed here: everything happens in yourls_add_new_link()
-	$url     = ( $_GET['u'] );
+	if( isset( $_GET['u'] ) ) {
+		// Old school bookmarklet: ?u=<url>
+		$url = rawurldecode( $_GET['u'] );
+	} else {
+		// New style bookmarklet: ?up=<url protocol>&us=<url slashes>&ur=<url rest>
+		$url = rawurldecode( $_GET['up'] . $_GET['us'] . $_GET['ur'] );
+	}
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
@@ -172,7 +178,7 @@ if ( isset( $_GET['u'] ) ) {
 		switch ( $_GET['share'] ) {
 			case 'twitter':
 				// share with Twitter
-				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", urlencode( $return['shorturl'] ), urlencode( $_GET['t'] ) );
+				$destination = sprintf( "https://twitter.com/intent/tweet?url=%s&text=%s", urlencode( $return['shorturl'] ), urlencode( $title ) );
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
@@ -183,13 +189,24 @@ if ( isset( $_GET['u'] ) ) {
 
 			case 'facebook':
 				// share with Facebook
-				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", urlencode( $return['shorturl'] ), urlencode( $_GET['t'] ) );
+				$destination = sprintf( "https://www.facebook.com/sharer/sharer.php?u=%s&t=%s", urlencode( $return['shorturl'] ), urlencode( $title ) );
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
 				$return['status']    = 'error';
 				$return['errorCode'] = 400;
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Facebook' );
+				break;
+
+			case 'tumblr':
+				// share with Tumblr
+				$destination = sprintf( "http://www.tumblr.com/share?v=3&u=%s&t=%s&s=%s", urlencode( $return['shorturl'] ), urlencode( $title ), urlencode( $text ) );
+				yourls_redirect( $destination, 303 );
+
+				// Deal with the case when redirection failed:
+				$return['status']    = 'error';
+				$return['errorCode'] = 400;
+				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Tumblr' );
 				break;
 
 			default:

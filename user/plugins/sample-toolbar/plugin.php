@@ -59,12 +59,12 @@ function ozh_toolbar_do( $args ) {
 	if( $days == 0 ) {
 		$created = 'today';
 	} else {
-		$created = $days.' '.yourls_plural( 'day', $days).' ago';
+		$created = $days . ' ' . yourls_n( 'day', 'days', $days ) . ' ago';
 	}
 	
 	// How many hits on the page
 	$hits = 1 + yourls_get_keyword_clicks( $ozh_toolbar['keyword'] );
-	$hits = $hits.' '.yourls_plural( 'view', $hits);
+	$hits = $hits . ' ' . yourls_n( 'view', 'views', $hits );
 	
 	// Plugin URL (no URL is hardcoded)
 	$pluginurl = YOURLS_PLUGINURL . '/'.yourls_plugin_basename( dirname(__FILE__) );
