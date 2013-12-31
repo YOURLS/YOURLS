@@ -1801,10 +1801,15 @@ function yourls_is_ssl() {
 	return yourls_apply_filter( 'is_ssl', $is_ssl );
 }
 
-
 /**
- * Get a remote page <title>, return a string (either title or url)
+ * Get a remote page title
  *
+ * This function returns a string: either the page title as defined in HTML, or the URL if not found
+ * The function tries to convert funky characters found in titles to UTF8, from the detected charset.
+ * Charset in use is guessed from HTML meta tag, or if not found, from server's 'content-type' response.
+ *
+ * @param string $url URL
+ * @return string Title (sanitized) or the URL if no title found
  */
 function yourls_get_remote_title( $url ) {
 	// Allow plugins to short-circuit the whole function
@@ -1812,49 +1817,52 @@ function yourls_get_remote_title( $url ) {
 	if ( false !== $pre )
 		return $pre;
 
-	require_once( YOURLS_INC.'/functions-http.php' );
-
 	$url = yourls_sanitize_url( $url );
+	
+	// Only deal with http(s):// 
+	if( !in_array( yourls_get_protocol( $url ), array( 'http://', 'https://' ) ) )
+		return $url;	
 
 	$title = $charset = false;
 	
-	$content = yourls_get_remote_content( $url );
-	
-	// If false, return url as title.
-	// Todo: improve this with temporary title when shorturl_meta available?
-	if( false === $content )
+	$response = yourls_http_get( $url ); // can be a Request object or an error string
+	if( is_string( $response ) ) {
 		return $url;
-
-	if( $content !== false ) {
-		// look for <title>
-		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
-			$title = $found[1];
-			unset( $found );
-		}
-
-		// look for charset
-		// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		if ( preg_match('/<meta[^>]*?charset=([^>]*?)\/?>/is', $content, $found ) ) {
-			$charset = trim($found[1], '"\' ');
+	}
+	
+	// Page content. No content? Return the URL
+	$content = $response->body;
+	if( !$content )
+		return $url;
+	
+	// look for <title>. No title found? Return the URL
+	if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
+		$title = $found[1];
+		unset( $found );
+	}
+	if( !$title )
+		return $url;
+		
+	// Now we have a title. We'll try to get proper utf8 from it.
+	
+	// Get charset as (and if) defined by the HTML meta tag. We should match
+	// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	// or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
+	if ( preg_match( '/<meta[^>]*charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $content, $found ) ) {
+		$charset = $found[1];
+		unset( $found );
+	} else {
+		// No charset found in HTML. Get charset as (and if) defined by the server response
+		$_charset = current( $response->headers->getValues( 'content-type' ) );
+		if( preg_match( '/charset=(\S+)/', $_charset, $found ) ) {
+			$charset = trim( $found[1], ';' );
 			unset( $found );
 		}
 	}
-	
-	// if title not found, guess if returned content was actually an error message
-	if( $title == false && strpos( $content, 'Error' ) === 0 ) {
-		$title = $content;
-	}
-	
-	if( $title == false )
-		$title = $url;
-	
-	/*
-	if( !yourls_seems_utf8( $title ) )
-		$title = utf8_encode( $title );
-	*/
-	
-	// Charset conversion. We use @ to remove warnings (mb_ functions are easily bitching about illegal chars)
-	if( function_exists( 'mb_convert_encoding' ) ) {
+
+	// Conversion to utf-8 if what we have is not utf8 already
+	if( strtolower( $charset ) != 'utf-8' && function_exists( 'mb_convert_encoding' ) ) {
+		// We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
 		if( $charset ) {
 			$title = @mb_convert_encoding( $title, 'UTF-8', $charset );
 		} else {
@@ -1867,7 +1875,7 @@ function yourls_get_remote_title( $url ) {
 	
 	// Strip out evil things
 	$title = yourls_sanitize_title( $title );
-	
+		
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 

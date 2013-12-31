@@ -4,10 +4,10 @@
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/user/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) . '/user/config.php' );
 } elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
 	// config.php in /includes/
-	define( 'YOURLS_CONFIGFILE', dirname( __FILE__ ) . '/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __FILE__ ) ) . '/config.php' );
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
@@ -110,6 +110,7 @@ require_once( YOURLS_INC.'/functions-kses.php' );
 require_once( YOURLS_INC.'/functions-l10n.php' );
 require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
+require_once( YOURLS_INC.'/functions-http.php' );
 require_once( YOURLS_INC.'/functions-infos.php' );
 
 // Load auth functions if needed
@@ -176,6 +177,9 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 // Init all plugins
 yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
+
+// Is there a new version of YOURLS ?
+yourls_new_core_version_notice();
 
 if( yourls_is_admin() )
 	yourls_do_action( 'admin_init' );
