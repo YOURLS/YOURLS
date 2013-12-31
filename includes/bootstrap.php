@@ -32,14 +32,9 @@ global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object
        $yourls_allowedentitynames, $yourls_allowedprotocols,      // used by KSES
 	   $ezsql_mysql_str, $ezsql_mysqli_str, $ezsql_pdo_str;       // used by ezSQL
 
+
 // Initialize ourselves some constants that are typically user defined
-$yourls_user_passwords = array(
-	'yourls'  => 'travis-ci-test',
-	'clear'   => 'somepassword',
-	'md5'     => 'md5:31712:f6cae1f032b9ae81b233866f4aa791af', // password: "md5"
-	'phpass'  => 'phpass:$2a$08$UbOIKE2oyh.shrjSkOJ3Au7zN2vqTkrhsmAFgaMPomfeS0S6xHjG6', // password: "phpass"
-	'phpass2' => 'phpass:!2a!08$zzwkOxZHwup7qsfSuxdFXOzRBEOtKu4b15gXqceYJ23GOJtRq.yvO', // password: also "phpass" with YOURLS' internal char substitution
-);
+
 $yourls_reserved_URL = array(
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
 );
@@ -63,6 +58,21 @@ yut_declare_yourls_consts();
 yut_load_yourls();
 yut_drop_all_tables_if_local();
 yut_install_yourls();
+
+// Compute 1 md5 and 2 phpass hashed passwords from a random password
+$random_password = rand_str();
+$salt = rand( 10000, 99999 );
+$md5  = 'md5:' . $salt . ':' . md5( $salt . $random_password );
+$phpassword_1 = 'phpass:' . str_replace( '$', '!', yourls_phpass_hash( $random_password ) );
+$phpassword_2 = 'phpass:' . yourls_phpass_hash( $random_password );
+
+$yourls_user_passwords = array(
+	'yourls'  => 'travis-ci-test',
+	'clear'   => 'somepassword',
+	'md5'     => $md5,          // password: $random_password
+	'phpass'  => $phpassword_1, // password: $random_password
+	'phpass2' => $phpassword_2, // password: also $random_password but without YOURLS internal char substitution
+);
 
 // At this point, tests will start
 

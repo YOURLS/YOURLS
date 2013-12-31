@@ -37,12 +37,22 @@ class Auth_Tests extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */
 	public function test_valid_md5() {
-		$this->assertTrue(  yourls_has_md5_password( 'md5' ) );
-		$this->assertFalse( yourls_has_md5_password( 'unknown' ) );
+		global $random_password;
 		
-		$this->assertTrue( yourls_check_password_hash( 'md5', 'md5' ) );
-		$this->assertFalse( yourls_check_password_hash( 'unknown', 'md5' ) );
-		$this->assertFalse( yourls_check_password_hash( 'md5', 'notmd5' ) );
+		$rnd_user = rand_str();
+		
+		// Check if users have md5'd passwords
+		$this->assertTrue(  yourls_has_md5_password( 'md5' ) );
+		$this->assertFalse( yourls_has_md5_password( $rnd_user ) );
+		
+		// Check that md5 hashed passwords match the password
+		$this->assertTrue( yourls_check_password_hash( 'md5', $random_password ) );
+		
+		// Unknow user, existing password
+		$this->assertFalse( yourls_check_password_hash( $rnd_user, $random_password ) );
+		
+		// Known user, invalid password
+		$this->assertFalse( yourls_check_password_hash( 'md5', rand_str() ) );
 	}
 	
 	/**
@@ -51,15 +61,25 @@ class Auth_Tests extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */
 	public function test_valid_phpass() {
-		$this->assertTrue( yourls_has_phpass_password( 'phpass' ) );
-		$this->assertTrue( yourls_has_phpass_password( 'phpass2' ) );
+		global $random_password;
 		
-		$this->assertTrue(  yourls_check_password_hash( 'phpass', 'phpass' ) );
-		$this->assertTrue(  yourls_check_password_hash( 'phpass2', 'phpass' ) );
+		$rnd_user = rand_str();
 		
-		$this->assertFalse( yourls_check_password_hash( 'unknown', 'phpass' ) );
-		$this->assertFalse( yourls_check_password_hash( 'phpass', 'notphpass' ) );
-		$this->assertFalse( yourls_check_password_hash( 'phpass2', 'notphpass' ) );
+		// Check if users have phpass'd passwords	
+		$this->assertTrue(  yourls_has_phpass_password( 'phpass' ) );
+		$this->assertTrue(  yourls_has_phpass_password( 'phpass2' ) );
+		$this->assertFalse( yourls_has_phpass_password( $rnd_user ) ); // random username
+		
+		// Check that phppass hashed passwords match the password
+		$this->assertTrue(  yourls_check_password_hash( 'phpass', $random_password ) );
+		$this->assertTrue(  yourls_check_password_hash( 'phpass2', $random_password ) );
+		
+		// unknow user, existing valid password
+		$this->assertFalse( yourls_check_password_hash( $rnd_user, $random_password ) );
+		
+		// known users, invalid passwords
+		$this->assertFalse( yourls_check_password_hash( 'phpass', rand_str() ) );
+		$this->assertFalse( yourls_check_password_hash( 'phpass2', rand_str() ) );
 	}
 	
 	/**
