@@ -157,7 +157,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	if( isset( $_GET['jsonp'] ) && $_GET['jsonp'] == 'yourls' ) {
 		$short   = $return['shorturl'] ? $return['shorturl'] : '';
 		$message = $return['message'];
-		header( 'Content-type: application/json' );
+		yourls_content_type_header( 'application/javascript' );
 		echo yourls_apply_filter( 'bookmarklet_jsonp', "yourls_callback({'short_url':'$short','message':'$message'});" );
 		
 		die();

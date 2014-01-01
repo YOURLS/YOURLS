@@ -60,6 +60,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 		header( 'Pragma: no-cache' );
+		yourls_content_type_header( yourls_apply_filters( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
 	
@@ -82,7 +83,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <head>
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filters( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
 	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
@@ -888,5 +889,21 @@ function yourls_new_core_version_notice() {
 		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $checks->last_result->latest );
 		yourls_add_notice( $msg );
 	}
+}
+
+/**
+ * Send a filerable content type header
+ *
+ * @since 1.7
+ * @param string $type content type ('text/html', 'application/json', ...)
+ * @return bool whether header was sent
+ */
+function yourls_content_type_header( $type ) {
+	if( !headers_sent() ) {
+		$charset = yourls_apply_filters( 'content_type_header_charset', 'utf-8' );
+		header( "Content-Type: $type; charset=$charset" );
+		return true;
+	}
+	return false;
 }
 

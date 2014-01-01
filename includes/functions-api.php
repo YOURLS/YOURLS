@@ -105,22 +105,23 @@ function yourls_api_output( $mode, $return ) {
 	
 	switch ( $mode ) {
 		case 'jsonp':
-			header( 'Content-type: application/javascript' );
+			yourls_content_type_header( 'application/javascript' );
 			echo $return['callback'] . '(' . json_encode( $return ) . ')';
 			break;
 	
 		case 'json':
-			header( 'Content-type: application/json' );
+			yourls_content_type_header( 'application/json' );
 			echo json_encode( $return );
 			break;
 		
 		case 'xml':
-			header( 'Content-type: application/xml' );
+			yourls_content_type_header( 'application/xml' );
 			echo yourls_xml_encode( $return );
 			break;
 			
 		case 'simple':
 		default:
+			yourls_content_type_header( 'text/plain' );
 			if( isset( $simple ) )
 				echo $simple;
 			break;
