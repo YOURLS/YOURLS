@@ -255,8 +255,10 @@ function yourls_check_core_version() {
 		
 	// The collection of stuff to report
 	$stuff = array(
-		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),  // globally unique site identifier, don't remove
+		// Globally uniquish site identifier
+		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),
 
+		// Install information
 		'failed_attempts'    => $checks->failed_attempts,
 		'yourls_site'        => defined( 'YOURLS_SITE' ) ? YOURLS_SITE : 'unknown',
 		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
@@ -264,12 +266,14 @@ function yourls_check_core_version() {
 		'mysql_version'      => $ydb->mysql_version(),
 		'locale'             => yourls_get_locale(),
 
-		'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unknown',
+		// custom DB driver if any, and useful common PHP extensions
+		'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unset',
 		'db_ext_pdo'         => extension_loaded( 'pdo_mysql' ) ? 1 : 0,
 		'db_ext_mysql'       => extension_loaded( 'mysql' )     ? 1 : 0,
 		'db_ext_mysqli'      => extension_loaded( 'mysqli' )    ? 1 : 0,
 		'ext_curl'           => extension_loaded( 'curl' )      ? 1 : 0,
 
+		// Config information
 		'num_users'          => count( $yourls_user_passwords ),
 		'config_location'    => $conf_loc,
 		'yourls_private'     => defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ? 1 : 0,
