@@ -258,13 +258,13 @@ function yourls_check_core_version() {
 		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),  // globally unique site identifier, don't remove
 
 		'failed_attempts'    => $checks->failed_attempts,
-		'yourls_site'        => YOURLS_SITE,
-		'yourls_version'     => YOURLS_VERSION,
+		'yourls_site'        => defined( 'YOURLS_SITE' ) ? YOURLS_SITE : 'unknown',
+		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
 		'php_version'        => phpversion(),
 		'mysql_version'      => $ydb->mysql_version(),
 		'locale'             => yourls_get_locale(),
 
-		'db_driver'          => YOURLS_DB_DRIVER,
+		'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unknown',
 		'db_ext_pdo'         => extension_loaded( 'pdo_mysql' ) ? 1 : 0,
 		'db_ext_mysql'       => extension_loaded( 'mysql' )     ? 1 : 0,
 		'db_ext_mysqli'      => extension_loaded( 'mysqli' )    ? 1 : 0,
@@ -272,9 +272,9 @@ function yourls_check_core_version() {
 
 		'num_users'          => count( $yourls_user_passwords ),
 		'config_location'    => $conf_loc,
-		'yourls_private'     => YOURLS_PRIVATE     ? 1 : 0,
-		'yourls_unique'      => YOURLS_UNIQUE_URLS ? 1 : 0,
-		'yourls_url_convert' => YOURLS_URL_CONVERT,
+		'yourls_private'     => defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ? 1 : 0,
+		'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
+		'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
 		'num_active_plugins' => yourls_has_active_plugins(),
 	);
 	
