@@ -4,12 +4,18 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
-HEAD
-----
+1.7
+---
 - improved: security with auto-encrypted user passwords
-- added: Support for PDO and MySQLi
-- added: Social bookmarklets
+- added: support for PDO and MySQLi
+- added: social bookmarklets
+- improved: new HTTP manipulation
+- added: api.yourls.org dialogue implementation
+- improved: auto-detect new YOURLS version
+- improved: proxy & Port config supported
 - improved: GeoIP IPv6
+- fixed: wrong headers declaration
+- fixed: broken link encoding
 - fixed: lots of bugs
 
 1.6
