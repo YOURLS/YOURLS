@@ -16,6 +16,12 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	
+	// When Searching, explode search text in pieces -- see split_search_text_before_search()
+	$('#filter_form').submit( function(){
+		split_search_text_before_search();
+		return true;
+	});
 });
 
 // Create new link and add to table
@@ -200,3 +206,16 @@ function toggle_share(id) {
 	
 	toggle_share_fill_boxes( longurl, shorturl, title );
 }
+
+// When "Search" is clicked, split search text to beat servers which don't like query string with "http://"
+// See https://github.com/YOURLS/YOURLS/issues/1576
+function split_search_text_before_search() {
+	// Add 2 hidden fields and populate them with parts of search text
+	$("<input type='hidden' name='search_protocol' />").appendTo('#filter_form');
+	$("<input type='hidden' name='search_slashes' />").appendTo('#filter_form');
+	var search = get_protocol_slashes_and_rest( $('#filter_form input[name=search]').val() );
+	$('#filter_form input[name=search]').val( search.rest );
+	$('#filter_form input[name=search_protocol]').val( search.protocol );
+	$('#filter_form input[name=search_slashes]').val( search.slashes );
+}
+

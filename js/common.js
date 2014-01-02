@@ -155,3 +155,14 @@ jQuery.cookie = function(name, value, options) {
     }
 };
 
+// Split a URL into protocol, slashes and the rest
+function get_protocol_slashes_and_rest( url ) {
+	if( ups=url.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ ) ) {
+		ups=ups[0];
+		var ur=url.split(new RegExp(ups))[1];
+		var ups=ups.split(/\:/);
+		return { protocol: ups[0]+':', slashes: ups[1], rest: ur };
+	} else {
+		return { protocol: '', slashes: '', rest: url };;
+	}
+}

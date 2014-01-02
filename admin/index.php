@@ -16,7 +16,7 @@ $sort_by_text    = yourls__( 'Short URL' );
 $sort_by         = 'timestamp';
 $sort_order      = 'desc';
 $page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
-$search          = ( isset( $_GET['search'] ) ? htmlspecialchars( trim($_GET['search']) ) : '' );
+$search          = yourls_get_search_text();
 $perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
 $click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
 if ( $click_limit !== '' ) {
