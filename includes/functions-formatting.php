@@ -120,12 +120,46 @@ function yourls_sanitize_int( $in ) {
 }
 
 /**
- * Escape a string
+ * Escape a string or an array of strings before DB usage. ALWAYS escape before using in a SQL query. Thanks.
  *
+ * @param string|array $data string or array of strings to be escaped
+ * @return string|array escaped data
  */
-function yourls_escape( $in ) {
+function yourls_escape( $data ) {
+	if( is_array( $data ) ) {
+		foreach( $data as $k => $v ) {
+			if( is_array( $v ) ) {
+				$data[ $k ] = yourls_escape( $v );
+			} else {
+				$data[ $k ] = yourls_escape_real( $v );
+			}
+		}
+	} else {
+		$data = yourls_escape_real( $data );
+	}
+	
+	return $data;
+}
+
+/**
+ * "Real" escape. This function should NOT be called directly. Use yourls_escape() instead. 
+ *
+ * This function uses a "real" escape if possible, using PDO, MySQL or MySQLi functions,
+ * with a fallback to a "simple" addslashes
+ * If you're implementing a custom DB engine or a custom cache system, you can define an
+ * escape function using filter 'custom_escape_real'
+ *
+ * @since 1.7
+ * @param string $a string to be escaped
+ * @return string escaped string
+ */
+function yourls_escape_real( $string ) {
 	global $ydb;
-	return $ydb->escape( $in );
+	if( isset( $ydb ) && is_a( $ydb, 'ezSQLcore' ) )
+		return $ydb->escape( $string );
+	
+	// YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
+	return yourls_apply_filters( 'custom_escape_real', addslashes( $string ), $string );	
 }
 
 /**

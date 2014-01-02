@@ -138,7 +138,7 @@ function yourls_delete_link_by_keyword( $keyword ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$keyword = yourls_sanitize_string( $keyword );
+	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 	$delete = $ydb->query("DELETE FROM `$table` WHERE `keyword` = '$keyword';");
 	yourls_do_action( 'delete_link', $keyword, $delete );
 	return $delete;
@@ -177,8 +177,8 @@ function yourls_url_exists( $url ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-	$strip_url = stripslashes($url);
-	$url_exists = $ydb->get_row("SELECT * FROM `$table` WHERE `url` = '".$strip_url."';");
+	$url   = yourls_escape( yourls_sanitize_url( $url) );
+	$url_exists = $ydb->get_row( "SELECT * FROM `$table` WHERE `url` = '".$url."';" );
 	
 	return yourls_apply_filter( 'url_exists', $url_exists, $url );
 }
@@ -332,7 +332,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$strip_url';"));
+		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$url';"));
 	} else {
 		$new_url_already_there = false;
 	}
@@ -413,7 +413,7 @@ function yourls_keyword_is_taken( $keyword ) {
 		return $pre;
 	
 	global $ydb;
-	$keyword = yourls_sanitize_keyword( $keyword );
+	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
 	$taken = false;
 	$table = YOURLS_DB_TABLE_URL;
 	$already_exists = $ydb->get_var( "SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';" );
@@ -471,7 +471,7 @@ function yourls_xml_encode( $array ) {
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
-	$keyword = yourls_sanitize_string( $keyword );
+	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 
 	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
@@ -566,7 +566,7 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_sanitize_string( $keyword );
+	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
 		$update = $ydb->query( "UPDATE `$table` SET `clicks` = $clicks WHERE `keyword` = '$keyword'" );
@@ -643,6 +643,8 @@ function yourls_get_link_stats( $shorturl ) {
 	global $ydb;
 
 	$table_url = YOURLS_DB_TABLE_URL;
+	$shorturl  = yourls_escape( yourls_sanitize_keyword( $shorturl ) );
+	
 	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl';" );
 	$return = array();
 
@@ -672,6 +674,9 @@ function yourls_get_link_stats( $shorturl ) {
 
 /**
  * Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
+ *
+ * IMPORTANT NOTE: make sure arguments for the $where clause have been sanitized and yourls_escape()'d
+ * before calling this function.
  *
  */
 function yourls_get_db_stats( $where = '' ) {
@@ -853,11 +858,11 @@ function yourls_log_redirect( $keyword ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
 	
-	$keyword = yourls_sanitize_string( $keyword );
-	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) : 'direct' );
-	$ua = yourls_get_user_agent();
-	$ip = yourls_get_IP();
-	$location = yourls_geo_ip_to_countrycode( $ip );
+	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
+	$ua       = yourls_escape( yourls_get_user_agent() );
+	$ip       = yourls_escape( yourls_get_IP() );
+	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
 	
 	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
@@ -1372,6 +1377,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 	}
 	
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
+	$ip = yourls_escape( $ip );
 
 	yourls_do_action( 'check_ip_flood', $ip );
 	
