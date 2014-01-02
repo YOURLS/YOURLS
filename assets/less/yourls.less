@@ -27,31 +27,31 @@
 
 // HTML Components
 .btn-outline(@bg-color) {
-    .btn-outline {
-        margin-top: 15px;
-        margin-bottom: 15px;
-        padding: 18px 24px;
-        font-size: inherit;
-        font-weight: 500;
-        color: #fff;
-        background-color: transparent;
-        border-color: #fff;
-        border-color: rgba(255,255,255,.5);
-        -moz-transition: all .1s ease-in-out;
-        -o-transition: all .1s ease-in-out;
-        -webkit-transition: all .1s ease-in-out;
-        transition: all .1s ease-in-out;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 18px 24px;
+    font-size: inherit;
+    font-weight: 500;
+    color: #fff;
+    background-color: transparent;
+    border-color: #fff;
+    border-color: rgba(255,255,255,.5);
+    -moz-transition: all .1s ease-in-out;
+    -o-transition: all .1s ease-in-out;
+    -webkit-transition: all .1s ease-in-out;
+    transition: all .1s ease-in-out;
 
-        &:hover,
-        &:active {
-            color: @bg-color;
-            background-color: #fff;
-            border-color: #fff;
-        }
+    &:hover,
+    &:active {
+        color: @bg-color;
+        background-color: #fff;
+        border-color: #fff;
     }
 }
 
-.btn-outline(@yourls-color-dark);
+.btn-outline {
+    .btn-outline(@yourls-color-dark);
+}
 
 .callout {
     margin: 20px 0;
@@ -88,7 +88,6 @@
 .callout-info {
     .callout-theme(#f0f7fd, #d0e3f0);
 }
-
 // HTML
 body,
 html {
@@ -104,7 +103,6 @@ html {
 input, select {
     .form-control;
 }
-
 // Content - Main
 .content {
     background-color: @bck-wrapper;
@@ -113,7 +111,6 @@ input, select {
     min-height: 100%;
     padding-bottom: 50px;
 }
-
     // Headings
     .content > h1,
     .docs h1 {
@@ -154,7 +151,6 @@ input, select {
         display: none;
     }
 }
-
 // Nav-bar / Sidebar & Components
 .sidebar {
     background-color: @sidebar;
@@ -253,7 +249,6 @@ input, select {
         }
     }
 }
-
 // Main Table
 .admin-main-table {
     .table;
@@ -345,8 +340,6 @@ input, select {
         height: 70px;
     }
 }
-
-
 // Forms
 .new-url-form {
     .make-row();
@@ -416,29 +409,32 @@ input, select {
     }
 }
 
+.install {
+    background-color: @yourls-color-med-dark;
+}
+
 .install-form {
-    width: 30%;
-    min-width: 325px;
-    height: auto;
     margin: 20px auto;
     text-align: center;
     padding: 50px;
-    background: @yourls-color-med-dark;
-    border-radius: 10px;
 
     img {
         margin-bottom: 10px;
     }
 
+    input {
+        width: auto;
+        height: auto;
+    }
+
     .start {
         .btn;
-        .btn-success;
-        .btn-lg;
-        margin: 8% 0;
-        line-height: 1;
+        .btn-outline(@yourls-color-med-dark);
     }
 
     form > div {
+        width: 235px;
+        margin: auto;
         text-align: left;
     }
 }
@@ -446,7 +442,6 @@ input, select {
 .feedback {
     display: none;
 }
-
 // Pages & Components
 .bookmarklet {
     .panel;
@@ -627,7 +622,6 @@ tbody > tr {
     .border-top-radius(0);
     background-color: #FCF8E3;
 }
-
 // Specials
 .login-screen {
     margin-left: auto;

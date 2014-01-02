@@ -4,24 +4,24 @@ define( 'YOURLS_INSTALLING', true );
 require_once dirname( dirname( __FILE__ ) ) . '/includes/load-yourls.php';
 require_once YOURLS_INC . '/functions-install.php';
 
-$error   = array();
+$danger  = array();
 $warning = array();
 $success = array();
 
 // Check pre-requisites
 if ( !yourls_check_database_version() ) {
-	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'MySQL' );
+	$danger[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'MySQL' );
 	$ydb->debug_log[] = 'MySQL version: ' . yourls_get_database_version();
 }
 
 if ( !yourls_check_php_version() ) {
-	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
+	$danger[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
 	$ydb->debug_log[] = 'PHP version: ' . phpversion();
 }
 
 // Is YOURLS already installed ?
 if ( yourls_is_installed() ) {
-	$error[] = yourls__( 'YOURLS already installed.' );
+	$warning[] = yourls__( 'YOURLS already installed.' );
 	// check if .htaccess exists, recreate otherwise. No error checking.
 	if( !file_exists( YOURLS_ABSPATH.'/.htaccess' ) ) {
 		yourls_create_htaccess();
@@ -29,7 +29,7 @@ if ( yourls_is_installed() ) {
 }
 
 // Start install if possible and needed
-if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
+if ( isset($_REQUEST['install']) && count( $danger ) == 0 ) {
 	// Create/update .htaccess file
 	if ( yourls_create_htaccess() ) {
 		$success[] = yourls__( 'File <code>.htaccess</code> successfully created/updated.' );
@@ -40,7 +40,7 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 	// Create SQL tables
 	$install = yourls_create_sql_tables();
 	if ( isset( $install['error'] ) )
-		$error = array_merge( $error, $install['error'] );
+		$danger = array_merge( $danger, $install['error'] );
 	if ( isset( $install['success'] ) )
 		$success = array_merge( $success, $install['success'] );
 }
@@ -68,7 +68,7 @@ yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
 			if( !yourls_is_installed() && !isset( $_REQUEST['install'] ) ) {
 				echo '<input type="submit" name="install" value="' . yourls__( 'Install YOURLS' ) . '" class="start" />';
 			} else {
-				echo '<p><a class="start" href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page' ) . '">' . yourls__( 'YOURLS Administration Page') . '</a></p>';
+				echo '<a class="start" href="'.yourls_admin_url().'" title="' . yourls__( 'YOURLS Administration Page' ) . '">' . yourls__( 'YOURLS Administration Page') . '</a>';
 			}
 		?>
 	</form>
