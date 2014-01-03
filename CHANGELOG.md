@@ -6,16 +6,15 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 
 1.7
 ---
-- improved: security with auto-encrypted user passwords
 - added: support for PDO and MySQLi
-- added: social bookmarklets
-- improved: new HTTP manipulation
-- added: api.yourls.org dialogue implementation
-- improved: auto-detect new YOURLS version
-- improved: proxy & Port config supported
-- improved: GeoIP IPv6
-- fixed: wrong headers declaration
-- fixed: broken link encoding
+- added: social bookmarklets - share on Twitter, Facebook or Tumblr in a click
+- added: check api.yourls.org if a new version of YOURLS is available
+- added: proxy support - install YOURLS behind a firewall!
+- improved: security regarding SQL injections
+- improved: security regarding your credentials - now auto-encrypted
+- improved: external HTTP request handling
+- improved: ƒυηкƴ UTF-8 titles handling
+- fixed: compatibility with Apache mod_security blocking bookmarklets
 - fixed: lots of bugs
 
 1.6
