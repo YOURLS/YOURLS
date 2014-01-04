@@ -7,32 +7,25 @@ vendor/
 
 # Configuration
 user/*
+!user/*/
+user/*/*
 !user/config-sample.php
 .htaccess
 *.config
 *.conf
 [Rr]obots.txt
 
-# Languages
-user/languages/*
-!user/languages/
-
-# Plugins
-user/plugins/*
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
 !user/plugins/sample-*/
 
-# Themes
-user/themes/*
 # Core themes
-!user/theme/sample-theme*/
-!user/theme/full-bootstrap/
+!user/themes/sample-theme*/
+!user/themes/full-bootstrap/
 
 # Pages
-pages/*
-!pages/examplepage.php
+!user/pages/examplepage.php
 
 # Keep index.html
 !user/index.html
@@ -62,3 +55,4 @@ Desktop.ini
 
 # Temp
 assets/css/*.less
+assets/less/*.css

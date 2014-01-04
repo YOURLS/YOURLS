@@ -281,7 +281,7 @@ function yourls_add_label( $message, $style = 'normal', $space = null ) {
  *
  */
 function yourls_page( $page ) {
-	$include = YOURLS_ABSPATH . "/pages/$page.php";
+	$include = YOURLS_PAGEDIR . "/$page.php";
 	if( !file_exists( $include ) ) {
 		yourls_die( "Page '$page' not found", 'Not found', 404 );
 	}
