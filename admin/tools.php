@@ -103,7 +103,7 @@ foreach( $bookmarks as $bookmark ) {
 	echo '<div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
 	echo '<div class="panel-body"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<i class="fa fa-arrow"></i> ' . yourls__( 'YOURLS Shorten' );
+	echo '<i class="fa fa-arrows"></i> ' . yourls__( 'YOURLS Shorten' );
 	echo '</a></div>';
 	echo '</div>';
 }
