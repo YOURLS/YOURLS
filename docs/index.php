@@ -32,7 +32,7 @@ foreach( $files as $file ) {
 		$menu .= '<li><a href="#' . string_to_HTML_ID( $file_name ) . '">' . $file_name . '</a></li>';
 	}
 }
-$html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class="icon-circle-arrow-up"></i></a></h1>', $html );
+$html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class="fa fa-arrow-circle-o-up"></i></a></h1>', $html );
 ?>
 <!DOCTYPE html>
 <html>
@@ -50,9 +50,7 @@ $html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class=
 	<div class="container">
 		<div class="sidebar">
 			<button data-target=".sidebar-responsive-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
+				<span class="fa fa-bars"></span>
 			</button>
 			<div class="yourls-logo">
 				<a href="../admin/"><img class="logo" src="../assets/img/yourls-logo.png" alt="YOURLS" title="YOURLS"/></a>

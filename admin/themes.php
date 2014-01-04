@@ -103,7 +103,7 @@ foreach( $themes as $file => $theme_data ) {
 	if( $screenshot = yourls_get_theme_screenshot( $themedir ) ) {
 		$screenshot = '<img src="' . $screenshot . '" alt="screenshot"/>';
 	} else {
-		$screenshot = '<span class="screenshot-missing"><i class="icon-question-sign"></i></span>';
+		$screenshot = '<span class="screenshot-missing"><i class="fa fa-question-circle"></i></span>';
 	}
 		
 	// Author link

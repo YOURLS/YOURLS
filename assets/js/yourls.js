@@ -44,21 +44,21 @@ function add_link() {
     add_loading(".add-button");
 
     $.getJSON(
-		ajaxurl,
-		{ action: 'add', url: newurl, keyword: keyword, nonce: nonce },
-		function (data) {
-		    if (data.status === 'success') {
-		        $('.admin-main-table tbody').prepend(data.html);
-		        $('.notfound').css('display', 'none');
-		        increment_counter();
-		        toggle_share_fill_boxes(data.url.url, data.shorturl, data.url.title);
-		    }
+        ajaxurl,
+        { action: 'add', url: newurl, keyword: keyword, nonce: nonce },
+        function (data) {
+            if (data.status === 'success') {
+                $('.admin-main-table tbody').prepend(data.html);
+                $('.notfound').css('display', 'none');
+                increment_counter();
+                toggle_share_fill_boxes(data.url.url, data.shorturl, data.url.title);
+            }
 
-		    add_link_reset();
-		    end_loading(".add-button");
-		    //feedback(data.message, data.status);
-		}
-	);
+            add_link_reset();
+            end_loading(".add-button");
+            //feedback(data.message, data.status);
+        }
+    );
 }
 
 // Delete a link
@@ -71,23 +71,23 @@ function remove_link(id) {
     var nonce = get_var_from_query($('#delete-button-' + id).attr('href'), 'nonce');
 
     $.getJSON(
-		ajaxurl,
-		{ action: "delete", keyword: keyword, nonce: nonce, id: id },
-		function (data) {
-		    if (data.success === 1) {
-		        $("#id-" + id).fadeOut(function () {
-		            $(this).remove();
-		            if ($('#main_table tbody tr').length === 1) {
-		                $('#nourl_found').css('display', '');
-		            }
-		        });
-		        decrement_counter();
-		    } else {
-		        // TODO: localize this
-		        alert('Could not delete link');
-		    }
-		}
-	);
+        ajaxurl,
+        { action: "delete", keyword: keyword, nonce: nonce, id: id },
+        function (data) {
+            if (data.success === 1) {
+                $("#id-" + id).fadeOut(function () {
+                    $(this).remove();
+                    if ($('#main_table tbody tr').length === 1) {
+                        $('#nourl_found').css('display', '');
+                    }
+                });
+                decrement_counter();
+            } else {
+                // TODO: localize this
+                alert('Could not delete link');
+            }
+        }
+    );
 }
 
 // Toggle Share box display
@@ -123,23 +123,23 @@ function update_share() {
 
     var charcount = parseInt(140 - $('#tweet_body').val().length, 10);
     $('#charcount')
-		.toggleClass("negative", charcount < 0)
-		.text(charcount);
+        .toggleClass("negative", charcount < 0)
+        .text(charcount);
 }
 
 // Mark an element as "loading" with a spinning icon
 function add_loading(elem) {
     add_disable(elem);
     $(elem).attr('data-html', $(elem).html())
-			 .html('')
-			 .append('<i class="spin icon-rotate-right"></i>');
+             .html('')
+             .append('<i class="spin fa fa-rotate-right"></i>');
 }
 
 // End marking an element as "loading" (remove spinning icon and restore content)
 function end_loading(elem) {
     end_disable(elem);
     $(elem).html($(elem).attr('data-html'))
-			 .removeAttr('data-html');
+             .removeAttr('data-html');
 }
 
 // Mark an element as "disabled" via class name

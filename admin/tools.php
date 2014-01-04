@@ -37,7 +37,7 @@ $('.bookmarklet-help strong').tooltip();
 $('p.bookmarklet-help strong').each( function( i, e ) {
 	var booktype = $(e).attr('class');
 	$(e).attr( 'id', 'booktype-'+booktype ).addClass('booktype-help');
-	$(e).append(' <i class="icon-info-sign"></i>');
+	$(e).append(' <i class="fa fa-info-circle"></i>');
 	$('#booktype-'+booktype).hover(
 		function() {
 			$('.bookmarklet-type-'+booktype).addClass('bookmarklet-hilite');
@@ -103,7 +103,7 @@ foreach( $bookmarks as $bookmark ) {
 	echo '<div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
 	echo '<div class="panel-body"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<i class="icon-move"></i> ' . yourls__( 'YOURLS Shorten' );
+	echo '<i class="fa fa-arrow"></i> ' . yourls__( 'YOURLS Shorten' );
 	echo '</a></div>';
 	echo '</div>';
 }
@@ -149,7 +149,7 @@ foreach( $bookmarks as $bookmark ) {
 	echo '<div class="bookmarklet panel-' . $bookmark['color'] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
 	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<i class="icon-move"></i> ' . $bookmark['name'];
+	echo '<i class="fa fa-arrow"></i> ' . $bookmark['name'];
 	echo '</a>';
 	echo '</div>';
 }

@@ -122,11 +122,11 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $
 function yourls_html_menu( $current_page = null ) {
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li class="logout"><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="icon-signout"></i> ' . yourls__( 'Logout' ) . '</a>' );
+		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li class="logout"><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="fa fa-sign-out"></i> ' . yourls__( 'Logout' ) . '</a>' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
-	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="icon-question-sign"></i> ' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="fa fa-question-circle"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -152,7 +152,7 @@ function yourls_html_menu( $current_page = null ) {
 		$admin_links['themes'] = array(
 			'url'    => yourls_admin_url( 'themes.php' ),
 			'anchor' => yourls__( 'Themes' ),
-			'icon'   => 'picture'
+			'icon'   => 'picture-o'
 		);
 		$admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
 	}
@@ -174,7 +174,7 @@ function yourls_html_menu( $current_page = null ) {
 			$class_active  = $current_page == $link ? ' active' : '';
 			
 			$format = '<li id="admin-menu-%link%-link" class="admin-menu-toplevel%class%">
-				<a href="%url%" %title%><i class="icon-%icon%"></i> %anchor%</a></li>';
+				<a href="%url%" %title%><i class="fa fa-%icon%"></i> %anchor%</a></li>';
 			$data   = array( 
 				'link'   => $link,
 				'class'  => $class_active,
@@ -620,7 +620,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
  */
 function yourls_html_zeroclipboard( $clipboard_target, $echo = true ) {
 	$html = yourls_apply_filter( 'html_zeroclipboard',
-	'<button class="btn-clipboard" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-clipboard-target="' . $clipboard_target . '" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"><i class="icon-copy"></i></button>',
+	'<button class="btn-clipboard" data-copied-hint="' . yourls__( 'Copied!' ) . '" data-clipboard-target="' . $clipboard_target . '" data-placement="bottom" data-trigger="manual" data-original-title="' . yourls__( 'Copy to clipboard' ) . '"><i class="fa fa-copy"></i></button>',
 	$clipboard_target );
 	if( $echo )
 		echo $html;
@@ -735,7 +735,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'href'    => $statlink,
 			'id'      => "statlink-$id",
 			'title'   => yourls_esc_attr__( 'Stats' ),
-			'icon'    => "zoom-in",
+			'icon'    => "bar-chart-o",
 			'anchor'  => yourls__( 'Stats' ),
 		),
 		'share' => array(
@@ -743,7 +743,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "share-button-$id",
 			'title'   => yourls_esc_attr__( 'Share' ),
 			'anchor'  => yourls__( 'Share' ),
-			'icon'    => "share-alt",
+			'icon'    => "share-square-o",
 			'onclick' => "toggle_share('$id');return false;",
 		),
 		'edit' => array(
@@ -759,7 +759,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'id'      => "delete-button-$id",
 			'title'   => yourls_esc_attr__( 'Delete' ),
 			'anchor'  => yourls__( 'Delete' ),
-			'icon'    => "trash",
+			'icon'    => "trash-o",
 			'onclick' => "remove_link('$id');return false;",
 		)
 	);
@@ -770,7 +770,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	$action_links = '<div class="btn-group">';
 	foreach( $actions as $key => $action ) {
 		$onclick = isset( $action['onclick'] ) ? 'onclick="' . $action['onclick'] . '"' : '' ;
-		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="icon-%s"></i></a>',
+		$action_links .= sprintf( '<a href="%s" id="%s" title="%s" class="%s" %s><i class="fa fa-%s"></i></a>',
 			$action['href'], $action['id'], $action['title'], 'btn btn-'.$key, $onclick, $action['icon']
 		);
 	}
@@ -782,7 +782,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$protocol_warning = '';
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
-		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<i class="warning protocol_warning icon-exclamation-sign" title="' . yourls__( 'Not a common link' ) . '"></i> ' );
+		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<i class="warning protocol_warning fa fa-exclamation-circle" title="' . yourls__( 'Not a common link' ) . '"></i> ' );
 
 	// Row template that you can filter before it's parsed (don't remove HTML classes & id attributes)
 	$format = '<tr id="id-%id%">
@@ -941,9 +941,7 @@ function yourls_wrapper_end() {
 function yourls_sidebar_start() {
 	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">
 	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-responsive-collapse">
-	  <span class="icon-bar"></span>
-	  <span class="icon-bar"></span>
-	  <span class="icon-bar"></span>
+	  <i class="fa fa-bars"></i>
 	</button>' );
 }
 
