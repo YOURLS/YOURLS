@@ -11,14 +11,10 @@
     font-weight: 500;
     color: #fff;
     background-color: transparent;
-    border-color: #fff;
-    border-color: rgba(255,255,255,.5);
-    -moz-transition: all .1s ease-in-out;
-    -o-transition: all .1s ease-in-out;
-    -webkit-transition: all .1s ease-in-out;
-    transition: all .1s ease-in-out;
+    border-color: lighten(@bg-color, 46%);
 
     &:hover,
+    &:focus,
     &:active {
         color: @bg-color;
         background-color: #fff;
