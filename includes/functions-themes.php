@@ -136,7 +136,7 @@ function yourls_core_assets() {
 			'yourls'    => 'yourls',
 		),
 		'css' => array(
-			'style'     => 'style.min',
+			'style'     => 'yourls.min',
 		),
 	);
 }

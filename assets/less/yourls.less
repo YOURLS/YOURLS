@@ -1,5 +1,27 @@
+/*!
+ * YOURLS v2.0
+ * http://yourls.org
+ *
+ * Bootstrap v3.0.3
+ * Copyright 2013 Twitter, Inc - Apache License v2.0
+ *
+ * To edit YOURLS CSS, please only edit /assets/less/yourls.less,
+ * rather than other CSS files like those found in the /assets/css directory.
+ * You can then compile /assets/less/style.less to /assets/css/style.min.css
+ * using a LESS compiler, as shown on http://lesscss.org/.
+ * Remember to also minify the resulting CSS file.
+ */
+ 
 //
-// YOURLS STYLE
+// Dependencies
+// --------------------------------------------------
+
+@import "bootstrap/bootstrap.less";
+@import "font-awesome/font-awesome.less";
+@import "flags/flags.less";
+
+//
+// Variables
 // --------------------------------------------------
 
 // Assets path
@@ -17,6 +39,10 @@
 @bck-wrapper: #fff;
 @sidebar: @bck-wrapper;
 @font-stats-big: 20px;
+
+//
+// Style
+// --------------------------------------------------
 
 // Fonts
 @font-face {
