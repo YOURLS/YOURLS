@@ -432,7 +432,7 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 			<ul id="details_countries" style="display:none" class="no_bullet">
 			<?php
 			foreach( $countries as $code=>$count ) {
-				echo '<li><i class="' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . '</li>';
+				echo '<li><i class="flag ' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . '</li>';
 			}		
 			?>
 			</ul>
