@@ -20,6 +20,16 @@ require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
 
+// Admin:
+if( preg_match( "@^".YOURLS_ADMIN_KEY."/(([a-zA-Z\-]+)(\.php)?)?$@", $request, $matches ) ) {
+	$page = YOURLS_INC.'/admin/';
+	$page .= $matches[2] ? $matches[2].'.php' : 'index.php';
+    if ( file_exists( $page ) ) {
+        require_once( $page );
+        exit;
+    }
+}
+
 // Make valid regexp pattern from authorized charset in keywords
 $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
 
@@ -52,7 +62,7 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = yourls_sanitize_url( $matches[0] );
 	yourls_do_action( 'load_template_redirect_admin', $url );
-	yourls_redirect( yourls_admin_url('index.php').'?u='.rawurlencode( $url ), 302 );
+	yourls_redirect( yourls_admin_url('index').'?u='.rawurlencode( $url ), 302 );
 	exit;
 }
 

@@ -85,7 +85,7 @@ function sample_theme_menu() {
 	// Some very interesting links
 	$intranet = 'http://intranet.corp/';
 	$yourls   = yourls_admin_url( );
-	$themes   = yourls_admin_url( 'themes.php' );
+	$themes   = yourls_admin_url( 'themes' );
 	
 	// The menu
 	echo <<<MENU

@@ -77,6 +77,7 @@ function yourls_keyword_is_reserved( $keyword ) {
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
+		or $keyword == YOURLS_ADMIN_KEY
 	)
 		$reserved = true;
 	
@@ -1962,7 +1963,7 @@ function yourls_current_admin_page() {
 	if( yourls_is_admin() ) {
 		$current = substr( yourls_get_request(), 6 );
 		if( $current === false ) 
-			$current = 'index.php'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index.php
+			$current = 'index'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index
 			
 		return $current;
 	}

@@ -73,7 +73,7 @@ function yourls_html_logo( $linked = true ) {
 	yourls_do_action( 'pre_html_logo' );
 	$logo = '<img class="yourls-logo-img" src="' . yourls_site_url( false, YOURLS_ASSETURL . '/img/yourls-logo.png' ) . '" alt="YOURLS" title="YOURLS"/>';
 	if ( $linked )
-		$logo = yourls_html_link( yourls_admin_url( 'index.php' ), $logo, 'YOURLS', false, false );
+		$logo = yourls_html_link( yourls_admin_url( 'index' ), $logo, 'YOURLS', false, false );
 	?>
 	<div class="yourls-logo">
 		<?php echo $logo; ?>
@@ -132,7 +132,7 @@ function yourls_html_menu( $current_page = null ) {
 	$admin_sublinks = array();
 	
 	$admin_links['admin'] = array(
-		'url'    => yourls_admin_url( 'index.php' ),
+		'url'    => yourls_admin_url( 'index' ),
 		'title'  => yourls__( 'Go to the admin interface' ),
 		'anchor' => yourls__( 'Interface' ),
 		'icon'   => 'home'
@@ -140,17 +140,17 @@ function yourls_html_menu( $current_page = null ) {
 	
 	if( ( yourls_is_admin() && yourls_is_public_or_logged() ) || defined( 'YOURLS_USER' ) ) {
 		$admin_links['tools'] = array(
-			'url'    => yourls_admin_url( 'tools.php' ),
+			'url'    => yourls_admin_url( 'tools' ),
 			'anchor' => yourls__( 'Tools' ),
 			'icon'   => 'wrench'
 		);
 		$admin_links['plugins'] = array(
-			'url'    => yourls_admin_url( 'plugins.php' ),
+			'url'    => yourls_admin_url( 'plugins' ),
 			'anchor' => yourls__( 'Plugins' ),
 			'icon'   => 'cogs'
 		);
 		$admin_links['themes'] = array(
-			'url'    => yourls_admin_url( 'themes.php' ),
+			'url'    => yourls_admin_url( 'themes' ),
 			'anchor' => yourls__( 'Themes' ),
 			'icon'   => 'picture-o'
 		);
@@ -396,7 +396,7 @@ function yourls_html_search( $params = array() ) {
 						$_select_search = yourls_html_select( 'search_in', $_options, $search_in );
 						$_button = '<span class="input-group-btn">
 						<button type="submit" id="submit-sort" class="btn btn-primary">' . yourls__( 'Search' ) . '</button>
-						<button type="button" id="submit-clear-filter" class="btn btn-danger" onclick="window.parent.location.href = \'index.php\'">' . yourls__( 'Clear' ) . '</button>
+						<button type="button" id="submit-clear-filter" class="btn btn-danger" onclick="window.parent.location.href = \'index\'">' . yourls__( 'Clear' ) . '</button>
 						</span>';
 						
 						// Second search control: order by

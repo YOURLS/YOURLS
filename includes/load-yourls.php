@@ -68,6 +68,10 @@ if( !defined( 'YOURLS_THEMEURL' ) )
 // physical path of pages directory
 if( !defined( 'YOURLS_PAGEDIR' ) )
 	define('YOURLS_PAGEDIR', YOURLS_USERDIR.'/pages' );
+ 
+// admin pages location
+if( !defined( 'YOURLS_ADMIN_KEY' ) )
+	define('YOURLS_ADMIN_KEY', 'admin' );
 
 // table to store URLs
 if( !defined( 'YOURLS_DB_TABLE_URL' ) )
@@ -185,7 +189,7 @@ if( !yourls_is_installed() && !yourls_is_installing() ) {
 // Check if upgrade is needed (bypassed if upgrading or installing)
 if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 	if ( yourls_upgrade_is_needed() ) {
-		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php', 302 );
+		yourls_redirect( YOURLS_SITE .'/admin/upgrade', 302 );
 	}
 }
 
