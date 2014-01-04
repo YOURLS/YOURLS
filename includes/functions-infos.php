@@ -18,8 +18,8 @@ function yourls_stats_countries_map( $countries, $id = null ) {
 	$options = array(
 		'backgroundColor' => "white",
 		'colorAxis'       => "{colors:['A8D0ED','99C4E4','8AB8DB','7BACD2','6BA1C9','5C95C0','4D89B7','3E7DAE','2E72A5','1F669C']}",
-		'width'           => "550",
-		'height'          => "340",
+		'width'           => "665",
+		'height'          => "400",
 		'theme'           => 'maximized'
 	);
 	$options = yourls_apply_filter( 'stats_countries_map_options', $options );

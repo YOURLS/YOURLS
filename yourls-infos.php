@@ -245,8 +245,10 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 
 
 		<div class="stat-tab" id="stat-tab-home">
+            <div class="page-header">
 		<?php yourls_html_htag( yourls__( 'Global Info' ), 2 ); ?>
-			<table class="table g-stats">
+        </div>
+			<table class="table table-striped table-bordered g-stats">
 				<tbody>
 					<tr>
 						<td><?php yourls_e( 'Short URL' ); ?></td>
@@ -285,7 +287,9 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 
 <?php if( yourls_do_log_redirect() ) { ?>
 	<div class="stat-tab" id="stat-tab-stats">
+    <div class="page-header">
 		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
+        </div>
 		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword );
 		if ( $list_of_days ) { ?>
 
@@ -326,8 +330,10 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 					}
 					echo "</div>";
 				}			
-			}
-				
+			} ?>
+								<details>
+					<summary><?php yourls_e( 'More details' ); ?></summary>
+<?php
 			yourls_html_htag( yourls__( 'Historical click count' ), 3 ); 
 			
 			$ago = round( (date('U') - strtotime($timestamp)) / (24* 60 * 60 ) );
@@ -376,8 +382,6 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
 				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>.</p>
-				<details>
-					<summary><?php yourls_e( 'More details' ); ?></summary>
 					<ul id="details-clicks">
 						<?php
 						foreach( $dates as $year=>$months ) {
@@ -423,14 +427,17 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 	</div>
 
 	<div class="stat-tab" id="stat-tab-location">
-		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
-		<?php yourls_do_action( 'pre_yourls_info_location', $keyword ); 
+                <div class="page-header">
+		<?php yourls_html_htag( yourls__( 'Location stats' ), 2 ); ?>
+        </div>
+        <?php yourls_do_action( 'pre_yourls_info_location', $keyword ); 
 		if ( $countries ) {			
-			yourls_html_htag( yourls__( 'Top 5 countries' ), 3 );
-			yourls_stats_pie( $countries, 5, '340x220', 'stat_tab_location_pie' ); ?>
+			yourls_stats_countries_map( $countries, 'stat_tab_location_map' ); ?>
 			<p><a href="" class='details hide-if-no-js' id="more_countries"><?php yourls_e( 'Click for more details' ); ?></a></p>
 			<ul id="details_countries" style="display:none" class="no_bullet">
-			<?php
+			<?php 
+			yourls_html_htag( yourls__( 'Top 5 countries' ), 3 );
+            yourls_stats_pie( $countries, 5, '340x220', 'stat_tab_location_pie' );
 			foreach( $countries as $code=>$count ) {
 				echo '<li><i class="flag ' . yourls_geo_get_flag( $code ) . '"></i> ' . $code . '( ' . yourls_geo_countrycode_to_countryname( $code ) . ' ) : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . '</li>';
 			}		
@@ -438,9 +445,6 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 			</ul>
 
 			<?php
-			yourls_html_htag( yourls__( 'Overall traffic' ), 3 );
-			yourls_stats_countries_map( $countries, 'stat_tab_location_map' );
-		
 			yourls_do_action( 'post_yourls_info_location', $keyword );
 
 		} else {
@@ -450,14 +454,18 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 
 
 	<div class="stat-tab" id="stat-tab-sources">
+                <div class="page-header">
 		<?php yourls_html_htag( yourls__( 'Hitting stats' ), 2 ); ?>
-		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword );
-
+        </div>
+        <?php yourls_do_action( 'pre_yourls_info_sources', $keyword ); ?>
+        <div class="row">
+        <div class="col-lg-6">
+<?php
 		if ( $referrers ) {
 			yourls_html_htag( yourls__( 'Referrer shares' ), 3 );
 			if ( $number_of_sites > 1 )
 				$referrer_sort[ yourls__( 'Others' ) ] = count( $referrers );
-			yourls_stats_pie( $referrer_sort, 5, '440x220', 'stat_tab_source_ref' );
+			yourls_stats_pie( $referrer_sort, 5, '332x220', 'stat_tab_source_ref' );
 			unset( $referrer_sort['Others'] );
 			yourls_html_htag( yourls__( 'Referrers' ), 3 ); ?>
 			<ul class="no_bullet">
@@ -485,14 +493,14 @@ yourls_html_htag( yourls__( 'Statistics Panel' ), 1, yourls_esc_html( $keyword )
 				}
 				?>
 			</ul>
-				
+				</div><div class="col-lg-6">
 			<?php
 			yourls_html_htag( yourls__( 'Direct vs Referrer Traffic' ), 3 );
-			yourls_stats_pie( array( yourls__( 'Direct' ) => $direct, yourls__( 'Referrers' ) => $notdirect ), 5, '440x220', 'stat_tab_source_direct' );
+			yourls_stats_pie( array( yourls__( 'Direct' ) => $direct, yourls__( 'Referrers' ) => $notdirect ), 5, '332x220', 'stat_tab_source_direct' );
 			?>
 			<p><?php yourls_e( 'Direct traffic:' ); echo ' ' . sprintf( yourls_n( '<strong>%s</strong> hit', '<strong>%s</strong> hits', $direct ), $direct ); ?></p>
 			<p><?php yourls_e( 'Referrer traffic:' ); echo ' ' . sprintf( yourls_n( '<strong>%s</strong> hit', '<strong>%s</strong> hits', $notdirect ), $direct ); ?></p>
-
+</div></div>
 			<?php yourls_do_action( 'post_yourls_info_sources', $keyword );
 			
 		} else {
