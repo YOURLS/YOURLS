@@ -9,7 +9,7 @@
  *
  * Hey! I see you're looking at CSS sources.
  * You want to edit the style? See how to manage LESS
- * at https://github.com/YOURLS/YOURLS/wiki/Style
+ * and CSS at https://github.com/YOURLS/YOURLS/wiki/Style
  */
  
 //
@@ -21,24 +21,12 @@
 @import "flag-sprites/flag-sprites";
 
 //
-// Variables
+// Tools
 // --------------------------------------------------
 
-// Assets path
-@font-path: "../fonts";
-@img-path: "../img";
-
-// Colors Palette
-@yourls-color-light: #e3f3ff;
-@yourls-color-med-light: #c7e7ff;
-@yourls-color-medium: #88c0eb;
-@yourls-color-med-dark: #2a85b3;
-@yourls-color-dark: #1f669c;
-
-// Wrapper Variables
-@bck-wrapper: #fff;
-@sidebar: @bck-wrapper;
-@font-stats-big: 20px;
+@import "variables";
+@import "mixins";
+@import "spin";
 
 //
 // Style
@@ -52,29 +40,6 @@
 }
 
 // HTML Components
-.btn-outline(@bg-color) {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    padding: 18px 24px;
-    font-size: inherit;
-    font-weight: 500;
-    color: #fff;
-    background-color: transparent;
-    border-color: #fff;
-    border-color: rgba(255,255,255,.5);
-    -moz-transition: all .1s ease-in-out;
-    -o-transition: all .1s ease-in-out;
-    -webkit-transition: all .1s ease-in-out;
-    transition: all .1s ease-in-out;
-
-    &:hover,
-    &:active {
-        color: @bg-color;
-        background-color: #fff;
-        border-color: #fff;
-    }
-}
-
 .btn-outline {
     .btn-outline(@yourls-color-dark);
 }
@@ -96,11 +61,6 @@
     .highlight {
         background-color: #fff;
     }
-}
-
-.callout-theme(@bck-color, @border-color) {
-    background-color: @bck-color;
-    border-color: @border-color;
 }
 
 .callout-danger {
@@ -791,63 +751,5 @@ button.btn-clipboard-active {
         margin-left: -10.7%;
         padding-right: 10.7%;
         padding-left: 10.7%;
-    }
-}
-// Spin stuff
-.spin {
-    -webkit-animation: spin 1s infinite linear;
-    -moz-animation: spin 1s infinite linear;
-    -o-animation: spin 1s infinite linear;
-    animation: spin 1s infinite linear;
-    display: inherit;
-}
-
-@-moz-keyframes spin {
-    0% {
-        .rotate(0deg);
-    }
-
-    100% {
-        .rotate(359deg);
-    }
-}
-
-@-webkit-keyframes spin {
-    0% {
-        .rotate(0deg);
-    }
-
-    100% {
-        .rotate(359deg);
-    }
-}
-
-@-o-keyframes spin {
-    0% {
-        .rotate(0deg);
-    }
-
-    100% {
-        .rotate(359deg);
-    }
-}
-
-@-ms-keyframes spin {
-    0% {
-        .rotate(0deg);
-    }
-
-    100% {
-        .rotate(359deg);
-    }
-}
-
-@keyframes spin {
-    0% {
-        .rotate(0deg);
-    }
-
-    100% {
-        .rotate(359deg);
     }
 }
