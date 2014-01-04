@@ -77,7 +77,6 @@ function yourls_keyword_is_reserved( $keyword ) {
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
-		or $keyword == YOURLS_ADMIN_KEY
 	)
 		$reserved = true;
 	
