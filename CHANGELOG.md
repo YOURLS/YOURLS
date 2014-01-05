@@ -4,12 +4,17 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
-HEAD
-----
-- improved: security with auto-encrypted user passwords
-- added: Support for PDO and MySQLi
-- added: Social bookmarklets
-- improved: GeoIP IPv6
+1.7
+---
+- added: support for PDO and MySQLi
+- added: social bookmarklets - share on Twitter, Facebook or Tumblr in a click
+- added: check api.yourls.org if a new version of YOURLS is available
+- added: proxy support - install YOURLS behind a firewall!
+- improved: security regarding SQL injections
+- improved: security regarding your credentials - now auto-encrypted
+- improved: external HTTP request handling
+- improved: ƒυηкƴ UTF-8 titles handling
+- fixed: compatibility with Apache mod_security blocking bookmarklets
 - fixed: lots of bugs
 
 1.6

@@ -1,4 +1,8 @@
 <?php
+/*
+ * YOURLS
+ * Compatibility functions when either missing from older PHP versions or not included by default
+ */
 
 /**
  * json_encode for PHP prior to 5.2

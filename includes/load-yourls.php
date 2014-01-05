@@ -4,10 +4,10 @@
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	define( 'YOURLS_CONFIGFILE', dirname( dirname( __FILE__ ) ) . '/user/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) . '/user/config.php' );
 } elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
 	// config.php in /includes/
-	define( 'YOURLS_CONFIGFILE', dirname( __FILE__ ) . '/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __FILE__ ) ) . '/config.php' );
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <code>config.php</code>.</p><p>Please read the <a href="../docs/#install">documentation</a> to learn how to install YOURLS</p>' );
@@ -21,10 +21,10 @@ if( !defined( 'YOURLS_DB_PREFIX' ) )
 	
 // Define core constants that have not been user defined in config.php
 $yourls_definitions = array(
-	// physical path of YOURLS root
+// physical path of YOURLS root
 	'ABSPATH'             => str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ),
-	// physical path of includes directory
-	'INC'                 => array( 'ABSPATH', '/include' ),
+// physical path of includes directory
+	'INC'                 => array( 'ABSPATH', '/includes' ),
 
 	// physical path and url of asset directory
 	'ASSETDIR'            => array( 'ABSPATH', '/assets' ),
@@ -33,7 +33,7 @@ $yourls_definitions = array(
 	// physical path and url of user directory
 	'USERDIR'             => array( 'ABSPATH', '/user' ),
 	'USERURL'             => array( 'SITE', '/user' ),
-	// physical path of translations directory
+// physical path of translations directory
 	'LANG_DIR'            => array( 'USERDIR', '/languages' ),
 	// physical path and url of plugins directory
 	'PLUGINDIR'           => array( 'USERDIR', '/plugins' ),
@@ -41,7 +41,7 @@ $yourls_definitions = array(
 	// physical path and url of themes directory
 	'THEMEDIR'            => array( 'USERDIR', '/themes' ),
 	'THEMEURL'            => array( 'USERURL', '/themes' ),
-	// physical path of pages directory
+// physical path of pages directory
 	'PAGEDIR'             => array( 'USERDIR', '/pages' ),
 
 	// admin pages location
@@ -49,22 +49,22 @@ $yourls_definitions = array(
 
 	// table to store URLs
 	'DB_TABLE_URL'        => array( 'DB_PREFIX', 'url' ),
-	// table to store options
+// table to store options
 	'DB_TABLE_OPTIONS'    => array( 'DB_PREFIX', 'options' ),
-	// table to store hits, for stats
+// table to store hits, for stats
 	'DB_TABLE_LOG'        => array( 'DB_PREFIX', 'log' ),
 
-	// minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
+// minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 	'FLOOD_DELAY_SECONDS' => 15,
-	// comma separated list of IPs that can bypass flood check.
+// comma separated list of IPs that can bypass flood check.
 	'FLOOD_IP_WHITELIST'  => '',
 	'COOKIE_LIFE'         => 60*60*24*7,
-	// life span of a nonce in seconds
+// life span of a nonce in seconds
 	'NONCE_LIFE'          => 43200, // 3600 *,12
 
-	// if set to true, disable stat logging (no use for it, too busy servers, ...)
+// if set to true, disable stat logging (no use for it, too busy servers, ...)
 	'NOSTATS'             => false,
-	// if set to true, force https:// in the admin area
+// if set to true, force https:// in the admin area
 	'ADMIN_SSL'           => false,
 	// if set to true, verbose debug infos. Will break things. Don't enable.
 	'DEBUG'               => false,
@@ -97,6 +97,7 @@ require_once YOURLS_INC . '/functions-kses.php';
 require_once YOURLS_INC . '/functions-l10n.php';
 require_once YOURLS_INC . '/functions-compat.php';
 require_once YOURLS_INC . '/functions-html.php';
+require_once YOURLS_INC . '/functions-http.php';
 require_once YOURLS_INC . '/functions-infos.php';
 require_once YOURLS_INC . '/functions-themes.php';
 
@@ -169,6 +170,9 @@ if( yourls_has_interface() ) {
 	yourls_init_theme();
 	yourls_do_action( 'init_theme' );
 }
+
+// Is there a new version of YOURLS ?
+yourls_new_core_version_notice();
 
 if( yourls_is_admin() ) {
 	yourls_do_action( 'admin_init' );
