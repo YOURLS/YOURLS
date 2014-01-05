@@ -20,98 +20,65 @@ if( !defined( 'YOURLS_DB_PREFIX' ) )
 
 	
 // Define core constants that have not been user defined in config.php
+$yourls_definitions = array(
+	// physical path of YOURLS root
+	'ABSPATH'             => str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ),
+	// physical path of includes directory
+	'INC'                 => array( 'ABSPATH', '/include' ),
 
-// physical path of YOURLS root
-if( !defined( 'YOURLS_ABSPATH' ) )
-	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
+	// physical path and url of asset directory
+	'ASSETDIR'            => array( 'ABSPATH', '/assets' ),
+	'ASSETURL'            => array( 'SITE', '/assets' ),
 
-// physical path of includes directory
-if( !defined( 'YOURLS_INC' ) )
-	define( 'YOURLS_INC', YOURLS_ABSPATH.'/includes' );
+	// physical path and url of user directory
+	'USERDIR'             => array( 'ABSPATH', '/user' ),
+	'USERURL'             => array( 'SITE', '/user' ),
+	// physical path of translations directory
+	'LANG_DIR'            => array( 'USERDIR', '/languages' ),
+	// physical path and url of plugins directory
+	'PLUGINDIR'           => array( 'USERDIR', '/plugins' ),
+	'PLUGINURL'           => array( 'USERURL', '/plugins' ),
+	// physical path and url of themes directory
+	'THEMEDIR'            => array( 'USERDIR', '/themes' ),
+	'THEMEURL'            => array( 'USERURL', '/themes' ),
+	// physical path of pages directory
+	'PAGEDIR'             => array( 'USERDIR', '/pages' ),
 
-// physical path of asset directory
-if( !defined( 'YOURLS_ASSETDIR' ) )
-	define( 'YOURLS_ASSETDIR', YOURLS_ABSPATH.'/assets' );
+	// admin pages location
+	'ADMIN_KEY'           => 'admin',
 
-// URL of asset directory
-if( !defined( 'YOURLS_ASSETURL' ) )
-	define( 'YOURLS_ASSETURL', YOURLS_SITE.'/assets' );
-	
-// physical path of user directory
-if( !defined( 'YOURLS_USERDIR' ) )
-	define( 'YOURLS_USERDIR', YOURLS_ABSPATH.'/user' );
+	// table to store URLs
+	'DB_TABLE_URL'        => array( 'DB_PREFIX', 'url' ),
+	// table to store options
+	'DB_TABLE_OPTIONS'    => array( 'DB_PREFIX', 'options' ),
+	// table to store hits, for stats
+	'DB_TABLE_LOG'        => array( 'DB_PREFIX', 'log' ),
 
-// URL of user directory
-if( !defined( 'YOURLS_USERURL' ) )
-	define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
-	
-// physical path of translations directory
-if( !defined( 'YOURLS_LANG_DIR' ) )
-	define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
+	// minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
+	'FLOOD_DELAY_SECONDS' => 15,
+	// comma separated list of IPs that can bypass flood check.
+	'FLOOD_IP_WHITELIST'  => '',
+	'COOKIE_LIFE'         => 60*60*24*7,
+	// life span of a nonce in seconds
+	'NONCE_LIFE'          => 43200, // 3600 *,12
 
-// physical path of plugins directory
-if( !defined( 'YOURLS_PLUGINDIR' ) )
-	define( 'YOURLS_PLUGINDIR', YOURLS_USERDIR.'/plugins' );
+	// if set to true, disable stat logging (no use for it, too busy servers, ...)
+	'NOSTATS'             => false,
+	// if set to true, force https:// in the admin area
+	'ADMIN_SSL'           => false,
+	// if set to true, verbose debug infos. Will break things. Don't enable.
+	'DEBUG'               => false,
+);
 
-// URL of plugins directory
-if( !defined( 'YOURLS_PLUGINURL' ) )
-	define( 'YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins' );
-	
-// physical path of themes directory
-if( !defined( 'YOURLS_THEMEDIR' ) )
-	define( 'YOURLS_THEMEDIR', YOURLS_USERDIR.'/themes' );
-
-// URL of themes directory
-if( !defined( 'YOURLS_THEMEURL' ) )
-	define( 'YOURLS_THEMEURL', YOURLS_USERURL.'/themes' );
-
-// physical path of pages directory
-if( !defined( 'YOURLS_PAGEDIR' ) )
-	define('YOURLS_PAGEDIR', YOURLS_USERDIR.'/pages' );
- 
-// admin pages location
-if( !defined( 'YOURLS_ADMIN_KEY' ) )
-	define('YOURLS_ADMIN_KEY', 'admin' );
-
-// table to store URLs
-if( !defined( 'YOURLS_DB_TABLE_URL' ) )
-	define( 'YOURLS_DB_TABLE_URL', YOURLS_DB_PREFIX.'url' );
-
-// table to store options
-if( !defined( 'YOURLS_DB_TABLE_OPTIONS' ) )
-	define( 'YOURLS_DB_TABLE_OPTIONS', YOURLS_DB_PREFIX.'options' );
-
-// table to store hits, for stats
-if( !defined( 'YOURLS_DB_TABLE_LOG' ) )
-	define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
-
-// minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
-if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
-	define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
-
-// comma separated list of IPs that can bypass flood check.
-if( !defined( 'YOURLS_FLOOD_IP_WHITELIST' ) )
-	define( 'YOURLS_FLOOD_IP_WHITELIST', '' );
-
-// life span of an auth cookie in seconds (60*60*24*7 = 7 days)
-if( !defined( 'YOURLS_COOKIE_LIFE' ) )
-	define( 'YOURLS_COOKIE_LIFE', 60*60*24*7 );
-
-// life span of a nonce in seconds
-if( !defined( 'YOURLS_NONCE_LIFE' ) )
-	define( 'YOURLS_NONCE_LIFE', 43200 ); // 3600 * 12
-
-// if set to true, disable stat logging (no use for it, too busy servers, ...)
-if( !defined( 'YOURLS_NOSTATS' ) )
-	define( 'YOURLS_NOSTATS', false );
-
-// if set to true, force https:// in the admin area
-if( !defined( 'YOURLS_ADMIN_SSL' ) )
-	define( 'YOURLS_ADMIN_SSL', false );
-
-// if set to true, verbose debug infos. Will break things. Don't enable.
-if( !defined( 'YOURLS_DEBUG' ) )
-	define( 'YOURLS_DEBUG', false );
+foreach ( $yourls_definitions as $def_name => $def_default ) {
+	if( !defined( 'YOURLS_' . $def_name ) ) {
+		if ( is_array( $def_default ) ) {
+			define( 'YOURLS_' . $def_name, constant( 'YOURLS_' . $def_default[0] ) . $def_default[1] );
+		} else {
+			define( 'YOURLS_' . $def_name, $def_default );
+		}
+	}
+}
 	
 // Error reporting
 if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
