@@ -41,7 +41,7 @@ $html = str_replace( '</h1>', '<a href="#top" class="back">back to top <i class=
 	<title>YOURLS Documentation</title>
 	<meta name="description" content="YOURLS is Your Own URL Shortener. Get it at http://yourls.org/">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../assets/css/style.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
+	<link rel="stylesheet" href="../assets/css/yourls.min.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen">
 	<script src="../assets/js/jquery.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="../assets/js/bootstrap.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="bootstrap-scrollspy.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
