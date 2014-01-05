@@ -6,7 +6,7 @@ if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
 	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) . '/user/config.php' );
 } elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
-	// config.php in /includes/
+	// config.php in /src/
 	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __FILE__ ) ) . '/config.php' );
 } else {
 	// config.php not found :(
@@ -24,7 +24,7 @@ $yourls_definitions = array(
 // physical path of YOURLS root
 	'ABSPATH'             => str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ),
 // physical path of includes directory
-	'INC'                 => array( 'ABSPATH', '/includes' ),
+	'INC'                 => array( 'ABSPATH', '/src' ),
 
 	// physical path and url of asset directory
 	'ASSETDIR'            => array( 'ABSPATH', '/assets' ),

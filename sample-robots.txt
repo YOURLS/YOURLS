@@ -1,6 +1,6 @@
 User-agent: *
 Disallow: /admin
 Disallow: /assets
-Disallow: /includes
+Disallow: /src
 Disallow: /pages
 Disallow: /user
