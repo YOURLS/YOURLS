@@ -84,7 +84,7 @@ function yourls_http_proxy_is_defined() {
 /**
  * Default HTTP requests options for YOURLS
  *
- * For a list of all available options, see function request() in /includes/Requests/Requests.php
+ * For a list of all available options, see function request() in /src/Requests/Requests.php
  *
  * @uses YOURLS_PROXY
  * @uses YOURLS_PROXY_USERNAME
@@ -248,7 +248,7 @@ function yourls_check_core_version() {
 		$checks->version_checked = YOURLS_VERSION;
 	}
 
-	// Config file location ('u' for '/user' or 'i' for '/includes')
+	// Config file location ('u' for '/user' or 'i' for '/src')
 	$conf_loc = str_replace( YOURLS_ABSPATH, '', YOURLS_CONFIGFILE );
 	$conf_loc = str_replace( '/config.php', '', $conf_loc );
 	$conf_loc = ( $conf_loc == '/user' ? 'u' : 'i' );

@@ -19,7 +19,7 @@ function string_to_HTML_ID($string) {
 
 require_once dirname( __FILE__ ) . '/Markdown.php';
 
-include_once( dirname( dirname( __FILE__ ) ) . '/includes/version.php' );
+include_once( dirname( dirname( __FILE__ ) ) . '/src/version.php' );
 
 $files = scandir( dirname( __FILE__ ) );
 $html = $menu = '';
