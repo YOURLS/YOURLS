@@ -23,11 +23,11 @@ $request = yourls_get_request();
 // Admin:
 if( preg_match( "@^".YOURLS_ADMIN_KEY."/(([a-zA-Z\-]+)(\.php)?)?$@", $request, $matches ) ) {
 	$page = YOURLS_INC.'/admin/';
-	$page .= $matches[2] ? $matches[2].'.php' : 'index.php';
-    if ( file_exists( $page ) ) {
-        require_once( $page );
-        exit;
-    }
+	$page .= ( isset( $matches[2] ) && $matches[2] ) ? $matches[2].'.php' : 'index.php';
+	if ( file_exists( $page ) ) {
+		require_once( $page );
+		exit;
+	}
 }
 
 // Make valid regexp pattern from authorized charset in keywords
