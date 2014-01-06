@@ -280,6 +280,7 @@ function yourls_check_core_version() {
 		'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
 		'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
 		'num_active_plugins' => yourls_has_active_plugins(),
+		'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
 	);
 	
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
