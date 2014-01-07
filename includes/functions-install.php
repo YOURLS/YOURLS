@@ -16,7 +16,7 @@ function yourls_check_database_version() {
 		yourls_die( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
 	}
 	
-	return ( version_compare( '4.1', $version ) <= 0 );
+	return ( version_compare( '5.0', $version ) <= 0 );
 }
 
 /**
