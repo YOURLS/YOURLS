@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Check if server has MySQL 4.1+
+ * Check if server has MySQL 5.0+
  *
  */
 function yourls_check_database_version() {
