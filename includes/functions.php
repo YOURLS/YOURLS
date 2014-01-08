@@ -1695,6 +1695,16 @@ function yourls_statlink( $keyword = '' ) {
 }
 
 /**
+ * Check if we'll need interface display function (ie not API or redirection)
+ *
+ */
+function yourls_has_interface() {
+	if( yourls_is_API() or yourls_is_GO() )
+		return false;
+	return true;
+}
+
+/**
  * Check if we're in API mode. Returns bool
  *
  */
