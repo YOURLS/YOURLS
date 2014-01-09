@@ -1,0 +1,44 @@
+{
+    "name": "yourls/yourls",
+    "description": "Your Own URL Shortener",
+    "keywords": [
+        "shortener",
+        "short url",
+        "url",
+        "bitly"
+    ],
+    "homepage": "http://yourls.org",
+    "type": "project",
+    "license": "MIT",
+    "authors" : [
+        {
+            "name": "Ozh Richard",
+            "homepage": "http://ozh.org",
+            "role": "Developer"
+        },
+        {
+            "name": "Leo Colombaro",
+            "homepage": "http://colombaro.fr",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "pomo/pomo": "*",
+        "rmccue/requests": "*",
+        "monolog/monolog": "*",
+        "jwage/purl": "*",
+        "nesbot/carbon": "*",
+        "fzaninotto/streamer": "*"
+    },
+    "require-dev": {
+        "filp/whoops": "1.*"
+    },
+    "suggest": {
+        "lib-curl": "Allow API external transactions",
+        "lib-openssl": "Allow HTTPS connexions"
+    },
+    "config": {
+        "vendor-dir": "includes/vendor"
+    }
+}
