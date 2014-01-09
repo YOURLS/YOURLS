@@ -28,17 +28,6 @@ function yourls_get_duplicate_keywords( $longurl ) {
 }
 
 /**
- * Check if we'll need interface display function (ie not API or redirection)
- *
- */
-function yourls_has_interface() {
-	yourls_deprecated_function( __FUNCTION__, '1.7' );
-	if( yourls_is_API() or yourls_is_GO() )
-		return false;
-	return true;
-}
-
-/**
  * Make sure a integer is safe
  * 
  * Note: this function is dumb and dumbly named since it does not intval(). DO NOT USE.

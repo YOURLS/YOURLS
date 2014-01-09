@@ -218,7 +218,8 @@ function yourls_http_user_agent() {
 /**
  * Check api.yourls.org if there's a newer version of YOURLS
  *
- * This function collects various stats to help us improve YOURLS. See https://gist.github.com/ozh/5518761
+ * This function collects various stats to help us improve YOURLS. See the blog post about it:
+ * http://blog.yourls.org/2014/01/on-yourls-1-7-and-api-yourls-org/
  * Results of requests sent to api.yourls.org are stored in option 'core_version_checks' and is an object
  * with the following properties:
  *    - failed_attempts : number of consecutive failed attempts
@@ -280,6 +281,7 @@ function yourls_check_core_version() {
 		'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
 		'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
 		'num_active_plugins' => yourls_has_active_plugins(),
+		'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
 	);
 	
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
