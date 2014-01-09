@@ -27,7 +27,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	$bodyclass = yourls_apply_filter( 'bodyclass', '' );
 	
 	// Page title
-	$_title = 'YOURLS &middot; Your Own URL Shortener | ' . yourls_link();
+	$_title = 'YOURLS &middot; Your Own URL Shortener';
 	$title = $title ? $title . " &mdash; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 	
