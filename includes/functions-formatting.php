@@ -155,7 +155,7 @@ function yourls_escape( $data ) {
  */
 function yourls_escape_real( $string ) {
 	global $ydb;
-	if( isset( $ydb ) && is_a( $ydb, 'ezSQLcore' ) )
+	if( isset( $ydb ) && ( $ydb instanceof ezSQLcore ) )
 		return $ydb->escape( $string );
 	
 	// YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
