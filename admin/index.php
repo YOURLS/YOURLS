@@ -275,11 +275,12 @@ if ( !$is_bookmark ) { ?>
 	?>.</p>
 <?php } ?>
 <p><?php printf( yourls__( 'Overall, tracking <strong class="increment">%1$s</strong> links, <strong>%2$s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
-<?php yourls_do_action( 'admin_page_before_form' ); ?>
-
-<?php yourls_html_addnew(); ?>
-
 <?php
+
+yourls_do_action( 'admin_page_before_form' );
+
+yourls_html_addnew();
+
 // If bookmarklet, add message. Otherwise, hide hidden share box.
 if ( !$is_bookmark ) {
 	yourls_share_box( '', '', '', '', '', '', true );
