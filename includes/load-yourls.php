@@ -112,6 +112,7 @@ require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
 require_once( YOURLS_INC.'/functions-http.php' );
 require_once( YOURLS_INC.'/functions-infos.php' );
+require_once( YOURLS_INC.'/functions-cron.php' );
 
 // Load auth functions if needed
 if( yourls_is_private() ) {
