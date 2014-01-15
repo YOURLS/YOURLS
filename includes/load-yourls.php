@@ -65,6 +65,13 @@ if( !defined( 'YOURLS_DB_TABLE_OPTIONS' ) )
 if( !defined( 'YOURLS_DB_TABLE_LOG' ) )
 	define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
+// Human readable time constants, in seconds
+define( 'YOURLS_MINUTE', 60 );
+define( 'YOURLS_HOUR',   60 * YOURLS_MINUTE );
+define( 'YOURLS_DAY',    24 * YOURLS_DAY );
+define( 'YOURLS_WEEK',    7 * YOURLS_WEEK );
+define( 'YOURLS_YEAR',  365 * YOURLS_YEAR );
+
 // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
 	define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
@@ -73,13 +80,13 @@ if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
 if( !defined( 'YOURLS_FLOOD_IP_WHITELIST' ) )
 	define( 'YOURLS_FLOOD_IP_WHITELIST', '' );
 
-// life span of an auth cookie in seconds (60*60*24*7 = 7 days)
+// life span of an auth cookie in seconds
 if( !defined( 'YOURLS_COOKIE_LIFE' ) )
-	define( 'YOURLS_COOKIE_LIFE', 60*60*24*7 );
+	define( 'YOURLS_COOKIE_LIFE', YOURLS_WEEK );
 
 // life span of a nonce in seconds
 if( !defined( 'YOURLS_NONCE_LIFE' ) )
-	define( 'YOURLS_NONCE_LIFE', 43200 ); // 3600 * 12
+	define( 'YOURLS_NONCE_LIFE', 12 * YOURLS_HOUR );
 
 // if set to true, disable stat logging (no use for it, too busy servers, ...)
 if( !defined( 'YOURLS_NOSTATS' ) )
