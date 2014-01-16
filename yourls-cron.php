@@ -18,7 +18,23 @@ define( 'YOURLS_CRON', true );
  */
 ignore_user_abort(true);
 
-require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+if ( defined('YOURLS_AJAX') || defined('YOURLS_CRON') ) {
+	die();
+}
+
+if( !defined( 'YOURLS_ABSPATH' ) ) {
+    require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+}
+
+// If cron is disabled per user choice, exit 
+if( defined( 'YOURLS_DISABLE_CRON' ) && YOURLS_DISABLE_CRON ) {
+    die();
+}
+    
+// If no cron job is defined, exit 
+if( false === $crons = yourls_get_option( 'cron' ) ) {
+    die();
+}
 
 // Check elapsed time since last cronjob so we don't execute too often
 if ( yourls_shouldwe_cron() ) {
