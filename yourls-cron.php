@@ -1,11 +1,10 @@
 <?php
-define( 'YOURLS_CURRENT_PAGE', 'cron' );
-define( 'YOURLS_IN_CRON', true );
+define( 'YOURLS_CRON', true );
 
 /**
  * There are two possible entry points to this script.
  * 1. The PHP command-line, as run by a system cron job.
- * 2. Called asynchronously over HTTP via fsockopen() in yourls_maybe_cron().
+ * 2. Called asynchronously over HTTP via fsockopen() in yourls_cron().
  *
  * This script will update the timestamp of the last cron job, then
  * fire off an action called "cron" with the YOURLS plugin API.

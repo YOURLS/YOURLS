@@ -5,26 +5,47 @@
  */
 
 /**
- * This function uses fsockopen() to run yourls-cron.php which is where the
- * body of all desired cron jobs are run. This happens asynchronously so that
- * URL redirection occurs without any delay for the user.
+ Scheduled jobs are stored in the option tables
+ 
+ WP structure, for reference:
+ $crons[$event->timestamp][$event->hook][$key] = array(
+    'schedule' => $event->schedule,
+    'args' => $event->args,
+    'interval' => $event->interval
+  );
+ */
+ 
+ 
+/**
+ * Run scheduled jobs if applicable
+ *
+ * This function uses the HTTP requests lib to load yourls-cron.php which is where the
+ * body of all desired cron jobs are run. This happens asynchronously so that events occurs
+ * without any delay for the user.
  *
  * The HTTP call is only executed once enough time has elapsed since the last
  * cron job was run.
  *
- * TODO: Use a real HTTP library, like WordPress.
+ * @since 1.8
+ * @return null when no cronjob to run
  */
-function yourls_maybe_cron() {
-	/**
-	 * This function is called every time YOURLS is loaded, and autocron
-	 * needs to load YOURLS so it can use the plugin architecture.
-	 *
-	 * If we got here from autocron, abort immediately.
-	 */
-	if ( defined( 'YOURLS_IN_CRON' ) ) {
+function yourls_cron() {
+    // If we got here from real crontab, abort immediately.
+	if ( defined( 'YOURLS_CRON' ) ) {
 		return;
 	}
-	
+    
+    // If cron is disabled per user choice, exit 
+    if( defined( 'YOURLS_DISABLE_CRON' ) && YOURLS_DISABLE_CRON ) {
+        return;
+	}
+    
+    // If no cron job is defined, exit 
+    if( false === $crons = yourls_get_option( 'cron' ) ) {
+        return;
+    }
+    
+    // TODO: completely revamp this.
 	if ( yourls_shouldwe_cron() ) {
 		$errno   = 0;
 		$errstr  = '';
