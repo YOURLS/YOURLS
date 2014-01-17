@@ -2,12 +2,8 @@
 /**
  * Functions that relate to HTTP requests
  *
- */
- 
-/**
  * On functions using the 3rd party library Requests: 
- *
- * The goal here is to provide convenient wrapper functions to the Requests library. There are
+ * Thir goal here is to provide convenient wrapper functions to the Requests library. There are
  * 2 types of functions for each METHOD, where METHOD is 'get' or 'post' (implement more as needed)
  *     - yourls_http_METHOD() :
  *         Return a complete Response object (with ->body, ->headers, ->status_code, etc...) or
@@ -170,8 +166,12 @@ function yourls_send_through_proxy( $url ) {
  * Perform a HTTP request, return response object
  *
  * @since 1.7
- * @param string $var Stuff
- * @return string Result
+ * @param string $type HTTP request type (GET, POST)
+ * @param string $url URL to request
+ * @param array $headers Extra headers to send with the request
+ * @param array $data Data to send either as a query string for GET requests, or in the body for POST requests
+ * @param array $options Options for the request (see /includes/Requests/Requests.php:request())
+ * @return object Requests_Response object
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	yourls_http_load_library();
