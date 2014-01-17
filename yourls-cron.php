@@ -22,6 +22,9 @@ if ( defined('YOURLS_AJAX') || defined('YOURLS_CRON') ) {
 	die();
 }
 
+if( isset( $_GET['yourls_cron_check'] ) )
+    die();
+
 if( !defined( 'YOURLS_ABSPATH' ) ) {
     require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 }
@@ -37,14 +40,19 @@ if( false === $crons = yourls_get_option( 'cron' ) ) {
 }
 
 // Check elapsed time since last cronjob so we don't execute too often
-if ( yourls_shouldwe_cron() ) {
-	/**
-	 * Immediate update the last_cron timestamp. Why here?
-	 *
-	 * 1. If we updated the timestamp AFTER firing the action, that could allow
-	 *    multiple cron tasks to spawn in quick succession and run in parallel.
-	 * 2. It needs to be here so that system cron jobs also update the timestamp.
-	 */
-	yourls_update_option( 'yourls_last_cron', time() );
-	yourls_do_action( 'cron' );
+if ( !yourls_shouldwe_cron() ) {
+    die();
 }
+
+/**
+ * TODO HERE: lock mechanism to make sure concurrent calls never fire twice the same job
+ **/
+
+
+/**
+ * TODO HERE: execute each job that has to be run
+ **/
+
+
+die();
+ 
