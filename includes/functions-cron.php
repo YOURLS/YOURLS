@@ -1,18 +1,45 @@
 <?php
-/*
+/**
  * YOURLS
  * Cron emulation library
- */
-
-/**
- Scheduled jobs are stored in the option tables
- 
- WP structure, for reference:
- $crons[$event->timestamp][$event->hook][$key] = array(
-    'schedule' => $event->schedule,
-    'args' => $event->args,
-    'interval' => $event->interval
-  );
+ *
+ * TODO: document the whole process here, query params that matter, constants used or defined and options stored
+ * 
+ * How this works
+ * ==============
+ * 
+ * It's black magic.
+ * 
+ * 
+ * Options
+ * =======
+ * - cron : defined cronjobs. Structure TBD.
+ *    WP structure, for reference:
+ *      $crons[$event->timestamp][$event->hook][$key] = array(
+ *        'schedule' => $event->schedule,
+ *        'args' => $event->args,
+ *        'interval' => $event->interval
+ *      );
+ * 
+ * - yourls_last_cron : timestamp of last cronjob check
+ * 
+ * - yourls_can_cron : bool, whether the system can emulate cronjobs or not
+ * 
+ * 
+ * Constants
+ * =========
+ * 
+ * YOURLS_DISABLE_CRON : if set to true, disable the whole system
+ * 
+ * YOURLS_CRON : set to true when yourls-cron.php is loaded
+ * 
+ *   
+ * Query params on yourls-cron.php
+ * ===============================
+ * 
+ * - GET, yourls_cron_check=1 : aborts immediately output. Used for tests.
+ * 
+ *
  */
  
  
@@ -118,3 +145,27 @@ function yourls_cron_min_interval() {
 	return (int) yourls_apply_filter( 'cron_min_interval', 60 );
 }
 
+/**
+ * Cron feature check
+ *
+ * The whole cron system implies that YOURLS can send HTTP requests to itself. If for some reason it cannot 
+ * (DNS problem or host configuration), we need to know.
+ *
+ * This function performs a HTTP request on /yourls-cron.php with a query parameter that will terminate it
+ * before YOURLS is booted, to keep things fast and save server resources (should take about 0.02s).
+ * The result of that query status (either success or failure) is saved into options.
+ *
+ * @since 1.8
+ * @return bool true if cron emulation can work on the system, false otherwise
+ */
+function yourls_can_cron() {
+    $can = yourls_get_option( 'yourls_can_cron', null );
+
+    if( $can !== null ) {
+        return (bool)$can;
+    }
+    
+    $request = yourls_http_get( yourls_site_url( false, YOURLS_SITE . '/yourls-cron.php?yourls_cron_check=1' ) );
+    yourls_update_option( 'yourls_can_cron', $request->success );
+    return $request->success;
+}
