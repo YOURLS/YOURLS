@@ -68,9 +68,9 @@ if( !defined( 'YOURLS_DB_TABLE_LOG' ) )
 // Human readable time constants, in seconds
 define( 'YOURLS_MINUTE', 60 );
 define( 'YOURLS_HOUR',   60 * YOURLS_MINUTE );
-define( 'YOURLS_DAY',    24 * YOURLS_DAY );
-define( 'YOURLS_WEEK',    7 * YOURLS_WEEK );
-define( 'YOURLS_YEAR',  365 * YOURLS_YEAR );
+define( 'YOURLS_DAY',    24 * YOURLS_HOUR );
+define( 'YOURLS_WEEK',    7 * YOURLS_DAY );
+define( 'YOURLS_YEAR',  365 * YOURLS_DAY );
 
 // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
