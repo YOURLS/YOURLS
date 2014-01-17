@@ -93,22 +93,28 @@ function yourls_cron() {
 }
 
 /**
- * Returns true if elapsed time since last cron job is longer than
- * threshold for running cron jobs.
+ * Returns true if elapsed time since last cron job is longer than threshold for running cron jobs.
+ *
+ * @since 1.8
+ * @return bool true if time for cron, false otherwise
  */
 function yourls_shouldwe_cron() {
-	$lastCronTime      = intval( yourls_get_option( 'yourls_last_cron' ));
-	$timeSinceLastCron = time() - $lastCronTime;
-	$shouldCron        = ( $timeSinceLastCron > yourls_cron_interval() );
-	
-	return $shouldCron;
+	$last_cron_time       = intval( yourls_get_option( 'yourls_last_cron' ));
+	$time_since_last_cron = time() - $last_cron_time;
+	return ( $time_since_last_cron > yourls_cron_min_interval() );
 }
 
+/**
+ * Define the minimum number of seconds between 2 cron jobs.
+ *
+ * @since 1.8
+ * @return int number of seconds
+ */
 /**
  * Define the minimum number of seconds between cron jobs.
  * TODO: Make this a configurable user option
  */
-function yourls_cron_interval() {
-	return 60;
+function yourls_cron_min_interval() {
+	return (int) yourls_apply_filter( 'cron_min_interval', 60 );
 }
 
