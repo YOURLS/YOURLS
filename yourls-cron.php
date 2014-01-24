@@ -35,7 +35,7 @@ if( defined( 'YOURLS_DISABLE_CRON' ) && YOURLS_DISABLE_CRON ) {
 }
     
 // If no cron job is defined, exit 
-if( false === $crons = yourls_get_option( 'cron' ) ) {
+if( false === $crons = yourls_get_cron_array() ) {
     die();
 }
 
