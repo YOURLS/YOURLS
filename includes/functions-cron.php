@@ -216,6 +216,7 @@ function yourls_set_cron_array( $cron ) {
  */
 function yourls_get_cron_schedules() {
     $schedules = array(
+        'once'       => array(                                 'description' => yourls__( 'Only once' ) ),
         'hourly'     => array( 'interval' => YOURLS_HOUR,      'description' => yourls__( 'Once hourly' ) ),
         'daily'      => array( 'interval' => YOURLS_DAY,       'description' => yourls__( 'Once daily' ) ),
         'twicedaily' => array( 'interval' => 12 * YOURLS_HOUR, 'description' => yourls__( 'Twice daily' ) ),
@@ -235,11 +236,33 @@ function yourls_get_cron_schedules() {
 function yourls_get_shortest_cron_schedule() {
     $min = YOURLS_HOUR; // this one is the shortest defined by YOURLS -- maybe a plugin set a shorter recurrence
     foreach( yourls_get_cron_schedules() as $interval => $array ) {
-        $min = min( $min, $array['interval'] );
+        if( isset( $array['interval'] ) )
+            $min = min( $min, $array['interval'] );
     }
     return $min;
 }
  
+/**
+ * Retrieve Cron schedule for hook with arguments.
+ *
+ * @since 2.1.0
+ *
+ * @param string $hook Action hook to execute when cron is run.
+ * @param array $args Optional. Arguments to pass to the hook's callback function.
+ * @return string|bool False, if no schedule. Schedule on success.
+ */
+function yourls_get_schedule( $hook, $args = array() ) {
+    $crons = yourls_get_cron_array();
+    if ( empty( $crons ) )
+        return false;
+    $key = md5( serialize( $args ) );
+    foreach ( $crons as $timestamp => $cron ) {
+        if ( isset( $cron[ $hook ][ $key ] ) )
+            return $cron[ $hook ][ $key ]['schedule'];
+    }
+    return false;
+}
+
 /**
  * Return the next timestamp for a scheduled event.
  *
@@ -288,8 +311,8 @@ function yourls_schedule_event( $timestamp, $recurrence, $hook, $args = array() 
     $crons = yourls_get_cron_array();
     $schedules = yourls_get_cron_schedules();
 
-    // the recurrence must exist, or be false (case for an event scheduled once, see yourls_schedule_event_once() )
-    if ( $recurrence !== false && !isset( $schedules[$recurrence] ) )
+    // the recurrence must exist
+    if ( !isset( $schedules[$recurrence] ) )
         return false;
     
     $event = (object) array(
@@ -297,7 +320,7 @@ function yourls_schedule_event( $timestamp, $recurrence, $hook, $args = array() 
         'timestamp' => $timestamp,
         'schedule'  => $recurrence,
         'args'      => $args,
-        'interval'  => $recurrence !== false ? $schedules[$recurrence]['interval'] : false,
+        'interval'  => isset( $schedules[$recurrence]['interval'] ) ? $schedules[$recurrence]['interval'] : false,
     );
     $event = yourls_apply_filters( 'schedule_event', $event );
 
@@ -335,7 +358,7 @@ function yourls_schedule_event_once( $timestamp, $hook, $args = array() ) {
     if ( $next && $next <= $timestamp + 10 * YOURLS_MINUTE )
         return false;
     
-    return yourls_schedule_event( $timestamp, false, $hook, $args );
+    return yourls_schedule_event( $timestamp, 'once', $hook, $args );
 }
 
 /**
