@@ -1,2 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Generate pretty patches for PHP
+*.php diff=php
+
+# Exclude certain files or directories when generating an archive
+assets/less/ export-ignore
+.travis.yml export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
