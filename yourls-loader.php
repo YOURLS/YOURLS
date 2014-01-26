@@ -21,7 +21,7 @@ require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 $request = yourls_get_request();
 
 // Admin:
-if( preg_match( "@^".YOURLS_ADMIN_KEY."/(([a-zA-Z\-]+)(\.php)?)?$@", $request, $matches ) ) {
+if( preg_match( "@^".YOURLS_ADMIN_LOCATION."/(([a-zA-Z\-]+)(\.php)?)?$@", $request, $matches ) ) {
 	$page = YOURLS_INC.'/admin/';
 	$page .= ( isset( $matches[2] ) && $matches[2] ) ? $matches[2].'.php' : 'index.php';
 	if ( file_exists( $page ) ) {

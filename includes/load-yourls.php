@@ -45,7 +45,7 @@ $yourls_definitions = array(
 	'PAGEDIR'             => array( 'USERDIR', '/pages' ),
 
 	// admin pages location
-	'ADMIN_KEY'           => 'admin',
+	'ADMIN_LOCATION'           => 'admin',
 
 	// table to store URLs
 	'DB_TABLE_URL'        => array( 'DB_PREFIX', 'url' ),

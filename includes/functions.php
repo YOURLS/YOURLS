@@ -77,7 +77,7 @@ function yourls_keyword_is_reserved( $keyword ) {
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
-		or ( substr( $keyword, 0, strlen( YOURLS_ADMIN_KEY ) + 1 ) === YOURLS_ADMIN_KEY."/" )
+		or ( substr( $keyword, 0, strlen( YOURLS_ADMIN_LOCATION ) + 1 ) === YOURLS_ADMIN_LOCATION."/" )
 	)
 		$reserved = true;
 	
@@ -1784,7 +1784,7 @@ function yourls_needs_ssl() {
  *
  */
 function yourls_admin_url( $page = '' ) {
-	$admin = YOURLS_SITE . '/' . YOURLS_ADMIN_KEY . '/' . $page;
+	$admin = YOURLS_SITE . '/' . YOURLS_ADMIN_LOCATION . '/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() )
 		$admin = str_replace('http://', 'https://', $admin);
 	return yourls_apply_filter( 'admin_url', $admin, $page );
