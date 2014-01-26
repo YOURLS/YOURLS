@@ -291,7 +291,7 @@ if ( !$is_bookmark ) {
 			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
 	echo '.</p>';
 
-	// If bookmarklet, add message. Otherwise, hide hidden share box.
+// If bookmarklet, add message. Otherwise, hide hidden share box.
 	yourls_share_box( '', '', '', '', '', '', true );
 } else {
 	echo '<script type="text/javascript">$(document).ready(function(){
