@@ -1784,7 +1784,7 @@ function yourls_needs_ssl() {
  *
  */
 function yourls_admin_url( $page = '' ) {
-	$admin = YOURLS_SITE . '/admin/' . $page;
+	$admin = YOURLS_SITE . '/' . YOURLS_ADMIN_KEY . '/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() )
 		$admin = str_replace('http://', 'https://', $admin);
 	return yourls_apply_filter( 'admin_url', $admin, $page );
