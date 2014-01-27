@@ -32,6 +32,12 @@ pages/*
 !user/*/index.html
 
 ############
+## Tests
+############
+
+tests/
+
+############
 ## Environnement
 ############
 
