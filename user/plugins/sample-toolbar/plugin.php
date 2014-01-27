@@ -55,7 +55,7 @@ function ozh_toolbar_do( $args ) {
 
 	// When was the link created (in days)
 	$diff = abs( time() - strtotime( yourls_get_keyword_timestamp( $ozh_toolbar['keyword'] ) ) );
-	$days = floor( $diff / (60*60*24) );
+	$days = floor( $diff / YOURLS_DAY );
 	if( $days == 0 ) {
 		$created = 'today';
 	} else {

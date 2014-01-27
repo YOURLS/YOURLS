@@ -557,7 +557,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		),
 		'timestamp' => array(
 			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
+			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * YOURLS_HOUR ) ),
 		),
 		'ip' => array(
 			'template' => '%ip%',

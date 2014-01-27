@@ -383,7 +383,7 @@ function yourls_check_timestamp( $time ) {
 function yourls_store_cookie( $user = null ) {
 	if( !$user ) {
 		$pass = null;
-		$time = time() - 3600;
+		$time = time() - YOURLS_HOUR;
 	} else {
 		global $yourls_user_passwords;
 		if( isset($yourls_user_passwords[$user]) ) {

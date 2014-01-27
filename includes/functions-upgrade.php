@@ -103,8 +103,8 @@ function yourls_upgrade_to_143( ) {
  */
 function yourls_upgrade_to_141( ) {
 	// Kill old cookies from 1.3 and prior
-	setcookie('yourls_username', null, time() - 3600 );
-	setcookie('yourls_password', null, time() - 3600 );
+	setcookie('yourls_username', null, time() - YOURLS_HOUR );
+	setcookie('yourls_password', null, time() - YOURLS_HOUR );
 	// alter table URL
 	yourls_alter_url_table_to_141();
 	// recreate the htaccess file if needed
