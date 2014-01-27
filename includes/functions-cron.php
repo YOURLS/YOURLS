@@ -11,19 +11,18 @@
  * It's black magic. TODO: explain.
  * 
  * 
- * Options
- * =======
- * - cron : defined cronjobs. Structure TBD.
- *    WP structure, for reference:
+ * Options stored
+ * ==============
+ * - cron : defined cronjobs. Structure:
  *      $crons[$event->timestamp][$event->hook][$key] = array(
  *        'schedule' => $event->schedule,
  *        'args' => $event->args,
  *        'interval' => $event->interval
  *      );
  * 
- * - yourls_last_cron : timestamp of last cronjob check
+ * - last_cron : timestamp of last cronjob check
  * 
- * - yourls_can_cron : bool, whether the system can emulate cronjobs or not
+ * - can_cron : bool, whether the system can emulate cronjobs or not
  * 
  * 
  * Constants
@@ -126,7 +125,7 @@ function yourls_cron() {
  * @return bool true if time for cron, false otherwise
  */
 function yourls_shouldwe_cron() {
-    $last_cron_time       = intval( yourls_get_option( 'yourls_last_cron' ));
+    $last_cron_time       = intval( yourls_get_option( 'last_cron' ));
     $time_since_last_cron = time() - $last_cron_time;
     return ( $time_since_last_cron > yourls_cron_min_interval() );
 }
@@ -155,7 +154,7 @@ function yourls_cron_min_interval() {
  * @return bool true if cron emulation can work on the system, false otherwise
  */
 function yourls_can_cron() {
-    $can = yourls_get_option( 'yourls_can_cron', null );
+    $can = yourls_get_option( 'can_cron', null );
 
     if( $can !== null ) {
         return (bool)$can;

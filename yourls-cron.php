@@ -1,30 +1,27 @@
 <?php
-define( 'YOURLS_CRON', true );
-
 /**
- * There are two possible entry points to this script.
- * 1. The PHP command-line, as run by a system cron job.
- * 2. Called asynchronously over HTTP via fsockopen() in yourls_cron().
+ * YOURLS emulation of a cron system
  *
- * This script will update the timestamp of the last cron job, then
- * fire off an action called "cron" with the YOURLS plugin API.
- *
- * TODO: Maybe change the max execution time for this script?
+ * This file is supposed to be executed via one of the following call
+ * 1. Direct call via Unix cronjob (either using the PHP CLI or a simple `wget http://sho.rt/yourls-cron.php`
+ * 2. Asynchronous HTTP request performed when someone interacts with YOURLS (ie loads an admin page, or follows a short URL)
+ *    When requested asynchronously, this file will not slow down the YOURLS user, even if this triggers the execution
+ *    of a scheduled job
  */
  
-/**
- * Allow the script to keep running, even if the client disconnects.
- * This is key to making async HTTP calls work correctly.
- */
+// Allow the script to keep running, even if the client disconnects. This is key to making async HTTP requests
 ignore_user_abort(true);
 
 if ( defined('YOURLS_AJAX') || defined('YOURLS_CRON') ) {
-	die();
+    die();
 }
 
-if( isset( $_GET['yourls_cron_check'] ) )
+if( isset( $_GET['yourls_cron_check'] ) ) {
     die();
+}
 
+// Load YOURLS
+define( 'YOURLS_CRON', true );
 if( !defined( 'YOURLS_ABSPATH' ) ) {
     require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 }
@@ -33,7 +30,7 @@ if( !defined( 'YOURLS_ABSPATH' ) ) {
 if( defined( 'YOURLS_DISABLE_CRON' ) && YOURLS_DISABLE_CRON ) {
     die();
 }
-    
+
 // If no cron job is defined, exit 
 if( false === $crons = yourls_get_cron_array() ) {
     die();
