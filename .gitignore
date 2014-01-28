@@ -2,9 +2,6 @@
 ## YOURLS
 ############
 
-# Libraries
-vendor/
-
 # Configuration
 user/*
 !user/*/
