@@ -6,6 +6,5 @@
 
 # Exclude certain files or directories when generating an archive
 composer.json export-ignore
-composer.lock export-ignore
 .travis.yml export-ignore
 .git* export-ignore

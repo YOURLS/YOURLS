@@ -2,6 +2,9 @@
 ## YOURLS
 ############
 
+# Libraries
+composer.lock
+
 # Configuration
 user/*
 !user/*/
