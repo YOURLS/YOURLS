@@ -1,0 +1,32 @@
+{
+    "name": "pomo/pomo",
+    "description": "Gettext library to translate with I18n",
+    "keywords": [
+        "gettext",
+        "translation",
+        "localization",
+        "internationalization",
+        "I18n"
+    ],
+    "homepage": "https://github.com/LeoColomb/pomo",
+    "type": "library",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "WordPress",
+            "homepage": "http://wordpress.org",
+            "role": "Author"
+        },
+        {
+            "name": "Leo Colombaro",
+            "homepage": "http://colombaro.fr",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "autoload": {
+        "psr-0": {"POMO": "src/"}
+    }
+}
