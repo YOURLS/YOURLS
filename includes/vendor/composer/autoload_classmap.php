@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
+    'Hautelook\\Phpass\\PasswordHash' => $vendorDir . '/hautelook/phpass/src/Hautelook/Phpass/PasswordHash.php',
     'POMO\\MO' => $vendorDir . '/pomo/pomo/src/POMO/MO.php',
     'POMO\\PO' => $vendorDir . '/pomo/pomo/src/POMO/PO.php',
     'POMO\\Streams\\CachedFileReader' => $vendorDir . '/pomo/pomo/src/POMO/Streams/CachedFileReader.php',

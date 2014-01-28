@@ -1,5 +1,102 @@
 [
     {
+        "name": "rmccue/requests",
+        "version": "v1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/rmccue/Requests.git",
+            "reference": "756374edd59ac69268ed35481a506ebd4e732525"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/rmccue/Requests/zipball/756374edd59ac69268ed35481a506ebd4e732525",
+            "reference": "756374edd59ac69268ed35481a506ebd4e732525",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "require-dev": {
+            "satooshi/php-coveralls": "dev-master"
+        },
+        "time": "2013-10-06 13:30:32",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Requests": "library/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "ISC"
+        ],
+        "authors": [
+            {
+                "name": "Ryan McCue",
+                "homepage": "http://ryanmccue.info"
+            }
+        ],
+        "description": "A HTTP library written in PHP, for human beings.",
+        "homepage": "http://github.com/rmccue/Requests",
+        "keywords": [
+            "curl",
+            "fsockopen",
+            "http",
+            "idna",
+            "ipv6",
+            "iri",
+            "sockets"
+        ]
+    },
+    {
+        "name": "hautelook/phpass",
+        "version": "0.3.0",
+        "version_normalized": "0.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/hautelook/phpass.git",
+            "reference": "da4c2c693aa4e1c616a350015c90af0da82a0fd8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/hautelook/phpass/zipball/da4c2c693aa4e1c616a350015c90af0da82a0fd8",
+            "reference": "da4c2c693aa4e1c616a350015c90af0da82a0fd8",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2012-08-31 00:00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Hautelook": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Public Domain"
+        ],
+        "authors": [
+            {
+                "name": "Solar Designer",
+                "email": "solar@openwall.com",
+                "homepage": "http://openwall.com/phpass/"
+            }
+        ],
+        "description": "Portable PHP password hashing framework",
+        "homepage": "http://github.com/hautelook/phpass/",
+        "keywords": [
+            "blowfish",
+            "crypt",
+            "password",
+            "security"
+        ]
+    },
+    {
         "name": "pomo/pomo",
         "version": "v1.1",
         "version_normalized": "1.1.0.0",
@@ -49,57 +146,6 @@
             "internationalization",
             "localization",
             "translation"
-        ]
-    },
-    {
-        "name": "rmccue/requests",
-        "version": "v1.6.0",
-        "version_normalized": "1.6.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rmccue/Requests.git",
-            "reference": "756374edd59ac69268ed35481a506ebd4e732525"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rmccue/Requests/zipball/756374edd59ac69268ed35481a506ebd4e732525",
-            "reference": "756374edd59ac69268ed35481a506ebd4e732525",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "require-dev": {
-            "satooshi/php-coveralls": "dev-master"
-        },
-        "time": "2013-10-06 13:30:32",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Requests": "library/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "ISC"
-        ],
-        "authors": [
-            {
-                "name": "Ryan McCue",
-                "homepage": "http://ryanmccue.info"
-            }
-        ],
-        "description": "A HTTP library written in PHP, for human beings.",
-        "homepage": "http://github.com/rmccue/Requests",
-        "keywords": [
-            "curl",
-            "fsockopen",
-            "http",
-            "idna",
-            "ipv6",
-            "iri",
-            "sockets"
         ]
     }
 ]

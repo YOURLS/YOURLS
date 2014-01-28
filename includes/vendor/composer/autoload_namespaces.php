@@ -8,4 +8,5 @@ $baseDir = dirname(dirname($vendorDir));
 return array(
     'Requests' => array($vendorDir . '/rmccue/requests/library'),
     'POMO' => array($vendorDir . '/pomo/pomo/src'),
+    'Hautelook' => array($vendorDir . '/hautelook/phpass/src'),
 );

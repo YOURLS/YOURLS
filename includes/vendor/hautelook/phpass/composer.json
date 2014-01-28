@@ -1,0 +1,23 @@
+{
+    "name": "hautelook/phpass",
+    "type": "library",
+    "version": "0.3.0",
+    "time" : "2012-08-31",
+    "license" : "Public Domain",
+    "description": "Portable PHP password hashing framework",
+    "keywords": ["Blowfish", "crypt", "password", "security"],
+    "homepage": "http://github.com/hautelook/phpass/",
+    "authors": [
+        {
+            "name" : "Solar Designer",
+            "email": "solar@openwall.com",
+            "homepage": "http://openwall.com/phpass/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-0": {"Hautelook": "src/"}
+    }
+}
