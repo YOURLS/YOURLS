@@ -1,0 +1,29 @@
+//
+// Mixins
+// --------------------------------------------------
+
+// Button Outline
+.btn-outline(@bg-color) {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 18px 24px;
+    font-size: inherit;
+    font-weight: 500;
+    color: #fff;
+    background-color: transparent;
+    border-color: lighten(@bg-color, 46%);
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: @bg-color;
+        background-color: #fff;
+        border-color: #fff;
+    }
+}
+
+// Callout Theme
+.callout-theme(@bck-color, @border-color) {
+    background-color: @bck-color;
+    border-color: @border-color;
+}

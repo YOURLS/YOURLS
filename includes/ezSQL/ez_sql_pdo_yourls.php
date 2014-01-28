@@ -22,7 +22,7 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		$this->dsn = $dsn;
 		
 		// Turn on track errors 
-		ini_set('track_errors',1);
+		ini_set('track_errors', 1);
 		
 		$this->connect( $dsn, $dbuser, $dbpassword );
 		

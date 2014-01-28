@@ -75,8 +75,9 @@ function yourls_keyword_is_reserved( $keyword ) {
 	$reserved = false;
 	
 	if ( in_array( $keyword, $yourls_reserved_URL)
-		or file_exists( YOURLS_ABSPATH ."/pages/$keyword.php" )
+		or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
+		or ( substr( $keyword, 0, strlen( YOURLS_ADMIN_LOCATION ) + 1 ) === YOURLS_ADMIN_LOCATION."/" )
 	)
 		$reserved = true;
 	
@@ -460,7 +461,7 @@ function yourls_db_connect() {
  *
  */
 function yourls_xml_encode( $array ) {
-	require_once( YOURLS_INC.'/functions-xml.php' );
+	require_once YOURLS_INC . '/functions-xml.php';
 	$converter= new yourls_array2xml;
 	return $converter->array2xml( $array );
 }
@@ -949,13 +950,8 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  *
  */
 function yourls_geo_get_flag( $code ) {
-	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-		$img = yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
-	} else {
-		$img = false;
+	return yourls_apply_filter( 'geo_get_flag', 'flag-' . strtolower( $code ), $code );
 	}
-	return yourls_apply_filter( 'geo_get_flag', $img, $code );
-}
 
 
 /**
@@ -1011,7 +1007,7 @@ function yourls_get_option( $option_name, $default = false ) {
 		$table = YOURLS_DB_TABLE_OPTIONS;
 		$option_name = yourls_escape( $option_name );
 		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
-		if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
+		if ( is_object( $row ) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
 			$value = $row->option_value;
 		} else { // option does not exist, so we must cache its non-existence
 			$value = $default;
@@ -1069,11 +1065,11 @@ function yourls_get_all_options() {
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
-	
+
 	$option_name = trim( $option_name );
 	if ( empty( $option_name ) )
 		return false;
-		
+
 	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
 	if ( is_object( $newvalue ) )
 		$newvalue = clone $newvalue;
@@ -1117,7 +1113,7 @@ function yourls_update_option( $option_name, $newvalue ) {
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
-	
+
 	$name = trim( $name );
 	if ( empty( $name ) )
 		return false;
@@ -1199,7 +1195,7 @@ function yourls_is_serialized( $data, $strict = true ) {
 	if ( ! is_string( $data ) )
 		return false;
 	$data = trim( $data );
-	 if ( 'N;' == $data )
+	if ( 'N;' == $data )
 		return true;
 	$length = strlen( $data );
 	if ( $length < 4 )
@@ -1295,7 +1291,7 @@ function yourls_is_private() {
 function yourls_maybe_require_auth() {
 	if( yourls_is_private() ) {
 		yourls_do_action( 'require_auth' );
-		require_once( YOURLS_INC.'/auth.php' );
+		require_once YOURLS_INC . '/auth.php';
 	} else {
 		yourls_do_action( 'require_no_auth' );
 	}
@@ -1365,7 +1361,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 		 if( yourls_is_valid_user() === true )
 			return true;
 	}
-	
+
 	// Don't throttle whitelist IPs
 	if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
 		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
@@ -1378,7 +1374,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 	
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
 	$ip = yourls_escape( $ip );
-
+	
 	yourls_do_action( 'check_ip_flood', $ip );
 	
 	global $ydb;
@@ -1633,7 +1629,7 @@ function yourls_create_nonce( $action, $user = false ) {
 function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
 	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
 	if( $echo )
-		echo $field."\n";
+		echo $field;
 	return $field;
 }
 
@@ -1695,16 +1691,6 @@ function yourls_statlink( $keyword = '' ) {
 }
 
 /**
- * Check if we'll need interface display function (ie not API or redirection)
- *
- */
-function yourls_has_interface() {
-	if( yourls_is_API() or yourls_is_GO() )
-		return false;
-	return true;
-}
-
-/**
  * Check if we're in API mode. Returns bool
  *
  */
@@ -1745,6 +1731,16 @@ function yourls_is_infos() {
 }
 
 /**
+ * Check if we'll need interface display function (ie not API or redirection)
+ *
+ */
+function yourls_has_interface() {
+	if( yourls_is_API() or yourls_is_GO() )
+		return false;
+	return true;
+}
+
+/**
  * Check if we're in the admin area. Returns bool
  *
  */
@@ -1752,6 +1748,17 @@ function yourls_is_admin() {
 	if ( defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true )
 		return true;
 	return false;
+}
+
+/**
+ * Check if current session is valid and secure as configurated
+ *
+ */
+function yourls_is_public_or_logged() {
+	if ( !yourls_is_private() )
+		return true;
+	else
+		return defined( 'YOURLS_USER' );
 }
 
 /**
@@ -1777,7 +1784,7 @@ function yourls_needs_ssl() {
  *
  */
 function yourls_admin_url( $page = '' ) {
-	$admin = YOURLS_SITE . '/admin/' . $page;
+	$admin = YOURLS_SITE . '/' . YOURLS_ADMIN_LOCATION . '/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() )
 		$admin = str_replace('http://', 'https://', $admin);
 	return yourls_apply_filter( 'admin_url', $admin, $page );
@@ -1833,8 +1840,10 @@ function yourls_get_remote_title( $url ) {
 	if ( false !== $pre )
 		return $pre;
 
+	require_once YOURLS_INC . '/functions-http.php';
+
 	$url = yourls_sanitize_url( $url );
-	
+
 	// Only deal with http(s):// 
 	if( !in_array( yourls_get_protocol( $url ), array( 'http://', 'https://' ) ) )
 		return $url;	
@@ -1850,19 +1859,19 @@ function yourls_get_remote_title( $url ) {
 	$content = $response->body;
 	if( !$content )
 		return $url;
-	
+
 	// look for <title>. No title found? Return the URL
-	if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
-		$title = $found[1];
-		unset( $found );
-	}
+		if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
+			$title = $found[1];
+			unset( $found );
+		}
 	if( !$title )
 		return $url;
 		
 	// Now we have a title. We'll try to get proper utf8 from it.
-	
+
 	// Get charset as (and if) defined by the HTML meta tag. We should match
-	// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	// or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
 	if ( preg_match( '/<meta[^>]*charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $content, $found ) ) {
 		$charset = $found[1];
@@ -1875,7 +1884,7 @@ function yourls_get_remote_title( $url ) {
 			unset( $found );
 		}
 	}
-
+	
 	// Conversion to utf-8 if what we have is not utf8 already
 	if( strtolower( $charset ) != 'utf-8' && function_exists( 'mb_convert_encoding' ) ) {
 		// We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
@@ -1891,7 +1900,7 @@ function yourls_get_remote_title( $url ) {
 	
 	// Strip out evil things
 	$title = yourls_sanitize_title( $title );
-		
+	
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
@@ -2018,22 +2027,19 @@ function yourls_favicon( $echo = true ) {
 	if( $favicon !== null )
 		return $favicon;
 	
-	$custom = null;
-	// search for favicon.(gif|ico|png|jpg|svg)
-	foreach( array( 'gif', 'ico', 'png', 'jpg', 'svg' ) as $ext ) {
+	// search for favicon.(ico|png|gif)
+	foreach( array( 'png', 'ico', 'gif' ) as $ext ) {
 		if( file_exists( YOURLS_USERDIR. '/favicon.' . $ext ) ) {
-			$custom = 'favicon.' . $ext;
+			$favicon = yourls_site_url( false, YOURLS_USERURL . '/favicon.' . $ext );
 			break;
 		}
 	}
+	if ( $favicon === null )
+		$favicon = yourls_site_url( false, YOURLS_ASSETURL . '/img/favicon.ico' );
 	
-	if( $custom ) {
-		$favicon = yourls_site_url( false, YOURLS_USERURL . '/' . $custom );
-	} else {
-		$favicon = yourls_site_url( false ) . '/images/favicon.gif';
-	}
 	if( $echo )
-		echo $favicon;
+			echo '<link rel="shortcut icon" href="'. $favicon . '">';
+	else
 	return $favicon;
 }
 
@@ -2062,7 +2068,7 @@ function yourls_check_maintenance_mode() {
 	
 	// https://www.youtube.com/watch?v=Xw-m4jEY-Ns
 	$title   = yourls__( 'Service temporarily unavailable' );
-	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p>\n<p>" .
+	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p><p>" .
 	yourls__( 'Things should not last very long, thank you for your patience and please excuse the inconvenience' );
 	yourls_die( $message, $title , 503 );
 
@@ -2078,7 +2084,7 @@ function yourls_current_admin_page() {
 	if( yourls_is_admin() ) {
 		$current = substr( yourls_get_request(), 6 );
 		if( $current === false ) 
-			$current = 'index.php'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index.php
+			$current = 'index'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index
 			
 		return $current;
 	}
@@ -2183,9 +2189,9 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 	// Allow plugin to filter the output error trigger
 	if ( YOURLS_DEBUG && yourls_apply_filters( 'deprecated_function_trigger_error', true ) ) {
 		if ( ! is_null( $replacement ) )
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
+			trigger_error( sprintf( yourls__( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.' ), $function, $version, $replacement ) );
 		else
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
+			trigger_error( sprintf( yourls__( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.' ), $function, $version ) );
 	}
 }
 

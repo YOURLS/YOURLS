@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * YOURLS API
  *
  * Note about translation : this file should NOT be translation ready
@@ -8,7 +8,7 @@
  */
 
 define( 'YOURLS_API', true );
-require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 yourls_maybe_require_auth();
 
 $action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );

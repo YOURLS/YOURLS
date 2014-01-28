@@ -2,30 +2,30 @@
 ## YOURLS
 ############
 
+# Libraries
+vendor/
+
 # Configuration
 user/*
+!user/*/
+user/*/*
 !user/config-sample.php
 .htaccess
 *.config
 *.conf
 [Rr]obots.txt
 
-# Languages
-user/languages/*
-!user/languages/
-
-# Plugins
-user/plugins/*
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
-!user/plugins/sample-page/
-!user/plugins/sample-plugin/
-!user/plugins/sample-toolbar/
+!user/plugins/sample-*/
+
+# Core themes
+!user/themes/sample-theme*/
+!user/themes/full-bootstrap/
 
 # Pages
-pages/*
-!pages/examplepage.php
+!user/pages/examplepage.php
 
 # Keep index.html
 !user/index.html
@@ -49,3 +49,16 @@ Desktop.ini
 
 # Mac crap
 .DS_Store
+
+############
+## Developpement
+############
+
+# Visual Studio
+*.sln
+*.suo
+*.phpproj
+
+# Temp
+assets/css/*.less
+assets/less/*.css

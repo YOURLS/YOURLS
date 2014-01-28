@@ -41,6 +41,7 @@
  * Two globals are not defined and unused at this moment: $yourls_allowedtags_all and $yourls_allowedtags
  * The code for these vars is here and ready for any future use 
  */
+global $yourls_allowedentitynames, $yourls_allowedprotocols;
 
 // Populate after plugins have loaded to allow user defined values
 yourls_add_action( 'plugins_loaded', 'yourls_kses_init' );
@@ -60,7 +61,7 @@ function yourls_kses_init() {
 	
 	if( ! $yourls_allowedprotocols ) {
 		$yourls_allowedprotocols   = yourls_apply_filter( 'kses_allowed_protocols', yourls_kses_allowed_protocols() );
-	}	
+	}
 
 	/** See NOTE ABOUT GLOBALS **
 	

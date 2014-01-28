@@ -18,8 +18,8 @@ function yourls_stats_countries_map( $countries, $id = null ) {
 	$options = array(
 		'backgroundColor' => "white",
 		'colorAxis'       => "{colors:['A8D0ED','99C4E4','8AB8DB','7BACD2','6BA1C9','5C95C0','4D89B7','3E7DAE','2E72A5','1F669C']}",
-		'width'           => "550",
-		'height'          => "340",
+		'width'           => "665",
+		'height'          => "400",
 		'theme'           => 'maximized'
 	);
 	$options = yourls_apply_filter( 'stats_countries_map_options', $options );
@@ -165,7 +165,7 @@ function yourls_stats_line( $values, $id = null ) {
 	
 	// if $id is null then assign a random string
 	if( $id === null )
-		$id = uniqid ( 'yourls_stats_line_' );
+		$id = uniqid( 'yourls_stats_line_' );
 		
 	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
 	if ( count( $values ) == 1 )
@@ -288,22 +288,22 @@ function yourls_array_granularity( $array, $grain = 100, $preserve_max = true ) 
  *
  */
 function yourls_google_array_to_data_table( $data ){
-	$str  = "var data = google.visualization.arrayToDataTable([\n";
+	$str  = "var data = google.visualization.arrayToDataTable([";
 	foreach( $data as $label => $values ){
 		if( !is_array( $values ) ) {
 			$values = array( $values );
 		}
-		$str .= "\t['$label',"; 
+		$str .= "['$label',";
 		foreach( $values as $value ){
-			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) {
 				$value = "'$value'";
 			}
 			$str .= "$value";
-		}		
-		$str .= "],\n";
+		}
+		$str .= "],";
 	}
-	$str = substr( $str, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
-	$str .= "]);\n"; // wrap it up	
+	$str = substr( $str, 0, -1 ); // remove the trailing comma/return, reappend the return
+	$str .= "]);"; // wrap it up	
 	return $str;
 }
 
@@ -313,26 +313,23 @@ function yourls_google_array_to_data_table( $data ){
  */
 function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 	$function_name = 'yourls_graph' . $id;
-	$code  = "\n<script id=\"$function_name\" type=\"text/javascript\">\n";
-	$code .= "function $function_name() { \n";
+	$code  = "<script id=\"$function_name\" type=\"text/javascript\">";
+	$code .= "function $function_name() { ";
 
-	$code .= "$data\n";
+	$code .= "$data";
 
-	$code .= "var options = {\n";
+	$code .= "var options = {";
 	foreach( $options as $field => $value ) {
 		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
 			$value = "\"$value\"";
 		}
-		$code .= "\t'$field': $value,\n";
+		$code .= "'$field': $value,";
 	}
-	$code  = substr( $code, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
-	$code .= "\t}\n";
-
-	$code .= "new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );";
-	$code .= "}\n";
-	$code .= "google.setOnLoadCallback( $function_name );\n";
-	$code .= "</script>\n";
-	$code .= "<div id=\"visualization_$id\"></div>\n";
+	$code  = substr( $code, 0, -1 ); // remove the trailing comma/return, reappend the return
+	$code .= "};new google.visualization.$graph_type( document.getElementById('visualization_$id') ).draw( data, options );}";
+	$code .= "google.setOnLoadCallback( $function_name );";
+	$code .= "</script>";
+	$code .= "<div id=\"visualization_$id\"></div>";
 	
 	return $code;
 }

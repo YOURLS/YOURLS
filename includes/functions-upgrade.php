@@ -27,7 +27,7 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		if( $oldsql < 482 )
 			yourls_upgrade_482();
 		
-		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
+		yourls_redirect_javascript( yourls_admin_url( "upgrade?step=3" ) );
 
 		break;
 		
@@ -142,8 +142,8 @@ function yourls_upgrade_to_14( $step ) {
 		$clean = yourls_clean_htaccess_for_14(); // returns bool
 		$create = yourls_create_htaccess(); // returns bool
 		if ( !$create )
-			echo "<p class='warning'>Please create your <tt>.htaccess</tt> file (I could not do it for you). Please refer to <a href='http://yourls.org/htaccess'>http://yourls.org/htaccess</a>.";
-		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200" ), $create );
+			echo "<p class='warning'>Please create your <code>.htaccess</code> file (I could not do it for you). Please refer to <a href='http://yourls.org/htaccess'>http://yourls.org/htaccess</a>.";
+		yourls_redirect_javascript( yourls_admin_url( "upgrade?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200" ), $create );
 		break;
 		
 	case 2:
@@ -158,7 +158,7 @@ function yourls_upgrade_to_14( $step ) {
 		// attempt to drop YOURLS_DB_TABLE_NEXTDEC
 		yourls_update_options_to_14();
 		// Now upgrade to 1.4.1
-		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=1&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210" ) );
+		yourls_redirect_javascript( yourls_admin_url( "upgrade?step=1&oldver=1.4&newver=1.4.1&oldsql=200&newsql=210" ) );
 		break;
 	}
 }
@@ -308,11 +308,11 @@ function yourls_update_table_to_14() {
 		$from = $from + $chunk;
 		$remain = $total - $from;
 		echo "<p>Converted $chunk database rows ($remain remaining). Continuing... Please do not close this window until it's finished!</p>";
-		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200&from=$from" ), $success );
+		yourls_redirect_javascript( yourls_admin_url( "upgrade?step=2&oldver=1.3&newver=1.4&oldsql=100&newsql=200&from=$from" ), $success );
 	} else {
 		// All done
 		echo '<p>All rows converted! Please wait...</p>';
-		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3&oldver=1.3&newver=1.4&oldsql=100&newsql=200" ), $success );
+		yourls_redirect_javascript( yourls_admin_url( "upgrade?step=3&oldver=1.3&newver=1.4&oldsql=100&newsql=200" ), $success );
 	}
 	
 }

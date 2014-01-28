@@ -1,0 +1,22 @@
+/*  
+Theme Name: Sample Theme
+Theme URI: http://yourls.org
+Description: A very simple theme - it just adds some dots to the original style
+Version: 1.0
+Author: YOURLS
+Author URI: http://yourls.org/
+*/
+
+/* Declare your theme CSS below, for instance: */
+
+body {
+    border-top: 40px dotted #404FA0;
+}
+
+#content{
+	border:20px dotted #00A3EE;
+}
+
+#sidebar{
+	border:16px dotted #1133EB;
+}

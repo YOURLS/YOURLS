@@ -1,4 +1,4 @@
-![yourls](images/yourls-logo.png)
+![yourls](assets/img/yourls-logo.png)
 [YOURLS](http://yourls.org) — [![Build Status](https://travis-ci.org/YOURLS/YOURLS.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS)
 ========
 

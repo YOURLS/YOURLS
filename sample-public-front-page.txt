@@ -11,7 +11,7 @@
  */
 
 // Start YOURLS engine
-require_once( dirname(__FILE__).'/includes/load-yourls.php' );
+require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 
 // Change this to match the URL of your public interface. Something like: http://yoursite.com/index.php
 $page = YOURLS_SITE . '/sample-public-front-page.php' ;
@@ -46,27 +46,23 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 
 // Insert <head> markup and all CSS & JS files
 yourls_html_head();
+yourls_template_content( 'before', 'index' );
 
 // Display title
-echo "<h1>YOURLS - Your Own URL Shortener</h1>\n";
+yourls_html_htag( 'YOURLS', 1, 'Your Own URL Shortener' );
 
-// Display left hand menu
-yourls_html_menu() ;
 
 // Part to be executed if FORM has been submitted
 if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 
 	// Display result message of short link creation
 	if( isset( $message ) ) {
-		echo "<h2>$message</h2>";
+		yourls_html_htag( $message, 2 );
 	}
 	
 	if( $status == 'success' ) {
 		// Include the Copy box and the Quick Share box
 		yourls_share_box( $url, $shorturl, $title, $text );
-		
-		// Initialize clipboard -- requires js/share.js and js/jquery.zclip.min.js to be properly loaded in the <head>
-		echo "<script>init_clipboard();</script>\n";
 	}
 
 // Part to be executed when no form has been submitted
@@ -74,42 +70,105 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 
 		$site = YOURLS_SITE;
 		
+		yourls_html_htag( 'Enter a new URL to shorten', 2 );
 		// Display the form
-		echo <<<HTML
-		<h2>Enter a new URL to shorten</h2>
-		<form method="post" action="">
-		<p><label>URL: <input type="text" class="text" name="url" value="http://" /></label></p>
-		<p><label>Optional custom short URL: $site/<input type="text" class="text" name="keyword" /></label></p>
-		<p><label>Optional title: <input type="text" class="text" name="title" /></label></p>
-		<p><input type="submit" class="button primary" value="Shorten" /></p>
-		</form>	
-HTML;
+		echo '<form role="form" method="post" action="">
+			<div class="form-group">
+				<label>URL</label>
+				<input type="text" name="url" placeholder="http://" required />
+			</div>
+			<div class="form-group">
+				<label>Custom short URL';
+				yourls_add_label( yourls__( 'Optional' ), 'info', 'before' );
+		echo '</label>
+					<div class="input-group">
+						<span class="input-group-addon">' . $site . '/</span>
+						<input type="text" class="form-control" name="keyword" placeholder="keyword" />
+					</div>
+			</div>
+			<div class="form-group">
+				<label>Title';
+				yourls_add_label( yourls__( 'Optional' ), 'info', 'before' );
+		echo '</label>
+				<input type="text" name="title" placeholder="Title" />
+			</div>
+			<button type="submit" class="btn btn-primary btn-lg pull-right">Shorten</button>
+		</form>
+		<div class="clearfix"></div>';
 
 }
 
-?>
+yourls_html_htag( 'Bookmarklets', 2 );
 
-<h2>Bookmarklets</h2>
+echo '<div>';
+$bookmarks = array (
+	'simple' => array (
+		'name'  => yourls__( 'Default + Standard' ),
+		'type'  => array( 'default', 'standard' ),
+		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()",
+	),
+	'custom' => array (
+		'name'  => yourls__( 'Custom + Standard' ),
+		'type'  => array( 'standard', 'custom' ),
+		'link'  => "javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='" . yourls_admin_url( 'index' ) . "',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&k='+k:%22%22),p='?u='+enc(l.href)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()",
+	),
+	'simple-pop' => array (
+		'name'  => yourls__( 'Default + Popup' ),
+		'type'  => array( 'default', 'popup' ),
+		'link'  => "javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index' ) . "?u='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();",
+	),
+	'custom-pop' => array (
+		'name'  => yourls__( 'Custom + Popup' ),
+		'type'  => array( 'popup', 'custom' ),
+		'link'  => "javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='" . yourls_admin_url( 'index' ) . "?u='+encodeURIComponent(d.location.href)+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();",
+	),
+);
 
-<p>Bookmark these links:</p>
+$bookmarks = yourls_apply_filter( 'classic_bookmarklet_data', $bookmarks );
 
-<p>
+foreach( $bookmarks as $bookmark ) {
+	echo '<div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
+	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
+	echo '<div class="panel-body"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<i class="icon-move"></i> ' . yourls__( 'YOURLS Shorten' );
+	echo '</a></div>';
+	echo '</div>';
+}
 
-<a href="javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo $page; ?>',l=d.location,p='?url='+enc(l.href)+'&title='+enc(d.title)+'&text='+s2,u=f+p;try%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0);%7D)()" class="bookmarklet">Default</a>
+echo '<hr />';
 
-<a href="javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo $page; ?>',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&keyword='+k:%22%22),p='?url='+enc(l.href)+'&title='+enc(d.title)+'&text='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()" class="bookmarklet">Custom</a>
+$bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656
+	'facebook'  => array (
+		'name'        => yourls__( 'YOURLS &amp; Facebook' ),
+		'color'       => 'info',
+		'description' => yourls__( 'Create a short URL and share it on social networks, all in one click!' ),
+		'link'        => "javascript:(function(){var%20d=document,enc=encodeURIComponent,share='facebook',f='" . yourls_admin_url( 'index' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!window.open(u,'Share','width=500,height=340,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();",
+	),
+	'twitter'   => array (
+		'name'        => yourls__( 'YOURLS &amp; Twitter' ),
+		'color'       => 'success',
+		'description' => yourls__( 'Create a short URL and share it on social networks, all in one click!' ),
+		'link'        => "javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='twitter',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='" . yourls_admin_url( 'index' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=780,height=265,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();",
+	),
+);
 
-<a href="javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();" class="bookmarklet">Popup</a>
+$bookmarks = yourls_apply_filter( 'social_bookmarklets_data', $bookmarks );
 
-<a href="javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&keyword='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();" class="bookmarklet">Custom Popup</a>
+foreach( $bookmarks as $bookmark ) {
+	echo '<div class="bookmarklet panel-' . $bookmark['color'] . '">';
+	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
+	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<i class="icon-move"></i> ' . $bookmark['name'];
+	echo '</a>';
+	echo '</div>';
+}
 
-</p>
+echo '</div>';
 
-<h2>Please note</h2>
-
-<p>Be aware that a public interface <strong>will</strong> attract spammers. You are strongly advised to install anti spam plugins and any appropriate counter measure to deal with this issue.</p>
-
-<?php
+echo '<div class="callout callout-warning">';
+yourls_html_htag( 'Please note', 4 );
+echo '<p>Be aware that a public interface <strong>will</strong> attract spammers. You are strongly advised to install anti spam plugins and any appropriate counter measure to deal with this issue.</p>';
+echo '</div>';
 
 // Display page footer
-yourls_html_footer();	
+yourls_template_content( 'after', 'index' );

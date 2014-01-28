@@ -15,10 +15,20 @@ if ( '/robots.txt' == $_SERVER['REQUEST_URI'] ) {
 }
 
 // Start YOURLS
-require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+require_once dirname( __FILE__ ) . '/includes/load-yourls.php';
 
 // Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
+
+// Admin:
+if( preg_match( "@^".YOURLS_ADMIN_LOCATION."/(([a-zA-Z\-]+)(\.php)?)?$@", $request, $matches ) ) {
+	$page = YOURLS_INC.'/admin/';
+	$page .= ( isset( $matches[2] ) && $matches[2] ) ? $matches[2].'.php' : 'index.php';
+	if ( file_exists( $page ) ) {
+		require_once( $page );
+		exit;
+	}
+}
 
 // Make valid regexp pattern from authorized charset in keywords
 $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
@@ -52,12 +62,12 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = yourls_sanitize_url( $matches[0] );
 	if( $parse = yourls_get_protocol_slashes_and_rest( $url, array( 'up', 'us', 'ur' ) ) ) {
-		yourls_do_action( 'load_template_redirect_admin', $url );
+	yourls_do_action( 'load_template_redirect_admin', $url );
 		$parse = array_map( 'rawurlencode', $parse );
 		// Redirect to /admin/index.php?up=<url protocol>&us=<url slashes>&ur=<url rest>
 		yourls_redirect( yourls_add_query_arg( $parse , yourls_admin_url( 'index.php' ) ), 302 );
-		exit;
-	}
+	exit;
+}
 }
 
 // Past this point this is a request the loader could not understand

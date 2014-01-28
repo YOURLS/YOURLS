@@ -203,7 +203,7 @@ function yourls_do_action( $hook, $arg = '' ) {
 * Retrieve the number times an action is fired.
 *
 * @param string $hook Name of the action hook.
-* @return int The number of times action hook <tt>$hook</tt> is fired
+* @return int The number of times action hook $hook is fired
 */
 function yourls_did_action( $hook ) {
 	global $yourls_actions;
@@ -271,6 +271,13 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
 	return false;
 }
 
+/**
+ * Check if a funtion has a specific action
+ * 
+ * @param string $hook The name of the filter hook.
+ * @param string $function_to_check
+ * @return bool
+ */
 function yourls_has_action( $hook, $function_to_check = false ) {
 	return yourls_has_filter( $hook, $function_to_check );
 }
@@ -296,14 +303,17 @@ function yourls_has_active_plugins( ) {
  * @global object $ydb Storage of mostly everything YOURLS needs to know
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
-function yourls_get_plugins( ) {
+function yourls_get_plugins( $category = 'plugins' ) {
+	if( $category == 'themes' )
+		$plugins = (array) glob( YOURLS_THEMEDIR .'/*/theme.css');
+	else
 	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
 	
 	if( !$plugins )
 		return array();
 	
 	foreach( $plugins as $key => $plugin ) {
-		$_plugin = yourls_plugin_basename( $plugin );
+		$_plugin = yourls_plugin_basename( $plugin, $category );
 		$plugins[ $_plugin ] = yourls_get_plugin_data( $plugin );
 		unset( $plugins[ $key ] );
 	}
@@ -360,7 +370,9 @@ function yourls_get_plugin_data( $file ) {
 	return $plugin_data;
 }
 
-// Include active plugins
+/**
+ * Include active plugins
+ */
 function yourls_load_plugins() {
 	// Don't load plugins when installing or updating
 	if( yourls_is_installing() OR yourls_is_upgrading() )
@@ -372,6 +384,9 @@ function yourls_load_plugins() {
 	
 	global $ydb;
 	$ydb->plugins = array();
+
+	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true )
+		$ydb->debug_log[] = 'Plugins: ' . count( $active_plugins );
 	
 	foreach( (array)$active_plugins as $key=>$plugin ) {
 		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
@@ -384,7 +399,7 @@ function yourls_load_plugins() {
 	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
 	if( count( $active_plugins ) ) {
 		yourls_update_option( 'active_plugins', $ydb->plugins );
-		$message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', count( $active_plugins ) );
+		$message = yourls_n( 'Could not find and deactivated plugin:', 'Could not find and deactivated plugins:', count( $active_plugins ) );
 		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
 		yourls_add_notice( $message .' '. $missing );
 	}
@@ -402,7 +417,7 @@ function yourls_validate_plugin_file( $file ) {
 		OR
 		false !== strpos( $file, './' )
 		OR
-		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
+		( 'plugin.php' !== substr( $file, -10 )	&& 'theme.php' !== substr( $file, -9 ) )	// a plugin must be named 'plugin.php', a theme must be named 'theme.php'
 		OR
 		!is_readable( $file )
 	)
@@ -477,8 +492,11 @@ function yourls_deactivate_plugin( $plugin ) {
 /**
  * Return the path of a plugin file, relative to the plugins directory
  */
-function yourls_plugin_basename( $file ) {
+function yourls_plugin_basename( $file, $category = 'plugins' ) {
 	$file = yourls_sanitize_filename( $file );
+	if( $category == 'themes' )
+		$plugindir = yourls_sanitize_filename( YOURLS_THEMEDIR );
+	else
 	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
 	$file = str_replace( $plugindir, '', $file );
 	return trim( $file, '/' );
@@ -506,7 +524,7 @@ function yourls_list_plugin_admin_pages() {
 	$plugin_links = array();
 	foreach( (array)$ydb->plugin_pages as $plugin => $page ) {
 		$plugin_links[ $plugin ] = array(
-			'url'    => yourls_admin_url( 'plugins.php?page='.$page['slug'] ),
+			'url'    => yourls_admin_url( 'plugins?page='.$page['slug'] ),
 			'anchor' => $page['title'],
 		);
 	}
@@ -530,10 +548,10 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
 }
 
 /**
- * Handle plugin administration page
+ * Handle plugin or theme administration page
  *
  */
-function yourls_plugin_admin_page( $plugin_page ) {
+function yourls_plugin_admin_page( $plugin_page, $type = 'plugin' ) {
 	global $ydb;
 
 	// Check the plugin page is actually registered
@@ -543,17 +561,14 @@ function yourls_plugin_admin_page( $plugin_page ) {
 	
 	// Draw the page itself
 	yourls_do_action( 'load-' . $plugin_page);
-	yourls_html_head( 'plugin_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
-	yourls_html_logo();
-	yourls_html_menu();
+	yourls_html_head( $type . '_page_' . $plugin_page, $ydb->plugin_pages[$plugin_page]['title'] );
+	yourls_template_content( 'before', $type );
 	
 	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
 	
-	yourls_html_footer();
-	
+	yourls_template_content( 'after', $type . '_page_' . $plugin_page );
 	die();
 }
-
 
 /**
  * Callback function: Sort plugins 
