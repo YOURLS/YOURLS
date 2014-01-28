@@ -12,8 +12,8 @@
 /**
  * Load POMO files required to run library
  */
-require_once dirname(__FILE__) . '/pomo/mo.php';
-require_once dirname(__FILE__) . '/pomo/translations.php';
+use POMO\MO;
+use POMO\Tanslations;
 
 /**
  * Gets the current locale.
