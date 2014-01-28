@@ -26,6 +26,7 @@
         "php": ">=5.3.0",
         "pomo/pomo": "*",
         "rmccue/requests": "*",
+        "hautelook/phpass": "*",
         "monolog/monolog": "*",
         "jwage/purl": "*",
         "nesbot/carbon": "*",
