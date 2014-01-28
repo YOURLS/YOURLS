@@ -174,8 +174,6 @@ function yourls_send_through_proxy( $url ) {
  * @return object Requests_Response object
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
-	yourls_http_load_library();
-	
 	$options = array_merge( yourls_http_default_options(), $options );
 	
 	if( yourls_http_proxy_is_defined() && !yourls_send_through_proxy( $url ) )
@@ -188,21 +186,6 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	};
 	
 	return $result;
-}
-
-/**
- * Check if Requests class is defined, include Requests library if need be
- *
- * All HTTP functions should perform that check prior to any operation. This is to avoid
- * include()-ing all the Requests files on every YOURLS instance disregarding whether needed or not.
- *
- * @since 1.7
- */
-function yourls_http_load_library() {
-	if ( !class_exists( 'Requests', false ) ) {
-		require_once dirname( __FILE__ ) . '/Requests/Requests.php';
-		Requests::register_autoloader();
-	}
 }
 
 /**
