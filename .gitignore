@@ -37,6 +37,7 @@ includes/vendor/*/*/*
 !includes/vendor/*/*/README.md
 !includes/vendor/*/*/src/
 !includes/vendor/rmccue/requests/library/
+!includes/vendor/psr/log/Psr/
 
 ############
 ## Tests
