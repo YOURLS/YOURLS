@@ -2,9 +2,6 @@
 ## YOURLS
 ############
 
-# Libraries
-composer.lock
-
 # Configuration
 user/*
 !user/*/
@@ -30,6 +27,16 @@ user/*/*
 # Keep index.html
 !user/index.html
 !user/*/index.html
+
+############
+## Libraries
+############
+
+composer.lock
+includes/vendor/*/*/*
+!includes/vendor/*/*/README.md
+!includes/vendor/*/*/src/
+!includes/vendor/rmccue/requests/library/
 
 ############
 ## Tests
