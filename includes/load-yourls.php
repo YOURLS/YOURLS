@@ -1,6 +1,6 @@
 <?php
 // This file initialize everything needed for YOURLS
-
+namespace YOURLS;
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
@@ -93,6 +93,7 @@ require YOURLS_INC . '/vendor/autoload.php';
 // Include all functions
 require_once YOURLS_INC . '/version.php';
 require_once YOURLS_INC . '/functions.php';
+require_once YOURLS_INC . '/functions-log.php';
 require_once YOURLS_INC . '/functions-plugins.php';
 require_once YOURLS_INC . '/functions-formatting.php';
 require_once YOURLS_INC . '/functions-api.php';
@@ -107,6 +108,9 @@ require_once YOURLS_INC . '/functions-themes.php';
 // Load auth functions if needed
 if( yourls_is_private() )
 	require_once YOURLS_INC.'/functions-auth.php';
+
+$logger = new Log( 'Loader' );
+$logger->addInfo( 'Welcome to YOURLS!', array( 'Version' => YOURLS_VERSION ) );
 
 // Load locale
 yourls_load_default_textdomain();
