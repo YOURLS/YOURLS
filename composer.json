@@ -33,7 +33,8 @@
         "fzaninotto/streamer": "*"
     },
     "require-dev": {
-        "filp/whoops": "1.*"
+        "filp/whoops": "1.*",
+        "phpunit/phpunit": "3.7.*"
     },
     "suggest": {
         "lib-curl": "Allow API external transactions",

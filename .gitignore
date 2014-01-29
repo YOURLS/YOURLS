@@ -32,8 +32,16 @@ user/*/*
 ## Libraries
 ############
 
+# Composer
 composer.lock
+
+# Dev libs
+phpunit/
+whoops/
+
+# Useless files
 includes/vendor/*/*/*
+includes/vendor/bin/
 !includes/vendor/*/*/README.md
 !includes/vendor/*/*/src/
 !includes/vendor/rmccue/requests/library/
