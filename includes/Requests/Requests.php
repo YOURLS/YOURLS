@@ -253,7 +253,9 @@ class Requests {
 	 * options:
 	 *
 	 * - `timeout`: How long should we wait for a response?
-	 *    (integer, seconds, default: 10)
+	 *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
+	 * - `connect_timeout`: How long should we wait while trying to connect?
+	 *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
 	 * - `useragent`: Useragent to send to the server
 	 *    (string, default: php-requests/$version)
 	 * - `follow_redirects`: Should we follow 3xx redirects?
@@ -443,6 +445,7 @@ class Requests {
 	protected static function get_default_options($multirequest = false) {
 		$defaults = array(
 			'timeout' => 10,
+			'connect_timeout' => 10,
 			'useragent' => 'php-requests/' . self::VERSION,
 			'redirected' => 0,
 			'redirects' => 10,
