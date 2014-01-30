@@ -2219,9 +2219,8 @@ function yourls_return_if_not_empty_string( $val ) {
  * @return string The message itself
  */
 function yourls_debug_log( $msg ) {
-	global $ydb;
-	$ydb->debug_log[] = $msg;
-	return $msg;
+    $logger = new Log( 'CONFIG' );
+    $logger->addDebug( $msg );
 }
 
 /**
