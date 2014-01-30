@@ -109,7 +109,7 @@ require_once YOURLS_INC . '/functions-themes.php';
 if( yourls_is_private() )
 	require_once YOURLS_INC.'/functions-auth.php';
 
-$logger = new Log( 'Loader' );
+$logger = new Log( 'LOADER' );
 $logger->addInfo( 'Welcome to YOURLS!', array( 'Version' => YOURLS_VERSION ) );
 
 // Load locale

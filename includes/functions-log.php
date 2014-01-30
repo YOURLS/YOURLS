@@ -21,7 +21,7 @@ class Log extends Logger {
      * @param string $channel The name of the channel
      */
     public function __construct( $channel ) {
-        parent::__construct( $channel );
+        parent::__construct( 'YOURLS.' . $channel );
         if ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
             $this->pushHandler( new StreamHandler( YOURLS_USERDIR . '/yourls.log' ) );
         }
