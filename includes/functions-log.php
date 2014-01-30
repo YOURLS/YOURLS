@@ -22,6 +22,8 @@ class Log extends Logger {
      */
     public function __construct( $channel ) {
         parent::__construct( $channel );
-        $this->pushHandler( new StreamHandler( YOURLS_USERDIR . '/yourls.log' ) );
+        if ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+            $this->pushHandler( new StreamHandler( YOURLS_USERDIR . '/yourls.log' ) );
+        }
     }  
 }
