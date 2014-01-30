@@ -5,8 +5,6 @@
  * This file is part of the YOURLS package.
  */
  
-namespace YOURLS;
- 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 

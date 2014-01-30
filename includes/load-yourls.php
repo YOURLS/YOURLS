@@ -1,6 +1,6 @@
 <?php
 // This file initialize everything needed for YOURLS
-namespace YOURLS;
+
 // Include settings
 if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
 	// config.php in /user/
