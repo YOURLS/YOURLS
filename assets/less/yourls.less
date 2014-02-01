@@ -107,6 +107,14 @@ input, select {
     padding-bottom: 50px;
     margin-bottom: 100px;
     .border-bottom-radius(@border-radius-base);
+
+    @media (max-width: @screen-tablet) {
+        margin-bottom: 0px; .border-bottom-radius(0);
+    }
+
+    @media (min-width: @screen-lg-desktop) {
+        padding-right: 6%; padding-left: 6%;
+    }
 }
     // Headings
     .content > h1,
@@ -121,7 +129,12 @@ input, select {
         > small {
             color: @yourls-color-light;
         }
+
+        @media (min-width: @screen-lg-desktop) {
+            margin-right: -9.55%; margin-left: -9.5%; padding-right: 9.55%; padding-left: 9.5%;
+        }
     }
+
 
 .docs {
     > div > h1 {
@@ -146,6 +159,10 @@ input, select {
 
     a.back {
         display: none;
+
+        @media (max-width: @screen-tablet) {
+            display: block; float: right; font-size: 50%; line-height: 200%;
+        }
     }
 }
 // Nav-bar / Sidebar & Components
@@ -156,7 +173,6 @@ input, select {
 .sidebar {
     background-color: @sidebar;
     .border-bottom-radius(@border-radius-base);
-    max-width: 265px;
 
     &:hover {
         max-height: 100%;
@@ -176,11 +192,31 @@ input, select {
         img {
             max-width: 100%;
         }
+
+        @media (max-width: @screen-lg-desktop) {
+            padding: 5px 15px; width: 150px; min-height: 0;
+        }
+    }
+
+    @media (max-width: @screen-lg-desktop) {
+        margin-left: -15px; margin-right: -15px;
+    }
+
+    @media (max-width: @screen-lg-desktop) {
+        > .global-stats, .footer, hr {
+            display: none !important;
+        }
+
+        > .sidebar-responsive-collapse {
+            .collapse;
+        }
+    }
+
+
+    @media (min-width: @screen-lg-desktop) {
+        max-width: 265px; .affix;
     }
 }
-
-
-
 
 .admin-menu {
     .nav;
@@ -257,6 +293,12 @@ input, select {
             font-size: (@font-stats-big * 0.7); // ~12px
             text-transform: uppercase;
         }
+    }
+}
+
+.navbar-toggle {
+    @media (max-width: @screen-lg-desktop) {
+        display: inherit;
     }
 }
 // Main Table
@@ -692,60 +734,10 @@ button.btn-clipboard-active {
     background-image: none;
     .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
 }
-// Responsive
+
 @media screen and (max-width: @screen-tablet) {
-    .sidebar {
-        > .yourls-logo {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 15px;
-            font-size: @font-size-large;
-            font-weight: 500;
-            line-height: @line-height-computed;
-            color: @navbar-default-brand-color;
-            text-align: center;
-        }
-
-        > .global-stats {
-            display: none !important;
-        }
-
-        > .sidebar-responsive-collapse {
-            .collapse;
-        }
-    }
-
-    .docs a.back {
-        display: block;
-        float: right;
-        font-size: 50%;
-        line-height: 200%;
-    }
 
     #about a.back {
         display: none;
     }
-}
-
-@media screen and (min-width: @screen-tablet) {
-    .sidebar {
-        .affix;
-    }
-}
-
-@media screen and (min-width: @screen-lg-desktop) {
-    .content {
-        padding-right: 6%;
-        padding-left: 6%;
-    }
-
-        .content > h1,
-        .content .new-url-form,
-        .docs h1 {
-            margin-right: -9.55%;
-            margin-left: -9.5%;
-            padding-right: 9.55%;
-            padding-left: 9.5%;
-        }
 }
