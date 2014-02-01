@@ -135,6 +135,7 @@
 			else
 			{
 				$this->dbname = $dbname;
+                if ( $encoding == '') $encoding = $this->encoding;
 				if($encoding!='')
 				{
 					$encoding = strtolower(str_replace("-","",$encoding));
