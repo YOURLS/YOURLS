@@ -45,11 +45,6 @@ $themes_count = sprintf( yourls_n( '%s theme', '%s themes', $count ), $count );
 	
 yourls_html_htag( yourls__( 'Themes' ), 1, /* //translators: "'3 themes' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed', $themes_count ) );
 
-echo '<p>';
-yourls_add_label( yourls__( 'More themes' ), 'info', 'after' );
-yourls_e( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' );
-echo '</p>';
-	
 echo '<div class="themes-list">';
 	
 $nonce = yourls_create_nonce( 'manage_themes' );
@@ -141,10 +136,9 @@ foreach( $themes as $file => $theme_data ) {
 	}
 }
 echo '</div>';
-	
-echo '<p class="callout callout-warning">';
-yourls_e( 'If something goes wrong after you activate a theme and you cannot use YOURLS or access this page, simply rename or delete its directory.' );
-echo '</p>';
+
+yourls_html_callout( 'info', yourls__( 'For more themes, head to the official <a href="http://yourls.org/themelist">Theme list</a>.' ), yourls__( 'More themes' ) );
+yourls_html_callout( 'warning', yourls__( 'If something goes wrong after you activate a theme and you cannot use YOURLS or access this page, simply rename or delete its directory.' ), yourls__( 'Got an error?' ) );
 	
 yourls_template_content( 'after', 'themes' );
 ?>

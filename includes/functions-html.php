@@ -1128,3 +1128,17 @@ function yourls_html_ending() {
 	yourls_do_action( 'html_ending' );
 	echo '</div></body></html>';
 }
+
+/**
+ * Add a callout container
+ *
+ * @since 2.0
+ */
+function yourls_html_callout( $type, $content, $title = '' ) {
+	echo '<div class="callout callout-' . $type . '">';
+    if ( $title != '' )
+        yourls_html_htag( $title, 4 );
+    echo $content;
+	echo '</div>';
+}
+

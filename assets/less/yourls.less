@@ -65,16 +65,25 @@
 }
 
 .callout-danger {
-    .callout-theme(#fcf2f2, #dFb5b4);
+    .callout-theme(@brand-danger);
 }
 
 .callout-warning {
-    .callout-theme(#fefbed, #f1e7bc);
+    .callout-theme(@brand-warning);
 }
 
 .callout-info {
-    .callout-theme(#f0f7fd, #d0e3f0);
+    .callout-theme(@brand-info);
 }
+
+.callout-doc {
+    .callout-theme(@brand-success);
+}
+
+.callout-help {
+    .callout-theme(@callout-help-bg);
+}
+
 // HTML
 body,
 html {
@@ -96,6 +105,8 @@ input, select {
     .make-lg-column(9);
     min-height: 100%;
     padding-bottom: 50px;
+    margin-bottom: 100px;
+    .border-bottom-radius(@border-radius-base);
 }
     // Headings
     .content > h1,

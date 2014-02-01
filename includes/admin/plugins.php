@@ -78,10 +78,6 @@ $count_active = yourls_has_active_plugins();
 	
 yourls_html_htag( yourls__( 'Plugins' ), 1, /* //translators: "'3 plugins' installed and '1' activated" */ yourls_s( '<strong>%1$s</strong> installed, and <strong>%2$s</strong> activated', $plugins_count, $count_active ) );
 
-echo '<p>';
-yourls_add_label( yourls__( 'More plugins' ), 'info', 'after' ) . yourls_e( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' );
-echo '</p>';
-
 yourls_table_start( 'plugins-table', 'table table-striped table-hover' );
 	
 $table_head = array(
@@ -150,10 +146,13 @@ foreach( $plugins as $file=>$plugin ) {
 }
 yourls_table_tbody_end();
 yourls_table_end();
-	
-echo '<p class="callout callout-warning">';
-yourls_e( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' );
-echo '</p>';
+
+
+yourls_html_callout( 'info', yourls__( 'For more plugins, head to the official <a href="http://yourls.org/pluginlist">Plugin list</a>.' ), yourls__( 'More plugins' ) );
+yourls_html_callout( 'warning', 
+    yourls__( 'If something goes wrong after you activate a plugin and you cannot use YOURLS or access this page, simply rename or delete its directory, or rename the plugin file to something different than <code>plugin.php</code>.' ),
+    yourls__( 'Got an error?' ) );
+
 	
 yourls_template_content( 'after', 'plugins' );
 ?>

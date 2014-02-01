@@ -23,10 +23,6 @@ yourls_se( 'Short URL can be %1$sDefault%2$s or %3$sCustom%2$s. Behavior can be 
 	'<strong class="popup" title="'. yourls__( 'Shows the short URL in a popup within the current page' ) . '">' );
 echo '</p>';
 
-echo '<p>';
-yourls_se( 'For more info, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' );
-echo '</p>';
-
 // @TODO: offload this to proper CSS & JS files
 echo <<<TEXT
 <script>
@@ -112,16 +108,10 @@ yourls_do_action( 'classic_bookmarklets_buttons_after' );
 
 echo '</div>';
 
-echo '<p>';
-yourls_add_label( yourls__( 'Help' ), 'default', 'after' );
-yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' );
-echo '</p>';
+yourls_html_callout( 'doc', yourls_s( 'For more information, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/Bookmarklets' ) );
+yourls_html_callout( 'help', yourls__( 'Click and drag links to your toolbar (or right-click and bookmark it).' ), yourls__( 'Help' ) );
+yourls_html_callout( 'info', yourls__( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" ), yourls__( 'Tip' ) );
 
-echo '<p>';
-yourls_add_label( yourls__( 'Tip' ), 'info', 'after' );
-yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
-echo '</p>';
-		
 yourls_html_htag( yourls__( 'Social Bookmarklets' ), 3 );
 
 echo '<p>';
@@ -156,9 +146,8 @@ foreach( $bookmarks as $bookmark ) {
 
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
-echo '<div class="clearfix"></div><p>';
-yourls_add_label( yourls__( 'Help' ), 'default', 'after' );
-yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it).' ) . '</p>';
+echo '<div class="clearfix"></div>';
+yourls_html_callout( 'help', yourls__( 'Click and drag links to your toolbar (or right-click and bookmark it).' ), yourls__( 'Help' ) );
 ?>
 	
 <div class="page-header">
@@ -167,15 +156,13 @@ yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)
 		
 <p><?php yourls_se( "When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add <code>%s</code> to the beginning of the current URL (right before its <code>http://</code> part) and hit enter.", preg_replace('@https?://@', '', YOURLS_SITE) . '/' ); ?></p>
 		
-<p>
 <?php
-yourls_add_label( yourls__( 'Note' ), 'warning', 'after' );
-yourls_e('This will probably not work if your web server is running on Windows' );
+$winrun = yourls__('This will probably not work if your web server is running on Windows' );
 if( yourls_is_windows() )
-	echo ' ' . yourls__( '(which seems to be the case here)' );
-?>.</p>
+	$winrun .= ' ' . yourls__( '(which seems to be the case here)' );
+yourls_html_callout( 'warning', $winrun . '.', yourls__( 'Note' ) );
 
-<?php if( yourls_is_private() ) { ?>
+if( yourls_is_private() ): ?>
 
 	<div class="page-header">
 		<?php yourls_html_htag( yourls__( 'Secure API' ), 2 ); ?>
@@ -190,15 +177,11 @@ if( yourls_is_windows() )
 		yourls_se( 'Your secret signature token: %s', '<strong><code id="signature">' . yourls_auth_signature() . '</code></strong>' );
 		yourls_html_zeroclipboard( 'signature' );
 		yourls_add_label( yourls__( "It's a secret. Keep it secret!" ), 'danger', 'before' );
-	?></p>
+	echo '</p>';
+    
+yourls_html_callout( 'warning', yourls__( 'This signature token can only be used with the API, not with the admin interface.' ), yourls__( 'Note' ) );
+yourls_html_callout( 'doc', yourls_s( 'For more information, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI' ) );
 
-	<p><?php
-		yourls_add_label( yourls__( 'Note' ), 'warning', 'after' );
-		yourls_e( 'This signature token can only be used with the API, not with the admin interface.' );
-	?></p>
-		
-	<p><?php echo yourls_s( 'For more info, please refer to the <a href="%s">online documentation</a>.', 'https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI' ); ?></p>
-
-<?php } // end is private 
+endif;  // end is private 
 		  
 yourls_template_content( 'after', 'tools' );

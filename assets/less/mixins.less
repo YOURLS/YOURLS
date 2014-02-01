@@ -23,7 +23,11 @@
 }
 
 // Callout Theme
-.callout-theme(@bck-color, @border-color) {
-    background-color: @bck-color;
+.callout-theme(@border-color) {
+    background-color: lighten(@border-color, 95% - lightness(@border-color));
     border-color: @border-color;
+
+    h4 {
+        color: @border-color;
+    }
 }
