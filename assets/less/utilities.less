@@ -1,0 +1,91 @@
+//
+// Mixins
+// --------------------------------------------------
+
+// Button outline
+.btn-outline {
+    .btn-outline(@yourls-color-dark);
+}
+
+// Callout
+.callout {
+    margin: 20px 0;
+    padding: 20px;
+    border-left: 3px solid #eee;
+
+    h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    code,
+    .highlight {
+        background-color: #fff;
+        border-radius: 3px;
+    }
+}
+
+.callout-danger {
+    .callout-theme(@brand-danger);
+}
+
+.callout-warning {
+    .callout-theme(@brand-warning);
+}
+
+.callout-info {
+    .callout-theme(@brand-info);
+}
+
+.callout-doc {
+    .callout-theme(@brand-success);
+}
+
+.callout-help {
+    .callout-theme(@callout-help-bg);
+}
+
+// Notices
+.container > .alert {
+    .make-lg-column(4);
+    .make-lg-column-push(5);
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    .border-top-radius(0);
+    background-color: #FCF8E3;
+}
+
+// Button clipboard
+button.btn-clipboard {
+    .btn;
+    .btn-primary;
+    .border-left-radius(0);
+
+    #signature-zone > & {
+        .btn-sm;
+        .border-left-radius(0);
+    }
+}
+
+button.btn-clipboard-hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+button.btn-clipboard-active {
+    outline: 0;
+    background-image: none;
+    .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+}
+
+#signature {
+    padding: 7px 10px 8px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+

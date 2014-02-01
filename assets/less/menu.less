@@ -1,0 +1,139 @@
+//
+// Menu & Sidebar
+// --------------------------------------------------
+
+.sidebar-container {
+    .make-lg-column(3);
+}
+
+.sidebar {
+    background-color: @sidebar;
+    .border-bottom-radius(@border-radius-base);
+
+    &:hover {
+        max-height: 100%;
+        overflow: auto;
+    }
+
+    .footer {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    > .yourls-logo {
+        text-align: center;
+        min-height: 110px;
+        padding: 11px 15px;
+
+        img {
+            max-width: 100%;
+        }
+
+        @media (max-width: @screen-lg-desktop) {
+            padding: 5px 15px; width: 150px; min-height: 0;
+        }
+    }
+
+    @media (max-width: @screen-lg-desktop) {
+        margin-left: -15px; margin-right: -15px;
+    }
+
+    @media (max-width: @screen-lg-desktop) {
+        > .global-stats, .footer, hr {
+            display: none !important;
+        }
+
+        > .sidebar-responsive-collapse {
+            .collapse;
+        }
+    }
+
+
+    @media (min-width: @screen-lg-desktop) {
+        max-width: 265px; .affix;
+    }
+}
+
+.admin-menu {
+    .nav;
+
+    > li > a {
+        display: block;
+        color: @navbar-default-link-active-color;
+        padding: 8px @menu-item-padding;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+            border-left: 1px solid @yourls-color-dark;
+            padding-left: @menu-item-padding - 1;
+        }
+    }
+
+    > .active {
+        > a,
+        &:hover > a,
+        &:focus > a {
+            color: @yourls-color-dark;
+            border-left: 2px solid @yourls-color-dark;
+            padding-left: @menu-item-padding - 2;
+        }
+
+        > ul {
+            display: block;
+        }
+    }
+
+    .submenu {
+        display: block;
+        margin-bottom: 5px;
+
+        > li > a {
+            padding: 2px @menu-item-padding*2;
+            font-size: 90%;
+
+            &:hover,
+            &:focus {
+                padding-left: @menu-item-padding*2 - 1;
+            }
+        }
+
+        > .active {
+            > a,
+            &:hover > a,
+            &:focus > a {
+                padding-left: @menu-item-padding*2 - 2;
+            }
+        }
+    }
+
+    .nav-header {
+        background-color: @yourls-color-med-light;
+        padding: 8px @menu-item-padding;
+        color: @yourls-color-med-dark;
+    }
+}
+
+.global-stats {
+    background-color: @yourls-color-dark;
+    color: #fff;
+    font-size: @font-stats-big;
+    text-align: center;
+    padding: 30px 10px 12px;
+    height: 115px;
+
+    > .global-stats-data {
+        .make-lg-column(6);
+
+        > p {
+            font-size: (@font-stats-big * 0.7); // ~12px
+            text-transform: uppercase;
+        }
+    }
+}
+
+.navbar-toggle {
+    @media (max-width: @screen-lg-desktop) {
+        display: inherit;
+    }
+}

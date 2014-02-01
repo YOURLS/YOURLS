@@ -1,0 +1,62 @@
+//
+// Themes Page
+// --------------------------------------------------
+
+.themes-list {
+    .make-row();
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-bottom: 20px;
+
+    .theme {
+        .make-lg-column(6);
+        margin-bottom: 10px;
+
+        img {
+            max-width: 100%;
+            opacity: 1;
+            -moz-transition: opacity 0.5s ease;
+            -o-transition: opacity 0.5s ease;
+            -webkit-transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease;
+        }
+
+        .theme-desc {
+            position: absolute;
+            top: 4px;
+            max-width: 88%;
+            padding: 15px;
+            color: #fff;
+            opacity: 0;
+            -moz-transition: opacity 0.5s ease;
+            -o-transition: opacity 0.5s ease;
+            -webkit-transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease;
+        }
+
+        .caption-hover {
+            background-color: #000;
+
+            &:hover {
+                img {
+                    opacity: 0.2;
+                }
+
+                .theme-desc {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+.screenshot-missing {
+    display: block;
+    font-size: 40px;
+    height: 200px;
+    width: 100%;
+    background: #e1e1e1;
+    color: #aaa;
+    padding-top: 80px;
+    text-align: center;
+}

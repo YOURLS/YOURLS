@@ -1,0 +1,87 @@
+//
+// Bookmarklet
+// --------------------------------------------------
+
+.bookmarklet {
+    .panel;
+    .make-lg-column(5.9);
+    padding: 0;
+    margin-right: 1%;
+    text-align: center;
+    float: none !important;
+    display: inline-block;
+
+    &:nth-of-type(2n) {
+        margin-right: 0;
+    }
+
+    > a {
+        .btn;
+        .btn-link;
+
+        &:hover,
+        &:focus {
+            color: @link-hover-color;
+            background-color: transparent;
+            .box-shadow(none);
+        }
+    }
+
+    &.bookmarklet-type-standard {
+        &.bookmarklet-type-default {
+            .panel-variant(@panel-info-border;
+            @panel-info-text;
+            @panel-info-heading-bg;
+            @panel-info-border
+            );
+        }
+
+        &.bookmarklet-type-custom {
+            .panel-variant(@panel-success-border;
+            @panel-success-text;
+            @panel-success-heading-bg;
+            @panel-success-border
+            );
+        }
+    }
+
+    &.bookmarklet-type-popup {
+        &.bookmarklet-type-default {
+            .panel-variant(@panel-warning-border;
+            @panel-warning-text;
+            @panel-warning-heading-bg;
+            @panel-warning-border
+            );
+        }
+
+        &.bookmarklet-type-custom {
+            .panel-variant(@panel-danger-border;
+            @panel-danger-text;
+            @panel-danger-heading-bg;
+            @panel-danger-border
+            );
+        }
+    }
+
+    &.bookmarklet-hilite {
+        border: 1px solid #1F669C !important;
+    }
+
+    strong {
+        cursor: default;
+
+        &.booktype-help {
+            padding: 1px 3px;
+            border-radius: @border-radius-base;
+            border: 1px solid transparent;
+
+            &:hover,
+            &:focus,
+            &.bookmarklet-hilite {
+                background: #ccc;
+                border: 1px solid #aaa;
+            }
+        }
+    }
+}
+
