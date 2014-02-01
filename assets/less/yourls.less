@@ -2,16 +2,16 @@
  * YOURLS v2.0
  * http://yourls.org
  * MIT License
- * Copyright (c) 2013 YOURLS
+ * Copyright (c) 2013 YOURLS - MIT license
  *
- * Bootstrap v3.0.3
+ * Bootstrap v3.1
  * Copyright 2013 Twitter, Inc under the MIT license
  *
  * Hey! I see you're looking at CSS sources.
  * You want to edit the style? See how to manage LESS
  * and CSS at https://github.com/YOURLS/YOURLS/wiki/Style
  */
- 
+
 //
 // Dependencies
 // --------------------------------------------------
@@ -26,7 +26,6 @@
 
 @import "variables";
 @import "mixins";
-@import "spin";
 
 //
 // Style
@@ -46,11 +45,12 @@
 
 .callout {
     margin: 20px 0;
-    padding: 15px 30px 15px 15px;
-    border-left: 5px solid #eee;
+    padding: 20px;
+    border-left: 3px solid #eee;
 
     h4 {
         margin-top: 0;
+        margin-bottom: 5px;
     }
 
     p:last-child {
@@ -60,6 +60,7 @@
     code,
     .highlight {
         background-color: #fff;
+        border-radius: 3px;
     }
 }
 
@@ -92,8 +93,7 @@ input, select {
 // Content - Main
 .content {
     background-color: @bck-wrapper;
-    .make-lg-column(8.5);
-    .make-lg-column-push(3.5);
+    .make-lg-column(9);
     min-height: 100%;
     padding-bottom: 50px;
 }
@@ -138,24 +138,29 @@ input, select {
     }
 }
 // Nav-bar / Sidebar & Components
+.sidebar-container {
+    .make-lg-column(3);
+}
+
 .sidebar {
     background-color: @sidebar;
     .border-bottom-radius(@border-radius-base);
-    width: 100%;
-    padding: 15px;
+    max-width: 265px;
 
     &:hover {
         max-height: 100%;
         overflow: auto;
     }
 
-    > .yourls-logo,
     .footer {
         text-align: center;
+        margin-bottom: 20px;
     }
 
     > .yourls-logo {
+        text-align: center;
         min-height: 110px;
+        padding: 11px 15px;
 
         img {
             max-width: 100%;
@@ -165,18 +170,20 @@ input, select {
 
 
 
+
 .admin-menu {
     .nav;
 
     > li > a {
         display: block;
         color: @navbar-default-link-active-color;
-        padding: 8px 15px;
+        padding: 8px @menu-item-padding;
 
         &:hover,
         &:focus {
             text-decoration: none;
-            border-right: 1px solid #d5d5d5;
+            border-left: 1px solid @yourls-color-dark;
+            padding-left: @menu-item-padding - 1;
         }
     }
 
@@ -184,10 +191,9 @@ input, select {
         > a,
         &:hover > a,
         &:focus > a {
-            font-weight: 500;
             color: @yourls-color-dark;
-            background-color: transparent;
-            border-right: 1px solid @yourls-color-dark;
+            border-left: 2px solid @yourls-color-dark;
+            padding-left: @menu-item-padding - 2;
         }
 
         > ul {
@@ -195,24 +201,33 @@ input, select {
         }
     }
 
-    .nav-header {
-        margin-top: 9px;
-        padding: 3px 15px;
-        font-size: 12px;
-        text-transform: uppercase;
-        color: #bbb;
-    }
-
     .submenu {
         display: block;
         margin-bottom: 5px;
 
         > li > a {
-            padding-top: 2px;
-            padding-bottom: 2px;
-            padding-left: 40px;
+            padding: 2px @menu-item-padding*2;
             font-size: 90%;
+
+            &:hover,
+            &:focus {
+                padding-left: @menu-item-padding*2 - 1;
+            }
         }
+
+        > .active {
+            > a,
+            &:hover > a,
+            &:focus > a {
+                padding-left: @menu-item-padding*2 - 2;
+            }
+        }
+    }
+
+    .nav-header {
+        background-color: @yourls-color-med-light;
+        padding: 8px @menu-item-padding;
+        color: @yourls-color-med-dark;
     }
 }
 
@@ -221,9 +236,7 @@ input, select {
     color: #fff;
     font-size: @font-stats-big;
     text-align: center;
-    .make-row();
     padding: 30px 10px 12px;
-    margin-bottom: 15px;
     height: 115px;
 
     > .global-stats-data {
@@ -671,11 +684,8 @@ button.btn-clipboard-active {
 // Responsive
 @media screen and (max-width: @screen-tablet) {
     .sidebar {
-        width: 100%;
-
         > .yourls-logo {
             display: block;
-            max-width: 200px;
             margin-left: auto;
             margin-right: auto;
             padding: 15px;
@@ -684,18 +694,9 @@ button.btn-clipboard-active {
             line-height: @line-height-computed;
             color: @navbar-default-brand-color;
             text-align: center;
-
-            &:hover,
-            &:focus {
-                color: @navbar-default-brand-hover-color;
-                text-decoration: none;
-                background-color: @navbar-default-brand-hover-bg;
-            }
         }
 
         > .global-stats {
-            margin-left: (@grid-gutter-width / -2);
-            margin-right: (@grid-gutter-width / -2);
             display: none !important;
         }
 
@@ -718,38 +719,22 @@ button.btn-clipboard-active {
 
 @media screen and (min-width: @screen-tablet) {
     .sidebar {
-        width: 205px;
         .affix;
-
-        > .global-stats {
-            margin-left: (@grid-gutter-width / -2);
-            margin-right: (@grid-gutter-width / -2);
-        }
     }
 }
 
 @media screen and (min-width: @screen-lg-desktop) {
-    .sidebar {
-        width: 263px;
-    }
-
     .content {
-        padding-right: 6.25%;
-        padding-left: 6.25%;
+        padding-right: 6%;
+        padding-left: 6%;
+    }
 
-        > h1,
-        .new-url-form {
-            margin-right: -10.7%;
-            margin-left: -10.7%;
-            padding-right: 10.7%;
-            padding-left: 10.7%;
+        .content > h1,
+        .content .new-url-form,
+        .docs h1 {
+            margin-right: -9.55%;
+            margin-left: -9.5%;
+            padding-right: 9.55%;
+            padding-left: 9.5%;
         }
-    }
-
-    .docs h1 {
-        margin-right: -10.7%;
-        margin-left: -10.7%;
-        padding-right: 10.7%;
-        padding-left: 10.7%;
-    }
 }

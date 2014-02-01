@@ -183,7 +183,7 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {
 		$result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
-	};
+	}
 	
 	return $result;
 }

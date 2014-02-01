@@ -62,6 +62,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 </head>
 <body class="<?php echo $context . ( $bodyclass ? ' ' . $bodyclass : '' ); ?>">
 	<div class="container">
+        <div class="row">
 	<?php
 }
 
@@ -122,12 +123,7 @@ function yourls_html_htag( $title, $size = 1, $subtitle = null, $class = null, $
  */
 function yourls_html_menu( $current_page = null ) {
 	// Build menu links
-	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', '<li class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '</li><li class="logout"><a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '"><i class="fa fa-sign-out"></i> ' . yourls__( 'Logout' ) . '</a>' );
-	} else {
-		$logout_link = yourls_apply_filter( 'logout_link', '' );
-	}
-	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="fa fa-question-circle"></i> ' . yourls__( 'Help' ) . '</a>' );
+	$help_link   = yourls_apply_filter( 'help-link', '<a href="' . yourls_site_url( false ) .'/docs/"><i class="fa fa-question-circle fa-fw"></i> ' . yourls__( 'Help' ) . '</a>' );
 	
 	$admin_links    = array();
 	$admin_sublinks = array();
@@ -163,10 +159,11 @@ function yourls_html_menu( $current_page = null ) {
 	
 	// Build menu HTML
 	$menu = yourls_apply_filter( 'admin_menu_start', '<nav class="sidebar-responsive-collapse"><ul class="admin-menu">' );
-	if ( yourls_is_private() && !empty( $logout_link ) )
-		$menu .= $logout_link;
-
-	$menu .= '<li class="nav-header">' . yourls__( 'Administration' ) . '</li>';
+	if( defined( 'YOURLS_USER' ) && yourls_is_private() ) {
+		$menu .= yourls_apply_filter( 'logout_link', '<div class="nav-header">' . sprintf( yourls__( 'Hello <strong>%s</strong>' ), YOURLS_USER ) . '<a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '" class="pull-right"><i class="fa fa-sign-out fa-fw"></i></a></div>' );
+	} else {
+		$menu .= yourls_apply_filter( 'logout_link', '' );
+	}
 
 	foreach( (array)$admin_links as $link => $ar ) {
 		if( isset( $ar['url'] ) ) {
@@ -175,7 +172,7 @@ function yourls_html_menu( $current_page = null ) {
 			$class_active  = $current_page == $link ? ' active' : '';
 			
 			$format = '<li id="admin-menu-%link%-link" class="admin-menu-toplevel%class%">
-				<a href="%url%" %title%><i class="fa fa-%icon%"></i> %anchor%</a></li>';
+				<a href="%url%" %title%><i class="fa fa-%icon% fa-fw"></i> %anchor%</a></li>';
 			$data   = array( 
 				'link'   => $link,
 				'class'  => $class_active,
@@ -327,7 +324,7 @@ function yourls_html_language_attributes() {
  */
 function yourls_html_footer() {
 	echo '<hr /><div class="footer" role="contentinfo"><p>';
-	$footer  = yourls_s( 'Powered by %s', yourls_html_link( 'http://yourls.org/', 'YOURLS', 'YOURLS', false, false ) . ' v' . YOURLS_VERSION );
+	$footer  = yourls_s( 'Powered by %s', yourls_html_link( 'http://yourls.org/', 'YOURLS', 'YOURLS', false, false ) );
 		echo yourls_apply_filters( 'html_footer_text', $footer );
 	echo '</p></div>';
 }
@@ -928,7 +925,7 @@ function yourls_wrapper_start() {
  * @since 2.0
  */
 function yourls_wrapper_end() {
-	echo yourls_apply_filter( 'wrapper_end', '</div>' );
+	echo yourls_apply_filter( 'wrapper_end', '</div></div>' );
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		yourls_html_debug();
 	}
@@ -940,7 +937,7 @@ function yourls_wrapper_end() {
  * @since 2.0
  */
 function yourls_sidebar_start() {
-	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar">
+	echo yourls_apply_filter( 'sidebar_start', '<div class="sidebar-container"><div class="sidebar">
 	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-responsive-collapse">
 	  <i class="fa fa-bars"></i>
 	</button>' );
@@ -952,7 +949,7 @@ function yourls_sidebar_start() {
  * @since 2.0
  */
 function yourls_sidebar_end() {
-	echo yourls_apply_filter( 'sidebar_end', '</div>' );
+	echo yourls_apply_filter( 'sidebar_end', '</div></div>' );
 }
 
 /**

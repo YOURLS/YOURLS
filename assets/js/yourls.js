@@ -132,7 +132,7 @@ function add_loading(elem) {
     add_disable(elem);
     $(elem).attr('data-html', $(elem).html())
              .html('')
-             .append('<i class="spin fa fa-rotate-right"></i>');
+             .append('<i class="fa fa-refresh fa-spin"></i>');
 }
 
 // End marking an element as "loading" (remove spinning icon and restore content)

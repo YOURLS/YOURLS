@@ -76,5 +76,6 @@ Desktop.ini
 *.phpproj
 
 # Temp
-assets/css/*.less
+assets/css/*
+!assets/css/yourls.min.css
 assets/less/*.css
