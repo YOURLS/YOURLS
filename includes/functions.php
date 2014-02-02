@@ -13,20 +13,13 @@ function yourls_get_shorturl_charset() {
 	if( $charset !== null )
 		return $charset;
 
-	if( !defined('YOURLS_URL_CONVERT') or !in_array( YOURLS_URL_CONVERT, array( 36, 62, 64 ) ) ) {
-		$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
-	} else {
-		switch( YOURLS_URL_CONVERT ) {
-			case 36:
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
-				break;
-			case 62:
-			case 64: // just because some people get this wrong in their config.php
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-				break;
-		}
-	}
-	
+    if( defined('YOURLS_URL_CONVERT') && in_array( YOURLS_URL_CONVERT, array( 62, 64 ) ) ) {
+        $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    } else {
+        // defined to 36, or wrongly defined 
+        $charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+    }
+
 	$charset = yourls_apply_filter( 'get_shorturl_charset', $charset );
 	return $charset;
 }
