@@ -12,8 +12,8 @@ function yourls_get_shorturl_charset() {
 	static $charset = null;
 	if( $charset !== null )
 		return $charset;
-		
-	if( !defined('YOURLS_URL_CONVERT') ) {
+
+	if( !defined('YOURLS_URL_CONVERT') or !in_array( YOURLS_URL_CONVERT, array( 36, 62, 64 ) ) ) {
 		$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
 	} else {
 		switch( YOURLS_URL_CONVERT ) {
