@@ -1690,7 +1690,7 @@ function yourls_link( $keyword = '' ) {
 function yourls_statlink( $keyword = '' ) {
 	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword ) . '+';
 	if( yourls_is_ssl() )
-		$link = str_replace( 'http://', 'https://', $link );
+        $link = yourls_set_url_scheme( $link, 'https' );
 	return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 
@@ -1779,7 +1779,7 @@ function yourls_needs_ssl() {
 function yourls_admin_url( $page = '' ) {
 	$admin = YOURLS_SITE . '/admin/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() )
-		$admin = str_replace('http://', 'https://', $admin);
+        $admin = yourls_set_url_scheme( $admin, 'https' );
 	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
@@ -1793,7 +1793,7 @@ function yourls_site_url( $echo = true, $url = '' ) {
 	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() )
-		$url = str_replace( 'http://', 'https://', $url );
+		$url = yourls_set_url_scheme( $url, 'https' );
 	$url = yourls_apply_filter( 'site_url', $url );
 	if( $echo )
 		echo $url;
@@ -2252,5 +2252,20 @@ function yourls_get_protocol_slashes_and_rest( $url, $array = array( 'protocol',
 	list( $proto, $slashes ) = explode( ':', $proto );
 	
 	return array( $array[0] => $proto . ':', $array[1] => $slashes, $array[2] => $rest );
+}
+
+/**
+ * Set URL scheme (to HTTP or HTTPS)
+ *
+ * @since 1.7.1
+ * @param string $url URL
+ * @param string $scheme scheme, either 'http' or 'https'
+ * @return string URL with chosen scheme
+ */
+function yourls_set_url_scheme( $url, $scheme = false ) {
+    if( $scheme != 'http' && $scheme != 'https' ) {
+        return $url;
+    }
+    return preg_replace( '!^[a-zA-Z0-9\+\.-]+://!', $scheme . '://', $url );
 }
 

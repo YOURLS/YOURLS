@@ -287,7 +287,9 @@ function yourls_check_core_version() {
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
 	
 	// Send it in
-	$url = 'https://api.yourls.org/core/version/1.0/';
+	$url = 'http://api.yourls.org/core/version/1.0/';
+    if( yourls_can_http_over_ssl() )
+        $url = yourls_set_url_scheme( $url, 'https' );
 	$req = yourls_http_post( $url, array(), $stuff );
 	
 	$checks->last_attempt = time();
@@ -365,5 +367,26 @@ function yourls_maybe_check_core_version() {
 		return false;
 	
 	return true;
+}
+
+/**
+ * Check if server can perform HTTPS requests, return bool
+ *
+ * @since 1.7.1
+ * @return bool whether the server can perform HTTP requests over SSL
+ */
+function yourls_can_http_over_ssl() {
+    $ssl_curl = $ssl_socket = false;
+    
+    if( function_exists( 'curl_exec' ) ) {
+        $curl_version  = curl_version();
+        $ssl_curl = ( $curl_version['features'] & CURL_VERSION_SSL );
+    }
+    
+    if( function_exists( 'stream_socket_client' ) ) {
+        $ssl_socket = extension_loaded( 'openssl' ) && function_exists( 'openssl_x509_parse' );    
+    }
+    
+    return ( $ssl_curl OR $ssl_socket );
 }
 
