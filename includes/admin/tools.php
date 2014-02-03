@@ -16,7 +16,7 @@ yourls_html_htag( yourls__( 'Tools' ), 1, yourls__( 'Easy shortening and sharing
 yourls_html_htag( yourls__( 'Classic Bookmarklets' ), 3 );
 
 echo '<p class="bookmarklet-help">';
-yourls_se( 'Short URL can be %1$sDefault%2$s or %3$sCustom%2$s. Behavior can be %4$sStandard%2$s or %5$sPopup%2$s',
+yourls_se( 'Short URL can be %1$sDefault%2$s or %3$sCustom%2$s. Behavior can be %4$sStandard%2$s or %5$sPopup%2$s.',
 	'<strong class="default" title="' . yourls__( 'No question asked' ) . '">', '</strong>', 
 	'<strong class="custom" title="' . yourls__( 'Prompt for a custom keyword first' ) . '">', 
 	'<strong class="standard" title="' . yourls__( 'Opens a new page to manage your brand new short URL' ) . '">',
@@ -66,7 +66,7 @@ $('div.bookmarklet').hover(
 );
 
 });
-</script><div>
+</script><div class="row">
 
 TEXT;
 
@@ -96,12 +96,12 @@ $bookmarks = array (
 $bookmarks = yourls_apply_filter( 'classic_bookmarklet_data', $bookmarks );
 
 foreach( $bookmarks as $bookmark ) {
-	echo '<div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
+	echo '<div class="col-sm-6"><div class="bookmarklet bookmarklet-type-' . $bookmark['type'][0] . ' bookmarklet-type-' . $bookmark['type'][1] . '">';
 	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
 	echo '<div class="panel-body"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
 	echo '<i class="fa fa-arrows"></i> ' . yourls__( 'YOURLS Shorten' );
 	echo '</a></div>';
-	echo '</div>';
+	echo '</div></div>';
 }
 
 yourls_do_action( 'classic_bookmarklets_buttons_after' ); 
@@ -121,13 +121,11 @@ echo '</p>';
 $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656
 	'facebook'  => array (
 		'name'        => yourls__( 'YOURLS &amp; Facebook' ),
-		'color'       => 'info',
 		'description' => yourls__( 'Create a short URL and share it on social networks, all in one click!' ),
 		'link'        => "javascript:(function(){var%20d=document,enc=encodeURIComponent,share='facebook',f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!window.open(u,'Share','width=500,height=340,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();",
 	),
 	'twitter'   => array (
 		'name'        => yourls__( 'YOURLS &amp; Twitter' ),
-		'color'       => 'success',
 		'description' => yourls__( 'Create a short URL and share it on social networks, all in one click!' ),
 		'link'        => "javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='twitter',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='" . yourls_admin_url( 'index.php' ) . "',l=d.location,p='?u='+enc(l.href)+'&t='+enc(d.title)+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=780,height=265,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();",
 	),
@@ -135,14 +133,14 @@ $bookmarks = array ( // Bookmarklets, unformatted for readability: https://gist.
 
 $bookmarks = yourls_apply_filter( 'social_bookmarklets_data', $bookmarks );
 
+	echo '<div class="bookmarklet panel-info">';
+	echo '<div class="panel-heading">' . yourls__( 'YOURLS &amp; Social Networks' ) . '</div><ul class="list-group">';
 foreach( $bookmarks as $bookmark ) {
-	echo '<div class="bookmarklet panel-' . $bookmark['color'] . '">';
-	echo '<div class="panel-heading">' . $bookmark['name'] . '</div>';
-	echo '<a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
-	echo '<i class="fa fa-arrow"></i> ' . $bookmark['name'];
-	echo '</a>';
-	echo '</div>';
+	echo '<li class="list-group-item"><a href="' . $bookmark['link'] . '" onclick="alert(\'' . yourls_esc_attr__( 'Drag to your toolbar!' ) . '\');return false;">';
+	echo '<i class="fa fa-arrows"></i> ' . $bookmark['name'];
+	echo '</a></li>';
 }
+	echo '</ul></div>';
 
 yourls_do_action( 'social_bookmarklet_buttons_after' ); 
 		
@@ -170,6 +168,7 @@ if( yourls_is_private() ): ?>
 	
 	<p><?php
 		yourls_e( 'YOURLS allows API calls the old fashioned way, using <code>username</code> and <code>password</code> parameters.' );
+        echo '<br />';
 		yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 	?></p>
 

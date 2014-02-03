@@ -2,31 +2,32 @@
 // Components
 // --------------------------------------------------
 
+html,
 body,
-html {
+.container {
     min-height: 100%;
-    height: 100%;
+}
+
+body {
     background-color: @yourls-color-light;
 }
 
-.container {
-    height: 100%;
+input, select {
+    &:extend(.form-control);
 }
 
-input, select {
-    .form-control;
-}
 // Content - Main
+@padding-page: 50px;
+
 .content {
     background-color: @bck-wrapper;
     .make-lg-column(9);
-    min-height: 100%;
-    padding-bottom: 50px;
-    margin-bottom: 100px;
+    padding-bottom: @padding-page;
+    margin-bottom: (@padding-page * 2);
     .border-bottom-radius(@border-radius-base);
 
     @media (max-width: @screen-tablet) {
-        margin-bottom: 0px; .border-bottom-radius(0);
+        margin-bottom: 0; .border-bottom-radius(0);
     }
 
     @media (min-width: @screen-lg-desktop) {
@@ -62,10 +63,6 @@ input, select {
         margin-top: 0;
     }
 
-    .global-stats {
-        height: auto;
-    }
-
     li {
         margin-bottom: 0.5em;
     }
@@ -98,24 +95,23 @@ input, select {
     }
 
     input {
-        width: auto;
-        height: auto;
+        .center-block();
     }
 
     .start {
-        .btn;
+        &:extend(.btn);
         .btn-outline(@yourls-color-med-dark);
     }
 
     form > div {
         width: 235px;
-        margin: auto;
         text-align: left;
+        .center-block();
     }
 }
 
 .feedback {
-    display: none;
+    .hidden();
 }
 
 tbody > tr {
@@ -126,7 +122,7 @@ tbody > tr {
         }
 
         .btn-active {
-            .btn-success;
+            &:extend(.btn-success);
         }
     }
 
@@ -137,37 +133,34 @@ tbody > tr {
         }
 
         .btn-unactive {
-            .btn-warning;
+            &:extend(.btn-warning);
         }
     }
 }
 
 .plugin-actions {
-    text-align: right;
+    &:extend(.text-right);
 }
 
 // Specials
 .login-screen {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
+    .center-block();
     width: 100%;
     max-width: 500px;
+    margin-top: 50px;
 
     > .control-group {
         margin-bottom: 20px;
     }
 
     .submit {
-        .btn;
-        .btn-primary;
-        .btn-lg;
+        &:extend(.btn, .btn-primary, .btn-lg);
         margin-top: 20px;
         width: 100%;
     }
 
     .alert-error {
-        .alert-danger;
+        &:extend(.alert-danger);
     }
 }
 
@@ -181,6 +174,6 @@ tbody > tr {
 
 @media (max-width: @screen-tablet) {
     #about a.back {
-        display: none;
+        .hidden();
     }
 }

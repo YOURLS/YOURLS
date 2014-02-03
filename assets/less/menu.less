@@ -10,14 +10,9 @@
     background-color: @sidebar;
     .border-bottom-radius(@border-radius-base);
 
-    &:hover {
-        max-height: 100%;
-        overflow: auto;
-    }
-
     .footer {
         text-align: center;
-        margin-bottom: 20px;
+        padding-bottom: 10px;
     }
 
     > .yourls-logo {
@@ -40,22 +35,22 @@
 
     @media (max-width: @screen-lg-desktop) {
         > .global-stats, .footer, hr {
-            display: none !important;
+            .hidden();
         }
 
         > .sidebar-responsive-collapse {
-            .collapse;
+            &:extend(.collapse all);
         }
     }
 
 
     @media (min-width: @screen-lg-desktop) {
-        max-width: 265px; .affix;
+        max-width: 265px; &:extend(.affix);
     }
 }
 
 .admin-menu {
-    .nav;
+    &:extend(.nav all);
 
     > li > a {
         display: block;
@@ -66,7 +61,7 @@
         &:focus {
             text-decoration: none;
             border-left: 1px solid @yourls-color-dark;
-            padding-left: @menu-item-padding - 1;
+            padding-left: (@menu-item-padding - 1);
         }
     }
 
@@ -76,7 +71,7 @@
         &:focus > a {
             color: @yourls-color-dark;
             border-left: 2px solid @yourls-color-dark;
-            padding-left: @menu-item-padding - 2;
+            padding-left: (@menu-item-padding - 2);
         }
 
         > ul {
@@ -89,12 +84,12 @@
         margin-bottom: 5px;
 
         > li > a {
-            padding: 2px @menu-item-padding*2;
+            padding: 2px (@menu-item-padding * 2);
             font-size: 90%;
 
             &:hover,
             &:focus {
-                padding-left: @menu-item-padding*2 - 1;
+                padding-left: ((@menu-item-padding * 2) - 1);
             }
         }
 
@@ -102,7 +97,7 @@
             > a,
             &:hover > a,
             &:focus > a {
-                padding-left: @menu-item-padding*2 - 2;
+                padding-left: ((@menu-item-padding * 2) - 2);
             }
         }
     }

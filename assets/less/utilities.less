@@ -11,7 +11,7 @@
 .callout {
     margin: 20px 0;
     padding: 20px;
-    border-left: 3px solid #eee;
+    border-left: 3px solid @gray-lighter;
 
     h4 {
         margin-top: 0;
@@ -24,8 +24,12 @@
 
     code,
     .highlight {
-        background-color: #fff;
+        background-color: @body-bg;
         border-radius: 3px;
+    }
+
+    a {
+        font-weight: @alert-link-font-weight;
     }
 }
 
@@ -50,7 +54,7 @@
 }
 
 // Notices
-.container > .alert {
+.container > .row > .alert {
     .make-lg-column(4);
     .make-lg-column-push(5);
     position: fixed;
@@ -62,30 +66,23 @@
 
 // Button clipboard
 button.btn-clipboard {
-    .btn;
-    .btn-primary;
+    &:extend(.btn, .btn-primary);
     .border-left-radius(0);
 
     #signature-zone > & {
-        .btn-sm;
+        &:extend(.btn-sm);
         .border-left-radius(0);
     }
 }
 
 button.btn-clipboard-hover {
-    color: #fff;
-    text-decoration: none;
+    &:extend(.btn:hover);
 }
 
 button.btn-clipboard-active {
-    outline: 0;
-    background-image: none;
-    .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+    &:extend(.btn:active);
 }
 
 #signature {
     padding: 7px 10px 8px;
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
 }
-
