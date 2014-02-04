@@ -8,6 +8,7 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 	* @since 1.7
 	*/
 	function ezSQL_pdo_YOURLS( $dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='' ) {
+        $this->show_errors = defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG; // comply to YOURLS debug mode
 		$this->dbuser = $dbuser;
 		$this->dbpassword = $dbpassword;
 		$this->dbname = $dbname;
@@ -27,15 +28,6 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		$this->connect( $dsn, $dbuser, $dbpassword );
 		
 	}
-
-    /**
-     * Comply to YOURLS debug mode
-     *
-     * @since 1.7.1
-     */
-    function __construct() {
-        $this->show_errors = defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG;
-    }
 
 	/**
 	 * Return MySQL server version
