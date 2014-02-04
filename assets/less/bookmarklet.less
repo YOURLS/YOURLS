@@ -2,12 +2,11 @@
 // Bookmarklet
 // --------------------------------------------------
 
-.bookmarklet {
-    &:extend(.panel all);
+.bookmarklet:extend(.panel all) {
     text-align: center;
 
     .panel-body > a {
-        &:extend(.btn, .btn-link all);
+        &:extend(.btn all, .btn-link all);
     }
 
     &.bookmarklet-type-standard {

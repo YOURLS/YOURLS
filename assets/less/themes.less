@@ -10,7 +10,7 @@
 
         img {
             max-width: 100%;
-            opacity: 1;
+            .opacity(1);
             .transition(opacity 0.5s ease);
         }
 
@@ -20,7 +20,7 @@
             padding: 15px;
             max-width: 88%;
             color: #fff;
-            opacity: 0;
+            .opacity(0);
             .transition(opacity 0.5s ease);
         }
 
@@ -29,11 +29,11 @@
 
             &:hover {
                 img {
-                    opacity: 0.2;
+                    .opacity(0.2);
                 }
 
                 .theme-desc {
-                    opacity: 1;
+                    .opacity(1);
                 }
             }
         }
@@ -41,10 +41,9 @@
 }
 
 .screenshot-missing {
+    .size(100%, 200px);
     display: block;
     padding-top: 80px;
-    width: 100%;
-    height: 200px;
     background: @gray-lighter;
     color: @gray-light;
     text-align: center;

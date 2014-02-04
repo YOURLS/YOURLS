@@ -2,9 +2,7 @@
 // Admin Table
 // --------------------------------------------------
 
-.admin-main-table {
-    &:extend(.table all, .table-striped all, .table-hover all);
-
+.admin-main-table:extend(.table all, .table-striped all, .table-hover all) {
     tbody > tr > td {
         vertical-align: middle;
     }
@@ -12,19 +10,7 @@
     .btn-clipboard {
         .transition(all 0.3s);
         cursor: pointer;
-        /*   &:after {
-        content: '';
-        position: relative;
-        z-index: 51;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        width: 0%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background: @yourls-color-med-dark;
-    }*/
+
         &.btn-clipboard-hover {
             background-color: @yourls-color-med-light;
         }
@@ -40,23 +26,23 @@
 }
 
 .btn-stats {
-    &:extend(.btn-info);
+    &:extend(.btn-info all);
 }
 
 .btn-share {
-    &:extend(.btn-success);
+    &:extend(.btn-success all);
 }
 
 .btn-edit {
-    &:extend(.btn-warning);
+    &:extend(.btn-warning all);
 }
 
 .btn-delete {
-    &:extend(.btn-danger);
+    &:extend(.btn-danger all);
 }
 
 .longurl > a {
-    color: grey;
+    color: @gray-light;
 
     > strong {
         color: @yourls-color-med-dark;
@@ -85,9 +71,8 @@
     }
 }
 
-.new-url-form {
+.new-url-form:extend(.form-horizontal all) {
     .make-row();
-    &:extend(.form-horizontal all);
     background-color: @yourls-color-med-light;
     color: @yourls-color-med-dark;
     margin: -20px -15px 30px;
@@ -96,11 +81,11 @@
 
 
     .new-url-long {
-        .make-lg-column(5);
+        .make-md-column(5);
     }
 
     .new-url-short {
-        .make-lg-column(4);
+        .make-sm-column(4);
     }
 
     .label {
@@ -108,24 +93,20 @@
     }
 
     .new-url-action {
-        .make-lg-column(3);
+        .make-sm-column(3);
 
-        .add-button {
-            &:extend(.btn);
+        .add-button:extend(.btn) {
             .button-variant(@btn-primary-color, @yourls-color-med-dark, @btn-primary-border);
             margin-top: 23px;
-            .center-block();
         }
     }
 
-    @media (min-width: @screen-lg-desktop) {
+    @media (min-width: @screen-lg-min) {
         margin-right: -9.55%; margin-left: -9.5%; padding-right: 9.55%; padding-left: 9.5%;
     }
 }
 
-.search-form {
-    &:extend(.form-horizontal all);
-
+.search-form:extend(.form-horizontal all) {
     .control-group {
         .make-row();
         margin-bottom: 20px;

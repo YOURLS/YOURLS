@@ -7,8 +7,13 @@
 }
 
 .sidebar {
-    background-color: @sidebar;
+    background-color: @sidebar-bg;
     .border-bottom-radius(@border-radius-base);
+
+    &:hover {
+        max-height: 100%;
+        overflow-y: auto;
+    }
 
     .footer {
         text-align: center;
@@ -21,19 +26,19 @@
         padding: 11px 15px;
 
         img {
-            max-width: 100%;
+            &:extend(.img-responsive);
         }
 
-        @media (max-width: @screen-lg-desktop) {
+        @media (max-width: @screen-md-max) {
             padding: 5px 15px; width: 150px; min-height: 0;
         }
     }
 
-    @media (max-width: @screen-lg-desktop) {
+    @media (max-width: @screen-md-max) {
         margin-left: -15px; margin-right: -15px;
     }
 
-    @media (max-width: @screen-lg-desktop) {
+    @media (max-width: @screen-md-max) {
         > .global-stats, .footer, hr {
             .hidden();
         }
@@ -44,14 +49,13 @@
     }
 
 
-    @media (min-width: @screen-lg-desktop) {
-        max-width: 265px; &:extend(.affix);
+    @media (min-width: @screen-lg-min) {
+        .affix();
+        max-width: 265px;
     }
 }
 
-.admin-menu {
-    &:extend(.nav all);
-
+.admin-menu:extend(.nav all) {
     > li > a {
         display: block;
         color: @navbar-default-link-active-color;
@@ -121,14 +125,14 @@
         .make-lg-column(6);
 
         > p {
-            font-size: (@font-stats-big * 0.7); // ~12px
+            font-size: (@font-stats-big * 0.5);
             text-transform: uppercase;
         }
     }
 }
 
 .navbar-toggle {
-    @media (max-width: @screen-lg-desktop) {
+    @media (max-width: @screen-md-max) {
         display: inherit;
     }
 }

@@ -17,20 +17,18 @@ input, select {
 }
 
 // Content - Main
-@padding-page: 50px;
-
 .content {
-    background-color: @bck-wrapper;
     .make-lg-column(9);
+    background-color: @wrapper-bg;
     padding-bottom: @padding-page;
     margin-bottom: (@padding-page * 2);
     .border-bottom-radius(@border-radius-base);
 
-    @media (max-width: @screen-tablet) {
+    @media (max-width: @screen-sm-max) {
         margin-bottom: 0; .border-bottom-radius(0);
     }
 
-    @media (min-width: @screen-lg-desktop) {
+    @media (min-width: @screen-lg-min) {
         padding-right: 6%; padding-left: 6%;
     }
 }
@@ -38,7 +36,7 @@ input, select {
     .content > h1,
     .docs h1 {
         background-color: @yourls-color-dark;
-        color: @bck-wrapper;
+        color: @wrapper-bg;
         font-family: 'Museo', @font-family-sans-serif;
         margin: 0 -15px 20px;
         padding: 40px 30px;
@@ -48,7 +46,7 @@ input, select {
             color: @yourls-color-light;
         }
 
-        @media (min-width: @screen-lg-desktop) {
+        @media (min-width: @screen-lg-min) {
             margin-right: -9.55%; margin-left: -9.5%; padding-right: 9.55%; padding-left: 9.5%;
         }
     }
@@ -74,13 +72,13 @@ input, select {
     a.back {
         display: none;
 
-        @media (max-width: @screen-tablet) {
+        @media (max-width: @screen-sm-max) {
             display: block; float: right; font-size: 50%; line-height: 200%;
         }
     }
 }
-// Nav-bar / Sidebar & Components
 
+// Nav-bar / Sidebar & Components
 .install {
     background-color: @yourls-color-med-dark;
 }
@@ -98,8 +96,7 @@ input, select {
         .center-block();
     }
 
-    .start {
-        &:extend(.btn);
+    .start:extend(.btn) {
         .btn-outline(@yourls-color-med-dark);
     }
 
@@ -144,19 +141,18 @@ tbody > tr {
 
 // Specials
 .login-screen {
-    .center-block();
     width: 100%;
     max-width: 500px;
+    .center-block();
     margin-top: 50px;
 
     > .control-group {
         margin-bottom: 20px;
     }
 
-    .submit {
-        &:extend(.btn, .btn-primary, .btn-lg);
-        margin-top: 20px;
+    .submit:extend(.btn, .btn-primary, .btn-lg) {
         width: 100%;
+        margin-top: 20px;
     }
 
     .alert-error {
@@ -172,7 +168,7 @@ tbody > tr {
     border-radius: 0;
 }
 
-@media (max-width: @screen-tablet) {
+@media (max-width: @screen-sm-max) {
     #about a.back {
         .hidden();
     }

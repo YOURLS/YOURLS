@@ -50,23 +50,22 @@
 }
 
 .callout-help {
-    .callout-theme(@callout-help-bg);
+    .callout-theme(@gray-light);
 }
 
 // Notices
 .container > .row > .alert {
-    .make-lg-column(4);
+    .make-md-column(4);
     .make-lg-column-push(5);
+    .make-xs-column(12);
     position: fixed;
     top: 0;
     z-index: 999;
     .border-top-radius(0);
-    background-color: #FCF8E3;
 }
 
 // Button clipboard
-button.btn-clipboard {
-    &:extend(.btn, .btn-primary);
+button.btn-clipboard:extend(.btn, .btn-primary) {
     .border-left-radius(0);
 
     #signature-zone > & {
@@ -85,4 +84,5 @@ button.btn-clipboard-active {
 
 #signature {
     padding: 7px 10px 8px;
+    .border-right-radius(0);
 }
