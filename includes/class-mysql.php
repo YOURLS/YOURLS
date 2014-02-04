@@ -49,3 +49,34 @@ function yourls_set_DB_driver( ) {
 	yourls_debug_log( "DB driver: $driver" );
 }
 
+/**
+ * Connect to DB
+ *
+ * @since 1.0
+ */
+function yourls_db_connect() {
+	global $ydb;
+
+	if (   !defined( 'YOURLS_DB_USER' )
+		or !defined( 'YOURLS_DB_PASS' )
+		or !defined( 'YOURLS_DB_NAME' )
+		or !defined( 'YOURLS_DB_HOST' )
+	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
+
+	// Are we standalone or in the WordPress environment?
+	if ( class_exists( 'wpdb', false ) ) {
+		/* TODO: should we deprecate this? Follow WP dev in that area */
+		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
+	} else {
+		yourls_set_DB_driver();
+	}
+	
+	// Check if connection attempt raised an error. It seems that only PDO does, though.
+	if ( $ydb->last_error )
+		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
+
+	
+	return $ydb;
+}
+
+

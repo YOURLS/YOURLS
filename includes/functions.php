@@ -416,38 +416,6 @@ function yourls_keyword_is_taken( $keyword ) {
 	return yourls_apply_filter( 'keyword_is_taken', $taken, $keyword );
 }
 
-
-/**
- * Connect to DB
- *
- */
-function yourls_db_connect() {
-	global $ydb;
-
-	if (   !defined( 'YOURLS_DB_USER' )
-		or !defined( 'YOURLS_DB_PASS' )
-		or !defined( 'YOURLS_DB_NAME' )
-		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
-
-	// Are we standalone or in the WordPress environment?
-	if ( class_exists( 'wpdb', false ) ) {
-		/* TODO: should we deprecate this? Follow WP dev in that area */
-		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-	} else {
-		yourls_set_DB_driver();
-	}
-	
-	// Check if connection attempt raised an error. It seems that only PDO does, though.
-	if ( $ydb->last_error )
-		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
-	
-	if ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG === true )
-		$ydb->show_errors = true;
-	
-	return $ydb;
-}
-
 /**
  * Return XML output.
  *

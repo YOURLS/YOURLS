@@ -28,6 +28,15 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		
 	}
 
+    /**
+     * Comply to YOURLS debug mode
+     *
+     * @since 1.7.1
+     */
+    function __construct() {
+        $this->show_errors = defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG;
+    }
+
 	/**
 	 * Return MySQL server version
 	 *
