@@ -11,6 +11,8 @@
 	/**********************************************************************
 	*  ezSQL error strings - mySQL
 	*/
+    
+    global $ezsql_mysql_str;
 
 	$ezsql_mysql_str = array
 	(

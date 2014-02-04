@@ -11,6 +11,8 @@
 	/**********************************************************************
 	*  ezSQL error strings - PDO
 	*/
+    
+    global $ezsql_pdo_str;
 
 	$ezsql_pdo_str = array
 	(
