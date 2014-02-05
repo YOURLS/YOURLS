@@ -16,37 +16,37 @@
 // Dependencies
 // --------------------------------------------------
 
-@import "bootstrap/bootstrap";
-@import "font-awesome/font-awesome";
-@import "flag-sprites/flag-sprites";
+@import "bootstrap/bootstrap.less";
+@import "font-awesome/font-awesome.less";
+@import "flag-sprites/flag-sprites.less";
 
 //
 // Tools
 // --------------------------------------------------
 
-@import "variables";
-@import "mixins";
+@import "variables.less";
+@import "mixins.less";
 
 //
 // Fonts
 // --------------------------------------------------
 
 @font-face {
-  font-family: @font-name;
-  src: ~"url('@{font-path}@{font-file}.eot')";
-  src: ~"url('@{font-path}@{font-file}.eot?#iefix') format('embedded-opentype')",
-       ~"url('@{font-path}@{font-file}.woff') format('woff')",
-       ~"url('@{font-path}@{font-file}.ttf') format('truetype')",
-       ~"url('@{font-path}@{font-file}.svg#@{font-svg-id}') format('svg')";
+    font-family: @font-name;
+    src: ~"url('@{font-path}@{font-file}.eot')";
+    src: ~"url('@{font-path}@{font-file}.eot?#iefix') format('embedded-opentype')",
+         ~"url('@{font-path}@{font-file}.woff') format('woff')",
+         ~"url('@{font-path}@{font-file}.ttf') format('truetype')",
+         ~"url('@{font-path}@{font-file}.svg#@{font-svg-id}') format('svg')";
 }
 
 //
 // Style
 // --------------------------------------------------
 
-@import "utilities";
-@import "components";
-@import "menu";
-@import "admin-table";
-@import "themes";
-@import "bookmarklet";
+@import "utilities.less";
+@import "components.less";
+@import "menu.less";
+@import "admin-table.less";
+@import "themes.less";
+@import "bookmarklet.less";
