@@ -7,25 +7,25 @@
     margin-top: 15px;
     margin-bottom: 15px;
     padding: 18px 24px;
-    font-size: inherit;
-    font-weight: 500;
-    color: #fff;
-    background-color: transparent;
     border-color: lighten(@bg-color, 46%);
+    background-color: transparent;
+    color: #fff;
+    font-weight: 500;
+    font-size: inherit;
 
     &:hover,
     &:focus,
     &:active {
-        color: @bg-color;
-        background-color: #fff;
         border-color: #fff;
+        background-color: #fff;
+        color: @bg-color;
     }
 }
 
 // Callout Theme
 .callout-theme(@border-color) {
-    background-color: lighten(@border-color, 95% - lightness(@border-color));
     border-color: @border-color;
+    background-color: lighten(@border-color, 95% - lightness(@border-color));
 
     h4 {
         color: @border-color;
