@@ -215,6 +215,8 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dsn, $this->user, $this->password);
+                if ( ! isset($this->dbh) || ! $this->dbh )
+                    return false;
 			}
 
 			// Query was an insert, delete, update, replace

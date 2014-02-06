@@ -245,12 +245,15 @@
 				
 				return $cache;
 			}
+            
 
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname,$this->encoding);
+                if ( ! isset($this->dbh) || $this->dbh->connect_errno )
+                    return false;
 			}
 
 			// Perform the query via std mysql_query function..

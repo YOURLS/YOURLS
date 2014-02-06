@@ -241,6 +241,8 @@
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
 				$this->select($this->dbname,$this->encoding);
+                if ( ! isset($this->dbh) || ! $this->dbh )
+                    return false;
 			}
 
 			// Perform the query via std mysql_query function..
