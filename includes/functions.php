@@ -986,9 +986,10 @@ function yourls_get_option( $option_name, $default = false ) {
 /**
  * Read all options from DB at once
  *
- * The goal is to read all option at once and then populate array $ydb->option, to prevent further
+ * The goal is to read all options at once and then populate array $ydb->option, to prevent further
  * SQL queries if we need to read an option value later.
- * It's also a simple check whether YOURLS is installed or not (no option = assuming not installed)
+ * It's also a simple check whether YOURLS is installed or not (no option = assuming not installed) after
+ * a check for DB server reachability has been performed
  *
  * @since 1.4
  */
@@ -1012,8 +1013,11 @@ function yourls_get_all_options() {
 		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
 		$ydb->installed = true;
 	} else {
-		// Zero option found: assume YOURLS is not installed
-		$ydb->installed = false;
+		// Zero option found: either YOURLS is not installed or DB server is dead
+        if( !yourls_is_db_alive() ) {
+            yourls_db_dead(); // YOURLS will die here
+        }
+        $ydb->installed = false;
 	}
 }
 
