@@ -84,9 +84,12 @@ function yourls_sanitize_title( $unsafe_title ) {
 /**
  * A few sanity checks on the URL. Used for redirection or DB. For display purpose, see yourls_esc_url()
  *
+ * @param string $unsafe_url unsafe URL
+ * @param array $protocols Optional allowed protocols, default to global $yourls_allowedprotocols
+ * @return string Safe URL
  */
-function yourls_sanitize_url( $unsafe_url ) {
-	$url = yourls_esc_url( $unsafe_url, 'redirection' );	
+function yourls_sanitize_url( $unsafe_url, $protocols = array() ) {
+	$url = yourls_esc_url( $unsafe_url, 'redirection', $protocols );
 	return yourls_apply_filter( 'sanitize_url', $url, $unsafe_url );
 }
 
@@ -476,12 +479,18 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	if ( ! yourls_get_protocol( $url ) )
 		$url = 'http://'.$url;
 
-	// force scheme and domain to lowercase - see issue 591
-	preg_match( '!^([a-zA-Z]+://([^/]+))(.*)$!', $url, $matches );
-	if( isset( $matches[1] ) && isset( $matches[3] ) )
-		$url = strtolower( $matches[1] ) . $matches[3];
-
 	$original_url = $url;
+
+	// force scheme and domain to lowercase - see issues 591 and 1630
+    // We're not using parse_url() here because its opposite, http_build_url(), requires PECL. Plus, who doesn't love a neat Regexp? :)
+	if( preg_match( '!^([a-zA-Z0-9\+\.-]+:)(//)?(.*?@)?([^/#?]+)(.*)$!', $url, $matches ) ) {
+        list( $all, $scheme, $slashes, $userinfo, $domain, $rest ) = $matches;
+        $scheme = strtolower( $scheme );
+        // Domain to lowercase. On URN eg "urn:example:animal:ferret:nose" don't lowercase anything else
+        if( $slashes == '//' )
+            $domain = strtolower( $domain );
+        $url = $scheme . $slashes . $userinfo . $domain . $rest;
+    }
 
 	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
