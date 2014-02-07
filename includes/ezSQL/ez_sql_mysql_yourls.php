@@ -18,7 +18,7 @@ class ezSQL_mysql_YOURLS extends ezSQL_mysql {
      */
     function __construct( $user, $pass, $name, $host ) {
         $this->show_errors = defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG;
-        return parent::ezSQL_mysql( $user, $pass, $name, $host );
+        parent::ezSQL_mysql( $user, $pass, $name, $host );
     }
 	
 	/**
