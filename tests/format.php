@@ -147,6 +147,31 @@ class Option_Format extends PHPUnit_Framework_TestCase {
 		$escaped = '&amp; &#xA3; &quot; &amp;';
 		$this->assertEquals( $escaped, yourls_esc_html( $source ) );
 	}
+    
+    /**
+     * Test that valid URLs are not modified
+     *
+     * @since 0.1
+     */
+    function test_valid_urls() {
+        $urls = array(
+            'http://example.com',
+            'http://example.com/',
+            'http://@example.com/',
+            'http://@example.com#BLAH',
+            'http://Ozh:Password@example.com/',
+            'http://Ozh:Password@example.com#OMG',
+            'http://Ozh:Password@example.com:1337/',
+            'http://Ozh:Password@example.com:1337#OMG',
+            'http://Ozh:Password@example.com/hey@ho',
+            'http://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose:@:@',
+            'mailto:ozh@ozh.org',
+        );
+
+        foreach( $urls as $url ) {
+            $this->assertEquals( $url, yourls_sanitize_url( $url ) );
+        }
+    }
 
 	/**
 	 * URL with spaces
@@ -187,11 +212,16 @@ class Option_Format extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'http://example.php', yourls_sanitize_url( 'example.php' ) );
 		$this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
 		$this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
+        // play with allowed protocols
 		$this->assertEquals( '', yourls_sanitize_url( 'nasty://example.com/' ) );
+		$this->assertEquals( 'nasty://example.com/', yourls_sanitize_url( 'nasty://example.com/', array('nasty://') ) );
+        global $yourls_allowedprotocols;
+        $yourls_allowedprotocols[] = 'evil://';
+        $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
 	}
 
 	/**
-	 * Protocol and domain case
+	 * Protocol and domain with mixed case
 	 *
 	 * @since 0.1
 	 */	
@@ -199,6 +229,12 @@ class Option_Format extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'HTTP://example.com' ) );
 		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'Http://example.com' ) );
 		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'Http://ExAmPlE.com' ) );
+		$this->assertEquals( 'http://example.com/BLAH', yourls_sanitize_url( 'Http://ExAmPlE.com/BLAH' ) );
+		$this->assertEquals( 'http://@example.com#BLAH', yourls_sanitize_url( 'Http://@ExAmPlE.com#BLAH' ) );
+		$this->assertEquals( 'http://example.com?BLAH', yourls_sanitize_url( 'Http://ExAmPlE.com?BLAH' ) );
+        $this->assertEquals( 'http://Ozh:Password@example.com:1337#OMG', yourls_sanitize_url( 'http://Ozh:Password@Example.COM:1337#OMG' ) );
+        $this->assertEquals( 'http://Ozh:Password@example.com?Ozh:Password@Example.com', yourls_sanitize_url( 'http://Ozh:Password@Example.com?Ozh:Password@Example.com' ) );
+        $this->assertEquals( 'mailto:Ozh@Ozh.org?omg', yourls_sanitize_url( 'MAILTO:Ozh@Ozh.org?omg' ) );
 	}
 	
 	/*
