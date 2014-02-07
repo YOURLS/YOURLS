@@ -1449,11 +1449,7 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 		
 	}
 
-	$i = 0;
-	while ($i < $length) {
-		$str .= substr( $possible, mt_rand( 0, strlen( $possible )-1 ), 1 );
-		$i++;
-	}
+    $str = substr( str_shuffle( $possible ), 0, $length );
 	
 	return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
 }
