@@ -3,6 +3,25 @@
 class Translation_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
+	 * Test yourls_get_locale()
+	 *
+	 * @since 0.1
+	 */
+	public function test_get_locale() {
+        global $yourls_locale;
+        $original = $yourls_locale;
+        
+        $yourls_locale = 'something';
+        $this->assertEquals( 'something' , yourls_get_locale() );
+        
+        $yourls_locale = false;
+        $this->assertEquals( '' , yourls_get_locale() );
+        
+        // Revert to original value to go on with tests now
+        $yourls_locale = $original;
+	}
+    
+	/**
 	 * Check if YOURLS text domain correctly loads
 	 *
 	 * @since 0.1
@@ -17,7 +36,6 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
 		return yourls_get_locale();
 	}
     
-
 	/**
 	 * Check a sample French translation if fr_FR available.
 	 *
@@ -30,7 +48,6 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
 		}
 	}	
     
-	
 	/**
 	 * Check a random string
 	 *
@@ -41,7 +58,6 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
         $this->assertEquals( $rand_string, yourls__( $rand_string ) );
     }
 
-    
 	/**
 	 * Unload domains
 	 *
@@ -79,7 +95,8 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
 	 */
     public function test_custom_domain_translations() {
         $this->assertEquals( 'Chaine simple', yourls__( 'Simple string', 'test' ) );
-        $this->assertEquals( 'Chaine avec omg', yourls_s( 'String with %s', 'omg', 'test' ) );
+        $this->assertEquals( 'String with omg', yourls_s( 'String with %s', 'omg' ) ); // default domain
+        $this->assertEquals( 'Chaine avec omg', yourls_s( 'String with %s', 'omg', 'test' ) ); // custom domain
         $this->assertEquals( '1 truc', yourls_n( '1 item', '%s items', 1, 'test' ) );
         $this->assertEquals( '%s trucs', yourls_n( '1 item', '%s items', 2, 'test' ) );
         $this->assertEquals( 'Untranslated string', yourls__( 'Untranslated string', 'test' ) );
@@ -94,6 +111,17 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
     public function test_custom_domain_unload() {
         $this->assertTrue( yourls_unload_textdomain( 'test' ) );
         $this->assertFalse( yourls_unload_textdomain( 'test' ) );
+    }
+
+	/**
+	 * Custom domain unloading
+	 *
+	 * @depends test_load_default_textdomain
+	 * @since 0.1
+	 */
+    public function test_get_languages() {
+        $this->assertEquals( array( 'fr_FR' ), yourls_get_available_languages() );
+        $this->assertEquals( array( 'test-fr_FR' ), yourls_get_available_languages( YOURLS_TESTDATA_DIR . '/pomo/' ) );
     }
 
 }
