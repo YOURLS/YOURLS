@@ -2,28 +2,28 @@
 
 class ShortURL_Tests extends PHPUnit_Framework_TestCase {
 
-	public function test_reserved_keywords() {
+    public function test_reserved_keywords() {
         global $yourls_reserved_URL;
         $reserved = $yourls_reserved_URL[ array_rand( $yourls_reserved_URL, 1 )  ];
-		$this->assertTrue( yourls_keyword_is_reserved( $reserved ) );
-		$this->assertFalse( yourls_keyword_is_reserved( rand_str() ) );
-	}
+        $this->assertTrue( yourls_keyword_is_reserved( $reserved ) );
+        $this->assertFalse( yourls_keyword_is_reserved( rand_str() ) );
+    }
     
-	public function test_free_keywords() {
+    public function test_free_keywords() {
         global $yourls_reserved_URL;
         $reserved = $yourls_reserved_URL[ array_rand( $yourls_reserved_URL, 1 )  ];
-		$this->assertFalse( yourls_keyword_is_free( $reserved ) );
-		$this->assertFalse( yourls_keyword_is_free( 'ozh' ) );
-		$this->assertTrue( yourls_keyword_is_free( rand_str() ) );
-	}
+        $this->assertFalse( yourls_keyword_is_free( $reserved ) );
+        $this->assertFalse( yourls_keyword_is_free( 'ozh' ) );
+        $this->assertTrue( yourls_keyword_is_free( rand_str() ) );
+    }
 
-	public function test_url_exists() {
+    public function test_url_exists() {
         $exists = yourls_url_exists( 'http://ozh.org/' );
-		$this->assertEquals( 'ozh', $exists->keyword );
-		$this->assertNull( yourls_url_exists( rand_str() ) );
-	}
+        $this->assertEquals( 'ozh', $exists->keyword );
+        $this->assertNull( yourls_url_exists( rand_str() ) );
+    }
 
-	public function test_add_url() {
+    public function test_add_url() {
         $keyword = rand_str();
         $title   = rand_str();
         $url     = 'http://' . rand_str();
@@ -44,12 +44,12 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 0, yourls_get_keyword_clicks( $keyword ) );
         
         return $keyword;
-	}
+    }
 
-	/**
-	 * @depends test_add_url
-	 */
-	public function test_edit_title( $original_keyword ) {
+    /**
+     * @depends test_add_url
+     */
+    public function test_edit_title( $original_keyword ) {
         $new_keyword = rand_str();
         $new_title   = rand_str();
         $new_url     = 'http://' . rand_str();
@@ -62,19 +62,39 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         
         return $original_keyword;
     }
- 	/**
-	 * @depends test_add_url
-	 */
-	public function test_is_shorturl( $keyword ) {
+    /**
+     * @depends test_add_url
+     */
+    public function test_is_shorturl( $keyword ) {
         $this->assertFalse( yourls_is_shorturl( rand_str() ) );
         $this->assertTrue( yourls_is_shorturl( $keyword ) );
         $this->assertTrue( yourls_is_shorturl( yourls_link( $keyword ) ) );
     }
     
-	/**
-	 * @depends test_edit_title
-	 */
-	public function test_edit_url( $original_keyword ) {
+    /**
+     * @depends test_add_url
+     */
+    public function test_update_hits( $keyword ) {
+        // purge cache
+        $cache = yourls_get_keyword_infos( $keyword, false );
+        $this->assertEquals( 0, yourls_get_keyword_clicks( $keyword ) );
+
+        $this->assertEquals( 1, yourls_update_clicks( $keyword ) );
+        // purge cache
+        yourls_get_keyword_infos( $keyword, false );
+        $this->assertEquals( 1, yourls_get_keyword_clicks( $keyword ) );
+    }
+
+    public function test_log_hits_unknown() {
+        $rand = rand_str();
+        $this->assertEquals( 0, yourls_update_clicks( $rand ) );
+        $this->assertEquals( 0, yourls_get_keyword_clicks( $rand ) );
+    }
+
+    /**
+     * @depends test_edit_title
+     */
+    public function test_edit_url( $original_keyword ) {
         $new_keyword = rand_str();
         $new_title   = rand_str();
         $new_url     = 'http://' . rand_str();
@@ -92,15 +112,15 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         return $new_keyword;
     }
 
-	/**
-	 * @depends test_edit_url
-	 */
-	public function test_delete_url( $keyword ) {
+    /**
+     * @depends test_edit_url
+     */
+    public function test_delete_url( $keyword ) {
         $delete = yourls_delete_link_by_keyword( rand_str() );
         $this->assertEquals( 0, $delete );
         $delete = yourls_delete_link_by_keyword( $keyword );
         $this->assertEquals( 1, $delete );
         $this->assertFalse( yourls_is_shorturl( $keyword ) );
     }
-	
+    
 }
