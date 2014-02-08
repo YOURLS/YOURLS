@@ -802,10 +802,15 @@ function yourls_get_HTTP_status( $code ) {
 		return '';
 }
 
-
 /**
  * Log a redirect (for stats)
  *
+ * This function does not check for the existence of a valid keyword, in order to save a query. Make sure the keyword
+ * exists before calling it.
+ *
+ * @since 1.4
+ * @param string $keyword short URL keyword
+ * @return mixed Result of the INSERT query (1 on success)
  */
 function yourls_log_redirect( $keyword ) {
 	// Allow plugins to short-circuit the whole function
