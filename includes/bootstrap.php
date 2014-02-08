@@ -53,6 +53,8 @@ foreach( $yourls_user_consts as $CONST => $value ) {
 		define( $CONST, $value );
 }
 
+define( 'YOURLS_TESTDATA_DIR', dirname( dirname( __FILE__ ) ) . '/data' );
+
 // All set -- go.
 yut_declare_yourls_consts();
 yut_load_yourls();
