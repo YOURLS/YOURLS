@@ -43,7 +43,7 @@ function yourls_get_locale() {
 			$yourls_locale = YOURLS_LANG;
 
 		if ( empty( $yourls_locale ) )
-			$yourls_locale = 'en_US';
+			$yourls_locale = '';
 	}
 	return yourls_apply_filters( 'get_locale', $yourls_locale );
 }
@@ -453,10 +453,15 @@ function yourls_load_textdomain( $domain, $mofile ) {
 
 	$mofile = yourls_apply_filters( 'load_textdomain_mofile', $mofile, $domain );
 
-	if ( !is_readable( $mofile ) ) return false;
+	if ( !is_readable( $mofile ) ) {
+        trigger_error( 'Cannot read file ' . str_replace( YOURLS_ABSPATH.'/', '', $mofile ) . '.'
+                    . ' Make sure there is a language file installed. More info: http://yourls.org/translations' );
+        return false;
+    }
 
 	$mo = new MO();
-	if ( !$mo->import_from_file( $mofile ) ) return false;
+	if ( !$mo->import_from_file( $mofile ) )
+        return false;
 
 	if ( isset( $yourls_l10n[$domain] ) )
 		$mo->merge_with( $yourls_l10n[$domain] );
@@ -502,9 +507,9 @@ function yourls_unload_textdomain( $domain ) {
  */
 function yourls_load_default_textdomain() {
 	$yourls_locale = yourls_get_locale();
-
-	return yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
-
+    
+    if( !empty( $yourls_locale ) )
+        return yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
 }
 
 /**
