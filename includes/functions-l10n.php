@@ -41,10 +41,11 @@ function yourls_get_locale() {
 		// YOURLS_LANG is defined in config.
 		if ( defined( 'YOURLS_LANG' ) )
 			$yourls_locale = YOURLS_LANG;
-
-		if ( empty( $yourls_locale ) )
-			$yourls_locale = '';
 	}
+
+    if ( !$yourls_locale )
+        $yourls_locale = '';
+
 	return yourls_apply_filters( 'get_locale', $yourls_locale );
 }
 
@@ -124,7 +125,7 @@ function yourls_s( $pattern ) {
 	// Get pattern and pattern arguments 
 	$args = func_get_args();
 	// If yourls_s() called by yourls_se(), all arguments are wrapped in the same array key
-	if( count( $args ) == 1 && is_array( $args ) ) {
+	if( count( $args ) == 1 && is_array( $args[0] ) ) {
 		$args = $args[0];
 	}
 	$pattern = $args[0];
