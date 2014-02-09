@@ -30,20 +30,22 @@ You need to send parameters to `http://yoursite.com/yourls-api.php` either via `
 
 ## Sample return
 
-	<result>
-		<url>
-			<keyword>shorter</keyword>
-			<url>http://somereallylongurlyouneedtoshrink.com/</url>
-			<title>The Page Title</title>
-			<date>2009-06-23 18:08:07</date>
-			<ip>127.0.0.1</ip>
-		</url>
-		<status>success</status>
-		<message>http://somereallylongurlyouneedtoshrink.com/ (ID: shorter) added to database</message>
+```xml
+<result>
+	<url>
+		<keyword>shorter</keyword>
+		<url>http://somereallylongurlyouneedtoshrink.com/</url>
 		<title>The Page Title</title>
-		<shorturl>http://yoursite.com/shorter</shorturl>
-		<statusCode>200</statusCode>
-	</result>
+		<date>2009-06-23 18:08:07</date>
+		<ip>127.0.0.1</ip>
+	</url>
+	<status>success</status>
+	<message>http://somereallylongurlyouneedtoshrink.com/ (ID: shorter) added to database</message>
+	<title>The Page Title</title>
+	<shorturl>http://yoursite.com/shorter</shorturl>
+	<statusCode>200</statusCode>
+</result>
+```
 
 ## Sample file
 
