@@ -453,6 +453,8 @@ function yourls_load_textdomain( $domain, $mofile ) {
 	yourls_do_action( 'load_textdomain', $domain, $mofile );
 
 	$mofile = yourls_apply_filters( 'load_textdomain_mofile', $mofile, $domain );
+    
+    trigger_error( var_dump( $mofile, file_exists( $mofile ), is_file( $mofile), is_readable( $mofile ) ) );
 
 	if ( !is_readable( $mofile ) ) {
         trigger_error( 'Cannot read file ' . str_replace( YOURLS_ABSPATH.'/', '', $mofile ) . '.'
