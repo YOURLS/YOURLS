@@ -24,7 +24,7 @@ define( 'YOURLS_DB_HOST', 'localhost' );
 
 *   `YOURLS_DB_PREFIX` &mdash; **The name prefix for all the tables YOURLS will need**  
 ```php
-define( 'YOURLS_DB_PREFIX', 'yourls_' );
+define( 'YOURLS_DB_PREFIX', 'yourls__' );
 ```
 
 
@@ -33,7 +33,7 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
 *   `YOURLS_SITE` &mdash; **Your (short) domain URL, no trailing slash, lowercase**  
     If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa).  
 ```php
-define( 'YOURLS_SITE', 'http://ozh.in' );
+define( 'YOURLS_SITE', 'http://sho.rt' );
 ```
 
 *   `YOURLS_HOURS_OFFSET` &mdash; **Timezone GMT offset**  
@@ -79,7 +79,7 @@ define( 'YOURLS_URL_CONVERT', '36' );
 *   `yourls_reserved_URL` &mdash; **A list of reserved keywords that won't be used as short URLs**  
     Define here negative, unwanted or potentially misleading keywords.  
 ```php
-yourls_reserved_URL = array( 'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay' );
+$yourls_reserved_URL = array( 'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay' );
 ```
 
 
