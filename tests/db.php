@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DB driver tests
+ * Checks for dead DB server using MySQL, MySQLi & PDO
  */
 
 class DB_Tests extends PHPUnit_Framework_TestCase {
