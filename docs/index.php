@@ -14,10 +14,11 @@ function string_to_HTML_ID($string) {
         // If the first character is numeric, add 'n' in front
         $string = 'n'. $string;
     }
-    return substr( strtolower( preg_replace( '/[^a-zA-Z0-9-]+/', '-', $string ) ), 0, 12 );
+    return substr( strtolower( preg_replace( '/[^a-zA-Z0-9-]+/', '-', $string ) ), 0, 13 );
 }
 
-require_once dirname( __FILE__ ) . '/Markdown.php';
+require_once dirname( __FILE__ ) . '/Michelf/Markdown.inc.php';
+use \Michelf\Markdown;
 
 include_once( dirname( dirname( __FILE__ ) ) . '/includes/version.php' );
 
@@ -28,7 +29,7 @@ foreach( $files as $file ) {
         $file_name = substr( $file, 2, -3 );
         $html .= '<div id="'. string_to_HTML_ID( $file_name ) .'">';
         $html .= '<h1>' . $file_name . '</h1>';
-        $html .= Markdown( file_get_contents( dirname( __FILE__ ) . '/' . $file ) );
+        $html .= Markdown::defaultTransform( file_get_contents( dirname( __FILE__ ) . '/' . $file ) );
         $html .= '</div>';
         $menu .= '<li><a href="#' . string_to_HTML_ID( $file_name ) . '">' . $file_name . '</a></li>';
     }
