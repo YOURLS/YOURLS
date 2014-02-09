@@ -73,21 +73,6 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
     }
 
 	/**
-	 * Custom domain loading with French translations
-	 *
-	 * @since 0.1
-	 */
-    public function test_custom_domain_load() {
-		if( yourls_get_locale() != 'fr_FR' ) {
-			$this->markTestSkipped( 'Custom domain tests skipped -- locale is not "fr_FR"' );
-			return false;
-		}
-        $this->assertFalse( yourls_is_textdomain_loaded( 'test' ) );
-        $this->assertTrue( yourls_load_custom_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/' ) );
-        $this->assertTrue( yourls_is_textdomain_loaded( 'test' ) );
-    }
-
-	/**
 	 * Custom domain translations
 	 *
 	 * @depends test_custom_domain_load
