@@ -1,6 +1,3 @@
-API
-===
-
 ## Features
 
 *   Generate or get existing short URLs, with sequential or custom keyword

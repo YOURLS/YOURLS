@@ -1,6 +1,3 @@
-FAQ
-===
-
 ## Server requirements
 
 1.  A server with **mod_rewrite** enabled

@@ -1,6 +1,3 @@
-Installation
-============
-
 ## Fresh Install
 
 1.  Unzip the YOURLS archive

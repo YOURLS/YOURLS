@@ -1,6 +1,3 @@
-Plugins
-=======
-
 ## Plugins?
 
 Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.

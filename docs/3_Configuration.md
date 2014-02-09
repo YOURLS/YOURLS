@@ -1,6 +1,3 @@
-Configuration
-=============
-
 Configuration (in `user/config.php`).
 
 ## MySQL settings

@@ -1,6 +1,3 @@
-Community
-=========
-
 YOURLS is open source, so the community of users plays a great role in its development, by contributing, helping others or giving feedback that helps improve the software.
 
 ## Resources

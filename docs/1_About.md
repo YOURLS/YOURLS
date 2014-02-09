@@ -1,6 +1,3 @@
-About YOURLS
-============
-
 ## What is YOURLS
 
 **YOURLS** stands for **Your Own URL Shortener**. It is a small set of PHP scripts that will allow you to run your own URL shortening service (_a la_ TinyURL or bitly).
