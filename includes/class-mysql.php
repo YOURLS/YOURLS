@@ -24,12 +24,8 @@ function yourls_set_DB_driver( ) {
 	
 	// Set the new driver
 	if ( in_array( $driver, array( 'mysql', 'mysqli', 'pdo' ) ) ) {
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_core.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php' );
-		require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php' );
+        $class = yourls_require_db_files( $driver );
 	}
-	$class = 'ezSQL_' . $driver . '_yourls';
 
 	global $ydb;
 
@@ -49,6 +45,23 @@ function yourls_set_DB_driver( ) {
 
 	yourls_debug_log( "DB driver: $driver" );
 }
+
+/**
+ * Load required DB class files
+ *
+ * This goes in its own function to allow easier unit tests
+ *
+ * @since 1.7.1
+ * @param string $driver DB driver
+ * @return string name of the DB class to instantiate
+ */
+function yourls_require_db_files( $driver ) {
+    require_once( YOURLS_INC . '/ezSQL/ez_sql_core.php' );
+    require_once( YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php' );
+    require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php' );
+    require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php' );
+    return 'ezSQL_' . $driver . '_yourls';
+} 
 
 /**
  * Connect to DB
