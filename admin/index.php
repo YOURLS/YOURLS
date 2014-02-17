@@ -17,7 +17,7 @@ $sort_by         = 'timestamp';
 $sort_order      = 'desc';
 $page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
 $search          = yourls_get_search_text();
-$perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : 15 );
+$perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : yourls_apply_filter( 'admin_view_per_page', 15 ) );
 $click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
 if ( $click_limit !== '' ) {
 	$click_filter   = ( isset( $_GET['click_filter'] ) && $_GET['click_filter'] == 'more' ? 'more' : 'less' ) ;
