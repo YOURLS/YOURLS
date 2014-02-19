@@ -116,6 +116,9 @@ function yut_declare_yourls_consts() {
 	if( !defined( 'YOURLS_DEBUG' ) )
 		define( 'YOURLS_DEBUG', true );
 		
+	if( !defined( 'YOURLS_ADMIN_LOCATION' ) )
+		define( 'YOURLS_ADMIN_LOCATION', 'admin' );
+		
 	// Error reporting
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		error_reporting( -1 );
