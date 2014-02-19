@@ -138,6 +138,8 @@ function yut_declare_yourls_consts() {
  */
 function yut_load_yourls() {
 	// Include all functions
+	if( is_readable( YOURLS_INC . '/vendor/autoload.php' ) )
+		require YOURLS_INC . '/vendor/autoload.php';
 	require_once YOURLS_INC.'/version.php';
 	$files = scandir( YOURLS_INC, 1 );
 	foreach ( $files as $file ) {
