@@ -11,6 +11,8 @@
 	/**********************************************************************
 	*  ezSQL error strings - mySQL
 	*/
+    
+    global $ezsql_mysql_str;
 
 	$ezsql_mysql_str = array
 	(
@@ -135,6 +137,7 @@
 			else
 			{
 				$this->dbname = $dbname;
+                if ( $encoding == '') $encoding = $this->encoding;
 				if($encoding!='')
 				{
 					$encoding = strtolower(str_replace("-","",$encoding));
@@ -238,6 +241,8 @@
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
 				$this->select($this->dbname,$this->encoding);
+                if ( ! isset($this->dbh) || ! $this->dbh )
+                    return false;
 			}
 
 			// Perform the query via std mysql_query function..

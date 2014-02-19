@@ -10,6 +10,16 @@ class ezSQL_mysqli_YOURLS extends ezSQL_mysqli {
 	function mysql_version() {
 		return  mysqli_get_server_info( $this->dbh ) ;
 	}
+    
+    /**
+     * Comply to YOURLS debug mode
+     *
+     * @since 1.7.1
+     */
+    function __construct( $user, $pass, $name, $host ) {
+        $this->show_errors = defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG;
+        parent::ezSQL_mysqli( $user, $pass, $name, $host );
+    }
 	
 	/**
 	 * Perform mySQL query

@@ -12,21 +12,14 @@ function yourls_get_shorturl_charset() {
 	static $charset = null;
 	if( $charset !== null )
 		return $charset;
-		
-	if( !defined('YOURLS_URL_CONVERT') ) {
-		$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
-	} else {
-		switch( YOURLS_URL_CONVERT ) {
-			case 36:
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyz';
-				break;
-			case 62:
-			case 64: // just because some people get this wrong in their config.php
-				$charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-				break;
-		}
-	}
-	
+
+    if( defined('YOURLS_URL_CONVERT') && in_array( YOURLS_URL_CONVERT, array( 62, 64 ) ) ) {
+        $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    } else {
+        // defined to 36, or wrongly defined 
+        $charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+    }
+
 	$charset = yourls_apply_filter( 'get_shorturl_charset', $charset );
 	return $charset;
 }
@@ -424,38 +417,6 @@ function yourls_keyword_is_taken( $keyword ) {
 	return yourls_apply_filter( 'keyword_is_taken', $taken, $keyword );
 }
 
-
-/**
- * Connect to DB
- *
- */
-function yourls_db_connect() {
-	global $ydb;
-
-	if (   !defined( 'YOURLS_DB_USER' )
-		or !defined( 'YOURLS_DB_PASS' )
-		or !defined( 'YOURLS_DB_NAME' )
-		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
-
-	// Are we standalone or in the WordPress environment?
-	if ( class_exists( 'wpdb', false ) ) {
-		/* TODO: should we deprecate this? Follow WP dev in that area */
-		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-	} else {
-		yourls_set_DB_driver();
-	}
-	
-	// Check if connection attempt raised an error. It seems that only PDO does, though.
-	if ( $ydb->last_error )
-		yourls_die( $ydb->last_error, yourls__( 'Fatal error' ), 503 );
-	
-	if ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG === true )
-		$ydb->show_errors = true;
-	
-	return $ydb;
-}
-
 /**
  * Return XML output.
  *
@@ -842,10 +803,15 @@ function yourls_get_HTTP_status( $code ) {
 		return '';
 }
 
-
 /**
  * Log a redirect (for stats)
  *
+ * This function does not check for the existence of a valid keyword, in order to save a query. Make sure the keyword
+ * exists before calling it.
+ *
+ * @since 1.4
+ * @param string $keyword short URL keyword
+ * @return mixed Result of the INSERT query (1 on success)
  */
 function yourls_log_redirect( $keyword ) {
 	// Allow plugins to short-circuit the whole function
@@ -1021,9 +987,10 @@ function yourls_get_option( $option_name, $default = false ) {
 /**
  * Read all options from DB at once
  *
- * The goal is to read all option at once and then populate array $ydb->option, to prevent further
+ * The goal is to read all options at once and then populate array $ydb->option, to prevent further
  * SQL queries if we need to read an option value later.
- * It's also a simple check whether YOURLS is installed or not (no option = assuming not installed)
+ * It's also a simple check whether YOURLS is installed or not (no option = assuming not installed) after
+ * a check for DB server reachability has been performed
  *
  * @since 1.4
  */
@@ -1047,8 +1014,11 @@ function yourls_get_all_options() {
 		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
 		$ydb->installed = true;
 	} else {
-		// Zero option found: assume YOURLS is not installed
-		$ydb->installed = false;
+		// Zero option found: either YOURLS is not installed or DB server is dead
+        if( !yourls_is_db_alive() ) {
+            yourls_db_dead(); // YOURLS will die here
+        }
+        $ydb->installed = false;
 	}
 }
 
@@ -1484,11 +1454,7 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 		
 	}
 
-	$i = 0;
-	while ($i < $length) {
-		$str .= substr( $possible, mt_rand( 0, strlen( $possible )-1 ), 1 );
-		$i++;
-	}
+    $str = substr( str_shuffle( $possible ), 0, $length );
 	
 	return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
 }
@@ -1686,7 +1652,7 @@ function yourls_link( $keyword = '' ) {
 function yourls_statlink( $keyword = '' ) {
 	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword ) . '+';
 	if( yourls_is_ssl() )
-		$link = str_replace( 'http://', 'https://', $link );
+        $link = yourls_set_url_scheme( $link, 'https' );
 	return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 
@@ -1786,7 +1752,7 @@ function yourls_needs_ssl() {
 function yourls_admin_url( $page = '' ) {
 	$admin = YOURLS_SITE . '/' . YOURLS_ADMIN_LOCATION . '/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() )
-		$admin = str_replace('http://', 'https://', $admin);
+        $admin = yourls_set_url_scheme( $admin, 'https' );
 	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
@@ -1800,7 +1766,7 @@ function yourls_site_url( $echo = true, $url = '' ) {
 	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() )
-		$url = str_replace( 'http://', 'https://', $url );
+		$url = yourls_set_url_scheme( $url, 'https' );
 	$url = yourls_apply_filter( 'site_url', $url );
 	if( $echo )
 		echo $url;
@@ -2258,5 +2224,20 @@ function yourls_get_protocol_slashes_and_rest( $url, $array = array( 'protocol',
 	list( $proto, $slashes ) = explode( ':', $proto );
 	
 	return array( $array[0] => $proto . ':', $array[1] => $slashes, $array[2] => $rest );
+}
+
+/**
+ * Set URL scheme (to HTTP or HTTPS)
+ *
+ * @since 1.7.1
+ * @param string $url URL
+ * @param string $scheme scheme, either 'http' or 'https'
+ * @return string URL with chosen scheme
+ */
+function yourls_set_url_scheme( $url, $scheme = false ) {
+    if( $scheme != 'http' && $scheme != 'https' ) {
+        return $url;
+    }
+    return preg_replace( '!^[a-zA-Z0-9\+\.-]+://!', $scheme . '://', $url );
 }
 

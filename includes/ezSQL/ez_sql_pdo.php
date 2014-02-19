@@ -11,6 +11,8 @@
 	/**********************************************************************
 	*  ezSQL error strings - PDO
 	*/
+    
+    global $ezsql_pdo_str;
 
 	$ezsql_pdo_str = array
 	(
@@ -213,6 +215,8 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dsn, $this->user, $this->password);
+                if ( ! isset($this->dbh) || ! $this->dbh )
+                    return false;
 			}
 
 			// Query was an insert, delete, update, replace

@@ -11,6 +11,8 @@
 	/**********************************************************************
 	*  ezSQL error strings - mySQLi
 	*/
+    
+    global $ezsql_mysqli_str;
 
 	$ezsql_mysqli_str = array
 	(
@@ -90,18 +92,23 @@
 				$this->show_errors ? trigger_error($ezsql_mysqli_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport) )
-			{
-				$this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
-			}
 			else
 			{
-				$this->dbuser = $dbuser;
-				$this->dbpassword = $dbpassword;
-				$this->dbhost = $dbhost;
-				$this->dbport = $dbport;
-				$return_val = true;
+				$this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport);
+                // Check for connection problem
+                if( $this->dbh->connect_errno )
+                {
+                    $this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
+                    $this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
+                }
+                else
+                {
+                    $this->dbuser = $dbuser;
+                    $this->dbpassword = $dbpassword;
+                    $this->dbhost = $dbhost;
+                    $this->dbport = $dbport;
+                    $return_val = true;
+                }
 			}
 
 			return $return_val;
@@ -238,12 +245,15 @@
 				
 				return $cache;
 			}
+            
 
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname,$this->encoding);
+                if ( ! isset($this->dbh) || $this->dbh->connect_errno )
+                    return false;
 			}
 
 			// Perform the query via std mysql_query function..
