@@ -1,9 +1,9 @@
 <?php
-/*
+/**
  * This file is part of the POMO package.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @copyright POMO 2014 - GPLv2
+ * @package POMO
  */
 
 namespace POMO\Streams;
@@ -12,40 +12,43 @@ namespace POMO\Streams;
  * Provides file-like methods for manipulating a string instead
  * of a physical file.
  *
- * @package POMO
  * @subpackage Streams
  * @author Danilo Segan <danilo@kvota.net>
  */
-class StringReader extends Reader {
+class StringReader extends Reader
+{
+    public $_str = '';
 
-	var $_str = '';
+    public function __construct($str = '')
+    {
+        parent::__construct();
+        $this->_str = $str;
+        $this->_pos = 0;
+    }
 
-	function __construct($str = '') {
-		parent::__construct();
-		$this->_str = $str;
-		$this->_pos = 0;
-	}
+    public function read($bytes)
+    {
+        $data = $this->substr($this->_str, $this->_pos, $bytes);
+        $this->_pos += $bytes;
+        if ($this->strlen($this->_str) < $this->_pos) $this->_pos = $this->strlen($this->_str);
+        return $data;
+    }
 
+    public function seekto($pos)
+    {
+        $this->_pos = $pos;
+        if ($this->strlen($this->_str) < $this->_pos) $this->_pos = $this->strlen($this->_str);
+        return $this->_pos;
+    }
 
-	function read($bytes) {
-		$data = $this->substr($this->_str, $this->_pos, $bytes);
-		$this->_pos += $bytes;
-		if ($this->strlen($this->_str) < $this->_pos) $this->_pos = $this->strlen($this->_str);
-		return $data;
-	}
+    public function length()
+    {
+        return $this->strlen($this->_str);
+    }
 
-	function seekto($pos) {
-		$this->_pos = $pos;
-		if ($this->strlen($this->_str) < $this->_pos) $this->_pos = $this->strlen($this->_str);
-		return $this->_pos;
-	}
-
-	function length() {
-		return $this->strlen($this->_str);
-	}
-
-	function read_all() {
-		return $this->substr($this->_str, $this->_pos, $this->strlen($this->_str));
-	}
+    public function read_all()
+    {
+        return $this->substr($this->_str, $this->_pos, $this->strlen($this->_str));
+    }
 
 }

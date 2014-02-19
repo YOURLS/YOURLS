@@ -14,7 +14,7 @@ return array(
     'POMO\\Streams\\FileReader' => $vendorDir . '/pomo/pomo/src/POMO/Streams/FileReader.php',
     'POMO\\Streams\\Reader' => $vendorDir . '/pomo/pomo/src/POMO/Streams/Reader.php',
     'POMO\\Streams\\StringReader' => $vendorDir . '/pomo/pomo/src/POMO/Streams/StringReader.php',
-    'POMO\\TranslationEntry' => $vendorDir . '/pomo/pomo/src/POMO/TranslationEntry.php',
+    'POMO\\Translations\\EntryTranslations' => $vendorDir . '/pomo/pomo/src/POMO/Translations/EntryTranslations.php',
     'POMO\\Translations\\GettextTranslations' => $vendorDir . '/pomo/pomo/src/POMO/Translations/GettextTranslations.php',
     'POMO\\Translations\\NOOPTranslations' => $vendorDir . '/pomo/pomo/src/POMO/Translations/NOOPTranslations.php',
     'POMO\\Translations\\Translations' => $vendorDir . '/pomo/pomo/src/POMO/Translations/Translations.php',

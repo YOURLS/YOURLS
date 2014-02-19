@@ -98,23 +98,23 @@
     },
     {
         "name": "pomo/pomo",
-        "version": "v1.1",
-        "version_normalized": "1.1.0.0",
+        "version": "v1.2.0",
+        "version_normalized": "1.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/LeoColomb/pomo.git",
-            "reference": "7d139502b2a229a5ef93e42fd5ab77776a71beb4"
+            "reference": "d0516a81122697c0727734e8918ae5b57b0ddeb7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/7d139502b2a229a5ef93e42fd5ab77776a71beb4",
-            "reference": "7d139502b2a229a5ef93e42fd5ab77776a71beb4",
+            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/d0516a81122697c0727734e8918ae5b57b0ddeb7",
+            "reference": "d0516a81122697c0727734e8918ae5b57b0ddeb7",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.2.0"
+            "php": ">=5.3.0"
         },
-        "time": "2014-01-05 08:47:00",
+        "time": "2014-02-19 12:49:12",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

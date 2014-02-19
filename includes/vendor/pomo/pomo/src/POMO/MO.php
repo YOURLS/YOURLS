@@ -1,261 +1,278 @@
 <?php
-/*
+/**
  * This file is part of the POMO package.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @copyright POMO 2014 - GPLv2
+ * @package POMO
  */
 
 namespace POMO;
 
 use POMO\Streams\FileReader;
 use POMO\Translations\GettextTranslations;
+use POMO\Translations\EntryTranslations;
 
 /**
  * Class for working with MO files
- *
- * @package POMO
  */
-class MO extends GettextTranslations {
+class MO extends GettextTranslations
+{
+    public $_nplurals = 2;
 
-	var $_nplurals = 2;
+    /**
+     * Fills up with the entries from MO file $filename
+     *
+     * @param string $filename MO file to load
+     */
+    public function import_from_file($filename)
+    {
+        $reader = new FileReader($filename);
+        if (!$reader->is_resource())
+            return false;
+        return $this->import_from_reader($reader);
+    }
 
-	/**
-	 * Fills up with the entries from MO file $filename
-	 *
-	 * @param string $filename MO file to load
-	 */
-	function import_from_file($filename) {
-		$reader = new FileReader($filename);
-		if (!$reader->is_resource())
-			return false;
-		return $this->import_from_reader($reader);
-	}
+    public function export_to_file($filename)
+    {
+        $fh = fopen($filename, 'wb');
+        if ( !$fh ) return false;
+        $res = $this->export_to_file_handle( $fh );
+        fclose($fh);
 
-	function export_to_file($filename) {
-		$fh = fopen($filename, 'wb');
-		if ( !$fh ) return false;
-		$res = $this->export_to_file_handle( $fh );
-		fclose($fh);
-		return $res;
-	}
+        return $res;
+    }
 
-	function export() {
-		$tmp_fh = fopen("php://temp", 'r+');
-		if ( !$tmp_fh ) return false;
-		$this->export_to_file_handle( $tmp_fh );
-		rewind( $tmp_fh );
-		return stream_get_contents( $tmp_fh );
-	}
+    public function export()
+    {
+        $tmp_fh = fopen("php://temp", 'r+');
+        if ( !$tmp_fh ) return false;
+        $this->export_to_file_handle( $tmp_fh );
+        rewind( $tmp_fh );
 
-	function is_entry_good_for_export( $entry ) {
-		if ( empty( $entry->translations ) ) {
-			return false;
-		}
+        return stream_get_contents( $tmp_fh );
+    }
 
-		if ( !array_filter( $entry->translations ) ) {
-			return false;
-		}
+    public function is_entry_good_for_export($entry)
+    {
+        if ( empty( $entry->translations ) ) {
+            return false;
+        }
 
-		return true;
-	}
+        if ( !array_filter( $entry->translations ) ) {
+            return false;
+        }
 
-	function export_to_file_handle($fh) {
-		$entries = array_filter( $this->entries, array( $this, 'is_entry_good_for_export' ) );
-		ksort($entries);
-		$magic = 0x950412de;
-		$revision = 0;
-		$total = count($entries) + 1; // all the headers are one entry
-		$originals_lenghts_addr = 28;
-		$translations_lenghts_addr = $originals_lenghts_addr + 8 * $total;
-		$size_of_hash = 0;
-		$hash_addr = $translations_lenghts_addr + 8 * $total;
-		$current_addr = $hash_addr;
-		fwrite($fh, pack('V*', $magic, $revision, $total, $originals_lenghts_addr,
-			$translations_lenghts_addr, $size_of_hash, $hash_addr));
-		fseek($fh, $originals_lenghts_addr);
+        return true;
+    }
 
-		// headers' msgid is an empty string
-		fwrite($fh, pack('VV', 0, $current_addr));
-		$current_addr++;
-		$originals_table = chr(0);
+    public function export_to_file_handle($fh)
+    {
+        $entries = array_filter( $this->entries, array( $this, 'is_entry_good_for_export' ) );
+        ksort($entries);
+        $magic = 0x950412de;
+        $revision = 0;
+        $total = count($entries) + 1; // all the headers are one entry
+        $originals_lenghts_addr = 28;
+        $translations_lenghts_addr = $originals_lenghts_addr + 8 * $total;
+        $size_of_hash = 0;
+        $hash_addr = $translations_lenghts_addr + 8 * $total;
+        $current_addr = $hash_addr;
+        fwrite($fh, pack('V*', $magic, $revision, $total, $originals_lenghts_addr,
+            $translations_lenghts_addr, $size_of_hash, $hash_addr));
+        fseek($fh, $originals_lenghts_addr);
 
-		foreach($entries as $entry) {
-			$originals_table .= $this->export_original($entry) . chr(0);
-			$length = strlen($this->export_original($entry));
-			fwrite($fh, pack('VV', $length, $current_addr));
-			$current_addr += $length + 1; // account for the NULL byte after
-		}
+        // headers' msgid is an empty string
+        fwrite($fh, pack('VV', 0, $current_addr));
+        $current_addr++;
+        $originals_table = chr(0);
 
-		$exported_headers = $this->export_headers();
-		fwrite($fh, pack('VV', strlen($exported_headers), $current_addr));
-		$current_addr += strlen($exported_headers) + 1;
-		$translations_table = $exported_headers . chr(0);
+        foreach ($entries as $entry) {
+            $originals_table .= $this->export_original($entry) . chr(0);
+            $length = strlen($this->export_original($entry));
+            fwrite($fh, pack('VV', $length, $current_addr));
+            $current_addr += $length + 1; // account for the NULL byte after
+        }
 
-		foreach($entries as $entry) {
-			$translations_table .= $this->export_translations($entry) . chr(0);
-			$length = strlen($this->export_translations($entry));
-			fwrite($fh, pack('VV', $length, $current_addr));
-			$current_addr += $length + 1;
-		}
+        $exported_headers = $this->export_headers();
+        fwrite($fh, pack('VV', strlen($exported_headers), $current_addr));
+        $current_addr += strlen($exported_headers) + 1;
+        $translations_table = $exported_headers . chr(0);
 
-		fwrite($fh, $originals_table);
-		fwrite($fh, $translations_table);
-		return true;
-	}
+        foreach ($entries as $entry) {
+            $translations_table .= $this->export_translations($entry) . chr(0);
+            $length = strlen($this->export_translations($entry));
+            fwrite($fh, pack('VV', $length, $current_addr));
+            $current_addr += $length + 1;
+        }
 
-	function export_original($entry) {
-		//TODO: warnings for control characters
-		$exported = $entry->singular;
-		if ($entry->is_plural) $exported .= chr(0).$entry->plural;
-		if (!is_null($entry->context)) $exported = $entry->context . chr(4) . $exported;
-		return $exported;
-	}
+        fwrite($fh, $originals_table);
+        fwrite($fh, $translations_table);
 
-	function export_translations($entry) {
-		//TODO: warnings for control characters
-		return implode(chr(0), $entry->translations);
-	}
+        return true;
+    }
 
-	function export_headers() {
-		$exported = '';
-		foreach($this->headers as $header => $value) {
-			$exported.= "$header: $value\n";
-		}
-		return $exported;
-	}
+    public function export_original($entry)
+    {
+        //TODO: warnings for control characters
+        $exported = $entry->singular;
+        if ($entry->is_plural) $exported .= chr(0).$entry->plural;
+        if (!is_null($entry->context)) $exported = $entry->context . chr(4) . $exported;
+        return $exported;
+    }
 
-	function get_byteorder($magic) {
-		// The magic is 0x950412de
+    public function export_translations($entry)
+    {
+        //TODO: warnings for control characters
+        return implode(chr(0), $entry->translations);
+    }
 
-		// bug in PHP 5.0.2, see https://savannah.nongnu.org/bugs/?func=detailitem&item_id=10565
-		$magic_little = (int) - 1794895138;
-		$magic_little_64 = (int) 2500072158;
-		// 0xde120495
-		$magic_big = ((int) - 569244523) & 0xFFFFFFFF;
-		if ($magic_little == $magic || $magic_little_64 == $magic) {
-			return 'little';
-		} else if ($magic_big == $magic) {
-			return 'big';
-		} else {
-			return false;
-		}
-	}
+    public function export_headers()
+    {
+        $exported = '';
+        foreach ($this->headers as $header => $value) {
+            $exported.= "$header: $value\n";
+        }
 
-	function import_from_reader($reader) {
-		$endian_string = MO::get_byteorder($reader->readint32());
-		if (false === $endian_string) {
-			return false;
-		}
-		$reader->setEndian($endian_string);
+        return $exported;
+    }
 
-		$endian = ('big' == $endian_string)? 'N' : 'V';
+    public function get_byteorder($magic)
+    {
+        // The magic is 0x950412de
 
-		$header = $reader->read(24);
-		if ($reader->strlen($header) != 24)
-			return false;
+        // bug in PHP 5.0.2, see https://savannah.nongnu.org/bugs/?func=detailitem&item_id=10565
+        $magic_little = (int) - 1794895138;
+        $magic_little_64 = (int) 2500072158;
+        // 0xde120495
+        $magic_big = ((int) - 569244523) & 0xFFFFFFFF;
+        if ($magic_little == $magic || $magic_little_64 == $magic) {
+            return 'little';
+        } elseif ($magic_big == $magic) {
+            return 'big';
+        } else {
+            return false;
+        }
+    }
 
-		// parse header
-		$header = unpack("{$endian}revision/{$endian}total/{$endian}originals_lenghts_addr/{$endian}translations_lenghts_addr/{$endian}hash_length/{$endian}hash_addr", $header);
-		if (!is_array($header))
-			return false;
+    public function import_from_reader($reader)
+    {
+        $endian_string = MO::get_byteorder($reader->readint32());
+        if (false === $endian_string) {
+            return false;
+        }
+        $reader->setEndian($endian_string);
 
-		extract( $header );
+        $endian = ('big' == $endian_string)? 'N' : 'V';
 
-		// support revision 0 of MO format specs, only
-		if ($revision != 0)
-			return false;
+        $header = $reader->read(24);
+        if ($reader->strlen($header) != 24)
+            return false;
 
-		// seek to data blocks
-		$reader->seekto($originals_lenghts_addr);
+        // parse header
+        $header = unpack("{$endian}revision/{$endian}total/{$endian}originals_lenghts_addr/{$endian}translations_lenghts_addr/{$endian}hash_length/{$endian}hash_addr", $header);
+        if (!is_array($header))
+            return false;
 
-		// read originals' indices
-		$originals_lengths_length = $translations_lenghts_addr - $originals_lenghts_addr;
-		if ( $originals_lengths_length != $total * 8 )
-			return false;
+        extract( $header );
 
-		$originals = $reader->read($originals_lengths_length);
-		if ( $reader->strlen( $originals ) != $originals_lengths_length )
-			return false;
+        // support revision 0 of MO format specs, only
+        if ($revision != 0)
+            return false;
 
-		// read translations' indices
-		$translations_lenghts_length = $hash_addr - $translations_lenghts_addr;
-		if ( $translations_lenghts_length != $total * 8 )
-			return false;
+        // seek to data blocks
+        $reader->seekto($originals_lenghts_addr);
 
-		$translations = $reader->read($translations_lenghts_length);
-		if ( $reader->strlen( $translations ) != $translations_lenghts_length )
-			return false;
+        // read originals' indices
+        $originals_lengths_length = $translations_lenghts_addr - $originals_lenghts_addr;
+        if ( $originals_lengths_length != $total * 8 )
+            return false;
 
-		// transform raw data into set of indices
-		$originals    = $reader->str_split( $originals, 8 );
-		$translations = $reader->str_split( $translations, 8 );
+        $originals = $reader->read($originals_lengths_length);
+        if ( $reader->strlen( $originals ) != $originals_lengths_length )
+            return false;
 
-		// skip hash table
-		$strings_addr = $hash_addr + $hash_length * 4;
+        // read translations' indices
+        $translations_lenghts_length = $hash_addr - $translations_lenghts_addr;
+        if ( $translations_lenghts_length != $total * 8 )
+            return false;
 
-		$reader->seekto($strings_addr);
+        $translations = $reader->read($translations_lenghts_length);
+        if ( $reader->strlen( $translations ) != $translations_lenghts_length )
+            return false;
 
-		$strings = $reader->read_all();
-		$reader->close();
+        // transform raw data into set of indices
+        $originals    = $reader->str_split( $originals, 8 );
+        $translations = $reader->str_split( $translations, 8 );
 
-		for ( $i = 0; $i < $total; $i++ ) {
-			$o = unpack( "{$endian}length/{$endian}pos", $originals[$i] );
-			$t = unpack( "{$endian}length/{$endian}pos", $translations[$i] );
-			if ( !$o || !$t ) return false;
+        // skip hash table
+        $strings_addr = $hash_addr + $hash_length * 4;
 
-			// adjust offset due to reading strings to separate space before
-			$o['pos'] -= $strings_addr;
-			$t['pos'] -= $strings_addr;
+        $reader->seekto($strings_addr);
 
-			$original    = $reader->substr( $strings, $o['pos'], $o['length'] );
-			$translation = $reader->substr( $strings, $t['pos'], $t['length'] );
+        $strings = $reader->read_all();
+        $reader->close();
 
-			if ('' === $original) {
-				$this->set_headers($this->make_headers($translation));
-			} else {
-				$entry = &$this->make_entry($original, $translation);
-				$this->entries[$entry->key()] = &$entry;
-			}
-		}
-		return true;
-	}
+        for ($i = 0; $i < $total; $i++) {
+            $o = unpack( "{$endian}length/{$endian}pos", $originals[$i] );
+            $t = unpack( "{$endian}length/{$endian}pos", $translations[$i] );
+            if ( !$o || !$t ) return false;
 
-	/**
-	 * Build a TranslationEntry from original string and translation strings,
-	 * found in a MO file
-	 *
-	 * @static
-	 * @param string $original original string to translate from MO file. Might contain
-	 * 	0x04 as context separator or 0x00 as singular/plural separator
-	 * @param string $translation translation string from MO file. Might contain
-	 * 	0x00 as a plural translations separator
-	 */
-	function &make_entry($original, $translation) {
-		$entry = new TranslationEntry();
-		// look for context
-		$parts = explode(chr(4), $original);
-		if (isset($parts[1])) {
-			$original = $parts[1];
-			$entry->context = $parts[0];
-		}
-		// look for plural original
-		$parts = explode(chr(0), $original);
-		$entry->singular = $parts[0];
-		if (isset($parts[1])) {
-			$entry->is_plural = true;
-			$entry->plural = $parts[1];
-		}
-		// plural translations are also separated by \0
-		$entry->translations = explode(chr(0), $translation);
-		return $entry;
-	}
+            // adjust offset due to reading strings to separate space before
+            $o['pos'] -= $strings_addr;
+            $t['pos'] -= $strings_addr;
 
-	function select_plural_form($count) {
-		return $this->gettext_select_plural_form($count);
-	}
+            $original    = $reader->substr( $strings, $o['pos'], $o['length'] );
+            $translation = $reader->substr( $strings, $t['pos'], $t['length'] );
 
-	function get_plural_forms_count() {
-		return $this->_nplurals;
-	}
+            if ('' === $original) {
+                $this->set_headers($this->make_headers($translation));
+            } else {
+                $entry = &$this->make_entry($original, $translation);
+                $this->entries[$entry->key()] = &$entry;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Build a EntryTranslations from original string and translation strings,
+     * found in a MO file
+     *
+     * @static
+     * @param string $original    original string to translate from MO file. Might contain
+     *                            0x04 as context separator or 0x00 as singular/plural separator
+     * @param string $translation translation string from MO file. Might contain
+     *                            0x00 as a plural translations separator
+     */
+    function &make_entry($original, $translation) {
+        $entry = new EntryTranslations();
+        // look for context
+        $parts = explode(chr(4), $original);
+        if (isset($parts[1])) {
+            $original = $parts[1];
+            $entry->context = $parts[0];
+        }
+        // look for plural original
+        $parts = explode(chr(0), $original);
+        $entry->singular = $parts[0];
+        if (isset($parts[1])) {
+            $entry->is_plural = true;
+            $entry->plural = $parts[1];
+        }
+        // plural translations are also separated by \0
+        $entry->translations = explode(chr(0), $translation);
+
+        return $entry;
+    }
+
+    public function select_plural_form($count)
+    {
+        return $this->gettext_select_plural_form($count);
+    }
+
+    public function get_plural_forms_count()
+    {
+        return $this->_nplurals;
+    }
 }
