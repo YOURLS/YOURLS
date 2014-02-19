@@ -74,6 +74,7 @@ Desktop.ini
 *.sln
 *.suo
 *.phpproj
+W[eE]*
 
 # Temp
 assets/css/*
