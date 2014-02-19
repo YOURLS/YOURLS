@@ -1,0 +1,31 @@
+{
+  "name": "YOURLS",
+  "version": "2.0.0",
+  "homepage": "http://yourls.org",
+  "authors": [
+    "Ozh Richard",
+    "Leo Colombaro"
+  ],
+  "description": "Your Own URL Shortener",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "*",
+    "font-awesome": "*",
+    "flag-sprites": "*"
+  },
+  "exportsOverride": {
+    "bootstrap": {
+      "less": "less/*.less",
+      "js": "dist/js/*.min.js"
+    },
+    "font-awesome": {
+      "less": "less/*.less",
+      "fonts": "fonts/fontawesome-webfont.*"
+    },
+    "flag-sprites": {
+      "less": "less/*.less",
+      "img": "dist/img/*"
+    }
+  },
+  "private": true
+}
