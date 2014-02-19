@@ -6,6 +6,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-php');
     grunt.loadNpmTasks('grunt-composer');
     grunt.loadNpmTasks('grunt-php-cs-fixer');
+    grunt.loadNpmTasks('grunt-phpunit');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -33,6 +34,12 @@ module.exports = function (grunt) {
                     'php_closing_tag', 'extra_empty_lines',
                     'include', 'psr0', 'elseif', 'eof_ending'
                 ]
+            }
+        },
+        phpunit: {
+            yourls: {},
+            options: {
+                configuration: '../phpunit.xml.dist'
             }
         },
         bower: {
@@ -78,18 +85,12 @@ module.exports = function (grunt) {
                 options: {
                     nospawn: true
                 },
-            },
-            php: {
-                files: 'includes/src/**/*.php',
-                tasks: 'phpcsfixer',
-                options: {
-                    nospawn: true
-                },
             }
         }
     });
 
     grunt.registerTask('default', [/*'composer:update:no-dev', */'bower', 'less:dev', 'watch']);
     grunt.registerTask('server', ['php']);
+    grunt.registerTask('php', ['phpcsfixer', 'phpunit']);
     grunt.registerTask('dist', ['update_submodules', 'less:dist']);
 };
