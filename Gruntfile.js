@@ -14,7 +14,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         php: {
-            dist: {
+            server: {
                 options: {
                     keepalive: true,
                     open: true,
@@ -81,16 +81,15 @@ module.exports = function (grunt) {
         watch: {
             less: {
                 files: 'assets/less/**/*.less',
-                tasks: 'less:development',
-                options: {
-                    nospawn: true
-                },
+                tasks: 'less:development'
+            },
+            php: {
+                files: 'includes/**/*.php',
+                tasks: ['phpcsfixer', 'phpunit']
             }
         }
     });
 
-    grunt.registerTask('default', [/*'composer:update:no-dev', */'bower', 'less:dev', 'watch']);
-    grunt.registerTask('server', ['php']);
-    grunt.registerTask('php', ['phpcsfixer', 'phpunit']);
+    grunt.registerTask('default', [/*'composer:update:no-dev', */'bower', 'less:dev', 'watch:less']);
     grunt.registerTask('dist', ['update_submodules', 'less:dist']);
 };
