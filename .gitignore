@@ -79,3 +79,8 @@ Desktop.ini
 assets/css/*
 !assets/css/yourls.min.css
 assets/less/*.css
+
+# Grunt
+node_modules
+__untyped__
+bower_components
