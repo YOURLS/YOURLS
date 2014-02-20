@@ -1,7 +1,7 @@
 module.exports = function (grunt) {
     'use strict';
 
-    var path = require('path')
+    var path = require('path');
 
     grunt.loadNpmTasks('grunt-php');
     grunt.loadNpmTasks('grunt-composer');
@@ -44,8 +44,8 @@ module.exports = function (grunt) {
                     targetDir: './assets',
                     layout: function (type, component) {
                         if (type == 'less') {
-                            return path.join(type, component)
-                        };
+                            return path.join(type, component);
+                        }
                         return type;
                     }
                 }
