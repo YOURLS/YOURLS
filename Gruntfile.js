@@ -28,12 +28,8 @@ module.exports = function (grunt) {
             },
             options: {
                 level: 'all',
-                fixers: [/*'indentation', */'linefeed', 'trailing_spaces',
-                    'unused_use', 'phpdoc_params',
-                    'short_tag', 'return', 'visibility',
-                    'php_closing_tag', 'extra_empty_lines',
-                    'include', 'psr0', 'elseif', 'eof_ending'
-                ]
+                fixers: ['-phpdoc_params', '-braces',
+                    '-function_declaration', '-controls_spaces']
             }
         },
         phpunit: {
@@ -47,7 +43,9 @@ module.exports = function (grunt) {
                 options: {
                     targetDir: './assets',
                     layout: function (type, component) {
-                        if (type == 'less') { return path.join(type, component) };
+                        if (type == 'less') {
+                            return path.join(type, component)
+                        };
                         return type;
                     }
                 }
@@ -90,6 +88,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', [/*'composer:update:no-dev', */'bower', 'less:dev', 'watch:less']);
+    grunt.registerTask('default', [/*'composer:update:no-dev', */'bower',
+        'less:dev', 'watch:less']);
     grunt.registerTask('dist', ['update_submodules', 'less:dist']);
 };
