@@ -85,7 +85,7 @@ module.exports = function (grunt) {
             },
             php: {
                 files: 'includes/**/*.php',
-                tasks: ['phpcsfixer', 'phpunit']
+                tasks: [/*'phpcsfixer', */'phpunit']
             }
         }
     });

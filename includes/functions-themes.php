@@ -502,8 +502,8 @@ function yourls_activate_theme( $theme ) {
  */
 function yourls_get_active_theme() {
 	global $ydb;
-	if( !property_exists( $ydb, 'theme' ) || !isset( $ydb->theme ) ) {
-		$ydb->theme = ( yourls_get_option( 'active_theme' ) ? yourls_get_option( 'active_theme' ) : '' );
+	if( !property_exists( $ydb, 'theme' ) || $ydb->theme == '' ) {
+		$ydb->theme = ( yourls_get_option( 'active_theme' ) ) ? yourls_get_option( 'active_theme' ) : '';
 		// Update option to save one query on next page load
 		yourls_update_option( 'active_theme', $ydb->theme );
 	}

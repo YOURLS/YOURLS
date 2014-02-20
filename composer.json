@@ -8,7 +8,6 @@
         "bitly"
     ],
     "homepage": "http://yourls.org",
-    "type": "project",
     "license": "MIT",
     "authors" : [
         {
