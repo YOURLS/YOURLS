@@ -28,8 +28,12 @@ module.exports = function (grunt) {
             },
             options: {
                 level: 'all',
-                fixers: ['-phpdoc_params', '-braces',
-                    '-function_declaration', '-controls_spaces']
+                fixers: [
+                    'indentation', 'linefeed', 'trailing_spaces',
+                    'unused_use', 'short_tag', 'return', 'visibility',
+                    'php_closing_tag', 'extra_empty_lines', 'include',
+                    'psr0', 'elseif', 'eof_ending'
+                ]
             }
         },
         phpunit: {
