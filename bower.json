@@ -11,7 +11,8 @@
   "dependencies": {
     "bootstrap": "*",
     "font-awesome": "*",
-    "flag-sprites": "*"
+    "flag-sprites": "*",
+    "bootstrap-social": "*" 
   },
   "exportsOverride": {
     "bootstrap": {
@@ -25,6 +26,9 @@
     "flag-sprites": {
       "less": "less/*.less",
       "img": "dist/img/*"
+    },
+    "bootstrap-social": {
+      "less": "*.less"
     }
   },
   "private": true
