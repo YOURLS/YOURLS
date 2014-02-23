@@ -98,28 +98,28 @@
     },
     {
         "name": "pomo/pomo",
-        "version": "v1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "1.2.1",
+        "version_normalized": "1.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/LeoColomb/pomo.git",
-            "reference": "d0516a81122697c0727734e8918ae5b57b0ddeb7"
+            "reference": "3f0cd0112d1a76c1a3c6b21e33f57a3e1211d032"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/d0516a81122697c0727734e8918ae5b57b0ddeb7",
-            "reference": "d0516a81122697c0727734e8918ae5b57b0ddeb7",
+            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/3f0cd0112d1a76c1a3c6b21e33f57a3e1211d032",
+            "reference": "3f0cd0112d1a76c1a3c6b21e33f57a3e1211d032",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2014-02-19 12:49:12",
+        "time": "2014-02-21 11:55:15",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
-                "POMO": "src/"
+            "psr-4": {
+                "POMO\\": "src/POMO"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
