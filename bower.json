@@ -9,12 +9,17 @@
   "description": "Your Own URL Shortener",
   "license": "MIT",
   "dependencies": {
+    "jquery": "*", 
     "bootstrap": "*",
     "font-awesome": "*",
     "flag-sprites": "*",
-    "bootstrap-social": "*" 
+    "bootstrap-social": "*",
+    "zeroclipboard": "*"
   },
   "exportsOverride": {
+    "jquery": {
+      "js": "dist/jquery.min.js"
+    },
     "bootstrap": {
       "less": "less/*.less",
       "js": "dist/js/*.min.js"
@@ -29,6 +34,9 @@
     },
     "bootstrap-social": {
       "less": "*.less"
+    },
+    "zeroclipboard": {
+      "js": ["ZeroClipboard.min.js", "ZeroClipboard.swf"]
     }
   },
   "private": true
