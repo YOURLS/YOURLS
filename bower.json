@@ -9,7 +9,7 @@
   "description": "Your Own URL Shortener",
   "license": "MIT",
   "dependencies": {
-    "jquery": "*", 
+    "jquery": "*",
     "bootstrap": "*",
     "font-awesome": "*",
     "flag-sprites": "*",
