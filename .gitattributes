@@ -8,6 +8,6 @@
 composer.json export-ignore
 bower.json export-ignore
 package.json export-ignore
-Gruntfile.json export-ignore
+Gruntfile.js export-ignore
 .travis.yml export-ignore
 .git* export-ignore
