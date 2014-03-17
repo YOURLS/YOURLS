@@ -1981,8 +1981,13 @@ function yourls_shutdown() {
  */
 function yourls_favicon( $echo = true ) {
 	static $favicon = null;
-	if( $favicon !== null )
-		return $favicon;
+    
+	if( $favicon !== null ) {
+        if( $echo ) {
+            echo $favicon;
+        }
+        return $favicon;    
+    }
 	
 	$custom = null;
 	// search for favicon.(gif|ico|png|jpg|svg)
@@ -1998,8 +2003,10 @@ function yourls_favicon( $echo = true ) {
 	} else {
 		$favicon = yourls_site_url( false ) . '/images/favicon.gif';
 	}
-	if( $echo )
+
+	if( $echo ) {
 		echo $favicon;
+    }
 	return $favicon;
 }
 
