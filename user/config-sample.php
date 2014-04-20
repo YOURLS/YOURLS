@@ -53,13 +53,10 @@ define( 'YOURLS_PRIVATE', true );
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
 define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
-/** Username(s) and password(s) allowed to access the site. Passwords either in plain text or as encrypted hashes
- ** YOURLS will auto encrypt plain text passwords in this file
- ** Read http://yourls.org/userpassword for more information */
-$yourls_user_passwords = array(
-	'username' => 'password',
-	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
-	);
+/** Username and password for initial setup. 
+ ** Other users can be added and your password changed through the interface.
+ ** http://yourls.org/userpassword needs to be updated to reflect this */
+$yourls_user_passwords = array('username' => 'password');
 
 /** Debug mode to output some internal information
  ** Default is false for live site. Enable when coding or before submitting a new issue */

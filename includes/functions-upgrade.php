@@ -27,6 +27,9 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		if( $oldsql < 482 )
 			yourls_upgrade_482();
 		
+		if( $oldsql < 483 )
+			yourls_upgrade_483();
+		
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
 		break;
@@ -50,6 +53,33 @@ function yourls_upgrade_482() {
 	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
 	$ydb->query( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
+}
+
+/**
+ * Upgrade r483 
+ *
+ */
+function yourls_upgrade_483() {
+	// Creating user table
+	global $ydb;
+	$table_url = YOURLS_DB_TABLE_USER;
+	$sql = 		
+		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_USER.'` ('.
+		'`user_id` int(11) NOT NULL auto_increment,'.
+		'`username` varchar(200) NOT NULL,'.
+		'`user_password` varchar(255) NOT NULL,'.
+		'PRIMARY KEY  (`user_id`),'.
+		'KEY `username` (`username`)'.
+		') AUTO_INCREMENT=1 ;';
+	$ydb->query( $sql );
+	echo "<p>Updating table structure. Please wait...</p>";
+	
+	// Initializes the user table
+	if( !yourls_initialize_user() ){
+		$error_msg[] = yourls__( 'Could not initialize user(s)' );
+	}else{
+		echo "<p>User table initialization successful.</p>";
+	}
 }
 
 /************************** 1.4.3 -> 1.5 **************************/
