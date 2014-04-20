@@ -6,12 +6,21 @@
  */
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
-	?>
-	<h1>
-		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
-	</h1>
-	<?php
+	if( YOURLS_SITE_LOGO == '' ){
+		?>
+		<h1>
+			<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
+			<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		</h1>
+		<?php
+	}else{
+		?>
+		<h1>
+			<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS">
+			<img src="<?php echo YOURLS_SITE_LOGO; ?>" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		</h1>
+		<?php	
+	}
 	yourls_do_action( 'html_logo' );
 }
 
