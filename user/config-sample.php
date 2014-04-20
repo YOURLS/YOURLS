@@ -31,6 +31,10 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** If you define it to "http://site.com", don't use "http://www.site.com" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://site.com' );
 
+/** YOURLS Site logo - displays in administrative dashboard 
+ ** If you leave this setting blank it will default to the YOURLS logo */
+define( 'YOURLS_SITE_LOGO', '' );
+
 /** Timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
