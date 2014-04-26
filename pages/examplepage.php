@@ -2,7 +2,7 @@
 
 // Make sure we're in YOURLS context
 if( !defined( 'YOURLS_ABSPATH' ) ) {
-	echo "Try using a URL without the /pages/";
+	echo "Try using a URL without the /pages/ part";
 	die();
 }
 
