@@ -517,8 +517,6 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	
 	// I didn't use KSES function kses_bad_protocol() because it doesn't work the way I liked (returns //blah from illegal://blah)
 
-	$url = substr( $url, 0, 1999 );
-	
 	return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
 }
 
