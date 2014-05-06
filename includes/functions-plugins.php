@@ -568,8 +568,8 @@ function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
 	$orderby = yourls_apply_filters( 'plugins_sort_callback', 'Plugin Name' );
 	$order   = yourls_apply_filters( 'plugins_sort_callback', 'ASC' );
 
-	$a = $plugin_a[$orderby];
-	$b = $plugin_b[$orderby];
+	$a = isset( $plugin_a[ $orderby ] ) ? $plugin_a[ $orderby ] : '';
+	$b = isset( $plugin_b[ $orderby ] ) ? $plugin_b[ $orderby ] : '';
 
 	if ( $a == $b )
 		return 0;
