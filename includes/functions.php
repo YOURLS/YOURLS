@@ -286,13 +286,15 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	} else {
 			
 		yourls_do_action( 'add_new_link_already_stored', $url, $keyword, $title );
+        
+        $shorturl = YOURLS_SITE .'/'. $url_exists->keyword;
 		
 		$return['status']   = 'fail';
 		$return['code']     = 'error:url';
 		$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-		$return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $strip_url ) );
+		$return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $strip_url ) ) . " (<a href='$shorturl'>$shorturl</a>)";
 		$return['title']    = $url_exists->title; 
-		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
+		$return['shorturl'] = $shorturl;
 	}
 	
 	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
