@@ -328,3 +328,6 @@ a.bookmarklet:hover {
 tr.plugin.active a{ font-weight:bolder;}
 body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
 tr:hover.plugin td.plugin_desc small{ visibility:visible;}
+#wrap h2{
+    word-break: break-all;
+}
