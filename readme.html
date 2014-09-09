@@ -373,42 +373,42 @@
 			<ul>
 				<li><code>YOURLS_DB_USER</code><br/>
 				your MySQL username<br/>
-				<em>Example:</em> <tt>'joe'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_USER', 'joe' );</tt></li>
 				<li><code>YOURLS_DB_PASS</code><br/>
 				your MySQL password<br/>
-				<em>Example:</em> <tt>'MySeCreTPaSsW0rd'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_PASS', 'MySeCreTPaSsW0rd' );</tt></li>
 				<li><code>YOURLS_DB_NAME</code>:
 				The database name<br/>
-				<em>Example:</em> <tt>'yourls'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_NAME', 'yourls' );</tt></li>
 				<li><code>YOURLS_DB_HOST</code><br/>
 				The database host<br/>
-				<em>Example:</em> <tt>'localhost'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_HOST', 'localhost' );</tt></li>
 				<li><code>YOURLS_DB_PREFIX</code><br/>
 				The name prefix for all the tables YOURLS will need<br/>
-				<em>Example:</em> <tt>'yourls_'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_PREFIX', 'yourls_' );</tt></li>
 			</ul>
 			
 			<h3 id="site">Site options</h3>
 			<ul>
 				<li><code>YOURLS_SITE</code><br/>
-				Your (short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
-				<em>Example:</em> <tt>'http://ozh.in'</tt></li>
+				Your (hopefully short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
+				<em>Example:</em> <tt>define( 'YOURLS_SITE', 'http://ozh.in' );</tt></li>
 				<li><code>YOURLS_HOURS_OFFSET</code><br/>
 				Timezone GMT offset<br/>
-				<em>Example:</em> <tt>'-5'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_HOURS_OFFSET', '-5' );</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
 				Private means the admin area will be protected with login/pass as defined below. See <a href="http://yourls.org/privatepublic">Private or Public</a> for more.<br/>
-				<em>Example:</em> <tt>'true'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_PRIVATE', 'true' );</tt></li>
 				<li><code>YOURLS_UNIQUE_URLS</code><br/>
 				Allow multiple short URLs for a same long URL<br/>
 				Set to <tt>true</tt> to allow only one pair of shortURL/longURL (default YOURLS behavior), or to <tt>false</tt> to allow creation of multiple short URLs pointing to the same long URL (as bit.ly does)<br/>
-				<em>Example:</em> <tt>'true'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_UNIQUE_URLS', 'true' );</tt></li>
 				<li><code>YOURLS_COOKIEKEY</code><br/>
 				A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: generate a unique one at <a href="http://yourls.org/cookie">http://yourls.org/cookie</a><br/>
-				<em>Example:</em> <tt>'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm' );</tt></li>
 				<li><code>yourls_user_passwords</code><br/>
 				A list of username(s) and password(s) allowed to access the site if private<br/>
-				Passwords can either be in plain text, or encrypted: see <a href="http://yourls.org/userpassword">http://yourls.org/userpassword</a> for more information<br/>
+				Passwords can either be in plain text, or encrypted: see <a href="http://yourls.org/userpassword">http://yourls.org/userpassword</a> for more information.<br/>
 				<em>Example:</em> <tt>'joe' => 'mypassword'</tt></li>
 			</ul>
 			
@@ -436,8 +436,12 @@
 			</ul>
 			
 			<h3 id="advanced">Advanced settings</h3>
-            <p>You can install YOURLS behind a firewall or a proxy: see <a href="http://yourls.org/proxy">Proxy Support</a></p>
-			<p>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</p>
+            <ul>
+                <li>YOURLS will look for the MySQL extension PDO, MySQLi or MySQL, in that order. If you want to force usage of one particular extension, add the following line to your <code>config.php</code>:<br/>
+                <tt>define( 'YOURLS_DB_DRIVER', 'mysqli' );</tt></li>
+                <li>You can install YOURLS behind a firewall or a proxy: see <a href="http://yourls.org/proxy">Proxy Support</a></li>
+                <li>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</li>
+            </ul>
 		</div>
 		
 		<!-- YOURLS plugins -->
