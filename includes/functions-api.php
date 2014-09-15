@@ -180,12 +180,14 @@ function yourls_api_expand( $shorturl ) {
 	$keyword = yourls_sanitize_string( $keyword );
 	
 	$longurl = yourls_get_keyword_longurl( $keyword );
+	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	
 	if( $longurl ) {
 		$return = array(
 			'keyword'   => $keyword,
 			'shorturl'  => YOURLS_SITE . "/$keyword",
 			'longurl'   => $longurl,
+			'title'	    => $title,
 			'simple'    => $longurl,
 			'message'   => 'success',
 			'statusCode' => 200,
