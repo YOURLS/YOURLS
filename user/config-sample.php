@@ -85,7 +85,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 
 /*
