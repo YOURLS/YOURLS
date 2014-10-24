@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>YOURLS: Your Own URL Shortener</title>
-	<link href='https://fonts.googleapis.com/css?family=Magra:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,700' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
 		/* Default Style */
 		body {
@@ -104,7 +104,7 @@
 		h1{margin:0px}
 		#Container h1 a {
 			display:block;
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 32px;
 			font-weight: 700;
 			color: #2A85B3;
@@ -122,7 +122,7 @@
 			text-decoration:underline;
 		}
 		h2 {
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 22px;
 			font-weight: 700;
 			color: #5b87b4;
@@ -134,7 +134,7 @@
 			color:#BFE0FE;
 		}
 		h3 {
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 18px;
 			font-weight: bold;
 			color: #73a4d6;
@@ -472,7 +472,7 @@
 			</ul>
 			
 			<h3 id="apiusage">Usage</h3>
-			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to URL encode parameters if via GET). These parameters are:</p>
+			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
 			<ul>
 				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://yourls.org/passwordlessapi">Passwordless API requests</a>)</li>
 				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links) or <tt>"db-stats"</tt> (get global link and click count)</li>
@@ -508,25 +508,80 @@
 					</ul>
 				</li>
 			</ul>
+            
+            <h3 id="apiexample">Sample requests</h3>
+            <p>Example of a <tt>GET</tt> request with Javascript (using jQuery) to shorten a URL</p>
+            <pre><tt>var api_url  = 'http://sho.rt/yourls-api.php';
+var response = $.get( api_url, {
+    username: "your_username",
+    password: "your_password",
+    action:   "shorturl",
+    format:   "json",
+    url:      "http://ozh.org/"
+    },
+    // callback function that will deal with the server response
+    function( data) {
+        // for instance, return short URL
+        return data.shorturl;
+    }
+);</tt></pre>
+            
+            <p>Example of a <tt>POST</tt> request with PHP to expand a short URL</p>
+            <pre><tt>&lt?php
+$username = 'your_username';
+$password = 'your_password';
+$api_url =  'http://sho.rt/yourls-api.php';
+
+// Init the CURL session
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $api_url);
+curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
+curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
+curl_setopt($ch, CURLOPT_POSTFIELDS, array(     // Data to POST
+        'shorturl' => 'ozh',
+        'format'   => 'json',
+        'action'   => 'expand',
+        'username' => $username,
+        'password' => $password
+    ));
+
+// Fetch and return content
+$data = curl_exec($ch);
+curl_close($ch);
+
+// Do something with the result. Here, we echo the long URL
+$data = json_decode( $data );
+echo $data->longurl;</tt></pre>
 			
-			<h3 id="apireturn">Sample return</h3>
+			<h3 id="apireturn">Sample returns</h3>
+            <p>Sample return in JSON format for the <code>shorturl</code> action</p>
+            <pre><tt>{
+  "url": {
+    "keyword": "ozh",
+    "url": "http:\/\/ozh.org",
+    "title": "Ozh RICHARD \u00ab ozh.org",
+    "date": "2014-10-24 16:01:39",
+    "ip": "127.0.0.1"
+  },
+  "status": "success",
+  "message": "http:\/\/ozh.org added to database",
+  "title": "Ozh RICHARD \u00ab ozh.org",
+  "shorturl": "http:\/\/sho.rt\/1f",
+  "statusCode": 200
+}</tt></pre>
+            
+            <p>Sample return in XML format for the <code>expand</code> action</p>
 			<pre><tt>&lt;result&gt;
-	&lt;url&gt;
-		&lt;keyword&gt;shorter&lt;/keyword&gt;
-		&lt;url&gt;http://somereallylongurlyouneedtoshrink.com/&lt;/url&gt;
-		&lt;title&gt;The Page Title&lt;/title&gt;
-		&lt;date&gt;2009-06-23 18:08:07&lt;/date&gt;
-		&lt;ip&gt;127.0.0.1&lt;/ip&gt;
-	&lt;/url&gt;
-	&lt;status&gt;success&lt;/status&gt;
-	&lt;message&gt;http://somereallylongurlyouneedtoshrink.com/ (ID: shorter) added to database&lt;/message&gt;
-	&lt;title&gt;The Page Title&lt;/title&gt;
-	&lt;shorturl&gt;http://yoursite.com/shorter&lt;/shorturl&gt;
-	&lt;statusCode&gt;200&lt;/statusCode&gt;
+    &lt;keyword&gt;ozh&lt;/keyword&gt;
+    &lt;shorturl&gt;http://sho.rt/ozh&lt;/shorturl&gt;
+    &lt;longurl&gt;http://ozh.org/&lt;/longurl&gt;
+    &lt;message&gt;success&lt;/message&gt;
+    &lt;statusCode&gt;200&lt;/statusCode&gt;
 &lt;/result&gt;</tt></pre>
 
 			<h3 id="apisample">Sample file</h3>
-			<p>There's a sample file included that serves as an example on how to play with the API</p>
+			<p>There's a sample PHP file included that serves as an example on how to play with the API</p>
 
 			<h3 id="expand_api">Expand the API</h3>
 			<p>You can easily implement custom API actions with a plugin. See the <a href="http://yourls.org/pluginlist">plugin list</a> for examples.</p>
