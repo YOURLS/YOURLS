@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>YOURLS: Your Own URL Shortener</title>
-	<link href='http://fonts.googleapis.com/css?family=Magra:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,700' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
 		/* Default Style */
 		body {
@@ -104,13 +104,13 @@
 		h1{margin:0px}
 		#Container h1 a {
 			display:block;
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 32px;
 			font-weight: 700;
 			color: #2A85B3;
 			margin-top:0px;
 			margin-bottom: 0px;
-			background:transparent url(http://yourls.org/images/yourls-logo.png) left 5px no-repeat;
+			background:transparent url(https://yourls.org/images/yourls-logo.png) left 5px no-repeat;
 			padding-top:15px;
 			height:80px;
 			padding-left:220px;
@@ -122,7 +122,7 @@
 			text-decoration:underline;
 		}
 		h2 {
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 22px;
 			font-weight: 700;
 			color: #5b87b4;
@@ -134,7 +134,7 @@
 			color:#BFE0FE;
 		}
 		h3 {
-			font-family: 'Magra', Verdana, Arial;
+			font-family: 'Fira Sans', Verdana, Arial;
 			font-size: 18px;
 			font-weight: bold;
 			color: #73a4d6;
@@ -231,7 +231,7 @@
 			border-bottom-left-radius: 30px;
 		}
 		#Copyright p a {
-			background:#fff url(http://yourls.org/images/favicon.gif) 2px center no-repeat;
+			background:#fff url(https://yourls.org/images/favicon.gif) 2px center no-repeat;
 			padding-left:20px;
 		}
 	</style>
@@ -308,10 +308,10 @@
 			
 			<div class="sshot">
 				<p>Main admin dashboard</p>
-				<img src="http://yourls.org/yourls-org-images/admin-dashboard.gif" />
+				<img src="https://yourls.org/yourls-org-images/admin-dashboard.gif" />
 				
 				<p>Stats for each short URL</p>
-				<img src="http://yourls.org/yourls-org-images/stats-anim.gif" />
+				<img src="https://yourls.org/yourls-org-images/stats-anim.gif" />
 				
 				<p>See a live example of YOURLS stats on <a href="http://yourls.org/cookie+">http://yourls.org/cookie+</a></p>
 			</div>
@@ -373,42 +373,42 @@
 			<ul>
 				<li><code>YOURLS_DB_USER</code><br/>
 				your MySQL username<br/>
-				<em>Example:</em> <tt>'joe'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_USER', 'joe' );</tt></li>
 				<li><code>YOURLS_DB_PASS</code><br/>
 				your MySQL password<br/>
-				<em>Example:</em> <tt>'MySeCreTPaSsW0rd'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_PASS', 'MySeCreTPaSsW0rd' );</tt></li>
 				<li><code>YOURLS_DB_NAME</code>:
 				The database name<br/>
-				<em>Example:</em> <tt>'yourls'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_NAME', 'yourls' );</tt></li>
 				<li><code>YOURLS_DB_HOST</code><br/>
 				The database host<br/>
-				<em>Example:</em> <tt>'localhost'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_HOST', 'localhost' );</tt></li>
 				<li><code>YOURLS_DB_PREFIX</code><br/>
 				The name prefix for all the tables YOURLS will need<br/>
-				<em>Example:</em> <tt>'yourls_'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_DB_PREFIX', 'yourls_' );</tt></li>
 			</ul>
 			
 			<h3 id="site">Site options</h3>
 			<ul>
 				<li><code>YOURLS_SITE</code><br/>
-				Your (short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
-				<em>Example:</em> <tt>'http://ozh.in'</tt></li>
+				Your (hopefully short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
+				<em>Example:</em> <tt>define( 'YOURLS_SITE', 'http://ozh.in' );</tt></li>
 				<li><code>YOURLS_HOURS_OFFSET</code><br/>
 				Timezone GMT offset<br/>
-				<em>Example:</em> <tt>'-5'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_HOURS_OFFSET', '-5' );</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
 				Private means the admin area will be protected with login/pass as defined below. See <a href="http://yourls.org/privatepublic">Private or Public</a> for more.<br/>
-				<em>Example:</em> <tt>'true'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_PRIVATE', 'true' );</tt></li>
 				<li><code>YOURLS_UNIQUE_URLS</code><br/>
 				Allow multiple short URLs for a same long URL<br/>
 				Set to <tt>true</tt> to allow only one pair of shortURL/longURL (default YOURLS behavior), or to <tt>false</tt> to allow creation of multiple short URLs pointing to the same long URL (as bit.ly does)<br/>
-				<em>Example:</em> <tt>'true'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_UNIQUE_URLS', 'true' );</tt></li>
 				<li><code>YOURLS_COOKIEKEY</code><br/>
 				A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: generate a unique one at <a href="http://yourls.org/cookie">http://yourls.org/cookie</a><br/>
-				<em>Example:</em> <tt>'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm'</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm' );</tt></li>
 				<li><code>yourls_user_passwords</code><br/>
 				A list of username(s) and password(s) allowed to access the site if private<br/>
-				Passwords can either be in plain text, or encrypted: see <a href="http://yourls.org/userpassword">http://yourls.org/userpassword</a> for more information<br/>
+				Passwords can either be in plain text, or encrypted: see <a href="http://yourls.org/userpassword">http://yourls.org/userpassword</a> for more information.<br/>
 				<em>Example:</em> <tt>'joe' => 'mypassword'</tt></li>
 			</ul>
 			
@@ -418,7 +418,7 @@
 				URL shortening method: base <tt>36</tt> or <tt>62</tt>. See <a onclick="toggle(this);" href="#FAQ">FAQ</a> for more explanations</li>
 				<li><code>yourls_reserved_URL</code><br/>
 				A list of reserved keywords that won't be used as short URLs. Define here negative, unwanted or potentially misleading keywords<br/>
-				<em>Example:</em> <tt>'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay'</tt></li>
+				<em>Example:</em> <tt>'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick'</tt></li>
 			</ul>
 			
 			<h3 id="optional">Optional settings</h3>
@@ -436,8 +436,12 @@
 			</ul>
 			
 			<h3 id="advanced">Advanced settings</h3>
-            <p>You can install YOURLS behind a firewall or a proxy: see <a href="http://yourls.org/proxy">Proxy Support</a></p>
-			<p>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</p>
+            <ul>
+                <li>YOURLS will look for the MySQL extension PDO, MySQLi or MySQL, in that order. If you want to force usage of one particular extension, add the following line to your <code>config.php</code>:<br/>
+                <tt>define( 'YOURLS_DB_DRIVER', 'mysqli' );</tt></li>
+                <li>You can install YOURLS behind a firewall or a proxy: see <a href="http://yourls.org/proxy">Proxy Support</a></li>
+                <li>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</li>
+            </ul>
 		</div>
 		
 		<!-- YOURLS plugins -->
@@ -468,7 +472,7 @@
 			</ul>
 			
 			<h3 id="apiusage">Usage</h3>
-			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to URL encode parameters if via GET). These parameters are:</p>
+			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
 			<ul>
 				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://yourls.org/passwordlessapi">Passwordless API requests</a>)</li>
 				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links) or <tt>"db-stats"</tt> (get global link and click count)</li>
@@ -504,25 +508,80 @@
 					</ul>
 				</li>
 			</ul>
+            
+            <h3 id="apiexample">Sample requests</h3>
+            <p>Example of a <tt>GET</tt> request with Javascript (using jQuery) to shorten a URL</p>
+            <pre><tt>var api_url  = 'http://sho.rt/yourls-api.php';
+var response = $.get( api_url, {
+    username: "your_username",
+    password: "your_password",
+    action:   "shorturl",
+    format:   "json",
+    url:      "http://ozh.org/"
+    },
+    // callback function that will deal with the server response
+    function( data) {
+        // for instance, return short URL
+        return data.shorturl;
+    }
+);</tt></pre>
+            
+            <p>Example of a <tt>POST</tt> request with PHP to expand a short URL</p>
+            <pre><tt>&lt?php
+$username = 'your_username';
+$password = 'your_password';
+$api_url =  'http://sho.rt/yourls-api.php';
+
+// Init the CURL session
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $api_url);
+curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
+curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
+curl_setopt($ch, CURLOPT_POSTFIELDS, array(     // Data to POST
+        'shorturl' => 'ozh',
+        'format'   => 'json',
+        'action'   => 'expand',
+        'username' => $username,
+        'password' => $password
+    ));
+
+// Fetch and return content
+$data = curl_exec($ch);
+curl_close($ch);
+
+// Do something with the result. Here, we echo the long URL
+$data = json_decode( $data );
+echo $data->longurl;</tt></pre>
 			
-			<h3 id="apireturn">Sample return</h3>
+			<h3 id="apireturn">Sample returns</h3>
+            <p>Sample return in JSON format for the <code>shorturl</code> action</p>
+            <pre><tt>{
+  "url": {
+    "keyword": "ozh",
+    "url": "http:\/\/ozh.org",
+    "title": "Ozh RICHARD \u00ab ozh.org",
+    "date": "2014-10-24 16:01:39",
+    "ip": "127.0.0.1"
+  },
+  "status": "success",
+  "message": "http:\/\/ozh.org added to database",
+  "title": "Ozh RICHARD \u00ab ozh.org",
+  "shorturl": "http:\/\/sho.rt\/1f",
+  "statusCode": 200
+}</tt></pre>
+            
+            <p>Sample return in XML format for the <code>expand</code> action</p>
 			<pre><tt>&lt;result&gt;
-	&lt;url&gt;
-		&lt;keyword&gt;shorter&lt;/keyword&gt;
-		&lt;url&gt;http://somereallylongurlyouneedtoshrink.com/&lt;/url&gt;
-		&lt;title&gt;The Page Title&lt;/title&gt;
-		&lt;date&gt;2009-06-23 18:08:07&lt;/date&gt;
-		&lt;ip&gt;127.0.0.1&lt;/ip&gt;
-	&lt;/url&gt;
-	&lt;status&gt;success&lt;/status&gt;
-	&lt;message&gt;http://somereallylongurlyouneedtoshrink.com/ (ID: shorter) added to database&lt;/message&gt;
-	&lt;title&gt;The Page Title&lt;/title&gt;
-	&lt;shorturl&gt;http://yoursite.com/shorter&lt;/shorturl&gt;
-	&lt;statusCode&gt;200&lt;/statusCode&gt;
+    &lt;keyword&gt;ozh&lt;/keyword&gt;
+    &lt;shorturl&gt;http://sho.rt/ozh&lt;/shorturl&gt;
+    &lt;longurl&gt;http://ozh.org/&lt;/longurl&gt;
+    &lt;message&gt;success&lt;/message&gt;
+    &lt;statusCode&gt;200&lt;/statusCode&gt;
 &lt;/result&gt;</tt></pre>
 
 			<h3 id="apisample">Sample file</h3>
-			<p>There's a sample file included that serves as an example on how to play with the API</p>
+			<p>There's a sample PHP file included that serves as an example on how to play with the API</p>
 
 			<h3 id="expand_api">Expand the API</h3>
 			<p>You can easily implement custom API actions with a plugin. See the <a href="http://yourls.org/pluginlist">plugin list</a> for examples.</p>
@@ -696,7 +755,7 @@
 				<li id="android">Android: <a href="https://play.google.com/store/apps/details?id=com.mndroid.apps.urly">URLy</a> and <a href="https://play.google.com/store/apps/details?id=de.keineantwort.android.urlshortener">URL Shortener</a><br/>
 				Android apps that plays nice with YOURLS</li>
 
-				<li id="iphone">iOS: <a href="https://itunes.apple.com/us/app/shorttail-for-yourls/id748523913?mt=8">ShortTail for YOURLS</a>, <a href="http://itunes.apple.com/us/app/clicklytics-track-clicks-on/id444008024?mt=8">Clicklytics</a> and <a href="https://itunes.apple.com/us/app/myyourls/id661934890?mt=8">myYOURLS</a><br/>
+				<li id="iphone">iOS: <a href="http://shorttailapp.com/">ShortTail for YOURLS</a>, <a href="http://itunes.apple.com/us/app/clicklytics-track-clicks-on/id444008024?mt=8">Clicklytics</a> and <a href="https://itunes.apple.com/us/app/myyourls/id661934890?mt=8">myYOURLS</a><br/>
 				Apps to use YOURLS on iPhones and iPads</li>
 
 				<li id="chrome"><a href="https://github.com/ukoms/Chrourls">Chrourls</a><br/>

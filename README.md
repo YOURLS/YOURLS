@@ -2,7 +2,7 @@
 [YOURLS](http://yourls.org) — [![Build Status](https://travis-ci.org/YOURLS/YOURLS.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS)
 ========
 
-**YOURLS** is a set of PHP scripts that will allow you to run **Y**our **O**wn **URL** **S**hortener. You'll have full control over your data, detailed stats, analytics, plugins, and more. It's free.
+**YOURLS** is a set of PHP scripts that will allow you to run <strong>Y</strong>our <strong>O</strong>wn <strong>URL</strong> <strong>S</strong>hortener. You'll have full control over your data, detailed stats, analytics, plugins, and more. It's free.
 
 
 Quick Start

@@ -402,7 +402,7 @@ function yourls_store_cookie( $user = null ) {
 	if ( $domain == 'localhost' ) 
 		$domain = '';
    
-	if ( !headers_sent() ) {
+	if ( !headers_sent( $filename, $linenum ) ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
 			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
@@ -412,6 +412,7 @@ function yourls_store_cookie( $user = null ) {
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
 		yourls_do_action( 'setcookie_failed', $user );
+        yourls_debug_log( "Could not store cookie: headers already sent in $filename on line $linenum" );
 	}
 }
 

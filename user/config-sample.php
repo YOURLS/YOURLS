@@ -1,6 +1,9 @@
 <?php
 /* This is a sample config file.
  * Edit this file with your own settings and save it as "config.php"
+ *
+ * IMPORTANT: edit and save this file as plain ASCII text, using a text editor, for instance TextEdit on Mac OS or
+ * Notepad on Windows. Make sure there is no character before the opening <?php at the beginning of this file.
  */
 
 /*
@@ -82,7 +85,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 
 /*

@@ -176,7 +176,7 @@ function zebra_table() {
 
 // Ready to add another URL
 function add_link_reset() {
-	$('#add-url').val('http://').focus();
+	$('#add-url').val('').focus();
 	$('#add-keyword').val('');
 }
 
