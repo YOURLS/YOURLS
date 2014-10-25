@@ -928,3 +928,24 @@ function yourls_get_search_text() {
 	
 	return htmlspecialchars( trim( $search ) );
 }
+
+/**
+ * Display or return HTML for a bookmarklet link
+ *
+ * @since 1.7.1
+ * @param string $href    bookmarklet link (presumably minified code with "javascript:" scheme)
+ * @param string $anchor  link anchor
+ * @param bool   $echo    true to display, false to return the HTML
+ * @return string         the HTML for a bookmarklet link
+ */
+function yourls_bookmarklet_link( $href, $anchor, $echo = true ) {
+    $alert = yourls_esc_attr__( 'Drag to your toolbar!' );
+    $link = <<<LINK
+    <a href="$href" class="bookmarklet" onclick="alert('$alert');return false;">$anchor</a>
+LINK;
+    
+    if( $echo )
+        echo $link;
+    return $link;
+}
+
