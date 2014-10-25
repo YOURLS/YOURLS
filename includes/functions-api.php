@@ -186,6 +186,7 @@ function yourls_api_expand( $shorturl ) {
 			'keyword'   => $keyword,
 			'shorturl'  => YOURLS_SITE . "/$keyword",
 			'longurl'   => $longurl,
+            'title'     => yourls_get_keyword_title( $keyword ),
 			'simple'    => $longurl,
 			'message'   => 'success',
 			'statusCode' => 200,
