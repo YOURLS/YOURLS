@@ -31,10 +31,12 @@ yourls_html_menu();
 		?></p>
 		
 		<h3><?php yourls_e( 'The Bookmarklets' ); ?></h3>
+        
+        <?php $base_bookmarklet = yourls_admin_url( 'index.php' ); ?>
 		
 		<p><?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
-		
-		<table class="tblSorter" cellpadding="0" cellspacing="1">
+        
+        <table class="tblSorter" cellpadding="0" cellspacing="1">
 			<thead>
 			<tr>
 				<td>&nbsp;</td>
@@ -45,34 +47,235 @@ yourls_html_menu();
 			<tbody>
 			<tr>
 				<th class="header"><?php yourls_e( 'Simple' ); ?></th>
-				<td><a href="javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo yourls_admin_url( 'index.php' ); ?>',l=d.location.href,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Shorten' ); ?></a></td>
-				<td><a href="javascript:(function(){var%20d=document,w=window,sc=d.createElement('script'),l=d.location.href,enc=encodeURIComponent,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);w.yourls_callback=function(r){if(r.short_url){prompt(r.message,r.short_url);}else{alert('An%20error%20occured:%20'+r.message);}};sc.src='<?php echo yourls_admin_url( 'index.php' ); ?>'+p+'&jsonp=yourls';void(d.body.appendChild(sc));})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Instant Shorten' ); ?></a></td>
-			</tr>
+
+				<td>
+                <?php $js_code = <<<STANDARD_SIMPLE
+                // Simple Standard Bookmarklet (new page, no keyword asked)
+                var d   = document,
+                    w   = window,
+                    enc = encodeURIComponent,
+                    e   = w.getSelection,
+                    k   = d.getSelection,
+                    x   = d.selection,
+                    s   = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+                    s2  = ((s.toString() == '') ? s : enc(s)),
+                    f   = '$base_bookmarklet',
+                    l   = d.location.href,
+                    ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+                    ur  = l.split(new RegExp(ups))[1],
+                    ups = ups.split(/\:/),
+                    p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2,
+                    u   = f + p;
+                try {
+                    throw ('ozhismygod');
+                } catch (z) {
+                    a = function () {
+                        if (!w.open(u)) l.href = u;
+                    };
+                    if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+                    else a();
+                }
+                void(0);
+STANDARD_SIMPLE;
+                yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Shorten' ) );
+                ?>
+                </td>
+
+				<td>
+                <?php $js_code = <<<POPUP_SIMPLE
+                // Simple Popup (in-page popup dialog, no keyword asked)
+                var d   = document,
+                    sc  = d.createElement('script'),
+                    l   = d.location.href,
+                    enc = encodeURIComponent,
+                    ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+                    ur  = l.split(new RegExp(ups))[1],
+                    ups = ups.split(/\:/),
+                    p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);
+                window.yourls_callback = function (r) {
+                    if (r.short_url) {
+                        prompt(r.message, r.short_url);
+                    } else {
+                        alert('An error occured: ' + r.message);
+                    }
+                };
+                sc.src = '$base_bookmarklet' + p + '&jsonp=yourls';
+                void(d.body.appendChild(sc));
+POPUP_SIMPLE;
+                yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Instant Shorten' ) );
+                ?>
+                </td>
+
+            </tr>
 			<tr>
 				<th class="header"><?php yourls_e( 'Custom Keyword' ); ?></th>
-				<td><a href="javascript:(function(){var%20d=document,enc=encodeURIComponent,e=window.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo yourls_admin_url( 'index.php' ); ?>',l=d.location.href,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),k=prompt('Custom%20URL'),k2=(k?'&k='+k:''),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2+k2,u=f+p;if(k!=null){try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u))l=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)}})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Custom shorten' ); ?></a></td>
-				<td><a href="javascript:(function(){var%20d=document,l=d.location.href,k=prompt('Custom%20URL'),enc=encodeURIComponent,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);sc=d.createElement('script');if(k!=null){window.yourls_callback=function(r){if(r.short_url){prompt(r.message,r.short_url);}else{alert('An%20error%20occured:%20'+r.message);}};sc.src='<?php echo yourls_admin_url( 'index.php' ); ?>'+p+'&k='+k+'&jsonp=yourls';void(d.body.appendChild(sc));}})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'Instant Custom Shorten' ); ?></a></td>
+
+				<td>
+                <?php $js_code = <<<CUSTOM_STANDARD
+                // Custom Standard (new page, prompt for a keyword)
+                var d   = document,
+                    enc = encodeURIComponent,
+                    w   = window,
+                    e   = w.getSelection,
+                    k   = d.getSelection,
+                    x   = d.selection,
+                    s   = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+                    s2  = ((s.toString() == '') ? s : enc(s)),
+                    f   = '$base_bookmarklet',
+                    l   = d.location.href,
+                    ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+                    ur  = l.split(new RegExp(ups))[1],
+                    ups = ups.split(/\:/),
+                    k   = prompt("Custom URL"),
+                    k2  = (k ? '&k=' + k : ""),
+                    p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2 + k2,
+                    u   = f + p;
+                if (k != null) {
+                    try {
+                        throw ('ozhismygod');
+                    } catch (z) {
+                        a = function () {
+                            if (!w.open(u)) l = u;
+                        };
+                        if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+                        else a();
+                    }
+                    void(0)
+                }
+CUSTOM_STANDARD;
+                yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Custom shorten' ) );
+                ?>
+                </td>
+				
+                <td>
+                <?php $js_code = <<<CUSTOM_POPUP
+                // Custom Popup (prompt for a keyword + on-page popup)
+                var d   = document,
+                    l   = d.location.href,
+                    k   = prompt('Custom URL'),
+                    enc = encodeURIComponent,
+                    ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+                    ur  = l.split(new RegExp(ups))[1],
+                    ups = ups.split(/\:/),
+                    p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);
+                    sc  = d.createElement('script');
+                if (k != null) {
+                    window.yourls_callback = function (r) {
+                        if (r.short_url) {
+                            prompt(r.message, r.short_url);
+                        } else {
+                            alert('An error occured: ' + r.message);
+                        }
+                    };
+                    sc.src = '$base_bookmarklet' + p + '&k=' + k + '&jsonp=yourls';
+                    void(d.body.appendChild(sc));
+                }
+CUSTOM_POPUP;
+                yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Instant Custom Shorten' ) );
+                ?>
+                </td>
+                
 			</tr>
 			</tbody>
 		</table>
-		
+        
+
 		<h3><?php yourls_e( 'Social Bookmarklets' ); ?></h3>
 		
 		<p><?php yourls_e( 'Create a short URL and share it on social networks, all in one click!' ); ?> 	
 		<?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
 
 		<p><?php yourls_e( 'Shorten and share:' ); ?></p>
+        
+        <p>
+        <?php $js_code = <<<FACEBOOK
+        // Share on Facebook 
+        var d   = document,
+            enc = encodeURIComponent,
+            f   = '$base_bookmarklet',
+            l   = d.location.href,
+            ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+            ur  = l.split(new RegExp(ups))[1],
+            ups = ups.split(/\:/),
+            p   = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur=' + enc(ur) + '&t=' + enc(d.title) + '&share=facebook',
+            u   = f + p;
+        try {
+            throw ('ozhismygod');
+        } catch (z) {
+            a = function () {
+                if (!window.open(u,'Share','width=500,height=340,left=100','_blank')) l.href = u;
+            };
+            if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+            else a();
+        }
+        void(0);
+FACEBOOK;
+        yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Facebook' ) );
+        ?>
+        
+        <?php $js_code = <<<TWITTER
+        // Share on Twitter
+        var d = document,
+            w = window,
+            enc = encodeURIComponent,
+            e = w.getSelection,
+            k = d.getSelection,
+            x = d.selection,
+            s = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+            s2 = ((s.toString() == '') ? s : '%20%22' + enc(s) + '%22'),
+            f = '$base_bookmarklet',
+            l = d.location.href,
+            ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+            ur = l.split(new RegExp(ups))[1],
+            ups = ups.split(/\:/),
+            p = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur='+enc(ur) + '&t=' + enc(d.title) + s2 + '&share=twitter',
+            u = f + p;
+        try {
+            throw ('ozhismygod');
+        } catch (z) {
+            a = function () {
+                if (!w.open(u,'Share','width=780,height=265,left=100','_blank')) l = u;
+            };
+            if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+            else a();
+        }
+        void(0);
+TWITTER;
+        yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Twitter' ) );
+        ?>
 		
-		<p>
-		
-		<a href="javascript:(function(){var%20d=document,enc=encodeURIComponent,share='facebook',f='<?php echo yourls_admin_url( 'index.php' ); ?>',l=d.location.href,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0];var%20ur=l.split(new%20RegExp(ups))[1];var%20ups=ups.split(/\:/);p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!window.open(u,'Share','width=500,height=340,left=100','_blank'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'YOURLS &amp; Facebook' ); ?></a>
-
-		<a href="javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='twitter',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='<?php echo yourls_admin_url( 'index.php' ); ?>',l=d.location.href,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=780,height=265,left=100','_blank'))l=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'YOURLS &amp; Twitter' ); ?></a>
-		
-		<a href="javascript:(function(){var%20d=document,w=window,enc=encodeURIComponent,share='tumblr',e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:'%20%22'+enc(s)+'%22'),f='<?php echo yourls_admin_url( 'index.php' ); ?>',l=d.location.href,ups=l.match(/^[a-zA-Z0-9\+\.-]+:(\/\/)?/)[0],ur=l.split(new%20RegExp(ups))[1],ups=ups.split(/\:/),p='?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2+'&share='+share,u=f+p;try{throw('ozhismygod');}catch(z){a=function(){if(!w.open(u,'Share','width=450,height=450,left=430','_blank'))l=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0);})();" class="bookmarklet" onclick="alert('<?php echo yourls_esc_attr__( 'Drag to your toolbar!' ); ?>');return false;"><?php yourls_e( 'YOURLS &amp; Tumblr' ); ?></a>
-		
-		<?php // Bookmarklets, unformatted for readability: https://gist.github.com/ozh/5495656 ?>
-		
+        <?php $js_code = <<<TUMBLR
+        // Share on Tumlr
+        var d = document,
+            w = window,
+            enc = encodeURIComponent,
+            share = 'tumblr',
+            e = w.getSelection,
+            k = d.getSelection,
+            x = d.selection,
+            s = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+            s2 = ((s.toString() == '') ? s : '%20%22' + enc(s) + '%22'),
+            f = '$base_bookmarklet',
+            l = d.location.href,
+            ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+            ur = l.split(new RegExp(ups))[1],
+            ups = ups.split(/\:/),
+            p = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur='+enc(ur) + '&t=' + enc(d.title) + '&s=' + s2 + '&share=tumblr',
+            u = f + p;
+        try {
+            throw ('ozhismygod');
+        } catch (z) {
+            a = function () {
+                if (!w.open(u,'Share','width=450,height=450,left=430','_blank')) l = u;
+            };
+            if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+            else a();
+        }
+        void(0);
+TUMBLR;
+        yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Tumblr' ) );
+        ?>
+        
 		<?php yourls_do_action( 'social_bookmarklet_buttons_after' ); ?>
 		
 		</p>
@@ -98,10 +301,8 @@ yourls_html_menu();
 		yourls_e( "If you're worried about sending your credentials into the wild, you can also make API calls without using your login or your password, using a secret signature token." );
 		?></p>
 
-		<p><?php
-		yourls_se( 'Your secret signature token: <strong><code>%s</code></strong>', yourls_auth_signature() );
-		yourls_e( "(It's a secret. Keep it secret) ");
-		?></p>
+		<p><?php yourls_se( 'Your secret signature token: <strong><code>%s</code></strong>', yourls_auth_signature() ); ?>
+        <?php yourls_e( "(It's a secret. Keep it secret) "); ?></p>
 
 		<p><?php yourls_e( 'This signature token can only be used with the API, not with the admin interface.' ); ?></p>
 		

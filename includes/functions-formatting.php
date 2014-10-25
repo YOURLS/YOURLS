@@ -621,3 +621,21 @@ function yourls_rawurldecode_while_encoded( $string ) {
 	}
 	return $string;
 }
+
+/**
+ * Converts readable Javascript code into a valid bookmarklet link
+ *
+ * Uses https://github.com/ozh/bookmarkletgen
+ *
+ * @since 1.7.1
+ * @param  string $code  Javascript code
+ * @return string        Bookmarklet link
+ */
+function yourls_make_bookmarklet( $code ) {
+    if ( !class_exists( 'BookmarkletGen', false ) ) {
+        require_once YOURLS_INC . '/BookmarkletGen/BookmarkletGen.php';
+    }
+
+    $book = new BookmarkletGen;
+    return $book->crunch( $code );
+}
