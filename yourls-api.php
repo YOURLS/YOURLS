@@ -24,7 +24,7 @@ $api_actions = array(
 	'expand'    => 'yourls_api_action_expand',
 	'version'   => 'yourls_api_action_version',
 );
-$api_actions = yourls_apply_filters( 'api_actions', $api_actions );
+$api_actions = yourls_apply_filter( 'api_actions', $api_actions );
 
 // Register API actions
 foreach( (array) $api_actions as $_action => $_callback ) {
