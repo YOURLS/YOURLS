@@ -47,3 +47,22 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	return yourls_http_get_body( $url );
 }
 
+/**
+ * Alias for yourls_apply_filter because I never remember if it's _filter or _filters
+ *
+ * At first I thought it made semantically more sense but thinking about it, I was wrong. It's one filter.
+ * There may be several function hooked into it, but it still the same one filter.
+ *
+ * @since 1.6
+ * @deprecated 1.7.1
+ *
+ * @param string $hook the name of the YOURLS element or action
+ * @param mixed $value the value of the element before filtering
+ * @return mixed
+ */
+function yourls_apply_filters( $hook, $value = '' ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_apply_filter' );
+	return yourls_apply_filter( $hook, $value );
+}
+
+

@@ -60,7 +60,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 		header( 'Pragma: no-cache' );
-		yourls_content_type_header( yourls_apply_filters( 'html_head_content-type', 'text/html' ) );
+		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
 	
@@ -83,7 +83,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <head>
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filters( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
+	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filter( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
     <meta name="referrer" content="always" />
@@ -145,7 +145,7 @@ function yourls_html_footer() {
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
 		$footer .= ' &ndash; '.$num_queries;
-		echo yourls_apply_filters( 'html_footer_text', $footer );
+		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
 	</p></div>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
@@ -340,7 +340,7 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
 		$html .= ">$text</option>\n";
 	}
 	$html .= "</select>\n";
-	$html  = yourls_apply_filters( 'html_select', $html, $name, $options, $selected, $display );
+	$html  = yourls_apply_filter( 'html_select', $html, $name, $options, $selected, $display );
 	if( $display )
 		echo $html;
 	return $html;
@@ -537,7 +537,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$protocol_warning = '';
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
-		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
+		$protocol_warning = yourls_apply_filter( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
 	// Row cells: the array
 	$cells = array(
@@ -839,7 +839,7 @@ function yourls_html_language_attributes() {
 	
 	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
 	
-	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
+	$doctype = yourls_apply_filter( 'html_language_attributes_doctype', 'html' );
 	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
 	if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
 		if( $doctype == 'xhtml' ) {
@@ -850,7 +850,7 @@ function yourls_html_language_attributes() {
 	}
 
 	$output = implode( ' ', $attributes );
-	$output = yourls_apply_filters( 'html_language_attributes', $output );
+	$output = yourls_apply_filter( 'html_language_attributes', $output );
 	echo $output;
 }
 
@@ -899,7 +899,7 @@ function yourls_new_core_version_notice() {
  */
 function yourls_content_type_header( $type ) {
 	if( !headers_sent() ) {
-		$charset = yourls_apply_filters( 'content_type_header_charset', 'utf-8' );
+		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
 		header( "Content-Type: $type; charset=$charset" );
 		return true;
 	}

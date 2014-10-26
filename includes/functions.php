@@ -2142,7 +2142,7 @@ function yourls_get_relative_url( $url, $strict = true ) {
  * @since 1.6
  * @uses yourls_do_action() Calls 'deprecated_function' and passes the function name, what to use instead,
  *   and the version the function was deprecated in.
- * @uses yourls_apply_filters() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
+ * @uses yourls_apply_filter() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
  *   trigger or false to not trigger error.
  *
  * @param string $function The function that was called
@@ -2154,7 +2154,7 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 	yourls_do_action( 'deprecated_function', $function, $replacement, $version );
 
 	// Allow plugin to filter the output error trigger
-	if ( YOURLS_DEBUG && yourls_apply_filters( 'deprecated_function_trigger_error', true ) ) {
+	if ( YOURLS_DEBUG && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
 		if ( ! is_null( $replacement ) )
 			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
 		else

@@ -29,7 +29,7 @@ require_once dirname(__FILE__) . '/pomo/translations.php';
  * always be filtered using the 'get_locale' hook.
  *
  * @since 1.6
- * @uses yourls_apply_filters() Calls 'get_locale' hook on locale value.
+ * @uses yourls_apply_filter() Calls 'get_locale' hook on locale value.
  * @uses $yourls_locale Gets the locale stored in the global.
  *
  * @return string The locale of the blog or from the 'get_locale' hook.
@@ -46,7 +46,7 @@ function yourls_get_locale() {
     if ( !$yourls_locale )
         $yourls_locale = '';
 
-	return yourls_apply_filters( 'get_locale', $yourls_locale );
+	return yourls_apply_filter( 'get_locale', $yourls_locale );
 }
 
 /**
@@ -55,7 +55,7 @@ function yourls_get_locale() {
  *
  * @see yourls__() Don't use yourls_translate() directly, use yourls__()
  * @since 1.6
- * @uses yourls_apply_filters() Calls 'translate' on domain translated text
+ * @uses yourls_apply_filter() Calls 'translate' on domain translated text
  *		with the untranslated text as second parameter.
  *
  * @param string $text Text to translate.
@@ -64,7 +64,7 @@ function yourls_get_locale() {
  */
 function yourls_translate( $text, $domain = 'default' ) {
 	$translations = yourls_get_translations_for_domain( $domain );
-	return yourls_apply_filters( 'translate', $translations->translate( $text ), $text, $domain );
+	return yourls_apply_filter( 'translate', $translations->translate( $text ), $text, $domain );
 }
 
 /**
@@ -85,7 +85,7 @@ function yourls_translate( $text, $domain = 'default' ) {
  */
 function yourls_translate_with_context( $text, $context, $domain = 'default' ) {
 	$translations = yourls_get_translations_for_domain( $domain );
-	return yourls_apply_filters( 'translate_with_context', $translations->translate( $text, $context ), $text, $context, $domain );
+	return yourls_apply_filter( 'translate_with_context', $translations->translate( $text, $context ), $text, $context, $domain );
 }
 
 /**
@@ -326,7 +326,7 @@ function yourls_esc_html_x( $single, $context, $domain = 'default' ) {
  *
  * @since 1.6
  * @uses $yourls_l10n Gets list of domain translated string (gettext_reader) objects
- * @uses yourls_apply_filters() Calls 'translate_n' hook on domains text returned,
+ * @uses yourls_apply_filter() Calls 'translate_n' hook on domains text returned,
  *		along with $single, $plural, and $number parameters. Expected to return string.
  *
  * @param string $single The text that will be used if $number is 1
@@ -338,7 +338,7 @@ function yourls_esc_html_x( $single, $context, $domain = 'default' ) {
 function yourls_n( $single, $plural, $number, $domain = 'default' ) {
 	$translations = yourls_get_translations_for_domain( $domain );
 	$translation = $translations->translate_plural( $single, $plural, $number );
-	return yourls_apply_filters( 'translate_n', $translation, $single, $plural, $number, $domain );
+	return yourls_apply_filter( 'translate_n', $translation, $single, $plural, $number, $domain );
 }
 
 /**
@@ -352,7 +352,7 @@ function yourls_n( $single, $plural, $number, $domain = 'default' ) {
 function yourls_nx($single, $plural, $number, $context, $domain = 'default') {
 	$translations = yourls_get_translations_for_domain( $domain );
 	$translation = $translations->translate_plural( $single, $plural, $number, $context );
-	return yourls_apply_filters( 'translate_nx', $translation, $single, $plural, $number, $context, $domain );
+	return yourls_apply_filter( 'translate_nx', $translation, $single, $plural, $number, $context, $domain );
 }
 
 /**
@@ -444,7 +444,7 @@ function yourls_translate_nooped_plural( $nooped_plural, $count, $domain = 'defa
 function yourls_load_textdomain( $domain, $mofile ) {
 	global $yourls_l10n;
 
-	$plugin_override = yourls_apply_filters( 'override_load_textdomain', false, $domain, $mofile );
+	$plugin_override = yourls_apply_filter( 'override_load_textdomain', false, $domain, $mofile );
 
 	if ( true == $plugin_override ) {
 		return true;
@@ -452,7 +452,7 @@ function yourls_load_textdomain( $domain, $mofile ) {
 
 	yourls_do_action( 'load_textdomain', $domain, $mofile );
 
-	$mofile = yourls_apply_filters( 'load_textdomain_mofile', $mofile, $domain );
+	$mofile = yourls_apply_filter( 'load_textdomain_mofile', $mofile, $domain );
 
 	if ( !is_readable( $mofile ) ) {
         trigger_error( 'Cannot read file ' . str_replace( YOURLS_ABSPATH.'/', '', $mofile ) . '.'
@@ -482,7 +482,7 @@ function yourls_load_textdomain( $domain, $mofile ) {
 function yourls_unload_textdomain( $domain ) {
 	global $yourls_l10n;
 
-	$plugin_override = yourls_apply_filters( 'override_unload_textdomain', false, $domain );
+	$plugin_override = yourls_apply_filter( 'override_unload_textdomain', false, $domain );
 
 	if ( $plugin_override )
 		return true;
@@ -571,7 +571,7 @@ function yourls_get_available_languages( $dir = null ) {
 		$languages[] = basename( $lang_file, '.mo' );
 	}
 	
-	return yourls_apply_filters( 'get_available_languages', $languages );
+	return yourls_apply_filter( 'get_available_languages', $languages );
 }
 
 /**
@@ -589,7 +589,7 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 		
 	$formatted = number_format( $number, abs( intval( $decimals ) ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
-	return yourls_apply_filters( 'number_format_i18n', $formatted );
+	return yourls_apply_filter( 'number_format_i18n', $formatted );
 }
 
 /**
@@ -668,7 +668,7 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 	}
 	$j = @$datefunc( $dateformatstring, $i );
 	// allow plugins to redo this entirely for languages with untypical grammars
-	$j = yourls_apply_filters('date_i18n', $j, $req_format, $i, $gmt);
+	$j = yourls_apply_filter('date_i18n', $j, $req_format, $i, $gmt);
 	return $j;
 }
 
@@ -1044,7 +1044,7 @@ class YOURLS_Locale_Formats {
  * @return bool True on success, false on failure
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
-	$locale = yourls_apply_filters( 'load_custom_textdomain', yourls_get_locale(), $domain );
+	$locale = yourls_apply_filter( 'load_custom_textdomain', yourls_get_locale(), $domain );
 	$mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
 
 	return yourls_load_textdomain( $domain, $mofile );

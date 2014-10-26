@@ -162,7 +162,7 @@ function yourls_escape_real( $string ) {
 		return $ydb->escape( $string );
 	
 	// YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
-	return yourls_apply_filters( 'custom_escape_real', addslashes( $string ), $string );	
+	return yourls_apply_filter( 'custom_escape_real', addslashes( $string ), $string );	
 }
 
 /**
@@ -434,7 +434,7 @@ function yourls_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 function yourls_esc_html( $text ) {
 	$safe_text = yourls_check_invalid_utf8( $text );
 	$safe_text = yourls_specialchars( $safe_text, ENT_QUOTES );
-	return yourls_apply_filters( 'esc_html', $safe_text, $text );
+	return yourls_apply_filter( 'esc_html', $safe_text, $text );
 }
 
 /**
@@ -448,7 +448,7 @@ function yourls_esc_html( $text ) {
 function yourls_esc_attr( $text ) {
 	$safe_text = yourls_check_invalid_utf8( $text );
 	$safe_text = yourls_specialchars( $safe_text, ENT_QUOTES );
-	return yourls_apply_filters( 'esc_attr', $safe_text, $text );
+	return yourls_apply_filter( 'esc_attr', $safe_text, $text );
 }
 
 /**
@@ -538,7 +538,7 @@ function yourls_esc_js( $text ) {
 	$safe_text = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes( $safe_text ) );
 	$safe_text = str_replace( "\r", '', $safe_text );
 	$safe_text = str_replace( "\n", '\\n', addslashes( $safe_text ) );
-	return yourls_apply_filters( 'esc_js', $safe_text, $text );
+	return yourls_apply_filter( 'esc_js', $safe_text, $text );
 }
 
 /**
@@ -551,7 +551,7 @@ function yourls_esc_js( $text ) {
  */
 function yourls_esc_textarea( $text ) {
 	$safe_text = htmlspecialchars( $text, ENT_QUOTES );
-	return yourls_apply_filters( 'esc_textarea', $safe_text, $text );
+	return yourls_apply_filter( 'esc_textarea', $safe_text, $text );
 }
 
 
