@@ -204,6 +204,7 @@ function yourls_html_tfooter( $params = array() ) {
 						// First search control: text to search
 						$_input = '<input type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
+                            'all'     => yourls__( 'All fields' ),
 							'keyword' => yourls__( 'Short URL' ),
 							'url'     => yourls__( 'URL' ),
 							'title'   => yourls__( 'Title' ),

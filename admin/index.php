@@ -11,7 +11,7 @@ $base_page   = yourls_admin_url( 'index.php' );
 
 // Default SQL behavior
 $search_in_text  = yourls__( 'URL' );
-$search_in       = 'url';
+$search_in       = 'all';
 $sort_by_text    = yourls__( 'Short URL' );
 $sort_by         = 'timestamp';
 $sort_order      = 'desc';
@@ -30,6 +30,10 @@ if ( $click_limit !== '' ) {
 // Searching
 if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	switch( $_GET['search_in'] ) {
+		case 'all':
+			$search_in_text = yourls__( 'All fields' );
+			$search_in      = 'all';
+			break;
 		case 'keyword':
 			$search_in_text = yourls__( 'Short URL' );
 			$search_in      = 'keyword';
@@ -51,7 +55,14 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	$search_url      = yourls_sanitize_url( "&amp;search=$search&amp;search_in=$search_in" );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
-	$where .= " AND `$search_in` LIKE ('$search')";
+    if( $search_in == 'all' ) {
+        $where .= " AND CONCAT(`keyword`,`url`,`title`,`ip`) LIKE ('$search')";
+        // Search across all fields. The resulting SQL will be something like:
+        // SELECT * FROM `yourls_url` WHERE CONCAT(`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
+        // TODO: pay attention to this bit when the DB schema changes
+    } else {
+        $where .= " AND `$search_in` LIKE ('$search')";
+    }
 }
 
 // Time span
