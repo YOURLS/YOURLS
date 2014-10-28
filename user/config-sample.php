@@ -84,8 +84,8 @@ define( 'YOURLS_URL_CONVERT', 36 );
 * Reserved keywords (so that generated URLs won't match them)
 * Define here negative, unwanted or potentially misleading keywords.
 */
-$yours_reserved_words_file = '/includes/bad-words.txt'
-$yourls_reserved_URL = array file ( dirname(__FILE__).$yours_reserved_words_file );
+$yourls_reserved_words_file = '/includes/bad-words.txt'
+$yourls_reserved_URL = file( dirname(__FILE__).$yourls_reserved_words_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
 /*
  ** Personal settings would go after here.
