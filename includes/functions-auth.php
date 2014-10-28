@@ -67,7 +67,7 @@ function yourls_is_valid_user() {
 	elseif
 		// Normal only: cookies
 		( !yourls_is_API() && 
-		  isset( $_COOKIE['yourls_username'] ) )
+		  isset( $_COOKIE[ yourls_cookie_name() ] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
@@ -307,7 +307,7 @@ function yourls_has_phpass_password( $user ) {
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if ( yourls_salt( $valid_user ) == $_COOKIE['yourls_username'] ) {
+		if ( yourls_salt( $valid_user ) == $_COOKIE[ yourls_cookie_name() ] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
@@ -402,15 +402,12 @@ function yourls_store_cookie( $user = null ) {
 	if ( $domain == 'localhost' ) 
 		$domain = '';
    
-    // Unique cookie name for each site to prevent cookie mismatch between sho.rt and very.sho.rt -- see #1673
-    $cookiename = 'yourls_' . yourls_salt( YOURLS_SITE );
-    
     if ( !headers_sent( $filename, $linenum ) ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie( $cookiename, yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
+			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 		} else {
-			setcookie( $cookiename, yourls_salt( $user ), $time, '/', $domain, $secure );
+			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure );
 		}
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
@@ -428,3 +425,16 @@ function yourls_set_user( $user ) {
 		define( 'YOURLS_USER', $user );
 }
 
+/**
+ * Get YOURLS cookie name
+ *
+ * The name is unique for each install, to prevent mismatch between sho.rt and very.sho.rt -- see #1673
+ *
+ * TODO: when multi user is implemented, the whole cookie stuff should be reworked to allow storing multiple users
+ *
+ * @since 1.7.1
+ * @return string  unique cookie name for a given YOURLS site
+ */
+function yourls_cookie_name() {
+    return 'yourls_' . yourls_salt( YOURLS_SITE );
+}
