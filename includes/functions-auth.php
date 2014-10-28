@@ -398,16 +398,19 @@ function yourls_store_cookie( $user = null ) {
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 
-	// Some browser refuse to store localhost cookie
+	// Some browsers refuse to store localhost cookie
 	if ( $domain == 'localhost' ) 
 		$domain = '';
    
-	if ( !headers_sent( $filename, $linenum ) ) {
+    // Unique cookie name for each site to prevent cookie mismatch between sho.rt and very.sho.rt -- see #1673
+    $cookiename = 'yourls_' . yourls_salt( YOURLS_SITE );
+    
+    if ( !headers_sent( $filename, $linenum ) ) {
 		// Set httponly if the php version is >= 5.2.0
 		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
+			setcookie( $cookiename, yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 		} else {
-			setcookie('yourls_username', yourls_salt( $user ), $time, '/', $domain, $secure );
+			setcookie( $cookiename, yourls_salt( $user ), $time, '/', $domain, $secure );
 		}
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
