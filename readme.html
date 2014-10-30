@@ -815,10 +815,10 @@ echo $data->longurl;</tt></pre>
 	// Dynamically get tabs
 	function getTabs() {
 		var d = document.getElementById('Tabs');
-		var matches = d.innerHTML.match(/<li id="(.+?)Tab"/g);
+		var matches = d.innerHTML.match(/<li.* id="(.+?)Tab"/g);
 		var tabs = []
 		for (i in matches) {
-		  tabs[i]= matches[i].replace('<li id="','').replace('Tab"', '');
+		  tabs[i]= matches[i].replace(/<li.* id="/,'').replace('Tab"', '');
 		}
 		tabs = tabs.reverse();
 		return (tabs)
