@@ -554,6 +554,17 @@ function yourls_esc_textarea( $text ) {
 	return yourls_apply_filter( 'esc_textarea', $safe_text, $text );
 }
 
+/**
+ * Escaping for input form fields.
+ *
+ * @param string $text
+ * @return string
+ */
+function yourls_esc_inputfield( $text ) {
+	$safe_text = str_replace( '%', '&#37;', $text );	// remove '%' for sprintf()
+	$safe_text = str_replace( '"', '&quot;', $safe_text );	// remove '"' for use in <input value="...">
+	return $safe_text;
+}
 
 /**
 * PHP emulation of JS's encodeURI
