@@ -54,7 +54,7 @@ yourls_add_filter( 'html_title', 'ozh_sample_change_title' );
  */
  
 function ozh_sample_change_title( $value ) {
-	$value = $value . ' (we have hacked this title)';
+	$value = $value . ' -- the sample plugin is activated';
 	return $value; // a filter *always* has to return a value
 }
 /* And that's it. Activate the plugin and notice how the page title changes */
