@@ -241,7 +241,7 @@ function yourls_get_domain( $url, $include_scheme = false ) {
  *
  */
 function yourls_get_favicon_url( $url ) {
-	return yourls_match_current_protocol( 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false ) );
+	return yourls_match_current_protocol( 'http://www.google.com/s2/favicons?domain=' . yourls_get_domain( $url, false ) );
 }
 
 /**
