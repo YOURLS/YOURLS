@@ -44,7 +44,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
@@ -80,7 +82,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
@@ -116,7 +120,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
@@ -152,7 +158,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
@@ -188,7 +196,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
@@ -240,7 +250,9 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $GLOBALS[ $var_name ] = $var_value;
         
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
+        $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
+        $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
         
         return $hook;
