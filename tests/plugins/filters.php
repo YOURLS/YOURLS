@@ -19,13 +19,13 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         // Random function name
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_action( $hook, rand_str() );
+        yourls_add_filter( $hook, rand_str() );
         $this->assertTrue( yourls_has_filter( $hook ) );
         
-        // Specific function name to test with yourls_do_action
+        // Specific function name to test with yourls_apply_filter
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_action( $hook, 'change_variable' );
+        yourls_add_filter( $hook, 'change_variable' );
         $this->assertTrue( yourls_has_filter( $hook ) );
         
         return $hook;
@@ -57,7 +57,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	public function test_add_filter_create_function() {
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_action( $hook, create_function( '', 'return rand_str();' ) );
+        yourls_add_filter( $hook, create_function( '', 'return rand_str();' ) );
         $this->assertTrue( yourls_has_filter( $hook ) );
                
         return $hook;
@@ -121,7 +121,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	public function test_add_filter_within_class_array() {
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_action( $hook, array( 'Change_Variable', 'change_it' ) );
+        yourls_add_filter( $hook, array( 'Change_Variable', 'change_it' ) );
         $this->assertTrue( yourls_has_filter( $hook ) );
                
         return $hook;
@@ -153,7 +153,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	public function test_add_filter_within_class_instance() {
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_action( $hook, array( $this, 'change_variable' ) );
+        yourls_add_filter( $hook, array( $this, 'change_variable' ) );
         $this->assertTrue( yourls_has_filter( $hook ) );
                
         return $hook;
@@ -176,17 +176,33 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
     
 
 	/**
+	 * Check that hooking to 'Class::Method' or array( 'Class', 'Method') is the same
+     *
+	 * @since 0.1
+	 */
+	public function test_add_filter_class_and_array() {
+        $hook = rand_str();
+        
+        $this->assertFalse( yourls_has_filter( $hook ) );
+        
+        yourls_add_filter( $hook, array( 'Class', 'Method' ) );
+        $this->assertSame( 10, yourls_has_filter( $hook, array( 'Class', 'Method' ) ) );
+        $this->assertSame( 10, yourls_has_filter( $hook, 'Class::Method' ) );
+	}
+    
+
+	/**
 	 * Check adding a filter with anonymous function using closure
      *
-     * Syntax tested: yourls_add_action( $hook, function(){ // do stuff } );
+     * Syntax tested: yourls_add_filter( $hook, function(){ // do stuff } );
 	 *
 	 * @since 0.1
 	 */
 	public function test_add_filter_closure() {
         $hook = rand_str();
-        $this->assertFalse( yourls_has_action( $hook ) );
-        yourls_add_action( $hook, function() { return rand_str(); } );
-        $this->assertTrue( yourls_has_action( $hook ) );
+        $this->assertFalse( yourls_has_filter( $hook ) );
+        yourls_add_filter( $hook, function() { return rand_str(); } );
+        $this->assertTrue( yourls_has_filter( $hook ) );
                
         return $hook;
 	}

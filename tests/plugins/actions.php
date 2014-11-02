@@ -196,6 +196,22 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     
 
 	/**
+	 * Check that hooking to 'Class::Method' or array( 'Class', 'Method') is the same
+     *
+	 * @since 0.1
+	 */
+	public function test_add_action_class_and_array() {
+        $hook = rand_str();
+        
+        $this->assertFalse( yourls_has_action( $hook ) );
+        
+        yourls_add_action( $hook, array( 'Class', 'Method' ) );
+        $this->assertSame( 10, yourls_has_action( $hook, array( 'Class', 'Method' ) ) );
+        $this->assertSame( 10, yourls_has_action( $hook, 'Class::Method' ) );
+	}
+    
+
+	/**
 	 * Check adding an action with anonymous function using closure
      *
      * Syntax tested: yourls_add_action( $hook, function(){ // do stuff } );
