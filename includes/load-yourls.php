@@ -118,6 +118,9 @@ if( yourls_is_private() ) {
 	require_once( YOURLS_INC.'/functions-auth.php' );
 }
 
+// Enforce UTC timezone to suppress PHP warnings -- correct date/time will be managed using the config time offset
+date_default_timezone_set( 'UTC' );
+
 // Load locale
 yourls_load_default_textdomain();
 
