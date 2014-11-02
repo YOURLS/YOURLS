@@ -79,26 +79,42 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 	global $yourls_filters;
 
 	// If function then just skip all of the tests and not overwrite the following.
-	if ( is_string( $function ) )
+	if ( is_string( $function ) ) {
 		return $function;
-	// Object Class Calling
-	else if ( is_object( $function[0] ) ) {
-		$obj_idx = get_class( $function[0] ) . $function[1];
-		if ( !isset( $function[0]->_yourls_filters_id ) ) {
-			if ( false === $priority )
-				return false;
-			$count = isset( $yourls_filters[ $hook ][ $priority ]) ? count( (array)$yourls_filters[ $hook ][ $priority ] ) : 0;
-			$function[0]->_yourls_filters_id = $count;
-			$obj_idx .= $count;
-			unset( $count );
-		} else
-			$obj_idx .= $function[0]->_yourls_filters_id;
-		return $obj_idx;
+    }
+    
+	if( is_object($function) ) {
+		// Closures are currently implemented as objects
+		$function = array( $function, '' );
+	} else {
+		$function = (array) $function;
 	}
-	// Static Calling
-	else if ( is_string( $function[0] ) )
-		return $function[0].$function[1];
 
+	// Object Class Calling
+	if ( is_object( $function[0] ) ) {
+		// Object Class Calling
+		if ( function_exists('spl_object_hash') ) {
+			return spl_object_hash($function[0]) . $function[1];
+		} else {
+            $obj_idx = get_class( $function[0] ) . $function[1];
+            if ( !isset( $function[0]->_yourls_filters_id ) ) {
+                if ( false === $priority )
+                    return false;
+                $count = isset( $yourls_filters[ $hook ][ $priority ]) ? count( (array)$yourls_filters[ $hook ][ $priority ] ) : 0;
+                $function[0]->_yourls_filters_id = $count;
+                $obj_idx .= $count;
+                unset( $count );
+            } else {
+                $obj_idx .= $function[0]->_yourls_filters_id;
+            }
+            return $obj_idx;
+        }
+	}
+    
+    // Static Calling
+	else if ( is_string( $function[0] ) ) {
+		return $function[0]. '::' .$function[1];
+    }
 }
 
 /**
@@ -209,10 +225,9 @@ function yourls_did_action( $hook ) {
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callback $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
- * @param int $accepted_args optional. The number of arguments the function accepts (default: 1).
  * @return boolean Whether the function was registered as a filter before it was removed.
  */
-function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $accepted_args = 1 ) {
+function yourls_remove_filter( $hook, $function_to_remove, $priority = 10 ) {
 	global $yourls_filters;
 	
 	$function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
@@ -227,6 +242,20 @@ function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $acce
 	return $remove;
 }
 
+/**
+ * Removes a function from a specified action hook.
+ *
+ * @see yourls_remove_filter()
+ *
+ * @param string $hook The action hook to which the function to be removed is hooked.
+ * @param callback $function_to_remove The name of the function which should be removed.
+ * @param int $priority optional. The priority of the function (default: 10).
+ * @return boolean Whether the function was registered as an action before it was removed.
+ */
+
+function yourls_remove_action( $hook, $function_to_remove, $priority = 10 ) {
+    return yourls_remove_filter( $hook, $function_to_remove, $priority );
+}
 
 /**
  * Check if any filter has been registered for a hook.
