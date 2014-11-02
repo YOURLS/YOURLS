@@ -206,9 +206,9 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
                
         return $hook;
 	}
-    
+       
 	/**
-	 * Check applygin a filter hooked with anonymous function using closure
+	 * Check applying a filter hooked with anonymous function using closure
 	 *
 	 * @depends test_add_filter_closure
 	 * @since 0.1
@@ -222,6 +222,26 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         return $hook;
 	}
     
+    
+	/**
+	 * Check applying multiple filters to one hook
+	 *
+	 * @depends test_apply_filter_closure
+	 * @since 0.1
+	 */
+	public function test_multiple_filter() {
+        $hook = rand_str();
+        $var  = rand_str();
+        
+        yourls_add_filter( $hook, function( $in ) { return $in . "1"; } );
+        yourls_add_filter( $hook, function( $in ) { return $in . "2"; } );
+        
+        $filtered = yourls_apply_filter( $hook, $var );
+        $this->assertSame( $var . "1" . "2", $filtered );
+        
+        return $hook;
+	}
+
     
     /**
      * Dummy function -- just modifies the value of a global var
