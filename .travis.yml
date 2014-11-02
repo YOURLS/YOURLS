@@ -1,6 +1,5 @@
 language: php
 php:
-  - 5.2
   - 5.3
   - 5.4
   - 5.5
@@ -24,7 +23,3 @@ notifications:
     channels:
       - "irc.freenode.org#YOURLS"
     use_notice: true
-
-matrix:
-    allow_failures:
-       - php: 5.2
