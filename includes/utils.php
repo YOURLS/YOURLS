@@ -25,6 +25,48 @@ function yut_is_local() {
 }
 
 /**
+ * Dummy function to be called by hook function tests
+ *
+ * @since 0.1
+ */
+function change_one_global() {
+    $var_name = $GLOBALS['test_var'];
+    $GLOBALS[ $var_name ] = rand_str();
+}
+
+/**
+ * Dummy function to be called by hook function tests
+ *
+ * @since 0.1
+ */
+function change_variable( $var ) {
+    $var = rand_str();
+    return $var;
+}
+
+/**
+ * Dummy class & function to be called by hook function tests
+ *
+ * @since 0.1
+ */
+class Change_One_Global {
+    static function change_it() {
+        $var_name = $GLOBALS['test_var'];
+        $GLOBALS[ $var_name ] = rand_str();
+    }
+}
+ /**
+ * Dummy class & function to be called by hook function tests
+ *
+ * @since 0.1
+ */
+class Change_Variable {
+    static function change_it( $var ) {
+        return rand_str();
+    }
+}
+ 
+/**
  * Log in a local text file, in case you need to var_dump() stuff within a test
  *
  * By design, you cannot var_dump() stuff during a unit test. A workaround is to export into a log file.
