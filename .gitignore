@@ -1,3 +1,6 @@
 # log dir
 build/
+YOURLS/
 /yourls-tests-config.php
+vendor/
+composer.lock

@@ -116,6 +116,9 @@ function yut_declare_yourls_consts() {
 	if( !defined( 'YOURLS_DEBUG' ) )
 		define( 'YOURLS_DEBUG', true );
 		
+	if( !defined( 'YOURLS_ADMIN_LOCATION' ) )
+		define( 'YOURLS_ADMIN_LOCATION', 'admin' );
+		
 	// Error reporting
 	if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		error_reporting( -1 );
@@ -138,6 +141,8 @@ function yut_declare_yourls_consts() {
  */
 function yut_load_yourls() {
 	// Include all functions
+	if( is_readable( YOURLS_INC . '/vendor/autoload.php' ) )
+		require YOURLS_INC . '/vendor/autoload.php';
 	require_once YOURLS_INC.'/version.php';
 	$files = scandir( YOURLS_INC, 1 );
 	foreach ( $files as $file ) {
