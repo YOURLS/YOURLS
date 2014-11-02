@@ -203,11 +203,6 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */
 	public function test_add_action_closure() {
-		// Closures are PHP 5.3+
-		if( version_compare( PHP_VERSION, '5.3', '<' ) ) {
-			$this->markTestSkipped( 'PHP 5.3+ only' );
-			return;
-		}
         $hook = rand_str();
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, function() { $var_name = $GLOBALS['test_var']; $GLOBALS[ $var_name ] = rand_str(); } );

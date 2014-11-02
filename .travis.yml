@@ -4,6 +4,7 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
 
 env:
   - DB=mysql
@@ -23,3 +24,7 @@ notifications:
     channels:
       - "irc.freenode.org#YOURLS"
     use_notice: true
+
+matrix:
+    allow_failures:
+       - php: 5.2
