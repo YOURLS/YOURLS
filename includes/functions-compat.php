@@ -136,6 +136,30 @@ if ( !function_exists( 'htmlspecialchars_decode' ) ) {
 }
 
 /**
+ * BC Math functions (assuming if one doesn't exist, none does)
+ *
+ */
+if ( !function_exists( 'bcdiv' ) ) {
+	function bcdiv( $dividend, $divisor ) {
+		$quotient = floor( $dividend/$divisor );
+		return $quotient;
+	}
+	function bcmod( $dividend, $modulo ) {
+		$remainder = $dividend%$modulo;
+		return $remainder;
+	}
+	function bcmul( $left, $right ) {
+		return $left * $right;
+	}
+	function bcadd( $left, $right ) {
+		return $left + $right;
+	}
+	function bcpow( $base, $power ) {
+		return pow( $base, $power );
+	}
+}
+
+/**
  * Replacement for property_exists() (5.1+)
  *
  */
