@@ -449,7 +449,8 @@ function yourls_activate_plugin( $plugin ) {
 		$output = ob_get_clean();
 		return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
 	}
-	
+    ob_end_clean();
+
 	// so far, so good: update active plugin list
 	$ydb->plugins[] = $plugin;
 	yourls_update_option( 'active_plugins', $ydb->plugins );
