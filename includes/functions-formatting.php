@@ -8,19 +8,20 @@
  * Convert an integer (1337) to a string (3jk).
  *
  */
-function yourls_int2string( $num, $chars = null ) {
-	if( $chars == null )
+function yourls_int2string( $int, $chars = null ) {
+    if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
-	$string = '';
-	$len = strlen( $chars );
-	while( $num >= $len ) {
-		$mod = bcmod( $num, $len );
-		$num = bcdiv( $num, $len );
-		$string = $chars[ $mod ] . $string;
-	}
-	$string = $chars[ intval( $num ) ] . $string;
+    
+    $base = strlen( $chars );
+
+    $str = '';
+    do {
+        $i   = fmod( $int, $base );
+        $str = $chars[ intval( $i ) ] . $str;
+        $int = ( $int - $i ) / $base;
+    } while( $int > 0 );
 	
-	return yourls_apply_filter( 'int2string', $string, $num, $chars );
+	return yourls_apply_filter( 'int2string', $str, $int, $chars );
 }
 
 /**
@@ -28,17 +29,17 @@ function yourls_int2string( $num, $chars = null ) {
  *
  */
 function yourls_string2int( $string, $chars = null ) {
-	if( $chars == null )
+    if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
-	$integer = 0;
-	$string = strrev( $string  );
-	$baselen = strlen( $chars );
-	$inputlen = strlen( $string );
-	for ($i = 0; $i < $inputlen; $i++) {
-		$index = strpos( $chars, $string[$i] );
-		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
-	}
+    
+    $base = strlen( $chars );
 
+    $len = strlen( $string );
+    $integer = 0;
+    $arr = array_flip( str_split( $chars ) );
+    for( $i = 0; $i < $len; ++$i ) {
+        $integer += $arr[ $string[ $i ] ] * pow( $base, $len - $i -1 );
+    }
 	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
 }
 
