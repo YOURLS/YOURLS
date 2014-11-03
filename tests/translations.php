@@ -73,6 +73,16 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
     }
 
 	/**
+	 * Check if custom text domain correctly loads
+	 *
+	 * @since 0.1
+	 */
+	public function test_custom_domain_load() {
+		$this->assertTrue( yourls_load_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/test-fr_FR.mo' ) );
+        $this->assertTrue( yourls_is_textdomain_loaded( 'test' ) );
+	}
+    
+	/**
 	 * Custom domain translations
 	 *
 	 * @depends test_custom_domain_load
@@ -99,7 +109,7 @@ class Translation_Tests extends PHPUnit_Framework_TestCase {
     }
 
 	/**
-	 * Custom domain unloading
+	 * Get available languages
 	 *
 	 * @depends test_load_default_textdomain
 	 * @since 0.1
