@@ -3,6 +3,7 @@
 /**
  * Filter related tests, playing with parameters (priority, number of accepted args)
  *
+ * @group plugins
  * @since 0.1
  */
 

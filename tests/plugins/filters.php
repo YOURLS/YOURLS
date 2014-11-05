@@ -3,6 +3,7 @@
 /**
  * Filter related tests
  *
+ * @group plugins
  * @since 0.1
  */
 

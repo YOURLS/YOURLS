@@ -3,6 +3,7 @@
 /**
  * File related plugin functions
  *
+ * @group plugins
  * @since 0.1
  */
 class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
