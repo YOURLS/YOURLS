@@ -2066,6 +2066,7 @@ function yourls_current_admin_page() {
  * protocol, 'mailto://' isn't, and 'http:' with no double slashed isn't either
  *
  * @since 1.6
+ * @see yourls_get_protocol()
  *
  * @param string $url URL to be check
  * @param array $protocols Optional. Array of protocols, defaults to global $yourls_allowedprotocols
@@ -2084,13 +2085,20 @@ function yourls_is_allowed_protocol( $url, $protocols = array() ) {
 /**
  * Get protocol from a URL (eg mailto:, http:// ...)
  *
+ * What we liberally call a "protocol" in YOURLS is the scheme name + colon + double slashes if present of a URI. Examples:
+ * "something://blah" -> "something://"
+ * "something:blah"   -> "something:"
+ * "something:/blah"  -> "something:"
+ *
+ * Unit Tests for this function are located in tests/format/urls.php
+ *
  * @since 1.6
  *
  * @param string $url URL to be check
  * @return string Protocol, with slash slash if applicable. Empty string if no protocol
  */
 function yourls_get_protocol( $url ) {
-	preg_match( '!^[a-zA-Z0-9\+\.-]+:(//)?!', $url, $matches );
+	preg_match( '!^[a-zA-Z][a-zA-Z0-9\+\.-]+:(//)?!', $url, $matches );
 	/*
 	http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
 	The scheme name consists of a sequence of characters beginning with a letter and followed by any
