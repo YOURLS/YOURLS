@@ -126,5 +126,25 @@ class Option_Format_General extends PHPUnit_Framework_TestCase {
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
         $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
     }
-    
+ 
+
+	/**
+	 * Trim long strings
+	 *
+	 * @since 0.1
+	 */
+    function test_trim_long_strings() {
+        $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
+        $trim = "The Plague That Makes Your Booty Move... It's The Infec[...]";
+        $this->assertSame( $trim, yourls_trim_long_string( $long ) );
+
+        $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
+        $trim = "The Plague That Makes Your Booty[...]";
+        $this->assertSame( $trim, yourls_trim_long_string( $long, 37 ) );
+
+        $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
+        $trim = "The Plague That Makes Your Booty Mo..";
+        $this->assertSame( $trim, yourls_trim_long_string( $long, 37, '..' ) );
+    }
+ 
 }
