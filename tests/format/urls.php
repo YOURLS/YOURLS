@@ -3,10 +3,59 @@
 /**
  * Formatting functions for URLs
  *
+ * @group formatting
+ * @group url
  * @since 0.1
  */
 class Option_Forma_URL extends PHPUnit_Framework_TestCase {
 
+    /**
+     * Correctly get protocols
+     *
+     * @since 0.1
+     */
+    function test_protocols() {
+    
+        // List of test uri with expected protocol
+        $list = "
+        example:80/blah              -> example:
+        example.com/blah             -> 
+        example.com:80/blah          -> example.com:
+        scheme://example.com:80/blah -> scheme://
+        scheme:example.com           -> scheme:
+        scheme:/example.com:80/hey   -> scheme:
+        scheme:/example:80/hey       -> scheme:
+        scheme://example             -> scheme://
+        scheme:///example            -> scheme://
+        scheme+bleh:example          -> scheme+bleh:
+        scheme :example              -> 
+        scheme+bleh : example        ->
+        scheme45:example             -> scheme45:
+        45scheme:example             -> 
+        scheme+-.1337:example        -> scheme+-.1337:
+        +scheme:example              -> 
+        ";
+        
+        // Split that list into a proper array
+        $tests = array();
+        $list  = explode( "\n", $list );
+        foreach( $list as $line ) {
+            $line = trim( $line );
+            if( $line ) {
+                list( $uri, $scheme ) = explode( '->', $line );
+                $uri = trim( $uri );
+                $scheme = trim( $scheme );
+                $tests[] = array( 'uri' => $uri, 'expected' => $scheme );
+            }
+        }
+        
+        foreach( $tests as $test ) {
+            $this->assertSame( $test['expected'], yourls_get_protocol( $test['uri'] ) );
+        }
+   
+        
+    }
+    
     /**
      * Test that valid URLs are not modified
      *

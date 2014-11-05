@@ -3,6 +3,7 @@
 /**
  * General formatting functions.
  *
+ * @group formatting
  * @since 0.1
  */
 class Option_Format_General extends PHPUnit_Framework_TestCase {
@@ -78,4 +79,52 @@ class Option_Format_General extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+	/**
+	 * Generating valid regexp from the allowed charset
+	 *
+	 * @since 0.1
+	 */
+    function test_valid_regexp() {
+        $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
+        
+        /* To validate a RegExp just run it against null.
+           If it returns explicit false (=== false), it's broken. Otherwise it's valid.
+           From: http://stackoverflow.com/a/12941133/36850
+           Cool to know :)
+           
+           We're testing it as used in yourls_sanitize_string()
+           TODO: more random char strings to test?           
+        */
+    
+        $this->assertFalse( preg_match( '![^' . $pattern . ']!', null ) === false );
+    }
+    
+	/**
+	 * Sanitize titles
+	 *
+	 * @since 0.1
+	 */
+    function test_sanitize_title() {
+        $expected = "How Will I Laugh Tomorrow When I Can't Even Smile Today";
+        $unsane   = "How <strong>Will</strong> I Laugh Tomorrow <em>When I Can't Even Smile Today</em>";
+        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
+        
+        $expected = 'Twilight of the Thunder God';
+        $unsane   = 'Twilight <bleh omg="wtf" >of</bleh> the <blah something>Thunder God';
+        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
+    }
+    
+	/**
+	 * Sanitize titles with fallback
+	 *
+	 * @since 0.1
+	 */
+    function test_sanitize_title_with_fallback() {
+        $fallback = rand_str();
+        $expected = '';
+        $unsane   = '<tag></tag><omg>';
+        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
+        $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
+    }
+    
 }

@@ -2,8 +2,9 @@
 
 /**
  * Escaping formatting functions.
- * Tests about escaping and sanitizing URLs are in urls.php
+ * Note: tests about escaping and sanitizing URLs are in urls.php
  *
+ * @group formatting
  * @since 0.1
  */
 class Option_Format_Esc extends PHPUnit_Framework_TestCase {
