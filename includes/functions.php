@@ -1856,7 +1856,7 @@ function yourls_get_remote_title( $url ) {
 	$title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
 	
 	// Strip out evil things
-	$title = yourls_sanitize_title( $title );
+	$title = yourls_sanitize_title( $title, $url );
 		
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }

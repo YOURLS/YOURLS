@@ -73,12 +73,22 @@ function yourls_sanitize_keyword( $keyword ) {
 /**
  * Sanitize a page title. No HTML per W3C http://www.w3.org/TR/html401/struct/global.html#h-7.4.2
  *
+ *
+ * @since 1.5
+ * @param string $unsafe_title  Title, potentially unsafe
+ * @param string $fallback      Optional fallback if after sanitization nothing remains
+ * @return string               Safe title
  */
-function yourls_sanitize_title( $unsafe_title ) {
+function yourls_sanitize_title( $unsafe_title, $fallback = '' ) {
 	$title = $unsafe_title;
 	$title = strip_tags( $title );
 	$title = preg_replace( "/\s+/", ' ', trim( $title ) );
-	return yourls_apply_filter( 'sanitize_title', $title, $unsafe_title );
+    
+    if ( '' === $title || false === $title ) {
+        $title = $fallback;
+    }
+    
+	return yourls_apply_filter( 'sanitize_title', $title, $unsafe_title, $fallback );
 }
 
 /**
