@@ -30,7 +30,7 @@ function yourls_get_shorturl_charset() {
  */
 function yourls_make_regexp_pattern( $string ) {
 	$pattern = preg_quote( $string, '-' ); // add - as an escaped characters -- this is fixed in PHP 5.3
-	// TODO: replace char sequences by smart sequences such as 0-9, a-z, A-Z ... ?
+	// Simple benchmarks show that regexp with smarter sequences (0-9, a-z, A-Z...) are not faster or slower than 0123456789 etc...
 	return $pattern;
 }
 
