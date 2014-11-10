@@ -690,10 +690,10 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 function yourls_current_time( $type, $gmt = 0 ) {
 	switch ( $type ) {
 		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * 3600 );
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * YOURLS_HOUR );
 			break;
 		case 'timestamp':
-			return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * 3600;
+			return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * YOURLS_HOUR;
 			break;
 	}
 }

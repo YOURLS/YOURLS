@@ -14,6 +14,13 @@
  */
 class Requests_Transport_fsockopen implements Requests_Transport {
 	/**
+	 * Second to microsecond conversion
+	 *
+	 * @var integer
+	 */
+	const SECOND_IN_MICROSECONDS = 1000000;
+
+	/**
 	 * Raw HTTP data
 	 *
 	 * @var string
@@ -99,7 +106,7 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 
 		$options['hooks']->dispatch('fsockopen.remote_socket', array(&$remote_socket));
 
-		$fp = stream_socket_client($remote_socket, $errno, $errstr, $options['timeout'], STREAM_CLIENT_CONNECT, $context);
+		$fp = stream_socket_client($remote_socket, $errno, $errstr, ceil($options['connect_timeout']), STREAM_CLIENT_CONNECT, $context);
 
 		restore_error_handler();
 
@@ -198,7 +205,10 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 			$options['hooks']->dispatch('fsockopen.after_request', array(&$fake_headers));
 			return '';
 		}
-		stream_set_timeout($fp, $options['timeout']);
+
+		$timeout_sec = (int) floor($options['timeout']);
+		$timeout_msec = $timeout_sec == $options['timeout'] ? 0 : self::SECOND_IN_MICROSECONDS * $options['timeout'] % self::SECOND_IN_MICROSECONDS;
+		stream_set_timeout($fp, $timeout_sec, $timeout_msec);
 
 		$this->info = stream_get_meta_data($fp);
 

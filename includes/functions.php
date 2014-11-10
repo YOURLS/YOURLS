@@ -2024,7 +2024,7 @@ function yourls_check_maintenance_mode() {
 
 	include_once( $file );
 	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
-	if ( ( time() - $maintenance_start ) >= 600 )
+	if ( ( time() - $maintenance_start ) >= 10 * YOURLS_MINUTE )
 		return;
 
 	// Use any /user/maintenance.php file

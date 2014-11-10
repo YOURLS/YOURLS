@@ -68,8 +68,11 @@ class Requests_Transport_cURL implements Requests_Transport {
 		if (version_compare($this->version, '7.10.5', '>=')) {
 			curl_setopt($this->fp, CURLOPT_ENCODING, '');
 		}
-		if (version_compare($this->version, '7.19.4', '>=')) {
+		if (defined('CURLOPT_PROTOCOLS')) {
 			curl_setopt($this->fp, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+		}
+		if (defined('CURLOPT_REDIR_PROTOCOLS')) {
+			curl_setopt($this->fp, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 		}
 	}
 
@@ -246,9 +249,17 @@ class Requests_Transport_cURL implements Requests_Transport {
 				break;
 		}
 
+		if( is_int($options['timeout']) or version_compare($this->version, '7.16.2', '<') ) {
+			curl_setopt($this->fp, CURLOPT_TIMEOUT, ceil($options['timeout']));
+		} else {
+			curl_setopt($this->fp, CURLOPT_TIMEOUT_MS, round($options['timeout'] * 1000) );
+		}
+		if( is_int($options['connect_timeout'])  or version_compare($this->version, '7.16.2', '<') ) {
+			curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT, ceil($options['connect_timeout']));
+		} else {
+			curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
+		}
 		curl_setopt($this->fp, CURLOPT_URL, $url);
-		curl_setopt($this->fp, CURLOPT_TIMEOUT, $options['timeout']);
-		curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT, $options['timeout']);
 		curl_setopt($this->fp, CURLOPT_REFERER, $url);
 		curl_setopt($this->fp, CURLOPT_USERAGENT, $options['useragent']);
 		curl_setopt($this->fp, CURLOPT_HTTPHEADER, $headers);

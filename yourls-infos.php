@@ -163,7 +163,7 @@ if( yourls_do_log_redirect() ) {
 	
 	$now = intval( date('U') );
 	for ($i = 23; $i >= 0; $i--) {
-		$h = date('H A', $now - ($i * 60 * 60) );
+		$h = date('H A', $now - ( $i * YOURLS_HOUR ) );
 		// If the $last_24h doesn't have all the hours, insert missing hours with value 0
 		$last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
 	}
@@ -331,14 +331,14 @@ yourls_html_menu();
 				<td valign="top">
 				<h3><?php yourls_e( 'Historical click count' ); ?></h3>
 				<?php
-				$ago = round( (date('U') - strtotime($timestamp)) / (24* 60 * 60 ) );
+				$ago = round( (date('U') - strtotime($timestamp)) / ( YOURLS_DAY ) );
 				if( $ago <= 1 ) {
 					$daysago = '';
 				} else {
 					$daysago = ' (' . sprintf( yourls_n( 'about 1 day ago', 'about %s days ago', $ago ), $ago ) . ')';
 				}
 				?>
-				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", ( strtotime( $timestamp ) + YOURLS_HOURS_OFFSET * 3600 ) ) ) . $daysago; ?></p>
+				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", ( strtotime( $timestamp ) + YOURLS_HOURS_OFFSET * YOURLS_HOUR ) ) ) . $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
