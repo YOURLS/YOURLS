@@ -81,9 +81,9 @@ class Requests {
 	 *
 	 * Use {@see get_transport()} instead
 	 *
-	 * @var string|null
+	 * @var array
 	 */
-	public static $transport = null;
+	public static $transport = array();
 
 	/**
 	 * This is a static class, do not instantiate it
@@ -147,11 +147,16 @@ class Requests {
 	 * @throws Requests_Exception If no valid transport is found (`notransport`)
 	 * @return Requests_Transport
 	 */
-	protected static function get_transport() {
+	protected static function get_transport($capabilities = array()) {
 		// Caching code, don't bother testing coverage
 		// @codeCoverageIgnoreStart
-		if (self::$transport !== null) {
-			return new self::$transport();
+		// array of capabilities as a string to be used as an array key
+		ksort($capabilities);
+		$cap_string = serialize($capabilities);
+
+		// Don't search for a transport if it's already been done for these $capabilities
+		if (isset(self::$transport[$cap_string]) && self::$transport[$cap_string] !== null) {
+			return new self::$transport[$cap_string]();
 		}
 		// @codeCoverageIgnoreEnd
 
@@ -167,17 +172,17 @@ class Requests {
 			if (!class_exists($class))
 				continue;
 
-			$result = call_user_func(array($class, 'test'));
+			$result = call_user_func(array($class, 'test'), $capabilities);
 			if ($result) {
-				self::$transport = $class;
+				self::$transport[$cap_string] = $class;
 				break;
 			}
 		}
-		if (self::$transport === null) {
+		if (self::$transport[$cap_string] === null) {
 			throw new Requests_Exception('No working transports found', 'notransport', self::$transports);
 		}
-
-		return new self::$transport();
+		
+		return new self::$transport[$cap_string]();
 	}
 
 	/**#@+
@@ -253,7 +258,9 @@ class Requests {
 	 * options:
 	 *
 	 * - `timeout`: How long should we wait for a response?
-	 *    (integer, seconds, default: 10)
+	 *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
+	 * - `connect_timeout`: How long should we wait while trying to connect?
+	 *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
 	 * - `useragent`: Useragent to send to the server
 	 *    (string, default: php-requests/$version)
 	 * - `follow_redirects`: Should we follow 3xx redirects?
@@ -310,9 +317,10 @@ class Requests {
 			if (is_string($options['transport'])) {
 				$transport = new $transport();
 			}
-		}
-		else {
-			$transport = self::get_transport();
+		} else {
+			$need_ssl = (0 === stripos($url, 'https://'));
+			$capabilities = array('ssl' => $need_ssl);
+			$transport = self::get_transport($capabilities);
 		}
 		$response = $transport->request($url, $headers, $data, $options);
 
@@ -343,9 +351,6 @@ class Requests {
 	 * - `type`: HTTP request type (use Requests constants). Same as the `$type`
 	 *    parameter to {@see Requests::request}
 	 *    (string, default: `Requests::GET`)
-	 * - `data`: Associative array of options. Same as the `$options` parameter
-	 *    to {@see Requests::request}
-	 *    (array, default: see {@see Requests::request})
 	 * - `cookies`: Associative array of cookie name to value, or cookie jar.
 	 *    (array|Requests_Cookie_Jar)
 	 *
@@ -443,6 +448,7 @@ class Requests {
 	protected static function get_default_options($multirequest = false) {
 		$defaults = array(
 			'timeout' => 10,
+			'connect_timeout' => 10,
 			'useragent' => 'php-requests/' . self::VERSION,
 			'redirected' => 0,
 			'redirects' => 10,
@@ -476,7 +482,7 @@ class Requests {
 	 * @return array $options
 	 */
 	protected static function set_defaults(&$url, &$headers, &$data, &$type, &$options) {
-		if (!preg_match('/^http(s)?:\/\//i', $url)) {
+		if (!preg_match('/^http(s)?:\/\//i', $url, $matches)) {
 			throw new Requests_Exception('Only HTTP requests are handled.', 'nonhttp', $url);
 		}
 
@@ -592,7 +598,7 @@ class Requests {
 				}
 				$options['redirected']++;
 				$location = $return->headers['location'];
-				if (strpos ($location, '/') === 0) {
+				if (strpos ($location, 'http://') !== 0 && strpos ($location, 'https://') !== 0) {
 					// relative redirect, for compatibility make it absolute
 					$location = Requests_IRI::absolutize($url, $location);
 					$location = $location->uri;

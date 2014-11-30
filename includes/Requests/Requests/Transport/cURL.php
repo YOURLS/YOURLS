@@ -13,6 +13,9 @@
  * @subpackage Transport
  */
 class Requests_Transport_cURL implements Requests_Transport {
+	const CURL_7_10_5 = 0x070A05;
+	const CURL_7_16_2 = 0x071002;
+
 	/**
 	 * Raw HTTP data
 	 *
@@ -30,7 +33,7 @@ class Requests_Transport_cURL implements Requests_Transport {
 	/**
 	 * Version string
 	 *
-	 * @var string
+	 * @var long
 	 */
 	public $version;
 
@@ -60,16 +63,19 @@ class Requests_Transport_cURL implements Requests_Transport {
 	 */
 	public function __construct() {
 		$curl = curl_version();
-		$this->version = $curl['version'];
+		$this->version = $curl['version_number'];
 		$this->fp = curl_init();
 
 		curl_setopt($this->fp, CURLOPT_HEADER, false);
 		curl_setopt($this->fp, CURLOPT_RETURNTRANSFER, 1);
-		if (version_compare($this->version, '7.10.5', '>=')) {
+		if ($this->version >= self::CURL_7_10_5) {
 			curl_setopt($this->fp, CURLOPT_ENCODING, '');
 		}
-		if (version_compare($this->version, '7.19.4', '>=')) {
+		if (defined('CURLOPT_PROTOCOLS')) {
 			curl_setopt($this->fp, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+		}
+		if (defined('CURLOPT_REDIR_PROTOCOLS')) {
+			curl_setopt($this->fp, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 		}
 	}
 
@@ -118,6 +124,7 @@ class Requests_Transport_cURL implements Requests_Transport {
 		}
 
 		$this->process_response($response, $options);
+		curl_close($this->fp);
 		return $this->headers;
 	}
 
@@ -246,9 +253,17 @@ class Requests_Transport_cURL implements Requests_Transport {
 				break;
 		}
 
+		if( is_int($options['timeout']) or $this->version < self::CURL_7_16_2 ) {
+			curl_setopt($this->fp, CURLOPT_TIMEOUT, ceil($options['timeout']));
+		} else {
+			curl_setopt($this->fp, CURLOPT_TIMEOUT_MS, round($options['timeout'] * 1000) );
+		}
+		if( is_int($options['connect_timeout'])  or $this->version < self::CURL_7_16_2 ) {
+			curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT, ceil($options['connect_timeout']));
+		} else {
+			curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
+		}
 		curl_setopt($this->fp, CURLOPT_URL, $url);
-		curl_setopt($this->fp, CURLOPT_TIMEOUT, $options['timeout']);
-		curl_setopt($this->fp, CURLOPT_CONNECTTIMEOUT, $options['timeout']);
 		curl_setopt($this->fp, CURLOPT_REFERER, $url);
 		curl_setopt($this->fp, CURLOPT_USERAGENT, $options['useragent']);
 		curl_setopt($this->fp, CURLOPT_HTTPHEADER, $headers);
@@ -260,7 +275,6 @@ class Requests_Transport_cURL implements Requests_Transport {
 
 	public function process_response($response, $options) {
 		if ($options['blocking'] === false) {
-			curl_close($this->fp);
 			$fake_headers = '';
 			$options['hooks']->dispatch('curl.after_request', array(&$fake_headers));
 			return false;
@@ -279,7 +293,6 @@ class Requests_Transport_cURL implements Requests_Transport {
 		}
 		$this->info = curl_getinfo($this->fp);
 
-		curl_close($this->fp);
 		$options['hooks']->dispatch('curl.after_request', array(&$this->headers));
 		return $this->headers;
 	}
@@ -343,7 +356,17 @@ class Requests_Transport_cURL implements Requests_Transport {
 	 * @codeCoverageIgnore
 	 * @return boolean True if the transport is valid, false otherwise.
 	 */
-	public static function test() {
-		return (function_exists('curl_init') && function_exists('curl_exec'));
+	public static function test($capabilities = array()) {
+		if (!function_exists('curl_init') && !function_exists('curl_exec'))
+			return false;
+
+		// If needed, check that our installed curl version supports SSL
+		if (isset( $capabilities['ssl'] ) && $capabilities['ssl']) {
+			$curl_version = curl_version();
+			if (!(CURL_VERSION_SSL & $curl_version['features']))
+				return false;
+		}
+
+		return true;
 	}
 }
