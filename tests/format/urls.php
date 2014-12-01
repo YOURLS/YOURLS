@@ -101,6 +101,7 @@ class Option_Forma_URL extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url( 'http://example.com/watchthelinefeed%0ago' ) );
 		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
 		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0dgo' ) );
+
 		//Nesting Checks
 		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
 		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
@@ -108,6 +109,19 @@ class Option_Forma_URL extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0ADA' ) );
 		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0DAd' ) );
 		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0ADa' ) );
+	}
+
+	/**
+	 * URL with valid chars
+	 *
+	 * @since 0.1
+	 */	
+	function test_url_with_valid_characters() {
+        $this->assertEquals( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay', yourls_sanitize_url( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay') );
+        $this->assertEquals( 'http://example.com/search.php?search=(amistillhere)', yourls_sanitize_url( 'http://example.com/search.php?search=(amistillhere)' ) );
+        // @TODO This must be fixed, see #1814
+        // $this->assertEquals( 'http://example.com/whyisthisintheurl/?param[1]=foo', yourls_sanitize_url( 'http://example.com/whyisthisintheurl/?param[1]=foo' ) );
+        // $this->assertEquals( 'http://[0:0:0:0:0:0:0:1]/', yourls_sanitize_url( 'http://[0:0:0:0:0:0:0:1]/' ) );
 	}
 
 	/**
