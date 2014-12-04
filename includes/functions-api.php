@@ -9,6 +9,18 @@
  */
 
 /**
+ * API function wrapper: Delete a URL
+ *
+ * @since 1.7
+ * @return array Result of API call
+ */
+function yourls_api_action_delete() {
+	$url = ( isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '' );
+	$return = yourls_delete_link_by_keyword( $url );
+	return yourls_apply_filter( 'api_result_delete', $return );
+}
+
+/**
  * API function wrapper: Shorten a URL
  *
  * @since 1.6
