@@ -147,14 +147,14 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	$url     = yourls_escape( yourls_sanitize_url( $url ) );
 	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
 	$title   = yourls_escape( yourls_sanitize_title( $title ) );
-
+	$user    = addslashes(YOURLS_USER);
 	$table = YOURLS_DB_TABLE_URL;
 	$timestamp = date('Y-m-d H:i:s');
 	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
-	
+	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`, `user`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0, '$user');");
+
 	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
-	
+
 	return (bool)$insert;
 }
 
@@ -542,7 +542,7 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
  * Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
  *
  */
-function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0, $owner = NULL ) {
+function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	global $ydb;
 
 	switch( $filter ) {
@@ -569,14 +569,12 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0, $owner = NU
 	// Fetch links
 	$limit = intval( $limit );
 	$start = intval( $start );
+
 	if ( $limit > 0 ) {
 
+		$user = addslashes(YOURLS_USER);
 		$table_url = YOURLS_DB_TABLE_URL;
-		if(!empty($owner)) {
-			$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 AND `user`='$owner' ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
-		} else {
-			$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
-		}
+		$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 AND `user` = '$user' ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
 		
 		$return = array();
 		$i = 1;
@@ -593,11 +591,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0, $owner = NU
 		}
 	}
 
-	if(!empty($owner)) {
-		$return['stats'] = yourls_get_db_stats("AND `user`='$owner' ");
-	} else {
-		$return['stats'] = yourls_get_db_stats($owner);
-	}
+	$return['stats'] = yourls_get_db_stats();
 
 	$return['statusCode'] = 200;
 
@@ -614,7 +608,9 @@ function yourls_get_link_stats( $shorturl ) {
 	$table_url = YOURLS_DB_TABLE_URL;
 	$shorturl  = yourls_escape( yourls_sanitize_keyword( $shorturl ) );
 	
-	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl';" );
+	$user = addslashes(YOURLS_USER);
+
+	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl' AND user = '$user';" );
 	$return = array();
 
 	if( !$res ) {
@@ -652,7 +648,9 @@ function yourls_get_db_stats( $where = '' ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->get_row( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where" );
+	$user = addslashes(YOURLS_USER);
+
+	$totals = $ydb->get_row( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 AND `user` = '$user' $where" );
 	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
 	
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
@@ -1133,9 +1131,10 @@ function yourls_delete_option( $name ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_OPTIONS;
 	$name = yourls_escape( $name );
+	$user = addslashes(YOURLS_USER);
 
 	// Get the ID, if no ID then return
-	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name'" );
+	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name' AND `user` = '$user'" );
 	if ( is_null( $option ) || !$option->option_id )
 		return false;
 		
@@ -1249,7 +1248,7 @@ function yourls_is_private() {
 		// API
 		if( yourls_is_API() ) {
 			if( !defined('YOURLS_PRIVATE_API') || YOURLS_PRIVATE_API != false )
-				$private = true;		
+				$private = true;
 
 		// Infos
 		} elseif( yourls_is_infos() ) {
@@ -1276,6 +1275,8 @@ function yourls_maybe_require_auth() {
 		require_once( YOURLS_INC.'/auth.php' );
 	} else {
 		yourls_do_action( 'require_no_auth' );
+		define( 'YOURLS_USER', 'guest' );
+		$user = addslashes(YOURLS_USER);
 	}
 }
 

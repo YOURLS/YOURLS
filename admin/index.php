@@ -330,7 +330,8 @@ yourls_table_tbody_start();
 
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
-$url_results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;" );
+$user = addslashes(YOURLS_USER);
+$url_results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 AND `user` = '$user' $where ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;" );
 $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;

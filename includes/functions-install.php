@@ -200,9 +200,11 @@ function yourls_create_sql_tables() {
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
+		'`user` varchar(255) DEFAULT NULL,'.
 		' PRIMARY KEY  (`keyword`),'.
 		' KEY `timestamp` (`timestamp`),'.
 		' KEY `ip` (`ip`)'.
+		' KEY `user` (`user`)'.
 		');';
 
 	$create_tables[YOURLS_DB_TABLE_OPTIONS] = 

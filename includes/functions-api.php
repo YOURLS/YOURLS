@@ -46,8 +46,7 @@ function yourls_api_action_stats() {
 	$filter = ( isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : '' );
 	$limit = ( isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : '' );
 	$start = ( isset( $_REQUEST['start'] ) ? $_REQUEST['start'] : '' );
-	$owner = ( isset( $_REQUEST['owner'] ) ? $_REQUEST['owner'] : '' );
-	return yourls_apply_filter( 'api_result_stats', yourls_api_stats( $filter, $limit, $start, $owner ) );
+	return yourls_apply_filter( 'api_result_stats', yourls_api_stats( $filter, $limit, $start ) );
 }
 
 /**
@@ -149,11 +148,11 @@ function yourls_api_output( $mode, $return ) {
  * Return array for API stat requests
  *
  */
-function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0, $owner = NULL ) {
-	$return = yourls_get_stats( $filter, $limit, $start, $owner );
+function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
+	$return = yourls_get_stats( $filter, $limit, $start );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
-	return yourls_apply_filter( 'api_stats', $return, $filter, $limit, $start, $owner );
+	return yourls_apply_filter( 'api_stats', $return, $filter, $limit, $start );
 }
 
 /**
