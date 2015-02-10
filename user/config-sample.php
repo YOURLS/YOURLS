@@ -30,9 +30,9 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL -- all lowercase and with no trailing slash.
+/** The URL you will be accessing the YOURLS service at -- all lowercase and with no trailing slash.
  ** If you define it to "http://example.com", don't use "http://www.example.com" in your browser (and vice-versa) */
-define( 'YOURLS_SITE', 'http://example.com' );
+define( 'YOURLS_SITE', 'http://your-own-domain' );
 
 /** Timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
