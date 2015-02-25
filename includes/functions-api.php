@@ -186,7 +186,7 @@ function yourls_api_expand( $shorturl ) {
 			'keyword'   => $keyword,
 			'shorturl'  => YOURLS_SITE . "/$keyword",
 			'longurl'   => $longurl,
-            'title'     => yourls_get_keyword_title( $keyword ),
+            		'title'     => yourls_get_keyword_title( $keyword ),
 			'simple'    => $longurl,
 			'message'   => 'success',
 			'statusCode' => 200,
@@ -202,3 +202,32 @@ function yourls_api_expand( $shorturl ) {
 	
 	return yourls_apply_filter( 'api_expand', $return, $shorturl );
 }
+
+/**
+ * Find the short url given a long url
+ *
+ */
+function yourls_api_action_find_short() {
+	$longurl = ( isset( $_REQUEST['longurl'] ) ? $_REQUEST['longurl'] : '' );
+	$shorturl = yourls_get_longurl_keyword( $longurl );
+
+	if ( $shorturl ) {
+		$return = array(
+			'longurl'   => $longurl,
+			'shorturl'  => $shorturl,
+			'simple'    => $shorturl,
+			'message'   => 'success',
+			'statusCode' => 200,
+		);
+	} else {
+		$return = array(
+			'longurl'   => $longurl,
+			'simple'    => 'not found',
+			'message'   => 'Error: short URL not found',
+			'errorCode' => 404,
+		);
+	}
+	
+	return yourls_apply_filter( 'api_find_short', $return, $longurl );
+}
+ 
