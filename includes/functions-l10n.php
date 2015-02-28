@@ -1045,7 +1045,7 @@ class YOURLS_Locale_Formats {
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filter( 'load_custom_textdomain', yourls_get_locale(), $domain );
-	$mofile = trim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
+	$mofile = rtrim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
 
 	return yourls_load_textdomain( $domain, $mofile );
 }
