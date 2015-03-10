@@ -432,7 +432,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
 	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
 	yourls_do_action( 'yourls_die' );
-	if( !yourls_did_action( 'html_head' ) ) {
+	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer();
 	}
 	die();
