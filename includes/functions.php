@@ -938,6 +938,18 @@ function yourls_upgrade_is_needed() {
 }
 
 /**
+ * Check if an upgrade is needed before looking for users in the DB.
+ *
+ */
+function yourls_users_in_database() {
+	list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
+	if( $currentsql >= 483 )
+		return true;
+		
+	return false;
+}
+
+/**
  * Get current version & db version as stored in the options DB. Prior to 1.4 there's no option table.
  *
  */
@@ -1135,6 +1147,93 @@ function yourls_delete_option( $name ) {
 		
 	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
 	unset( $ydb->option[ $name ] );
+	return true;
+}
+
+/**
+ * Read a user from DB. Return username or $default if not found
+ *
+ * Pretty much stolen from yourls_get_option
+ *
+ * @since 1.8
+ * @param string $username User's name. Expected to not be SQL-escaped.
+ * @param mixed $default Optional value to return if user doesn't exist. Defaults to false.
+ * @return mixed Value set for the option.
+ */
+function yourls_get_user( $username, $default = false ) {
+	global $ydb;
+
+	$table = YOURLS_DB_TABLE_USER;
+	$username = yourls_escape( $username );
+	$row = $ydb->get_row( "SELECT `username` FROM `$table` WHERE `username` = '$username' LIMIT 1" );
+	if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
+		$value = $row->username;
+	} else { // user does not exist
+		$value = $default;
+	}
+
+	return $value;
+}
+
+/**
+ * Read all users with passwords from DB and returns them
+ *
+ * Pretty much stolen from yourls_get_option
+ *
+ * @since 1.8
+ * @return array of user => password
+ */
+function yourls_get_user_passwords() {
+	global $ydb;
+
+	$table = YOURLS_DB_TABLE_USER;
+	$username = yourls_escape( $username );
+	$users = $ydb->get_results( "SELECT `username`, `user_password` FROM `$table`" );
+	$user_passwords = array();
+	foreach( $users as $user ){
+		$user_passwords[ $user->username ] = $user->user_password;
+	}
+
+	return $user_passwords;
+}
+
+/**
+ * Add a user to the DB
+ *
+ * Pretty much stolen from yourls_add_option function
+ *
+ * @since 1.8
+ * @param string $username Name of user to add. Expected to not be SQL-escaped.
+ * @param mixed $password Password of user to add. Expected to not be SQL-escaped.
+ * @return bool False if user was not added and true otherwise.
+ */
+function yourls_add_user( $username, $password) {
+	global $ydb;
+	$table = YOURLS_DB_TABLE_USER;
+	
+	$username = trim( $username );
+	if ( empty( $username ) )
+		return false;
+	$username = yourls_escape( $username );
+	
+	$password = trim( $password );
+	if ( empty( $password ) )
+		return false;
+	if( substr( $password, 0, 7 ) != 'phpass:' ){
+		$hash = yourls_phpass_hash( $password );
+		// PHP would interpret $ as a variable, so replace it in storage.
+		$password = 'phpass:'.str_replace( '$', '!', $hash );
+	}
+	$password = yourls_escape( $password );
+		
+	// Make sure the user doesn't already exist
+	if ( false !== yourls_get_user( $username ) )
+		return false;
+
+	yourls_do_action( 'add_user', $username, $password );
+
+	$ydb->query( "INSERT INTO `$table` (`username`, `user_password`) VALUES ('$username', '$password')" );
+	//$ydb->option[ $name ] = $value; --------- not sure what this line does
 	return true;
 }
 

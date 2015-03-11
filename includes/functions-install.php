@@ -227,6 +227,14 @@ function yourls_create_sql_tables() {
 		'KEY `shorturl` (`shorturl`)'.
 		') AUTO_INCREMENT=1 ;';
 
+	$create_tables[YOURLS_DB_TABLE_USER] = 
+		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_USER.'` ('.
+		'`user_id` int(11) NOT NULL auto_increment,'.
+		'`username` varchar(200) NOT NULL,'.
+		'`user_password` varchar(255) NOT NULL,'.
+		'PRIMARY KEY  (`user_id`),'.
+		'KEY `username` (`username`)'.
+		') AUTO_INCREMENT=1 ;';
 
 	$create_table_count = 0;
 	
@@ -247,6 +255,10 @@ function yourls_create_sql_tables() {
 	// Initializes the option table
 	if( !yourls_initialize_options() )
 		$error_msg[] = yourls__( 'Could not initialize options' );
+	
+	// Initializes the user table
+	if( !yourls_initialize_user() )
+		$error_msg[] = yourls__( 'Could not initialize user(s)' );
 	
 	// Insert sample links
 	if( !yourls_insert_sample_links() )
@@ -278,6 +290,28 @@ function yourls_initialize_options() {
 		& yourls_update_option( 'db_version', YOURLS_DB_VERSION )
 		& yourls_update_option( 'next_id', 1 )
 	);
+}
+
+/**
+ * Initializes the user table
+ *
+ * Initializes the admin user with password.
+ *
+ * @since 1.8
+ * @return bool
+ */
+function yourls_initialize_user() {
+	global $yourls_user_passwords;
+	
+	if( !isset( $yourls_user_passwords ) ){
+		return ( bool ) ( yourls_add_user( 'admin', 'pasord' ) );
+	}else{
+		$users = array_keys( $yourls_user_passwords );
+		$success = true;
+		foreach( $users as $user ){
+			$success = $success && ( bool ) ( yourls_add_user( $user, $yourls_user_passwords[$user] ) );
+		}
+	}
 }
 
 /**

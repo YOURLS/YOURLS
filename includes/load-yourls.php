@@ -65,6 +65,10 @@ if( !defined( 'YOURLS_DB_TABLE_OPTIONS' ) )
 if( !defined( 'YOURLS_DB_TABLE_LOG' ) )
 	define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
+// table to store users and their passwords
+if( !defined( 'YOURLS_DB_TABLE_USER' ) )
+	define( 'YOURLS_DB_TABLE_USER', YOURLS_DB_PREFIX.'user' );
+
 // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
 if( !defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) )
 	define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
@@ -176,6 +180,10 @@ if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php', 302 );
 	}
 }
+
+// Initialize user/password array (overwrites what's in the config file from the DB if it exists).
+if ( yourls_users_in_database() )
+	$yourls_user_passwords = yourls_get_user_passwords();
 
 // Init all plugins
 yourls_load_plugins();
