@@ -61,7 +61,8 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
  ** Read http://yourls.org/userpassword for more information */
 $yourls_user_passwords = array(
 	'username' => 'password',
-	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
+	// 'username2' => 'password2',
+	// You can have one or more 'login'=>'password' lines
 	);
 
 /** Debug mode to output some internal information
