@@ -1885,7 +1885,7 @@ function yourls_is_mobile_device() {
 }
 
 /**
- * Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
+ * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
  *
  */
 function yourls_get_request() {
