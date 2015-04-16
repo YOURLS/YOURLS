@@ -824,13 +824,14 @@ function yourls_log_redirect( $keyword ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
 	
+    $now      = date( 'Y-m-d H:i:s' );
 	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
 	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
 	$ua       = yourls_escape( yourls_get_user_agent() );
 	$ip       = yourls_escape( yourls_get_IP() );
 	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
 	
-	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES ('$now', '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
 
 /**
