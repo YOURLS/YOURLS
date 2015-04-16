@@ -41,7 +41,7 @@ global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object
 // Initialize ourselves some constants that are typically user defined
 
 $yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 $yourls_user_consts = array(
 	'YOURLS_HOURS_OFFSET'     => 5,
