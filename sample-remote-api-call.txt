@@ -21,7 +21,7 @@ $title   = 'Super blog!';                // optional, if omitted YOURLS will loo
 $format  = 'json';                       // output format: 'json', 'xml' or 'simple'
 
 // EDIT THIS: the URL of the API file
-$api_url = 'http://yoursite/yourls-api.php';
+$api_url = 'http://your-own-domain-here.com/yourls-api.php';
 
 // Init the CURL session
 $ch = curl_init();

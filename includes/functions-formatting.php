@@ -51,7 +51,7 @@ function yourls_string2htmlid( $string ) {
 }
 
 /**
- * Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
+ * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is valid.
  *
  */
 function yourls_sanitize_string( $string ) {
