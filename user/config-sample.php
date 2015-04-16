@@ -34,7 +34,7 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
-/** Timezone GMT offset */
+/** Server timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
 /** YOURLS language
