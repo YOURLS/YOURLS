@@ -1483,6 +1483,13 @@ function yourls_salt( $string ) {
  *     'var', 'value', $url 
  * If $url omitted, uses $_SERVER['REQUEST_URI']
  *
+ * The result of this function call is a URL : it should be escaped before being printed as HTML
+ *
+ * @since 1.5
+ * @param string|array $param1 Either newkey or an associative_array.
+ * @param string       $param2 Either newvalue or oldquery or URI.
+ * @param string       $param3 Optional. Old query or URI.
+ * @return string New URL query string.
  */
 function yourls_add_query_arg() {
 	$ret = '';
@@ -1564,6 +1571,12 @@ function yourls_urlencode_deep( $value ) {
 /**
  * Remove arg from query. Opposite of yourls_add_query_arg. Stolen from WP.
  *
+ * The result of this function call is a URL : it should be escaped before being printed as HTML
+ *
+ * @since 1.5
+ * @param string|array $key   Query key or keys to remove.
+ * @param bool|string  $query Optional. When false uses the $_SERVER value. Default false.
+ * @return string New URL query string.
  */
 function yourls_remove_query_arg( $key, $query = false ) {
 	if ( is_array( $key ) ) { // removing multiple keys
