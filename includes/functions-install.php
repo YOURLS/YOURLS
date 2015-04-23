@@ -183,8 +183,17 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 /**
  * Create MySQL tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
  *
+ * @since 1.3
+ * @return array  An array like array( 'success' => array of success strings, 'errors' => array of error strings )
  */
 function yourls_create_sql_tables() {
+    // Allow plugins (most likely a custom db.php layer in user dir) to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_yourls_create_sql_tables', null );
+    // your filter function should return an array of ( 'success' => $success_msg, 'error' => $error_msg ), see below
+    if ( null !== $pre ) {
+        return $pre;
+    }
+
 	global $ydb;
 	
 	$error_msg = array();
