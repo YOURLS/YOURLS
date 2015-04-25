@@ -157,7 +157,7 @@ if( yourls_do_log_redirect() ) {
 	
 	$_last_24h = array();
 	foreach( (array)$rows as $row ) {
-		if ( $row->time )
+		if ( isset( $row->time ) )
 			$_last_24h[ "$row->time" ] = $row->count;
 	}
 	
