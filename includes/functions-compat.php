@@ -5,7 +5,7 @@
  */
 
 /**
- * json_encode for PHP prior to 5.2
+ * json_encode for PHP, should someone run a distro without php-json -- see http://askubuntu.com/questions/361424/
  *
  */
 if( !function_exists( 'json_encode' ) ) {
@@ -80,60 +80,6 @@ function yourls_array_to_json( $array ){
 	return $result;
 }
 
-/**
- * Compat http_build_query for PHP4
- *
- */
-if ( !function_exists( 'http_build_query' ) ) {
-	function http_build_query( $data, $prefix=null, $sep=null ) {
-		return yourls_http_build_query( $data, $prefix, $sep );
-	}
-}
-
-/**
- * Compat http_build_query for PHP4. Stolen from WP.
- *
- * from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
- * 
- */
-function yourls_http_build_query( $data, $prefix=null, $sep=null, $key='', $urlencode=true ) {
-	$ret = array();
-
-	foreach ( (array) $data as $k => $v ) {
-		if ( $urlencode)
-			$k = urlencode( $k );
-		if ( is_int($k) && $prefix != null )
-			$k = $prefix.$k;
-		if ( !empty( $key ) )
-			$k = $key . '%5B' . $k . '%5D';
-		if ( $v === NULL )
-			continue;
-		elseif ( $v === FALSE )
-			$v = '0';
-
-		if ( is_array( $v ) || is_object( $v ) )
-			array_push( $ret,yourls_http_build_query( $v, '', $sep, $k, $urlencode ) );
-		elseif ( $urlencode )
-			array_push( $ret, $k.'='.urlencode( $v ) );
-		else
-			array_push( $ret, $k.'='.$v );
-	}
-
-	if ( NULL === $sep )
-		$sep = ini_get( 'arg_separator.output' );
-
-	return implode( $sep, $ret );
-}
-
-/**
- * htmlspecialchars_decode for PHP < 5.1
- *
- */
-if ( !function_exists( 'htmlspecialchars_decode' ) ) {
-	function htmlspecialchars_decode( $text ) {
-		return strtr( $text, array_flip( get_html_translation_table( HTML_SPECIALCHARS ) ) );
-	}
-}
 
 /**
  * BC Math functions (assuming if one doesn't exist, none does)
@@ -156,20 +102,5 @@ if ( !function_exists( 'bcdiv' ) ) {
 	}
 	function bcpow( $base, $power ) {
 		return pow( $base, $power );
-	}
-}
-
-/**
- * Replacement for property_exists() (5.1+)
- *
- */
-if ( !function_exists( 'property_exists' ) ) {
-	function property_exists( $class, $property ) {
-		if ( is_object( $class ) ) {
-			$vars = get_object_vars( $class );
-		} else {
-			$vars = get_class_vars( $class );
-		}
-		return array_key_exists( $property, $vars );
 	}
 }
