@@ -492,15 +492,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	$original_url = $url;
 
 	// force scheme and domain to lowercase - see issues 591 and 1630
-    // We're not using parse_url() here because its opposite, http_build_url(), requires PECL. Plus, who doesn't love a neat Regexp? :)
-	if( preg_match( '!^([a-zA-Z0-9\+\.-]+:)(//)?(.*?@)?([^/#?]+)(.*)$!', $url, $matches ) ) {
-        list( $all, $scheme, $slashes, $userinfo, $domain, $rest ) = $matches;
-        $scheme = strtolower( $scheme );
-        // Domain to lowercase. On URN eg "urn:example:animal:ferret:nose" don't lowercase anything else
-        if( $slashes == '//' )
-            $domain = strtolower( $domain );
-        $url = $scheme . $slashes . $userinfo . $domain . $rest;
-    }
+    $url = yourls_lowercase_scheme_domain( $url );
 
 	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
@@ -529,6 +521,92 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 
 	return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
 }
+
+
+/**
+ * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889
+ *
+ * This function is trickier than what seems to be needed at first
+ * 
+ * First, we need to handle several URI types: http://example.com, mailto:ozh@ozh.ozh, facetime:user@example.com, and so on, see
+ * yourls_kses_allowed_protocols() in functions-kses.php
+ * The general rule is that the scheme ("stuff://" or "stuff:") is case insensitive and should be lowercase. But then, depending on the
+ * scheme, parts of what follows the scheme may or may not be case sensitive.
+ *
+ * Second, simply using parse_url() and its opposite http_build_url() (see functions-compat.php) is a pretty unsafe process:
+ *  - parse_url() can easily trip up on malformed or weird URLs
+ *  - exploding a URL with parse_url(), lowercasing some stuff, and glueing things back with http_build_url() does not handle well
+ *    "stuff:"-like URI [1] and can result in URLs ending modified [2][3]. We don't want to *validate* URI, we just want to lowercase
+ *    what is supposed to be lowercased.
+ *
+ * So, to be conservative, this functions:
+ *  - lowercases the scheme
+ *  - does not lowercase anything else on "stuff:" URI
+ *  - tries to lowercase only scheme and domain of "stuff://" URI
+ *
+ * [1] http_build_url(parse_url("mailto:ozh")) == "mailto:///ozh"
+ * [2] http_build_url(parse_url("http://blah#omg")) == "http://blah/#omg"
+ * [3] http_build_url(parse_url("http://blah?#")) == "http://blah/"
+ *
+ * @since 1.7.1
+ * @param string $url URL
+ * @return string URL with lowercase scheme and protocol
+ */
+function yourls_lowercase_scheme_domain( $url ) {
+    $scheme = yourls_get_protocol( $url );
+
+    if( false == $scheme ) {
+        // Scheme not found, malformed URL? Something else? Not sure.
+        return $url;
+    }
+
+    // Case 1 : scheme like "stuff://" (eg "http://example.com/" or "ssh://joe@joe.com")
+    if( substr( $scheme, -2, 2 ) == '//' ) {
+
+        $parts = parse_url( $url );
+
+        // Most likely malformed stuff, could not parse : we'll just lowercase the scheme and leave the rest untouched
+        if( false == $parts ) {
+            $url = str_replace( $scheme, strtolower( $scheme ), $url );
+
+        // URL seems parsable, let's do the best we can
+        } else {
+
+            $lower = array();
+
+            $lower['scheme'] = strtolower( $parts['scheme'] );
+
+            if( isset( $parts['host'] ) ) { 
+                $lower['host'] = strtolower( $parts['host'] );
+            } else {
+                $parts['host'] = '***';
+            }
+
+            // We're not going to glue back things that could be modified in the process            
+            unset( $parts['path'] );
+            unset( $parts['query'] );
+            unset( $parts['fragment'] );
+
+            // original beginning of the URL and its lowercase-where-needed counterpart
+            // We trim the / after the domain to avoid avoid "http://example.com" being reconstructed as "http://example.com/"
+            $partial_original_url       = trim( http_build_url( $parts ), '/' );
+            $partial_lower_original_url = trim( http_build_url( $parts, $lower ), '/' );
+
+            $url = str_replace( $partial_original_url , $partial_lower_original_url, $url );
+
+        }
+
+    // Case 2 : scheme like "stuff:" (eg "mailto:joe@joe.com" or "bitcoin:15p1o8vnWqNkJBJGgwafNgR1GCCd6EGtQR?amount=1&label=Ozh")
+    // In this case, we only lowercase the scheme, because depending on it, things after should or should not be lowercased
+    } else {
+
+        $url = str_replace( $scheme, strtolower( $scheme ), $url );
+
+    }
+
+    return $url;
+}
+
 
 /**
  * Escape single quotes, htmlspecialchar " < > &, and fix line endings. Stolen from WP.
