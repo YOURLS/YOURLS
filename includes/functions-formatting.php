@@ -494,7 +494,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	// force scheme and domain to lowercase - see issues 591 and 1630
     $url = yourls_lowercase_scheme_domain( $url );
 
-	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', $url );
+	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
 	// TODO: check if that was it too destructive
 	$strip = array( '%0d', '%0a', '%0D', '%0A' );
