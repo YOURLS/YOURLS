@@ -7,78 +7,77 @@
  * @group url
  * @since 0.1
  */
-class Option_Forma_URL extends PHPUnit_Framework_TestCase {
+class Format_URL extends PHPUnit_Framework_TestCase {
 
+    /**
+     * List of schemes to test. Structure: array( string to test, expected scheme )
+     */
+    function list_of_schemes() {
+        return array(
+           array( 'example:80/blah'             , 'example:' ),
+           array( 'example.com/blah'            , '' ),
+           array( 'example.com:80/blah'         , 'example.com:' ),
+           array( 'scheme://example.com:80/blah', 'scheme://' ),
+           array( 'scheme:example.com'          , 'scheme:' ),
+           array( 'scheme:/example.com:80/hey'  , 'scheme:' ),
+           array( 'scheme:/example:80/hey'      , 'scheme:' ),
+           array( 'scheme://example'            , 'scheme://' ),
+           array( 'scheme:///example'           , 'scheme://' ),
+           array( 'scheme+bleh:example'         , 'scheme+bleh:' ),
+           array( 'scheme :example'             , '' ),
+           array( 'scheme+bleh : example'       , '' ),
+           array( 'scheme45:example'            , 'scheme45:' ),
+           array( '45scheme:example'            , '' ),
+           array( 'scheme+-.1337:example'       , 'scheme+-.1337:' ),
+           array( '+scheme:example'             , '' ),
+        );
+    }
+    
     /**
      * Correctly get protocols
      *
      * @since 0.1
+     * @dataProvider list_of_schemes
      */
-    function test_protocols() {
+    function test_correcttly_get_protocols( $test_this, $expected ) {
+        $this->assertSame( yourls_get_protocol( $test_this ), $expected );
+    }
     
-        // List of test uri with expected protocol
-        $list = "
-        example:80/blah              -> example:
-        example.com/blah             -> 
-        example.com:80/blah          -> example.com:
-        scheme://example.com:80/blah -> scheme://
-        scheme:example.com           -> scheme:
-        scheme:/example.com:80/hey   -> scheme:
-        scheme:/example:80/hey       -> scheme:
-        scheme://example             -> scheme://
-        scheme:///example            -> scheme://
-        scheme+bleh:example          -> scheme+bleh:
-        scheme :example              -> 
-        scheme+bleh : example        ->
-        scheme45:example             -> scheme45:
-        45scheme:example             -> 
-        scheme+-.1337:example        -> scheme+-.1337:
-        +scheme:example              -> 
-        ";
-        
-        // Split that list into a proper array
-        $tests = array();
-        $list  = explode( "\n", $list );
-        foreach( $list as $line ) {
-            $line = trim( $line );
-            if( $line ) {
-                list( $uri, $scheme ) = explode( '->', $line );
-                $uri = trim( $uri );
-                $scheme = trim( $scheme );
-                $tests[] = array( 'uri' => $uri, 'expected' => $scheme );
-            }
-        }
-        
-        foreach( $tests as $test ) {
-            $this->assertSame( $test['expected'], yourls_get_protocol( $test['uri'] ) );
-        }
-   
-        
+    
+    /**
+     * List of valid URLs that shoul not be changed when sanitized
+     */
+    function list_of_valid_URLs() {
+        return array(
+            array( 'http://example.com' ),
+            array( 'http://example.com/' ),
+            array( 'http://@example.com/' ),
+            array( 'http://example.com/?@OMG' ), // #1890
+            array( 'http://@example.com#BLAH' ),
+            array( 'http://Ozh:Password@example.com/' ),
+            array( 'http://Ozh:Password@example.com#OMG' ),
+            array( 'http://Ozh:Password@example.com:1337/' ),
+            array( 'http://Ozh:Password@example.com:1337#OMG' ),
+            array( 'http://Ozh:Password@example.com/hey@ho' ),
+            array( 'http://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose:@:@' ),
+            array( 'mailto:ozh@ozh.org' ),
+            array( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay' ),
+            array( 'http://example.com/search.php?search=(amistillhere)' ),
+            array( 'http://example.com/?test=%2812345%29abcdef[gh]' ),
+            array( 'http://example.com/?test=(12345)abcdef[gh]' ),
+            array( 'http://[0:0:0:0:0:0:0:1]/' ),
+            array( 'http://[2001:db8:1f70::999:de8:7648:6e8]:100/' ),
+        );
     }
     
     /**
      * Test that valid URLs are not modified
      *
      * @since 0.1
+     * @dataProvider list_of_valid_URLs
      */
-    function test_valid_urls() {
-        $urls = array(
-            'http://example.com',
-            'http://example.com/',
-            'http://@example.com/',
-            'http://@example.com#BLAH',
-            'http://Ozh:Password@example.com/',
-            'http://Ozh:Password@example.com#OMG',
-            'http://Ozh:Password@example.com:1337/',
-            'http://Ozh:Password@example.com:1337#OMG',
-            'http://Ozh:Password@example.com/hey@ho',
-            'http://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose:@:@',
-            'mailto:ozh@ozh.org',
-        );
-
-        foreach( $urls as $url ) {
-            $this->assertEquals( $url, yourls_sanitize_url( $url ) );
-        }
+    function test_valid_urls( $url ) {
+        $this->assertEquals( $url, yourls_sanitize_url( $url ) );
     }
 
 	/**
@@ -112,19 +111,6 @@ class Option_Forma_URL extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * URL with valid chars
-	 *
-	 * @since 0.1
-	 */	
-	function test_url_with_valid_characters() {
-        $this->assertEquals( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay', yourls_sanitize_url( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay') );
-        $this->assertEquals( 'http://example.com/search.php?search=(amistillhere)', yourls_sanitize_url( 'http://example.com/search.php?search=(amistillhere)' ) );
-        // @TODO This must be fixed, see #1814
-        // $this->assertEquals( 'http://example.com/whyisthisintheurl/?param[1]=foo', yourls_sanitize_url( 'http://example.com/whyisthisintheurl/?param[1]=foo' ) );
-        // $this->assertEquals( 'http://[0:0:0:0:0:0:0:1]/', yourls_sanitize_url( 'http://[0:0:0:0:0:0:0:1]/' ) );
-	}
-
-	/**
 	 * Test valid, missing and fake protocols
 	 *
 	 * @since 0.1
@@ -141,22 +127,35 @@ class Option_Forma_URL extends PHPUnit_Framework_TestCase {
         $yourls_allowedprotocols[] = 'evil://';
         $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
 	}
+    
+    /**
+     * List of URLs with MiXeD CaSe to test. Structure: array( sanitized url, unsanitized url with mixed case )
+     */
+    function list_of_mixed_case() {
+        return array(
+            array( 'http://example.com'                               , 'HTTP://example.com' ),
+            array( 'http://example.com'                               , 'Http://example.com' ),
+            array( 'http://example.com'                               , 'Http://ExAmPlE.com' ),
+            array( 'http://example.com/BLAH'                          , 'Http://ExAmPlE.com/BLAH' ),
+            array( 'http://http/HTTP?HTTP#HTTP'                       , 'HTTP://HTTP/HTTP?HTTP#HTTP' ),
+            array( 'http://example.com/?@BLaH'                        , 'Http://ExAmPlE.com/?@BLaH' ), #1890
+            array( 'http://example.com#BLAH'                          , 'Http://ExAmPlE.com#BLAH' ),
+            array( 'http://@example.com#BLAH'                         , 'Http://@ExAmPlE.com#BLAH' ),
+            array( 'http://example.com?BLAH'                          , 'Http://ExAmPlE.com?BLAH' ),
+            array( 'http://Ozh:Password@example.com:1337#OMG'         , 'http://Ozh:Password@Example.COM:1337#OMG' ),
+            array( 'http://User:PWd@example.com?User:PWd@Example.com' , 'http://User:PWd@Example.com?User:PWd@Example.com' ),
+            array( 'mailto:Ozh@Ozh.org?omg'                           , 'MAILTO:Ozh@Ozh.org?omg' ),        
+        );
+    }
 
 	/**
 	 * Protocol and domain with mixed case
 	 *
 	 * @since 0.1
+     * @dataProvider list_of_mixed_case
 	 */	
-	function test_url_with_protocol_case() {
-		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'HTTP://example.com' ) );
-		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'Http://example.com' ) );
-		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'Http://ExAmPlE.com' ) );
-		$this->assertEquals( 'http://example.com/BLAH', yourls_sanitize_url( 'Http://ExAmPlE.com/BLAH' ) );
-		$this->assertEquals( 'http://@example.com#BLAH', yourls_sanitize_url( 'Http://@ExAmPlE.com#BLAH' ) );
-		$this->assertEquals( 'http://example.com?BLAH', yourls_sanitize_url( 'Http://ExAmPlE.com?BLAH' ) );
-        $this->assertEquals( 'http://Ozh:Password@example.com:1337#OMG', yourls_sanitize_url( 'http://Ozh:Password@Example.COM:1337#OMG' ) );
-        $this->assertEquals( 'http://Ozh:Password@example.com?Ozh:Password@Example.com', yourls_sanitize_url( 'http://Ozh:Password@Example.com?Ozh:Password@Example.com' ) );
-        $this->assertEquals( 'mailto:Ozh@Ozh.org?omg', yourls_sanitize_url( 'MAILTO:Ozh@Ozh.org?omg' ) );
+	function test_url_with_protocol_case( $sanitized, $unsanitized ) {
+		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
 	}
 	
 	/*

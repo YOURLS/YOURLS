@@ -6,7 +6,7 @@
  * @group formatting
  * @since 0.1
  */
-class Option_Format_General extends PHPUnit_Framework_TestCase {
+class Format_General extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Serialized data. Stolen from WP.
