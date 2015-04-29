@@ -109,7 +109,7 @@ if ( !function_exists( 'bcdiv' ) ) {
 /**
  * http_build_url compatibility function
  *
- * @since 1.7
+ * @since 1.7.1
  */
 if ( !function_exists( 'http_build_url' ) ) {
     include YOURLS_INC . '/http_build_url/http_build_url.php';
