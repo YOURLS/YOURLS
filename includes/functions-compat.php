@@ -104,3 +104,13 @@ if ( !function_exists( 'bcdiv' ) ) {
 		return pow( $base, $power );
 	}
 }
+
+
+/**
+ * http_build_url compatibility function
+ *
+ * @since 1.7.1
+ */
+if ( !function_exists( 'http_build_url' ) ) {
+    include YOURLS_INC . '/http_build_url/http_build_url.php';
+}
