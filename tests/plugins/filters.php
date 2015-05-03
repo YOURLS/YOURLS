@@ -72,6 +72,32 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
     }
 
     
+    /**
+     * Check removing a filter with non default priority
+     *
+     * @since 0.1
+     */
+    public function test_remove_filter_priority() {
+        $hook = rand_str();
+        $function = rand_str();
+        // Random priority but not 10
+        do {
+            $priority = rand( 1,100 );
+        } while ( $priority == 10 );
+        
+        $this->assertFalse( yourls_has_filter( $hook ) );
+        yourls_add_filter( $hook, $function, $priority );
+        $this->assertTrue( yourls_has_filter( $hook ) );
+        
+        $removed = yourls_remove_filter( $hook, $function );
+        $this->assertFalse( $removed );
+        
+        $removed = yourls_remove_filter( $hook, $function, $priority );
+        $this->assertTrue( $removed );
+        $this->assertFalse( yourls_has_filter( $hook ) );        
+    }
+
+    
 	/**
 	 * Check adding a filter with an anonymous function using create_function()
      *
@@ -306,6 +332,25 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         return $hook;
 	}
+
+    /**
+     * Check applying multiple filters with priorities to one hook
+     *
+     * @depends test_apply_filter_closure
+     * @since 0.1
+     */
+    public function test_multiple_filter_with_priority() {
+        $hook = rand_str();
+        $var  = rand_str();
+        
+        yourls_add_filter( $hook, function( $in ) { return $in . "1"; }, 10 );
+        yourls_add_filter( $hook, function( $in ) { return $in . "2"; }, 9 );
+        
+        $filtered = yourls_apply_filter( $hook, $var );
+        $this->assertSame( $var . "2" . "1", $filtered );
+        
+        return $hook;
+    }
 
     
     /**
