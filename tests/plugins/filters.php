@@ -8,6 +8,11 @@
  */
 
 class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
+    
+    /**
+     * this var will allow to share "$this" across multiple tests here
+     */
+    public static $instance;
 
 	/**
 	 * Check adding a filter with a simple function name
@@ -46,6 +51,25 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         return $hook;
 	}
+    
+    
+    /**
+     * Check removing a filter hooked with a simple function name
+     *
+     * @since 0.1
+     */
+    public function test_remove_filter_funcname() {
+        $hook = rand_str();
+        $function = rand_str();
+        
+        $this->assertFalse( yourls_has_filter( $hook ) );
+        yourls_add_filter( $hook, $function );
+        $this->assertTrue( yourls_has_filter( $hook ) );
+        
+        $removed = yourls_remove_filter( $hook, $function );
+        $this->assertTrue( $removed );
+        $this->assertFalse( yourls_has_filter( $hook ) );        
+    }
 
     
 	/**
@@ -111,6 +135,18 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         return $hook;
 	}
     
+    /**
+     * Check removing a filter hooked with function within class
+     *
+     * @depends test_add_filter_within_class
+     * @since 0.1
+     */
+    public function test_remove_filter_within_class( $hook ) {
+        $removed = yourls_remove_filter( $hook, 'Change_Variable::change_it' );
+        $this->assertTrue( $removed );
+        $this->assertFalse( yourls_has_filter( $hook ) );        
+    }
+    
 
 	/**
 	 * Check adding filter with function within class using an array
@@ -136,14 +172,25 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_apply_filter_within_class_array( $hook ) {
         $var = rand_str();
-        
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
+
         return $hook;
 	}
     
+    /**
+     * Check removing a filter hooked with function within class using an array
+     *
+     * @depends test_add_filter_within_class_array
+     * @since 0.1
+     */
+    public function test_remove_filter_within_class_array( $hook ) {
+        $removed = yourls_remove_filter( $hook, array( 'Change_Variable', 'change_it' ) );
+        $this->assertTrue( $removed );
+        $this->assertFalse( yourls_has_filter( $hook ) );        
+    }
 
+    
 	/**
 	 * Check adding a filter with function within class instance
      *
@@ -152,11 +199,18 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */
 	public function test_add_filter_within_class_instance() {
+        /* Note : in the unit tests context, we cannot rely on "$this" keeping the same
+         * between tests, whereas it totally works in a "normal" class context
+         * For this reason, using yourls_add_filter($hook, array($this, 'some_func')) in one test and 
+         * yourls_remove_filter($hook,array($this,'some_func')) in another test doesn't work.
+         * To circumvent this, we're storing $this in $instance.
+         */
+        self::$instance = $this;
         $hook = rand_str();
         $this->assertFalse( yourls_has_filter( $hook ) );
-        yourls_add_filter( $hook, array( $this, 'change_variable' ) );
+        yourls_add_filter( $hook, array( self::$instance, 'change_variable' ) );
         $this->assertTrue( yourls_has_filter( $hook ) );
-               
+
         return $hook;
 	}
     
@@ -168,13 +222,24 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_apply_filter_within_class_instance( $hook ) {
         $var = rand_str();
-        
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
+
         return $hook;
 	}
     
+    /**
+     * Check removing a filter hooked with function within class
+     *
+     * @depends test_add_filter_within_class_instance
+     * @since 0.1
+     */
+    public function test_remove_filter_within_class_instance( $hook ) {
+        $this->assertTrue( yourls_has_filter( $hook ) );
+        $removed = yourls_remove_filter( $hook, array( self::$instance, 'change_variable' ) );
+        $this->assertTrue( $removed );
+        $this->assertFalse( yourls_has_filter( $hook ) );
+    }
 
 	/**
 	 * Check that hooking to 'Class::Method' or array( 'Class', 'Method') is the same
@@ -222,8 +287,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         return $hook;
 	}
-    
-    
+
 	/**
 	 * Check applying multiple filters to one hook
 	 *
