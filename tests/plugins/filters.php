@@ -317,7 +317,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
 	/**
 	 * Check applying multiple filters to one hook
 	 *
-	 * @depends test_apply_filter_closure
 	 * @since 0.1
 	 */
 	public function test_multiple_filter() {
@@ -336,7 +335,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
     /**
      * Check applying multiple filters with priorities to one hook
      *
-     * @depends test_apply_filter_closure
      * @since 0.1
      */
     public function test_multiple_filter_with_priority() {
@@ -350,15 +348,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( $var . "2" . "1", $filtered );
         
         return $hook;
-    }
-
-    
-    /**
-     * Dummy function -- just modifies the value of a global var
-     */
-    public function change_one_global() {
-        $var_name = $GLOBALS['test_var'];
-        $GLOBALS[ $var_name ] = rand_str();
     }
 
     /**
