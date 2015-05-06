@@ -92,25 +92,8 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 
 	// Object Class Calling
 	if ( is_object( $function[0] ) ) {
-		// Object Class Calling
-		if ( function_exists('spl_object_hash') ) {
-			return spl_object_hash($function[0]) . $function[1];
-		} else {
-            $obj_idx = get_class( $function[0] ) . $function[1];
-            if ( !isset( $function[0]->_yourls_filters_id ) ) {
-                if ( false === $priority )
-                    return false;
-                $count = isset( $yourls_filters[ $hook ][ $priority ]) ? count( (array)$yourls_filters[ $hook ][ $priority ] ) : 0;
-                $function[0]->_yourls_filters_id = $count;
-                $obj_idx .= $count;
-                unset( $count );
-            } else {
-                $obj_idx .= $function[0]->_yourls_filters_id;
-            }
-            return $obj_idx;
-        }
+        return spl_object_hash( $function[0] ) . $function[1];
 	}
-    
     // Static Calling
 	else if ( is_string( $function[0] ) ) {
 		return $function[0]. '::' .$function[1];
