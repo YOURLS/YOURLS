@@ -53,6 +53,23 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         return $hook;
 	}
 
+	/**
+	 * Check we keep correct track of the number of time an action is done
+	 *
+	 * @since 0.1
+	 */
+	public function test_do_action_several_times_and_count() {
+        $hook = rand_str();
+        $this->assertSame( 0, yourls_did_action( $hook ) );
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            yourls_do_action( $hook );
+        }
+        
+        $this->assertSame( $times, yourls_did_action( $hook ) );
+	}
+
     
 	/**
 	 * Check adding an action with an anonymous function using create_function()
@@ -259,6 +276,19 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         return $hook;
 	}
     
+    /**
+     * Check that applied function must exist
+     *
+     * @expectedException PHPUnit_Framework_Error
+     * @since 0.1
+     */
+    public function test_function_must_exist_if_applied() {
+        $hook = rand_str();
+        yourls_add_action( $hook, rand_str() );
+        // this will trigger an error, converted to an exception by PHPUnit
+        yourls_do_action( $hook );
+    }
+
     
     /**
      * Dummy function -- just modifies the value of a global var

@@ -48,8 +48,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
-        return $hook;
 	}
     
     
@@ -125,8 +123,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
-        return $hook;
 	}
     
     
@@ -157,8 +153,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
-        return $hook;
 	}
     
     /**
@@ -200,8 +194,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $var = rand_str();
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-
-        return $hook;
 	}
     
     /**
@@ -250,8 +242,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $var = rand_str();
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-
-        return $hook;
 	}
     
     /**
@@ -310,8 +300,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertNotSame( $var, $filtered );
-        
-        return $hook;
 	}
 
 	/**
@@ -328,8 +316,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertSame( $var . "1" . "2", $filtered );
-        
-        return $hook;
 	}
 
     /**
@@ -346,10 +332,65 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertSame( $var . "2" . "1", $filtered );
-        
-        return $hook;
     }
 
+    /**
+     * Check return values of yourls_has_filter()
+     *
+     * @since 0.1
+     */
+    public function test_has_filter_return_values() {
+        $hook = rand_str();
+        
+        yourls_add_filter( $hook, 'some_function' );
+        yourls_add_filter( $hook, 'some_other_function', 1337 );
+        
+        $this->assertTrue( yourls_has_filter( $hook ) );
+        $this->assertSame( 10, yourls_has_filter( $hook, 'some_function' ) );
+        $this->assertSame( 1337, yourls_has_filter( $hook, 'some_other_function' ) );
+        $this->assertFalse( yourls_has_filter( $hook, 'nope_not_this_function' ) );
+
+        // $this->assertSame( "omg", "lol" );
+    }
+
+    /**
+     * Check that applied function must exist
+     *
+     * @expectedException PHPUnit_Framework_Error
+     * @since 0.1
+     */
+    public function test_function_must_exist_if_applied() {
+        $hook = rand_str();
+        yourls_add_filter( $hook, rand_str() );
+        // this will trigger an error, converted to an exception by PHPUnit
+        $test = yourls_apply_filter( $hook, rand_str() );
+    }
+
+    /**
+     * Check filters accept multiple and defined number of arguments
+     *
+     * @since 0.1
+     */
+    public function test_accepted_args() {
+        // Ask for 2 arguments and provide 2
+        $hook = rand_str();
+        yourls_add_filter( $hook, function( $var1 = '', $var2 = '' ) { return "$var1 $var2"; }, 10, 2 );
+        $test = yourls_apply_filter( $hook, 'hello', 'world' );
+        $this->assertSame( $test, 'hello world' );
+
+        // Ask for 1 argument and provide 2
+        $hook = rand_str();
+        yourls_add_filter( $hook, function( $var1 = '', $var2 = '' ) { return "$var1 $var2"; }, 10, 1 );
+        $test = yourls_apply_filter( $hook, 'hello', 'world' );
+        $this->assertSame( $test, 'hello ' );
+        
+        // Ask for 2 arguments and provide 1
+        $hook = rand_str();
+        yourls_add_filter( $hook, function( $var1 = '', $var2 = '' ) { return "$var1 $var2"; }, 10, 2 );
+        $test = yourls_apply_filter( $hook, 'hello' );
+        $this->assertSame( $test, 'hello ' );
+    }
+    
     /**
      * Dummy function -- just modifies the value of a var
      */
