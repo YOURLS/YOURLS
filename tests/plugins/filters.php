@@ -354,8 +354,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( 10, yourls_has_filter( $hook, 'some_function' ) );
         $this->assertSame( 1337, yourls_has_filter( $hook, 'some_other_function' ) );
         $this->assertFalse( yourls_has_filter( $hook, 'nope_not_this_function' ) );
-
-        // $this->assertSame( "omg", "lol" );
     }
 
     /**

@@ -1,5 +1,6 @@
 # log dir
 build/
+coverage/
 YOURLS/
 /yourls-tests-config.php
 vendor/
