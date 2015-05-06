@@ -14,6 +14,11 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
      */
     public static $instance;
 
+    /**
+     * this var will keep track of how many times particular filters will be called
+     */
+    public static $counter;
+
 	/**
 	 * Check adding a filter with a simple function name
      *
@@ -391,6 +396,27 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( $test, 'hello ' );
     }
     
+    /**
+     * Check applying multiple filters and count executions
+     *
+     * @since 0.1
+     */
+    public function test_multiple_filter_and_count() {
+        $hook = rand_str();
+        
+        self::$instance = $this;
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            // This will register every time a different closure function
+            yourls_add_filter( $hook, function() { ++self::$counter; return rand_str(); } );
+        }
+        
+        self::$counter = 0;
+        $filtered = yourls_apply_filter( $hook, rand_str() );
+        $this->assertSame( $times, self::$counter );
+    }
+
     /**
      * Dummy function -- just modifies the value of a var
      */
