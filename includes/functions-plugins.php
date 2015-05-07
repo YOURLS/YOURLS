@@ -94,10 +94,12 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 	if ( is_object( $function[0] ) ) {
         return spl_object_hash( $function[0] ) . $function[1];
 	}
+    
     // Static Calling
-	else if ( is_string( $function[0] ) ) {
+    if ( is_string( $function[0] ) ) {
 		return $function[0]. '::' .$function[1];
     }
+
 }
 
 /**
@@ -165,10 +167,11 @@ function yourls_do_action( $hook, $arg = '' ) {
 	// Keep track of actions that are "done"
 	if ( !isset( $yourls_actions ) )
 		$yourls_actions = array();
-	if ( !isset( $yourls_actions[ $hook ] ) )
+	if ( !isset( $yourls_actions[ $hook ] ) ) {
 		$yourls_actions[ $hook ] = 1;
-	else
+    } else {
 		++$yourls_actions[ $hook ];
+    }
 
 	$args = array();
 	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) // array(&$this)
