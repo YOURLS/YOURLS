@@ -30,7 +30,6 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_plugin_validate( $plugin ) {
 		$this->assertTrue( yourls_validate_plugin_file( YOURLS_PLUGINDIR . '/' . $plugin ) );
-		return $plugin;
 	}
 
 	/**
@@ -67,6 +66,32 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 		return $plugin;
 	}
 
+    /**
+    * Simulate initial plugin loading
+    *
+    * @depends test_plugin_activate
+    * @since 0.1
+    */
+    public function test_load_plugins( $plugin ) {
+        global $ydb;
+        
+        // at this point, we have a plugin activated
+        $this->assertSame( $ydb->plugins, array( $plugin ) );
+        
+        // Register a fake plugin to simulate one that was once activated but deleted since
+        $fake_plugin = rand_str() . '/plugin.php';
+        $ydb->plugins[] = $fake_plugin;
+        yourls_update_option( 'active_plugins', $ydb->plugins );
+        
+        // Check that a notice has been triggered to warn about deleted plugin
+        $this->assertFalse( yourls_has_action( 'admin_notices' ) );
+        yourls_load_plugins();
+        $this->assertTrue( yourls_has_action( 'admin_notices' ) );
+        
+        // Check only our valid plugin is left registered
+        $this->assertSame( $ydb->plugins, array( $plugin ) );
+    }
+
 	/**
 	 * Check that valid plugin deactivates correctly
 	 *
@@ -102,5 +127,37 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
 		$this->assertNotSame( true, yourls_deactivate_plugin( $plugin ) );
 	}
+
+    /**
+    * Check that return of yourls_plugin_url() complies to SSL needs
+    *
+    * @since 0.1
+    */
+    public function test_yourls_plugin_url() {
+        $plugin = rand_str();
+        
+        // not on SSL and does not need SSL : "http"
+        yourls_add_filter( 'is_ssl', 'yourls_return_false' );
+        yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
+        $plugin_url = yourls_plugin_url( $plugin );
+        $this->assertStringStartsWith( 'http://', $plugin_url );
+
+        // either on SSL or needs it: "https"
+        
+        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
+        yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
+        $plugin_url = yourls_plugin_url( $plugin );
+        $this->assertStringStartsWith( 'https://', $plugin_url );
+
+        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
+        yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
+        $plugin_url = yourls_plugin_url( $plugin );
+        $this->assertStringStartsWith( 'https://', $plugin_url );
+
+        yourls_add_filter( 'is_ssl', 'yourls_return_false' );
+        yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
+        $plugin_url = yourls_plugin_url( $plugin );
+        $this->assertStringStartsWith( 'https://', $plugin_url );
+    }
 
 }

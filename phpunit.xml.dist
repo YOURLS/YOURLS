@@ -17,6 +17,15 @@
 			<group>ajax</group>
 		</exclude>
 	</groups>
+    <filter>
+        <blacklist>
+            <!-- Exclude YOURLS-unit-tests itself -->
+            <directory suffix=".php">./</directory>
+            <!-- Exclude YOURLS 3rd party dirs -->
+            <!-- Copy this file to phpunit.xml and manually exclude these dirs -->
+            <!-- Example:  <directory suffix=".php">../yourls/includes/pomo</directory> -->
+        </blacklist>
+    </filter>
 	<php>
 		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />

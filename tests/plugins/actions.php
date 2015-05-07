@@ -31,6 +31,24 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         
         return $hook;
 	}
+
+    /**
+     * Remove an action
+     *
+     * @since 0.1
+     */
+    public function test_remove_action() {
+        $hook = rand_str();
+        $action = rand_str();
+
+        $this->assertFalse( yourls_has_action( $hook ) );
+        yourls_add_action( $hook, $action );
+        $this->assertTrue( yourls_has_action( $hook ) );
+        $this->assertSame( 10, yourls_has_action( $hook, $action ) );
+
+        yourls_remove_action( $hook, $action );
+        $this->assertFalse( yourls_has_action( $hook ) );
+    }
     
 	/**
 	 * Check 'doing' an action hooked with a simple function name
