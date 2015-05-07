@@ -1679,9 +1679,8 @@ function yourls_statlink( $keyword = '' ) {
  *
  */
 function yourls_is_API() {
-	if ( defined( 'YOURLS_API' ) && YOURLS_API == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_API' ) && YOURLS_API == true;
+    return yourls_apply_filter( 'is_API', $return );
 }
 
 /**
@@ -1689,9 +1688,8 @@ function yourls_is_API() {
  *
  */
 function yourls_is_Ajax() {
-	if ( defined( 'YOURLS_AJAX' ) && YOURLS_AJAX == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_AJAX' ) && YOURLS_AJAX == true;
+    return yourls_apply_filter( 'is_Ajax', $return );
 }
 
 /**
@@ -1699,9 +1697,8 @@ function yourls_is_Ajax() {
  *
  */
 function yourls_is_GO() {
-	if ( defined( 'YOURLS_GO' ) && YOURLS_GO == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_GO' ) && YOURLS_GO == true;
+    return yourls_apply_filter( 'is_GO', $return );
 }
 
 /**
@@ -1709,9 +1706,8 @@ function yourls_is_GO() {
  *
  */
 function yourls_is_infos() {
-	if ( defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true;
+    return yourls_apply_filter( 'is_infos', $return );
 }
 
 /**
@@ -1719,9 +1715,8 @@ function yourls_is_infos() {
  *
  */
 function yourls_is_admin() {
-	if ( defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true;
+    return yourls_apply_filter( 'is_admin', $return );
 }
 
 /**
@@ -1737,9 +1732,8 @@ function yourls_is_windows() {
  *
  */
 function yourls_needs_ssl() {
-	if ( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
-		return true;
-	return false;
+    $return = defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true;
+    return yourls_apply_filter( 'needs_ssl', $return );
 }
 
 /**
@@ -1748,8 +1742,9 @@ function yourls_needs_ssl() {
  */
 function yourls_admin_url( $page = '' ) {
 	$admin = YOURLS_SITE . '/admin/' . $page;
-	if( yourls_is_ssl() or yourls_needs_ssl() )
+	if( yourls_is_ssl() or yourls_needs_ssl() ) {
         $admin = yourls_set_url_scheme( $admin, 'https' );
+    }
 	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
@@ -1762,11 +1757,13 @@ function yourls_site_url( $echo = true, $url = '' ) {
 	$url = trim( YOURLS_SITE . '/' . $url, '/' );
 	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
-	if( yourls_is_ssl() )
+	if( yourls_is_ssl() ) {
 		$url = yourls_set_url_scheme( $url, 'https' );
+    }
 	$url = yourls_apply_filter( 'site_url', $url );
-	if( $echo )
+	if( $echo ) {
 		echo $url;
+    }
 	return $url;
 }
 
