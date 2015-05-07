@@ -65,4 +65,13 @@ function yourls_apply_filters( $hook, $value = '' ) {
 	return yourls_apply_filter( $hook, $value );
 }
 
-
+/**
+ * Check if we'll need interface display function (ie not API or redirection)
+ *
+ */
+function yourls_has_interface() {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1' );
+	if( yourls_is_API() or yourls_is_GO() )
+		return false;
+	return true;
+}
