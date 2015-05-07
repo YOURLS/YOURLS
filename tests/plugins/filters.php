@@ -83,7 +83,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $hook = rand_str();
         global $yourls_filters;
 
-        $this->assertArrayNotHasKey( 10, $yourls_filters[$hook] );
+        $this->assertArrayNotHasKey( $hook, $yourls_filters );
         yourls_add_filter( $hook, rand_str() );
         $this->assertArrayHasKey( 10, $yourls_filters[$hook] );
     }
