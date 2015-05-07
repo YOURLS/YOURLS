@@ -74,6 +74,19 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_filter( $hook ) );        
     }
 
+    /**
+     * Check that default priority is 10
+     *
+     * @since 0.1
+     */
+    public function test_default_priority() {
+        $hook = rand_str();
+        global $yourls_filters;
+
+        $this->assertArrayNotHasKey( 10, $yourls_filters[$hook] );
+        yourls_add_filter( $hook, rand_str() );
+        $this->assertArrayHasKey( 10, $yourls_filters[$hook] );
+    }
     
     /**
      * Check removing a filter with non default priority
@@ -337,6 +350,15 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         
         $filtered = yourls_apply_filter( $hook, $var );
         $this->assertSame( $var . "2" . "1", $filtered );
+        
+        $hook = rand_str();
+        $var  = rand_str();
+
+        yourls_add_filter( $hook, function( $in ) { return $in . "1"; }, 10 );
+        yourls_add_filter( $hook, function( $in ) { return $in . "2"; }, 11 );
+        
+        $filtered = yourls_apply_filter( $hook, $var );
+        $this->assertSame( $var . "1" . "2", $filtered );
     }
 
     /**
@@ -374,7 +396,7 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
      *
      * @since 0.1
      */
-    public function test_accepted_args() {
+    public function test_filter_specified_arguments() {
         // Ask for 2 arguments and provide 2
         $hook = rand_str();
         yourls_add_filter( $hook, function( $var1 = '', $var2 = '' ) { return "$var1 $var2"; }, 10, 2 );
@@ -394,6 +416,49 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( $test, 'hello ' );
     }
     
+	/**
+	 * Make sure yourls_apply_filter accepts an arbitrary number of elements if unspecified
+	 *
+	 * @since 0.1
+	 */
+	public function test_filter_arbitrary_arguments() {
+        $hook = rand_str();
+        $var1 = rand_str();
+        $var2 = rand_str();
+        $var3 = rand_str();
+        
+        yourls_add_filter( $hook, function( $var1 = '', $var2 = '', $var3 = '' ) { return $var1 . $var2 . $var3; } );
+        
+        $filtered = yourls_apply_filter( $hook, $var1 );
+        $this->assertSame( $var1, $filtered );
+    
+        $filtered = yourls_apply_filter( $hook, $var1, $var2 );
+        $this->assertSame( $var1 . $var2, $filtered );
+    
+        $filtered = yourls_apply_filter( $hook, $var1, $var2, $var3 );
+        $this->assertSame( $var1 . $var2 . $var3, $filtered );
+    }
+   
+	/**
+	 * Make sure yourls_apply_filter accepts an arbitrary number of elements if unspecified
+	 *
+     * @expectedException PHPUnit_Framework_Error
+	 * @since 0.1
+	 */
+	public function test_filter_required_missing() {
+        $hook = rand_str();
+        $var1 = rand_str();
+        $var2 = rand_str();
+       
+        yourls_add_filter( $hook, function( $var1, $var2 ) { return $var1 . $var2; } );
+        
+        $filtered = yourls_apply_filter( $hook, $var1, $var2 );
+        $this->assertSame( $var1 . $var2, $filtered );
+    
+        $filtered = yourls_apply_filter( $hook, $var1 );
+        $this->assertSame( $var1 . $var2 . $var3, $filtered );
+    }
+   
     /**
      * Check applying multiple filters and count executions
      *
