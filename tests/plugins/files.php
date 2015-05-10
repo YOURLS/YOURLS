@@ -128,36 +128,4 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertNotSame( true, yourls_deactivate_plugin( $plugin ) );
 	}
 
-    /**
-    * Check that return of yourls_plugin_url() complies to SSL needs
-    *
-    * @since 0.1
-    */
-    public function test_yourls_plugin_url() {
-        $plugin = rand_str();
-        
-        // not on SSL and does not need SSL : "http"
-        yourls_add_filter( 'is_ssl', 'yourls_return_false' );
-        yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
-        $plugin_url = yourls_plugin_url( $plugin );
-        $this->assertStringStartsWith( 'http://', $plugin_url );
-
-        // either on SSL or needs it: "https"
-        
-        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
-        yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
-        $plugin_url = yourls_plugin_url( $plugin );
-        $this->assertStringStartsWith( 'https://', $plugin_url );
-
-        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
-        yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
-        $plugin_url = yourls_plugin_url( $plugin );
-        $this->assertStringStartsWith( 'https://', $plugin_url );
-
-        yourls_add_filter( 'is_ssl', 'yourls_return_false' );
-        yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
-        $plugin_url = yourls_plugin_url( $plugin );
-        $this->assertStringStartsWith( 'https://', $plugin_url );
-    }
-
 }
