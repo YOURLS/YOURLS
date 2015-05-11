@@ -251,6 +251,45 @@ function yourls_remove_action( $hook, $function_to_remove, $priority = 10 ) {
 }
 
 /**
+ * Removes all functions from a specified action hook.
+ *
+ * @see yourls_remove_all_filters()
+ * @since 1.7.1
+ *
+ * @param string $hook The action to remove hooks from
+ * @param int $priority optional. The priority of the functions to remove
+ * @return boolean true when it's finished
+ */
+
+function yourls_remove_all_actions( $hook, $priority = false ) {
+    return yourls_remove_all_filters( $hook, $priority );
+}
+
+/**
+ * Removes all functions from a specified filter hook.
+ *
+ * @since 1.7.1
+ *
+ * @param string $hook The filter to remove hooks from
+ * @param int $priority optional. The priority of the functions to remove
+ * @return boolean true when it's finished
+ */
+
+function yourls_remove_all_filters( $hook, $priority = false ) {
+    global $yourls_filters;
+    
+    if( isset( $yourls_filters[ $hook ] ) ) {
+        if( $priority === false ) {
+            unset( $yourls_filters[ $hook ] );
+        } else if ( isset( $yourls_filters[ $hook ][ $priority ] ) ) {
+            unset( $yourls_filters[ $hook ][ $priority ] );
+        }
+    }
+    
+    return true;
+}
+
+/**
  * Check if any filter has been registered for a hook.
  *
  * @global array $yourls_filters storage for all of the filters
