@@ -423,6 +423,8 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
  *
  */
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
+    yourls_do_action( 'pre_yourls_die', $message, $title, $header_code );
+
 	yourls_status_header( $header_code );
 	
 	if( !yourls_did_action( 'html_head' ) ) {
@@ -431,6 +433,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	}
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
 	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
+    // Hook into 'yourls_die' to add more elements or messages to that page
 	yourls_do_action( 'yourls_die' );
 	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer();
