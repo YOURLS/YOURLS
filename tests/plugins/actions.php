@@ -50,6 +50,129 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
     }
     
+    /**
+     * Add several actions on the same hook
+     *
+     * @since 0.1
+     */
+    public function test_add_several_actions_default_priority() {
+        $hook = rand_str();
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            yourls_add_action( $hook, rand_str() );
+        }
+
+        $this->assertTrue( yourls_has_action( $hook ) );
+        global $yourls_filters;
+        $this->assertSame( $times, count( $yourls_filters[ $hook ][10] ) );
+    }
+    
+    /**
+     * Add several actions on the same hook with different priorities
+     *
+     * @since 0.1
+     */
+    public function test_add_several_actions_random_priorities() {
+        $hook = rand_str();
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            yourls_add_action( $hook, rand_str(), mt_rand( 1, 10 ) );
+        }
+
+        $this->assertTrue( yourls_has_action( $hook ) );
+        
+        global $yourls_filters;
+        $total = 0;
+        foreach( $yourls_filters[ $hook ] as $prio => $action ) {
+            $total += count( $yourls_filters[ $hook ][ $prio ] );
+        }
+        
+        $this->assertSame( $times, $total );
+    }
+    
+    /**
+     * Remove all actions on a hook
+     *
+     * @since 0.1
+     */
+    public function test_remove_all_actions() {
+        $hook = rand_str();
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            yourls_add_action( $hook, rand_str() );
+        }
+        
+        $this->assertTrue( yourls_has_action( $hook ) );
+        yourls_remove_all_actions( $hook );
+        $this->assertFalse( yourls_has_action( $hook ) );
+    }
+    
+    /**
+     * Remove all actions with random priorities on a hook
+     *
+     * @since 0.1
+     */
+    public function test_remove_all_actions_random_prio() {
+        $hook = rand_str();
+        
+        $times = mt_rand( 5, 15 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            yourls_add_action( $hook, rand_str(), mt_rand( 1, 10 ) );
+        }
+        
+        $this->assertTrue( yourls_has_action( $hook ) );
+        yourls_remove_all_actions( $hook );
+        $this->assertFalse( yourls_has_action( $hook ) );
+    }
+    
+    /**
+     * Remove all actions with specific priority
+     *
+     * @since 0.1
+     */
+    public function test_remove_only_actions_with_given_prio() {
+        $hook = rand_str();
+        $priorities = array();
+        
+        $times = mt_rand( 10, 30 );
+        for ( $i = 1; $i <= $times; $i++ ) {
+            $prio = mt_rand( 1, 100 );
+            $priorities[] = $prio;
+            yourls_add_action( $hook, rand_str(), $prio );
+        }
+        $this->assertTrue( yourls_has_action( $hook ) );
+        
+        global $yourls_filters;
+
+        // Pick a random number of randomly picked priorities (but not all of them)
+        $priorities = array_unique( $priorities );
+        $random_priorities = (array) array_rand( $priorities, mt_rand( 1, count( $priorities ) - 1 ) );
+
+        // Count how many we're supposed to remove
+        $removed = 0;
+        foreach( $yourls_filters[ $hook ] as $prio => $action ) {
+            if( in_array( $prio, $random_priorities ) )
+                $removed += count( $yourls_filters[ $hook ][ $prio ] );
+        }
+        
+        // Remove the randomly picked priorities
+        foreach( $random_priorities as $random_priority ) {
+            yourls_remove_all_actions( $hook, $random_priority );
+        }
+        
+        $this->assertTrue( yourls_has_action( $hook ) );
+        
+        // Count how many are left
+        $remaining = 0;
+        foreach( $yourls_filters[ $hook ] as $prio => $action ) {
+            $remaining += count( $yourls_filters[ $hook ][ $prio ] );
+        }
+        $this->assertSame( $remaining, $times - $removed );
+    }
+    
 	/**
 	 * Check 'doing' an action hooked with a simple function name
 	 *
