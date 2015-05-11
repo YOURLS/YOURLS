@@ -304,9 +304,9 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
 	if ( false === $function_to_check || false == $has ) {
 		return $has;
 	}
-	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) ) {
+    
+	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) )
 		return false;
-	}
 
 	foreach ( (array) array_keys( $yourls_filters[ $hook ] ) as $priority ) {
 		if ( isset( $yourls_filters[ $hook ][ $priority ][ $idx ] ) )
@@ -477,8 +477,10 @@ function yourls_activate_plugin( $plugin ) {
 	include_once( YOURLS_PLUGINDIR.'/'.$plugin );
 	if ( ob_get_length() > 0 ) {
 		// there was some output: error
+        // @codeCoverageIgnoreStart
 		$output = ob_get_clean();
 		return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
+        // @codeCoverageIgnoreEnd
 	}
     ob_end_clean();
 
@@ -601,6 +603,7 @@ function yourls_plugin_admin_page( $plugin_page ) {
  * Callback function: Sort plugins 
  *
  * @link http://php.net/uasort
+ * @codeCoverageIgnore
  *
  * @param array $plugin_a
  * @param array $plugin_b
