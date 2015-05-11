@@ -15,9 +15,16 @@
  * @since 1.5
  */
 
-$yourls_filters = array();
+if( !isset( $yourls_filters ) )
+    $yourls_filters = array();
 /* This global var will collect filters with the following structure:
- * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args)]']
+ * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args, filter or action)]']
+ */
+
+if( !isset( $yourls_actions ) )
+    $yourls_actions = array();
+/* This global var will collect 'done' actions with the following structure:
+ * $yourls_actions['hook'] => number of time this action was done
  */
 
 /**
@@ -291,7 +298,6 @@ function yourls_has_active_plugins( ) {
 /**
  * List plugins in /user/plugins
  *
- * @global object $ydb Storage of mostly everything YOURLS needs to know
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
 function yourls_get_plugins( ) {
