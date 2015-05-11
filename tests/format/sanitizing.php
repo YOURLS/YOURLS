@@ -43,14 +43,11 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     function test_sanitize_int() {
-        $fallback = rand_str();
-        $expected = '';
-        $unsane   = '<tag></tag><omg>';
-        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
-        $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
+        for ( $i = 1; $i <= 10; $i++ ) {
+            $string = yourls_rnd_string( 20, 6 ) . '1'; // make sure there's at least one digit :P
+            $int = yourls_sanitize_int( $string );
+            $this->assertTrue( ctype_digit( $int ) );
+        }
     }
- 
-    
-
 
 }

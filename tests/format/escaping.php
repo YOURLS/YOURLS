@@ -79,4 +79,44 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $escaped, yourls_esc_html( $source ) );
 	}
     
+    /**
+     * String to escape and what they should look like once escaped
+     */
+    public function strings_to_escape() {
+        return array(
+           array( "I'm rock n' rollin'", "I\'m rock n\' rollin\'" ),
+           array( 'I am "nice"', 'I am \"nice\"' ),
+           array( 'Back\Slash', 'BackSlash' ),
+           array( "NULL\0NULL", 'NULL\0NULL' ), // notice the quote change
+        );
+    }
+    
+    /**
+     * Escape strings
+     *
+     * @since 0.1
+     * @dataProvider strings_to_escape
+     */
+    public function test_yourls_escape_string( $string, $escaped ) {
+        $this->assertSame( yourls_escape( $string ), $escaped );
+    }
+
+    /**
+     * Escape arrays
+     *
+     * @since 0.1
+     */
+    public function test_yourls_escape_array() {
+        $arrays = $this->strings_to_escape();
+        $array_str = array();
+        $array_esc = array();
+        
+        foreach( $arrays as $array ) {
+            $array_str[] = $array[0];
+            $array_esc[] = $array[1];
+        }
+        
+        $this->assertSame( yourls_escape( $array_str ), $array_esc );
+    }
+    
 }
