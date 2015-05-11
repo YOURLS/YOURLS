@@ -8,36 +8,55 @@
  */
 class Format_General extends PHPUnit_Framework_TestCase {
 
+    /**
+     * Data to serialize
+     */
+    function serialize_data() {
+        return array(
+            array( null ),
+            array( true ),
+            array( false ),
+            array( -25 ),
+            array( 25 ),
+            array( 1.1 ),
+            array( 'this string will be serialized' ),
+            array( "a\nb" ),
+            array( array() ),
+            array( array(1,1,2,3,5,8,13) ),
+            array( (object)array('test' => true, '3', 4) ),
+        );
+    }
+
+    /**
+     * Unserialized data
+     */
+    function not_serialized_data() {
+        return array(
+            array( 'a string' ),
+            array( 'garbage:a:0:garbage;' ),
+            // array( 'b:4;' ), // this test fails in WP test suite, not sure if intentional or what...
+            array( 's:4:test;' ),
+        );
+    }
+
 	/**
-	 * Serialized data. Stolen from WP.
+	 * Check that yourls_is_serialized detects serialized data
 	 *
+     * @dataProvider serialize_data
 	 * @since 0.1
 	 */
-	public function test_is_serialized() {
-		$cases = array(
-			serialize(null),
-			serialize(true),
-			serialize(false),
-			serialize(-25),
-			serialize(25),
-			serialize(1.1),
-			serialize('this string will be serialized'),
-			serialize("a\nb"),
-			serialize(array()),
-			serialize(array(1,1,2,3,5,8,13)),
-			serialize( (object)array('test' => true, '3', 4) )
-		);
-		foreach ( $cases as $case )
-			$this->assertTrue( yourls_is_serialized($case), "Serialized data: $case" );
-
-		$not_serialized = array(
-			'a string',
-			'garbage:a:0:garbage;',
-			// 'b:4;',  // this test fails in WP test suite, not sure if intentional or what...
-			's:4:test;'
-		);
-		foreach ( $not_serialized as $case )
-			$this->assertFalse( yourls_is_serialized($case), "Test data: $case" );
+	public function test_is_serialized( $data ) {
+		$this->assertTrue( yourls_is_serialized( serialize( $data ) ) );
+	}
+	
+	/**
+	 * Check that yourls_is_serialized doesn't assume garbage is serialized
+	 *
+     * @dataProvider not_serialized_data
+	 * @since 0.1
+	 */
+	public function test_is_not_serialized( $data ) {
+        $this->assertFalse( yourls_is_serialized( $data ) );
 	}
 	
 	/**
@@ -99,35 +118,6 @@ class Format_General extends PHPUnit_Framework_TestCase {
         $this->assertFalse( preg_match( '![^' . $pattern . ']!', null ) === false );
     }
     
-	/**
-	 * Sanitize titles
-	 *
-	 * @since 0.1
-	 */
-    function test_sanitize_title() {
-        $expected = "How Will I Laugh Tomorrow When I Can't Even Smile Today";
-        $unsane   = "How <strong>Will</strong> I Laugh Tomorrow <em>When I Can't Even Smile Today</em>";
-        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
-        
-        $expected = 'Twilight of the Thunder God';
-        $unsane   = 'Twilight <bleh omg="wtf" >of</bleh> the <blah something>Thunder God';
-        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
-    }
-    
-	/**
-	 * Sanitize titles with fallback
-	 *
-	 * @since 0.1
-	 */
-    function test_sanitize_title_with_fallback() {
-        $fallback = rand_str();
-        $expected = '';
-        $unsane   = '<tag></tag><omg>';
-        $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
-        $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
-    }
- 
-
 	/**
 	 * Trim long strings
 	 *
