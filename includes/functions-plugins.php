@@ -555,8 +555,6 @@ function yourls_plugin_admin_page( $plugin_page ) {
 	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
 	
 	yourls_html_footer();
-	
-	die();
 }
 
 
