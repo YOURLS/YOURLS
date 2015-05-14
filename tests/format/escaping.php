@@ -115,6 +115,8 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
             $array_str[] = $array[0];
             $array_esc[] = $array[1];
         }
+        $array_str = array( $array_str );
+        $array_esc = array( $array_esc );        
         
         $this->assertSame( yourls_escape( $array_str ), $array_esc );
     }
