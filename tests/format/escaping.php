@@ -225,8 +225,68 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
      * @group url
      * @dataProvider list_of_URLs
      */
-    function test_valid_urls( $url, $escaped ) {
+    function test_esc_urls( $url, $escaped ) {
         $this->assertEquals( $escaped, yourls_esc_url( $url ) );
+    }
+
+    /**
+     * Some strings and how they should be escaped in javascript
+     */
+    function list_of_JS() {
+        return array(
+            array(
+                'hello world();',
+                'hello world();',
+            ),
+            array(
+                'hello("world");',
+                'hello(&quot;world&quot;);',
+            ),
+            array(
+                'foo & bar &baz; &apos;',
+                'foo &amp; bar &amp;baz; &apos;',
+            ),
+        );
+    }
+    
+    /**
+     * Escape JS
+     *
+     * @since 0.1
+     * @dataProvider list_of_JS
+     */
+    function test_esc_js( $js, $escaped ) {
+        $this->assertEquals( $escaped, yourls_esc_js( $js ) );
+    }
+
+    /**
+     * Strings in a textarea and how they should be escaped
+     */
+    function list_of_textarea() {
+        return array(
+            array(
+                'hello<br/>world',
+                'hello&lt;br/&gt;world',
+            ),
+            array(
+                '"omg"',
+                '&quot;omg&quot;',
+            ),
+            array(
+                "'omg'",
+                '&#039;omg&#039;',
+            ),
+        );
+    }
+    
+    /**
+     * Escape JS
+     *
+     * @since 0.1
+     * @dataProvider list_of_textarea
+     */
+    function test_esc_textarea( $text, $escaped ) {
+        $this->assertEquals( $escaped, yourls_esc_textarea( $text ) );
     }
 
 }

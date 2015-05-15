@@ -204,4 +204,14 @@ class Format_General extends PHPUnit_Framework_TestCase {
         return $strings;
     }
  
+	/**
+	 * Test yourls_backslashit
+     *
+	 * @since 0.1
+	 */
+    function test_backslashit() {
+        $this->assertSame( yourls_backslashit( 'hello world 123 !' ), '\h\e\l\l\o \w\o\r\l\d 123 !' );
+        $this->assertSame( yourls_backslashit( '1, 2, 3' ), '\\\1, 2, 3' );
+    }
+    
 }
