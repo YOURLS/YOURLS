@@ -223,11 +223,15 @@ function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 }
 
 /**
- * Sanitize a version number (1.4.1-whatever -> 1.4.1)
+ * Sanitize a version number (1.4.1-whatever-RC1 -> 1.4.1)
  *
+ * @since 1.4.1
+ * @param string $ver Version number
+ * @return string Sanitized version number
  */
 function yourls_sanitize_version( $ver ) {
-	return preg_replace( '/[^0-9.]/', '', $ver );
+	preg_match( '/(^[0-9.]+).*$/', $ver, $matches );
+    return isset( $matches[1] ) ? trim( $matches[1], '.' ) : '';
 }
 
 /**
