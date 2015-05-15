@@ -559,7 +559,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 function yourls_lowercase_scheme_domain( $url ) {
     $scheme = yourls_get_protocol( $url );
 
-    if( false == $scheme ) {
+    if( '' == $scheme ) {
         // Scheme not found, malformed URL? Something else? Not sure.
         return $url;
     }
