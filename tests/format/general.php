@@ -97,6 +97,29 @@ class Format_General extends PHPUnit_Framework_TestCase {
 			$this->assertEquals( $string, yourls_int2string( yourls_string2int( $string ) ) );
 		}
 	}
+    
+    /**
+     * Some random keywords
+     */
+    public function some_random_keywords() {
+        return array(
+            array( '1' ),
+            array( 'a' ),
+            array( 'hello-world' ),
+            array( '1337ozhOZH' ),
+            array( '@#!?*' ),
+        );
+    }
+
+	/**
+	 * Checking that string2htmlid is an alphanumeric string
+	 *
+     * @dataProvider some_random_keywords
+	 * @since 0.1
+	 */
+    public function test_string2htmlid( $string ) {
+        $this->assertTrue( ctype_alnum( yourls_string2htmlid( $string ) ) );
+    }
 
 	/**
 	 * Generating valid regexp from the allowed charset
@@ -112,7 +135,7 @@ class Format_General extends PHPUnit_Framework_TestCase {
            Cool to know :)
            
            We're testing it as used in yourls_sanitize_string()
-           TODO: more random char strings to test?           
+           TODO: more random char strings to test?
         */
     
         $this->assertFalse( preg_match( '![^' . $pattern . ']!', null ) === false );
@@ -135,6 +158,50 @@ class Format_General extends PHPUnit_Framework_TestCase {
         $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
         $trim = "The Plague That Makes Your Booty Mo..";
         $this->assertSame( $trim, yourls_trim_long_string( $long, 37, '..' ) );
+    }
+    
+	/**
+	 * Return true for UTF8 strings
+     *
+     * Note: As of 1.7.1, function yourls_seem_utf8() is still unused. In 2.0 consider simply deleting it if still not needed
+	 *
+	 * @dataProvider valid_utf8
+	 * @since 0.1
+	 */
+    function test_is_utf8( $string ) {
+        $this->assertTrue( yourls_seems_utf8( $string ) );
+    }
+ 
+	/**
+	 * Return false for non UTF8 strings
+     *
+     * Note: As of 1.7.1, function yourls_seem_utf8() is still unused. In 2.0 consider simply deleting it if still not needed
+	 *
+	 * @dataProvider invalid_utf8
+	 * @since 0.1
+	 */
+    function test_is_not_utf8( $string ) {
+        $this->assertFalse( yourls_seems_utf8( $string ) );
+    }
+    
+    function valid_utf8() {
+        return $this->get_data( YOURLS_TESTDATA_DIR . '/formatting/utf-8.txt' );
+    }
+ 
+    function invalid_utf8() {
+        return $this->get_data( YOURLS_TESTDATA_DIR . '/formatting/big5.txt' );
+    }
+    
+    /**
+     * Parse a file and return its content as a data provider
+     */
+    function get_data( $filename ) {
+        $strings = file( $filename );
+        foreach ( $strings as &$string ) {
+            $string = (array) trim( $string );
+        }
+        unset( $string );
+        return $strings;
     }
  
 }
