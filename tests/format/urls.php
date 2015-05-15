@@ -30,6 +30,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
            array( '45scheme:example'            , '' ),
            array( 'scheme+-.1337:example'       , 'scheme+-.1337:' ),
            array( '+scheme:example'             , '' ),
+           array( 'scheme'                      , '' ),
         );
     }
     
@@ -45,7 +46,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
     
     
     /**
-     * List of valid URLs that shoul not be changed when sanitized
+     * List of valid URLs that should not be changed when sanitized
      */
     function list_of_valid_URLs() {
         return array(
@@ -144,7 +145,8 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://example.com?BLAH'                          , 'Http://ExAmPlE.com?BLAH' ),
             array( 'http://Ozh:Password@example.com:1337#OMG'         , 'http://Ozh:Password@Example.COM:1337#OMG' ),
             array( 'http://User:PWd@example.com?User:PWd@Example.com' , 'http://User:PWd@Example.com?User:PWd@Example.com' ),
-            array( 'mailto:Ozh@Ozh.org?omg'                           , 'MAILTO:Ozh@Ozh.org?omg' ),        
+            array( 'mailto:Ozh@Ozh.org?omg'                           , 'MAILTO:Ozh@Ozh.org?omg' ),
+            array( 'http://omg'                                       , 'OMG' ),
         );
     }
 
