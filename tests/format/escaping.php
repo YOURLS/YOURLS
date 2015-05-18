@@ -177,9 +177,6 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_yourls_escape_array() {
-        
-        global $ydb;
-        
         $arrays = $this->strings_to_escape();
         $array_str = array();
         $array_esc = array();
