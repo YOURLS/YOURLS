@@ -312,10 +312,20 @@ function yourls_check_auth_cookie() {
 /**
  * Check auth against signature and timestamp. Sets user if applicable, returns bool
  *
+ *
+ * @since 1.4.1
+ * @return bool False if signature or timestamp missing or invalid, true if valid
  */
 function yourls_check_signature_timestamp() {
+    if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
+       OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
+    )
+        return false;
+
 	// Timestamp in PHP : time()
 	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
+    
+	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
@@ -331,21 +341,31 @@ function yourls_check_signature_timestamp() {
 			return true;
 		}
 	}
+
+    // Signature doesn't match known user
 	return false;
 }
 
 /**
  * Check auth against signature. Sets user if applicable, returns bool
  *
+ * @since 1.4.1
+ * @return bool False if signature missing or invalid, true if valid
  */
 function yourls_check_signature() {
-	global $yourls_user_passwords;
+    if( !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] ) )
+        return false;
+    
+	// Check signature against all possible users
+    global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if ( yourls_auth_signature( $valid_user ) == $_REQUEST['signature'] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
 	}
+    
+    // Signature doesn't match known user
 	return false;
 }
 
