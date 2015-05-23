@@ -127,6 +127,10 @@ function yourls_send_through_proxy( $url ) {
 		return $pre;
 
 	$check = @parse_url( $url );
+    
+    if( !isset( $check['host'] ) ) {
+        return false;
+    }
 	
 	// Malformed URL, can not process, but this could mean ssl, so let through anyway.
 	if ( $check === false )
