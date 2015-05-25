@@ -76,9 +76,8 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
 function yourls_http_get_proxy() {
     $proxy = false;
     
-    if( defined( 'YOURLS_PROXY' ) && !empty( YOURLS_PROXY ) ) {
+    if( defined( 'YOURLS_PROXY' ) ) {
         $proxy = YOURLS_PROXY;
-        // Username (?) and password can be defined as an empty string : no check for empty()
         if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
             $proxy = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
         }
