@@ -8,25 +8,9 @@
  */
 class HTTP_Misc_Tests extends PHPUnit_Framework_TestCase {
     
-    public function proxy() {
-        return array(
-            array( 'invalid', false ),
-            array( 'http://localhost', false ),
-            array( 'http://127.0.0.1', false ),
-            array( 'http://127.1', false ),
-            array( 'http://[::1]', false ),
-            array( YOURLS_SITE, false ),
-            array( 'http://' . rand_str() , true ),
-        );
-    }
-    /**
-     * Check what URLs we send through a proxy, if defined
-     *
-     * @dataProvider proxy
-     * @since 0.1
-     */
-    public function test_proxy( $url, $goes_through_proxy ) {
-        $this->assertSame( yourls_send_through_proxy( $url ), $goes_through_proxy );
+    protected function tearDown() {
+        yourls_remove_filter( 'http_get_proxy', 'yourls_return_true' );
+        yourls_remove_filter( 'http_get_proxy', 'yourls_return_false' );
     }
 
     /**
@@ -39,25 +23,33 @@ class HTTP_Misc_Tests extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Check that proxy definition test returns a boolean
-     *
-     * @since 0.1
-     */
-    public function test_proxy_is_defined() {
-        $this->assertTrue( is_bool( yourls_http_proxy_is_defined() ) );
-    }
-
-    /**
      * Check request default options
      *
      * @since 0.1
      */
     public function test_request_default_options() {
+        yourls_add_filter( 'http_get_proxy', 'yourls_return_false' );
         $options = yourls_http_default_options();
         $this->assertArrayHasKey( 'timeout', $options );
         $this->assertArrayHasKey( 'useragent', $options );
         $this->assertArrayHasKey( 'follow_redirects', $options );
         $this->assertArrayHasKey( 'redirects', $options );
+        $this->assertArrayNotHasKey( 'proxy', $options );
+    }
+
+    /**
+     * Check request default options with a proxy
+     *
+     * @since 0.1
+     */
+    public function test_request_default_options_proxy() {
+        yourls_add_filter( 'http_get_proxy', 'yourls_return_true' );
+        $options = yourls_http_default_options();
+        $this->assertArrayHasKey( 'timeout', $options );
+        $this->assertArrayHasKey( 'useragent', $options );
+        $this->assertArrayHasKey( 'follow_redirects', $options );
+        $this->assertArrayHasKey( 'redirects', $options );
+        $this->assertArrayHasKey( 'proxy', $options );
     }
 
     /**
