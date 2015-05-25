@@ -75,3 +75,16 @@ function yourls_has_interface() {
 		return false;
 	return true;
 }
+
+/**
+ * Check if a proxy is defined for HTTP requests
+ *
+ * @uses YOURLS_PROXY
+ * @since 1.7
+ * @deprecated 1.7.1
+ * @return bool true if a proxy is defined, false otherwise
+ */
+function yourls_http_proxy_is_defined() {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_http_get_proxy' );
+	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
+}
