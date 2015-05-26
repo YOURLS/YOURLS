@@ -429,15 +429,65 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         // this will trigger an error, converted to an exception by PHPUnit
         yourls_do_action( $hook );
     }
-
+    
+    /**
+     * Test yourls_do_action() with multiple params
+     *
+     * Note : this test will expectedly fail when YOURLS actions work the same as filters, see issue #1203
+     *
+     * @since 0.1
+     */
+    public function test_do_action_no_params() {
+        $hook = rand_str();
+        yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
+        
+        $this->expectOutputString( "array (0 => '',)" );
+        yourls_do_action( $hook );
+    }
+    
+    /**
+     * Test yourls_do_action() with multiple params
+     *
+     * Note : this test will expectedly fail when YOURLS actions work the same as filters, see issue #1203
+     *
+     * @since 0.1
+     */
+    public function test_do_action_1_params() {
+        $hook = rand_str();
+        yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
+        
+        $this->expectOutputString( "array (0 => 'hello',)" );
+        yourls_do_action( $hook, 'hello' );
+    }
+    
+    /**
+     * Test yourls_do_action() with multiple params
+     *
+     * Note : this test will expectedly fail when YOURLS actions work the same as filters, see issue #1203
+     *
+     * @since 0.1
+     */
+    public function test_do_action_2_params() {
+        $hook = rand_str();
+        yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
+        
+        $this->expectOutputString( "array (0 => 'hello',1 => 'world',)" );
+        yourls_do_action( $hook, 'hello', 'world' );
+    }
     
     /**
      * Dummy function -- just modifies the value of a global var
      */
-    
     public function change_one_global() {
         $var_name = $GLOBALS['test_var'];
         $GLOBALS[ $var_name ] = rand_str();
+    }
+
+    /**
+     * Dummy function -- echo in one line arguments passed
+     */
+    public function accept_multiple_params( $args ) {
+        echo preg_replace( '/\s{2,}|\t|\n|\r/', '', var_export( $args, true ) );;
     }
 
 }
