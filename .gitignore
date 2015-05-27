@@ -3,5 +3,6 @@ build/
 coverage/
 YOURLS/
 /yourls-tests-config.php
+/phpunit.xml
 vendor/
 composer.lock
