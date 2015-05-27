@@ -51,6 +51,7 @@ $yourls_user_consts = array(
 	'YOURLS_URL_CONVERT'      => 62,
 	'YOURLS_DB_PREFIX'        => 'yourls_',
 	'YOURLS_NO_HASH_PASSWORD' => true, // prevents rewriting config.php with encrypted passwords
+    'YOURLS_LANG'             => 'fr_FR', // locale of a sample translation file in the data dir
 );
 foreach( $yourls_user_consts as $CONST => $value ) {
 	if( !defined( $CONST ) )

@@ -30,7 +30,5 @@ if( !defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false ) {
 	define( 'YOURLS_DB_HOST', 'localhost' );
 
 	/*** Site options */
-	define( 'YOURLS_LANG', 'fr_FR' ); 
-	
 	define( 'YOURLS_PHP_BIN', 'php' );
 }
