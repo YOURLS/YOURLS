@@ -905,6 +905,7 @@ function yourls_new_core_version_notice() {
  * @return bool whether header was sent
  */
 function yourls_content_type_header( $type ) {
+    yourls_do_action( 'content_type_header', $type );
 	if( !headers_sent() ) {
 		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
 		header( "Content-Type: $type; charset=$charset" );

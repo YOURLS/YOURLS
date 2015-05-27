@@ -695,10 +695,15 @@ function yourls_redirect( $location, $code = 301 ) {
 /**
  * Set HTTP status header
  *
+ * @since 1.4
+ * @param int $code  status header code
+ * @return bool      whether header was sent
  */
 function yourls_status_header( $code = 200 ) {
+	yourls_do_action( 'status_header', $code );
+    
 	if( headers_sent() )
-		return;
+		return false;
 		
 	$protocol = $_SERVER['SERVER_PROTOCOL'];
 	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
@@ -708,7 +713,8 @@ function yourls_status_header( $code = 200 ) {
 	$desc = yourls_get_HTTP_status( $code );
 
 	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
-	yourls_do_action( 'status_header', $code );
+    
+    return true;
 }
 
 /**
