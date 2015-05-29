@@ -54,7 +54,7 @@ function yut_declare_yourls_consts() {
 		
 	// physical path of translations directory
 	if( !defined( 'YOURLS_LANG_DIR' ) )
-		define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
+		define( 'YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo' );
 
 	// physical path of plugins directory
 	if( !defined( 'YOURLS_PLUGINDIR' ) )
