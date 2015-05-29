@@ -88,3 +88,23 @@ function yourls_http_proxy_is_defined() {
 	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_http_get_proxy' );
 	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
 }
+
+/**
+ * Displays translated string with gettext context
+ *
+ * This function has been renamed yourls_xe() for consistency with other *e() functions
+ *
+ * @see yourls_x()
+ * @since 1.6
+ * @deprecated 1.7.1
+ *
+ * @param string $text Text to translate
+ * @param string $context Context information for the translators
+ * @param string $domain Optional. Domain to retrieve the translated text
+ * @return string Translated context string without pipe
+ */
+function yourls_ex( $text, $context, $domain = 'default' ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_xe' );
+	echo yourls_xe( $text, $context, $domain );
+}
+

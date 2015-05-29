@@ -112,7 +112,6 @@ function yourls__( $text, $domain = 'default' ) {
  * - first one will be the string to translate, eg "hello %s my name is %s"
  * - following ones will be the sprintf arguments, eg "world" and "Ozh"
  * - if there are more arguments passed than needed, the last one will be used as the translation domain
- * This function will not accept a textdomain argument: do not use in plugins or outside YOURLS core.
  *
  * @see sprintf()
  * @since 1.6
@@ -255,7 +254,7 @@ function yourls_esc_html_e( $text, $domain = 'default' ) {
  * @param string $text Text to translate
  * @param string $context Context information for the translators
  * @param string $domain Optional. Domain to retrieve the translated text
- * @return string Translated context string without pipe
+ * @return string Translated context string
  */
 function yourls_x( $text, $context, $domain = 'default' ) {
 	return yourls_translate_with_context( $text, $context, $domain );
@@ -265,14 +264,14 @@ function yourls_x( $text, $context, $domain = 'default' ) {
  * Displays translated string with gettext context
  *
  * @see yourls_x()
- * @since 1.6
+ * @since 1.7.1
  *
  * @param string $text Text to translate
  * @param string $context Context information for the translators
  * @param string $domain Optional. Domain to retrieve the translated text
- * @return string Translated context string without pipe
+ * @return string Translated context string
  */
-function yourls_ex( $text, $context, $domain = 'default' ) {
+function yourls_xe( $text, $context, $domain = 'default' ) {
 	echo yourls_x( $text, $context, $domain );
 }
 
