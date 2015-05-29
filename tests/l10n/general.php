@@ -59,8 +59,8 @@ class Translation_General_Tests extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_get_languages() {
-        $this->assertEquals( array( 'fr_FR' ), yourls_get_available_languages() );
-        $this->assertEquals( array( 'test-fr_FR' ), yourls_get_available_languages( YOURLS_TESTDATA_DIR . '/pomo/' ) );
+        $this->assertEquals( array( 'fr_FR', 'test-fr_FR' ), yourls_get_available_languages() );
+        $this->assertEquals( array( 'fr_FR', 'test-fr_FR' ), yourls_get_available_languages( YOURLS_TESTDATA_DIR . '/pomo/' ) );
     }
 
 }
