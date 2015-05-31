@@ -8,7 +8,7 @@
  */
 class Translation_Format_Tests extends PHPUnit_Framework_TestCase {
     
-    public static function setUpBeforeClass() {
+    public function setUp() {
         yourls_load_textdomain( 'default', YOURLS_TESTDATA_DIR . '/pomo/fr_FR.mo' );
         global $yourls_locale_formats;
         $yourls_locale_formats = new YOURLS_Locale_Formats();
@@ -22,10 +22,13 @@ class Translation_Format_Tests extends PHPUnit_Framework_TestCase {
          * are never picked up and the variable is never set to its localized content.
          *
          * In YOURLS itself, no need to manually set things like this.
+         *
+         * Also, this needs to be in setUp(), setUpBeforeClass() doesn't fix things. Again,
+         * no idea why and don't want to bother understanding.
          */
     }
 
-    public static function tearDownAfterClass() {
+    public function tearDown() {
         yourls_unload_textdomain( 'default' );
     }
 
