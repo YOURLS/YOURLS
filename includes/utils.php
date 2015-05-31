@@ -55,17 +55,31 @@ class Change_One_Global {
         $GLOBALS[ $var_name ] = rand_str();
     }
 }
- /**
- * Dummy class & function to be called by hook function tests
- *
- * @since 0.1
- */
+
+/**
+* Dummy class & function to be called by hook function tests
+*
+* @since 0.1
+*/
 class Change_Variable {
     static function change_it( $var ) {
         return rand_str();
     }
 }
  
+/**
+* var_dump() for Unit Tests
+*
+* @since 0.1
+*/
+function ut_var_dump( $what ) {
+    ob_start();
+    var_dump( $what );
+    $display = ob_get_contents();
+    ob_end_clean();
+    fwrite( STDERR, $display );
+}
+
 /**
  * Log in a local text file, in case you need to var_dump() stuff within a test
  *
