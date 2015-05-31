@@ -1134,6 +1134,7 @@ function yourls_l10n_month_abbrev( $month = '' ){
 		return $yourls_locale_formats->month_abbrev;
 	
 	if( intval( $month ) > 0 ) {
+        $month = sprintf('%02d', intval( $month ) );
 		$month = $yourls_locale_formats->month[ $month ];
 		return $yourls_locale_formats->month_abbrev[ $month ];
 	} else {
