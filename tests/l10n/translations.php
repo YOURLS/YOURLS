@@ -8,12 +8,12 @@
  */
 class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     
-    public function setUp() {
+    public static function setUpBeforeClass() {
         yourls_load_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/test-fr_FR.mo' );
         yourls_load_textdomain( 'default', YOURLS_TESTDATA_DIR . '/pomo/fr_FR.mo' );
     }
 
-    public function tearDown() {
+    public static function tearDownAfterClass() {
         yourls_unload_textdomain( 'test' );
         yourls_unload_textdomain( 'default' );
     }
