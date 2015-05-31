@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YOURLS 1.7\n"
 "POT-Creation-Date: 2014-01-11 11:50+0100\n"
-"PO-Revision-Date: 2015-05-29 22:41+0100\n"
+"PO-Revision-Date: 2015-05-31 12:18+0100\n"
 "Last-Translator: Ozh <ozh[at]ozh.org>\n"
 "Language-Team: \n"
 "Language: Français\n"
@@ -54,3 +54,18 @@ msgstr[1] "%s sources (default)"
 
 msgid "Untranslated string"
 msgstr ""
+
+msgid "number_format_thousands_sep"
+msgstr " "
+
+msgid "number_format_decimal_point"
+msgstr ","
+
+msgid "Feb_February_abbreviation"
+msgstr "Fév"
+
+msgid "Mon"
+msgstr "Lun"
+
+msgid "M_Monday_initial"
+msgstr "L"
