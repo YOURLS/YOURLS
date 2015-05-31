@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Checks for dead DB server using MySQL, MySQLi & PDO
+ * Checks if DB server is dead or alive, using MySQL, MySQLi & PDO
+ *
+ * @group db
  */
-
-class DB_Tests extends PHPUnit_Framework_TestCase {
+class DB_DOA_Tests extends PHPUnit_Framework_TestCase {
 
     protected $ydb_copy = null;
 
