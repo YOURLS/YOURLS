@@ -126,8 +126,18 @@ function yourls_create_htaccess() {
 }
 
 /**
- * Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
+ * Insert text into a file between BEGIN/END markers, return bool. Stolen from WP
  *
+ * Inserts an array of strings into a file (eg .htaccess ), placing it between
+ * BEGIN and END markers. Replaces existing marked info. Retains surrounding
+ * data. Creates file if none exists.
+ *
+ * @since 1.3
+ *
+ * @param string $filename 
+ * @param string $marker
+ * @param array  $insertion
+ * @return bool True on write success, false on failure.
  */
 function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 	if ( !file_exists( $filename ) || is_writeable( $filename ) ) {
