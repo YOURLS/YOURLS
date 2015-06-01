@@ -1,29 +1,13 @@
 <?php
 
 /**
- * Checks MySQL DB server version getter
+ * Checks install misc functions
  *
  * @group install
  */
 class Install_Tests extends PHPUnit_Framework_TestCase {
 
-    protected $server;
-
     /**
-     * Make a copy of $_SERVER
-     */
-    public function setUp() {
-        $this->server = $_SERVER;
-    }
-
-    /**
-     * Restore original $_SERVER
-     */
-    public function tearDown() {
-        $_SERVER = $this->server;
-    }
-
-	/**
 	 * Check if YOURLS is declared installed
 	 *
 	 * @since 0.1
@@ -45,34 +29,39 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( yourls_insert_sample_links() );
 	}
 
-    /**
-     * Provide server signatures, wether they're Apache (true) or something else (false) and
-     * the name of the redirect rule file (.htaccess or web.config)
-     */
-    public function servers() {
-        return array(
-            array( 'Very Common Apache', true,  '.htaccess'  ),
-            array( 'LiteSpeed So Fast',  true,  '.htaccess'  ),
-            array( 'meh IIS meh',        false, 'web.config' ),
-        );
-    }
-
 	/**
-	 * Check .htaccess creation
+	 * Test (sort of) table creation
 	 *
-	 * @dataProvider servers
 	 * @since 0.1
 	 */
-	public function test_htaccess( $server, $is_apache, $file ) {
-        $_SERVER['SERVER_SOFTWARE'] = $server;
+	public function test_create_tables() {
         
-        $this->assertSame( $is_apache, yourls_is_apache() );
+        /* The expected result has:
+         *   - success messages: the table are created with a "CREATE IF NOT EXISTS",
+         *     hence, will not be recreated once more, they're already created
+         *     upon install procedure
+         *   - error messages: the function cannot initalize options and links, since
+         *     they have been populated during install procedure as well
+         *
+         * A more thorough test would be to mockup the DB connection and create another
+         * set of tables (with another prefix for instance).
+         * Well. Consider this for next DB engine maybe? :)
+         */
         
-        if( file_exists( YOURLS_ABSPATH . '/' . $file ) )
-            @unlink( YOURLS_ABSPATH . '/' . $file );
+        $expected = array(
+            'success' => array (
+                "Table 'yourls_url' created.",
+                "Table 'yourls_options' created.",
+                "Table 'yourls_log' created.",
+                "YOURLS tables successfully created.",
+            ),
+            'error' => array (
+                'Could not initialize options',
+                'Could not insert sample short URLs',
+            ),
+        );
         
-		$this->assertTrue( yourls_create_htaccess() );
-		$this->assertFileExists( YOURLS_ABSPATH . '/' . $file );
+        $this->assertSame( $expected, yourls_create_sql_tables() );
 	}
 
 }

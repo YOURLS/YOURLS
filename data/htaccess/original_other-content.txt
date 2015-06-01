@@ -1,0 +1,4 @@
+# Fake htaccess
+
+SomeRule
+SomeOtherRule
