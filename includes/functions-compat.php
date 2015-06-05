@@ -136,14 +136,14 @@ if ( ! function_exists( 'mb_substr' ) ) :
 endif;
 function yourls_mb_substr( $str, $start, $length = null, $encoding = null ) {
     if ( null === $encoding ) {
-        $encoding = get_option( 'blog_charset' );
+        $encoding = 'UTF-8';
     }
     // The solution below works only for UTF-8,
     // so in case of a different charset just use built-in substr()
     if ( ! in_array( $encoding, array( 'utf8', 'utf-8', 'UTF8', 'UTF-8' ) ) ) {
         return is_null( $length ) ? substr( $str, $start ) : substr( $str, $start, $length );
     }
-    if ( _wp_can_use_pcre_u() ) {
+    if ( yourls_supports_pcre_u() ) {
         // Use the regex unicode support to separate the UTF-8 characters into an array
         preg_match_all( '/./us', $str, $match );
         $chars = is_null( $length ) ? array_slice( $match[0], $start ) : array_slice( $match[0], $start, $length );
@@ -187,14 +187,14 @@ if ( ! function_exists( 'mb_strlen' ) ) :
 endif;
 function yourls_mb_strlen( $str, $encoding = null ) {
     if ( null === $encoding ) {
-        $encoding = get_option( 'blog_charset' );
+        $encoding = 'UTF-8';
     }
     // The solution below works only for UTF-8,
     // so in case of a different charset just use built-in strlen()
     if ( ! in_array( $encoding, array( 'utf8', 'utf-8', 'UTF8', 'UTF-8' ) ) ) {
         return strlen( $str );
     }
-    if ( _wp_can_use_pcre_u() ) {
+    if ( yourls_supports_pcre_u() ) {
         // Use the regex unicode support to separate the UTF-8 characters into an array
         preg_match_all( '/./us', $str, $match );
         return count( $match[0] );

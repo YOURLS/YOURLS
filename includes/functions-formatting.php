@@ -261,6 +261,25 @@ function yourls_seems_utf8( $str ) {
 	return true;
 }
 
+
+/**
+ * Check for PCRE /u modifier support. Stolen from WP.
+ *
+ * Just in case "PCRE is not compiled with PCRE_UTF8" which seems to happen
+ * on some distros even for PHP 5.3
+ *
+ * @since 1.7.1
+ *
+ * @return bool whether there's /u support or not
+ */
+function yourls_supports_pcre_u() {
+    static $utf8_pcre;
+    if( !isset( $utf8_pcre ) ) {
+        $utf8_pcre = (bool) @preg_match( '/^./u', 'a' );   
+    }
+    return $utf8_pcre;
+}
+
 /**
  * Checks for invalid UTF8 in a string. Stolen from WP
  *
@@ -277,13 +296,8 @@ function yourls_check_invalid_utf8( $string, $strip = false ) {
 		return '';
 	}
 
-	// Check for support for utf8 in the installed PCRE library once and store the result in a static
-	static $utf8_pcre;
-	if ( !isset( $utf8_pcre ) ) {
-		$utf8_pcre = @preg_match( '/^./u', 'a' );
-	}
 	// We can't demand utf8 in the PCRE installation, so just return the string in those cases
-	if ( !$utf8_pcre ) {
+	if ( !$yourls_supports_pcre_u() ) {
 		return $string;
 	}
 
