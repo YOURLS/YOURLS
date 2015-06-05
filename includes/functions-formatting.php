@@ -297,7 +297,7 @@ function yourls_check_invalid_utf8( $string, $strip = false ) {
 	}
 
 	// We can't demand utf8 in the PCRE installation, so just return the string in those cases
-	if ( !$yourls_supports_pcre_u() ) {
+	if ( ! yourls_supports_pcre_u() ) {
 		return $string;
 	}
 
