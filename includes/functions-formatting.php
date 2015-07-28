@@ -487,6 +487,9 @@ function yourls_esc_attr( $text ) {
  * @return string The cleaned $url
  */
 function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
+    // trim first -- see #1931
+    $url = trim( $url );
+    
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
 	$url = str_replace( 
 		array( 'http://http://', 'http://https://' ),
