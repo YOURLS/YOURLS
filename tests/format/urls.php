@@ -89,6 +89,9 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	function test_url_with_spaces() {
 		$this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
 		$this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/ ' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/ ' ) );
 	}
 
 	/**
