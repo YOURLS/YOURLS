@@ -1368,7 +1368,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
 			// Flood!
 			yourls_do_action( 'ip_flood', $ip, $now - $then );
-			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Forbidden' ), 403 );
+			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
 		}
 	}
 	
