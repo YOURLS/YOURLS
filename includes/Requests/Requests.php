@@ -63,6 +63,13 @@ class Requests {
 	const PATCH = 'PATCH';
 
 	/**
+	 * Default size of buffer size to read streams
+	 *
+	 * @var integer
+	 */
+	const BUFFER_SIZE = 1160;
+
+	/**
 	 * Current version of Requests
 	 *
 	 * @var string
@@ -276,6 +283,8 @@ class Requests {
 	 *    (Requests_Auth|array|boolean, default: false)
 	 * - `proxy`: Proxy details to use for proxy by-passing and authentication
 	 *    (Requests_Proxy|array|boolean, default: false)
+	 * - `max_bytes`: Limit for the response body size.
+	 *    (integer|boolean, default: false)
 	 * - `idn`: Enable IDN parsing
 	 *    (boolean, default: true)
 	 * - `transport`: Custom transport. Either a class name, or a
@@ -459,6 +468,7 @@ class Requests {
 			'auth' => false,
 			'proxy' => false,
 			'cookies' => false,
+			'max_bytes' => false,
 			'idn' => true,
 			'hooks' => null,
 			'transport' => null,
@@ -483,7 +493,7 @@ class Requests {
 	 */
 	protected static function set_defaults(&$url, &$headers, &$data, &$type, &$options) {
 		if (!preg_match('/^http(s)?:\/\//i', $url, $matches)) {
-			throw new Requests_Exception('Only HTTP requests are handled.', 'nonhttp', $url);
+			throw new Requests_Exception('Only HTTP(S) requests are handled.', 'nonhttp', $url);
 		}
 
 		if (empty($options['hooks'])) {
