@@ -14,6 +14,13 @@
  */
 class Requests_Utility_FilteredIterator extends ArrayIterator {
 	/**
+	 * Callback to run as a filter
+	 *
+	 * @var callable
+	 */
+	protected $callback;
+
+	/**
 	 * Create a new iterator
 	 *
 	 * @param array $data

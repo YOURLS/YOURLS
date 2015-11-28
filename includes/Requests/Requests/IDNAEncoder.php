@@ -237,6 +237,7 @@ class Requests_IDNAEncoder {
 		$h = $b = 0; // see loop
 #		copy them to the output in order
 		$codepoints = self::utf8_to_codepoints($input);
+		$extended = array();
 
 		foreach ($codepoints as $char) {
 			if ($char < 128) {
@@ -303,7 +304,6 @@ class Requests_IDNAEncoder {
 						}
 #						output the code point for digit t + ((q - t) mod (base - t))
 						$digit = $t + (($q - $t) % (self::BOOTSTRAP_BASE - $t));
-						//printf('needed delta is %d, encodes as "%s"' . PHP_EOL, $delta, self::digit_to_char($digit));
 						$output .= self::digit_to_char($digit);
 #						let q = (q - t) div (base - t)
 						$q = floor(($q - $t) / (self::BOOTSTRAP_BASE - $t));
@@ -311,10 +311,8 @@ class Requests_IDNAEncoder {
 					}
 #					output the code point for digit q
 					$output .= self::digit_to_char($q);
-					//printf('needed delta is %d, encodes as "%s"' . PHP_EOL, $delta, self::digit_to_char($q));
 #					let bias = adapt(delta, h + 1, test h equals b?)
 					$bias = self::adapt($delta, $h + 1, $h === $b);
-					//printf('bias becomes %d' . PHP_EOL, $bias);
 #					let delta = 0
 					$delta = 0;
 #					increment h
