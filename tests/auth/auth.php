@@ -40,14 +40,30 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Provide strings to hash
+     */
+    public function strings_to_hash() {
+       
+        return array(
+            array( rand_str() ),
+            array( 'lol .\+*?[^]$(){}=!<>|:-/' . "'" . '"' ),
+            array( 'أنا أحب النقانق' ),
+            array( '"double quotes"' ),
+            array( "'single quotes'" ),
+            array( '@$*' ),
+            array( 'أنا أحب النقانق' ),
+        );
+    }
+
+    /**
      * Check that a hash can be verified
      *
+     * @dataProvider strings_to_hash
      * @since 0.1
      */
-    public function test_hash_and_check() {
-        $rnd = rand_str();
-        $hash = yourls_phpass_hash( $rnd );
-        $this->assertTrue( yourls_phpass_check( $rnd, $hash ) );
+    public function test_hash_and_check( $string ) {
+        $hash = yourls_phpass_hash( $string );
+        $this->assertTrue( yourls_phpass_check( $string, $hash ) );
     }
 
     /**
@@ -132,13 +148,36 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
             $config_file = YOURLS_USERDIR . '/config-sample.php';
         }
         
-        // Include file, make a copy of $yourls_user_passwords
-        // Temporary suppress error reporting to avoid notices about redeclared constants
-        $errlevel = error_reporting();
-        error_reporting( 0 );
-        require $config_file;
-        error_reporting( $errlevel );
-        $original = $yourls_user_passwords;
+        // Encrypt file
+        $this->assertTrue( yourls_hash_passwords_now( $config_file ) );
+        
+        // Make sure encrypted file is still valid PHP with no syntax error
+        if( !defined( 'YOURLS_PHP_BIN' ) ) {
+            $this->markTestSkipped( 'No PHP binary defined -- cannot check file hashing' );
+            return;
+        }
+        
+        exec( YOURLS_PHP_BIN . ' -l ' .  escapeshellarg( $config_file ), $output, $return );
+        $this->assertEquals( 0, $return );
+        
+    }
+
+    /**
+     * Check that in-file password encryption works as expected with different kinds of passwords
+     *
+     * This test checks that encrypting the config file, with different kinds of pwd, results in a valid
+     * PHP file as expected. It doesn't test that the different kinds of password get correctly hashed
+     * and can be correctly decyphered. This task is covered in test_hash_and_check()
+     *
+     * @since 0.1
+     */
+    public function test_hash_passwords_special_chars_now() {
+
+        if( !copy( YOURLS_TESTDATA_DIR . '/auth/config-test-auth.php', YOURLS_TESTDATA_DIR . '/auth/config-test-auth-hashed.php' ) ) {
+            $this->markTestSkipped( 'Could not copy file (write permissions?) -- cannot run test' );
+        } else {
+            $config_file = YOURLS_TESTDATA_DIR . '/auth/config-test-auth-hashed.php';
+        }
         
         // Encrypt file
         $this->assertTrue( yourls_hash_passwords_now( $config_file ) );
@@ -153,4 +192,5 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 0, $return );
         
     }
+
 }

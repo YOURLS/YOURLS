@@ -6,3 +6,4 @@ YOURLS/
 /phpunit.xml
 vendor/
 composer.lock
+data/auth/config-test-auth-hashed.php

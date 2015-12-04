@@ -79,6 +79,11 @@ $yourls_user_passwords = array(
 	'md5'     => $md5,          // password: $random_password
 	'phpass'  => $phpassword_1, // password: $random_password
 	'phpass2' => $phpassword_2, // password: also $random_password but without YOURLS internal char substitution
+    '1994'    => '@$*',
+    'special' => 'lol .\+*?[^]$(){}=!<>|:-/',
+    'quote1'  => '"ahah"',
+    'quote2'  => "'ahah'",
+    'utf8fun' => 'أنا أحب النقانق',
 );
 
 // At this point, tests will start
