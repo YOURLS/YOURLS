@@ -10,10 +10,8 @@ function update_share() {
 	var text = encodeURIComponent( $('#tweet_body').val() );
 	var url = encodeURIComponent( $('#copylink').val() );
 	var tw = 'http://twitter.com/intent/tweet?status='+text;
-	var ff = 'http://friendfeed.com/share/bookmarklet/frame#title='+text ;
 	var fb = 'http://www.facebook.com/share.php?u='+url ;
 	$('#share_tw').attr('href', tw);
-	$('#share_ff').attr('href', ff);
 	$('#share_fb').attr('href', fb);
 	
 	var charcount = parseInt(140 - $('#tweet_body').val().length);
@@ -25,10 +23,6 @@ function update_share() {
 function share(dest) {
 	var url = $('#share_'+dest).attr('href');
 	switch (dest) {
-	case 'ff':
-		//$('body').append('<script type="text/javascript" src="http://friendfeed.com/share/bookmarklet/javascript"></script>');
-		window.open(url, 'ff','toolbar=no,width=500,height=350');
-		break;
 	case 'fb':
 		//var url = $('#share_fb').attr('href');
 		window.open( url, 'fb','toolbar=no,width=1000,height=550');
