@@ -208,6 +208,7 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * Check if we should poll api.yourls.org under various circumstances
      *
      * @dataProvider case_scenario
+     * @depends test_check_core_version
      * @since 0.1
      */
     public function test_api_check_in_various_scenario( $name, $checks, $expected ) {
