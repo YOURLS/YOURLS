@@ -10,7 +10,6 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
         yourls_remove_all_filters( 'is_admin' );
-        yourls_remove_all_filters( 'shunt_yourls_http_request' );
     }
     
     /**
@@ -209,11 +208,11 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * Check if we should poll api.yourls.org under various circumstances
      *
      * @dataProvider case_scenario
+     * @depends test_check_core_version
      * @since 0.1
      */
     public function test_api_check_in_various_scenario( $name, $checks, $expected ) {
         yourls_add_filter( 'is_admin', 'yourls_return_true' );
-        yourls_add_filter( 'shunt_yourls_http_request', 'yourls_return_true' );
         yourls_update_option( 'core_version_checks', $checks );
         
         $this->assertSame( $expected, yourls_maybe_check_core_version() );
