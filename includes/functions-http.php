@@ -3,7 +3,7 @@
  * Functions that relate to HTTP requests
  *
  * On functions using the 3rd party library Requests: 
- * Thir goal here is to provide convenient wrapper functions to the Requests library. There are
+ * Their goal here is to provide convenient wrapper functions to the Requests library. There are
  * 2 types of functions for each METHOD, where METHOD is 'get' or 'post' (implement more as needed)
  *     - yourls_http_METHOD() :
  *         Return a complete Response object (with ->body, ->headers, ->status_code, etc...) or
@@ -200,13 +200,20 @@ function yourls_send_through_proxy( $url ) {
  * @return object Requests_Response object
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
+	if ( null !== $pre )
+		return $pre;
+
 	yourls_http_load_library();
 	
 	$options = array_merge( yourls_http_default_options(), $options );
 	
-	if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) )
+	if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) ) {
 		unset( $options['proxy'] );
-	
+	}
+    
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {

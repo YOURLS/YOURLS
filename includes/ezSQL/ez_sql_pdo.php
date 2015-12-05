@@ -39,7 +39,7 @@
 		*  same time as initialising the ezSQL_pdo class
 		*/
 
-		function ezSQL_pdo($dsn='', $user='', $password='', $ssl=array())
+		function __construct($dsn='', $user='', $password='', $ssl=array())
 		{
 			// Turn on track errors 
 			ini_set('track_errors',1);
