@@ -1814,7 +1814,7 @@ function yourls_get_remote_title( $url ) {
 
 	$title = $charset = false;
     
-    $max_bytes = yourls_filter_apply( 'get_remote_title_max_byte', 2048 ); // limit data fetching to 2K in order to find a <title> tag
+    $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 2048 ); // limit data fetching to 2K in order to find a <title> tag
 	
 	$response = yourls_http_get( $url, array(), array(), array( 'max_bytes' => $max_bytes ) ); // can be a Request object or an error string
 	if( is_string( $response ) ) {
