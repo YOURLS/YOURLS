@@ -1031,7 +1031,7 @@ class YOURLS_Locale_Formats {
 }
 
 /**
- * Loads a custom translation file (for a plugin, a theme, a public interface...)
+ * Loads a custom translation file (for a plugin, a theme, a public interface...) if locale is defined
  *
  * The .mo file should be named based on the domain with a dash, and then the locale exactly,
  * eg 'myplugin-pt_BR.mo'
@@ -1040,13 +1040,14 @@ class YOURLS_Locale_Formats {
  *
  * @param string $domain Unique identifier (the "domain") for retrieving translated strings
  * @param string $path Full path to directory containing MO files.
- * @return bool True on success, false on failure
+ * @return mixed Returns nothing if locale undefined, otherwise return bool: true on success, false on failure
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filter( 'load_custom_textdomain', yourls_get_locale(), $domain );
-	$mofile = rtrim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
-
-	return yourls_load_textdomain( $domain, $mofile );
+    if( !empty( $locale ) ) {
+        $mofile = rtrim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
+        return yourls_load_textdomain( $domain, $mofile );
+    }
 }
 
 /**
