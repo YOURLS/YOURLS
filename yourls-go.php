@@ -2,6 +2,9 @@
 define( 'YOURLS_GO', true );
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
+$redirectType = 301;
+if( YOURLS_TEMPREDIRECT )
+	$redirectType = 302;
 // Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-go.php)
 if( !isset( $keyword ) && isset( $_GET['id'] ) )
 	$keyword = $_GET['id'];
@@ -10,7 +13,7 @@ $keyword = yourls_sanitize_string( $keyword );
 // First possible exit:
 if ( !isset( $keyword ) ) {
 	yourls_do_action( 'redirect_no_keyword' );
-	yourls_redirect( YOURLS_SITE, 301 );
+	yourls_redirect( YOURLS_SITE, $redirectType );
 }
 
 // Get URL From Database
@@ -26,7 +29,7 @@ if( !empty( $url ) ) {
 	// Update detailed log for stats
 	$log_redirect = yourls_log_redirect( $keyword );
 	
-	yourls_redirect( $url, 301 );
+	yourls_redirect( $url, $redirectType );
 
 // URL not found. Either reserved, or page, or doesn't exist
 } else {
