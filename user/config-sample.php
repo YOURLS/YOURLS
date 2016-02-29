@@ -31,10 +31,10 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  */
 
 /** YOURLS installation URL -- all lowercase and with no trailing slash.
- ** If you define it to "http://site.com", don't use "http://www.site.com" in your browser (and vice-versa) */
-define( 'YOURLS_SITE', 'http://site.com' );
+ ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
+define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
-/** Timezone GMT offset */
+/** Server timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
 /** YOURLS language
@@ -61,7 +61,8 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
  ** Read http://yourls.org/userpassword for more information */
 $yourls_user_passwords = array(
 	'username' => 'password',
-	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
+	// 'username2' => 'password2',
+	// You can have one or more 'login'=>'password' lines
 	);
 
 /** Debug mode to output some internal information

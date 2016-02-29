@@ -4,15 +4,9 @@
  *
  */
 function yourls_is_valid_user() {
-	static $valid = false;
-	
-	if( $valid )
-		return true;
-		
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_is_valid_user', null );
 	if ( null !== $pre ) {
-		$valid = ( $pre === true ) ;
 		return $pre;
 	}
 	
@@ -176,7 +170,7 @@ function yourls_hash_passwords_now( $config_file ) {
 			// PHP would interpret $ as a variable, so replace it in storage.
 			$hash = str_replace( '$', '!', $hash );
 			$quotes = "'" . '"';
-			$pattern = "/[$quotes]${user}[$quotes]\s*=>\s*[$quotes]" . preg_quote( $password, '-' ) . "[$quotes]/";
+			$pattern = "/[$quotes]${user}[$quotes]\s*=>\s*[$quotes]" . preg_quote( $password, '/' ) . "[$quotes]/";
 			$replace = "'$user' => 'phpass:$hash' /* Password encrypted by YOURLS */ ";
 			$count = 0;
 			$configdata = preg_replace( $pattern, $replace, $configdata, -1, $count );
@@ -318,10 +312,20 @@ function yourls_check_auth_cookie() {
 /**
  * Check auth against signature and timestamp. Sets user if applicable, returns bool
  *
+ *
+ * @since 1.4.1
+ * @return bool False if signature or timestamp missing or invalid, true if valid
  */
 function yourls_check_signature_timestamp() {
+    if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
+       OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
+    )
+        return false;
+
 	// Timestamp in PHP : time()
 	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
+    
+	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
@@ -337,21 +341,31 @@ function yourls_check_signature_timestamp() {
 			return true;
 		}
 	}
+
+    // Signature doesn't match known user
 	return false;
 }
 
 /**
  * Check auth against signature. Sets user if applicable, returns bool
  *
+ * @since 1.4.1
+ * @return bool False if signature missing or invalid, true if valid
  */
 function yourls_check_signature() {
-	global $yourls_user_passwords;
+    if( !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] ) )
+        return false;
+    
+	// Check signature against all possible users
+    global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if ( yourls_auth_signature( $valid_user ) == $_REQUEST['signature'] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
 	}
+    
+    // Signature doesn't match known user
 	return false;
 }
 

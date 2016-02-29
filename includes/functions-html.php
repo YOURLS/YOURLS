@@ -403,7 +403,6 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 			<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
 				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
-				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="<?php yourls_e( 'Share on Friendfeed' ); ?>" onclick="share('ff');return false;">FriendFeed</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
@@ -423,6 +422,8 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
  *
  */
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
+    yourls_do_action( 'pre_yourls_die', $message, $title, $header_code );
+
 	yourls_status_header( $header_code );
 	
 	if( !yourls_did_action( 'html_head' ) ) {
@@ -431,6 +432,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	}
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
 	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
+    // Hook into 'yourls_die' to add more elements or messages to that page
 	yourls_do_action( 'yourls_die' );
 	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer();
@@ -902,6 +904,7 @@ function yourls_new_core_version_notice() {
  * @return bool whether header was sent
  */
 function yourls_content_type_header( $type ) {
+    yourls_do_action( 'content_type_header', $type );
 	if( !headers_sent() ) {
 		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
 		header( "Content-Type: $type; charset=$charset" );

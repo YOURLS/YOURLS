@@ -74,7 +74,7 @@ class Requests_Auth_Basic implements Requests_Auth {
 	 * @param string $out HTTP header string
 	 */
 	public function fsockopen_header(&$out) {
-		$out .= "Authorization: Basic " . base64_encode($this->getAuthString()) . "\r\n";
+		$out .= sprintf("Authorization: Basic %s\r\n", base64_encode($this->getAuthString()));
 	}
 
 	/**

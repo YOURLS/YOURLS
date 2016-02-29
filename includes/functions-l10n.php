@@ -112,7 +112,6 @@ function yourls__( $text, $domain = 'default' ) {
  * - first one will be the string to translate, eg "hello %s my name is %s"
  * - following ones will be the sprintf arguments, eg "world" and "Ozh"
  * - if there are more arguments passed than needed, the last one will be used as the translation domain
- * This function will not accept a textdomain argument: do not use in plugins or outside YOURLS core.
  *
  * @see sprintf()
  * @since 1.6
@@ -255,7 +254,7 @@ function yourls_esc_html_e( $text, $domain = 'default' ) {
  * @param string $text Text to translate
  * @param string $context Context information for the translators
  * @param string $domain Optional. Domain to retrieve the translated text
- * @return string Translated context string without pipe
+ * @return string Translated context string
  */
 function yourls_x( $text, $context, $domain = 'default' ) {
 	return yourls_translate_with_context( $text, $context, $domain );
@@ -265,14 +264,14 @@ function yourls_x( $text, $context, $domain = 'default' ) {
  * Displays translated string with gettext context
  *
  * @see yourls_x()
- * @since 1.6
+ * @since 1.7.1
  *
  * @param string $text Text to translate
  * @param string $context Context information for the translators
  * @param string $domain Optional. Domain to retrieve the translated text
- * @return string Translated context string without pipe
+ * @return string Translated context string
  */
-function yourls_ex( $text, $context, $domain = 'default' ) {
+function yourls_xe( $text, $context, $domain = 'default' ) {
 	echo yourls_x( $text, $context, $domain );
 }
 
@@ -1032,7 +1031,7 @@ class YOURLS_Locale_Formats {
 }
 
 /**
- * Loads a custom translation file (for a plugin, a theme, a public interface...)
+ * Loads a custom translation file (for a plugin, a theme, a public interface...) if locale is defined
  *
  * The .mo file should be named based on the domain with a dash, and then the locale exactly,
  * eg 'myplugin-pt_BR.mo'
@@ -1041,13 +1040,14 @@ class YOURLS_Locale_Formats {
  *
  * @param string $domain Unique identifier (the "domain") for retrieving translated strings
  * @param string $path Full path to directory containing MO files.
- * @return bool True on success, false on failure
+ * @return mixed Returns nothing if locale undefined, otherwise return bool: true on success, false on failure
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
 	$locale = yourls_apply_filter( 'load_custom_textdomain', yourls_get_locale(), $domain );
-	$mofile = rtrim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
-
-	return yourls_load_textdomain( $domain, $mofile );
+    if( !empty( $locale ) ) {
+        $mofile = rtrim( $path, '/' ) . '/'. $domain . '-' . $locale . '.mo';
+        return yourls_load_textdomain( $domain, $mofile );
+    }
 }
 
 /**
@@ -1135,6 +1135,7 @@ function yourls_l10n_month_abbrev( $month = '' ){
 		return $yourls_locale_formats->month_abbrev;
 	
 	if( intval( $month ) > 0 ) {
+        $month = sprintf('%02d', intval( $month ) );
 		$month = $yourls_locale_formats->month[ $month ];
 		return $yourls_locale_formats->month_abbrev[ $month ];
 	} else {

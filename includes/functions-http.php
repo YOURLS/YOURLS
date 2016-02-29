@@ -3,7 +3,7 @@
  * Functions that relate to HTTP requests
  *
  * On functions using the 3rd party library Requests: 
- * Thir goal here is to provide convenient wrapper functions to the Requests library. There are
+ * Their goal here is to provide convenient wrapper functions to the Requests library. There are
  * 2 types of functions for each METHOD, where METHOD is 'get' or 'post' (implement more as needed)
  *     - yourls_http_METHOD() :
  *         Return a complete Response object (with ->body, ->headers, ->status_code, etc...) or
@@ -67,14 +67,36 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
 }
 
 /**
- * Check if a proxy is defined for HTTP requests
+ * Get proxy information
  *
- * @uses YOURLS_PROXY
- * @since 1.7
- * @return bool true if a proxy is defined, false otherwise
+ * @uses YOURLS_PROXY YOURLS_PROXY_USERNAME YOURLS_PROXY_PASSWORD
+ * @since 1.7.1
+ * @return mixed false if no proxy is defined, or string like '10.0.0.201:3128' or array like ('10.0.0.201:3128', 'username', 'password')
  */
-function yourls_http_proxy_is_defined() {
-	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
+function yourls_http_get_proxy() {
+    $proxy = false;
+    
+    if( defined( 'YOURLS_PROXY' ) ) {
+        $proxy = YOURLS_PROXY;
+        if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
+            $proxy = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
+        }
+    }
+    
+    return yourls_apply_filter( 'http_get_proxy', $proxy );
+}
+
+/**
+ * Get list of hosts that should bypass the proxy
+ *
+ * @uses YOURLS_PROXY_BYPASS_HOSTS
+ * @since 1.7.1
+ * @return mixed false if no host defined, or string like "example.com, *.mycorp.com"
+ */
+function yourls_http_get_proxy_bypass_host() {
+    $hosts = defined( 'YOURLS_PROXY_BYPASS_HOSTS' ) ? YOURLS_PROXY_BYPASS_HOSTS : false;
+
+    return yourls_apply_filter( 'http_get_proxy_bypass_host', $hosts );
 }
 
 /**
@@ -82,9 +104,6 @@ function yourls_http_proxy_is_defined() {
  *
  * For a list of all available options, see function request() in /includes/Requests/Requests.php
  *
- * @uses YOURLS_PROXY
- * @uses YOURLS_PROXY_USERNAME
- * @uses YOURLS_PROXY_PASSWORD
  * @since 1.7
  * @return array Options
  */
@@ -95,13 +114,9 @@ function yourls_http_default_options() {
 		'follow_redirects' => true,
 		'redirects'        => 3,
 	);
-	
-	if( yourls_http_proxy_is_defined() ) {
-		if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
-			$options['proxy'] = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
-		} else {
-			$options['proxy'] = YOURLS_PROXY;
-		}
+
+	if( yourls_http_get_proxy() ) {
+        $options['proxy'] = yourls_http_get_proxy();
 	}
 
 	return yourls_apply_filter( 'http_default_options', $options );	
@@ -127,6 +142,10 @@ function yourls_send_through_proxy( $url ) {
 		return $pre;
 
 	$check = @parse_url( $url );
+    
+    if( !isset( $check['host'] ) ) {
+        return false;
+    }
 	
 	// Malformed URL, can not process, but this could mean ssl, so let through anyway.
 	if ( $check === false )
@@ -139,21 +158,28 @@ function yourls_send_through_proxy( $url ) {
 	if( in_array( $check['host'], $local ) )
 		return false;
 		
-	if ( !defined( 'YOURLS_PROXY_BYPASS_HOSTS' ) )
-		return true;
-	
-	// Check YOURLS_PROXY_BYPASS_HOSTS
+    $bypass = yourls_http_get_proxy_bypass_host();
+    
+    if( $bypass === false OR $bypass === '' ) {
+        return true;
+    }
+        
+	// Build array of hosts to bypass
 	static $bypass_hosts;
 	static $wildcard_regex = false;
 	if ( null == $bypass_hosts ) {
-			$bypass_hosts = preg_split( '|,\s*|', YOURLS_PROXY_BYPASS_HOSTS );
+        $bypass_hosts = preg_split( '|\s*,\s*|', $bypass );
 
-			if ( false !== strpos( YOURLS_PROXY_BYPASS_HOSTS, '*' ) ) {
-					$wildcard_regex = array();
-					foreach ( $bypass_hosts as $host )
-							$wildcard_regex[] = str_replace( '\*', '.+', preg_quote( $host, '/' ) );
-					$wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
-			}
+        if ( false !== strpos( $bypass, '*' ) ) {
+            $wildcard_regex = array();
+            foreach ( $bypass_hosts as $host ) {
+                $wildcard_regex[] = str_replace( '\*', '.+', preg_quote( $host, '/' ) );
+                if ( false !== strpos( $host, '*' ) ) {
+                    $wildcard_regex[] = str_replace( '\*\.', '', preg_quote( $host, '/' ) );
+                }
+            }
+            $wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
+        }
 	}
 
 	if ( !empty( $wildcard_regex ) )
@@ -174,13 +200,20 @@ function yourls_send_through_proxy( $url ) {
  * @return object Requests_Response object
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
+
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
+	if ( null !== $pre )
+		return $pre;
+
 	yourls_http_load_library();
 	
 	$options = array_merge( yourls_http_default_options(), $options );
 	
-	if( yourls_http_proxy_is_defined() && !yourls_send_through_proxy( $url ) )
+	if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) ) {
 		unset( $options['proxy'] );
-	
+	}
+    
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {

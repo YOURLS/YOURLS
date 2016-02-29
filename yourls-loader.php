@@ -17,7 +17,7 @@ if ( '/robots.txt' == $_SERVER['REQUEST_URI'] ) {
 // Start YOURLS
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
-// Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
+// Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
 
 // Make valid regexp pattern from authorized charset in keywords

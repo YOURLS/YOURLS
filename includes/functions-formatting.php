@@ -51,7 +51,7 @@ function yourls_string2htmlid( $string ) {
 }
 
 /**
- * Make sure a link keyword (ie "1fv" as in "site.com/1fv") is valid.
+ * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is valid.
  *
  */
 function yourls_sanitize_string( $string ) {
@@ -210,24 +210,22 @@ function yourls_sanitize_date_for_sql( $date ) {
  */
 function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
 	$newstring = $string;
-	if( function_exists( 'mb_substr' ) ) {
-		if ( mb_strlen( $newstring ) > $length ) {
-			$newstring = mb_substr( $newstring, 0, $length - mb_strlen( $append ), 'UTF-8' ) . $append;	
-		}
-	} else {
-		if ( strlen( $newstring ) > $length ) {
-			$newstring = substr( $newstring, 0, $length - strlen( $append ) ) . $append;	
-		}
-	}
+    if ( mb_strlen( $newstring ) > $length ) {
+        $newstring = mb_substr( $newstring, 0, $length - mb_strlen( $append ), 'UTF-8' ) . $append;	
+    }
 	return yourls_apply_filter( 'trim_long_string', $newstring, $string, $length, $append );
 }
 
 /**
- * Sanitize a version number (1.4.1-whatever -> 1.4.1)
+ * Sanitize a version number (1.4.1-whatever-RC1 -> 1.4.1)
  *
+ * @since 1.4.1
+ * @param string $ver Version number
+ * @return string Sanitized version number
  */
 function yourls_sanitize_version( $ver ) {
-	return preg_replace( '/[^0-9.]/', '', $ver );
+	preg_match( '/(^[0-9.]+).*$/', $ver, $matches );
+    return isset( $matches[1] ) ? trim( $matches[1], '.' ) : '';
 }
 
 /**
@@ -263,6 +261,25 @@ function yourls_seems_utf8( $str ) {
 	return true;
 }
 
+
+/**
+ * Check for PCRE /u modifier support. Stolen from WP.
+ *
+ * Just in case "PCRE is not compiled with PCRE_UTF8" which seems to happen
+ * on some distros even for PHP 5.3
+ *
+ * @since 1.7.1
+ *
+ * @return bool whether there's /u support or not
+ */
+function yourls_supports_pcre_u() {
+    static $utf8_pcre;
+    if( !isset( $utf8_pcre ) ) {
+        $utf8_pcre = (bool) @preg_match( '/^./u', 'a' );   
+    }
+    return $utf8_pcre;
+}
+
 /**
  * Checks for invalid UTF8 in a string. Stolen from WP
  *
@@ -279,13 +296,8 @@ function yourls_check_invalid_utf8( $string, $strip = false ) {
 		return '';
 	}
 
-	// Check for support for utf8 in the installed PCRE library once and store the result in a static
-	static $utf8_pcre;
-	if ( !isset( $utf8_pcre ) ) {
-		$utf8_pcre = @preg_match( '/^./u', 'a' );
-	}
 	// We can't demand utf8 in the PCRE installation, so just return the string in those cases
-	if ( !$utf8_pcre ) {
+	if ( ! yourls_supports_pcre_u() ) {
 		return $string;
 	}
 
@@ -475,6 +487,9 @@ function yourls_esc_attr( $text ) {
  * @return string The cleaned $url
  */
 function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
+    // trim first -- see #1931
+    $url = trim( $url );
+    
 	// make sure there's only one 'http://' at the beginning (prevents pasting a URL right after the default 'http://')
 	$url = str_replace( 
 		array( 'http://http://', 'http://https://' ),
@@ -492,17 +507,9 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	$original_url = $url;
 
 	// force scheme and domain to lowercase - see issues 591 and 1630
-    // We're not using parse_url() here because its opposite, http_build_url(), requires PECL. Plus, who doesn't love a neat Regexp? :)
-	if( preg_match( '!^([a-zA-Z0-9\+\.-]+:)(//)?(.*?@)?([^/#?]+)(.*)$!', $url, $matches ) ) {
-        list( $all, $scheme, $slashes, $userinfo, $domain, $rest ) = $matches;
-        $scheme = strtolower( $scheme );
-        // Domain to lowercase. On URN eg "urn:example:animal:ferret:nose" don't lowercase anything else
-        if( $slashes == '//' )
-            $domain = strtolower( $domain );
-        $url = $scheme . $slashes . $userinfo . $domain . $rest;
-    }
+    $url = yourls_lowercase_scheme_domain( $url );
 
-	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]|i', '', $url );
+	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
 	// TODO: check if that was it too destructive
 	$strip = array( '%0d', '%0a', '%0D', '%0A' );
@@ -529,6 +536,92 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 
 	return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
 }
+
+
+/**
+ * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889
+ *
+ * This function is trickier than what seems to be needed at first
+ * 
+ * First, we need to handle several URI types: http://example.com, mailto:ozh@ozh.ozh, facetime:user@example.com, and so on, see
+ * yourls_kses_allowed_protocols() in functions-kses.php
+ * The general rule is that the scheme ("stuff://" or "stuff:") is case insensitive and should be lowercase. But then, depending on the
+ * scheme, parts of what follows the scheme may or may not be case sensitive.
+ *
+ * Second, simply using parse_url() and its opposite http_build_url() (see functions-compat.php) is a pretty unsafe process:
+ *  - parse_url() can easily trip up on malformed or weird URLs
+ *  - exploding a URL with parse_url(), lowercasing some stuff, and glueing things back with http_build_url() does not handle well
+ *    "stuff:"-like URI [1] and can result in URLs ending modified [2][3]. We don't want to *validate* URI, we just want to lowercase
+ *    what is supposed to be lowercased.
+ *
+ * So, to be conservative, this functions:
+ *  - lowercases the scheme
+ *  - does not lowercase anything else on "stuff:" URI
+ *  - tries to lowercase only scheme and domain of "stuff://" URI
+ *
+ * [1] http_build_url(parse_url("mailto:ozh")) == "mailto:///ozh"
+ * [2] http_build_url(parse_url("http://blah#omg")) == "http://blah/#omg"
+ * [3] http_build_url(parse_url("http://blah?#")) == "http://blah/"
+ *
+ * @since 1.7.1
+ * @param string $url URL
+ * @return string URL with lowercase scheme and protocol
+ */
+function yourls_lowercase_scheme_domain( $url ) {
+    $scheme = yourls_get_protocol( $url );
+
+    if( '' == $scheme ) {
+        // Scheme not found, malformed URL? Something else? Not sure.
+        return $url;
+    }
+
+    // Case 1 : scheme like "stuff://" (eg "http://example.com/" or "ssh://joe@joe.com")
+    if( substr( $scheme, -2, 2 ) == '//' ) {
+
+        $parts = parse_url( $url );
+
+        // Most likely malformed stuff, could not parse : we'll just lowercase the scheme and leave the rest untouched
+        if( false == $parts ) {
+            $url = str_replace( $scheme, strtolower( $scheme ), $url );
+
+        // URL seems parsable, let's do the best we can
+        } else {
+
+            $lower = array();
+
+            $lower['scheme'] = strtolower( $parts['scheme'] );
+
+            if( isset( $parts['host'] ) ) { 
+                $lower['host'] = strtolower( $parts['host'] );
+            } else {
+                $parts['host'] = '***';
+            }
+
+            // We're not going to glue back things that could be modified in the process            
+            unset( $parts['path'] );
+            unset( $parts['query'] );
+            unset( $parts['fragment'] );
+
+            // original beginning of the URL and its lowercase-where-needed counterpart
+            // We trim the / after the domain to avoid avoid "http://example.com" being reconstructed as "http://example.com/"
+            $partial_original_url       = trim( http_build_url( $parts ), '/' );
+            $partial_lower_original_url = trim( http_build_url( $parts, $lower ), '/' );
+
+            $url = str_replace( $partial_original_url , $partial_lower_original_url, $url );
+
+        }
+
+    // Case 2 : scheme like "stuff:" (eg "mailto:joe@joe.com" or "bitcoin:15p1o8vnWqNkJBJGgwafNgR1GCCd6EGtQR?amount=1&label=Ozh")
+    // In this case, we only lowercase the scheme, because depending on it, things after should or should not be lowercased
+    } else {
+
+        $url = str_replace( $scheme, strtolower( $scheme ), $url );
+
+    }
+
+    return $url;
+}
+
 
 /**
  * Escape single quotes, htmlspecialchar " < > &, and fix line endings. Stolen from WP.

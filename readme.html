@@ -337,7 +337,7 @@
 				<li>Open <code>user/config.php</code> with a raw text editor (like Notepad) and fill in the required settings</li>
 				<li>Upload the unzipped files to your domain <code>public_html</code> or <code>www</code> folder</li>
 				<li>Create a new database (see <a href="#Config" onclick="toggle(this);">Configuration</a> &ndash; you can also use an existing one)</li>
-				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
+				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 			</ol>
 			
 			<h2 id="upgrade">Upgrade</h2>
@@ -345,7 +345,7 @@
 				<li><strong>Backup the database!</strong></li>
 				<li>Unzip the YOURLS archive</li>
 				<li>Upload files to your server, overwriting your existing install</li>
-				<li>Point your browser to <code>http://yoursite.com/admin/</code></li>
+				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 				<li>Tip: you can now move your <code>config.php</code> file to the <code>/user</code> directory</li>
 			</ol>
 			
@@ -357,7 +357,7 @@
 				<li>Unzip the YOURLS archive, upload the files</li>
 				<li>Copy <code>config-sample.php</code> to <code>config.php</code> and fill in details. <strong>Don't start with your old config file</strong>, use the new sample config file.</li>
 				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
-				<li>Point your browser to <code>http://yoursite.com/admin/</code> and follow instructions</li>
+				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code> and follow instructions</li>
 				<li>After upgrade is well and over, remove the define <code>YOURLS_DB_TABLE_NEXTDEC</code> from your config file</li>
 			</ol>
 			
@@ -469,7 +469,7 @@
 			</ul>
 			
 			<h3 id="apiusage">Usage</h3>
-			<p>You need to send parameters to <code>http://yoursite.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
+			<p>You need to send parameters to <code>http://your-own-domain-here.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
 			<ul>
 				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://yourls.org/passwordlessapi">Passwordless API requests</a>)</li>
 				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links) or <tt>"db-stats"</tt> (get global link and click count)</li>
@@ -767,6 +767,9 @@ echo $data->longurl;</tt></pre>
 				
 				<li><a href="https://github.com/tomslominski/infinity-squared">Infinity Squared</a><br/>
 				&#8734;&sup2; is a public page theme for YOURLS to help you design your own public interface</li>
+				
+				<li><a href="https://github.com/Flynntes/Sleeky">Sleeky</a><br/>
+				Sleeky is another public page theme for YOURLS></li>
 				
 				<li><a href="https://github.com/johngirvin/yourls-index-page">John Girvin's page</a><br/>
 				Example index page listing all the URLs held in a YOURLS database</li>

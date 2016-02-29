@@ -695,10 +695,15 @@ function yourls_redirect( $location, $code = 301 ) {
 /**
  * Set HTTP status header
  *
+ * @since 1.4
+ * @param int $code  status header code
+ * @return bool      whether header was sent
  */
 function yourls_status_header( $code = 200 ) {
+	yourls_do_action( 'status_header', $code );
+    
 	if( headers_sent() )
-		return;
+		return false;
 		
 	$protocol = $_SERVER['SERVER_PROTOCOL'];
 	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
@@ -708,7 +713,8 @@ function yourls_status_header( $code = 200 ) {
 	$desc = yourls_get_HTTP_status( $code );
 
 	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
-	yourls_do_action( 'status_header', $code );
+    
+    return true;
 }
 
 /**
@@ -824,13 +830,14 @@ function yourls_log_redirect( $keyword ) {
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
 	
+    $now      = date( 'Y-m-d H:i:s' );
 	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
 	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
 	$ua       = yourls_escape( yourls_get_user_agent() );
 	$ip       = yourls_escape( yourls_get_IP() );
 	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
 	
-	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (NOW(), '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES ('$now', '$keyword', '$referrer', '$ua', '$ip', '$location')" );
 }
 
 /**
@@ -1482,6 +1489,13 @@ function yourls_salt( $string ) {
  *     'var', 'value', $url 
  * If $url omitted, uses $_SERVER['REQUEST_URI']
  *
+ * The result of this function call is a URL : it should be escaped before being printed as HTML
+ *
+ * @since 1.5
+ * @param string|array $param1 Either newkey or an associative_array.
+ * @param string       $param2 Either newvalue or oldquery or URI.
+ * @param string       $param3 Optional. Old query or URI.
+ * @return string New URL query string.
  */
 function yourls_add_query_arg() {
 	$ret = '';
@@ -1563,6 +1577,12 @@ function yourls_urlencode_deep( $value ) {
 /**
  * Remove arg from query. Opposite of yourls_add_query_arg. Stolen from WP.
  *
+ * The result of this function call is a URL : it should be escaped before being printed as HTML
+ *
+ * @since 1.5
+ * @param string|array $key   Query key or keys to remove.
+ * @param bool|string  $query Optional. When false uses the $_SERVER value. Default false.
+ * @return string New URL query string.
  */
 function yourls_remove_query_arg( $key, $query = false ) {
 	if ( is_array( $key ) ) { // removing multiple keys
@@ -1661,23 +1681,12 @@ function yourls_statlink( $keyword = '' ) {
 }
 
 /**
- * Check if we'll need interface display function (ie not API or redirection)
- *
- */
-function yourls_has_interface() {
-	if( yourls_is_API() or yourls_is_GO() )
-		return false;
-	return true;
-}
-
-/**
  * Check if we're in API mode. Returns bool
  *
  */
 function yourls_is_API() {
-	if ( defined( 'YOURLS_API' ) && YOURLS_API == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_API' ) && YOURLS_API == true;
+    return yourls_apply_filter( 'is_API', $return );
 }
 
 /**
@@ -1685,9 +1694,8 @@ function yourls_is_API() {
  *
  */
 function yourls_is_Ajax() {
-	if ( defined( 'YOURLS_AJAX' ) && YOURLS_AJAX == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_AJAX' ) && YOURLS_AJAX == true;
+    return yourls_apply_filter( 'is_Ajax', $return );
 }
 
 /**
@@ -1695,9 +1703,8 @@ function yourls_is_Ajax() {
  *
  */
 function yourls_is_GO() {
-	if ( defined( 'YOURLS_GO' ) && YOURLS_GO == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_GO' ) && YOURLS_GO == true;
+    return yourls_apply_filter( 'is_GO', $return );
 }
 
 /**
@@ -1705,9 +1712,8 @@ function yourls_is_GO() {
  *
  */
 function yourls_is_infos() {
-	if ( defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true;
+    return yourls_apply_filter( 'is_infos', $return );
 }
 
 /**
@@ -1715,9 +1721,8 @@ function yourls_is_infos() {
  *
  */
 function yourls_is_admin() {
-	if ( defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true )
-		return true;
-	return false;
+    $return = defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true;
+    return yourls_apply_filter( 'is_admin', $return );
 }
 
 /**
@@ -1733,9 +1738,8 @@ function yourls_is_windows() {
  *
  */
 function yourls_needs_ssl() {
-	if ( defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true )
-		return true;
-	return false;
+    $return = defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true;
+    return yourls_apply_filter( 'needs_ssl', $return );
 }
 
 /**
@@ -1744,8 +1748,9 @@ function yourls_needs_ssl() {
  */
 function yourls_admin_url( $page = '' ) {
 	$admin = YOURLS_SITE . '/admin/' . $page;
-	if( yourls_is_ssl() or yourls_needs_ssl() )
+	if( yourls_is_ssl() or yourls_needs_ssl() ) {
         $admin = yourls_set_url_scheme( $admin, 'https' );
+    }
 	return yourls_apply_filter( 'admin_url', $admin, $page );
 }
 
@@ -1758,11 +1763,13 @@ function yourls_site_url( $echo = true, $url = '' ) {
 	$url = trim( YOURLS_SITE . '/' . $url, '/' );
 	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
-	if( yourls_is_ssl() )
+	if( yourls_is_ssl() ) {
 		$url = yourls_set_url_scheme( $url, 'https' );
+    }
 	$url = yourls_apply_filter( 'site_url', $url );
-	if( $echo )
+	if( $echo ) {
 		echo $url;
+    }
 	return $url;
 }
 
@@ -1806,8 +1813,10 @@ function yourls_get_remote_title( $url ) {
 		return $url;	
 
 	$title = $charset = false;
+    
+    $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
 	
-	$response = yourls_http_get( $url ); // can be a Request object or an error string
+	$response = yourls_http_get( $url, array(), array(), array( 'max_bytes' => $max_bytes ) ); // can be a Request object or an error string
 	if( is_string( $response ) ) {
 		return $url;
 	}
@@ -1885,7 +1894,7 @@ function yourls_is_mobile_device() {
 }
 
 /**
- * Get request in YOURLS base (eg in 'http://site.com/yourls/abcd' get 'abdc')
+ * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
  *
  */
 function yourls_get_request() {
@@ -2181,6 +2190,78 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
  */
 function yourls_return_if_not_empty_string( $val ) {
 	return( $val !== '' );
+}
+
+/**
+ * Returns true.
+ *
+ * Useful for returning true to filters easily.
+ *
+ * @since 1.7.1
+ * @return bool True.
+ */
+function yourls_return_true() {
+    return true;
+}
+
+/**
+ * Returns false.
+ *
+ * Useful for returning false to filters easily.
+ *
+ * @since 1.7.1
+ * @return bool False.
+ */
+function yourls_return_false() {
+    return false;
+}
+
+/**
+ * Returns 0.
+ *
+ * Useful for returning 0 to filters easily.
+ *
+ * @since 1.7.1
+ * @return int 0.
+ */
+function yourls_return_zero() {
+    return 0;
+}
+
+/**
+ * Returns an empty array.
+ *
+ * Useful for returning an empty array to filters easily.
+ *
+ * @since 1.7.1
+ * @return array Empty array.
+ */
+function yourls_return_empty_array() {
+    return array();
+}
+
+/**
+ * Returns null.
+ *
+ * Useful for returning null to filters easily.
+ *
+ * @since 1.7.1
+ * @return null Null value.
+ */
+function yourls_return_null() {
+    return null;
+}
+
+/**
+ * Returns an empty string.
+ *
+ * Useful for returning an empty string to filters easily.
+ *
+ * @since 1.7.1
+ * @return string Empty string.
+ */
+function yourls_return_empty_string() {
+    return '';
 }
 
 /**

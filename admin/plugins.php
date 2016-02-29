@@ -6,6 +6,7 @@ yourls_maybe_require_auth();
 // Handle plugin administration pages
 if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
 	yourls_plugin_admin_page( $_GET['page'] );
+    die();
 }
 
 // Handle activation/deactivation of plugins
