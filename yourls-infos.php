@@ -50,8 +50,8 @@ if( yourls_do_log_redirect() ) {
 	$last_24h = array();
 	
 	// Define keyword query range : either a single keyword or a list of keywords
+	$keyword_list = yourls_get_longurl_keywords( $longurl );
 	if( $aggregate ) {
-		$keyword_list = yourls_get_longurl_keywords( $longurl );
 		$keyword_range = "IN ( '" . join( "', '", $keyword_list ) . "' )"; // IN ( 'blah', 'bleh', 'bloh' )
 	} else {
 		$keyword_range = sprintf( "= '%s'", yourls_escape( $keyword ) );
