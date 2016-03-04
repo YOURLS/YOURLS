@@ -212,7 +212,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 			case 'tumblr':
 				// share with Tumblr
-				$destination = sprintf( "http://www.tumblr.com/share?v=3&u=%s&t=%s&s=%s", urlencode( $return['shorturl'] ), urlencode( $title ), urlencode( $text ) );
+				$destination = sprintf( "https://www.tumblr.com/share?v=3&u=%s&t=%s&s=%s", urlencode( $return['shorturl'] ), urlencode( $title ), urlencode( $text ) );
 				yourls_redirect( $destination, 303 );
 
 				// Deal with the case when redirection failed:
