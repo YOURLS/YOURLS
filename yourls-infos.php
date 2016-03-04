@@ -148,10 +148,10 @@ if( yourls_do_log_redirect() ) {
 	
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$query = "SELECT
-		DATE_FORMAT(`click_time`, '%H %p') AS `time`,
+		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR), '%H %p') AS `time`,
 		COUNT(*) AS `count`
 	FROM `$table`
-	WHERE `shorturl` $keyword_range AND `click_time` > (CURRENT_TIMESTAMP - INTERVAL 1 DAY)
+	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) > (CURRENT_TIMESTAMP - INTERVAL 1 DAY)
 	GROUP BY `time`;";
 	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_last24h', $query ) );
 	
@@ -163,7 +163,7 @@ if( yourls_do_log_redirect() ) {
 	
 	$now = intval( date('U') );
 	for ($i = 23; $i >= 0; $i--) {
-		$h = date('H A', $now - ($i * 60 * 60) );
+		$h = date('H A', ($now - ($i * 60 * 60) + (YOURLS_HOURS_OFFSET * 60 * 60)) );
 		// If the $last_24h doesn't have all the hours, insert missing hours with value 0
 		$last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
 	}
