@@ -49,7 +49,7 @@ if( yourls_do_log_redirect() ) {
 	$list_of_years = array();
 	$last_24h = array();
 	
-	íf( yourls_allow_duplicate_longurls() )
+	if( yourls_allow_duplicate_longurls() )
 		$keyword_list = yourls_get_longurl_keywords( $longurl );
 	// Define keyword query range : either a single keyword or a list of keywords
 	if( $aggregate ) {
