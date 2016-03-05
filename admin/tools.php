@@ -8,8 +8,7 @@ yourls_html_logo();
 yourls_html_menu();
 ?>
 
-	<div class="sub_wrap">	
-	<main role="main">
+	<main role="main" class="sub_wrap">
 
 	<h2><?php yourls_e( 'Bookmarklets' ); ?></h2>
 	
@@ -330,9 +329,8 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 	</ul>
 	
 	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/readme.html#API' ); ?></p>
-		
-	</main>	
-	</div>
+
+	</main>
 
 	<?php } // end is private ?>
 

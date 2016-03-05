@@ -143,13 +143,13 @@ function yourls_html_footer() {
 	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
 	?>
 	</div><?php // wrap ?>
-	<div id="footer"><footer role="contentinfo"><p>
+	<footer id="footer" role="contentinfo"><p>
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
 		$footer .= ' &ndash; '.$num_queries;
 		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
-	</p></footer></div>
+	</p></footer>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", $ydb->debug_log );
