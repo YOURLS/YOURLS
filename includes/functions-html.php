@@ -7,10 +7,12 @@
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
+	<header role="banner">
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
+	</header>
 	<?php
 	yourls_do_action( 'html_logo' );
 }
@@ -140,14 +142,14 @@ function yourls_html_footer() {
 	
 	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
 	?>
-	</div> <?php // wrap ?>
-	<div id="footer"><p>
+	</div><?php // wrap ?>
+	<footer id="footer" role="contentinfo"><p>
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
 		$footer .= ' &ndash; '.$num_queries;
 		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
-	</p></div>
+	</p></footer>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", $ydb->debug_log );
@@ -167,6 +169,7 @@ function yourls_html_footer() {
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
 	?>
+	<main role="main">
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
@@ -664,7 +667,7 @@ function yourls_table_tbody_end() {
  *
  */
 function yourls_table_end() {
-	echo yourls_apply_filter( 'table_end', '</table>' );
+	echo yourls_apply_filter( 'table_end', '</table></main>' );
 }
 
 /**
@@ -756,7 +759,7 @@ function yourls_html_menu() {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul id="admin_menu">'."\n";
+	echo '<nav role="navigation"><ul id="admin_menu">'."\n";
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
@@ -784,7 +787,7 @@ function yourls_html_menu() {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 		
 	yourls_do_action( 'admin_menu' );
-	echo "</ul>\n";
+	echo "</ul></nav>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
