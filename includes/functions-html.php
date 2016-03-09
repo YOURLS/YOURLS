@@ -312,7 +312,7 @@ function yourls_html_tfooter( $params = array() ) {
 					if( ( $p_end ) < $total_pages ) {
 						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
 						echo '<span class="nav_link nav_next"></span>';
-						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
+						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to Last Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
 					}
 					?>
 				<?php } ?>
