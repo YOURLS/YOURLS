@@ -197,7 +197,8 @@ function decrement_counter() {
 
 // Decrease number of total clicks
 function decrease_total_clicks( id ) {
-	$('#total_clicks').html( parseInt( $('#total_clicks').html() ) - parseInt( $('#clicks-' + id).html() ) );
+	var total_clicks = $("#overall_tracking strong:nth-child(2)");
+	total_clicks.html( parseInt( total_clicks.html() ) - parseInt( $('#clicks-' + id).html() ) );
 }
 
 // Toggle Share box
