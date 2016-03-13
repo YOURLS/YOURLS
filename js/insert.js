@@ -111,6 +111,7 @@ function remove_link(id) {
 					zebra_table();
 				});
 				decrement_counter();
+				decrease_total_clicks( id );
 			} else {
 				alert('something wrong happened while deleting :/');
 			}
@@ -192,6 +193,12 @@ function decrement_counter() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
+}
+
+// Decrease number of total clicks
+function decrease_total_clicks( id ) {
+	var total_clicks = $("#overall_tracking strong:nth-child(2)");
+	total_clicks.html( parseInt( total_clicks.html() ) - parseInt( $('#clicks-' + id).html() ) );
 }
 
 // Toggle Share box
