@@ -481,7 +481,7 @@ yourls_html_menu();
 					if ( $number_of_sites > 1 )
 						$referrer_sort[ yourls__( 'Others' ) ] = count( $referrers );
 					yourls_stats_pie( $referrer_sort, 5, '440x220', 'stat_tab_source_ref' );
-					unset( $referrer_sort['Others'] );
+					unset( $referrer_sort[yourls__('Others')] );
 					?>
 					<h3><?php yourls_e( 'Referrers' ); ?></h3>
 					<ul class="no_bullet">
