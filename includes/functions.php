@@ -923,7 +923,7 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  */
 function yourls_geo_get_flag( $code ) {
 	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-		$img = yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
+		$img = yourls_match_current_protocol( YOURLS_URL.'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
 	} else {
 		$img = false;
 	}
@@ -1747,7 +1747,7 @@ function yourls_needs_ssl() {
  *
  */
 function yourls_admin_url( $page = '' ) {
-	$admin = YOURLS_SITE . '/admin/' . $page;
+	$admin = YOURLS_URL . '/admin/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() ) {
         $admin = yourls_set_url_scheme( $admin, 'https' );
     }
@@ -1760,7 +1760,7 @@ function yourls_admin_url( $page = '' ) {
  */
 function yourls_site_url( $echo = true, $url = '' ) {
 	$url = yourls_get_relative_url( $url );
-	$url = trim( YOURLS_SITE . '/' . $url, '/' );
+	$url = trim( YOURLS_URL . '/' . $url, '/' );
 	
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() ) {

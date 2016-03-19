@@ -25,6 +25,10 @@ if( !defined( 'YOURLS_DB_PREFIX' ) )
 if( !defined( 'YOURLS_ABSPATH' ) )
 	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
 
+// URL of YOURLS root
+if( !defined( 'YOURLS_URL' ) )
+	define( 'YOURLS_URL', YOURLS_SITE );
+
 // physical path of includes directory
 if( !defined( 'YOURLS_INC' ) )
 	define( 'YOURLS_INC', YOURLS_ABSPATH.'/includes' );
@@ -35,7 +39,7 @@ if( !defined( 'YOURLS_USERDIR' ) )
 
 // URL of user directory
 if( !defined( 'YOURLS_USERURL' ) )
-	define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
+	define( 'YOURLS_USERURL', YOURLS_URL.'/user' );
 	
 // physical path of translations directory
 if( !defined( 'YOURLS_LANG_DIR' ) )
@@ -173,7 +177,7 @@ if( !yourls_is_installed() && !yourls_is_installing() ) {
 // Check if upgrade is needed (bypassed if upgrading or installing)
 if ( !yourls_is_upgrading() && !yourls_is_installing() ) {
 	if ( yourls_upgrade_is_needed() ) {
-		yourls_redirect( YOURLS_SITE .'/admin/upgrade.php', 302 );
+		yourls_redirect( YOURLS_URL.'/admin/upgrade.php', 302 );
 	}
 }
 
