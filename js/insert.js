@@ -163,6 +163,7 @@ function edit_link_save(id) {
 			}
 			feedback(data.message, data.status);
 			end_loading("#edit-close-" + id);
+			end_disable("#edit-close-" + id);
 			end_disable("#actions-" + id + ' .button');
 		}
 	);
