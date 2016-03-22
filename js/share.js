@@ -36,14 +36,14 @@ function share(dest) {
 }
 
 function init_clipboard() {
-
     var clipboard = new Clipboard('#copylink', {
         text: function (trigger) {
-            return $(trigger).select();
+            return $(trigger).val();
         }
     });
-
+    
     clipboard.on('success', function (e) {
+        $('#copylink').select();
         html_pulse('#copybox h2, #copybox h3', 'Copied!');
     });
 };
