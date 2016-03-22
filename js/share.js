@@ -36,16 +36,14 @@ function share(dest) {
 }
 
 function init_clipboard() {
-	$('#copylink').click(function(){
-		$(this).select();
-	})
-	
-	$('#copylink').zclip({
-		path: zclipurl,
-		copy: $('#copylink').val(),
-		afterCopy:function(){
-			html_pulse( '#copybox h2, #copybox h3', 'Copied!' );
-		}
-	});
-};                     
 
+    var clipboard = new Clipboard('#copylink', {
+        text: function (trigger) {
+            return $(trigger).select();
+        }
+    });
+
+    clipboard.on('success', function (e) {
+        html_pulse('#copybox h2, #copybox h3', 'Copied!');
+    });
+};

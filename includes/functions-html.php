@@ -107,7 +107,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php if ( $share ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 		<script src="<?php yourls_site_url(); ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-		<script src="<?php yourls_site_url(); ?>/js/jquery.zclip.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/clipboard.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $cal ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -123,7 +123,6 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<script type="text/javascript">
 	//<![CDATA[
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
-		var zclipurl = '<?php yourls_site_url(); ?>/js/ZeroClipboard.swf';
 	//]]>
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
