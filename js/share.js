@@ -42,7 +42,7 @@ function init_clipboard() {
         }
     });
     
-    clipboard.on('success', function (e) {
+    clipboard.on('success', function () {
         $('#copylink').select();
         html_pulse('#copybox h2, #copybox h3', 'Copied!');
     });
