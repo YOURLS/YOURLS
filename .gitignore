@@ -50,4 +50,6 @@ Desktop.ini
 
 # Mac crap
 .DS_Store
+
+# NetBeans files
 /nbproject/
