@@ -154,7 +154,6 @@ function edit_link_save(id) {
 
 				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
-				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
 					$('#main_table tbody').trigger("update");
 				});
