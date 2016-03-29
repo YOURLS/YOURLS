@@ -147,7 +147,7 @@ function edit_link_save(id) {
 			if(data.status == 'success') {
 			
 				if( data.url.title != '' ) {
-					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
+					var display_link = '<a href="' + data.url.url + '" title="' + data.url.title + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
 				} else {
 					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_url + '</a>';
 				}
