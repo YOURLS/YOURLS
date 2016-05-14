@@ -908,6 +908,7 @@ function yourls_content_type_header( $type ) {
 	if( !headers_sent() ) {
 		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
 		header( "Content-Type: $type; charset=$charset" );
+		header("Access-Control-Allow-Origin: "+YOURLS_SITE);
 		return true;
 	}
 	return false;
