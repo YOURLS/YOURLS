@@ -440,17 +440,23 @@ function yourls_load_plugins() {
  * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
-	if (
-		false !== strpos( $file, '..' )
-		OR
-		false !== strpos( $file, './' )
-		OR
-		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
-		OR
-		!is_readable( $file )
-	)
+	if ( is_readable( $file ) ) {
+		$fp = fopen( $file, 'r' );
+		$tempdata = fread( $fp, 10 );
+		fclose( $fp );
+		if (
+			0 !== strpos( $tempdata, '<?php' )
+			OR
+			false !== strpos( $file, '..' )
+			OR
+			false !== strpos( $file, './' )
+			OR
+			'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
+			)
 		return false;
-		
+	}
+	else
+		return false;
 	return true;
 }
 
