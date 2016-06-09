@@ -440,24 +440,22 @@ function yourls_load_plugins() {
  * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
-	if ( is_readable( $file ) ) {
-		$fp = fopen( $file, 'r' );
-		$tempdata = fread( $fp, 10 );
-		fclose( $fp );
-		if (
-			0 !== strpos( $tempdata, '<?php' )
-			OR
-			false !== strpos( $file, '..' )
-			OR
-			false !== strpos( $file, './' )
-			OR
-			'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
-			)
-		return false;
+	if ( is_readable( $file ) ) {			// if the plugin file is readable
+		$fp = fopen( $file, 'r' );		// open the file for reading
+		$firstchars = fread( $fp, 10 );		// read the first 10 characters
+		fclose( $fp );				// close the plugin file
 	}
-	else
-		return false;
-	return true;
+	if (						// test for "safety"
+		0 !== strpos( $firstchars, '<?php' )	// a plugin must be a valid php file; it should start with <?php
+		OR
+		false !== strpos( $file, '..' )		// check filename for sanity I
+		OR
+		false !== strpos( $file, './' )		// check filename for sanity II
+		OR
+		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
+		)
+		return false;				// oops! one of our tests failed!
+	return true;					// everything is fine! we think... 
 }
 
 /**
