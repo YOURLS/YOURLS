@@ -440,6 +440,7 @@ function yourls_load_plugins() {
  * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
+	$firstchars="";
 	if ( is_readable( $file ) ) {			// if the plugin file is readable
 		$fp = fopen( $file, 'r' );		// open the file for reading
 		$firstchars = fread( $fp, 10 );		// read the first 10 characters
