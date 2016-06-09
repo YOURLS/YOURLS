@@ -440,7 +440,7 @@ function yourls_load_plugins() {
  * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
-	$firstchars="";
+	$firstchars="";					// initialize, if we file isn't readable, an error would be thrown
 	if ( is_readable( $file ) ) {			// if the plugin file is readable
 		$fp = fopen( $file, 'r' );		// open the file for reading
 		$firstchars = fread( $fp, 10 );		// read the first 10 characters
@@ -454,9 +454,8 @@ function yourls_validate_plugin_file( $file ) {
 		false !== strpos( $file, './' )		// check filename for sanity II
 		OR
 		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
-		) {
+		)
 		return false;				// oops! one of our tests failed!
-	}
 	return true;					// everything is fine! we think... 
 }
 
