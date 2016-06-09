@@ -453,8 +453,9 @@ function yourls_validate_plugin_file( $file ) {
 		false !== strpos( $file, './' )		// check filename for sanity II
 		OR
 		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
-		)
+		) {
 		return false;				// oops! one of our tests failed!
+	}
 	return true;					// everything is fine! we think... 
 }
 
