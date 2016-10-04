@@ -14,7 +14,7 @@ Learn more tweaks in the [Wiki documentation](https://github.com/YOURLS/YOURLS/w
 Community news, tips and tricks
 -------------------------------
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
-* Follow [@yourls](http://twitter.com/yourls)
+* Follow [@yourls](https://twitter.com/yourls)
 * Subscribe to the [YOURLS User Newsletter](http://yourls.org/newsletter) (infrequent, low volume)
 
 
