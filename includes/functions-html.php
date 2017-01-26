@@ -759,7 +759,7 @@ function yourls_html_menu() {
 	
 	// Now output menu
 	echo '<nav role="navigation"><ul id="admin_menu">'."\n";
-	if ( yourls_is_private() && !empty( $logout_link ) ) //Always displayed because $logout_link wasn't empty on public/domainroot index
+	if ( yourls_is_private() && !empty( $logout_link ) ) 
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
 	foreach( (array)$admin_links as $link => $ar ) {
