@@ -514,7 +514,6 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	// TODO: check if that was it too destructive
 	$strip = array( '%0d', '%0a', '%0D', '%0A' );
 	$url = yourls_deep_replace( $strip, $url );
-	$url = str_replace( ';//', '://', $url );
 
 	// Replace ampersands and single quotes only when displaying.
 	if ( 'display' == $context ) {
