@@ -59,7 +59,7 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
         $where .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ('$search')";
         // Search across all fields. The resulting SQL will be something like:
         // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
-        // CONCAT_WS because CONCAT('foo', 'bar’, NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
+        // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
         // TODO: pay attention to this bit when the DB schema changes
     } else {
         $where .= " AND `$search_in` LIKE ('$search')";
