@@ -832,7 +832,7 @@ function yourls_log_redirect( $keyword ) {
 	
     $now      = date( 'Y-m-d H:i:s' );
 	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
+	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
 	$ua       = yourls_escape( yourls_get_user_agent() );
 	$ip       = yourls_escape( yourls_get_IP() );
 	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );

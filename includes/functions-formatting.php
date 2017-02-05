@@ -92,7 +92,9 @@ function yourls_sanitize_title( $unsafe_title, $fallback = '' ) {
 }
 
 /**
- * A few sanity checks on the URL. Used for redirection or DB. For display purpose, see yourls_esc_url()
+ * A few sanity checks on the URL. Used for redirection or DB.
+ * For redirection when you don't trust the URL ($_SERVER variable, query string), see yourls_sanitize_url_safe()
+ * For display purpose, see yourls_esc_url()
  *
  * @param string $unsafe_url unsafe URL
  * @param array $protocols Optional allowed protocols, default to global $yourls_allowedprotocols
@@ -101,6 +103,25 @@ function yourls_sanitize_title( $unsafe_title, $fallback = '' ) {
 function yourls_sanitize_url( $unsafe_url, $protocols = array() ) {
 	$url = yourls_esc_url( $unsafe_url, 'redirection', $protocols );
 	return yourls_apply_filter( 'sanitize_url', $url, $unsafe_url );
+}
+
+/**
+ * A few sanity checks on the URL, including CRLF. Used for redirection when URL to be sanitized is critical and cannot be trusted.
+ *
+ * Use when critical URL comes from user input or environment variable. In such a case, this function will sanitize
+ * it like yourls_sanitize_url() but will also remove %0A and %0D to prevent CRLF injection.
+ * Still, some legit URLs contain %0A or %0D (see issue 2056, and for extra fun 1694, 1707, 2030, and maybe others)
+ * so we're not using this function unless it's used for internal redirection when the target location isn't
+ * hardcoded, to avoid XSS via CRLF
+ *
+ * @since 1.7.2
+ * @param string $unsafe_url unsafe URL
+ * @param array $protocols Optional allowed protocols, default to global $yourls_allowedprotocols
+ * @return string Safe URL
+ */
+function yourls_sanitize_url_safe( $unsafe_url, $protocols = array() ) {
+	$url = yourls_esc_url( $unsafe_url, 'safe', $protocols );
+	return yourls_apply_filter( 'sanitize_url_safe', $url, $unsafe_url );
 }
 
 /**
@@ -479,6 +500,9 @@ function yourls_esc_attr( $text ) {
  * A number of characters are removed from the URL. If the URL is for displaying
  * (the default behaviour) ampersands are also replaced.
  *
+ * This function by default "escapes" URL for display purpose (param $context = 'display') but can
+ * take extra steps in URL sanitization. See yourls_sanitize_url() and yourls_sanitize_url_safe()
+ *
  * @since 1.6
  *
  * @param string $url The URL to be cleaned.
@@ -512,8 +536,13 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
 	// TODO: check if that was it too destructive
-	$strip = array( '%0d', '%0a', '%0D', '%0A' );
-	$url = yourls_deep_replace( $strip, $url );
+
+    // If $context is 'safe', an extra step is taken to make sure no CRLF injection is possible.
+    // To be used when $url can be forged by evil user (eg it's from a $_SERVER variable, a query string, etc..)
+	if ( 'safe' == $context ) {
+        $strip = array( '%0d', '%0a', '%0D', '%0A' );
+        $url = yourls_deep_replace( $strip, $url );
+    }
 
 	// Replace ampersands and single quotes only when displaying.
 	if ( 'display' == $context ) {
