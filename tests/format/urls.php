@@ -68,6 +68,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://example.com/?test=(12345)abcdef[gh]' ),
             array( 'http://[0:0:0:0:0:0:0:1]/' ),
             array( 'http://[2001:db8:1f70::999:de8:7648:6e8]:100/' ),
+            array( 'http://example.com/?req=http;//blah' ), // 
         );
     }
     
@@ -100,18 +101,23 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	 * @since 0.1
 	 */	
 	function test_url_with_bad_characters() {
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url( 'http://example.com/watchthelinefeed%0Ago' ) );
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url( 'http://example.com/watchthelinefeed%0ago' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0dgo' ) );
+        // regular sanitize leaves %0A & %0D alone
+        $this->assertEquals( 'http://example.com/keep%0Dlinefeed%0A', yourls_sanitize_url( 'http://example.com/keep%0Dlinefeed%0A' ) );
+        $this->assertEquals( 'http://example.com/%0%0%0DAD', yourls_sanitize_url( 'http://example.com/%0%0%0DAD' ) );
+        
+        // sanitize with anti CRLF 
+		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
+		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
+		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
+		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0dgo' ) );
 
 		//Nesting Checks
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0DAD' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0ADA' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0DAd' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/%0%0%0ADa' ) );
+		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
+		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAD' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
+		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
 	}
 
 	/**
