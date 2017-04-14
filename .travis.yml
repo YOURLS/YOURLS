@@ -18,6 +18,7 @@ before_script:
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
+  - phpunit --version
 
 script: phpunit --configuration ./tests/phpunit-travis.xml.dist
 
