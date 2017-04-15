@@ -92,7 +92,6 @@ if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner
     class_alias( 'PHPUnit\Framework\TestCase', 'PHPUnit_Framework_TestCase' ); 
     class_alias( 'PHPUnit\Framework\Exception', 'PHPUnit_Framework_Exception' ); 
     class_alias( 'PHPUnit\Framework\ExpectationFailedException', 'PHPUnit_Framework_ExpectationFailedException' ); 
-    class_alias( 'PHPUnit\Framework\Error', 'PHPUnit_Framework_Error' ); 
     class_alias( 'PHPUnit\Framework\Error\Notice', 'PHPUnit_Framework_Error_Notice' ); 
     class_alias( 'PHPUnit\Framework\Test', 'PHPUnit_Framework_Test' ); 
     class_alias( 'PHPUnit\Framework\Warning', 'PHPUnit_Framework_Warning' ); 
