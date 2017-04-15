@@ -38,9 +38,9 @@ before_script:
         exit 1
         ;;
     esac
-  - phpunit --version
+  - vendor/bin/phpunit --version
 
-script: phpunit --configuration ./tests/phpunit-travis.xml.dist
+script: vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 after_script: rm user/config.php
 
