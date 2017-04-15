@@ -23,26 +23,9 @@ before_script:
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
-  - |
-    case "$TRAVIS_PHP_VERSION" in
-      7.1|7.0|hhvm)
-        echo "Using PHPUnit 5.7"
-        composer global require "phpunit/phpunit=5.7.*"
-        ;;
-      5.6|5.5|5.4|5.3)
-        echo "Using PHPUnit 4.8"
-        composer global require "phpunit/phpunit=4.8.*"
-        ;;
-      *)
-        echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
-        exit 1
-        ;;
-    esac
-  - which phpunit
   - phpunit --version
-  - $COMPOSER_BIN_DIR/phpunit --version
 
-script: vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
+script: phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 after_script: rm user/config.php
 
