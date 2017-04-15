@@ -38,7 +38,9 @@ before_script:
         exit 1
         ;;
     esac
-  - vendor/bin/phpunit --version
+  - which phpunit
+  - phpunit --version
+  - $COMPOSER_BIN_DIR/phpunit --version
 
 script: vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
