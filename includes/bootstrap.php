@@ -90,8 +90,7 @@ $yourls_user_passwords = array(
 if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {
     class_alias( 'PHPUnit\Framework\TestCase', 'PHPUnit_Framework_TestCase' );
     class_alias( 'PHPUnit\Framework\Assert', 'PHPUnit_Framework_Assert' );
-    class_alias( 'PHPUnit\Framework\BaseTestListener ', 'PHPUnit_Framework_BaseTestListener' );
-    class_alias( 'PHPUnit\Framework\TestListener  ', 'PHPUnit_Framework_TestListener' );
+    class_alias( 'PHPUnit\Framework\Error\Error', 'PHPUnit_Framework_Error' );
 }
 
 // At this point, tests will start
