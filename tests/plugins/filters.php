@@ -434,26 +434,6 @@ class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( $var1 . $var2 . $var3, $filtered );
     }
    
-	/**
-	 * Make sure yourls_apply_filter accepts an arbitrary number of elements if unspecified
-	 *
-     * @expectedException PHPUnit_Framework_Error
-	 * @since 0.1
-	 */
-	public function test_filter_required_missing() {
-        $hook = rand_str();
-        $var1 = rand_str();
-        $var2 = rand_str();
-       
-        yourls_add_filter( $hook, function( $var1, $var2 ) { return $var1 . $var2; } );
-        
-        $filtered = yourls_apply_filter( $hook, $var1, $var2 );
-        $this->assertSame( $var1 . $var2, $filtered );
-    
-        $filtered = yourls_apply_filter( $hook, $var1 );
-        $this->assertSame( $var1 . $var2 . $var3, $filtered );
-    }
-   
     /**
      * Check applying multiple filters and count executions
      *
