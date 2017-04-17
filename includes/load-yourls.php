@@ -2,12 +2,12 @@
 // This file initialize everything needed for YOURLS
 
 // Include settings
-if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
+if( file_exists( dirname( __DIR__ ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) . '/user/config.php' );
-} elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __DIR__ ) ) . '/user/config.php' );
+} elseif ( file_exists( __DIR__ . '/config.php' ) ) {
 	// config.php in /includes/
-	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __FILE__ ) ) . '/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', __DIR__ ) . '/config.php' );
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
@@ -23,7 +23,7 @@ if( !defined( 'YOURLS_DB_PREFIX' ) )
 
 // physical path of YOURLS root
 if( !defined( 'YOURLS_ABSPATH' ) )
-	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
+	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( __DIR__ ) ) );
 
 // physical path of includes directory
 if( !defined( 'YOURLS_INC' ) )

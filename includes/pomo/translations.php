@@ -7,7 +7,7 @@
  * @subpackage translations
  */
 
-require_once dirname(__FILE__) . '/entry.php';
+require_once __DIR__ . '/entry.php';
 
 if ( !class_exists( 'Translations', false ) ):
 class Translations {

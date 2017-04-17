@@ -1,6 +1,6 @@
 <?php
 define( 'YOURLS_ADMIN', true );
-require_once( dirname( dirname( __FILE__ ) ).'/includes/load-yourls.php' );
+require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 // Variables
