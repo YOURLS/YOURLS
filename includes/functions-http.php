@@ -233,7 +233,7 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
  */
 function yourls_http_load_library() {
 	if ( !class_exists( 'Requests', false ) ) {
-		require_once dirname( __FILE__ ) . '/Requests/Requests.php';
+		require_once __DIR__ . '/Requests/Requests.php';
 		Requests::register_autoloader();
 	}
 }
