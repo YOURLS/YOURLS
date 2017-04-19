@@ -128,7 +128,7 @@ td.url small a{
 }
 body.desktop td.actions input,body.desktop  td.actions a {
 	position:absolute;
-	left-10000px;
+	left:-10000px;
 	top:auto;
 	width:1px;
 	height:1px;
