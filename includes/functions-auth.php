@@ -395,16 +395,11 @@ function yourls_check_timestamp( $time ) {
  *
  */
 function yourls_store_cookie( $user = null ) {
+
+    // No user will delete the cookie with a cookie time from the past
 	if( !$user ) {
-		$pass = null;
 		$time = time() - 3600;
 	} else {
-		global $yourls_user_passwords;
-		if( isset($yourls_user_passwords[$user]) ) {
-			$pass = $yourls_user_passwords[$user];
-		} else {
-			die( 'Stealing cookies?' ); // This should never happen
-		}
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
 	
