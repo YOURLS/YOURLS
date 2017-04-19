@@ -80,7 +80,7 @@ function yourls_is_valid_user() {
 			
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-				$url = $_SERVER['REQUEST_URI'];
+				$url = yourls_match_current_protocol(yourls_sanitize_url(sprintf("%s%s", $_SERVER['SERVER_NAME'], $_SERVER['REQUEST_URI'])));
 				yourls_redirect( yourls_sanitize_url_safe($url) );
 			}
 		}
@@ -408,7 +408,7 @@ function yourls_store_cookie( $user = null ) {
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
 	
-	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, 1 ) );
+	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, PHP_URL_HOST ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 

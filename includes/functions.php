@@ -29,7 +29,7 @@ function yourls_get_shorturl_charset() {
  * 
  */
 function yourls_make_regexp_pattern( $string ) {
-	$pattern = preg_quote( $string, '-' ); // add - as an escaped characters -- this is fixed in PHP 5.3
+	$pattern = preg_quote( $string, '@' ); // add @ as an escaped character because @ is used as the regexp delimiter in yourls-loader.php
 	// Simple benchmarks show that regexp with smarter sequences (0-9, a-z, A-Z...) are not faster or slower than 0123456789 etc...
 	return $pattern;
 }

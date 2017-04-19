@@ -1,6 +1,6 @@
 <?php
 define( 'YOURLS_ADMIN', true );
-require_once( dirname( dirname( __FILE__ ) ).'/includes/load-yourls.php' );
+require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 // Variables
@@ -52,7 +52,6 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 			break;
 	}
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
-	$search_url      = yourls_sanitize_url_safe( "&amp;search=$search&amp;search_in=$search_in" );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
     if( $search_in == 'all' ) {
