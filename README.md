@@ -1,6 +1,5 @@
-[![yourls](images/yourls-logo.png)](https://yourls.org) [![Build Status](https://travis-ci.org/YOURLS/YOURLS.png?branch=master)](https://travis-ci.org/YOURLS/YOURLS) [![OpenCollective](https://opencollective.com/yourls/backers/badge.svg)](#backers) 
-[![OpenCollective](https://opencollective.com/yourls/sponsors/badge.svg)](#sponsors)
-
+[![yourls](images/yourls-logo.png)](https://yourls.org) [![Build Status](https://api.travis-ci.org/YOURLS/YOURLS.svg?branch=master)](https://travis-ci.org/YOURLS/YOURLS) [![OpenCollective](https://opencollective.com/yourls/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/yourls/sponsors/badge.svg)](#sponsors) ![&hearts;](https://img.shields.io/badge/made%20with-%E2%9D%A4-ff69b4.svg)
 ========
 
 **YOURLS** is a set of PHP scripts that will allow you to run <strong>Y</strong>our <strong>O</strong>wn <strong>URL</strong> <strong>S</strong>hortener. You'll have full control over your data, detailed stats, analytics, plugins, and more. It's free.
@@ -42,6 +41,42 @@ For transparency, YOURLS will be maintained under the [Semantic Versioning](http
 
 *[Release Archive](https://github.com/YOURLS/YOURLS/releases)*
 
+
+Sponsors
+-------
+Does your company use YOURLS? Help the project, become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/yourls#sponsor)]
+
+<a href="https://opencollective.com/yourls/sponsor/0/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/1/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/2/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/3/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/4/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/5/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/6/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/7/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/8/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/9/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/9/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/10/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/10/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/11/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/11/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/12/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/12/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/13/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/13/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/14/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/14/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/15/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/15/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/16/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/16/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/17/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/17/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/18/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/18/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/19/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/19/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/20/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/20/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/21/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/21/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/22/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/22/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/23/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/23/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/24/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/24/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/25/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/25/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/26/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/26/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/27/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/27/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/28/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/28/avatar.svg"></a>
+<a href="https://opencollective.com/yourls/sponsor/29/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/29/avatar.svg"></a>
+
 Backers
 -------
 
@@ -77,42 +112,6 @@ Support us with a monthly donation and help us continue our activities. [[Become
 <a href="https://opencollective.com/yourls/backer/27/website" target="_blank"><img src="https://opencollective.com/yourls/backer/27/avatar.svg"></a>
 <a href="https://opencollective.com/yourls/backer/28/website" target="_blank"><img src="https://opencollective.com/yourls/backer/28/avatar.svg"></a>
 <a href="https://opencollective.com/yourls/backer/29/website" target="_blank"><img src="https://opencollective.com/yourls/backer/29/avatar.svg"></a>
-
-
-Sponsors
--------
-Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/yourls#sponsor)]
-
-<a href="https://opencollective.com/yourls/sponsor/0/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/1/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/2/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/3/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/4/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/5/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/6/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/7/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/8/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/9/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/9/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/10/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/10/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/11/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/11/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/12/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/12/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/13/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/13/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/14/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/14/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/15/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/15/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/16/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/16/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/17/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/17/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/18/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/18/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/19/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/19/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/20/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/20/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/21/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/21/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/22/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/22/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/23/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/23/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/24/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/24/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/25/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/25/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/26/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/26/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/27/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/27/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/28/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/28/avatar.svg"></a>
-<a href="https://opencollective.com/yourls/sponsor/29/website" target="_blank"><img src="https://opencollective.com/yourls/sponsor/29/avatar.svg"></a>
 
 License
 -------
