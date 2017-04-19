@@ -393,6 +393,7 @@ function yourls_check_timestamp( $time ) {
 /**
  * Store new cookie. No $user will delete the cookie.
  *
+ * @param mixed $user  String, user login, or null to delete cookie
  */
 function yourls_store_cookie( $user = null ) {
 
