@@ -412,12 +412,7 @@ function yourls_store_cookie( $user = null ) {
 		$domain = '';
    
     if ( !headers_sent( $filename, $linenum ) ) {
-		// Set httponly if the php version is >= 5.2.0
-		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
-		} else {
-			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure );
-		}
+        setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
 		yourls_do_action( 'setcookie_failed', $user );
