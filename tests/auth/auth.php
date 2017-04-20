@@ -36,7 +36,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_hash_instance() {
-        $this->assertInstanceOf( 'PasswordHash', yourls_phpass_instance() );
+        $this->assertInstanceOf( 'Hautelook\Phpass\PasswordHash', yourls_phpass_instance() );
     }
 
     /**
