@@ -229,14 +229,14 @@ function yourls_phpass_check( $password, $hash ) {
 function yourls_phpass_instance( $iteration = 8, $portable = false ) {
 	$iteration = yourls_apply_filter( 'phpass_new_instance_iteration', $iteration );
 	$portable  = yourls_apply_filter( 'phpass_new_instance_portable', $portable );
-
-	if( !class_exists( 'PasswordHash' ) ) {
+    
+	if( !class_exists( 'Hautelook\Phpass\PasswordHash' ) ) {
 		require_once( YOURLS_INC.'/phpass/PasswordHash.php' );
 	}
 
 	static $instance = false;
 	if( $instance == false ) {
-		$instance = new PasswordHash( $iteration, $portable );
+		$instance = new Hautelook\Phpass\PasswordHash( $iteration, $portable );
 	}
 	
 	return $instance;
