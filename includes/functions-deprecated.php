@@ -33,9 +33,9 @@ function yourls_get_duplicate_keywords( $longurl ) {
  * Note: this function is dumb and dumbly named since it does not intval(). DO NOT USE.
  *
  */
-function yourls_intval( $in ) {
+function yourls_intval( $int ) {
 	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_sanitize_int' );
-	return yourls_escape( $in );
+	return yourls_escape( $int );
 }
 
 /**
