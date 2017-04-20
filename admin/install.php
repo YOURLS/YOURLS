@@ -16,7 +16,7 @@ if ( !yourls_check_database_version() ) {
 
 if ( !yourls_check_php_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
-	yourls_debug_log( 'PHP version: ' . phpversion() );
+	yourls_debug_log( 'PHP version: ' . PHP_VERSION );
 }
 
 // Is YOURLS already installed ?

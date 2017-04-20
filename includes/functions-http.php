@@ -296,7 +296,7 @@ function yourls_check_core_version() {
 		'failed_attempts'    => $checks->failed_attempts,
 		'yourls_site'        => defined( 'YOURLS_SITE' ) ? YOURLS_SITE : 'unknown',
 		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
-		'php_version'        => phpversion(),
+		'php_version'        => PHP_VERSION,
 		'mysql_version'      => $ydb->mysql_version(),
 		'locale'             => yourls_get_locale(),
 
