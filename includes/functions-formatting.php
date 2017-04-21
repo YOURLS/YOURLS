@@ -149,8 +149,8 @@ function yourls_deep_replace( $search, $subject ){
  * Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
  *
  */
-function yourls_sanitize_int( $in ) {
-	return ( substr( preg_replace( '/[^0-9]/', '', strval( $in ) ), 0, 20 ) );
+function yourls_sanitize_int( $int ) {
+	return ( substr( preg_replace( '/[^0-9]/', '', strval( $int ) ), 0, 20 ) );
 }
 
 /**

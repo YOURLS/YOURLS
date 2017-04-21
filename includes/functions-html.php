@@ -193,7 +193,22 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @return string Result
  */
 function yourls_html_tfooter( $params = array() ) {
-	extract( $params ); // extract $search_text, $page, $search_in ...
+    // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
+    // to make things clearer and more explicit about what var is used.
+    $search       = $params['search'];
+    $search_text  = $params['search_text'];
+    $search_in    = $params['search_in'];
+    $sort_by      = $params['sort_by'];
+    $sort_order   = $params['sort_order'];
+    $page         = $params['page'];
+    $perpage      = $params['perpage'];
+    $click_filter = $params['click_filter'];
+    $click_limit  = $params['click_limit'];
+    $total_pages  = $params['total_pages'];
+    $date_filter  = $params['date_filter'];
+    $date_first   = $params['date_first'];
+    $date_second  = $params['date_second'];
+
 	?>
 	<tfoot>
 		<tr>
