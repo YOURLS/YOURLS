@@ -314,6 +314,7 @@ class Requests_Cookie {
 	/**
 	 * Format a cookie for a Cookie header
 	 *
+	 * @codeCoverageIgnore
 	 * @deprecated Use {@see Requests_Cookie::format_for_header}
 	 * @return string
 	 */
@@ -351,6 +352,7 @@ class Requests_Cookie {
 	/**
 	 * Format a cookie for a Set-Cookie header
 	 *
+	 * @codeCoverageIgnore
 	 * @deprecated Use {@see Requests_Cookie::format_for_set_cookie}
 	 * @return string
 	 */
@@ -488,6 +490,7 @@ class Requests_Cookie {
 	/**
 	 * Parse all Set-Cookie headers from request headers
 	 *
+	 * @codeCoverageIgnore
 	 * @deprecated Use {@see Requests_Cookie::parse_from_headers}
 	 * @return string
 	 */
