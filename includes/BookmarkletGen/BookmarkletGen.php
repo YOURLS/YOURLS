@@ -20,8 +20,6 @@ class BookmarkletGen {
 
     private $literal_strings = array();
     
-    private function __construct__() {}
-    
     /**
      * Main function, calls all others
      *
@@ -29,7 +27,7 @@ class BookmarkletGen {
      * @return string        Bookmarklet link
      */
     public function crunch( $code ) {
-        $out = $code = "(function() {\n" . $code . "\n})();";
+        $out = "(function() {\n" . $code . "\n})();";
 
         $out = $this->replace_strings( $out );
         $out = $this->kill_comments( $out );
@@ -128,11 +126,15 @@ class BookmarkletGen {
      * @return string        Javascript code with placeholders (eg "__1__") instead of literal strings
      */
     private function replace_strings( $code ) {
-        $return = "";
+        $return    = "";
+        $literal   = "";
+        $quoteChar = "";
+        $escaped   = false;
 
         // Split script into individual lines.
         $lines = explode("\n", $code);
-        for( $i = 0; $i < count( $lines ); $i++ ) {
+        $count = count( $lines );
+        for( $i = 0; $i < $count; $i++ ) {
 
             $j = 0;
             $inQuote = false;
@@ -147,8 +149,9 @@ class BookmarkletGen {
                         $quoteChar = $c;
                         $literal = $c;
                     }
-                 else
-                     $return .= $c;
+                    else {
+                        $return .= $c;
+                    }
                 }
 
                 // Already in a string, look for end and copy characters.
@@ -159,10 +162,12 @@ class BookmarkletGen {
                         $return .= "__" . count( $this->literal_strings ) . "__";
                         $this->literal_strings[ count( $this->literal_strings ) ] = $literal;
                     }
-                    else if ($c == "\\" && !$escaped)
+                    else if ($c == "\\" && !$escaped) {
                         $escaped = true;
-                    else
+                    }
+                    else {
                         $escaped = false;
+                    }
                     $literal .= $c;
                 }
                 $j++;
@@ -179,7 +184,7 @@ class BookmarkletGen {
      * @param  string $code  Javascript code with placeholders
      * @return string        Javascript code with actual strings
      */
-    function restore_strings( $code ) {
+    private function restore_strings( $code ) {
         foreach( $this->literal_strings as $i => $string ) {
             $code = preg_replace( '/__' . $i . '__/', $string, $code, 1 );
         }
