@@ -46,6 +46,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	/**
 	 * Normalise cookie data into a Requests_Cookie
 	 *
+	 * @codeCoverageIgnore
 	 * @deprecated Use {@see Requests_Cookie_Jar::normalize_cookie}
 	 * @return Requests_Cookie
 	 */
