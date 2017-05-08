@@ -231,8 +231,8 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			
 			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 		
-			$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 			$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
+			$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 			if ( !yourls_keyword_is_free( $keyword ) ) {
 				// This shorturl either reserved or taken already
 				$return['status']  = 'fail';
@@ -260,6 +260,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			do {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
+				$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
 				if ( yourls_keyword_is_free($keyword) ) {
 					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
 						// everything ok, populate needed vars
