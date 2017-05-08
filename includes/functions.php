@@ -185,7 +185,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
 		return $pre;
-		
+
 	$url = yourls_encodeURI( $url );
 	$url = yourls_escape( yourls_sanitize_url( $url ) );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
@@ -195,7 +195,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['errorCode'] = '400';
 		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
-	
+		
 	// Prevent DB flood
 	$ip = yourls_get_IP();
 	yourls_check_IP_flood( $ip );
@@ -210,6 +210,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 			return yourls_apply_filter( 'add_new_link_fail_noloop', $return, $url, $keyword, $title );
 		}
 	}
+
+	$proceed = yourls_apply_filter( 'should_add_new_link', true, $url, $keyword, $title );
+	if ( true !== $proceed )
+		return $proceed;
 
 	yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
 	
