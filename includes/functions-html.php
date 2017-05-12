@@ -886,8 +886,6 @@ function yourls_l10n_calendar_strings() {
  */
 function yourls_new_core_version_notice() {
 
-	yourls_debug_log( 'Check for new version: ' . ( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
-	
 	$checks = yourls_get_option( 'core_version_checks' );
 	
 	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
