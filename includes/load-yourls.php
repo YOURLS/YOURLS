@@ -182,8 +182,8 @@ yourls_load_plugins();
 yourls_do_action( 'plugins_loaded' );
 
 // Is there a new version of YOURLS ?
-if( yourls_is_installed() && !yourls_is_upgrading() && yourls_maybe_check_core_version() ) {
-    yourls_new_core_version_notice();
+if( yourls_is_installed() && !yourls_is_upgrading() ) {
+    yourls_tell_if_new_version();
 }
 
 if( yourls_is_admin() )

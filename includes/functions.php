@@ -2331,3 +2331,16 @@ function yourls_set_url_scheme( $url, $scheme = false ) {
     return preg_replace( '!^[a-zA-Z0-9\+\.-]+://!', $scheme . '://', $url );
 }
 
+/**
+ * Tell if there is a new YOURLS version
+ *
+ * This function checks, if needed, if there's a new version of YOURLS and, if applicable, display
+ * an update notice.
+ *
+ * @since 1.7.3
+ */
+function yourls_tell_if_new_version() {
+    $check = yourls_maybe_check_core_version();
+    yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
+    yourls_new_core_version_notice();
+}
