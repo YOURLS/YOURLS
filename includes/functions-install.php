@@ -296,6 +296,7 @@ function yourls_initialize_options() {
 		  yourls_update_option( 'version', YOURLS_VERSION )
 		& yourls_update_option( 'db_version', YOURLS_DB_VERSION )
 		& yourls_update_option( 'next_id', 1 )
+        & yourls_update_option( 'active_plugins', array() )
 	);
 }
 
