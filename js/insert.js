@@ -134,7 +134,7 @@ function edit_link_hide(id) {
 // Save edition of a link
 function edit_link_save(id) {
 	add_loading("#edit-close-" + id);
-	var newurl = encodeURI( $("#edit-url-" + id).val() );
+	var newurl = $("#edit-url-" + id).val();
 	var newkeyword = $("#edit-keyword-" + id).val();
 	var title = $("#edit-title-" + id).val();
 	var keyword = $('#old_keyword_'+id).val();
