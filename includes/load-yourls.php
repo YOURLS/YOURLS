@@ -100,6 +100,9 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 	error_reporting( E_ERROR | E_PARSE );
 }
 
+// Load 3rd party libraries
+require_once YOURLS_INC. '/vendor/autoload.php';
+
 // Include all functions
 require_once( YOURLS_INC.'/version.php' );
 require_once( YOURLS_INC.'/functions.php');

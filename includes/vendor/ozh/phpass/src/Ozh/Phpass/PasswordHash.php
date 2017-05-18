@@ -1,25 +1,22 @@
 <?php
 
-namespace Hautelook\Phpass;
+namespace Ozh\Phpass;
 
 /**
  *
  * Portable PHP password hashing framework.
  *
- * Version 1.0.0 - modified by Nordstromrack.com | HauteLook
+ * Originally written by Solar Designer <solar at openwall.com> in 2004-2006
  *
- * Change Log:
+ * Modernized by Hautelook at https://github.com/hautelook/phpass
  *
- * - the hash_equals function is now used instead of == or === to prevent
- *   timing attacks
- *
- * Written by Solar Designer <solar at openwall.com> in 2004-2006 and placed in
+ * Slightly repacked by Ozh to extend compatibility from PHP 5.3 to 7.1 in a single file
  *
  * There's absolutely no warranty.
  *
  * The homepage URL for this framework is:
  *
- *	http://www.openwall.com/phpass/
+ * http://www.openwall.com/phpass/
  *
  * Please be sure to update the Version line if you edit this file in any way.
  * It is suggested that you leave the main version number intact, but indicate
@@ -322,3 +319,53 @@ class PasswordHash
         return hash_equals($stored_hash, $hash);
     }
 }
+
+
+/**
+ * hash_equals compatibility function
+ *
+ * @package     CodeIgniter
+ * @author      EllisLab Dev Team
+ * @copyright   Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright   Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license     http://opensource.org/licenses/MIT	MIT License
+ * @link        https://codeigniter.com
+ *
+ * Source: https://github.com/bcit-ci/CodeIgniter/blob/3.1.4/system/core/compat/hash.php
+ * For PHP < 5.6
+ */
+if ( ! function_exists('hash_equals'))
+{
+	/**
+	 * hash_equals()
+	 *
+	 * @link	http://php.net/hash_equals
+	 * @param	string	$known_string
+	 * @param	string	$user_string
+	 * @return	bool
+	 */
+	function hash_equals($known_string, $user_string)
+	{
+		if ( ! is_string($known_string))
+		{
+			trigger_error('hash_equals(): Expected known_string to be a string, '.strtolower(gettype($known_string)).' given', E_USER_WARNING);
+			return FALSE;
+		}
+		elseif ( ! is_string($user_string))
+		{
+			trigger_error('hash_equals(): Expected user_string to be a string, '.strtolower(gettype($user_string)).' given', E_USER_WARNING);
+			return FALSE;
+		}
+		elseif (($length = strlen($known_string)) !== strlen($user_string))
+		{
+			return FALSE;
+		}
+		$diff = 0;
+		for ($i = 0; $i < $length; $i++)
+		{
+			$diff |= ord($known_string[$i]) ^ ord($user_string[$i]);
+		}
+		return ($diff === 0);
+	}
+}
+

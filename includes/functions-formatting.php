@@ -763,10 +763,6 @@ function yourls_rawurldecode_while_encoded( $string ) {
  * @return string        Bookmarklet link
  */
 function yourls_make_bookmarklet( $code ) {
-    if ( !class_exists( 'BookmarkletGen', false ) ) {
-        require_once YOURLS_INC . '/BookmarkletGen/BookmarkletGen.php';
-    }
-
-    $book = new BookmarkletGen;
+    $book = new \Ozh\Bookmarkletgen\Bookmarkletgen;
     return $book->crunch( $code );
 }

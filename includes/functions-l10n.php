@@ -12,8 +12,8 @@
 /**
  * Load POMO files required to run library
  */
-require_once __DIR__ . '/pomo/mo.php';
-require_once __DIR__ . '/pomo/translations.php';
+use \POMO\MO;
+use POMO\Translations\NOOPTranslations;
 
 /**
  * Gets the current locale.
@@ -522,7 +522,7 @@ function yourls_load_default_textdomain() {
 function yourls_get_translations_for_domain( $domain ) {
 	global $yourls_l10n;
 	if ( !isset( $yourls_l10n[$domain] ) ) {
-		$yourls_l10n[$domain] = new NOOP_Translations;
+		$yourls_l10n[$domain] = new NOOPTranslations;
 	}
 	return $yourls_l10n[$domain];
 }

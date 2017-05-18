@@ -1,10 +1,18 @@
 {
-  "name": "yourls/yourls",
-  "description": "Your Own URL Shortener",
-  "keywords": ["shortener", "url shortener", "short url", "url", "bitly"],
-  "homepage": "http://yourls.org",
-  "license": "MIT",
-  "require": {
-    "php": ">=5.3"
-  }
+    "name": "yourls/yourls",
+    "description": "Your Own URL Shortener",
+    "keywords": ["shortener", "url shortener", "short url", "url", "bitly"],
+    "homepage": "http://yourls.org",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3",
+        "ext-pdo": "*",
+        "ozh/bookmarkletgen": "1.2",
+        "ozh/phpass": "1.2.0",
+        "rmccue/Requests" : "1.7",
+        "pomo/pomo" : "1.3.0-beta"
+    },
+    "config": {
+        "vendor-dir": "includes/vendor"
+    }
 }

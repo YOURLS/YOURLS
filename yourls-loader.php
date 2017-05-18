@@ -14,8 +14,8 @@ if ( '/robots.txt' == $_SERVER['REQUEST_URI'] ) {
 	exit;
 }
 
-// Start YOURLS
-require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
+// Load YOURLS
+require_once __DIR__ . '/includes/load-yourls.php';
 
 // Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
 $request = yourls_get_request();
