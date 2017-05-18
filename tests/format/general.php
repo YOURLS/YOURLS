@@ -219,15 +219,13 @@ class Format_General extends PHPUnit_Framework_TestCase {
      *
      * Note: we're not testing that the bookmarklet generator produces valid JS code: the
      * bookmarklet class has tests for this, see https://github.com/ozh/bookmarkletgen
-     * We're just testing that content is returned and that the bookmarklet class has been
-     * loaded at some point
+     * We're just testing that content is returned
      *
      * @since 0.1
      */
     function test_bookmarklet() {
         $code = yourls_make_bookmarklet( 'hello' );
         $this->assertTrue( is_string( $code ) );
-        $this->assertTrue( class_exists( '\BookmarkletGen', false ) );
     }
     
     /**
