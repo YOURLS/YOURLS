@@ -158,7 +158,7 @@ function yourls_s( $pattern ) {
  * @see sprintf()
  * @since 1.6
  *
- * @param string $text Text to translate
+ * @param string $pattern Text to translate
  * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
  * @return string Translated text
  */
@@ -517,7 +517,7 @@ function yourls_load_default_textdomain() {
  * returns empty Translations instance.
  *
  * @param string $domain
- * @return object A Translation instance
+ * @return NOOPTranslations An NOOPTranslations translation instance
  */
 function yourls_get_translations_for_domain( $domain ) {
 	global $yourls_l10n;
