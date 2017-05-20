@@ -11,7 +11,7 @@
 # Typical use:
 #
 # $ composer update --no-dev --prefer-dist
-# $ ./includes/vendor/build-script/yourls-build.sh
+# $ ./includes/vendor/build-script/yourls-build.sh ./includes/vendor
 # $ commit & push
 #
 ####################################################################
@@ -20,7 +20,7 @@
 ## OPTIONS ##########################################################
 
 # This directories in /vendor won't be cleaned up
-# Must be explicit names, no jocker eg "README.*"
+# Must be explicit names, case sensitive, no wildcard eg "README.*"
 #
 PRESERVE_IN_VENDOR=(
     'composer'
@@ -28,7 +28,7 @@ PRESERVE_IN_VENDOR=(
 )
 
 # Files & dirs to keep in each library directory
-# Must be explicit names, no jocker eg "README.*"
+# Must be explicit names, case sensitive, no wildcard eg "README.*"
 #
 PRESERVE_IN_LIB=(
     'src'
