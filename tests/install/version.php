@@ -71,7 +71,7 @@ class Mock_Version {
     
     public $version;
     
-    public $captured_errors = 0;
+    public $captured_errors = array();
     
     public function __construct( $version ) {
         $this->version = $version;
