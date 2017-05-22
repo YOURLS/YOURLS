@@ -10,7 +10,7 @@
         "ozh/bookmarkletgen": "1.2",
         "ozh/phpass": "1.2.0",
         "rmccue/Requests" : "1.7",
-        "pomo/pomo" : "1.3.0-beta"
+        "pomo/pomo" : "1.3.0"
     },
     "config": {
         "vendor-dir": "includes/vendor"

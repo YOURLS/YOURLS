@@ -1,9 +1,6 @@
 <?php
 /**
  * This file is part of the POMO package.
- *
- * @copyright 2014 POMO
- * @license GPL
  */
 
 namespace POMO\Streams;
@@ -11,9 +8,12 @@ namespace POMO\Streams;
 /**
  * Classes, which help reading streams of data from files.
  *
+ * @property bool is_overloaded
+ * @property int _pos
+ *
  * @author Danilo Segan <danilo@kvota.net>
  */
-class Reader
+abstract class Reader implements StreamInterface
 {
     public $endian = 'little';
     public $_post = '';
@@ -25,22 +25,11 @@ class Reader
         $this->_pos = 0;
     }
 
-    /**
-     * Sets the endianness of the file.
-     *
-     * @param $endian string 'big' or 'little'
-     */
     public function setEndian($endian)
     {
         $this->endian = $endian;
     }
 
-    /**
-     * Reads a 32bit Integer from the Stream
-     *
-     * @return mixed The integer, corresponding to the next 32 bits from the
-     *               stream of false if there are not enough bytes or on error
-     */
     public function readint32()
     {
         $bytes = $this->read(4);
@@ -50,27 +39,19 @@ class Reader
         $endian_letter = ('big' == $this->endian) ? 'N' : 'V';
         $int = unpack($endian_letter, $bytes);
 
-        return array_shift($int);
+        return reset($int);
     }
 
-    /**
-     * Reads an array of 32-bit Integers from the Stream
-     *
-     * @param integer count How many elements should be read
-     * @return mixed Array of integers or false if there isn't
-     *               enough data or on error
-     */
     public function readint32array($count)
     {
         $bytes = $this->read(4 * $count);
-        if (4*$count != $this->strlen($bytes)) {
+        if (4 * $count != $this->strlen($bytes)) {
             return false;
         }
         $endian_letter = ('big' == $this->endian) ? 'N' : 'V';
 
         return unpack($endian_letter.$count, $bytes);
     }
-
 
     public function substr($string, $start, $length)
     {

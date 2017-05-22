@@ -1,9 +1,6 @@
 <?php
 /**
  * This file is part of the POMO package.
- *
- * @copyright 2014 POMO
- * @license GPL
  */
 
 namespace POMO\Streams;
@@ -14,7 +11,7 @@ namespace POMO\Streams;
  *
  * @author Danilo Segan <danilo@kvota.net>
  */
-class StringReader extends Reader
+class StringReader extends Reader implements StreamInterface
 {
     public $_str = '';
 
@@ -46,6 +43,9 @@ class StringReader extends Reader
         return $this->_pos;
     }
 
+    /**
+     * @return int
+     */
     public function length()
     {
         return $this->strlen($this->_str);
@@ -59,5 +59,4 @@ class StringReader extends Reader
             $this->strlen($this->_str)
         );
     }
-
 }

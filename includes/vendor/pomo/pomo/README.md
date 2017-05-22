@@ -20,7 +20,7 @@ $translations = new MO();
 $translations->import_from_file($the_mo_filepath);
 
 // Translate
-$translations->translate($text)
+$translations->translate($text);
 ```
 
 Installation

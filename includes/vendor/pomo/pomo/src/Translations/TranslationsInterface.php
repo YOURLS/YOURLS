@@ -18,7 +18,7 @@ interface TranslationsInterface
     /**
      * Add entry to the PO structure
      *
-     * @param  object &$entry
+     * @param  array|EntryTranslations &$entry
      * @return bool   true on success, false if the entry doesn't have a key
      */
     public function add_entry($entry);
@@ -34,11 +34,22 @@ interface TranslationsInterface
      */
     public function set_header($header, $value);
 
+    /**
+     * @param array $headers
+     */
     public function set_headers($headers);
 
+    /**
+     * @param string $header
+     * @return false|string
+     */
     public function get_header($header);
 
-    public function translate_entry(&$entry);
+    /**
+     * @param EntryTranslations $entry
+     * @return mixed
+     */
+    public function translate_entry(EntryTranslations &$entry);
 
     /**
      * Translate an entry in the singular way
@@ -55,15 +66,19 @@ interface TranslationsInterface
      *
      * Here, in the base Translations class, the common logic for English is
      * implemented:
-     * 	0 if there is one element, 1 otherwise
+     *     0 if there is one element, 1 otherwise
      *
      * This function should be overrided by the sub-classes. For example MO/PO
      * can derive the logic from their headers.
      *
      * @param integer $count number of items
+     * @return int
      */
     public function select_plural_form($count);
 
+    /**
+     * @return int
+     */
     public function get_plural_forms_count();
 
     /**
@@ -88,9 +103,9 @@ interface TranslationsInterface
     /**
      * Merge $other in the current object.
      *
-     * @param  Object &$other Another Translation object, whose translations
+     * @param  TranslationsInterface &$other Another Translation object, whose translations
      *                        will be merged in this one
      * @return void
      **/
-    public function merge_with(&$other);
+    public function merge_with(TranslationsInterface &$other);
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2a223c72da68c420b4a0a8886e13ee5",
+    "content-hash": "a4529ecd25477246a7984d7a4ef3b154",
     "packages": [
         {
             "name": "ozh/bookmarkletgen",
@@ -93,24 +93,25 @@
         },
         {
             "name": "pomo/pomo",
-            "version": "v1.3.0-beta",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LeoColomb/pomo.git",
-                "reference": "b27b66fef6dc9fd2fde7ee422c5c68f44cccddb6"
+                "reference": "b03f6707db79ff250cf4042a23c70ce69548f277"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/b27b66fef6dc9fd2fde7ee422c5c68f44cccddb6",
-                "reference": "b27b66fef6dc9fd2fde7ee422c5c68f44cccddb6",
+                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/b03f6707db79ff250cf4042a23c70ce69548f277",
+                "reference": "b03f6707db79ff250cf4042a23c70ce69548f277",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": ">=4.0"
+                "codeclimate/php-test-reporter": "^0.4",
+                "phpunit/phpunit": ">=4.0",
+                "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
             },
             "type": "library",
             "autoload": {
@@ -129,7 +130,7 @@
                     "role": "Author"
                 },
                 {
-                    "name": "Leo Colombaro",
+                    "name": "Léo Colombaro",
                     "homepage": "http://colombaro.fr",
                     "role": "Maintainer"
                 }
@@ -143,7 +144,7 @@
                 "localization",
                 "translation"
             ],
-            "time": "2014-07-22T20:42:48+00:00"
+            "time": "2017-05-22T10:49:09+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -198,9 +199,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "pomo/pomo": 10
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -10,8 +10,11 @@ namespace POMO\Translations;
 
 /**
  * Class for a set of entries for translation and their associated headers
+ *
+ * @property mixed _nplurals
+ * @property callable _gettext_select_plural_form
  */
-class GettextTranslations extends Translations
+class GettextTranslations extends Translations implements TranslationsInterface
 {
     /**
      * The gettext implementation of select_plural_form.
@@ -19,13 +22,14 @@ class GettextTranslations extends Translations
      * It lives in this class, because there are more than one descendand,
      * which will use it and they can't share it effectively.
      *
-     * @param integer $count Items count
+     * @param int $count Items count
+     * @return mixed
      */
     public function gettext_select_plural_form($count)
     {
         if (!isset($this->_gettext_select_plural_form)
             || is_null($this->_gettext_select_plural_form)) {
-            list( $nplurals, $expression ) = $this->nplurals_and_expression_from_header($this->get_header('Plural-Forms'));
+            list($nplurals, $expression) = $this->nplurals_and_expression_from_header($this->get_header('Plural-Forms'));
             $this->_nplurals = $nplurals;
             $this->_gettext_select_plural_form = $this->make_plural_form_function($nplurals, $expression);
         }
@@ -33,6 +37,10 @@ class GettextTranslations extends Translations
         return call_user_func($this->_gettext_select_plural_form, $count);
     }
 
+    /**
+     * @param $header
+     * @return array
+     */
     public function nplurals_and_expression_from_header($header)
     {
         if (preg_match('/^\s*nplurals\s*=\s*(\d+)\s*;\s+plural\s*=\s*(.+)$/', $header, $matches)) {
@@ -98,6 +106,10 @@ class GettextTranslations extends Translations
         return rtrim($res, ';');
     }
 
+    /**
+     * @param string $translation
+     * @return array
+     */
     public function make_headers($translation)
     {
         $headers = array();

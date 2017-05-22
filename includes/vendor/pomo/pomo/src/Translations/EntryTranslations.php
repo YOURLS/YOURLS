@@ -32,16 +32,16 @@ class EntryTranslations
 
     /**
      * @param array $args associative array, support following keys:
-     *                    - singular (string) -- the string to translate, if omitted and empty entry will be created
-     *                    - plural (string) -- the plural form of the string, setting this will set {@link $is_plural} to true
-     *                    - translations (array) -- translations of the string and possibly -- its plural forms
-     *                    - context (string) -- a string differentiating two equal strings used in different contexts
-     *                    - translator_comments (string) -- comments left by translators
-     *                    - extracted_comments (string) -- comments left by developers
-     *                    - references (array) -- places in the code this strings is used, in relative_to_root_path/file.php:linenum form
-     *                    - flags (array) -- flags like php-format
+     *     - singular (string) -- the string to translate, if omitted and empty entry will be created
+     *     - plural (string) -- the plural form of the string, setting this will set {@link $is_plural} to true
+     *     - translations (array) -- translations of the string and possibly -- its plural forms
+     *     - context (string) -- a string differentiating two equal strings used in different contexts
+     *     - translator_comments (string) -- comments left by translators
+     *     - extracted_comments (string) -- comments left by developers
+     *     - references (array) -- places in the code this strings is used, in relative_to_root_path/file.php:linenum form
+     *     - flags (array) -- flags like php-format
      */
-    public function __construct($args=array())
+    public function __construct($args = array())
     {
         // if no singular -- empty object
         if (!isset($args['singular'])) {
@@ -51,7 +51,7 @@ class EntryTranslations
         foreach ($args as $varname => $value) {
             $this->$varname = $value;
         }
-        if (isset($args['plural'])) {
+        if (isset($args['plural']) && $args['plural']) {
             $this->is_plural = true;
         }
         if (!is_array($this->translations)) {
@@ -72,13 +72,21 @@ class EntryTranslations
      */
     public function key()
     {
-        if (is_null($this->singular)) {
+        if (null === $this->singular || '' === $this->singular) {
             return false;
         }
-        // prepend context and EOT, like in MO files
-        return is_null($this->context) ? $this->singular : $this->context.chr(4).$this->singular;
+
+        // Prepend context and EOT, like in MO files
+        $key = !$this->context? $this->singular : $this->context.chr(4).$this->singular;
+        // Standardize on \n line endings
+        $key = str_replace(array( "\r\n", "\r" ), "\n", $key);
+
+        return $key;
     }
 
+    /**
+     * @param object $other
+     */
     public function merge_with(&$other)
     {
         $this->flags = array_unique(array_merge($this->flags, $other->flags));
@@ -86,6 +94,5 @@ class EntryTranslations
         if ($this->extracted_comments != $other->extracted_comments) {
             $this->extracted_comments .= $other->extracted_comments;
         }
-
     }
 }

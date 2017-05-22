@@ -1,9 +1,6 @@
 <?php
 /**
  * This file is part of the POMO package.
- *
- * @copyright 2014 POMO
- * @license GPL
  */
 
 namespace POMO\Streams;
@@ -13,7 +10,7 @@ namespace POMO\Streams;
  *
  * @author Danilo Segan <danilo@kvota.net>
  */
-class CachedFileReader extends StringReader
+class CachedFileReader extends StringReader implements StreamInterface
 {
     public function __construct($filename)
     {

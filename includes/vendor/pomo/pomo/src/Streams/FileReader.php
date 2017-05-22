@@ -1,9 +1,6 @@
 <?php
 /**
  * This file is part of the POMO package.
- *
- * @copyright 2014 POMO
- * @license GPL
  */
 
 namespace POMO\Streams;
@@ -11,10 +8,15 @@ namespace POMO\Streams;
 /**
  * Classes, which help reading streams of data from files.
  *
+ * @property bool|resource _f
+ *
  * @author Danilo Segan <danilo@kvota.net>
  */
-class FileReader extends Reader
+class FileReader extends Reader implements StreamInterface
 {
+    /**
+     * @param string $filename
+     */
     public function __construct($filename)
     {
         parent::__construct();
@@ -41,6 +43,9 @@ class FileReader extends Reader
         return is_resource($this->_f);
     }
 
+    /**
+     * @return bool
+     */
     public function feof()
     {
         return feof($this->_f);
@@ -54,8 +59,9 @@ class FileReader extends Reader
     public function read_all()
     {
         $all = '';
-        while (!$this->feof())
+        while (!$this->feof()) {
             $all .= $this->read(4096);
+        }
 
         return $all;
     }

@@ -21,71 +21,44 @@ class NOOPTranslations implements TranslationsInterface
     public $entries = array();
     public $headers = array();
 
-    /**
-     * {@inheritdoc}
-     */
     public function add_entry($entry)
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set_header($header, $value)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set_headers($headers)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get_header($header)
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function translate_entry(&$entry)
+    public function translate_entry(EntryTranslations &$entry)
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translate($singular, $context = null)
     {
         return $singular;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function select_plural_form($count)
     {
         return 1 == $count ? 0 : 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get_plural_forms_count()
     {
         return 2;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translate_plural(
         $singular,
         $plural,
@@ -95,10 +68,7 @@ class NOOPTranslations implements TranslationsInterface
         return 1 == $count ? $singular : $plural;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function merge_with(&$other)
+    public function merge_with(TranslationsInterface &$other)
     {
     }
 }

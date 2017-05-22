@@ -21,9 +21,6 @@ class Translations implements TranslationsInterface
     public $entries = array();
     public $headers = array();
 
-    /**
-     * {@inheritdoc}
-     */
     public function add_entry($entry)
     {
         if (is_array($entry)) {
@@ -38,6 +35,10 @@ class Translations implements TranslationsInterface
         return true;
     }
 
+    /**
+     * @param array|EntryTranslations $entry
+     * @return bool
+     */
     public function add_entry_or_merge($entry)
     {
         if (is_array($entry)) {
@@ -56,17 +57,11 @@ class Translations implements TranslationsInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set_header($header, $value)
     {
         $this->headers[$header] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set_headers($headers)
     {
         foreach ($headers as $header => $value) {
@@ -74,27 +69,18 @@ class Translations implements TranslationsInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get_header($header)
     {
         return isset($this->headers[$header]) ? $this->headers[$header] : false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function translate_entry(&$entry)
+    public function translate_entry(EntryTranslations &$entry)
     {
         $key = $entry->key();
 
         return isset($this->entries[$key]) ? $this->entries[$key] : false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translate($singular, $context = null)
     {
         $entry = new EntryTranslations(array(
@@ -108,25 +94,16 @@ class Translations implements TranslationsInterface
             $singular;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function select_plural_form($count)
     {
         return 1 == $count ? 0 : 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get_plural_forms_count()
     {
         return 2;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translate_plural(
         $singular,
         $plural,
@@ -150,20 +127,20 @@ class Translations implements TranslationsInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function merge_with(&$other)
+    public function merge_with(TranslationsInterface &$other)
     {
         foreach ($other->entries as $entry) {
             $this->entries[$entry->key()] = $entry;
         }
     }
 
-    public function merge_originals_with(&$other)
+    /**
+     * @param Translations $other
+     */
+    public function merge_originals_with(Translations &$other)
     {
         foreach ($other->entries as $entry) {
-            if ( !isset( $this->entries[$entry->key()] )) {
+            if (!isset($this->entries[$entry->key()])) {
                 $this->entries[$entry->key()] = $entry;
             } else {
                 $this->entries[$entry->key()]->merge_with($entry);
