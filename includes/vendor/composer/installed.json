@@ -1,0 +1,199 @@
+[
+    {
+        "name": "ozh/phpass",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ozh/phpass.git",
+            "reference": "7d5b99ce3052faa84224cf680dc08c0a12ad396e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ozh/phpass/zipball/7d5b99ce3052faa84224cf680dc08c0a12ad396e",
+            "reference": "7d5b99ce3052faa84224cf680dc08c0a12ad396e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2017-05-17T23:30:20+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Ozh\\Phpass\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Public Domain"
+        ],
+        "authors": [
+            {
+                "name": "Solar Designer",
+                "email": "solar@openwall.com",
+                "homepage": "http://openwall.com/phpass/"
+            }
+        ],
+        "description": "Portable PHP password hashing framework",
+        "homepage": "http://github.com/ozh/phpass/",
+        "keywords": [
+            "blowfish",
+            "crypt",
+            "password",
+            "security"
+        ]
+    },
+    {
+        "name": "ozh/bookmarkletgen",
+        "version": "1.2",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ozh/bookmarkletgen.git",
+            "reference": "3319b53c493a1474a03d1cc4e087617652284c20"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ozh/bookmarkletgen/zipball/3319b53c493a1474a03d1cc4e087617652284c20",
+            "reference": "3319b53c493a1474a03d1cc4e087617652284c20",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "time": "2017-05-18T12:46:21+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Ozh\\Bookmarkletgen\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Ozh",
+                "homepage": "http://ozh.org/"
+            }
+        ],
+        "description": "PHP class to convert JS into valid bookmarklet links",
+        "homepage": "https://github.com/ozh/bookmarkletgen",
+        "keywords": [
+            "bookmarklet",
+            "javascript"
+        ]
+    },
+    {
+        "name": "rmccue/requests",
+        "version": "v1.7.0",
+        "version_normalized": "1.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/rmccue/Requests.git",
+            "reference": "87932f52ffad70504d93f04f15690cf16a089546"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/rmccue/Requests/zipball/87932f52ffad70504d93f04f15690cf16a089546",
+            "reference": "87932f52ffad70504d93f04f15690cf16a089546",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "require-dev": {
+            "requests/test-server": "dev-master"
+        },
+        "time": "2016-10-13T00:11:37+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Requests": "library/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "ISC"
+        ],
+        "authors": [
+            {
+                "name": "Ryan McCue",
+                "homepage": "http://ryanmccue.info"
+            }
+        ],
+        "description": "A HTTP library written in PHP, for human beings.",
+        "homepage": "http://github.com/rmccue/Requests",
+        "keywords": [
+            "curl",
+            "fsockopen",
+            "http",
+            "idna",
+            "ipv6",
+            "iri",
+            "sockets"
+        ]
+    },
+    {
+        "name": "pomo/pomo",
+        "version": "v1.3.0",
+        "version_normalized": "1.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/LeoColomb/pomo.git",
+            "reference": "b03f6707db79ff250cf4042a23c70ce69548f277"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/b03f6707db79ff250cf4042a23c70ce69548f277",
+            "reference": "b03f6707db79ff250cf4042a23c70ce69548f277",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "codeclimate/php-test-reporter": "^0.4",
+            "phpunit/phpunit": ">=4.0",
+            "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
+        },
+        "time": "2017-05-22T10:49:09+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "POMO\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "WordPress",
+                "homepage": "http://wordpress.org",
+                "role": "Author"
+            },
+            {
+                "name": "Léo Colombaro",
+                "homepage": "http://colombaro.fr",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "Gettext library to translate with I18n",
+        "homepage": "https://github.com/LeoColomb/pomo",
+        "keywords": [
+            "gettext",
+            "i18n",
+            "internationalization",
+            "localization",
+            "translation"
+        ]
+    }
+]

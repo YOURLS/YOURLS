@@ -16,7 +16,9 @@
  * http://ted.mielczarek.org/code/mozilla/bookmarklet.html
  *
  */
-class BookmarkletGen {
+namespace Ozh\Bookmarkletgen;
+
+class Bookmarkletgen {
 
     private $literal_strings = array();
     

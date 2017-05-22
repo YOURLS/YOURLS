@@ -223,46 +223,5 @@ function yourls_mb_strlen( $str, $encoding = null ) {
     return --$count;
 }
 
-/**
- * hash_equals compatibility function. Stolen from Code Igniter
- *
- * Source: https://github.com/bcit-ci/CodeIgniter/blob/3.1.4/system/core/compat/hash.php
- * For PHP < 5.6
- *
- * @since 1.7.2
- */
-if ( ! function_exists('hash_equals'))
-{
-	/**
-	 * hash_equals()
-	 *
-	 * @link	http://php.net/hash_equals
-	 * @param	string	$known_string
-	 * @param	string	$user_string
-	 * @return	bool
-	 */
-	function hash_equals($known_string, $user_string)
-	{
-		if ( ! is_string($known_string))
-		{
-			trigger_error('hash_equals(): Expected known_string to be a string, '.strtolower(gettype($known_string)).' given', E_USER_WARNING);
-			return FALSE;
-		}
-		elseif ( ! is_string($user_string))
-		{
-			trigger_error('hash_equals(): Expected user_string to be a string, '.strtolower(gettype($user_string)).' given', E_USER_WARNING);
-			return FALSE;
-		}
-		elseif (($length = strlen($known_string)) !== strlen($user_string))
-		{
-			return FALSE;
-		}
-		$diff = 0;
-		for ($i = 0; $i < $length; $i++)
-		{
-			$diff |= ord($known_string[$i]) ^ ord($user_string[$i]);
-		}
-		return ($diff === 0);
-	}
-}
+
 
