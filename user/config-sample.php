@@ -53,6 +53,12 @@ define( 'YOURLS_UNIQUE_URLS', true );
  ** Read http://yourls.org/privatepublic for more details if you're unsure */
 define( 'YOURLS_PRIVATE', true );
 
+/** Send temporary redirect codes
+ ** Should we send users a temporary redirect code when redirecting them to the longURL?
+ ** This means they'll hit your service for every request, rather than the first one
+ ** Set to true to send temporary redirects. */
+define( 'YOURLS_TEMPREDIRECT', false );
+
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
 define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
