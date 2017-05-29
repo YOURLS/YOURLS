@@ -1,7 +1,7 @@
 <?php
 define( 'YOURLS_ADMIN', true );
 define( 'YOURLS_INSTALLING', true );
-require_once( dirname(dirname(__FILE__)).'/includes/load-yourls.php' );
+require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
 require_once( YOURLS_INC.'/functions-install.php' );
 
 $error   = array();
@@ -16,7 +16,7 @@ if ( !yourls_check_database_version() ) {
 
 if ( !yourls_check_php_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'PHP' );
-	yourls_debug_log( 'PHP version: ' . phpversion() );
+	yourls_debug_log( 'PHP version: ' . PHP_VERSION );
 }
 
 // Is YOURLS already installed ?

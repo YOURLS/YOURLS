@@ -2,12 +2,12 @@
 // This file initialize everything needed for YOURLS
 
 // Include settings
-if( file_exists( dirname( dirname( __FILE__ ) ) . '/user/config.php' ) ) {
+if( file_exists( dirname( __DIR__ ) . '/user/config.php' ) ) {
 	// config.php in /user/
-	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) . '/user/config.php' );
-} elseif ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __DIR__ ) ) . '/user/config.php' );
+} elseif ( file_exists( __DIR__ . '/config.php' ) ) {
 	// config.php in /includes/
-	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', dirname( __FILE__ ) ) . '/config.php' );
+	define( 'YOURLS_CONFIGFILE', str_replace( '\\', '/', __DIR__ ) . '/config.php' );
 } else {
 	// config.php not found :(
 	die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
@@ -23,7 +23,7 @@ if( !defined( 'YOURLS_DB_PREFIX' ) )
 
 // physical path of YOURLS root
 if( !defined( 'YOURLS_ABSPATH' ) )
-	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( dirname( __FILE__ ) ) ) );
+	define( 'YOURLS_ABSPATH', str_replace( '\\', '/', dirname( __DIR__ ) ) );
 
 // physical path of includes directory
 if( !defined( 'YOURLS_INC' ) )
@@ -100,6 +100,9 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 	error_reporting( E_ERROR | E_PARSE );
 }
 
+// Load 3rd party libraries
+require_once YOURLS_INC. '/vendor/autoload.php';
+
 // Include all functions
 require_once( YOURLS_INC.'/version.php' );
 require_once( YOURLS_INC.'/functions.php');
@@ -117,6 +120,9 @@ require_once( YOURLS_INC.'/functions-infos.php' );
 if( yourls_is_private() ) {
 	require_once( YOURLS_INC.'/functions-auth.php' );
 }
+
+// Enforce UTC timezone to suppress PHP warnings -- correct date/time will be managed using the config time offset
+date_default_timezone_set( 'UTC' );
 
 // Load locale
 yourls_load_default_textdomain();
@@ -180,7 +186,7 @@ yourls_do_action( 'plugins_loaded' );
 
 // Is there a new version of YOURLS ?
 if( yourls_is_installed() && !yourls_is_upgrading() ) {
-    yourls_new_core_version_notice();
+    yourls_tell_if_new_version();
 }
 
 if( yourls_is_admin() )

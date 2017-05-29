@@ -7,10 +7,12 @@
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
 	?>
+	<header role="banner">
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
 		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
 	</h1>
+	</header>
 	<?php
 	yourls_do_action( 'html_logo' );
 }
@@ -60,7 +62,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 		header( 'Pragma: no-cache' );
-		yourls_content_type_header( yourls_apply_filters( 'html_head_content-type', 'text/html' ) );
+		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
 	
@@ -83,12 +85,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 <head>
 	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filters( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
-	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
-	<meta name="author" content="Ozh RICHARD & Lester CHAN for http://yourls.org/" />
+	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filter( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
-	<meta name="description" content="Insert URL &laquo; YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-1.9.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
+    <meta name="referrer" content="always" />
+	<script src="<?php yourls_site_url(); ?>/js/jquery-2.2.4.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -106,7 +107,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php if ( $share ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
 		<script src="<?php yourls_site_url(); ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-		<script src="<?php yourls_site_url(); ?>/js/jquery.zclip.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/clipboard.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $cal ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -122,7 +123,6 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<script type="text/javascript">
 	//<![CDATA[
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
-		var zclipurl = '<?php yourls_site_url(); ?>/js/ZeroClipboard.swf';
 	//]]>
 	</script>
 	<?php yourls_do_action( 'html_head', $context ); ?>
@@ -141,14 +141,14 @@ function yourls_html_footer() {
 	
 	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
 	?>
-	</div> <?php // wrap ?>
-	<div id="footer"><p>
+	</div><?php // wrap ?>
+	<footer id="footer" role="contentinfo"><p>
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
 		$footer .= ' &ndash; '.$num_queries;
-		echo yourls_apply_filters( 'html_footer_text', $footer );
+		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
-	</p></div>
+	</p></footer>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", $ydb->debug_log );
@@ -167,13 +167,13 @@ function yourls_html_footer() {
  * @param string $keyword Keyword to prefill the input with
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
-	$url = $url ? $url : 'http://';
 	?>
+	<main role="main">
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<div><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" />
-				<?php yourls_e( 'Optional '); ?>: <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+				<div><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" placeholder="http://" />
+				<?php yourls_e( 'Optional '); ?> : <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
 				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 				<input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" /></div>
 			</form>
@@ -193,7 +193,22 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @return string Result
  */
 function yourls_html_tfooter( $params = array() ) {
-	extract( $params ); // extract $search_text, $page, $search_in ...
+    // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
+    // to make things clearer and more explicit about what var is used.
+    $search       = $params['search'];
+    $search_text  = $params['search_text'];
+    $search_in    = $params['search_in'];
+    $sort_by      = $params['sort_by'];
+    $sort_order   = $params['sort_order'];
+    $page         = $params['page'];
+    $perpage      = $params['perpage'];
+    $click_filter = $params['click_filter'];
+    $click_limit  = $params['click_limit'];
+    $total_pages  = $params['total_pages'];
+    $date_filter  = $params['date_filter'];
+    $date_first   = $params['date_first'];
+    $date_second  = $params['date_second'];
+
 	?>
 	<tfoot>
 		<tr>
@@ -206,6 +221,7 @@ function yourls_html_tfooter( $params = array() ) {
 						// First search control: text to search
 						$_input = '<input type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
+                            'all'     => yourls__( 'All fields' ),
 							'keyword' => yourls__( 'Short URL' ),
 							'url'     => yourls__( 'URL' ),
 							'title'   => yourls__( 'Title' ),
@@ -310,7 +326,7 @@ function yourls_html_tfooter( $params = array() ) {
 					if( ( $p_end ) < $total_pages ) {
 						$link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
 						echo '<span class="nav_link nav_next"></span>';
-						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
+						echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to Last Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
 					}
 					?>
 				<?php } ?>
@@ -342,7 +358,7 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
 		$html .= ">$text</option>\n";
 	}
 	$html .= "</select>\n";
-	$html  = yourls_apply_filters( 'html_select', $html, $name, $options, $selected, $display );
+	$html  = yourls_apply_filter( 'html_select', $html, $name, $options, $selected, $display );
 	if( $display )
 		echo $html;
 	return $html;
@@ -404,7 +420,6 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 			<p id="share_links"><?php yourls_e( 'Share with' ); ?> 
 				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
 				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
-				<a id="share_ff" href="http://friendfeed.com/share/bookmarklet/frame#title=<?php echo $_share; ?>" title="<?php yourls_e( 'Share on Friendfeed' ); ?>" onclick="share('ff');return false;">FriendFeed</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
@@ -424,6 +439,8 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
  *
  */
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
+    yourls_do_action( 'pre_yourls_die', $message, $title, $header_code );
+
 	yourls_status_header( $header_code );
 	
 	if( !yourls_did_action( 'html_head' ) ) {
@@ -432,8 +449,9 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	}
 	echo yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
 	echo yourls_apply_filter( 'die_message', "<p>$message</p>" );
+    // Hook into 'yourls_die' to add more elements or messages to that page
 	yourls_do_action( 'yourls_die' );
-	if( !yourls_did_action( 'html_head' ) ) {
+	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer();
 	}
 	die();
@@ -449,20 +467,23 @@ function yourls_table_edit_row( $keyword ) {
 	$keyword = yourls_sanitize_string( $keyword );
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
-	
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
-	$safe_url = yourls_esc_attr( $url );
+	$safe_url = yourls_esc_attr( rawurldecode( $url ) );
 	$safe_title = yourls_esc_attr( $title );
+    
+    // Make strings sprintf() safe: '%' -> '%%'
+    $safe_url = str_replace( '%', '%%', $safe_url );
+    $safe_title = str_replace( '%', '%%', $safe_title );
+
 	$www = yourls_link();
-	
+    
 	$nonce = yourls_create_nonce( 'edit-save_'.$id );
 	
 	if( $url ) {
 		$return = <<<RETURN
 <tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
-        $return = preg_replace( '/%([^s])/', '%%$1', $return ); // make sprintf() safe: '%' -> '%%'
-		$return = sprintf( urldecode( $return ), yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+		$return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
 		$return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
 	}
@@ -539,7 +560,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	$protocol_warning = '';
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
-		$protocol_warning = yourls_apply_filters( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
+		$protocol_warning = yourls_apply_filter( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
 	// Row cells: the array
 	$cells = array(
@@ -660,7 +681,7 @@ function yourls_table_tbody_end() {
  *
  */
 function yourls_table_end() {
-	echo yourls_apply_filter( 'table_end', '</table>' );
+	echo yourls_apply_filter( 'table_end', '</table></main>' );
 }
 
 /**
@@ -752,7 +773,7 @@ function yourls_html_menu() {
 	$admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 	
 	// Now output menu
-	echo '<ul id="admin_menu">'."\n";
+	echo '<nav role="navigation"><ul id="admin_menu">'."\n";
 	if ( yourls_is_private() && !empty( $logout_link ) )
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
@@ -780,7 +801,7 @@ function yourls_html_menu() {
 		echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 		
 	yourls_do_action( 'admin_menu' );
-	echo "</ul>\n";
+	echo "</ul></nav>\n";
 	yourls_do_action( 'admin_notices' );
 	yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
 	/*
@@ -841,7 +862,7 @@ function yourls_html_language_attributes() {
 	
 	$attributes[] = ( yourls_is_rtl() ? 'dir="rtl"' : 'dir="ltr"' );
 	
-	$doctype = yourls_apply_filters( 'html_language_attributes_doctype', 'html' );
+	$doctype = yourls_apply_filter( 'html_language_attributes_doctype', 'html' );
 	// Experimental: get HTML lang from locale. Should work. Convert fr_FR -> fr-FR
 	if ( $lang = str_replace( '_', '-', yourls_get_locale() ) ) {
 		if( $doctype == 'xhtml' ) {
@@ -852,7 +873,7 @@ function yourls_html_language_attributes() {
 	}
 
 	$output = implode( ' ', $attributes );
-	$output = yourls_apply_filters( 'html_language_attributes', $output );
+	$output = yourls_apply_filter( 'html_language_attributes', $output );
 	echo $output;
 }
 
@@ -882,8 +903,6 @@ function yourls_l10n_calendar_strings() {
  */
 function yourls_new_core_version_notice() {
 
-	yourls_debug_log( 'Check for new version: ' . ( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
-	
 	$checks = yourls_get_option( 'core_version_checks' );
 	
 	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
@@ -900,8 +919,9 @@ function yourls_new_core_version_notice() {
  * @return bool whether header was sent
  */
 function yourls_content_type_header( $type ) {
+    yourls_do_action( 'content_type_header', $type );
 	if( !headers_sent() ) {
-		$charset = yourls_apply_filters( 'content_type_header_charset', 'utf-8' );
+		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
 		header( "Content-Type: $type; charset=$charset" );
 		return true;
 	}
@@ -930,3 +950,24 @@ function yourls_get_search_text() {
 	
 	return htmlspecialchars( trim( $search ) );
 }
+
+/**
+ * Display or return HTML for a bookmarklet link
+ *
+ * @since 1.7.1
+ * @param string $href    bookmarklet link (presumably minified code with "javascript:" scheme)
+ * @param string $anchor  link anchor
+ * @param bool   $echo    true to display, false to return the HTML
+ * @return string         the HTML for a bookmarklet link
+ */
+function yourls_bookmarklet_link( $href, $anchor, $echo = true ) {
+    $alert = yourls_esc_attr__( 'Drag to your toolbar!' );
+    $link = <<<LINK
+    <a href="$href" class="bookmarklet" onclick="alert('$alert');return false;">$anchor</a>
+LINK;
+    
+    if( $echo )
+        echo $link;
+    return $link;
+}
+

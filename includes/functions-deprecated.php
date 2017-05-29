@@ -33,9 +33,9 @@ function yourls_get_duplicate_keywords( $longurl ) {
  * Note: this function is dumb and dumbly named since it does not intval(). DO NOT USE.
  *
  */
-function yourls_intval( $in ) {
+function yourls_intval( $int ) {
 	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_sanitize_int' );
-	return yourls_escape( $in );
+	return yourls_escape( $int );
 }
 
 /**
@@ -45,5 +45,66 @@ function yourls_intval( $in ) {
 function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
 	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_http_get_body' );
 	return yourls_http_get_body( $url );
+}
+
+/**
+ * Alias for yourls_apply_filter because I never remember if it's _filter or _filters
+ *
+ * At first I thought it made semantically more sense but thinking about it, I was wrong. It's one filter.
+ * There may be several function hooked into it, but it still the same one filter.
+ *
+ * @since 1.6
+ * @deprecated 1.7.1
+ *
+ * @param string $hook the name of the YOURLS element or action
+ * @param mixed $value the value of the element before filtering
+ * @return mixed
+ */
+function yourls_apply_filters( $hook, $value = '' ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_apply_filter' );
+	return yourls_apply_filter( $hook, $value );
+}
+
+/**
+ * Check if we'll need interface display function (ie not API or redirection)
+ *
+ */
+function yourls_has_interface() {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1' );
+	if( yourls_is_API() or yourls_is_GO() )
+		return false;
+	return true;
+}
+
+/**
+ * Check if a proxy is defined for HTTP requests
+ *
+ * @uses YOURLS_PROXY
+ * @since 1.7
+ * @deprecated 1.7.1
+ * @return bool true if a proxy is defined, false otherwise
+ */
+function yourls_http_proxy_is_defined() {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_http_get_proxy' );
+	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
+}
+
+/**
+ * Displays translated string with gettext context
+ *
+ * This function has been renamed yourls_xe() for consistency with other *e() functions
+ *
+ * @see yourls_x()
+ * @since 1.6
+ * @deprecated 1.7.1
+ *
+ * @param string $text Text to translate
+ * @param string $context Context information for the translators
+ * @param string $domain Optional. Domain to retrieve the translated text
+ * @return string Translated context string without pipe
+ */
+function yourls_ex( $text, $context, $domain = 'default' ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_xe' );
+	echo yourls_xe( $text, $context, $domain );
 }
 

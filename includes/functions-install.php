@@ -40,11 +40,11 @@ function yourls_get_database_version() {
 }
 
 /**
- * Check if PHP > 5.2
+ * Check if PHP > 5.3
  *
  */
 function yourls_check_php_version() {
-	return ( version_compare( '5.2', phpversion() ) <= 0 );
+    return(defined('PHP_VERSION_ID') && PHP_VERSION_ID > 50300);
 }
 
 /**
@@ -126,8 +126,18 @@ function yourls_create_htaccess() {
 }
 
 /**
- * Inserts $insertion (text in an array of lines) into $filename (.htaccess) between BEGIN/END $marker block. Returns bool. Stolen from WP
+ * Insert text into a file between BEGIN/END markers, return bool. Stolen from WP
  *
+ * Inserts an array of strings into a file (eg .htaccess ), placing it between
+ * BEGIN and END markers. Replaces existing marked info. Retains surrounding
+ * data. Creates file if none exists.
+ *
+ * @since 1.3
+ *
+ * @param string $filename 
+ * @param string $marker
+ * @param array  $insertion
+ * @return bool True on write success, false on failure.
  */
 function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 	if ( !file_exists( $filename ) || is_writeable( $filename ) ) {
@@ -183,8 +193,17 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
 /**
  * Create MySQL tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
  *
+ * @since 1.3
+ * @return array  An array like array( 'success' => array of success strings, 'errors' => array of error strings )
  */
 function yourls_create_sql_tables() {
+    // Allow plugins (most likely a custom db.php layer in user dir) to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_yourls_create_sql_tables', null );
+    // your filter function should return an array of ( 'success' => $success_msg, 'error' => $error_msg ), see below
+    if ( null !== $pre ) {
+        return $pre;
+    }
+
 	global $ydb;
 	
 	$error_msg = array();
@@ -277,6 +296,7 @@ function yourls_initialize_options() {
 		  yourls_update_option( 'version', YOURLS_VERSION )
 		& yourls_update_option( 'db_version', YOURLS_DB_VERSION )
 		& yourls_update_option( 'next_id', 1 )
+        & yourls_update_option( 'active_plugins', array() )
 	);
 }
 

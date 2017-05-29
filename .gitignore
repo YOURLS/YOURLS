@@ -35,6 +35,7 @@ pages/*
 ## Tests
 ############
 
+test*.php
 tests/
 
 ############
@@ -49,3 +50,6 @@ Desktop.ini
 
 # Mac crap
 .DS_Store
+
+# NetBeans files
+/nbproject/

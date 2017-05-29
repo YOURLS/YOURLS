@@ -185,7 +185,7 @@ function yourls_stats_line( $values, $id = null ) {
 		"width"       => 430,
 		"height"	  => 220,
 		"hAxis"       => "{minTextSpacing: 80, maxTextLines: 1, maxAlternation: 1}",
-		"vAxis"       => "{minValue: -0.5, format: '#'}",
+		"vAxis"       => "{minValue: 0, format: '#'}",
 		"colors"	  => "['#2a85b3']",
 	);
 	$options = yourls_apply_filter( 'stats_line_options', $options );
@@ -241,7 +241,7 @@ function yourls_get_domain( $url, $include_scheme = false ) {
  *
  */
 function yourls_get_favicon_url( $url ) {
-	return yourls_match_current_protocol( 'http://www.google.com/s2/u/0/favicons?domain=' . yourls_get_domain( $url, false ) );
+	return yourls_match_current_protocol( 'http://www.google.com/s2/favicons?domain=' . yourls_get_domain( $url, false ) );
 }
 
 /**

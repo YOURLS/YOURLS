@@ -49,9 +49,10 @@ if( yourls_do_log_redirect() ) {
 	$list_of_years = array();
 	$last_24h = array();
 	
+	if( yourls_allow_duplicate_longurls() )
+		$keyword_list = yourls_get_longurl_keywords( $longurl );
 	// Define keyword query range : either a single keyword or a list of keywords
 	if( $aggregate ) {
-		$keyword_list = yourls_get_longurl_keywords( $longurl );
 		$keyword_range = "IN ( '" . join( "', '", $keyword_list ) . "' )"; // IN ( 'blah', 'bleh', 'bloh' )
 	} else {
 		$keyword_range = sprintf( "= '%s'", yourls_escape( $keyword ) );
@@ -142,28 +143,31 @@ if( yourls_do_log_redirect() ) {
 	// Get $list_of_days, $list_of_months, $list_of_years
 	reset( $dates );
 	if( $dates ) {
-		extract( yourls_build_list_of_days( $dates ) );
+        $_lists = yourls_build_list_of_days( $dates );
+        $list_of_days   = $_lists['list_of_days'];
+        $list_of_months = $_lists['list_of_months'];
+        $list_of_years  = $_lists['list_of_years'];
+        unset($_lists);
 	}
 
-	
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$query = "SELECT
-		DATE_FORMAT(`click_time`, '%H %p') AS `time`,
+		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR), '%H %p') AS `time`,
 		COUNT(*) AS `count`
 	FROM `$table`
-	WHERE `shorturl` $keyword_range AND `click_time` > (CURRENT_TIMESTAMP - INTERVAL 1 DAY)
+	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) - INTERVAL 1 DAY)
 	GROUP BY `time`;";
 	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_last24h', $query ) );
 	
 	$_last_24h = array();
 	foreach( (array)$rows as $row ) {
-		if ( $row->time )
+		if ( isset( $row->time ) )
 			$_last_24h[ "$row->time" ] = $row->count;
 	}
 	
 	$now = intval( date('U') );
 	for ($i = 23; $i >= 0; $i--) {
-		$h = date('H A', $now - ($i * 60 * 60) );
+		$h = date('H A', ($now - ($i * 60 * 60) + (YOURLS_HOURS_OFFSET * 60 * 60)) );
 		// If the $last_24h doesn't have all the hours, insert missing hours with value 0
 		$last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
 	}
@@ -197,7 +201,7 @@ if( yourls_do_log_redirect() ) {
 	echo "last_24h: "; print_r( $last_24h );
 	echo "countries: "; print_r( $countries );
 	die();
-	/**/
+	**/
 
 }
 
@@ -377,7 +381,7 @@ yourls_html_menu();
 				$best_time['month'] = date( "m", strtotime( $best['day'] ) );
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
-				<p><strong><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>. 
+				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>. 
 				<a href="" class='details hide-if-no-js' id="more_clicks"><?php yourls_e( 'Click for more details' ); ?></a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php
@@ -480,7 +484,7 @@ yourls_html_menu();
 					if ( $number_of_sites > 1 )
 						$referrer_sort[ yourls__( 'Others' ) ] = count( $referrers );
 					yourls_stats_pie( $referrer_sort, 5, '440x220', 'stat_tab_source_ref' );
-					unset( $referrer_sort['Others'] );
+					unset( $referrer_sort[yourls__('Others')] );
 					?>
 					<h3><?php yourls_e( 'Referrers' ); ?></h3>
 					<ul class="no_bullet">

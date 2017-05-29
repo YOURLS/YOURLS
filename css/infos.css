@@ -111,3 +111,6 @@ ul.no_bullet li {
 	min-width:100px;
 	display:inline-block;
 }
+h2#informations{
+	word-break: break-all;
+}

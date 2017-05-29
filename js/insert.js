@@ -111,6 +111,7 @@ function remove_link(id) {
 					zebra_table();
 				});
 				decrement_counter();
+				decrease_total_clicks( id );
 			} else {
 				alert('something wrong happened while deleting :/');
 			}
@@ -146,14 +147,13 @@ function edit_link_save(id) {
 			if(data.status == 'success') {
 			
 				if( data.url.title != '' ) {
-					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
+					var display_link = '<a href="' + data.url.url + '" title="' + data.url.title + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
 				} else {
 					var display_link = '<a href="' + data.url.url + '" title="' + data.url.url + '">' + data.url.display_url + '</a>';
 				}
 
 				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
-				$("#timestamp-" + id).html(data.url.date);
 				$("#edit-" + id).fadeOut(200, function(){
 					$('#main_table tbody').trigger("update");
 				});
@@ -162,7 +162,10 @@ function edit_link_save(id) {
 			}
 			feedback(data.message, data.status);
 			end_loading("#edit-close-" + id);
-			end_disable("#actions-" + id + ' .button');
+			end_disable("#edit-close-" + id);
+			if(data.status == 'success') {
+				end_disable("#actions-" + id + ' .button');
+			}
 		}
 	);
 }
@@ -176,7 +179,7 @@ function zebra_table() {
 
 // Ready to add another URL
 function add_link_reset() {
-	$('#add-url').val('http://').focus();
+	$('#add-url').val('').focus();
 	$('#add-keyword').val('');
 }
 
@@ -192,6 +195,12 @@ function decrement_counter() {
 	$('.increment').each(function(){
 		$(this).html( parseInt($(this).html()) - 1 );
 	});
+}
+
+// Decrease number of total clicks
+function decrease_total_clicks( id ) {
+	var total_clicks = $("#overall_tracking strong:nth-child(2)");
+	total_clicks.html( parseInt( total_clicks.html() ) - parseInt( $('#clicks-' + id).html() ) );
 }
 
 // Toggle Share box

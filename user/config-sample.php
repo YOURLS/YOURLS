@@ -1,6 +1,9 @@
 <?php
 /* This is a sample config file.
  * Edit this file with your own settings and save it as "config.php"
+ *
+ * IMPORTANT: edit and save this file as plain ASCII text, using a text editor, for instance TextEdit on Mac OS or
+ * Notepad on Windows. Make sure there is no character before the opening <?php at the beginning of this file.
  */
 
 /*
@@ -27,11 +30,11 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL -- all lowercase and with no trailing slash.
- ** If you define it to "http://site.com", don't use "http://www.site.com" in your browser (and vice-versa) */
-define( 'YOURLS_SITE', 'http://site.com' );
+/** YOURLS installation URL -- all lowercase, no trailing slash at the end.
+ ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
+define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
-/** Timezone GMT offset */
+/** Server timezone GMT offset */
 define( 'YOURLS_HOURS_OFFSET', 0 ); 
 
 /** YOURLS language
@@ -58,7 +61,8 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
  ** Read http://yourls.org/userpassword for more information */
 $yourls_user_passwords = array(
 	'username' => 'password',
-	'username2' => 'password2'	// You can have one or more 'login'=>'password' lines
+	// 'username2' => 'password2',
+	// You can have one or more 'login'=>'password' lines
 	);
 
 /** Debug mode to output some internal information
@@ -82,7 +86,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'gay',
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 
 /*

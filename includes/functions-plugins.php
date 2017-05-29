@@ -15,9 +15,16 @@
  * @since 1.5
  */
 
-$yourls_filters = array();
+if( !isset( $yourls_filters ) )
+    $yourls_filters = array();
 /* This global var will collect filters with the following structure:
- * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args)]']
+ * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args, filter or action)]']
+ */
+
+if( !isset( $yourls_actions ) )
+    $yourls_actions = array();
+/* This global var will collect 'done' actions with the following structure:
+ * $yourls_actions['hook'] => number of time this action was done
  */
 
 /**
@@ -79,25 +86,26 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 	global $yourls_filters;
 
 	// If function then just skip all of the tests and not overwrite the following.
-	if ( is_string( $function ) )
+	if ( is_string( $function ) ) {
 		return $function;
-	// Object Class Calling
-	else if ( is_object( $function[0] ) ) {
-		$obj_idx = get_class( $function[0] ) . $function[1];
-		if ( !isset( $function[0]->_yourls_filters_id ) ) {
-			if ( false === $priority )
-				return false;
-			$count = isset( $yourls_filters[ $hook ][ $priority ]) ? count( (array)$yourls_filters[ $hook ][ $priority ] ) : 0;
-			$function[0]->_yourls_filters_id = $count;
-			$obj_idx .= $count;
-			unset( $count );
-		} else
-			$obj_idx .= $function[0]->_yourls_filters_id;
-		return $obj_idx;
+    }
+    
+	if( is_object($function) ) {
+		// Closures are currently implemented as objects
+		$function = array( $function, '' );
+	} else {
+		$function = (array) $function;
 	}
-	// Static Calling
-	else if ( is_string( $function[0] ) )
-		return $function[0].$function[1];
+
+	// Object Class Calling
+	if ( is_object( $function[0] ) ) {
+        return spl_object_hash( $function[0] ) . $function[1];
+	}
+    
+    // Static Calling
+    if ( is_string( $function[0] ) ) {
+		return $function[0]. '::' .$function[1];
+    }
 
 }
 
@@ -155,23 +163,6 @@ function yourls_apply_filter( $hook, $value = '' ) {
 }
 
 /**
- * Alias for yourls_apply_filter because I never remember if it's _filter or _filters
- *
- * Plus, semantically, it makes more sense. There can be several filters. I should have named it
- * like this from the very start. Duh.
- *
- * @since 1.6
- *
- * @param string $hook the name of the YOURLS element or action
- * @param mixed $value the value of the element before filtering
- * @return mixed
- */
-function yourls_apply_filters( $hook, $value = '' ) {
-	return yourls_apply_filter( $hook, $value );
-}
-
-
-/**
  * Performs an action triggered by a YOURLS event.
 * 
  * @param string $hook the name of the YOURLS action
@@ -183,10 +174,11 @@ function yourls_do_action( $hook, $arg = '' ) {
 	// Keep track of actions that are "done"
 	if ( !isset( $yourls_actions ) )
 		$yourls_actions = array();
-	if ( !isset( $yourls_actions[ $hook ] ) )
+	if ( !isset( $yourls_actions[ $hook ] ) ) {
 		$yourls_actions[ $hook ] = 1;
-	else
+    } else {
 		++$yourls_actions[ $hook ];
+    }
 
 	$args = array();
 	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) // array(&$this)
@@ -226,10 +218,9 @@ function yourls_did_action( $hook ) {
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callback $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
- * @param int $accepted_args optional. The number of arguments the function accepts (default: 1).
  * @return boolean Whether the function was registered as a filter before it was removed.
  */
-function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $accepted_args = 1 ) {
+function yourls_remove_filter( $hook, $function_to_remove, $priority = 10 ) {
 	global $yourls_filters;
 	
 	$function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
@@ -244,6 +235,59 @@ function yourls_remove_filter( $hook, $function_to_remove, $priority = 10, $acce
 	return $remove;
 }
 
+/**
+ * Removes a function from a specified action hook.
+ *
+ * @see yourls_remove_filter()
+ *
+ * @param string $hook The action hook to which the function to be removed is hooked.
+ * @param callback $function_to_remove The name of the function which should be removed.
+ * @param int $priority optional. The priority of the function (default: 10).
+ * @return boolean Whether the function was registered as an action before it was removed.
+ */
+
+function yourls_remove_action( $hook, $function_to_remove, $priority = 10 ) {
+    return yourls_remove_filter( $hook, $function_to_remove, $priority );
+}
+
+/**
+ * Removes all functions from a specified action hook.
+ *
+ * @see yourls_remove_all_filters()
+ * @since 1.7.1
+ *
+ * @param string $hook The action to remove hooks from
+ * @param int $priority optional. The priority of the functions to remove
+ * @return boolean true when it's finished
+ */
+
+function yourls_remove_all_actions( $hook, $priority = false ) {
+    return yourls_remove_all_filters( $hook, $priority );
+}
+
+/**
+ * Removes all functions from a specified filter hook.
+ *
+ * @since 1.7.1
+ *
+ * @param string $hook The filter to remove hooks from
+ * @param int $priority optional. The priority of the functions to remove
+ * @return boolean true when it's finished
+ */
+
+function yourls_remove_all_filters( $hook, $priority = false ) {
+    global $yourls_filters;
+    
+    if( isset( $yourls_filters[ $hook ] ) ) {
+        if( $priority === false ) {
+            unset( $yourls_filters[ $hook ] );
+        } else if ( isset( $yourls_filters[ $hook ][ $priority ] ) ) {
+            unset( $yourls_filters[ $hook ][ $priority ] );
+        }
+    }
+    
+    return true;
+}
 
 /**
  * Check if any filter has been registered for a hook.
@@ -260,9 +304,9 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
 	if ( false === $function_to_check || false == $has ) {
 		return $has;
 	}
-	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) ) {
+    
+	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) )
 		return false;
-	}
 
 	foreach ( (array) array_keys( $yourls_filters[ $hook ] ) as $priority ) {
 		if ( isset( $yourls_filters[ $hook ][ $priority ][ $idx ] ) )
@@ -293,7 +337,6 @@ function yourls_has_active_plugins( ) {
 /**
  * List plugins in /user/plugins
  *
- * @global object $ydb Storage of mostly everything YOURLS needs to know
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
 function yourls_get_plugins( ) {
@@ -434,10 +477,13 @@ function yourls_activate_plugin( $plugin ) {
 	include_once( YOURLS_PLUGINDIR.'/'.$plugin );
 	if ( ob_get_length() > 0 ) {
 		// there was some output: error
+        // @codeCoverageIgnoreStart
 		$output = ob_get_clean();
 		return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
+        // @codeCoverageIgnoreEnd
 	}
-	
+    ob_end_clean();
+
 	// so far, so good: update active plugin list
 	$ydb->plugins[] = $plugin;
 	yourls_update_option( 'active_plugins', $ydb->plugins );
@@ -550,8 +596,6 @@ function yourls_plugin_admin_page( $plugin_page ) {
 	call_user_func( $ydb->plugin_pages[$plugin_page]['function'] );
 	
 	yourls_html_footer();
-	
-	die();
 }
 
 
@@ -559,14 +603,15 @@ function yourls_plugin_admin_page( $plugin_page ) {
  * Callback function: Sort plugins 
  *
  * @link http://php.net/uasort
+ * @codeCoverageIgnore
  *
  * @param array $plugin_a
  * @param array $plugin_b
  * @return int 0, 1 or -1, see uasort()
  */
 function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
-	$orderby = yourls_apply_filters( 'plugins_sort_callback', 'Plugin Name' );
-	$order   = yourls_apply_filters( 'plugins_sort_callback', 'ASC' );
+	$orderby = yourls_apply_filter( 'plugins_sort_callback', 'Plugin Name' );
+	$order   = yourls_apply_filter( 'plugins_sort_callback', 'ASC' );
 
 	$a = isset( $plugin_a[ $orderby ] ) ? $plugin_a[ $orderby ] : '';
 	$b = isset( $plugin_b[ $orderby ] ) ? $plugin_b[ $orderby ] : '';
