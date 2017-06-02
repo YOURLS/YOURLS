@@ -22,6 +22,7 @@ $api_actions = array(
 	'db-stats'  => 'yourls_api_action_db_stats',
 	'url-stats' => 'yourls_api_action_url_stats',
 	'expand'    => 'yourls_api_action_expand',
+	'find-short'=> 'yourls_api_action_find_short',
 	'version'   => 'yourls_api_action_version',
 );
 $api_actions = yourls_apply_filter( 'api_actions', $api_actions );

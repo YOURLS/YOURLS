@@ -493,6 +493,17 @@ function yourls_get_keyword_longurl( $keyword, $notfound = false ) {
 }
 
 /**
+ * Return keyword associated with long URL. Optional $notfound = string default message if nothing found
+ *
+ */
+function yourls_get_longurl_keyword( $longurl, $notfound = false ) {
+	global $ydb;
+	$table = YOURLS_DB_TABLE_URL;
+	return $ydb->get_var( "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl';" );
+}
+
+
+/**
  * Return number of clicks on a keyword. Optional $notfound = string default message if nothing found
  *
  */
