@@ -542,7 +542,7 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
  * Return array of stats. (string)$filter is 'bottom', 'last', 'rand' or 'top'. (int)$limit is the number of links to return
  *
  */
-function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
+function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0, $owner = NULL ) {
 	global $ydb;
 
 	switch( $filter ) {
@@ -572,7 +572,11 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		if(!empty($owner)) {
+			$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 AND `user`='$owner' ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		} else {
+			$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		}
 		
 		$return = array();
 		$i = 1;
@@ -589,8 +593,12 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 		}
 	}
 
-	$return['stats'] = yourls_get_db_stats();
-	
+	if(!empty($owner)) {
+		$return['stats'] = yourls_get_db_stats("AND `user`='$owner' ");
+	} else {
+		$return['stats'] = yourls_get_db_stats($owner);
+	}
+
 	$return['statusCode'] = 200;
 
 	return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
