@@ -309,7 +309,7 @@ TUMBLR;
 		<ul>
 			<li><h3><?php yourls_e( 'Usage of the signature token' ); ?></h3>
 			<p><?php yourls_e( 'Simply use parameter <tt>signature</tt> in your API requests. Example:' ); ?></p>
-			<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
+			<p><code><?php echo YOURLS_URL; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
 			</li>
 		
 			<li><h3><?php yourls_e( 'Usage of a time limited signature token' ); ?></h3>
@@ -321,14 +321,14 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 ?> 
 </code></pre>
 		<p><?php yourls_e( 'Now use parameters <tt>signature</tt> and <tt>timestamp</tt> in your API requests. Example:' ); ?></p>
-		<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
+		<p><code><?php echo YOURLS_URL; ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
 		<p><?php yourls_e( 'Actual values:' ); ?><br/>
-		<tt><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
+		<tt><?php echo YOURLS_URL; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
 		<p><?php yourls_se( 'This URL would be valid for only %s seconds', YOURLS_NONCE_LIFE ); ?></p>
 		</li>
 	</ul>
 	
-	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/readme.html#API' ); ?></p>
+	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_URL . '/readme.html#API' ); ?></p>
 
 	</main>
 
