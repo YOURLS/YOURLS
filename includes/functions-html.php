@@ -745,7 +745,7 @@ function yourls_html_menu() {
 	if( defined( 'YOURLS_USER' ) ) {
 		$logout_link = yourls_apply_filter( 'logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' (<a href="?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
 	} else {
-		$logout_link = yourls_apply_filter( 'logout_link', '' );
+		$logout_link = '';
 	}
 	$help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
 	
@@ -775,7 +775,7 @@ function yourls_html_menu() {
 	
 	// Now output menu
 	echo '<nav role="navigation"><ul id="admin_menu">'."\n";
-	if ( yourls_is_private() && !empty( $logout_link ) )
+	if ( yourls_is_private() && !empty( $logout_link ) ) 
 		echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
 
 	foreach( (array)$admin_links as $link => $ar ) {
