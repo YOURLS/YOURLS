@@ -9,6 +9,40 @@
  */
 
 /**
+ * API function wrapper: Delete a shorturl
+ *
+ * @since prototype
+ * @return array Result of API call
+ */
+function yourls_api_action_delete() {
+	// We don't want unauthenticated users deleting links
+	// If YOURLS is in public mode, force authentication anyway
+	if (!yourls_is_private()) {
+		yourls_do_action( 'require_auth' );
+		require_once( YOURLS_INC.'/auth.php' );
+	}
+	
+	$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
+	if (yourls_delete_link_by_keyword( $keyword ))
+	{
+		$return = array(
+			'keyword'    => $keyword,
+			'statusCode' => 200,
+			'simple'     => 'deleted',
+			'message'    => 'success',
+		);
+	} else {
+		$return = array(
+			'keyword'   => $keyword,
+			'simple'    => 'not found',
+			'message'   => 'Error: short URL not found',
+			'errorCode' => 404,
+		);
+	}
+	return yourls_apply_filter( 'api_result_delete', $return );
+}
+
+/**
  * API function wrapper: Shorten a URL
  *
  * @since 1.6
