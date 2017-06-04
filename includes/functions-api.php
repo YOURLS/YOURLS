@@ -83,6 +83,18 @@ function yourls_api_action_version() {
 }
 
 /**
+ * API function wrapper: delete a shorturl
+ *
+ * @return array Result of API call
+ */
+function yourls_api_action_delete() {
+	$keyword = ( isset( $_REQUEST['keyword'] ) ? $_REQUEST['keyword'] : '' );
+	$query = yourls_delete_link_by_keyword($keyword);
+	$return = array( 'success' => $query === 1 );
+	return yourls_apply_filter( 'api_result_delete', $return, $keyword);
+}
+
+/**
  * Output and return API result
  *
  * This function will echo (or only return if asked) an array as JSON, JSONP or XML. If the array has a

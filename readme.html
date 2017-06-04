@@ -477,7 +477,9 @@
 			<p>You need to send parameters to <code>http://your-own-domain-here.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
 			<ul>
 				<li>A valid <code>username</code> / <code>password</code> pair, or your <code>signature</code> (see <a href="http://yourls.org/passwordlessapi">Passwordless API requests</a>)</li>
-				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), <tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links) or <tt>"db-stats"</tt> (get global link and click count)</li>
+				<li>The requested <code>action</code>: <tt>"shorturl"</tt> (get short URL for a link), <tt>"expand"</tt> (get long URL of a shorturl), 
+<tt>"url-stats"</tt> (get stats about one short URL), <tt>"stats"</tt> (get stats about your links), <tt>"db-stats"</tt> (get global link and click count) or 
+<tt>"delete" (remove a shorturl)</li>
 				<li>With <tt>action = "shorturl"</tt> :
 					<ul>
 						<li>the <code>url</code> to shorten</li>
@@ -506,6 +508,12 @@
 				</li>
 				<li>With <tt>action = "db-stats"</tt> :
 					<ul>
+						<li>output <code>format</code>: either <tt>"jsonp"</tt>, <tt>"json"</tt> or <tt>"xml"</tt></li>
+					</ul>
+				</li>
+				<li>With <tt>action = "delete"</tt> :
+					<ul>
+						<li>the <code>keyword</code> of the short URL to delete</li>
 						<li>output <code>format</code>: either <tt>"jsonp"</tt>, <tt>"json"</tt> or <tt>"xml"</tt></li>
 					</ul>
 				</li>
