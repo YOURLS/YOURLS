@@ -3,6 +3,7 @@
 /**
  * Option functions. Completely stolen from WP Unit Tests.
  *
+ * @group options
  * @since 0.1
  */
 class Option_Tests extends PHPUnit_Framework_TestCase {

@@ -3,6 +3,7 @@
 /**
  * YOURLS Unit Tests for the Geolocation API
  *
+ * @group geoip
  * @since 0.1
  */
 

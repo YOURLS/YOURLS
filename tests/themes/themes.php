@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Themes functions
+ *
+ * @group themes
+ */
+
 if( function_exists( 'yourls_activate_theme' ) ) :
 
 class Themes_Tests extends PHPUnit_Framework_TestCase {

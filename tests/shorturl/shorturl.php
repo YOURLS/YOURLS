@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Short URL tests
+ *
+ * @group shorturls
+ * @since 0.1
+ */
+ 
 class ShortURL_Tests extends PHPUnit_Framework_TestCase {
 
     public function test_reserved_keywords() {
