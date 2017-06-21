@@ -4,7 +4,6 @@
  * YOURLS Unit Tests for the Geolocation API
  *
  * @group geoip
- * @since 0.1
  */
 
 class GeoIP_Tests extends PHPUnit_Framework_TestCase {
