@@ -7,6 +7,8 @@
  * in core that might be using it, including core plugins.
  */
 
+// @codeCoverageIgnoreStart
+
 /**
  * Return word or words if more than one
  *
@@ -29,7 +31,7 @@ function yourls_get_duplicate_keywords( $longurl ) {
 
 /**
  * Make sure a integer is safe
- * 
+ *
  * Note: this function is dumb and dumbly named since it does not intval(). DO NOT USE.
  *
  */
@@ -108,3 +110,4 @@ function yourls_ex( $text, $context, $domain = 'default' ) {
 	echo yourls_xe( $text, $context, $domain );
 }
 
+// @codeCoverageIgnoreEnd

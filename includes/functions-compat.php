@@ -4,10 +4,8 @@
  * Compatibility functions when either missing from older PHP versions or not included by default
  */
 
-/**
- * @codeCoverageIgnore
- */
- 
+// @codeCoverageIgnoreStart
+
 /**
  * json_encode for PHP, should someone run a distro without php-json -- see http://askubuntu.com/questions/361424/
  *
@@ -223,5 +221,6 @@ function yourls_mb_strlen( $str, $encoding = null ) {
     return --$count;
 }
 
+// @codeCoverageIgnoreEnd
 
 
