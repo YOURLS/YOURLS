@@ -32,7 +32,12 @@ $ozh_random_keyword['length'] = 5;
 yourls_add_filter( 'random_keyword', 'ozh_random_keyword' );
 function ozh_random_keyword() {
         global $ozh_random_keyword;
-        return yourls_rnd_string( $ozh_random_keyword['length'] );
+        $possible = yourls_get_shorturl_charset() ;
+        $str='';
+        while (strlen($str) < $ozh_random_keyword['length']) {
+                $str .= substr($possible, rand(0,strlen($possible)),1);
+        }
+        return $str;
 }
 
 // Don't increment sequential keyword tracker
