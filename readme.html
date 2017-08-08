@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>	
+<head>
 	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>YOURLS: Your Own URL Shortener</title>
@@ -24,7 +24,7 @@
 		}
 		tt {
 			background:#ffc;
-			padding:0 2px;		
+			padding:0 2px;
 		}
 		pre tt {
 			display:block;
@@ -64,7 +64,7 @@
 		#fade {
 			position:absolute; background: #E3F3FF; width:100%; height:230px; top:0px; left:0px; z-index:-1;
 			background: -webkit-gradient(linear, left top, left bottom, from(rgba(227, 243, 255, 1)), to(rgba(227, 243, 255, 0)));
-			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */ 
+			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */
 		}
 		/* Social */
 		@keyframes mymove { 0% {top:130px;} 50% {top:150px;} 100% {top:130px;} }
@@ -245,7 +245,7 @@
 	<header role="banner">
 	<h1><a href="http://yourls.org/">YOURLS: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</a></h1>
 	</header>
-	
+
 	<main role="main">
 	<!-- Tabs -->
 	<ul id="Tabs">
@@ -264,7 +264,7 @@
 		<div id="buttons">
 			<div id="fb">
 			<div class="fb-like" data-href="http://yourls.org/" data-send="false" data-layout="box_count" data-width="60" data-show-faces="true" data-font="verdana"></div>
-			
+
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -286,12 +286,12 @@
 		<!-- Index -->
 		<div id="AboutDiv">
 			<h2 class='first'>About YOURLS</h2>
-			
+
 			<h3 id="what">What is YOURLS</h3>
 			<p><strong>YOURLS</strong> stands for <strong>Your Own URL Shortener</strong>. It is a small set of PHP scripts that will allow you to run your own URL shortening service (<em>a la</em> TinyURL or bitly).</p>
-			
+
 			<p>Running your own URL shortener is fun, geeky and useful: you own your data and don't depend on third party services. It's also a great way to add branding to your short URLs, instead of using the same public URL shortener everyone uses.</p>
-			
+
 			<h3 id="features">YOURLS Features</h3>
 			<ul>
 				<li><tt>Free</tt> and <tt>Open Source</tt> software.</li>
@@ -306,26 +306,26 @@
 				<li>Friendly <tt>installer</tt></li>
 				<li><tt>Sample files</tt> to create your own public interface and more</li>
 			</ul>
-			
+
 			<h3 id="screenshots">Screenshots</h3>
-			
+
 			<div class="sshot">
 				<p>Main admin dashboard</p>
 				<img src="https://yourls.org/yourls-org-images/admin-dashboard.gif" />
-				
+
 				<p>Stats for each short URL</p>
 				<img src="https://yourls.org/yourls-org-images/stats-anim.gif" />
-				
+
 				<p>See a live example of YOURLS stats on <a href="http://yourls.org/cookie+">http://yourls.org/cookie+</a></p>
 			</div>
-			
+
 			<h2 id="download">Download</h2>
-			
+
 			<p><a href="http://yourls.org/download">Download YOURLS</a> from Github</p>
 			<p>You can follow YOURLS' development on the <a href="http://yourls.org/revisions">commit history</a> and get <a href="https://github.com/YOURLS/YOURLS/archive/master.zip">current development build</a></p>
-			
+
 			<h2 id="credits">Credits</h2>
-			
+
 			<p>YOURLS is made by <a href="https://github.com/YOURLS/YOURLS/graphs/contributors">awesome people</a>.</p>
 
 			<p>Keep up to date: follow <a href="http://twitter.com/yourls">@yourls</a>, <a href="http://twitter.com/ozh">@ozh</a> (lead developer)and read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>
@@ -342,9 +342,13 @@
 				<li>Create a new database (see <a href="#Config" onclick="toggle(this);">Configuration</a> &ndash; you can also use an existing one)</li>
 				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 			</ol>
-			<a href="https://www.rosehosting.com/blog/how-to-install-yourls-on-ubuntu-14-04/">How to Install YOURLS on Ubuntu 14.04</a> (Unoficial guide) <br/>
-			<a href="https://thishosting.rocks/how-to-shorten-your-links-with-your-own-domain/#vps">How to Install YOURLS on CentOS 7</a> (Unoficial guide) <br/>
-			<a href="https://thishosting.rocks/how-to-shorten-your-links-with-your-own-domain/#shared">How to Install YOURLS on Shared hosting (cPanel)</a> (Unoficial guide) 
+			<h3 class='first' id="auto">Install Guides</h3>
+            <p>Here is a list of some (unofficial) install guides using automated tools:</p>
+			<ul>
+            <li><a href="https://www.rosehosting.com/blog/how-to-install-yourls-on-ubuntu-14-04/">How to Install YOURLS on Ubuntu 14.04</a></li>
+			<li><a href="https://thishosting.rocks/how-to-shorten-your-links-with-your-own-domain/">How to Install YOURLS on a VPS or shared hosting</a></li>
+			<li><a href="https://www.websitehostingrating.com/how-to-install-yourls-using-softaculous/">How to Install YOURLS using Softaculous</a></li>
+            </ul>
 			<h2 id="upgrade">Upgrade</h2>
 			<ol>
 				<li><strong>Backup the database!</strong></li>
@@ -353,22 +357,10 @@
 				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 				<li>Tip: you can now move your <code>config.php</code> file to the <code>/user</code> directory</li>
 			</ol>
-			
-			<h2 id="upgrade13">Upgrade from YOURLS 1.3 or earlier</h2>
-			<ol>
-				<li><strong>Backup the database!</strong></li>
-				<li>Make a copy of your <code>config.php</code></li>
-				<li>Delete all files including <code>.htaccess</code> in YOURLS root directory</li>
-				<li>Unzip the YOURLS archive, upload the files</li>
-				<li>Copy <code>config-sample.php</code> to <code>config.php</code> and fill in details. <strong>Don't start with your old config file</strong>, use the new sample config file.</li>
-				<li>In your new <code>config.php</code>, add the <em>defines</em> for <code>YOURLS_DB_TABLE_URL</code> and <code>YOURLS_DB_TABLE_NEXTDEC</code> you had in your previous config file
-				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code> and follow instructions</li>
-				<li>After upgrade is well and over, remove the define <code>YOURLS_DB_TABLE_NEXTDEC</code> from your config file</li>
-			</ol>
-			
+
 		</div>
 
-		<!-- Configuration Instructions -->	
+		<!-- Configuration Instructions -->
 		<div id="ConfigDiv" style="display: none;">
 			<h2 class='first'>Configuration (in <code>user/config.php</code>)</h2>
 			<h3 id="mysql">MySQL settings</h3>
@@ -389,7 +381,7 @@
 				The name prefix for all the tables YOURLS will need<br/>
 				<em>Example:</em> <tt>define( 'YOURLS_DB_PREFIX', 'yourls_' );</tt></li>
 			</ul>
-			
+
 			<h3 id="site">Site options</h3>
 			<ul>
 				<li><code>YOURLS_SITE</code><br/>
@@ -413,7 +405,7 @@
 				Passwords can either be in plain text, or encrypted: see <a href="http://yourls.org/userpassword">http://yourls.org/userpassword</a> for more information.<br/>
 				<em>Example:</em> <tt>'joe' => 'mypassword'</tt></li>
 			</ul>
-			
+
 			<h3 id="urlsettings">URL Shortening settings</h3>
 			<ul>
 				<li><code>YOURLS_URL_CONVERT</code><br/>
@@ -422,7 +414,7 @@
 				A list of reserved keywords that won't be used as short URLs. Define here negative, unwanted or potentially misleading keywords<br/>
 				<em>Example:</em> <tt>'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick'</tt></li>
 			</ul>
-			
+
 			<h3 id="optional">Optional settings</h3>
 			<ul>
 				<li><code>YOURLS_PRIVATE_INFOS</code><br/>
@@ -436,7 +428,7 @@
 				If <code>YOURLS_NOSTATS</code> is set to <tt>true</tt>, redirects won't be logged and there will be not stats available.<br/>
 				</li>
 			</ul>
-			
+
 			<h3 id="advanced">Advanced settings</h3>
             <ul>
                 <li>YOURLS will look for the MySQL extension PDO, MySQLi or MySQL, in that order. If you want to force usage of one particular extension, add the following line to your <code>config.php</code>:<br/>
@@ -445,11 +437,11 @@
                 <li>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</li>
             </ul>
 		</div>
-		
+
 		<!-- YOURLS plugins -->
 		<div id="PluginsDiv" style="display:none">
 			<h2 class='first'>Plugins for YOURLS</h2>
-			
+
 			<h3 id="plugins">Plugins?</h3>
 			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
 			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation and you can easily activate and deactivate a plugin from the admin interface.</p>
@@ -458,13 +450,13 @@
 			<h3 id="documentation">Documentation</h3>
 			<p>Several sample plugins are included in the archive. Read the source and learn the concept. It's easy and fun!</p>
 			<p>Check the <a href="http://yourls.org/pluginapi">plugin API documentation</a> to learn more</p>
-		
+
 		</div>
-		
+
 		<!-- API -->
 		<div id="APIDiv" style="display:none">
 			<h2 class='first'>YOURLS' API</h2>
-			
+
 			<h3 id="apifeatures">Features</h3>
 			<ul>
 				<li>Generate or get existing short URLs, with sequential or custom keyword</li>
@@ -472,7 +464,7 @@
 				<li>Output format: JSON, XML, or simple raw text</li>
 				<li>Authentify either with login/password or using a secure passwordless mechanism</li>
 			</ul>
-			
+
 			<h3 id="apiusage">Usage</h3>
 			<p>You need to send parameters to <code>http://your-own-domain-here.com/yourls-api.php</code> either via <code>GET</code> or <code>POST</code> (remember to <strong></strong>URL encode parameters</strong> if via GET). These parameters are:</p>
 			<ul>
@@ -510,7 +502,7 @@
 					</ul>
 				</li>
 			</ul>
-            
+
             <h3 id="apiexample">Sample requests</h3>
             <p>Example of a <tt>GET</tt> request with Javascript (using jQuery) to shorten a URL</p>
             <pre><tt>var api_url  = 'http://sho.rt/yourls-api.php';
@@ -527,7 +519,7 @@ var response = $.get( api_url, {
         return data.shorturl;
     }
 );</tt></pre>
-            
+
             <p>Example of a <tt>POST</tt> request with PHP to expand a short URL</p>
             <pre><tt>&lt?php
 $username = 'your_username';
@@ -555,7 +547,7 @@ curl_close($ch);
 // Do something with the result. Here, we echo the long URL
 $data = json_decode( $data );
 echo $data->longurl;</tt></pre>
-			
+
 			<h3 id="apireturn">Sample returns</h3>
             <p>Sample return in JSON format for the <code>shorturl</code> action</p>
             <pre><tt>{
@@ -572,7 +564,7 @@ echo $data->longurl;</tt></pre>
   "shorturl": "http:\/\/sho.rt\/1f",
   "statusCode": 200
 }</tt></pre>
-            
+
             <p>Sample return in XML format for the <code>expand</code> action</p>
 			<pre><tt>&lt;result&gt;
     &lt;keyword&gt;ozh&lt;/keyword&gt;
@@ -589,9 +581,9 @@ echo $data->longurl;</tt></pre>
 			<p>You can easily implement custom API actions with a plugin. See the <a href="http://yourls.org/pluginlist">plugin list</a> for examples.</p>
 
 		</div>
-		
 
-		<!-- FAQ Instructions -->	
+
+		<!-- FAQ Instructions -->
 		<div id="FAQDiv" style="display: none;">
 			<h2 class='first'>FAQ</h2>
 
@@ -607,13 +599,13 @@ echo $data->longurl;</tt></pre>
 			<ul>
 				<li>PHP <a href="http://www.php.net/curl">CURL extension</a> installed if you plan on playing with the API</li>
 			</ul>
-			
+
 			<h3 id="limitations">Limitations</h3>
 			<ul>
 				<li>Maximum length of custom keyword is <strong>200 characters</strong></li>
 				<li>That makes about <strong>8 sexdecillions of centillions</strong> of available URLs (<a href="http://en.wikipedia.org/wiki/Names_of_large_numbers">seriously</a>. That's a 355 digits number). </li>
 			</ul>
-			
+
 			<h3 id="base3662">Difference Between Base 36 And Base 62 Encoding</h3>
 			<ul>
 				<li>Base 36 encoding uses <code>0123456789abcdefghijklmnopqrstuvwxyz</code> for short URLs</li>
@@ -621,7 +613,7 @@ echo $data->longurl;</tt></pre>
 				<li>Stick to one setting, don't change after you've created links as it will change all your short URLs!</li>
 				<li>Base 36 is the default and should be picked if you're not sure.</li>
 			</ul>
-			
+
 			<h3 id="shortdomain">Getting a short domain name for your YOURLS install</h3>
 			<ul>
 				<li>Unless you plan on making it public and as popular as bit.ly, any shared hosting will be fine. Ozh runs all his YOURLS instance on <a href="http://yourls.org/dreamhost">Dreamhost</a> and it works just great.</li>
@@ -634,32 +626,32 @@ echo $data->longurl;</tt></pre>
 				<li>You cannot install YOURLS and, say, WordPress, in the same directory. Both need to handle URLs differently and need their own <tt>.htaccess</tt> file.</li>
 				<li>If you want to install YOURLS on the same domain than your blog, give it its own (short) subdirectory, such as yourblog.com/s/ (for "short") or yourblog.com/x/ (for "exit")</li>
 			</ul>
-			
+
 			<h3 id="does404">If YOURLS generates 404 for your short URLs</h3>
 			<ul>
 				<li>Make sure <strong>mod_rewrite</strong> is enabled with your Apache server</li>
 				<li>Make sure your .htaccess file looks like <a href="http://yourls.org/htaccess">this one</a></li>
 				<li>Eventually, check your server Apache configuration allows use of .htaccess (<tt>AllowOverride All</tt> directive, ask your server admin)</li>
 			</ul>
-			
+
 			<h3 id="sequential">Random versus sequential short URLs</h3>
 			<ul>
 				<li>Out of the box, YOURLS generates sequential short URLS (ie <code>ab31</code>, then <code>ab32</code> and so on)</li>
 				<li>If you prefer random short URLs (ie <code>j3kz1</code> then <code>13hz7</code> like Bitly does), just activate the plugin that comes with YOURLS.</li>
 			</ul>
-			
+
 			<h3 id="noindex">There is no index page at the root of the install</h3>
 			<ul>
 				<li>Indeed. It's intended. It's up to the user to make what they need. Some will redirect the root to a different place, some make a public interface for anyone to shorten links, some make a portfolio. You make it.</li>
 				<li>If you want to make a public interface and run your own little bitly.com, there's a sample file provided as an example: <code>sample-public-front-page.txt</code>. This implies important issues to deal with: spam, performance and security. Read <a href="http://yourls.org/public">Public Shortening</a> for important information.</li>
 			</ul>
-			
+
 			<h3 id="lowercase">Uppercase letters in short URLs are eaten up, eg "<code>OmgOzh</code>" becomes "<code>mgzh</code>" !</h3>
 			<ul>
 				<li>Indeed. It's intented if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
 				<li>If you want to force lowercase, you'll need a <a href="http://yourls.org/pluginlist">plugin</a>.</li>
 			</ul>
-			
+
 			<h3 id="feedback">Feedback, feature requests and bug reporting</h3>
 			<ol>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="http://yourls.org/support">Please</a>.</li>
@@ -670,78 +662,78 @@ echo $data->longurl;</tt></pre>
 			</ol>
 
 		</div>
-		
-		
-		<!-- More -->	
+
+
+		<!-- More -->
 		<div id="MoreDiv" style="display: none;">
-		
+
 			<h2 class='first'>Community</h2>
-			
+
 			<p>YOURLS is open source, so the community of users plays a great role in its development, by contributing, helping others or giving feedback that helps improve the software.</p>
-			
+
 			<h3 id="ressources">Resources</h3>
 			<ul>
 				<li>The official <a href="http://blog.yourls.org">YOURLS blog</a>, for news, hints and showcase.</li>
 				<li>The <a href="http://yourls.org/wiki">wiki</a>: advanced documentation, plugins, tips and more</li>
 				<li>Follow <a href="https://twitter.com/YOURLS">@YOURLS</a> for hardcore development, and <a href="https://twitter.com/ozh">@Ozh</a> for tips and news (and random geekiness too)</li>
 			</ul>
-		
+
 			<h2 id="showcase">Showcase</h2>
 
 			<h3>Here are a few examples of sites running YOURLS with a unique design or concept</h3>
 			<ul>
 				<li><a href="http://oe.cd/">http://oe.cd/</a><br/>
 				OECD's internal URL shortener with a neat interface and private features</li>
-				
+
 				<li><a href="http://yourwish.es/">http://yourwish.es/</a><br/>
 				Easily share an Amazon wishlist</li>
-				
+
 				<li><a href="http://vbly.us">http://vbly.us</a><br/>
 				Public YOURLS setup and early adopter, run by famous sex writer Violet Blue as "the internet's first and only sex-positive url shortener", once taken down by Libya (<a href="http://www.readwriteweb.com/archives/libya_shuts_down_vbly_bitly_owly_next.php">story</a>)</li>
 			</ul>
-			
+
 			<h2 id="frameworks">YOURLS and other platforms or frameworks</h2>
-			<ul>		
+			<ul>
 				<li id="wordpress"><a href="http://wordpress.org/extend/plugins/search.php?q=yourls">WordPress</a><br/>
 				There are numerous WordPress plugin with YOURLS support. <a href="http://wordpress.org/extend/plugins/yourls-link-creator/">YOURLS Link Creator</a> is recommended.</li>
-				
+
 				<li id="drupal"><a href="http://drupal.org/project/yourls">Drupal</a><br/>
 				Allows for the automatic creation of short urls using a YOURLS installation</li>
-				
+
 				<li id="perl"><a href="http://github.com/pjain/WWW-Shorten-Yourls">Perl</a><br/>
 				WWW-Shorten-Yourls is a Perl module to shorten URLs using YOURLS</li>
-				
+
 				<li id="ruby"><a href="https://github.com/threestage/yourls">Ruby</a><br/>
 				A Ruby wrapper for the YOURLS API</li>
-				
+
 				<li id="python"><a href="http://tflink.github.com/python-yourls/">Python</a><br/>
 				A Python client for YOURLS</li>
-				
+
 				<li id="vbnet"><a href="http://www.nugardt.com/open-source/yourls-api/">VB .Net</a><br/>
 				A VB .Net 4.0 wrapper for the YOURLS API</li>
-				
+
 				<li id="javascript"><a href="http://neocotic.com/yourls-api/">Javascript</a><br/>
 				JavaScript bindings for the YOURLS API to leverage JSONP support</li>
 
 				<li id="cake"><a href="https://github.com/driflash/CakePHP-YOURLS-Plugin">CakePHP</a><br/>
 				Plugin which integrates CakePHP with Yourls</li>
-				
+
 				<li id="statusnet"><a href="https://github.com/rthees/yourls-status-net">status.net</a><br/>
 				A plugin for status.net to use YOURLS</li>
-				
+
 				<li id="sharetronix"><a href="http://developer.sharetronix.com/mpview/12/tag:yourls">Sharetronix</a><br/>
 				A YOURLS addon for Sharetronix</li>
-				
+
 			</ul>
-				
+
 			<h2>YOURLS works with your favorite sofware or device</h2>
 			<ul>
 				<li id="tweetie2"><a href="http://www.eugenegordin.com/etc/how-to-use-your-custom-yourls-shortener-with-tweetie-2.html">Tweetie 2</a><br/>
 				How to set up Tweetie2 so it uses your own service</li>
-				
+
 				<li id="tweetbot"><a href="http://2fatdads.com/2012/02/how-to-make-yourls-org-work-in-tweetbot/">Tweetbot</a><br/>
 				Make Tweetbot run with YOURLS</li>
-				
+
 				<li id="twitterfeed"><a href="http://blog.yourls.org/2011/09/how-to-use-twitterfeed-with-your-custom-yourls-url-shortener/">Twitterfeed</a><br/>
 				Use Twitterfeed with YOURLS</li>
 
@@ -766,52 +758,52 @@ echo $data->longurl;</tt></pre>
 
 			<h2 id="morestuff">More stuff to do with YOURLS</h2>
 			<ul>
-				
+
 				<li><a href="https://github.com/tomslominski/infinity-squared">Infinity Squared</a><br/>
 				&#8734;&sup2; is a public page theme for YOURLS to help you design your own public interface</li>
-				
+
 				<li><a href="https://github.com/Flynntes/Sleeky">Sleeky</a><br/>
 				Sleeky is another public page theme for YOURLS</li>
-				
+
 				<li><a href="https://github.com/ScottHelme/yourls-index-page">Scott Helme's page</a><br/>
 				Example index page listing all the URLs held in a YOURLS database</li>
-				
+
 				<li><a href="http://screenr.com/nTs">http://screenr.com/nTs</a><br/>
 				A screencast explaining how to setup YOURLS</li>
-				
+
 				<li><a href="http://v007.me/836">YOURLS: Short URL Widget</a><br/>
 				Creates a fully configurable widget that outputs the short URL to the current post or page</li>
-				
+
 				<li><a href="http://foolrulez.org/blog/2009/09/yourls-widget-released">YOURLS Widget for WordPress</a><br/>
 				This widget adds a convenient short URL service into your sidebar. Check the above link for a live example</li>
-				
+
 				<li><a href="http://www.stewartallen.org/2010/08/yourls-twitter-tools-wordpress-plugin/">Twitter Tools & YOURLS</a><br/>
 				Companion plugin for Alex King's Twitter Tool for WordPress, that enables YOURLS support</li>
-				
+
 				<li><a href="http://code.google.com/p/yourls/issues/detail?id=137">Export URLS as text list</a><br/>
 				A simple script to list all URLs, one per line, in plain text (for using as an indexer config file, for example)</li>
-				
+
 				<li>YOURLS featured on <a href="http://lifehacker.com/5335216/make-your-own-url-shortening-service">Lifehacker</a></li>
 			</ul>
 
 			<h2>"Celebrity endorsements", sort of.</h2>
 			<ul>
-				
+
 				<li><a href="http://smashed.by/">http://smashed.by/</a> by <a href="http://smashingmagazine.com/">Smashing Magazine</a></li>
-                
+
 				<li><a href="http://oe.cd/">http://oe.cd/</a> by <a href="http://www.oecd.org/">the OECD</a></li>
 
 				<li><a href="http://cuny.is/">http://cuny.is/</a> by <a href="http://www.cuny.edu/">the City University of New York</a></li>
 
 				<li><a href="http://virg.in/">http://virg.in/</a> for the <a href="http://www.virgin.com/">Virgin Group companies</a></li>
-                
+
 				<li><a href="http://dhurl.org/">http://dhurl.org/</a> by <a href="http://yourls.org/dreamhost">Dreamhost</a></li>
 
 				<li><a href="https://rho.st/">https://rho.st/</a> by <a href="https://www.rosehosting.com/">RoseHosting.com</a></li>
-				
+
 			</ul>
-				
-				
+
+
 		</div>
 	</div> <!-- content -->
 	</main>
@@ -834,7 +826,7 @@ echo $data->longurl;</tt></pre>
 	}
 	// Scroll to ?anchor
 	// window.location.hash
-	
+
 	// Toggle tab display
 	function toggle(el) {
 		var hashes = el.toString().replace(/^.*?#/, '').split('#');
