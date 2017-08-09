@@ -12,7 +12,6 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	 * Check that a few IPv4 resolve to the correct country code
 	 *
 	 * @dataProvider ipv4_samples
-	 * @since 0.1
 	 */
 	public function test_ip_to_countrycode_ipv4( $ip, $country ) {
 		$this->assertEquals( $country, yourls_geo_ip_to_countrycode( $ip, 'none' ) );
@@ -22,7 +21,6 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	 * Check that a few IPv6 resolve to the correct country code
 	 *
 	 * @dataProvider ipv6_samples
-	 * @since 0.1
 	 */
 	public function test_ip_to_countrycode_ipv6( $ip, $country ) {
 		$this->assertEquals( $country, yourls_geo_ip_to_countrycode( $ip, 'none' ) );
@@ -32,16 +30,24 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	 * Check a few country code => country name pairs
 	 *
 	 * @dataProvider country_codes
-	 * @since 0.1
 	 */
 	public function test_countrycode_to_countryname( $code, $country ) {
 		$this->assertEquals( $country, yourls_geo_countrycode_to_countryname( $code ) );
 	}
 	
-	/**
+    /**
+     * Check a few code return a string when getting their country flag
+     */
+    public function test_country_images() {
+        $this->assertInternalType('string', yourls_geo_get_flag('AU')); // something like http://yourls/includes/geo/flags/flag_au.gif
+        $this->assertInternalType('string', yourls_geo_get_flag('FR'));
+        $this->assertInternalType('string', yourls_geo_get_flag(''));   // something like http://yourls/includes/geo/flags/flag_.gif
+        $this->assertFalse(yourls_geo_get_flag('OMGLOL'));
+    }
+    
+    
+    /**
 	 * Data provider : array of arrays of ( 'ip', 'country code' ) in IPv4 notation
-	 *
-	 * @since 0.1
 	 */
 	public function ipv4_samples() {
 		return array(
@@ -55,8 +61,6 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	
 	/**
 	 * Data provider : array of arrays of ( 'ip', 'country code' ) in IPv6 notation
-	 *
-	 * @since 0.1
 	 */
 	public function ipv6_samples() {
 		return array(
@@ -70,20 +74,14 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	
 	/**
 	 * Data provider : array of arrays of ( 'country code', 'country name' )
-	 *
-	 * No need to test for non existant codes since in YOURLS all country codes are produced by the GeoIP API, hence
-	 * cannot be user made or arbitrary.
-	 *
-	 * @since 0.1
 	 */
 	public function country_codes() {
 		return array(
 			array( 'AU', 'Australia' ),
 			array( 'BZ', 'Belize' ),
 			array( 'CA', 'Canada' ),
+			array( 'WW', '' ),          // fake code
 		);
 	}
-	
-	
-	
+
 }
