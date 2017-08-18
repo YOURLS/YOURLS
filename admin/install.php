@@ -9,6 +9,11 @@ $warning = array();
 $success = array();
 
 // Check pre-requisites
+if ( !yourls_check_PDO() ) {
+	$error[] = yourls__( 'PHP extension for PDO not found' );
+	yourls_debug_log( 'PHP PDO extension not found' );
+}
+
 if ( !yourls_check_database_version() ) {
 	$error[] = yourls_s( '%s version is too old. Ask your server admin for an upgrade.', 'MySQL' );
 	yourls_debug_log( 'MySQL version: ' . yourls_get_database_version() );

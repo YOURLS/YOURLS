@@ -20,12 +20,12 @@ if ( !yourls_upgrade_is_needed() ) {
 
 } else {
 	/*
-	step 1: create new tables and populate them, update old tables structure, 
+	step 1: create new tables and populate them, update old tables structure,
 	step 2: convert each row of outdated tables if needed
 	step 3: - if applicable finish updating outdated tables (indexes etc)
 	        - update version & db_version in options, this is all done!
 	*/
-	
+
 	// From what are we upgrading?
 	if ( isset( $_GET['oldver'] ) && isset( $_GET['oldsql'] ) ) {
 		$oldver = yourls_sanitize_version( $_GET['oldver'] );
@@ -33,14 +33,17 @@ if ( !yourls_upgrade_is_needed() ) {
 	} else {
 		list( $oldver, $oldsql ) = yourls_get_current_version_from_sql();
 	}
-	
+
 	// To what are we upgrading ?
 	$newver = YOURLS_VERSION;
 	$newsql = YOURLS_DB_VERSION;
-	
+
 	// Verbose & ugly details
-	$ydb->show_errors = true;
-	
+    /**
+     * @todo wrapper function to toggle $ydb->debug
+     */
+	yourls_debug_mode(true);
+
 	// Let's go
 	$step = ( isset( $_GET['step'] ) ? intval( $_GET['step'] ) : 0 );
 	switch( $step ) {
@@ -64,23 +67,23 @@ if ( !yourls_upgrade_is_needed() ) {
 			<input type='hidden' name='newsql' value='$newsql' />
 			<input type='submit' class='primary' value='" . yourls_esc_attr__( 'Upgrade' ) . "' />
 			</form>";
-			
+
 			break;
-			
+
 		case 1:
 		case 2:
 			$upgrade = yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql );
 			break;
-			
+
 		case 3:
 			$upgrade = yourls_upgrade( 3, $oldver, $newver, $oldsql, $newsql );
 			echo '<p>' . yourls__( 'Your installation is now up to date ! ' ) . '</p>';
 			echo '<p>' . yourls_s( 'Go back to <a href="%s">the admin interface</a>', yourls_admin_url('index.php') ) . '</p>';
 	}
-	
+
 }
 
-		
-?>	
+
+?>
 
 <?php yourls_html_footer(); ?>

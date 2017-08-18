@@ -415,5 +415,60 @@
             "geolocation",
             "maxmind"
         ]
+    },
+    {
+        "name": "aura/sql",
+        "version": "2.5.1",
+        "version_normalized": "2.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/auraphp/Aura.Sql.git",
+            "reference": "ffc692d2037c1e8d17103ad0a128189ba6f59b96"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/ffc692d2037c1e8d17103ad0a128189ba6f59b96",
+            "reference": "ffc692d2037c1e8d17103ad0a128189ba6f59b96",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-10-03T20:31:07+00:00",
+        "type": "library",
+        "extra": {
+            "aura": {
+                "type": "library"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Aura\\Sql\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Aura.Sql Contributors",
+                "homepage": "https://github.com/auraphp/Aura.Sql/contributors"
+            }
+        ],
+        "description": "A PDO extension that provides lazy connections, array quoting, identifier quoting, query profiling, value binding, and convenience methods for common fetch styles. Because it extends PDO, existing code that uses PDO can use this without any changes to the existing code.",
+        "homepage": "https://github.com/auraphp/Aura.Sql",
+        "keywords": [
+            "mysql",
+            "pdo",
+            "pgsql",
+            "postgres",
+            "postgresql",
+            "sql server",
+            "sqlite",
+            "sqlserver",
+            "sqlsrv"
+        ]
     }
 ]

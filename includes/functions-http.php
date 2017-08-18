@@ -2,7 +2,7 @@
 /**
  * Functions that relate to HTTP requests
  *
- * On functions using the 3rd party library Requests: 
+ * On functions using the 3rd party library Requests:
  * Their goal here is to provide convenient wrapper functions to the Requests library. There are
  * 2 types of functions for each METHOD, where METHOD is 'get' or 'post' (implement more as needed)
  *     - yourls_http_METHOD() :
@@ -75,14 +75,14 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
  */
 function yourls_http_get_proxy() {
     $proxy = false;
-    
+
     if( defined( 'YOURLS_PROXY' ) ) {
         $proxy = YOURLS_PROXY;
         if( defined( 'YOURLS_PROXY_USERNAME' ) && defined( 'YOURLS_PROXY_PASSWORD' ) ) {
             $proxy = array( YOURLS_PROXY, YOURLS_PROXY_USERNAME, YOURLS_PROXY_PASSWORD );
         }
     }
-    
+
     return yourls_apply_filter( 'http_get_proxy', $proxy );
 }
 
@@ -119,7 +119,7 @@ function yourls_http_default_options() {
         $options['proxy'] = yourls_http_get_proxy();
 	}
 
-	return yourls_apply_filter( 'http_default_options', $options );	
+	return yourls_apply_filter( 'http_default_options', $options );
 }
 
 /**
@@ -142,28 +142,28 @@ function yourls_send_through_proxy( $url ) {
 		return $pre;
 
 	$check = @parse_url( $url );
-    
+
     if( !isset( $check['host'] ) ) {
         return false;
     }
-	
+
 	// Malformed URL, can not process, but this could mean ssl, so let through anyway.
 	if ( $check === false )
 		return true;
-	
+
 	// Self and loopback URLs are considered local (':' is parse_url() host on '::1')
 	$home = parse_url( YOURLS_SITE );
 	$local = array( 'localhost', '127.0.0.1', '127.1', '[::1]', ':', $home['host'] );
-	
+
 	if( in_array( $check['host'], $local ) )
 		return false;
-		
+
     $bypass = yourls_http_get_proxy_bypass_host();
-    
+
     if( $bypass === false OR $bypass === '' ) {
         return true;
     }
-        
+
 	// Build array of hosts to bypass
 	static $bypass_hosts;
 	static $wildcard_regex = false;
@@ -207,19 +207,19 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 		return $pre;
 
 	yourls_http_load_library();
-	
+
 	$options = array_merge( yourls_http_default_options(), $options );
-	
+
 	if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) ) {
 		unset( $options['proxy'] );
 	}
-    
+
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {
 		$result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
 	};
-	
+
 	return $result;
 }
 
@@ -263,14 +263,14 @@ function yourls_http_user_agent() {
 function yourls_check_core_version() {
 
 	global $ydb, $yourls_user_passwords;
-	
+
 	$checks = yourls_get_option( 'core_version_checks' );
-	
+
 	// Invalidate check data when YOURLS version changes
 	if ( is_object( $checks ) && YOURLS_VERSION != $checks->version_checked ) {
 		$checks = false;
 	}
-	
+
 	if( !is_object( $checks ) ) {
 		$checks = new stdClass;
 		$checks->failed_attempts = 0;
@@ -283,7 +283,7 @@ function yourls_check_core_version() {
 	$conf_loc = str_replace( YOURLS_ABSPATH, '', YOURLS_CONFIGFILE );
 	$conf_loc = str_replace( '/config.php', '', $conf_loc );
 	$conf_loc = ( $conf_loc == '/user' ? 'u' : 'i' );
-		
+
 	// The collection of stuff to report
 	$stuff = array(
 		// Globally uniquish site identifier
@@ -299,10 +299,10 @@ function yourls_check_core_version() {
 
 		// custom DB driver if any, and useful common PHP extensions
 		'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unset',
-		'db_ext_pdo'         => extension_loaded( 'pdo_mysql' ) ? 1 : 0,
-		'db_ext_mysql'       => extension_loaded( 'mysql' )     ? 1 : 0,
-		'db_ext_mysqli'      => extension_loaded( 'mysqli' )    ? 1 : 0,
-		'ext_curl'           => extension_loaded( 'curl' )      ? 1 : 0,
+		'db_ext_pdo'         => extension_loaded( 'PDO' )     ? 1 : 0,
+		'db_ext_mysql'       => extension_loaded( 'mysql' )   ? 1 : 0,
+		'db_ext_mysqli'      => extension_loaded( 'mysqli' )  ? 1 : 0,
+		'ext_curl'           => extension_loaded( 'curl' )    ? 1 : 0,
 
 		// Config information
 		'num_users'          => count( $yourls_user_passwords ),
@@ -313,15 +313,15 @@ function yourls_check_core_version() {
 		'num_active_plugins' => yourls_has_active_plugins(),
 		'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
 	);
-	
+
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
-	
+
 	// Send it in
 	$url = 'http://api.yourls.org/core/version/1.0/';
     if( yourls_can_http_over_ssl() )
         $url = yourls_set_url_scheme( $url, 'https' );
 	$req = yourls_http_post( $url, array(), $stuff );
-	
+
 	$checks->last_attempt = time();
 	$checks->version_checked = YOURLS_VERSION;
 
@@ -331,21 +331,21 @@ function yourls_check_core_version() {
 		yourls_update_option( 'core_version_checks', $checks );
 		return false;
 	}
-	
+
 	// Parse response
 	$json = json_decode( trim( $req->body ) );
-	
+
 	if( isset( $json->latest ) && isset( $json->zipurl ) ) {
 		// All went OK - mark this down
 		$checks->failed_attempts = 0;
 		$checks->last_result     = $json;
 		yourls_update_option( 'core_version_checks', $checks );
-		
+
 		return $json;
 	}
-	
+
 	// Request returned actual result, but not what we expected
-	return false;	
+	return false;
 }
 
 /**
@@ -371,7 +371,7 @@ function yourls_maybe_check_core_version() {
 		return false;
 
 	$checks = yourls_get_option( 'core_version_checks' );
-	
+
 	/* We don't want to check if :
 	 - last_result is set (a previous check was performed)
 	 - and it was less than 24h ago (or less than 2h ago if it wasn't successful)
@@ -380,7 +380,7 @@ function yourls_maybe_check_core_version() {
 	*/
 	if( !empty( $checks->last_result )
 		AND
-		( 
+		(
 			( $checks->failed_attempts == 0 && ( ( time() - $checks->last_attempt ) < 24 * 3600 ) )
 			OR
 			( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) <  2 * 3600 ) )
@@ -391,11 +391,11 @@ function yourls_maybe_check_core_version() {
 
 	// We want to check if there's a new version
 	$new_check = yourls_check_core_version();
-	
+
 	// Could not check for a new version, and we don't have ancient data
 	if( false == $new_check && !isset( $checks->last_result->latest ) )
 		return false;
-	
+
 	return true;
 }
 
@@ -407,16 +407,16 @@ function yourls_maybe_check_core_version() {
  */
 function yourls_can_http_over_ssl() {
     $ssl_curl = $ssl_socket = false;
-    
+
     if( function_exists( 'curl_exec' ) ) {
         $curl_version  = curl_version();
         $ssl_curl = ( $curl_version['features'] & CURL_VERSION_SSL );
     }
-    
+
     if( function_exists( 'stream_socket_client' ) ) {
-        $ssl_socket = extension_loaded( 'openssl' ) && function_exists( 'openssl_x509_parse' );    
+        $ssl_socket = extension_loaded( 'openssl' ) && function_exists( 'openssl_x509_parse' );
     }
-    
+
     return ( $ssl_curl OR $ssl_socket );
 }
 

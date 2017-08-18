@@ -1029,32 +1029,21 @@ function yourls_get_current_version_from_sql() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $default Optional value to return if option doesn't exist. Default false.
  * @return mixed Value set for the option.
  */
 function yourls_get_option( $option_name, $default = false ) {
-	global $ydb;
-
 	// Allow plugins to short-circuit options
 	$pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
 	if ( false !== $pre )
 		return $pre;
 
-	// If option not cached already, get its value from the DB
-	if ( !isset( $ydb->option[$option_name] ) ) {
-		$table = YOURLS_DB_TABLE_OPTIONS;
-		$option_name = yourls_escape( $option_name );
-		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
-		if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
-			$value = $row->option_value;
-		} else { // option does not exist, so we must cache its non-existence
-			$value = $default;
-		}
-		$ydb->option[ $option_name ] = yourls_maybe_unserialize( $value );
-	}
+	global $ydb;
+    $option = new \YOURLS\Database\Options($ydb);
+    $value  = $option->get($option_name, $default);
 
-	return yourls_apply_filter( 'get_option_'.$option_name, $ydb->option[$option_name] );
+    return yourls_apply_filter( 'get_option_'.$option_name, $value );
 }
 
 /**
@@ -1068,31 +1057,23 @@ function yourls_get_option( $option_name, $default = false ) {
  * @since 1.4
  */
 function yourls_get_all_options() {
-	global $ydb;
-
 	// Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
 	$pre = yourls_apply_filter( 'shunt_all_options', false );
 	if ( false !== $pre )
 		return $pre;
 
-	$table = YOURLS_DB_TABLE_OPTIONS;
+	global $ydb;
+    $options = new \YOURLS\Database\Options($ydb);
 
-	$allopt = $ydb->get_results( "SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1" );
-
-	foreach( (array)$allopt as $option ) {
-		$ydb->option[ $option->option_name ] = yourls_maybe_unserialize( $option->option_value );
-	}
-
-	if( property_exists( $ydb, 'option' ) ) {
-		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
-		$ydb->installed = true;
-	} else {
+    if($options->get_all_options() === false) {
 		// Zero option found: either YOURLS is not installed or DB server is dead
         if( !yourls_is_db_alive() ) {
             yourls_db_dead(); // YOURLS will die here
         }
-        $ydb->installed = false;
-	}
+        yourls_set_installed(false);
+    }
+
+	yourls_set_installed(true);
 }
 
 /**
@@ -1101,46 +1082,17 @@ function yourls_get_all_options() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $newvalue Option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
 
-	$option_name = trim( $option_name );
-	if ( empty( $option_name ) )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $update = $option->update($option_name, $newvalue);
 
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $newvalue ) )
-		$newvalue = clone $newvalue;
-
-	$option_name = yourls_escape( $option_name );
-
-	$oldvalue = yourls_get_option( $option_name );
-
-	// If the new and old values are the same, no need to update.
-	if ( $newvalue === $oldvalue )
-		return false;
-
-	if ( false === $oldvalue ) {
-		yourls_add_option( $option_name, $newvalue );
-		return true;
-	}
-
-	$_newvalue = yourls_escape( yourls_maybe_serialize( $newvalue ) );
-
-	yourls_do_action( 'update_option', $option_name, $oldvalue, $newvalue );
-
-	$ydb->query( "UPDATE `$table` SET `option_value` = '$_newvalue' WHERE `option_name` = '$option_name'" );
-
-	if ( $ydb->rows_affected == 1 ) {
-		$ydb->option[ $option_name ] = $newvalue;
-		return true;
-	}
-	return false;
+    return $update;
 }
 
 /**
@@ -1149,35 +1101,17 @@ function yourls_update_option( $option_name, $newvalue ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Name of option to add. Expected to not be SQL-escaped.
+ * @param string $name Name of option to add. Expected to not be SQL-escaped.
  * @param mixed $value Optional option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
 
-	$name = trim( $name );
-	if ( empty( $name ) )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $add    = $option->add($name, $value);
 
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $value ) )
-		$value = clone $value;
-
-	$name = yourls_escape( $name );
-
-	// Make sure the option doesn't already exist
-	if ( false !== yourls_get_option( $name ) )
-		return false;
-
-	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
-
-	yourls_do_action( 'add_option', $name, $_value );
-
-	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
-	$ydb->option[ $name ] = $value;
-	return true;
+    return $add;
 }
 
 
@@ -1187,24 +1121,16 @@ function yourls_add_option( $name, $value = '' ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name to delete. Expected to not be SQL-escaped.
+ * @param string $name Option name to delete. Expected to not be SQL-escaped.
  * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	$name = yourls_escape( $name );
 
-	// Get the ID, if no ID then return
-	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name'" );
-	if ( is_null( $option ) || !$option->option_id )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $delete = $option->delete($name);
 
-	yourls_do_action( 'delete_option', $name );
-
-	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
-	unset( $ydb->option[ $name ] );
-	return true;
+    return $delete;
 }
 
 
@@ -1470,13 +1396,19 @@ function yourls_is_upgrading() {
  */
 function yourls_is_installed() {
 	global $ydb;
-	$is_installed = ( property_exists( $ydb, 'installed' ) && $ydb->installed == true );
-	return yourls_apply_filter( 'is_installed', $is_installed );
+	return yourls_apply_filter( 'is_installed', $ydb->get_installed() );
+}
 
-	/* Note: this test won't work on YOURLS 1.3 or older (Aug 2009...)
-	   Should someone complain that they cannot upgrade directly from
-	   1.3 to 1.7: first, laugh at them, then ask them to install 1.6 first.
-	*/
+/**
+ * Set installed state
+ *
+ * @since  1.7.3
+ * @param  bool $bool  whether YOURLS is installed or not
+ * @return void
+ */
+function yourls_set_installed($bool) {
+    global $ydb;
+    $ydb->set_installed($bool);
 }
 
 /**
@@ -2357,6 +2289,18 @@ function yourls_debug_log( $msg ) {
 }
 
 /**
+ * Debug mode toggle
+ *
+ * @since 1.7.3
+ * @param bool $bool  Debug on or off
+ */
+function yourls_debug_mode($bool) {
+    global $ydb;
+    $bool = (bool)$bool;
+    $ydb->getProfiler()->setActive($bool);
+}
+
+/**
  * Explode a URL in an array of ( 'protocol' , 'slashes if any', 'rest of the URL' )
  *
  * Some hosts trip up when a query string contains 'http://' - see http://git.io/j1FlJg
@@ -2420,3 +2364,4 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
+

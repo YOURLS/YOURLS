@@ -1,69 +1,6 @@
 <?php
 
 /**
- * Pick the right DB class and return an instance
- *
- * @since 1.7
- * @param string $extension Optional: user defined choice
- * @return class $ydb DB class instance
- */
-function yourls_set_DB_driver( ) {
-
-	// Auto-pick the driver. Priority: user defined, then PDO, then mysqli, then mysql
-	if ( defined( 'YOURLS_DB_DRIVER' ) ) {
-		$driver = strtolower( YOURLS_DB_DRIVER ); // accept 'MySQL', 'mySQL', etc
-	} elseif ( extension_loaded( 'pdo_mysql' ) ) {
-		$driver = 'pdo';
-	} elseif ( extension_loaded( 'mysqli' ) ) {
-		$driver = 'mysqli';
-	} elseif ( extension_loaded( 'mysql' ) ) {
-		$driver = 'mysql';
-	} else {
-		$driver = '';
-	}
-	
-	// Set the new driver
-	if ( in_array( $driver, array( 'mysql', 'mysqli', 'pdo' ) ) ) {
-        $class = yourls_require_db_files( $driver );
-	}
-
-	global $ydb;
-
-	if ( !class_exists( $class, false ) ) {
-		$ydb = new stdClass();
-		yourls_die(
-			yourls__( 'YOURLS requires the mysql, mysqli or pdo_mysql PHP extension. No extension found. Check your server config, or contact your host.' ),
-			yourls__( 'Fatal error' ),
-			503
-		);
-	}
-	
-	yourls_do_action( 'set_DB_driver', $driver );
-		
-	$ydb = new $class( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-    $ydb->DB_driver = $driver;
-
-	yourls_debug_log( "DB driver: $driver" );
-}
-
-/**
- * Load required DB class files
- *
- * This goes in its own function to allow easier unit tests
- *
- * @since 1.7.1
- * @param string $driver DB driver
- * @return string name of the DB class to instantiate
- */
-function yourls_require_db_files( $driver ) {
-    require_once( YOURLS_INC . '/ezSQL/ez_sql_core.php' );
-    require_once( YOURLS_INC . '/ezSQL/ez_sql_core_yourls.php' );
-    require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '.php' );
-    require_once( YOURLS_INC . '/ezSQL/ez_sql_' . $driver . '_yourls.php' );
-    return 'ezSQL_' . $driver . '_yourls';
-} 
-
-/**
  * Connect to DB
  *
  * @since 1.0
@@ -75,16 +12,57 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );	
+	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
 
-	// Are we standalone or in the WordPress environment?
-	if ( class_exists( 'wpdb', false ) ) {
-		/* TODO: should we deprecate this? Follow WP dev in that area */
-		$ydb =  new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-	} else {
-		yourls_set_DB_driver();
-	}
-	
+    $dbhost = YOURLS_DB_HOST;
+    $user   = YOURLS_DB_USER;
+    $pass   = YOURLS_DB_PASS;
+    $dbname = YOURLS_DB_NAME;
+
+    // This action is deprecated
+    yourls_do_action( 'set_DB_driver', 'deprecated' );
+
+    // Get custom port if any
+    if ( false !== strpos( $dbhost, ':' ) ) {
+        list( $dbhost, $dbport ) = explode( ':', $dbhost );
+        $dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
+    }
+
+    /**
+     * Data Source Name (dsn) used to connect the DB
+     *
+     * DSN with PDO is something like:
+     * 'mysql:host=123.4.5.6;dbname=test_db;port=3306'
+     * 'sqlite:/opt/databases/mydb.sq3'
+     * 'pgsql:host=192.168.13.37;port=5432;dbname=omgwtf'
+     */
+    $dsn = sprintf( 'mysql:host=%s;dbname=%s', $dbhost, $dbname );
+    $dsn = yourls_apply_filter( 'db_connect_custom_dsn', $dsn );
+
+    /**
+     * PDO driver options and attributes
+
+     * The PDO constructor is something like:
+     *   new PDO( string $dsn, string $username, string $password [, array $options ] )
+     * The driver options are passed to the PDO constructor, eg array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+     * The attribute options are then set in a foreach($attr as $k=>$v){$db->setAttribute($k, $v)} loop
+     */
+    $driver_options = yourls_apply_filter( 'db_connect_driver_option', array() ); // driver options as key-value pairs
+    $attributes     = yourls_apply_filter( 'db_connect_attributes',    array() ); // attributes as key-value pairs
+
+    try {
+        $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
+    } catch (Exception $e) {
+        // TODO: something smarter with error handling here
+        $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
+        $message .= ' (' . get_class($e) .') (' . $e->getMessage() . ')';
+
+        yourls_die ( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+    }
+
+    $ydb->start_profiler();
+    yourls_debug_mode(YOURLS_DEBUG);
+
 	return $ydb;
 }
 
@@ -98,26 +76,26 @@ function yourls_db_connect() {
  */
 function yourls_is_db_alive() {
     global $ydb;
-    
+
     $alive = false;
     switch( $ydb->DB_driver ) {
         case 'pdo' :
             $alive = isset( $ydb->dbh );
             break;
-    
+
         case 'mysql' :
             $alive = ( isset( $ydb->dbh ) && false !== $ydb->dbh );
             break;
-    
+
         case 'mysqli' :
             $alive = ( null == mysqli_connect_error() );
             break;
-        
+
         // Custom DB driver & class : delegate check
         default:
             $alive = yourls_apply_filter( 'is_db_alive_custom', false );
     }
-    
+
     return $alive;
 }
 
