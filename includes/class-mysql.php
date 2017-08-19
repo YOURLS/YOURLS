@@ -28,6 +28,8 @@ function yourls_db_connect() {
         $dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
     }
 
+    $charset = yourls_apply_filter( 'db_connect_charset', 'utf8' );
+
     /**
      * Data Source Name (dsn) used to connect the DB
      *
@@ -36,7 +38,7 @@ function yourls_db_connect() {
      * 'sqlite:/opt/databases/mydb.sq3'
      * 'pgsql:host=192.168.13.37;port=5432;dbname=omgwtf'
      */
-    $dsn = sprintf( 'mysql:host=%s;dbname=%s', $dbhost, $dbname );
+    $dsn = sprintf( 'mysql:host=%s;dbname=%s;charset=%s', $dbhost, $dbname, $charset );
     $dsn = yourls_apply_filter( 'db_connect_custom_dsn', $dsn );
 
     /**
@@ -60,7 +62,6 @@ function yourls_db_connect() {
         yourls_die ( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
     }
 
-    $ydb->start_profiler();
     yourls_debug_mode(YOURLS_DEBUG);
 
 	return $ydb;

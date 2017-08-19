@@ -22,10 +22,12 @@ use YOURLS\Database\YDB;
 
 class Options {
 
-    /** @var \YOURLS\Database\YDB */
+    /**
+     * Hold a copy of the all mighty $ydb global
+     *
+     * @var \YOURLS\Database\YDB
+     */
     protected $ydb;
-
-    protected $option = array();
 
     public function __construct(YDB $ydb) {
         $this->ydb = $ydb;
@@ -48,10 +50,10 @@ class Options {
         }
 
         foreach($options as $name => $value) {
-            $this->option[$name] = yourls_maybe_unserialize($value);
+            $this->ydb->set_option($name, yourls_maybe_unserialize($value));
         }
 
-        $this->option = yourls_apply_filter('get_all_options', $this->option);
+        $deprecated = yourls_apply_filter('get_all_options', 'deprecated');
 
         return true;
     }
@@ -66,8 +68,8 @@ class Options {
      */
     public function get($name, $default) {
         // Check if option value is cached already
-        if(array_key_exists($name, $this->option)) {
-            return $this->option[$name];
+        if($this->ydb->has_option($name)) {
+            return $this->ydb->get_option($name);
         }
 
         // Get option value from DB
@@ -85,7 +87,7 @@ class Options {
         }
 
         // Cache option value to save a DB query if needed later
-        $this->option[$name] = $value;
+        $this->ydb->set_option($name, $value);
 
         return $value;
     }
@@ -133,7 +135,7 @@ class Options {
         }
 
         // Cache option value to save a DB query if needed later
-        $this->option[$name] = $newvalue;
+        $this->ydb->set_option($name, $newvalue);
     	yourls_do_action( 'update_option', $name, $oldvalue, $newvalue );
         return true;
     }
@@ -158,9 +160,12 @@ class Options {
         }
 
         // Make sure the option doesn't already exist
-        if (false !== yourls_get_option($name)) {
+        if ($this->ydb->has_option($name)) {
             return false;
         }
+        // if (false !== yourls_get_option($name)) {
+            // return false;
+        // }
 
         $table = YOURLS_DB_TABLE_OPTIONS;
         $_value = yourls_maybe_serialize($value);
@@ -174,7 +179,7 @@ class Options {
         }
 
         // Cache option value to save a DB query if needed later
-        $this->option[$name] = $value;
+        $this->ydb->set_option($name, $value);
         yourls_do_action('add_option', $name, $_value);
 
         return true;
@@ -199,7 +204,7 @@ class Options {
         }
 
         yourls_do_action('delete_option', $name);
-        unset($this->option[$name]);
+        $this->ydb->delete_option($name);
         return true;
     }
 

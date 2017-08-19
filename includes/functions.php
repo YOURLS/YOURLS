@@ -2284,7 +2284,7 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
-	$ydb->debug_log[] = $msg;
+    $ydb->debug_log($msg);
 	return $msg;
 }
 

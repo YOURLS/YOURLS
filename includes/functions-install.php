@@ -32,21 +32,18 @@ function yourls_check_database_version() {
 /**
  * Get DB version
  *
- * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
- * follows after that.
- *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
- *   'mysql5.5-ubuntu-4.20'     => '5.5'
- *   '5.5-ubuntu-4.20'          => '5.5'
- *   '5.5-beta2'                => '5.5'
- *   '5.5'                      => '5.5'
- *
  * @since 1.7
  * @return string sanitized DB version
  */
 function yourls_get_database_version() {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_get_database_version', false );
+	if ( false !== $pre )
+		return $pre;
+
 	global $ydb;
 
-	return preg_replace( '/(^[^0-9]*)|[^0-9.].*/', '', $ydb->mysql_version() );
+	return $ydb->mysql_version();
 }
 
 /**

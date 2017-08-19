@@ -24,7 +24,7 @@ class YDB extends ExtendedPdo {
      * @tempnote 1 plugin accessing this property (ozh_yourls_sqlite)
      * @var array
      */
-    public $debug_log = array();
+    protected $debug_log = array();
 
     /**
      * Debug mode, default false
@@ -87,14 +87,6 @@ class YDB extends ExtendedPdo {
     protected $plugins = array();
 
     /**
-     * Aura Profiler
-     * @var Profiler
-     */
-    // protected $profiler;
-
-    // public $dsn;
-
-    /**
      * Deprecated properties since 1.7.3, unused in 3rd party plugins as far as I know
      *
      * $ydb->DB_driver
@@ -104,6 +96,25 @@ class YDB extends ExtendedPdo {
      * $ydb->rows_affected
      * $ydb->show_errors
      */
+
+    /**
+     * Class constructor
+     *
+     * Don't forget to end with a call to the parent constructor
+     *
+     * @since 1.7.3
+     * @param string $dsn        The data source name
+     * @param string $user       The username
+     * @param string $pass       The password
+     * @param array $options     Driver-specific options
+     * @param array $attributes  Attributes to set after a connection
+     */
+    public function __construct($dsn, $user, $pass, $driver_options, $attributes) {
+        parent::__construct($dsn, $user, $pass, $driver_options, $attributes);
+
+        // The Aura\Sql\Profiler logs queries info
+        $this->start_profiler();
+    }
 
     public function start_profiler() {
         $this->profiler = new Profiler();
@@ -115,6 +126,24 @@ class YDB extends ExtendedPdo {
 
     public function get_html_context() {
         return $this->context;
+    }
+
+    // Options low level functions, see \YOURLS\Database\Options
+
+    public function set_option($name, $value) {
+        $this->option[$name] = $value;
+    }
+
+    public function has_option($name) {
+        return array_key_exists($name, $this->option);
+    }
+
+    public function get_option($name) {
+        return $this->option[$name];
+    }
+
+    public function delete_option($name) {
+        unset($this->option[$name]);
     }
 
     /**
@@ -139,34 +168,30 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Set option value
+     * Return standardized DB version
+     *
+     * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
+     * follows after that.
+     *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
+     *   'mysql5.5-ubuntu-4.20'     => '5.5'
+     *   '5.5-ubuntu-4.20'          => '5.5'
+     *   '5.5-beta2'                => '5.5'
+     *   '5.5'                      => '5.5'
      *
      * @since  1.7.3
-     * @param  string $name
-     * @param  mixed  $value
-     * @return void
+     * @return string
      */
-    public function zset_option($name, $value) {
-        $this->option[$name] = $value;
-    }
-
-    /**
-     * Get option value
-     *
-     * @since  1.7.3
-     * @param  string $name
-     * @return mixed
-     */
-    public function zget_option($name) {
-        if(array_key_exists($name, $this->option)) {
-            return $this->option[$name];
-        }
-
-        return false;
-    }
-
     public function mysql_version() {
-        return $this->ydb->getAttribute(PDO::ATTR_SERVER_VERSION);
+        $version = $this->pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
+        return preg_replace('/(^[^0-9]*)|[^0-9.].*/', '', $version);
+    }
+
+    public function debug_log($msg) {
+        $this->debug_log[] = $msg;
+    }
+
+    public function get_debug_log() {
+        return $this->debug_log;
     }
 
     public function is_alive() {
