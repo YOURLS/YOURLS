@@ -101,8 +101,7 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 }
 
 // Load 3rd party and YOURLS libraries
-$load = require_once YOURLS_INC. '/vendor/autoload.php';
-$load->add('YOURLS', YOURLS_INC);
+require_once YOURLS_INC. '/vendor/autoload.php';
 
 // Include all functions
 require_once( YOURLS_INC.'/version.php' );

@@ -16,5 +16,8 @@
     },
     "config": {
         "vendor-dir": "includes/vendor"
+    },
+    "autoload": {
+        "psr-4": {"YOURLS\\": "includes/yourls"}
     }
 }
