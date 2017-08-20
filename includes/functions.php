@@ -657,7 +657,7 @@ function yourls_get_db_stats( $where = '' ) {
 function yourls_get_num_queries() {
 	global $ydb;
 
-	return yourls_apply_filter( 'get_num_queries', $ydb->num_queries );
+	return yourls_apply_filter( 'get_num_queries', $ydb->get_num_queries() );
 }
 
 /**

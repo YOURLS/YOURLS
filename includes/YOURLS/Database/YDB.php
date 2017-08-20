@@ -61,18 +61,11 @@ class YDB extends ExtendedPdo {
     protected $installed = false;
 
     /**
-     * Number of SQL queries fetched
-     * @todo Get rid of this
-     * @var int
-     */
-    protected $num_queries = 0;
-
-    /**
      * Options
      * @tempnote 6 plugins accessing this property although there are functions to do so
      * @var array
      */
-    public $option = array();
+    protected $option = array();
 
     /**
      * Plugin admin pages informations
@@ -144,6 +137,59 @@ class YDB extends ExtendedPdo {
 
     public function delete_option($name) {
         unset($this->option[$name]);
+    }
+
+    /**
+     * Return count of SQL queries performed
+     *
+     * @since  1.7.3
+     * @return int
+     */
+    public function get_num_queries() {
+        return count( (array) $this->get_queries() );
+    }
+
+    /**
+     * Return SQL queries performed
+     *
+     * Aura\Sql\Profiler logs every PDO command issued. But depending on PDO::ATTR_EMULATE_PREPARES, some are
+     * actually sent to the mysql server or not :
+     *  - if PDO::ATTR_EMULATE_PREPARES is true, prepare() statements are not sent to the server and are performed
+     *    internally, so they are removed from the logger
+     *  - if PDO::ATTR_EMULATE_PREPARES is false, prepare() statements are actually performed by the mysql server,
+     *    and count as an actual query
+     *
+     * Resulting array is something like:
+     *   array (
+     *      0 => array (
+     *           'duration' => 1.0010569095611572265625,
+     *           'function' => 'connect',
+     *           'statement' => NULL,
+     *           'bind_values' => array (),
+     *           'trace' => ...back trace...,
+     *       ),
+     *       // key index might not be sequential if 'prepare' function are filtered out
+     *       2 => array (
+     *           'duration' => 0.000999927520751953125,
+     *           'function' => 'perform',
+     *           'statement' => 'SELECT option_value FROM yourls_options WHERE option_name = :option_name LIMIT 1',
+     *           'bind_values' => array ( 'option_name' => 'test_option' ),
+     *           'trace' => ...back trace...,
+     *       ),
+     *   );
+     *
+     * @since  1.7.3
+     * @return array
+     */
+    public function get_queries() {
+        $queries = $this->getProfiler()->getProfiles();
+
+        if ($this->getAttribute(\PDO::ATTR_EMULATE_PREPARES)) {
+            // keep queries if $query['function'] != 'prepare'
+            $queries = array_filter($queries, function($query) {return $query['function'] !== 'prepare';});
+        }
+
+        return $queries;
     }
 
     /**

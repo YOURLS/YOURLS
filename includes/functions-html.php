@@ -138,9 +138,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  *
  */
 function yourls_html_footer() {
-	global $ydb;
+    $num_queries = yourls_get_num_queries();
 
-	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $ydb->num_queries ), $ydb->num_queries );
+	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
 	?>
 	</div><?php // wrap ?>
 	<footer id="footer" role="contentinfo"><p>
