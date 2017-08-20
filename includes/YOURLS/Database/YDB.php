@@ -139,6 +139,49 @@ class YDB extends ExtendedPdo {
         unset($this->option[$name]);
     }
 
+
+    // Plugin low level functions, see functions-plugins.php
+
+    public function get_plugins() {
+        return $this->plugins;
+    }
+
+    public function set_plugins(array $plugins) {
+        $this->plugins = $plugins;
+    }
+
+    public function add_plugin(array $plugin) {
+        $this->plugins[] = $plugin;
+    }
+
+    public function remove_plugin($plugin) {
+        unset($this->plugins[$plugin]);
+    }
+
+
+    // Plugin Pages low level functions, see functions-plugins.php
+
+    public function get_plugin_pages() {
+        return $this->plugin_pages;
+    }
+
+    public function set_plugin_pages(array $pages) {
+        $this->plugin_pages = $pages;
+    }
+
+    public function add_plugin_page($slug, $title, $function) {
+        $this->plugin_pages[$slug] = array(
+            'slug'     => $slug,
+            'title'    => $title,
+            'function' => $function,
+        );
+    }
+
+    public function remove_plugin_page($page) {
+        unset($this->plugin_pages[$page]);
+    }
+
+
     /**
      * Return count of SQL queries performed
      *
