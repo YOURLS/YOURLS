@@ -142,14 +142,23 @@ class YDB extends ExtendedPdo {
         $this->option[$name] = $value;
     }
 
+    /**
+     * @param string $name
+     */
     public function has_option($name) {
         return array_key_exists($name, $this->option);
     }
 
+    /**
+     * @param string $name
+     */
     public function get_option($name) {
         return $this->option[$name];
     }
 
+    /**
+     * @param string $name
+     */
     public function delete_option($name) {
         unset($this->option[$name]);
     }

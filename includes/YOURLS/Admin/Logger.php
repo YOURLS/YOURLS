@@ -31,6 +31,9 @@ class Logger extends \Aura\Sql\Profiler {
          */
     }
 
+    /**
+     * @param string $message
+     */
     public function log($message) {
         yourls_do_action('debug_log', $message);
         $this->debug_log[] = $message;
@@ -69,9 +72,9 @@ class Logger extends \Aura\Sql\Profiler {
      * This is merely a cosmetic replacement to allow for readability: the result WILL NOT be valid SQL! (eg no quotes around strings)
      *
      * @since  1.7.3
-     * @param  $statement  SQL query with PDO style named placeholders
-     * @param  $values     Optional array of values corresponding to placeholders
-     * @return strings     Readable SQL query with placeholders replaced
+     * @param  string $statement  SQL query with PDO style named placeholders
+     * @param  array  $values     Optional array of values corresponding to placeholders
+     * @return string             Readable SQL query with placeholders replaced
      */
     public function pretty_format($statement, array $values = array() ) {
         if (!$values) {
@@ -80,6 +83,10 @@ class Logger extends \Aura\Sql\Profiler {
 
         return preg_replace_callback(
             '/:([^\s;)]*)/',
+
+            /**
+             * @param string $matches
+             */
             function ($matches) use ($values) {
                 $replacement = isset( $values[$matches[1]] ) ? $values[$matches[1]] : '';
                 if(is_array($replacement)) {
