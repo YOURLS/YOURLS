@@ -256,7 +256,7 @@ function yourls_create_sql_tables() {
 
 	$create_table_count = 0;
 
-    yourls_debug_mod(true);
+    yourls_debug_mode(true);
 
 	// Create tables
 	foreach ( $create_tables as $table_name => $table_query ) {
