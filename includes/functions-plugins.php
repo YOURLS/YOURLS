@@ -553,7 +553,7 @@ function yourls_list_plugin_admin_pages() {
     }
 
 	$plugin_links = array();
-	foreach( (array)$ypages as $plugin => $page ) {
+	foreach( (array)$pages as $plugin => $page ) {
 		$plugin_links[ $plugin ] = array(
 			'url'    => yourls_admin_url( 'plugins.php?page='.$page['slug'] ),
 			'anchor' => $page['title'],

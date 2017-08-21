@@ -13,30 +13,17 @@
 
 namespace YOURLS\Database;
 
+use YOURLS\Admin\Logger;
 use Aura\Sql\ExtendedPdo;
-use Aura\Sql\Profiler;
 
 
 class YDB extends ExtendedPdo {
-
-    /**
-     * Message logger
-     * @tempnote 1 plugin accessing this property (ozh_yourls_sqlite)
-     * @var array
-     */
-    protected $debug_log = array();
 
     /**
      * Debug mode, default false
      * @var bool
      */
     protected $debug = false;
-
-    /**
-     * the Aura\Sql\ExtendedPdo instance
-     * @var Aura\Sql\ExtendedPdo
-     */
-    // public $ydb;
 
     /**
      * Page context (ie "infos", "bookmark", "plugins"...)
@@ -96,21 +83,29 @@ class YDB extends ExtendedPdo {
      * Don't forget to end with a call to the parent constructor
      *
      * @since 1.7.3
-     * @param string $dsn        The data source name
-     * @param string $user       The username
-     * @param string $pass       The password
-     * @param array $options     Driver-specific options
-     * @param array $attributes  Attributes to set after a connection
+     * @param string $dsn         The data source name
+     * @param string $user        The username
+     * @param string $pass        The password
+     * @param array  $options     Driver-specific options
+     * @param array  $attributes  Attributes to set after a connection
      */
     public function __construct($dsn, $user, $pass, $driver_options, $attributes) {
         parent::__construct($dsn, $user, $pass, $driver_options, $attributes);
 
-        // The Aura\Sql\Profiler logs queries info
+        // Log query infos
         $this->start_profiler();
     }
 
+    /**
+     * Start a Message Logger
+     *
+     * @since  1.7.3
+     * @see    \YOURLS\Admin\Logger
+     * @see    \Aura\Sql\Profiler
+     * @return void
+     */
     public function start_profiler() {
-        $this->profiler = new Profiler();
+        $this->profiler = new Logger($this);
     }
 
     public function set_html_context($context) {
@@ -275,14 +270,6 @@ class YDB extends ExtendedPdo {
         return preg_replace('/(^[^0-9]*)|[^0-9.].*/', '', $version);
     }
 
-    public function debug_log($msg) {
-        $this->debug_log[] = $msg;
-    }
-
-    public function get_debug_log() {
-        return $this->debug_log;
-    }
-
     public function is_alive() {
         throw new \Exception\is_alive();
     }
@@ -307,8 +294,10 @@ class YDB extends ExtendedPdo {
         return($stm->fetchAll(\PDO::FETCH_OBJ));
     }
 
-    public function get_row() {
-        throw new \Exception\get_row();
+    public function get_row($sql) {
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        $row = $this->fetchObjects($sql);
+        return $row[0];
     }
 
     public function get_var() {

@@ -152,10 +152,10 @@ function yourls_html_footer() {
 	</p></footer>
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
-		echo join( "\n", $ydb->debug_log );
+		echo join( "\n", yourls_get_debug_log() );
 		echo '</div>';
 	} ?>
-	<?php yourls_do_action( 'html_footer', $ydb->context ); ?>
+	<?php yourls_do_action( 'html_footer', yourls_get_html_context() ); ?>
 	</body>
 	</html>
 	<?php

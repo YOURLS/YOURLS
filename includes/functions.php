@@ -2284,8 +2284,19 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
-    $ydb->debug_log($msg);
+    $ydb->getProfiler()->log($msg);
 	return $msg;
+}
+
+/**
+ * Get the debug log
+ *
+ * @since  1.7.3
+ * @return array
+ */
+function yourls_get_debug_log() {
+	global $ydb;
+    return $ydb->getProfiler()->get_log();
 }
 
 /**
