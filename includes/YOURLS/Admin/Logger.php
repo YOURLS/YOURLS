@@ -74,6 +74,10 @@ class Logger extends \Aura\Sql\Profiler {
      * @return strings     Readable SQL query with placeholders replaced
      */
     public function pretty_format($statement, array $values = array() ) {
+        if (!$values) {
+            return $statement;
+        }
+
         return preg_replace_callback(
             '/:([^\s;)]*)/',
             function ($matches) use ($values) {

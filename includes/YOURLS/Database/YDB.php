@@ -15,7 +15,7 @@ namespace YOURLS\Database;
 
 use YOURLS\Admin\Logger;
 use Aura\Sql\ExtendedPdo;
-
+use PDO;
 
 class YDB extends ExtendedPdo {
 
@@ -135,6 +135,29 @@ class YDB extends ExtendedPdo {
     }
 
 
+    // Infos (related to keyword) low level functions
+
+    public function set_infos($keyword, $infos) {
+        $this->info[$keyword] = $infos;
+    }
+
+    public function has_infos($keyword) {
+        return array_key_exists($keyword, $this->infos);
+    }
+
+    public function get_infos($keyword) {
+        return $this->infos[$keyword];
+    }
+
+    public function delete_infos($keyword) {
+        unset($this->infos[$keyword]);
+    }
+
+    /**
+     * @todo: infos & options are working the same way here. Abstract this.
+     */
+
+
     // Plugin low level functions, see functions-plugins.php
 
     public function get_plugins() {
@@ -222,7 +245,7 @@ class YDB extends ExtendedPdo {
     public function get_queries() {
         $queries = $this->getProfiler()->getProfiles();
 
-        if ($this->getAttribute(\PDO::ATTR_EMULATE_PREPARES)) {
+        if ($this->getAttribute(PDO::ATTR_EMULATE_PREPARES)) {
             // keep queries if $query['function'] != 'prepare'
             $queries = array_filter($queries, function($query) {return $query['function'] !== 'prepare';});
         }
@@ -266,7 +289,7 @@ class YDB extends ExtendedPdo {
      * @return string
      */
     public function mysql_version() {
-        $version = $this->pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
+        $version = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
         return preg_replace('/(^[^0-9]*)|[^0-9.].*/', '', $version);
     }
 
@@ -284,28 +307,36 @@ class YDB extends ExtendedPdo {
         throw new \Exception\escape();
     }
 
-    public function get_col() {
-        //->fetchAll(PDO::FETCH_COLUMN) -> array
-        throw new \Exception\get_col();
+    public function get_col($query) {
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        yourls_debug_log('LEGACY SQL: '.$query);
+        return $this->fetchCol($query);
     }
 
     public function get_results($query) {
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        yourls_debug_log('LEGACY SQL: '.$query);
         $stm = parent::query($query);
-        return($stm->fetchAll(\PDO::FETCH_OBJ));
+        return($stm->fetchAll(PDO::FETCH_OBJ));
     }
 
-    public function get_row($sql) {
+    public function get_row($query) {
         yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
-        $row = $this->fetchObjects($sql);
+        yourls_debug_log('LEGACY SQL: '.$query);
+        $row = $this->fetchObjects($query);
         return $row[0];
     }
 
-    public function get_var() {
-        throw new \Exception\get_var();
+    public function get_var($query) {
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        yourls_debug_log('LEGACY SQL: '.$query);
+        return $this->fetchValue($query);
     }
 
     public function query($query) {
-        throw new \Exception\query();
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        yourls_debug_log('LEGACY SQL: '.$query);
+        return $this->fetchAffected($query);
     }
 
 }
