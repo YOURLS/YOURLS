@@ -89,8 +89,8 @@ class YDB extends ExtendedPdo {
      * @param array  $options     Driver-specific options
      * @param array  $attributes  Attributes to set after a connection
      */
-    public function __construct($dsn, $user, $pass, $driver_options, $attributes) {
-        parent::__construct($dsn, $user, $pass, $driver_options, $attributes);
+    public function __construct($dsn, $user, $pass, $options, $attributes) {
+        parent::__construct($dsn, $user, $pass, $options, $attributes);
 
         // Log query infos
         $this->start_profiler();
@@ -158,7 +158,7 @@ class YDB extends ExtendedPdo {
     // Infos (related to keyword) low level functions
 
     public function set_infos($keyword, $infos) {
-        $this->info[$keyword] = $infos;
+        $this->infos[$keyword] = $infos;
     }
 
     public function has_infos($keyword) {
