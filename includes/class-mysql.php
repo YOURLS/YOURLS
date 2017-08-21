@@ -52,15 +52,8 @@ function yourls_db_connect() {
     $driver_options = yourls_apply_filter( 'db_connect_driver_option', array() ); // driver options as key-value pairs
     $attributes     = yourls_apply_filter( 'db_connect_attributes',    array() ); // attributes as key-value pairs
 
-    try {
-        $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
-    } catch (Exception $e) {
-        // TODO: something smarter with error handling here
-        $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
-        $message .= ' (' . get_class($e) .') (' . $e->getMessage() . ')';
-
-        yourls_die ( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
-    }
+    $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
+    $ydb->connect_to_DB();
 
     yourls_debug_mode(YOURLS_DEBUG);
 

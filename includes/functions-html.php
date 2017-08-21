@@ -136,11 +136,20 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 /**
  * Display HTML footer (including closing body & html tags)
  *
+ * Function yourls_die() will call this function with the optional param set to false: most likely, if we're using yourls_die(),
+ * there's a problem, so don't maybe add to it by sending another SQL query
+ *
+ * @param  bool $can_query  If set to false, will not try to send another query to DB server
+ * @return void
  */
-function yourls_html_footer() {
-    $num_queries = yourls_get_num_queries();
+function yourls_html_footer($can_query = true) {
+    if($can_query) {
+        $num_queries = yourls_get_num_queries();
+        $num_queries = sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
+    } else {
+        $num_queries = '';
+    }
 
-	$num_queries = sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
 	?>
 	</div><?php // wrap ?>
 	<footer id="footer" role="contentinfo"><p>
@@ -453,7 +462,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
     // Hook into 'yourls_die' to add more elements or messages to that page
 	yourls_do_action( 'yourls_die' );
 	if( !yourls_did_action( 'html_footer' ) ) {
-		yourls_html_footer();
+		yourls_html_footer(false);
 	}
 	die();
 }

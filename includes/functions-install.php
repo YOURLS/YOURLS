@@ -15,18 +15,7 @@ function yourls_check_PDO() {
  *
  */
 function yourls_check_database_version() {
-	global $ydb;
-
-	// Attempt to get MySQL server version, check result and if error count increased
-	$num_errors1 = count( $ydb->captured_errors );
-	$version     = yourls_get_database_version();
-	$num_errors2 = count( $ydb->captured_errors );
-
-	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
-		yourls_die( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
-	}
-
-	return ( version_compare( '5.0', $version ) <= 0 );
+    return ( version_compare( '5.0', yourls_get_database_version() ) <= 0 );
 }
 
 /**

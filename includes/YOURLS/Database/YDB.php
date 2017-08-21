@@ -97,6 +97,26 @@ class YDB extends ExtendedPdo {
     }
 
     /**
+     * Initiate real connection to DB server
+     *
+     * This is to check that the server is running and/or the config is OK
+     *
+     * @since  1.7.3
+     * @return void
+     */
+    public function connect_to_DB() {
+        try {
+            $this->connect();
+        } catch ( \Exception $e ) {
+            $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
+            $message .= '<br/>' . get_class($e) .': ' . $e->getMessage();
+
+            yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+            die();
+        }
+    }
+
+    /**
      * Start a Message Logger
      *
      * @since  1.7.3
@@ -324,7 +344,7 @@ class YDB extends ExtendedPdo {
         yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
         yourls_debug_log('LEGACY SQL: '.$query);
         $row = $this->fetchObjects($query);
-        return $row[0];
+        return isset($row[0]) ? $row[0] : false;
     }
 
     public function get_var($query) {
