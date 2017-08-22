@@ -53,7 +53,7 @@ class Options {
             $this->ydb->set_option($name, yourls_maybe_unserialize($value));
         }
 
-        $deprecated = yourls_apply_filter('get_all_options', 'deprecated');
+        yourls_apply_filter('get_all_options', 'deprecated');
 
         return true;
     }

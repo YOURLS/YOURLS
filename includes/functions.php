@@ -437,7 +437,7 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 
 	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
-	if( $ydb->has_infos($keyword) && $use_cache == true ) {
+	if( $ydb->has_infos($keyword) && $use_cache === true ) {
 		return yourls_apply_filter( 'get_keyword_infos', $ydb->get_infos($keyword), $keyword );
 	}
 
