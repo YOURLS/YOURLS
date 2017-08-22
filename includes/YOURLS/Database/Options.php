@@ -82,12 +82,19 @@ class Options {
         $value = $this->ydb->fetchOne($sql, $bind);
         if($value !== false) {
             $value = yourls_maybe_unserialize( $value['option_value'] );
+            // Cache option value to save a DB query if needed later
+            $this->ydb->set_option($name, $value);
         } else {
             $value = $default;
         }
 
-        // Cache option value to save a DB query if needed later
-        $this->ydb->set_option($name, $value);
+        /**
+         * We don't cache value if option is not set, to make a difference between "not found: returning false"
+         * and "found, and value is false".
+         * This way, we can:
+         * $check = yourls_get_option('doesnt_exist'); // false
+         * yourls_add_option('doesnt_exist', 'value'); // will work, because check on has_option() will return false
+         */
 
         return $value;
     }
