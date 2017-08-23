@@ -69,7 +69,7 @@ class Logger extends \Aura\Sql\Profiler {
      * Format PDO statement with bind/values replacement
      *
      * This replaces PDO binds such as 'key_name = :name' with corresponding array values, eg array('name'=>'some value')
-     * This is merely a cosmetic replacement to allow for readability: the result WILL NOT be valid SQL! (eg no quotes around strings)
+     * This is merely a cosmetic replacement to allow for readability: the result WILL NOT be valid SQL! (eg no proper quotes)
      *
      * @since  1.7.3
      * @param  string $statement  SQL query with PDO style named placeholders
@@ -92,7 +92,7 @@ class Logger extends \Aura\Sql\Profiler {
                 if(is_array($replacement)) {
                     $replacement = implode(",", $replacement);
                 }
-                return $replacement;
+                return "'$replacement'";
             },
             $statement
         );

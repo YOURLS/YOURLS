@@ -67,6 +67,11 @@ class Options {
      * @return mixed            Value set for the option
      */
     public function get($name, $default) {
+        $name = trim((string)$name);
+        if (empty($name)) {
+            return $default;
+        }
+
         // Check if option value is cached already
         if($this->ydb->has_option($name)) {
             return $this->ydb->get_option($name);
@@ -108,7 +113,7 @@ class Options {
      * @return bool              False if value was not updated, true otherwise.
      */
     public function update($name, $newvalue) {
-        $name = trim($name);
+        $name = trim((string)$name);
         if (empty($name)) {
             return false;
         }
@@ -156,7 +161,7 @@ class Options {
      * @return bool           False if option was not added (eg already exists), true otherwise.
      */
     public function add($name, $value) {
-        $name = trim($name);
+        $name = trim((string)$name);
         if (empty($name)) {
             return false;
         }
@@ -200,6 +205,11 @@ class Options {
      * @return bool          False if option was not deleted (eg not found), true otherwise.
      */
     public function delete($name) {
+        $name = trim((string)$name);
+        if (empty($name)) {
+            return false;
+        }
+
         $table = YOURLS_DB_TABLE_OPTIONS;
         $sql = "DELETE FROM $table WHERE option_name = :name";
         $bind = array('name' => $name);
