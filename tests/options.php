@@ -57,18 +57,31 @@ class Option_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_delete_option( $key ) );
 	}
 
+    /**
+	 * Data provider of bad option names
+	 */
+	public function bad_option_names() {
+		return array(
+			array( '' ),
+			array( '0' ),
+			array( ' ' ),
+			array( 0 ),
+			array( false ),
+			array( null ),
+		);
+	}
+
 	/**
 	 * Check with bad option names
 	 *
+     * @dataProvider bad_option_names
 	 * @since 0.1
 	 */
-	public function test_bad_option_names() {
-		foreach ( array( '', '0', ' ', 0, false, null ) as $empty ) {
-			$this->assertFalse( yourls_get_option( $empty ) );
-			$this->assertFalse( yourls_add_option( $empty, '' ) );
-			$this->assertFalse( yourls_update_option( $empty, '' ) );
-			$this->assertFalse( yourls_delete_option( $empty ) );
-		}
+	public function test_bad_option_names($empty) {
+        $this->assertFalse( yourls_get_option( $empty ) );
+        $this->assertFalse( yourls_add_option( $empty, '' ) );
+        $this->assertFalse( yourls_update_option( $empty, '' ) );
+        $this->assertFalse( yourls_delete_option( $empty ) );
 	}	
 
 	function setUp() {
