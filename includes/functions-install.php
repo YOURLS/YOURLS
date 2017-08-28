@@ -32,7 +32,7 @@ function yourls_get_database_version() {
 
 	global $ydb;
 
-	return $ydb->mysql_version();
+	return yourls_sanitize_version($ydb->mysql_version());
 }
 
 /**

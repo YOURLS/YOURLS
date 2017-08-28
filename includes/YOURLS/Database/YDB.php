@@ -34,7 +34,6 @@ class YDB extends ExtendedPdo {
     /**
      * Information related to a short URL keyword (eg timestamp, long URL, ...)
      *
-     * @tempnote 3 plugins accessing this property
      * @var array
      *
      */
@@ -42,14 +41,12 @@ class YDB extends ExtendedPdo {
 
     /**
      * Is YOURLS installed and ready to run?
-     * @tempnote 1 plugin accessing this property (apc cache)
      * @var bool
      */
     protected $installed = false;
 
     /**
      * Options
-     * @tempnote 6 plugins accessing this property although there are functions to do so
      * @var array
      */
     protected $option = array();
@@ -65,17 +62,6 @@ class YDB extends ExtendedPdo {
      * @var array
      */
     protected $plugins = array();
-
-    /**
-     * Deprecated properties since 1.7.3, unused in 3rd party plugins as far as I know
-     *
-     * $ydb->DB_driver
-     * $ydb->captured_errors
-     * $ydb->dbh
-     * $ydb->result
-     * $ydb->rows_affected
-     * $ydb->show_errors
-     */
 
     /**
      * Class constructor
@@ -128,29 +114,41 @@ class YDB extends ExtendedPdo {
         $this->profiler = new Logger($this);
     }
 
+    /**
+     * @param string $context
+     */
     public function set_html_context($context) {
         $this->context = $context;
     }
 
+    /**
+     * @return string
+     */
     public function get_html_context() {
         return $this->context;
     }
 
     // Options low level functions, see \YOURLS\Database\Options
 
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
     public function set_option($name, $value) {
         $this->option[$name] = $value;
     }
 
     /**
-     * @param string $name
+     * @param  string $name
+     * @return bool
      */
     public function has_option($name) {
         return array_key_exists($name, $this->option);
     }
 
     /**
-     * @param string $name
+     * @param  string $name
+     * @return string
      */
     public function get_option($name) {
         return $this->option[$name];
@@ -166,18 +164,33 @@ class YDB extends ExtendedPdo {
 
     // Infos (related to keyword) low level functions
 
+    /**
+     * @param string $keyword
+     * @param mixed  $infos
+     */
     public function set_infos($keyword, $infos) {
         $this->infos[$keyword] = $infos;
     }
 
+    /**
+     * @param  string $keyword
+     * @return bool
+     */
     public function has_infos($keyword) {
         return array_key_exists($keyword, $this->infos);
     }
 
+    /**
+     * @param  string $keyword
+     * @return array
+     */
     public function get_infos($keyword) {
         return $this->infos[$keyword];
     }
 
+    /**
+     * @param string $keyword
+     */
     public function delete_infos($keyword) {
         unset($this->infos[$keyword]);
     }
@@ -189,18 +202,30 @@ class YDB extends ExtendedPdo {
 
     // Plugin low level functions, see functions-plugins.php
 
+    /**
+     * @return array
+     */
     public function get_plugins() {
         return $this->plugins;
     }
 
+    /**
+     * @param array $plugins
+     */
     public function set_plugins(array $plugins) {
         $this->plugins = $plugins;
     }
 
-    public function add_plugin(array $plugin) {
+    /**
+     * @param string $plugin  plugin filename
+     */
+    public function add_plugin($plugin) {
         $this->plugins[] = $plugin;
     }
 
+    /**
+     * @param string $plugin  plugin filename
+     */
     public function remove_plugin($plugin) {
         unset($this->plugins[$plugin]);
     }
@@ -208,14 +233,25 @@ class YDB extends ExtendedPdo {
 
     // Plugin Pages low level functions, see functions-plugins.php
 
+    /**
+     * @return array
+     */
     public function get_plugin_pages() {
         return $this->plugin_pages;
     }
 
+    /**
+     * @param array $pages
+     */
     public function set_plugin_pages(array $pages) {
         $this->plugin_pages = $pages;
     }
 
+    /**
+     * @param string   $slug
+     * @param string   $title
+     * @param callable $function
+     */
     public function add_plugin_page($slug, $title, $function) {
         $this->plugin_pages[$slug] = array(
             'slug'     => $slug,
@@ -224,8 +260,11 @@ class YDB extends ExtendedPdo {
         );
     }
 
-    public function remove_plugin_page($page) {
-        unset($this->plugin_pages[$page]);
+    /**
+     * @param string $slug
+     */
+    public function remove_plugin_page($slug) {
+        unset($this->plugin_pages[$slug]);
     }
 
 
@@ -319,21 +358,30 @@ class YDB extends ExtendedPdo {
      */
     public function mysql_version() {
         $version = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-        return preg_replace('/(^[^0-9]*)|[^0-9.].*/', '', $version);
+        return $version;
     }
 
-    public function is_alive() {
-        throw new \Exception\is_alive();
-    }
+    /**
+     * Deprecated properties since 1.7.3, unused in 3rd party plugins as far as I know
+     *
+     * $ydb->DB_driver
+     * $ydb->captured_errors
+     * $ydb->dbh
+     * $ydb->result
+     * $ydb->rows_affected
+     * $ydb->show_errors
+     */
 
-    public function is_dead() {
-        throw new \Exception\is_dead();
-    }
+    /**
+     * Deprecated functions since 1.7.3
+     */
 
-    //** Compatibility with legacy ezSQL functions **
+    // @codeCoverageIgnoreStart
 
-    public function escape() {
-        throw new \Exception\escape();
+    public function escape($string) {
+        yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
+        // This will escape using PDO->quote(), but then remove the enclosing quotes
+        return substr($this->quote($string), 1, -1);
     }
 
     public function get_col($query) {
@@ -353,7 +401,7 @@ class YDB extends ExtendedPdo {
         yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
         yourls_debug_log('LEGACY SQL: '.$query);
         $row = $this->fetchObjects($query);
-        return isset($row[0]) ? $row[0] : false;
+        return isset($row[0]) ? $row[0] : null;
     }
 
     public function get_var($query) {
@@ -367,5 +415,5 @@ class YDB extends ExtendedPdo {
         yourls_debug_log('LEGACY SQL: '.$query);
         return $this->fetchAffected($query);
     }
-
+    // @codeCoverageIgnoreEnd
 }

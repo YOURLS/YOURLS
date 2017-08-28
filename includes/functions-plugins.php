@@ -542,7 +542,9 @@ function yourls_plugin_url( $file ) {
 }
 
 /**
- * Display list of links to plugin admin pages, if any
+ * Build list of links to plugin admin pages, if any
+ *
+ * @return void|array  Array of arrays of URL and anchor of plugin admin pages, or void if no plugin page
  */
 function yourls_list_plugin_admin_pages() {
 	global $ydb;

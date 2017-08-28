@@ -66,8 +66,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
 
-	// Store page context in global object
-	global $ydb;
+	// Store page context
 	yourls_set_html_context($context);
 
 	// Body class
