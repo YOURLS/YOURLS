@@ -1397,7 +1397,7 @@ function yourls_is_upgrading() {
  */
 function yourls_is_installed() {
 	global $ydb;
-	return yourls_apply_filter( 'is_installed', $ydb->get_installed() );
+	return yourls_apply_filter( 'is_installed', $ydb->is_installed() );
 }
 
 /**

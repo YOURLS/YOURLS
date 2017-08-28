@@ -338,7 +338,7 @@ class YDB extends ExtendedPdo {
      * @since  1.7.3
      * @return bool
      */
-    public function get_installed() {
+    public function is_installed() {
         return $this->installed;
     }
 
