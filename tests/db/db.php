@@ -30,7 +30,7 @@ class DB_Set_Tests extends PHPUnit_Framework_TestCase {
         yourls_db_connect();
         
         global $ydb;
-        $this->assertInstanceOf( 'ezSQLcore', $ydb );
+        $this->assertInstanceOf( '\YOURLS\Database\YDB', $ydb );
     }
 
 }

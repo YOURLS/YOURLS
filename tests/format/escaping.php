@@ -131,7 +131,7 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
         return array(
            array( "I'm rock n' rollin'", "I\'m rock n\' rollin\'" ),
            array( 'I am "nice"', 'I am \"nice\"' ),
-           array( 'Back\Slash', 'BackSlash' ),
+           array( 'Back\Slash', 'Back\\\Slash' ),
            array( "NULL\0NULL", 'NULL\0NULL' ), // notice the quote change
         );
     }

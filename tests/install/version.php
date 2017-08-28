@@ -26,21 +26,6 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Provide various real-life-ish versions and how they should be sanitized 
-     */
-    public function versions() {
-        return array(
-            array( 'omgmysql-5.5-ubuntu-4.20', '5.5' ),
-            array( 'mysql5.5-ubuntu-4.20',     '5.5' ),
-            array( '5.5-ubuntu-4.20',          '5.5' ),
-            array( '5.5-beta2',                '5.5' ),
-            array( 'mysql-5.5',                '5.5' ),
-            array( '5.5',                      '5.5' ),
-            array( '6',                        '6'   ),
-        );
-    }
-    
-    /**
      * Test mysql version getter & version comparer
      *
      * @dataProvider versions

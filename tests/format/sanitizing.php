@@ -142,11 +142,25 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
      */
     function random_versions() {
         return array(
-            array( '1.2.3' , '1.2.3' ),
-            array( '1.2.3-leet', '1.2.3' ),
-            array( '1.0-RC1-Almost-Final', '1.0' ),
-            array( 'beta-4', '' ),
-            array( '1-2-3', '1' ),
+            array('1.2.3',                    '1.2.3'),
+            array('1.2.3.4',                  '1.2.3.4'),
+            array('1.2.3-leet',               '1.2.3'),
+            array('1.0-RC1-Almost-Final',     '1.0'),
+            array('beta-4',                   ''),
+            array('4.something',              ''),
+            array('4-final',                  ''),
+            array('1-2-3',                    ''),
+            array('omgmysql-5.5-ubuntu-4.20', '5.5'),
+            array('mysql5.5-ubuntu-4.20',     '5.5'),
+            array('5.5-ubuntu-4.20',          '5.5'),
+            array('5.5-beta2',                '5.5'),
+            array('5.5.beta2',                '5.5'),
+            array('5.5',                      '5.5'),
+            array('5.5.',                     '5.5'),
+            array('5',                        ''),
+            array('5.',                       ''),
+            array('100.1',                    '100.1'),
+            array('mysql-10.10-beta',         '10.10'),
         );
     }
 
