@@ -159,8 +159,11 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 }
 
 /**
- * Check if a URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+ * Check if a long URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
  *
+ * @since 1.5.1
+ * @param  string $url  URL to check if already shortened
+ * @return mixed        NULL if does not already exist in DB, or object with URL information as properties (eg keyword, url, title, ...)
  */
 function yourls_url_exists( $url ) {
 	// Allow plugins to short-circuit the whole function
@@ -170,8 +173,8 @@ function yourls_url_exists( $url ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-	$url   = yourls_escape( yourls_sanitize_url( $url) );
-	$url_exists = $ydb->get_row( "SELECT * FROM `$table` WHERE `url` = '".$url."';" );
+    $url   = yourls_sanitize_url($url);
+	$url_exists = $ydb->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
 
 	return yourls_apply_filter( 'url_exists', $url_exists, $url );
 }
@@ -430,10 +433,14 @@ function yourls_xml_encode( $array ) {
 /**
  * Return array of all information associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
  *
+ * @since 1.4
+ * @param  string $keyword    Short URL keyword
+ * @param  bool   $use_cache  Default true, set to false to force fetching from DB
+ * @return false|object       false if not found, object with URL properties if found
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 
 	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
@@ -444,12 +451,14 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	yourls_do_action( 'get_keyword_not_cached', $keyword );
 
 	$table = YOURLS_DB_TABLE_URL;
-	$infos = $ydb->get_row( "SELECT * FROM `$table` WHERE `keyword` = '$keyword'" );
+	$infos = $ydb->fetchObject("SELECT * FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	if( $infos ) {
 		$infos = (array)$infos;
 		$ydb->set_infos($keyword, $infos);
 	} else {
+        // is NULL if not found
+        $infos = false;
 		$ydb->set_infos($keyword, false);
 	}
 
@@ -605,9 +614,9 @@ function yourls_get_link_stats( $shorturl ) {
 	global $ydb;
 
 	$table_url = YOURLS_DB_TABLE_URL;
-	$shorturl  = yourls_escape( yourls_sanitize_keyword( $shorturl ) );
+	$shorturl  = yourls_sanitize_keyword( $shorturl );
 
-	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl';" );
+    $res = $ydb->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
 	$return = array();
 
 	if( !$res ) {
