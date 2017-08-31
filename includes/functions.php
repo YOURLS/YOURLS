@@ -637,9 +637,12 @@ function yourls_get_link_stats( $shorturl ) {
 /**
  * Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
  *
- * IMPORTANT NOTE: make sure arguments for the $where clause have been sanitized and yourls_escape()'d
- * before calling this function.
+ * The $where parameter will contain additional SQL arguments:
+ *   $where['sql'] will concatenate SQL clauses: $where['sql'] = ' AND something = :value AND otherthing < :othervalue';
+ *   $where['binds'] will hold the (name => value) placeholder pairs: $where['binds'] = array('value' => $value, 'othervalue' => $value2)
  *
+ * @param  $where array  See comment above
+ * @return array
  */
 function yourls_get_db_stats( $where = array('sql' => '', 'binds' => array()) ) {
 	global $ydb;
