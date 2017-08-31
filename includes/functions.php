@@ -641,11 +641,11 @@ function yourls_get_link_stats( $shorturl ) {
  * before calling this function.
  *
  */
-function yourls_get_db_stats( $where = '' ) {
+function yourls_get_db_stats( $where = array('sql' => '', 'binds' => array()) ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->get_row( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where" );
+	$totals = $ydb->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
 	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
 
 	return yourls_apply_filter( 'get_db_stats', $return, $where );

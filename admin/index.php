@@ -5,7 +5,12 @@ yourls_maybe_require_auth();
 
 // Variables
 $table_url = YOURLS_DB_TABLE_URL;
-$where = $search_sentence = $search_text = $url = $keyword = '';
+$search_sentence = $search_text = $url = $keyword = '';
+/* $where will collect additional SQL arguments:
+ * $where['sql'] will concatenate SQL clauses: $where['sql'] .= ' AND something = :value ';
+ * $where['binds'] will hold the (name => value) placeholder pairs: $where['binds']['value'] = $value;
+ */
+$where = array('sql' => '', 'binds' => array());
 $date_filter = $date_first  = $date_second = '';
 $base_page   = yourls_admin_url( 'index.php' );
 
@@ -22,7 +27,8 @@ $click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '
 if ( $click_limit !== '' ) {
 	$click_filter   = ( isset( $_GET['click_filter'] ) && $_GET['click_filter'] == 'more' ? 'more' : 'less' ) ;
 	$click_moreless = ( $click_filter == 'more' ? '>' : '<' );
-	$where          = " AND clicks $click_moreless $click_limit";
+	$where['sql']   = " AND clicks $click_moreless :click_limit";
+    $where['binds']['click_limit'] = $click_limit;
 } else {
 	$click_filter   = '';
 }
@@ -53,15 +59,17 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	}
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
 	$search_text     = $search;
-	$search          = str_replace( '*', '%', '*' . yourls_escape( $search ) . '*' );
+	$search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
-        $where .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ('$search')";
+        $where['sql'] .= ' AND CONCAT_WS("",`keyword`,`url`,`title`,`ip`) LIKE (:search)';
+        $where['binds']['search'] = $search;
         // Search across all fields. The resulting SQL will be something like:
         // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
         // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
         // TODO: pay attention to this bit when the DB schema changes
     } else {
-        $where .= " AND `$search_in` LIKE ('$search')";
+        $where['sql'] .= " AND `$search_in` LIKE (:search)";
+        $where['binds']['search'] = $search;
     }
 }
 
@@ -73,7 +81,8 @@ if( !empty( $_GET['date_filter'] ) ) {
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
 				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$where .= " AND `timestamp` < '$date_first_sql'";
+				$where['sql'] .= ' AND `timestamp` < :date_first_sql';
+                $where['binds']['date_first_sql'] = $date_first_sql;
 			}
 			break;
 		case 'after':
@@ -81,7 +90,8 @@ if( !empty( $_GET['date_filter'] ) ) {
 			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
 				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
 				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
-				$where .= " AND `timestamp` > '$date_first_sql'";
+				$where['sql'] .= ' AND `timestamp` > :date_first_sql';
+                $where['binds']['date_first_sql'] = $date_first_sql;
 			}
 			break;
 		case 'between':
@@ -91,7 +101,9 @@ if( !empty( $_GET['date_filter'] ) ) {
 				$date_second_sql = yourls_sanitize_date_for_sql( $_GET['date_second'] );
 				$date_first      = yourls_sanitize_date( $_GET['date_first'] );
 				$date_second     = yourls_sanitize_date( $_GET['date_second'] );
-				$where .= " AND `timestamp` BETWEEN '$date_first_sql' AND '$date_second_sql'";
+				$where['sql'] .= ' AND `timestamp` BETWEEN :date_first_sql AND :date_second_sql';
+                $where['binds']['date_first_sql']  = $date_first_sql;
+                $where['binds']['date_second_sql'] = $date_second_sql;
 			}
 			break;
 	}
@@ -133,7 +145,7 @@ if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
 
 // Get URLs Count for current filter, total links in DB & total clicks
 list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
-if ( $where ) {
+if ( !empty($where['sql']) ) {
 	list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
 } else {
 	$total_items        = $total_urls;
@@ -156,33 +168,34 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
 	$return  = yourls_add_new_link( $url, $keyword, $title );
-	
+
 	// If fails because keyword already exist, retry with no keyword
 	if ( isset( $return['status'] ) && $return['status'] == 'fail' && isset( $return['code'] ) && $return['code'] == 'error:keyword' ) {
 		$msg = $return['message'];
 		$return = yourls_add_new_link( $url, '', $ydb );
 		$return['message'] .= ' ('.$msg.')';
 	}
-	
+
 	// Stop here if bookmarklet with a JSON callback function
 	if( isset( $_GET['jsonp'] ) && $_GET['jsonp'] == 'yourls' ) {
 		$short   = $return['shorturl'] ? $return['shorturl'] : '';
 		$message = $return['message'];
 		yourls_content_type_header( 'application/javascript' );
 		echo yourls_apply_filter( 'bookmarklet_jsonp', "yourls_callback({'short_url':'$short','message':'$message'});" );
-		
+
 		die();
 	}
-	
+
 	// Now use the URL that has been sanitized and returned by yourls_add_new_link()
 	$url = $return['url']['url'];
-	$where  = sprintf( " AND `url` LIKE '%s' ", yourls_escape( $url ) );
-	
+	$where['sql'] .= ' AND `url` LIKE :url ';
+    $where['binds']['url'] = $url;
+
 	$page   = $total_pages = $perpage = 1;
 	$offset = 0;
-	
+
 	$text   = ( isset( $_GET['s'] ) ? stripslashes( $_GET['s'] ) : '' );
-	
+
 	// Sharing with social bookmarklets
 	if( !empty($_GET['share']) ) {
 		yourls_do_action( 'pre_share_redirect' );
@@ -223,7 +236,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 			default:
 				// Is there a custom registered social bookmark?
 				yourls_do_action( 'share_redirect_' . $_GET['share'], $return );
-				
+
 				// Still here? That was an unknown 'share' method, then.
 				$return['status']    = 'error';
 				$return['errorCode'] = 400;
@@ -235,7 +248,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 // This is not a bookmarklet
 } else {
 	$is_bookmark = false;
-	
+
 	// Checking $page, $offset, $perpage
 	if( empty($page) || $page == 0 ) {
 		$page = 1;
@@ -251,17 +264,17 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	$offset = ( $page-1 ) * $perpage;
 
 	// Determine Max Number Of Items To Display On Page
-	if( ( $offset + $perpage ) > $total_items ) { 
-		$max_on_page = $total_items; 
-	} else { 
-		$max_on_page = ( $offset + $perpage ); 
+	if( ( $offset + $perpage ) > $total_items ) {
+		$max_on_page = $total_items;
+	} else {
+		$max_on_page = ( $offset + $perpage );
 	}
 
 	// Determine Number Of Items To Display On Page
-	if ( ( $offset + 1 ) > $total_items ) { 
-		$display_on_page = $total_items; 
-	} else { 
-		$display_on_page = ( $offset + 1 ); 
+	if ( ( $offset + 1 ) > $total_items ) {
+		$display_on_page = $total_items;
+	} else {
+		$display_on_page = ( $offset + 1 );
 	}
 
 	// Determing Total Amount Of Pages
@@ -329,7 +342,7 @@ yourls_table_tbody_start();
 
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
-$url_results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 $where ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;" );
+$url_results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
 $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;
@@ -357,5 +370,5 @@ yourls_do_action( 'admin_page_after_table' );
 if ( $is_bookmark )
 	yourls_share_box( $url, $return['shorturl'], $title, $text );
 ?>
-	
+
 <?php yourls_html_footer( ); ?>
