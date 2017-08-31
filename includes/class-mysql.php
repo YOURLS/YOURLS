@@ -53,61 +53,12 @@ function yourls_db_connect() {
     $attributes     = yourls_apply_filter( 'db_connect_attributes',    array() ); // attributes as key-value pairs
 
     $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
+    yourls_debug_log(sprintf('Connecting to database %s on %s ', $dbname, $dbhost));
     $ydb->connect_to_DB();
 
     yourls_debug_mode(YOURLS_DEBUG);
 
-    yourls_debug_log(sprintf('Connecting to database %s on %s ', $dbname, $dbhost));
 
 	return $ydb;
 }
 
-/**
- * Return true if DB server is responding
- *
- * This function is supposed to be called right after yourls_get_all_options() has fired. It is not designed (yet) to
- * check for a responding server after several successful operation to check if the server has gone MIA
- *
- * @since 1.7.1
- */
-function yourls_is_db_alive() {
-    global $ydb;
-
-    $alive = false;
-    switch( $ydb->DB_driver ) {
-        case 'pdo' :
-            $alive = isset( $ydb->dbh );
-            break;
-
-        case 'mysql' :
-            $alive = ( isset( $ydb->dbh ) && false !== $ydb->dbh );
-            break;
-
-        case 'mysqli' :
-            $alive = ( null == mysqli_connect_error() );
-            break;
-
-        // Custom DB driver & class : delegate check
-        default:
-            $alive = yourls_apply_filter( 'is_db_alive_custom', false );
-    }
-
-    return $alive;
-}
-
-/**
- * Die with a DB error message
- *
- * @TODO in version 1.8 : use a new localized string, specific to the problem (ie: "DB is dead")
- *
- * @since 1.7.1
- */
-function yourls_db_dead() {
-    // Use any /user/db_error.php file
-    if( file_exists( YOURLS_USERDIR . '/db_error.php' ) ) {
-        include_once( YOURLS_USERDIR . '/db_error.php' );
-        die();
-    }
-
-    yourls_die( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
-}

@@ -94,6 +94,12 @@ class YDB extends ExtendedPdo {
         try {
             $this->connect();
         } catch ( \Exception $e ) {
+            // Use any /user/db_error.php file
+            if( file_exists( YOURLS_USERDIR . '/db_error.php' ) ) {
+                include_once( YOURLS_USERDIR . '/db_error.php' );
+                die();
+            }
+
             $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
             $message .= '<br/>' . get_class($e) .': ' . $e->getMessage();
 
