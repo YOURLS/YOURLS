@@ -318,17 +318,18 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$url = yourls_escape (yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
-	$newkeyword = yourls_escape( yourls_sanitize_string( $newkeyword ) );
+	$url = yourls_sanitize_url($url);
+	$keyword = yourls_sanitize_string($keyword);
+	$title = yourls_sanitize_title($title);
+	$newkeyword = yourls_sanitize_string($newkeyword);
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
-	$old_url = $ydb->get_var( "SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';" );
+
+    $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$url';"));
+		$new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
 	} else {
 		$new_url_already_there = false;
 	}
@@ -409,11 +410,11 @@ function yourls_keyword_is_taken( $keyword ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
+    $keyword = yourls_sanitize_keyword($keyword);
 	$taken = false;
 	$table = YOURLS_DB_TABLE_URL;
 
-	$already_exists = $ydb->get_var( "SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';" );
+	$already_exists = $ydb->fetchValue("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = :keyword;", array('keyword' => $keyword));
 	if ( $already_exists )
 		$taken = true;
 
@@ -1351,14 +1352,13 @@ function yourls_check_IP_flood( $ip = '' ) {
 	}
 
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
-	$ip = yourls_escape( $ip );
 
 	yourls_do_action( 'check_ip_flood', $ip );
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
 
-	$lasttime = $ydb->get_var( "SELECT `timestamp` FROM $table WHERE `ip` = '$ip' ORDER BY `timestamp` DESC LIMIT 1" );
+	$lasttime = $ydb->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", array('ip' => $ip) );
 	if( $lasttime ) {
 		$now = date( 'U' );
 		$then = date( 'U', strtotime( $lasttime ) );

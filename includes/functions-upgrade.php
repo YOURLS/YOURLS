@@ -174,7 +174,7 @@ function yourls_update_options_to_14() {
 	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
 		global $ydb;
 		$table = YOURLS_DB_TABLE_NEXTDEC;
-		$next_id = $ydb->get_var("SELECT `next_id` FROM `$table`");
+		$next_id = $ydb->fetchValue("SELECT `next_id` FROM `$table`");
 		yourls_update_option( 'next_id', $next_id );
 		@$ydb->query( "DROP TABLE `$table`" );
 	} else {
