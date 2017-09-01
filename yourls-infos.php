@@ -15,7 +15,7 @@ if ( !isset( $keyword ) ) {
 	yourls_do_action( 'infos_no_keyword' );
 	yourls_redirect( YOURLS_SITE, 302 );
 }
-	
+
 // Get basic infos for this shortened URL
 $keyword = yourls_sanitize_string( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );
@@ -48,40 +48,43 @@ if( yourls_do_log_redirect() ) {
 	$list_of_months = array();
 	$list_of_years = array();
 	$last_24h = array();
-	
+
 	if( yourls_allow_duplicate_longurls() )
 		$keyword_list = yourls_get_longurl_keywords( $longurl );
 	// Define keyword query range : either a single keyword or a list of keywords
 	if( $aggregate ) {
-		$keyword_range = "IN ( '" . join( "', '", $keyword_list ) . "' )"; // IN ( 'blah', 'bleh', 'bloh' )
+		$keyword_range = 'IN ( :list )';
+        $keyword_binds = array('list' => $keyword_list);
 	} else {
-		$keyword_range = sprintf( "= '%s'", yourls_escape( $keyword ) );
+		$keyword_range = '= :keyword';
+        $keyword_binds = array('keyword' => $keyword);
 	}
-	
-	
+
+
 	// *** Referrers ***
-	$query = "SELECT `referrer`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `referrer`;";
-	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_referrer', $query ) );
-	
+    $sql = "SELECT `referrer`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `referrer`;";
+    $sql = yourls_apply_filter('stat_query_referrer', $sql);
+	$rows = $ydb->fetchObjects($sql, $keyword_binds);
+
 	// Loop through all results and build list of referrers, countries and hits per day
 	foreach( (array)$rows as $row ) {
 		if ( $row->referrer == 'direct' ) {
 			$direct = $row->count;
 			continue;
 		}
-		
+
 		$host = yourls_get_domain( $row->referrer );
 		if( !array_key_exists( $host, $referrers ) )
 			$referrers[$host] = array( );
 		if( !array_key_exists( $row->referrer, $referrers[$host] ) ) {
 			$referrers[$host][$row->referrer] = $row->count;
-			$notdirect += $row->count;			
+			$notdirect += $row->count;
 		} else {
 			$referrers[$host][$row->referrer] += $row->count;
-			$notdirect += $row->count;				
+			$notdirect += $row->count;
 		}
 	}
-	
+
 	// Sort referrers. $referrer_sort is a array of most frequent domains
 	arsort( $referrers );
 	$referrer_sort = array();
@@ -92,33 +95,35 @@ if( yourls_do_log_redirect() ) {
 	}
 	arsort($referrer_sort);
 
-	
+
 	// *** Countries ***
-	$query = "SELECT `country_code`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `country_code`;";
-	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_country', $query ) );
-	
+	$sql = "SELECT `country_code`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `country_code`;";
+    $sql = yourls_apply_filter('stat_query_country', $sql);
+	$rows = $ydb->fetchObjects($sql, $keyword_binds);
+
 	// Loop through all results and build list of countries and hits
 	foreach( (array)$rows as $row ) {
 		if ("$row->country_code")
 			$countries["$row->country_code"] = $row->count;
 	}
-	
+
 	// Sort countries, most frequent first
 	if ( $countries )
 		arsort( $countries );
 
-		
+
 	// *** Dates : array of $dates[$year][$month][$day] = number of clicks ***
-	$query = "SELECT 
-		DATE_FORMAT(`click_time`, '%Y') AS `year`, 
-		DATE_FORMAT(`click_time`, '%m') AS `month`, 
-		DATE_FORMAT(`click_time`, '%d') AS `day`, 
-		COUNT(*) AS `count` 
+	$sql = "SELECT
+		DATE_FORMAT(`click_time`, '%Y') AS `year`,
+		DATE_FORMAT(`click_time`, '%m') AS `month`,
+		DATE_FORMAT(`click_time`, '%d') AS `day`,
+		COUNT(*) AS `count`
 	FROM `$table`
 	WHERE `shorturl` $keyword_range
 	GROUP BY `year`, `month`, `day`;";
-	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_dates', $query ) );
-	
+    $sql = yourls_apply_filter('stat_query_dates', $sql);
+	$rows = $ydb->fetchObjects($sql, $keyword_binds);
+
 	// Loop through all results and fill blanks
 	foreach( (array)$rows as $row ) {
 		if( !array_key_exists($row->year, $dates ) )
@@ -130,7 +135,7 @@ if( yourls_do_log_redirect() ) {
 		else
 			$dates[$row->year][$row->month][$row->day] += $row->count;
 	}
-	
+
 	// Sort dates, chronologically from [2007][12][24] to [2009][02][19]
 	ksort( $dates );
 	foreach( $dates as $year=>$months ) {
@@ -139,7 +144,7 @@ if( yourls_do_log_redirect() ) {
 			ksort( $dates[$year][$month] );
 		}
 	}
-	
+
 	// Get $list_of_days, $list_of_months, $list_of_years
 	reset( $dates );
 	if( $dates ) {
@@ -151,20 +156,21 @@ if( yourls_do_log_redirect() ) {
 	}
 
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
-	$query = "SELECT
+	$sql = "SELECT
 		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR), '%H %p') AS `time`,
 		COUNT(*) AS `count`
 	FROM `$table`
 	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) - INTERVAL 1 DAY)
 	GROUP BY `time`;";
-	$rows = $ydb->get_results( yourls_apply_filter( 'stat_query_last24h', $query ) );
-	
+    $sql = yourls_apply_filter('stat_query_last24h', $sql);
+	$rows = $ydb->fetchObjects($sql, $keyword_binds);
+
 	$_last_24h = array();
 	foreach( (array)$rows as $row ) {
 		if ( isset( $row->time ) )
 			$_last_24h[ "$row->time" ] = $row->count;
 	}
-	
+
 	$now = intval( date('U') );
 	for ($i = 23; $i >= 0; $i--) {
 		$h = date('H A', ($now - ($i * 60 * 60) + (YOURLS_HOURS_OFFSET * 60 * 60)) );
@@ -172,9 +178,9 @@ if( yourls_do_log_redirect() ) {
 		$last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
 	}
 	unset( $_last_24h );
-	
-	// *** Queries all done, phew ***	
-	
+
+	// *** Queries all done, phew ***
+
 	// Filter all this junk if applicable. Be warned, some are possibly huge datasets.
 	$referrers      = yourls_apply_filter( 'pre_yourls_info_referrers', $referrers );
 	$referrer_sort  = yourls_apply_filter( 'pre_yourls_info_referrer_sort', $referrer_sort );
@@ -244,15 +250,15 @@ yourls_html_menu();
 	</ul>
 	</div>
 
-			
+
 <?php if( yourls_do_log_redirect() ) { ?>
 	<div id="stat_tab_stats" class="tab">
 		<h2><?php yourls_e( 'Traffic statistics'); ?></h2>
-		
+
 		<?php yourls_do_action( 'pre_yourls_info_stats', $keyword ); ?>
-		
+
 		<?php if ( $list_of_days ) { ?>
-		
+
 			<?php
 			$graphs = array(
 				'24' => yourls__( 'Last 24 hours' ),
@@ -260,7 +266,7 @@ yourls_html_menu();
 				'30' => yourls__( 'Last 30 days' ),
 				'all'=> yourls__( 'All time' ),
 			);
-			
+
 			// Which graph to generate ?
 			$do_all = $do_30 = $do_7 = $do_24 = false;
 			$hits_all = array_sum( $list_of_days );
@@ -275,7 +281,7 @@ yourls_html_menu();
 				$do_7 = true; // graph for last 7 days
 			if( $hits_24 > 0 )
 				$do_24 = true; // graph for last 24 hours
-			
+
 			// Which graph to display ?
 			$display_all = $display_30 = $display_7 = $display_24 = false;
 			if( $do_24 ) {
@@ -286,7 +292,7 @@ yourls_html_menu();
 				$display_30 = true;
 			} elseif ( $do_all ) {
 				$display_all = true;
-			}				
+			}
 			?>
 
 			<table border="0" cellspacing="2">
@@ -302,7 +308,7 @@ yourls_html_menu();
 					echo '<li><a href="#stat_line_30">' . yourls__( 'Last 30 days' ) . '</a>';
 				if( $do_all == true )
 					echo '<li><a href="#stat_line_all">' . yourls__( 'All time' ) . '</a>';
-				?>				
+				?>
 				</ul>
 				<?php
 				// Generate, and display if applicable, each needed graph
@@ -328,9 +334,9 @@ yourls_html_menu();
 								break;
 						}
 						echo "</div>\n";
-					}			
+					}
 				} ?>
-				
+
 				</td>
 				<td valign="top">
 				<h3><?php yourls_e( 'Historical click count' ); ?></h3>
@@ -373,7 +379,7 @@ yourls_html_menu();
 					?>
 					</ul>
 				</div>
-		
+
 				<h3><?php yourls_e( 'Best day' ); ?></h3>
 				<?php
 				$best = yourls_stats_get_best_day( $list_of_days );
@@ -381,7 +387,7 @@ yourls_html_menu();
 				$best_time['month'] = date( "m", strtotime( $best['day'] ) );
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
-				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>. 
+				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>.
 				<a href="" class='details hide-if-no-js' id="more_clicks"><?php yourls_e( 'Click for more details' ); ?></a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php
@@ -418,14 +424,14 @@ yourls_html_menu();
 					}
 					?>
 				</ul>
-				
+
 				</td>
-				
+
 			</tr>
 			</table>
 
 		<?php yourls_do_action( 'post_yourls_info_stats', $keyword ); ?>
-		
+
 		<?php } else {
 			echo '<p>' . yourls__( 'No traffic yet. Get some clicks first!' ) . '</p>';
 		} ?>
@@ -434,11 +440,11 @@ yourls_html_menu();
 
 	<div id="stat_tab_location" class="tab">
 		<h2><?php yourls_e( 'Traffic location' ); ?></h2>
-		
+
 		<?php yourls_do_action( 'pre_yourls_info_location', $keyword ); ?>
 
 		<?php if ( $countries ) { ?>
-			
+
 			<table border="0" cellspacing="2">
 			<tr>
 				<td valign="top">
@@ -449,7 +455,7 @@ yourls_html_menu();
 					<?php
 					foreach( $countries as $code=>$count ) {
 						echo "<li><img src='".yourls_geo_get_flag( $code )."' /> $code (".yourls_geo_countrycode_to_countryname( $code ) . ') : ' . sprintf( yourls_n( '1 hit', '%s hits', $count ), $count ) . "</li>\n";
-					}		
+					}
 					?>
 					</ul>
 
@@ -460,22 +466,22 @@ yourls_html_menu();
 				</td>
 			</tr>
 			</table>
-		
+
 		<?php yourls_do_action( 'post_yourls_info_location', $keyword ); ?>
 
 		<?php } else {
 			echo '<p>' . yourls__( 'No country data.' ) . '</p>';
 		} ?>
 	</div>
-				
-				
+
+
 	<div id="stat_tab_sources" class="tab">
 		<h2><?php yourls_e( 'Traffic sources' ); ?></h2>
-		
+
 		<?php yourls_do_action( 'pre_yourls_info_sources', $keyword ); ?>
 
 		<?php if ( $referrers ) { ?>
-			
+
 			<table border="0" cellspacing="2">
 			<tr>
 				<td valign="top">
@@ -506,16 +512,16 @@ yourls_html_menu();
 							echo "<li id='sites_various'>" . yourls__( 'Various:' ) . " <strong>". count( $referrers ). "</strong> <a href='' class='details hide-if-no-js' id='more_various'>" . yourls__( '(details)' ) . "</a></li>\n";
 							echo "<ul id='details_various' style='display:none'>";
 							foreach( $referrers as $url ) {
-								echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";	
+								echo "<li>"; yourls_html_link(key($url)); echo ": 1</li>\n";
 							}
 							echo "</ul>\n";
 						}
 						?>
-						
+
 					</ul>
-				
+
 				</td>
-				
+
 				<td valign="top">
 					<h3><?php yourls_e( 'Direct vs Referrer Traffic' ); ?></h3>
 					<?php
@@ -529,11 +535,11 @@ yourls_html_menu();
 			</table>
 
 		<?php yourls_do_action( 'post_yourls_info_sources', $keyword ); ?>
-			
+
 		<?php } else {
 			echo '<p>' . yourls__( 'No referrer data.' ) . '</p>';
 		} ?>
-			
+
 	</div>
 
 <?php } // endif do log redirect ?>
@@ -541,11 +547,11 @@ yourls_html_menu();
 
 	<div id="stat_tab_share" class="tab">
 		<h2><?php yourls_e( 'Share' ); ?></h2>
-		
+
 		<?php yourls_share_box( $longurl, yourls_link($keyword), $title, '', '<h3>' . yourls__( 'Short link' ) . '</h3>', '<h3>' . yourls__( 'Quick Share' ) . '</h3>'); ?>
 
 	</div>
-	
+
 </div>
 
 

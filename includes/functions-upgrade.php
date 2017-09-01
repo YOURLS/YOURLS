@@ -87,7 +87,7 @@ function yourls_upgrade_to_143( ) {
 	global $ydb;
 	$table_log = YOURLS_DB_TABLE_LOG;
 	$sql = "SHOW COLUMNS FROM `$table_log`";
-	$cols = $ydb->get_results( $sql );
+	$cols = $ydb->fetchObjects( $sql );
 	if ( $cols[2]->Field == 'keyword' ) {
 		$sql = "ALTER TABLE `$table_log` CHANGE `keyword` `shorturl` VARCHAR( 200 ) BINARY;";
 		$ydb->query( $sql );
@@ -278,7 +278,7 @@ function yourls_update_table_to_14() {
 
 	$sql = "SELECT `keyword`,`url` FROM `$table` WHERE 1=1 ORDER BY `url` ASC LIMIT $from, $chunk ;";
 
-	$rows = $ydb->get_results($sql);
+	$rows = $ydb->fetchObjects($sql);
 
 	$count = 0;
 	$queries = 0;
