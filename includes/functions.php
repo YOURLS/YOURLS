@@ -1297,24 +1297,20 @@ function yourls_allow_duplicate_longurls() {
  *
  * @since 1.7
  * @param string $longurl long url
- * @param string $sort Optional ORDER BY order (can be 'keyword', 'title', 'timestamp' or'clicks')
  * @param string $order Optional SORT order (can be 'ASC' or 'DESC')
  * @return array array of keywords
  */
-function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
+function yourls_get_longurl_keywords( $longurl, $order = 'ASC' ) {
 	global $ydb;
-	$longurl = yourls_escape( yourls_sanitize_url( $longurl ) );
+	$longurl = yourls_sanitize_url($longurl);
 	$table   = YOURLS_DB_TABLE_URL;
-	$query   = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
+    $sql     = "SELECT `keyword` FROM `$table` WHERE `url` = :url";
 
-	// Ensure sort is a column in database (@TODO: update verification array if database changes)
-	if ( in_array( $sort, array('keyword','title','timestamp','clicks') ) ) {
-		$query .= " ORDER BY '".$sort."'";
-		if ( in_array( $order, array( 'ASC','DESC' ) ) ) {
-			$query .= " ".$order;
-		}
-	}
-	return yourls_apply_filter( 'get_longurl_keywords', $ydb->get_col( $query ), $longurl );
+    if (in_array($order, array('ASC','DESC'))) {
+        $sql .= " ORDER BY `keyword` ".$order;
+    }
+
+    return yourls_apply_filter( 'get_longurl_keywords', $ydb->fetchCol($sql, array('url'=>$longurl)), $longurl );
 }
 
 /**
