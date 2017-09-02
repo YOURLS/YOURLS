@@ -131,8 +131,8 @@ function yourls_delete_link_by_keyword( $keyword ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$delete = $ydb->query("DELETE FROM `$table` WHERE `keyword` = '$keyword';");
+    $keyword = yourls_sanitize_string($keyword);
+    $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 	yourls_do_action( 'delete_link', $keyword, $delete );
 	return $delete;
 }
@@ -144,14 +144,21 @@ function yourls_delete_link_by_keyword( $keyword ) {
 function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	global $ydb;
 
-	$url     = yourls_escape( yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title   = yourls_escape( yourls_sanitize_title( $title ) );
+    $url       = yourls_sanitize_url($url);
+    $keyword   = yourls_sanitize_keyword($keyword);
+    $title     = yourls_sanitize_title($title);
+    $timestamp = date('Y-m-d H:i:s');
+    $ip        = yourls_get_IP();
 
-	$table = YOURLS_DB_TABLE_URL;
-	$timestamp = date('Y-m-d H:i:s');
-	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
+    $table = YOURLS_DB_TABLE_URL;
+    $binds = array(
+        'keyword'   => $keyword,
+        'url'       => $url,
+        'title'     => $title,
+        'timestamp' => $timestamp,
+        'ip'        => $ip,
+    );
+    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
 
 	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 
@@ -176,6 +183,10 @@ function yourls_url_exists( $url ) {
     $url   = yourls_sanitize_url($url);
 	$url_exists = $ydb->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
 
+    if ($url_exists === false) {
+        $url_exists = NULL;
+    }
+
 	return yourls_apply_filter( 'url_exists', $url_exists, $url );
 }
 
@@ -190,7 +201,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		return $pre;
 
 	$url = yourls_encodeURI( $url );
-	$url = yourls_escape( yourls_sanitize_url( $url ) );
+	$url = yourls_sanitize_url( $url );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';
@@ -234,7 +245,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 
-			$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+			$keyword = yourls_sanitize_string( $keyword );
 			$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 			if ( !yourls_keyword_is_free( $keyword ) ) {
 				// This shorturl either reserved or taken already
@@ -264,7 +275,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
 				if ( yourls_keyword_is_free($keyword) ) {
-					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
+					if (yourls_insert_link_in_db( $url, $keyword, $title )){
 						// everything ok, populate needed vars
 						$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 						$return['status']   = 'success';
@@ -272,7 +283,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 						$return['title']    = $title;
 						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
-					}else{
+					} else {
 						// database error, couldnt store result
 						$return['status']   = 'fail';
 						$return['code']     = 'error:db';
@@ -345,7 +356,9 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-			$update_url = $ydb->query( "UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword', `title` = '$title' WHERE `keyword` = '$keyword';" );
+            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
+			$update_url = $ydb->fetchAffected($sql, $binds);
 		if( $update_url ) {
 			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status']  = 'success';
@@ -376,11 +389,11 @@ function yourls_edit_link_title( $keyword, $title ) {
 
 	global $ydb;
 
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
+	$keyword = yourls_sanitize_keyword( $keyword );
+	$title = yourls_sanitize_title( $title );
 
 	$table = YOURLS_DB_TABLE_URL;
-	$update = $ydb->query("UPDATE `$table` SET `title` = '$title' WHERE `keyword` = '$keyword';");
+	$update = $ydb->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
 
 	return $update;
 }
@@ -538,12 +551,12 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = $clicks WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", array('clicks' => $clicks, 'keyword' => $keyword) );
 	else
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", array('keyword' => $keyword) );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -843,15 +856,17 @@ function yourls_log_redirect( $keyword ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
+    $ip = yourls_get_IP();
+    $binds = array(
+        'now' => date( 'Y-m-d H:i:s' ),
+        'keyword'  => yourls_sanitize_string($keyword),
+        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe($_SERVER['HTTP_REFERER']) : 'direct',
+        'ua'       => yourls_get_user_agent(),
+        'ip'       => $ip,
+        'location' => yourls_geo_ip_to_countrycode($ip),
+    );
 
-    $now      = date( 'Y-m-d H:i:s' );
-	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
-	$ua       = yourls_escape( yourls_get_user_agent() );
-	$ip       = yourls_escape( yourls_get_IP() );
-	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
-
-	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES ('$now', '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+    return $ydb->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
 }
 
 /**

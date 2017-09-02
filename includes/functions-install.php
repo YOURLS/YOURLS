@@ -249,8 +249,8 @@ function yourls_create_sql_tables() {
 
 	// Create tables
 	foreach ( $create_tables as $table_name => $table_query ) {
-		$ydb->query( $table_query );
-		$create_success = $ydb->query( "SHOW TABLES LIKE '$table_name'" );
+		$ydb->perform( $table_query );
+		$create_success = $ydb->fetchAffected( "SHOW TABLES LIKE '$table_name'" );
 		if( $create_success ) {
 			$create_table_count++;
 			$success_msg[] = yourls_s( "Table '%s' created.", $table_name );
