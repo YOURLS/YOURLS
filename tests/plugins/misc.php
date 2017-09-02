@@ -18,7 +18,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         
         // unregister plugin pages
         global $ydb;
-        unset( $ydb->plugin_pages );
+        $ydb->set_plugin_pages(array());
     }
 
     /**
@@ -89,20 +89,21 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         $func = rand_str();
 
         // no plugin page registered
-        $this->assertObjectNotHasAttribute( 'plugin_pages', $ydb );
+        $this->assertEquals( 0, count( $ydb->get_plugin_pages() ) );
 
         // register one and check
         yourls_register_plugin_page( $plugin, $title, $func );
-        $this->assertObjectHasAttribute( 'plugin_pages', $ydb );
+        $this->assertEquals( 1, count( $ydb->get_plugin_pages() ) );
         $expected = array(
             'slug' => $plugin,
             'title' => $title,
             'function' => $func,
         );
-        $this->assertSame( $ydb->plugin_pages[ $plugin ], $expected );
+        $pages = $ydb->get_plugin_pages();
+        $this->assertSame( $pages[ $plugin ], $expected );
         
         // deregister it
-        unset( $ydb->plugin_pages );
+        $ydb->set_plugin_pages(array());
     }
 
     /**
@@ -117,7 +118,6 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         $func = rand_str();
 
         // no plugin page registered
-        $this->assertObjectNotHasAttribute( 'plugin_pages', $ydb );
         $this->assertEmpty( yourls_list_plugin_admin_pages() );
         
         // register one plugin

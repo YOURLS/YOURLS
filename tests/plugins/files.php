@@ -76,12 +76,12 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
         global $ydb;
         
         // at this point, we have a plugin activated
-        $this->assertSame( $ydb->plugins, array( $plugin ) );
+        $this->assertSame( $ydb->get_plugins(), array( $plugin ) );
         
         // Register a fake plugin to simulate one that was once activated but deleted since
         $fake_plugin = rand_str() . '/plugin.php';
-        $ydb->plugins[] = $fake_plugin;
-        yourls_update_option( 'active_plugins', $ydb->plugins );
+        $ydb->add_plugin($fake_plugin);
+        yourls_update_option( 'active_plugins', $ydb->get_plugins() );
         
         // Check that a notice has been triggered to warn about deleted plugin
         $this->assertFalse( yourls_has_action( 'admin_notices' ) );
@@ -89,7 +89,7 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
         $this->assertTrue( yourls_has_action( 'admin_notices' ) );
         
         // Check only our valid plugin is left registered
-        $this->assertSame( $ydb->plugins, array( $plugin ) );
+        $this->assertSame( $ydb->get_plugins(), array( $plugin ) );
     }
 
 	/**

@@ -36,10 +36,9 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
             array( '5.5-beta2',                '5.5' ),
             array( 'mysql-5.5',                '5.5' ),
             array( '5.5',                      '5.5' ),
-            array( '6',                        '6'   ),
         );
     }
-    
+
     /**
      * Test mysql version getter & version comparer
      *
