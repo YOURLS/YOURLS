@@ -186,13 +186,13 @@ function yut_drop_all_tables_if_local() {
 	global $ydb;
 	$sql = sprintf( "SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema = '%s';", YOURLS_DB_NAME );
 	try {
-		$tables = $ydb->get_var( $sql );
+		$tables = $ydb->fetchValue( $sql );
 	} catch( Exception $e ) {
 		return;
 	}
 	if( $tables ) {
 		try {
-			$drop = $ydb->get_var( sprintf( 'DROP TABLE %s', $tables ) );
+			$drop = $ydb->fetchValue( sprintf( 'DROP TABLE %s', $tables ) );
 		} catch( Exception $e ) {
 			return;
 		}

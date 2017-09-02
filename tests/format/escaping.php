@@ -137,61 +137,6 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Escape strings
-     *
-     * @since 0.1
-     * @dataProvider strings_to_escape
-     */
-    public function test_yourls_escape_string( $string, $escaped ) {
-        $this->assertSame( yourls_escape( $string ), $escaped );
-    }
-
-    /**
-     * String to addslash and what they should look like once addslashed
-     */
-    public function strings_to_addslash() {
-        return array(
-           array( "I'm rock n' rollin'", "I\'m rock n\' rollin\'" ),
-           array( 'I am "nice"', 'I am \"nice\"' ),
-           array( 'Back\Slash', 'Back\\\Slash' ),
-           array( "NULL\0NULL", 'NULL\0NULL' ), // notice the quote change
-        );
-    }
-    
-    /**
-     * Escape strings when no DB connection exists
-     *
-     * @since 0.1
-     * @dataProvider strings_to_addslash
-     */
-    public function test_yourls_escape_string_with_no_DB( $string, $escaped ) {
-        global $ydb;
-        $ydb = "not a DB instance";
-        
-        $this->assertSame( yourls_escape( $string ), $escaped );
-    }
-
-    /**
-     * Escape arrays
-     *
-     * @since 0.1
-     */
-    public function test_yourls_escape_array() {
-        $arrays = $this->strings_to_escape();
-        $array_str = array();
-        $array_esc = array();
-        
-        foreach( $arrays as $array ) {
-            $array_str[] = $array[0];
-            $array_esc[] = $array[1];
-        }
-        $array_str = array( $array_str );
-        $array_esc = array( $array_esc );        
-        
-        $this->assertSame( yourls_escape( $array_str ), $array_esc );
-    }
-    
-    /**
      * List of URLs and how they should be escaped
      */
     function list_of_URLs() {
