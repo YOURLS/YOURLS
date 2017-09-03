@@ -42,7 +42,7 @@ class Logger extends \Aura\Sql\Profiler {
          */
         try {
             $this->is_emulate_prepare = $this->ydb->getAttribute(\PDO::ATTR_EMULATE_PREPARES);
-        } catch (Exception $e) {
+        } catch (\PDOException $e) {
             $this->is_emulate_prepare = false;
         }
     }
