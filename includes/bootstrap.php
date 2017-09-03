@@ -34,14 +34,13 @@ if( !defined( 'YOURLS_CONFIGFILE' ) ) {
 global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object & config file
        $yourls_filters, $yourls_actions,                          // used by plugin API
        $yourls_locale, $yourls_l10n, $yourls_locale_formats,      // used by L10N API
-       $yourls_allowedentitynames, $yourls_allowedprotocols,      // used by KSES
-	   $ezsql_mysql_str, $ezsql_mysqli_str, $ezsql_pdo_str;       // used by ezSQL
+       $yourls_allowedentitynames, $yourls_allowedprotocols;      // used by KSES
 
 
 // Initialize ourselves some constants that are typically user defined
 
 $yourls_reserved_URL = array(
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
+	'porn', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 $yourls_user_consts = array(
 	'YOURLS_HOURS_OFFSET'     => 5,
