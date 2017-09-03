@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
-    'YOURLS\\' => array($baseDir . '/includes/yourls'),
+    'YOURLS\\' => array($baseDir . '/includes/YOURLS'),
     'POMO\\' => array($vendorDir . '/pomo/pomo/src'),
     'MaxMind\\WebService\\' => array($vendorDir . '/maxmind/web-service-common/src/WebService'),
     'MaxMind\\Exception\\' => array($vendorDir . '/maxmind/web-service-common/src/Exception'),

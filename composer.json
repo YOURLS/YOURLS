@@ -18,6 +18,6 @@
         "vendor-dir": "includes/vendor"
     },
     "autoload": {
-        "psr-4": {"YOURLS\\": "includes/yourls"}
+        "psr-4": {"YOURLS\\": "includes/YOURLS"}
     }
 }
