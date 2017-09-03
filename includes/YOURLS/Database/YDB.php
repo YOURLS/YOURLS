@@ -78,6 +78,8 @@ class YDB extends ExtendedPdo {
     public function __construct($dsn, $user, $pass, $options, $attributes) {
         parent::__construct($dsn, $user, $pass, $options, $attributes);
 
+        $this->connect_to_DB();
+
         // Log query infos
         $this->start_profiler();
     }

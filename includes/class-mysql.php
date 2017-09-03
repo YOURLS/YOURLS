@@ -53,8 +53,7 @@ function yourls_db_connect() {
     $attributes     = yourls_apply_filter( 'db_connect_attributes',    array() ); // attributes as key-value pairs
 
     $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
-    yourls_debug_log(sprintf('Connecting to database %s on %s ', $dbname, $dbhost));
-    $ydb->connect_to_DB();
+    yourls_debug_log(sprintf('Connected to database %s on %s ', $dbname, $dbhost));
 
     yourls_debug_mode(YOURLS_DEBUG);
 
