@@ -64,6 +64,12 @@ class YDB extends ExtendedPdo {
     protected $plugins = array();
 
     /**
+     * Are we emulating prepare statements ?
+     * @var bool
+     */
+    protected $is_emulate_prepare;
+
+    /**
      * Class constructor
      *
      * Don't forget to end with a call to the parent constructor
@@ -80,8 +86,38 @@ class YDB extends ExtendedPdo {
 
         $this->connect_to_DB();
 
+        $this->set_emulate_state();
+
         // Log query infos
         $this->start_profiler();
+    }
+
+    /**
+     * Check if we emulate prepare statements, and set bool flag accordingly
+     *
+     * Check if current driver can PDO::getAttribute(PDO::ATTR_EMULATE_PREPARES)
+     * Some combinations of PHP/MySQL don't support this function. See
+     * https://travis-ci.org/YOURLS/YOURLS/jobs/271423782#L481
+     *
+     * @since  1.7.3
+     * @return void
+     */
+    public function set_emulate_state() {
+        try {
+            $this->is_emulate_prepare = $this->getAttribute(PDO::ATTR_EMULATE_PREPARES);
+        } catch (\PDOException $e) {
+            $this->is_emulate_prepare = false;
+        }
+    }
+
+    /**
+     * Get emulate status
+     *
+     * @since  1.7.3
+     * @return bool
+     */
+    public function get_emulate_state() {
+        return $this->is_emulate_prepare;
     }
 
     /**
@@ -321,7 +357,7 @@ class YDB extends ExtendedPdo {
     public function get_queries() {
         $queries = $this->getProfiler()->getProfiles();
 
-        if ($this->getAttribute(PDO::ATTR_EMULATE_PREPARES)) {
+        if ($this->get_emulate_state()) {
             // keep queries if $query['function'] != 'prepare'
             $queries = array_filter($queries, function($query) {return $query['function'] !== 'prepare';});
         }
