@@ -3,12 +3,12 @@
  * YOURLS Unit Test. No, I don't know what I'm doing.
  */
 
-if( is_readable( 'PHPUnit/Autoload.php' ) )
-    require_once 'PHPUnit/Autoload.php';
-elseif( is_readable( dirname( dirname( __FILE__ ) ) .  '/vendor/phpunit/phpunit/PHPUnit/Autoload.php' ) )
-    require_once dirname( dirname( __FILE__ ) ) .  '/vendor/phpunit/phpunit/PHPUnit/Autoload.php';
-elseif( is_readable( dirname( dirname( __FILE__ ) ) .  'YOURLS/includes/vendor/phpunit/phpunit/PHPUnit/Autoload.php' ) )
-    require_once dirname( dirname( __FILE__ ) ) .  'YOURLS/includes/vendor/phpunit/phpunit/PHPUnit/Autoload.php';
+// if( is_readable( 'PHPUnit/Autoload.php' ) )
+    // require_once 'PHPUnit/Autoload.php';
+// elseif( is_readable( dirname( dirname( __FILE__ ) ) .  '/vendor/phpunit/phpunit/PHPUnit/Autoload.php' ) )
+    // require_once dirname( dirname( __FILE__ ) ) .  '/vendor/phpunit/phpunit/PHPUnit/Autoload.php';
+// elseif( is_readable( dirname( dirname( __FILE__ ) ) .  'YOURLS/includes/vendor/phpunit/phpunit/PHPUnit/Autoload.php' ) )
+    // require_once dirname( dirname( __FILE__ ) ) .  'YOURLS/includes/vendor/phpunit/phpunit/PHPUnit/Autoload.php';
 require_once dirname( __FILE__ ) . '/utils.php';
 require_once dirname( __FILE__ ) . '/install.php';
 
