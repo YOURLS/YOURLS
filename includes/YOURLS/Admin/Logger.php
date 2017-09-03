@@ -24,11 +24,27 @@ class Logger extends \Aura\Sql\Profiler {
      */
     protected $debug_log = array();
 
+    /**
+     * Are we emulating prepare statements ?
+     * @var bool
+     */
+    protected $is_emulate_prepare;
+
     public function __construct(YDB $ydb) {
         $this->ydb = $ydb;
         /**
          * @todo Extend this to allow calling an external logger
          */
+
+        /* Check if current driver can PDO::getAttribute(PDO::ATTR_EMULATE_PREPARES)
+         * Some combinations of PHP/MySQL don't support this function. See
+         * https://travis-ci.org/YOURLS/YOURLS/jobs/271423782#L481
+         */
+        try {
+            $this->is_emulate_prepare = $this->ydb->getAttribute(\PDO::ATTR_EMULATE_PREPARES);
+        } catch (Exception $e) {
+            $this->is_emulate_prepare = false;
+        }
     }
 
     /**
@@ -58,10 +74,12 @@ class Logger extends \Aura\Sql\Profiler {
 
         if($function == 'connect') {
             $this->log( sprintf('SQL: CONNECT (%s s)', number_format($duration, 5)) );
-        } else {
-            if ( $this->ydb->getAttribute(\PDO::ATTR_EMULATE_PREPARES) && $function !== 'prepare' ) {
-                $this->log( sprintf('SQL: %s (%s s)', $this->pretty_format($statement, $bind_values), number_format($duration, 5) ) );
-            }
+            return;
+        }
+
+        // If we are emulating prepare, don't log 'prepare' statement, as they are not actual queries sent to the server
+        if ($this->is_emulate_prepare && $function !== 'prepare') {
+            $this->log( sprintf('SQL: %s (%s s)', $this->pretty_format($statement, $bind_values), number_format($duration, 5) ) );
         }
     }
 
