@@ -39,9 +39,6 @@ if ( !yourls_upgrade_is_needed() ) {
 	$newsql = YOURLS_DB_VERSION;
 
 	// Verbose & ugly details
-    /**
-     * @todo wrapper function to toggle $ydb->debug
-     */
 	yourls_debug_mode(true);
 
 	// Let's go
