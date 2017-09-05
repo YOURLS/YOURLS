@@ -1,42 +1,38 @@
 <?php
 
 /**
+ * Check if we have PDO installed, returns bool
+ *
+ * @since 1.7.3
+ * @return bool
+ */
+function yourls_check_PDO() {
+    return extension_loaded('pdo');
+}
+
+/**
  * Check if server has MySQL 5.0+
  *
  */
 function yourls_check_database_version() {
-	global $ydb;
-	
-	// Attempt to get MySQL server version, check result and if error count increased
-	$num_errors1 = count( $ydb->captured_errors );
-	$version     = yourls_get_database_version();
-	$num_errors2 = count( $ydb->captured_errors );
-	
-	if( $version == NULL || ( $num_errors2 > $num_errors1 ) ) {
-		yourls_die( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
-	}
-	
-	return ( version_compare( '5.0', $version ) <= 0 );
+    return ( version_compare( '5.0', yourls_get_database_version() ) <= 0 );
 }
 
 /**
  * Get DB version
  *
- * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
- * follows after that.
- *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
- *   'mysql5.5-ubuntu-4.20'     => '5.5'
- *   '5.5-ubuntu-4.20'          => '5.5'
- *   '5.5-beta2'                => '5.5'
- *   '5.5'                      => '5.5'
- *
  * @since 1.7
  * @return string sanitized DB version
  */
 function yourls_get_database_version() {
+	// Allow plugins to short-circuit the whole function
+	$pre = yourls_apply_filter( 'shunt_get_database_version', false );
+	if ( false !== $pre )
+		return $pre;
+
 	global $ydb;
-	
-	return preg_replace( '/(^[^0-9]*)|[^0-9.].*/', '', $ydb->mysql_version() );
+
+	return yourls_sanitize_version($ydb->mysql_version());
 }
 
 /**
@@ -81,7 +77,7 @@ function yourls_create_htaccess() {
 		// Prepare content for a web.config file
 		$content = array(
 			'<?'.'xml version="1.0" encoding="UTF-8"?>',
-			'<configuration>', 
+			'<configuration>',
 			'    <system.webServer>',
 			'        <security>',
 			'            <requestFiltering allowDoubleEscaping="true" />',
@@ -101,7 +97,7 @@ function yourls_create_htaccess() {
 			'    </system.webServer>',
 			'</configuration>',
 		);
-	
+
 		$filename = YOURLS_ABSPATH.'/web.config';
 		$marker = 'none';
 
@@ -116,12 +112,12 @@ function yourls_create_htaccess() {
 			'RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
 			'</IfModule>',
 		);
-	
+
 		$filename = YOURLS_ABSPATH.'/.htaccess';
 		$marker = 'YOURLS';
-		
+
 	}
-	
+
 	return ( yourls_insert_with_markers( $filename, $marker, $content ) );
 }
 
@@ -134,7 +130,7 @@ function yourls_create_htaccess() {
  *
  * @since 1.3
  *
- * @param string $filename 
+ * @param string $filename
  * @param string $marker
  * @param array  $insertion
  * @return bool True on write success, false on failure.
@@ -205,7 +201,7 @@ function yourls_create_sql_tables() {
     }
 
 	global $ydb;
-	
+
 	$error_msg = array();
 	$success_msg = array();
 
@@ -224,7 +220,7 @@ function yourls_create_sql_tables() {
 		' KEY `ip` (`ip`)'.
 		');';
 
-	$create_tables[YOURLS_DB_TABLE_OPTIONS] = 
+	$create_tables[YOURLS_DB_TABLE_OPTIONS] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_OPTIONS.'` ('.
 		'`option_id` bigint(20) unsigned NOT NULL auto_increment,'.
 		'`option_name` varchar(64) NOT NULL default "",'.
@@ -232,8 +228,8 @@ function yourls_create_sql_tables() {
 		'PRIMARY KEY  (`option_id`,`option_name`),'.
 		'KEY `option_name` (`option_name`)'.
 		') AUTO_INCREMENT=1 ;';
-		
-	$create_tables[YOURLS_DB_TABLE_LOG] = 
+
+	$create_tables[YOURLS_DB_TABLE_LOG] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
 		'`click_id` int(11) NOT NULL auto_increment,'.
 		'`click_time` datetime NOT NULL,'.
@@ -248,34 +244,34 @@ function yourls_create_sql_tables() {
 
 
 	$create_table_count = 0;
-	
-	$ydb->show_errors = true;
-	
+
+    yourls_debug_mode(true);
+
 	// Create tables
 	foreach ( $create_tables as $table_name => $table_query ) {
-		$ydb->query( $table_query );
-		$create_success = $ydb->query( "SHOW TABLES LIKE '$table_name'" );
+		$ydb->perform( $table_query );
+		$create_success = $ydb->fetchAffected( "SHOW TABLES LIKE '$table_name'" );
 		if( $create_success ) {
 			$create_table_count++;
-			$success_msg[] = yourls_s( "Table '%s' created.", $table_name ); 
+			$success_msg[] = yourls_s( "Table '%s' created.", $table_name );
 		} else {
-			$error_msg[] = yourls_s( "Error creating table '%s'.", $table_name ); 
+			$error_msg[] = yourls_s( "Error creating table '%s'.", $table_name );
 		}
 	}
-		
+
 	// Initializes the option table
 	if( !yourls_initialize_options() )
 		$error_msg[] = yourls__( 'Could not initialize options' );
-	
+
 	// Insert sample links
 	if( !yourls_insert_sample_links() )
 		$error_msg[] = yourls__( 'Could not insert sample short URLs' );
-	
+
 	// Check results of operations
 	if ( sizeof( $create_tables ) == $create_table_count ) {
 		$success_msg[] = yourls__( 'YOURLS tables successfully created.' );
 	} else {
-		$error_msg[] = yourls__( 'Error creating YOURLS tables.' ); 
+		$error_msg[] = yourls__( 'Error creating YOURLS tables.' );
 	}
 
 	return array( 'success' => $success_msg, 'error' => $error_msg );
@@ -284,7 +280,7 @@ function yourls_create_sql_tables() {
 /**
  * Initializes the option table
  *
- * Each yourls_update_option() returns either true on success (option updated) or false on failure (new value == old value, or 
+ * Each yourls_update_option() returns either true on success (option updated) or false on failure (new value == old value, or
  * for some reason it could not save to DB).
  * Since true & true & true = 1, we cast it to boolean type to return true (or false)
  *
@@ -310,7 +306,7 @@ function yourls_insert_sample_links() {
 	$link1 = yourls_add_new_link( 'http://blog.yourls.org/', 'yourlsblog', 'YOURLS\' Blog' );
 	$link2 = yourls_add_new_link( 'http://yourls.org/',      'yourls',     'YOURLS: Your Own URL Shortener' );
 	$link3 = yourls_add_new_link( 'http://ozh.org/',         'ozh',        'ozh.org' );
-	return ( bool ) ( 
+	return ( bool ) (
 		  $link1['status'] == 'success'
 		& $link2['status'] == 'success'
 		& $link3['status'] == 'success'
@@ -330,7 +326,7 @@ function yourls_maintenance_mode( $maintenance = true ) {
 	if ( (bool)$maintenance ) {
 		if ( ! ( $fp = @fopen( $file, 'w' ) ) )
 			return false;
-		
+
 		$maintenance_string = '<?php $maintenance_start = ' . time() . '; ?>';
 		@fwrite( $fp, $maintenance_string );
 		@fclose( $fp );
@@ -338,9 +334,10 @@ function yourls_maintenance_mode( $maintenance = true ) {
 
 		// Not sure why the fwrite would fail if the fopen worked... Just in case
 		return( is_readable( $file ) );
-		
+
 	// Turn maintenance mode off : delete the .maintenance file
 	} else {
 		return @unlink($file);
 	}
 }
+

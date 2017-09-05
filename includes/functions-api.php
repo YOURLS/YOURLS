@@ -97,15 +97,15 @@ function yourls_api_action_version() {
  * @param  bool   $send_headers  Optional, default true: Whether a headers (status, content type) should be sent or not
  * @param  bool   $echo          Optional, default true: Whether the output should be outputted or just returned
  * @return string                API output, as an XML / JSON / JSONP / raw text string
- */ 
+ */
 function yourls_api_output( $mode, $output, $send_headers = true, $echo = true ) {
 	if( isset( $output['simple'] ) ) {
 		$simple = $output['simple'];
 		unset( $output['simple'] );
 	}
-	
+
 	yourls_do_action( 'pre_api_output', $mode, $output, $send_headers, $echo );
-	
+
     if( $send_headers ) {
         if( isset( $output['statusCode'] ) ) {
             $code = $output['statusCode'];
@@ -116,37 +116,37 @@ function yourls_api_output( $mode, $output, $send_headers = true, $echo = true )
         }
         yourls_status_header( $code );
     }
-	
+
     $result = '';
-    
+
 	switch ( $mode ) {
 		case 'jsonp':
             if( $send_headers )
                 yourls_content_type_header( 'application/javascript' );
-            
+
             $callback = isset( $output['callback'] ) ? $output['callback'] : '';
 			$result =  $callback . '(' . json_encode( $output ) . ')';
 			break;
-	
+
 		case 'json':
             if( $send_headers )
                 yourls_content_type_header( 'application/json' );
-            
+
 			$result = json_encode( $output );
 			break;
-		
+
 		case 'xml':
             if( $send_headers )
                 yourls_content_type_header( 'application/xml' );
-            
+
 			$result = yourls_xml_encode( $output );
 			break;
-			
+
 		case 'simple':
 		default:
             if( $send_headers )
                 yourls_content_type_header( 'text/plain' );
-            
+
 			$result = isset( $simple ) ? $simple : '';
 			break;
 	}
@@ -154,9 +154,9 @@ function yourls_api_output( $mode, $output, $send_headers = true, $echo = true )
     if( $echo ) {
         echo $result;
     }
-    
+
 	yourls_do_action( 'api_output', $mode, $output, $send_headers, $echo );
-	
+
     return $result;
 }
 
@@ -182,7 +182,7 @@ function yourls_api_db_stats() {
 		'simple'     => 'Need either XML or JSON format for stats',
 		'message'    => 'success',
 	);
-		
+
 	return yourls_apply_filter( 'api_db_stats', $return );
 }
 
@@ -206,9 +206,9 @@ function yourls_api_url_stats( $shorturl ) {
 function yourls_api_expand( $shorturl ) {
 	$keyword = str_replace( YOURLS_SITE . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
 	$keyword = yourls_sanitize_string( $keyword );
-	
+
 	$longurl = yourls_get_keyword_longurl( $keyword );
-	
+
 	if( $longurl ) {
 		$return = array(
 			'keyword'   => $keyword,
@@ -227,6 +227,6 @@ function yourls_api_expand( $shorturl ) {
 			'errorCode' => 404,
 		);
 	}
-	
+
 	return yourls_apply_filter( 'api_expand', $return, $shorturl );
 }

@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
 {
     public static $prefixLengthsPsr4 = array (
+        'Y' => 
+        array (
+            'YOURLS\\' => 7,
+        ),
         'P' => 
         array (
             'POMO\\' => 5,
@@ -25,9 +29,17 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         array (
             'Composer\\CaBundle\\' => 18,
         ),
+        'A' => 
+        array (
+            'Aura\\Sql\\' => 9,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'YOURLS\\' => 
+        array (
+            0 => __DIR__ . '/../../..' . '/includes/YOURLS',
+        ),
         'POMO\\' => 
         array (
             0 => __DIR__ . '/..' . '/pomo/pomo/src',
@@ -51,6 +63,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'Composer\\CaBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
+        ),
+        'Aura\\Sql\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/aura/sql/src',
         ),
     );
 

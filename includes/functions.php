@@ -131,8 +131,8 @@ function yourls_delete_link_by_keyword( $keyword ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$delete = $ydb->query("DELETE FROM `$table` WHERE `keyword` = '$keyword';");
+    $keyword = yourls_sanitize_string($keyword);
+    $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 	yourls_do_action( 'delete_link', $keyword, $delete );
 	return $delete;
 }
@@ -144,14 +144,21 @@ function yourls_delete_link_by_keyword( $keyword ) {
 function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	global $ydb;
 
-	$url     = yourls_escape( yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title   = yourls_escape( yourls_sanitize_title( $title ) );
+    $url       = yourls_sanitize_url($url);
+    $keyword   = yourls_sanitize_keyword($keyword);
+    $title     = yourls_sanitize_title($title);
+    $timestamp = date('Y-m-d H:i:s');
+    $ip        = yourls_get_IP();
 
-	$table = YOURLS_DB_TABLE_URL;
-	$timestamp = date('Y-m-d H:i:s');
-	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
+    $table = YOURLS_DB_TABLE_URL;
+    $binds = array(
+        'keyword'   => $keyword,
+        'url'       => $url,
+        'title'     => $title,
+        'timestamp' => $timestamp,
+        'ip'        => $ip,
+    );
+    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
 
 	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 
@@ -159,8 +166,11 @@ function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 }
 
 /**
- * Check if a URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+ * Check if a long URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
  *
+ * @since 1.5.1
+ * @param  string $url  URL to check if already shortened
+ * @return mixed        NULL if does not already exist in DB, or object with URL information as properties (eg keyword, url, title, ...)
  */
 function yourls_url_exists( $url ) {
 	// Allow plugins to short-circuit the whole function
@@ -170,8 +180,12 @@ function yourls_url_exists( $url ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-	$url   = yourls_escape( yourls_sanitize_url( $url) );
-	$url_exists = $ydb->get_row( "SELECT * FROM `$table` WHERE `url` = '".$url."';" );
+    $url   = yourls_sanitize_url($url);
+	$url_exists = $ydb->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
+
+    if ($url_exists === false) {
+        $url_exists = NULL;
+    }
 
 	return yourls_apply_filter( 'url_exists', $url_exists, $url );
 }
@@ -187,7 +201,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		return $pre;
 
 	$url = yourls_encodeURI( $url );
-	$url = yourls_escape( yourls_sanitize_url( $url ) );
+	$url = yourls_sanitize_url( $url );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';
@@ -231,7 +245,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 
-			$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+			$keyword = yourls_sanitize_string( $keyword );
 			$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 			if ( !yourls_keyword_is_free( $keyword ) ) {
 				// This shorturl either reserved or taken already
@@ -261,7 +275,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
 				if ( yourls_keyword_is_free($keyword) ) {
-					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
+					if (yourls_insert_link_in_db( $url, $keyword, $title )){
 						// everything ok, populate needed vars
 						$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 						$return['status']   = 'success';
@@ -269,7 +283,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 						$return['title']    = $title;
 						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
-					}else{
+					} else {
 						// database error, couldnt store result
 						$return['status']   = 'fail';
 						$return['code']     = 'error:db';
@@ -315,17 +329,18 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$url = yourls_escape (yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
-	$newkeyword = yourls_escape( yourls_sanitize_string( $newkeyword ) );
+	$url = yourls_sanitize_url($url);
+	$keyword = yourls_sanitize_string($keyword);
+	$title = yourls_sanitize_title($title);
+	$newkeyword = yourls_sanitize_string($newkeyword);
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
-	$old_url = $ydb->get_var( "SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';" );
+
+    $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$url';"));
+		$new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
 	} else {
 		$new_url_already_there = false;
 	}
@@ -341,7 +356,9 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-			$update_url = $ydb->query( "UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword', `title` = '$title' WHERE `keyword` = '$keyword';" );
+            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
+			$update_url = $ydb->fetchAffected($sql, $binds);
 		if( $update_url ) {
 			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status']  = 'success';
@@ -372,11 +389,11 @@ function yourls_edit_link_title( $keyword, $title ) {
 
 	global $ydb;
 
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
+	$keyword = yourls_sanitize_keyword( $keyword );
+	$title = yourls_sanitize_title( $title );
 
 	$table = YOURLS_DB_TABLE_URL;
-	$update = $ydb->query("UPDATE `$table` SET `title` = '$title' WHERE `keyword` = '$keyword';");
+	$update = $ydb->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
 
 	return $update;
 }
@@ -406,10 +423,11 @@ function yourls_keyword_is_taken( $keyword ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
+    $keyword = yourls_sanitize_keyword($keyword);
 	$taken = false;
 	$table = YOURLS_DB_TABLE_URL;
-	$already_exists = $ydb->get_var( "SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';" );
+
+	$already_exists = $ydb->fetchValue("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = :keyword;", array('keyword' => $keyword));
 	if ( $already_exists )
 		$taken = true;
 
@@ -429,30 +447,36 @@ function yourls_xml_encode( $array ) {
 /**
  * Return array of all information associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
  *
+ * @since 1.4
+ * @param  string $keyword    Short URL keyword
+ * @param  bool   $use_cache  Default true, set to false to force fetching from DB
+ * @return false|object       false if not found, object with URL properties if found
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 
 	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
-	if( isset( $ydb->infos[$keyword] ) && $use_cache == true ) {
-		return yourls_apply_filter( 'get_keyword_infos', $ydb->infos[$keyword], $keyword );
+	if( $ydb->has_infos($keyword) && $use_cache === true ) {
+		return yourls_apply_filter( 'get_keyword_infos', $ydb->get_infos($keyword), $keyword );
 	}
 
 	yourls_do_action( 'get_keyword_not_cached', $keyword );
 
 	$table = YOURLS_DB_TABLE_URL;
-	$infos = $ydb->get_row( "SELECT * FROM `$table` WHERE `keyword` = '$keyword'" );
+	$infos = $ydb->fetchObject("SELECT * FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	if( $infos ) {
 		$infos = (array)$infos;
-		$ydb->infos[ $keyword ] = $infos;
+		$ydb->set_infos($keyword, $infos);
 	} else {
-		$ydb->infos[ $keyword ] = false;
+        // is NULL if not found
+        $infos = false;
+		$ydb->set_infos($keyword, false);
 	}
 
-	return yourls_apply_filter( 'get_keyword_infos', $ydb->infos[$keyword], $keyword );
+	return yourls_apply_filter( 'get_keyword_infos', $infos, $keyword );
 }
 
 /**
@@ -527,12 +551,12 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = $clicks WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", array('clicks' => $clicks, 'keyword' => $keyword) );
 	else
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", array('keyword' => $keyword) );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -572,7 +596,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
 
 		$return = array();
 		$i = 1;
@@ -604,9 +628,9 @@ function yourls_get_link_stats( $shorturl ) {
 	global $ydb;
 
 	$table_url = YOURLS_DB_TABLE_URL;
-	$shorturl  = yourls_escape( yourls_sanitize_keyword( $shorturl ) );
+	$shorturl  = yourls_sanitize_keyword( $shorturl );
 
-	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl';" );
+    $res = $ydb->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
 	$return = array();
 
 	if( !$res ) {
@@ -636,15 +660,18 @@ function yourls_get_link_stats( $shorturl ) {
 /**
  * Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
  *
- * IMPORTANT NOTE: make sure arguments for the $where clause have been sanitized and yourls_escape()'d
- * before calling this function.
+ * The $where parameter will contain additional SQL arguments:
+ *   $where['sql'] will concatenate SQL clauses: $where['sql'] = ' AND something = :value AND otherthing < :othervalue';
+ *   $where['binds'] will hold the (name => value) placeholder pairs: $where['binds'] = array('value' => $value, 'othervalue' => $value2)
  *
+ * @param  $where array  See comment above
+ * @return array
  */
-function yourls_get_db_stats( $where = '' ) {
+function yourls_get_db_stats( $where = array('sql' => '', 'binds' => array()) ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->get_row( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where" );
+	$totals = $ydb->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
 	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
 
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
@@ -657,7 +684,7 @@ function yourls_get_db_stats( $where = '' ) {
 function yourls_get_num_queries() {
 	global $ydb;
 
-	return yourls_apply_filter( 'get_num_queries', $ydb->num_queries );
+	return yourls_apply_filter( 'get_num_queries', $ydb->get_num_queries() );
 }
 
 /**
@@ -829,15 +856,17 @@ function yourls_log_redirect( $keyword ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
+    $ip = yourls_get_IP();
+    $binds = array(
+        'now' => date( 'Y-m-d H:i:s' ),
+        'keyword'  => yourls_sanitize_string($keyword),
+        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe($_SERVER['HTTP_REFERER']) : 'direct',
+        'ua'       => yourls_get_user_agent(),
+        'ip'       => $ip,
+        'location' => yourls_geo_ip_to_countrycode($ip),
+    );
 
-    $now      = date( 'Y-m-d H:i:s' );
-	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
-	$ua       = yourls_escape( yourls_get_user_agent() );
-	$ip       = yourls_escape( yourls_get_IP() );
-	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
-
-	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES ('$now', '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+    return $ydb->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
 }
 
 /**
@@ -1029,32 +1058,21 @@ function yourls_get_current_version_from_sql() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $default Optional value to return if option doesn't exist. Default false.
  * @return mixed Value set for the option.
  */
 function yourls_get_option( $option_name, $default = false ) {
-	global $ydb;
-
 	// Allow plugins to short-circuit options
 	$pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
 	if ( false !== $pre )
 		return $pre;
 
-	// If option not cached already, get its value from the DB
-	if ( !isset( $ydb->option[$option_name] ) ) {
-		$table = YOURLS_DB_TABLE_OPTIONS;
-		$option_name = yourls_escape( $option_name );
-		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
-		if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
-			$value = $row->option_value;
-		} else { // option does not exist, so we must cache its non-existence
-			$value = $default;
-		}
-		$ydb->option[ $option_name ] = yourls_maybe_unserialize( $value );
-	}
+	global $ydb;
+    $option = new \YOURLS\Database\Options($ydb);
+    $value  = $option->get($option_name, $default);
 
-	return yourls_apply_filter( 'get_option_'.$option_name, $ydb->option[$option_name] );
+    return yourls_apply_filter( 'get_option_'.$option_name, $value );
 }
 
 /**
@@ -1068,31 +1086,23 @@ function yourls_get_option( $option_name, $default = false ) {
  * @since 1.4
  */
 function yourls_get_all_options() {
-	global $ydb;
-
 	// Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
 	$pre = yourls_apply_filter( 'shunt_all_options', false );
 	if ( false !== $pre )
 		return $pre;
 
-	$table = YOURLS_DB_TABLE_OPTIONS;
+	global $ydb;
+    $options = new \YOURLS\Database\Options($ydb);
 
-	$allopt = $ydb->get_results( "SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1" );
-
-	foreach( (array)$allopt as $option ) {
-		$ydb->option[ $option->option_name ] = yourls_maybe_unserialize( $option->option_value );
-	}
-
-	if( property_exists( $ydb, 'option' ) ) {
-		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
-		$ydb->installed = true;
-	} else {
+    if($options->get_all_options() === false) {
 		// Zero option found: either YOURLS is not installed or DB server is dead
         if( !yourls_is_db_alive() ) {
             yourls_db_dead(); // YOURLS will die here
         }
-        $ydb->installed = false;
-	}
+        yourls_set_installed(false);
+    }
+
+	yourls_set_installed(true);
 }
 
 /**
@@ -1101,46 +1111,17 @@ function yourls_get_all_options() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $newvalue Option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
 
-	$option_name = trim( $option_name );
-	if ( empty( $option_name ) )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $update = $option->update($option_name, $newvalue);
 
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $newvalue ) )
-		$newvalue = clone $newvalue;
-
-	$option_name = yourls_escape( $option_name );
-
-	$oldvalue = yourls_get_option( $option_name );
-
-	// If the new and old values are the same, no need to update.
-	if ( $newvalue === $oldvalue )
-		return false;
-
-	if ( false === $oldvalue ) {
-		yourls_add_option( $option_name, $newvalue );
-		return true;
-	}
-
-	$_newvalue = yourls_escape( yourls_maybe_serialize( $newvalue ) );
-
-	yourls_do_action( 'update_option', $option_name, $oldvalue, $newvalue );
-
-	$ydb->query( "UPDATE `$table` SET `option_value` = '$_newvalue' WHERE `option_name` = '$option_name'" );
-
-	if ( $ydb->rows_affected == 1 ) {
-		$ydb->option[ $option_name ] = $newvalue;
-		return true;
-	}
-	return false;
+    return $update;
 }
 
 /**
@@ -1149,35 +1130,17 @@ function yourls_update_option( $option_name, $newvalue ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Name of option to add. Expected to not be SQL-escaped.
+ * @param string $name Name of option to add. Expected to not be SQL-escaped.
  * @param mixed $value Optional option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
 
-	$name = trim( $name );
-	if ( empty( $name ) )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $add    = $option->add($name, $value);
 
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $value ) )
-		$value = clone $value;
-
-	$name = yourls_escape( $name );
-
-	// Make sure the option doesn't already exist
-	if ( false !== yourls_get_option( $name ) )
-		return false;
-
-	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
-
-	yourls_do_action( 'add_option', $name, $_value );
-
-	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
-	$ydb->option[ $name ] = $value;
-	return true;
+    return $add;
 }
 
 
@@ -1187,24 +1150,16 @@ function yourls_add_option( $name, $value = '' ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name to delete. Expected to not be SQL-escaped.
+ * @param string $name Option name to delete. Expected to not be SQL-escaped.
  * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	$name = yourls_escape( $name );
 
-	// Get the ID, if no ID then return
-	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name'" );
-	if ( is_null( $option ) || !$option->option_id )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $delete = $option->delete($name);
 
-	yourls_do_action( 'delete_option', $name );
-
-	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
-	unset( $ydb->option[ $name ] );
-	return true;
+    return $delete;
 }
 
 
@@ -1358,24 +1313,20 @@ function yourls_allow_duplicate_longurls() {
  *
  * @since 1.7
  * @param string $longurl long url
- * @param string $sort Optional ORDER BY order (can be 'keyword', 'title', 'timestamp' or'clicks')
  * @param string $order Optional SORT order (can be 'ASC' or 'DESC')
  * @return array array of keywords
  */
-function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
+function yourls_get_longurl_keywords( $longurl, $order = 'ASC' ) {
 	global $ydb;
-	$longurl = yourls_escape( yourls_sanitize_url( $longurl ) );
+	$longurl = yourls_sanitize_url($longurl);
 	$table   = YOURLS_DB_TABLE_URL;
-	$query   = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
+    $sql     = "SELECT `keyword` FROM `$table` WHERE `url` = :url";
 
-	// Ensure sort is a column in database (@TODO: update verification array if database changes)
-	if ( in_array( $sort, array('keyword','title','timestamp','clicks') ) ) {
-		$query .= " ORDER BY '".$sort."'";
-		if ( in_array( $order, array( 'ASC','DESC' ) ) ) {
-			$query .= " ".$order;
-		}
-	}
-	return yourls_apply_filter( 'get_longurl_keywords', $ydb->get_col( $query ), $longurl );
+    if (in_array($order, array('ASC','DESC'))) {
+        $sql .= " ORDER BY `keyword` ".$order;
+    }
+
+    return yourls_apply_filter( 'get_longurl_keywords', $ydb->fetchCol($sql, array('url'=>$longurl)), $longurl );
 }
 
 /**
@@ -1416,14 +1367,13 @@ function yourls_check_IP_flood( $ip = '' ) {
 	}
 
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
-	$ip = yourls_escape( $ip );
 
 	yourls_do_action( 'check_ip_flood', $ip );
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
 
-	$lasttime = $ydb->get_var( "SELECT `timestamp` FROM $table WHERE `ip` = '$ip' ORDER BY `timestamp` DESC LIMIT 1" );
+	$lasttime = $ydb->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", array('ip' => $ip) );
 	if( $lasttime ) {
 		$now = date( 'U' );
 		$then = date( 'U', strtotime( $lasttime ) );
@@ -1470,13 +1420,19 @@ function yourls_is_upgrading() {
  */
 function yourls_is_installed() {
 	global $ydb;
-	$is_installed = ( property_exists( $ydb, 'installed' ) && $ydb->installed == true );
-	return yourls_apply_filter( 'is_installed', $is_installed );
+	return yourls_apply_filter( 'is_installed', $ydb->is_installed() );
+}
 
-	/* Note: this test won't work on YOURLS 1.3 or older (Aug 2009...)
-	   Should someone complain that they cannot upgrade directly from
-	   1.3 to 1.7: first, laugh at them, then ask them to install 1.6 first.
-	*/
+/**
+ * Set installed state
+ *
+ * @since  1.7.3
+ * @param  bool $bool  whether YOURLS is installed or not
+ * @return void
+ */
+function yourls_set_installed($bool) {
+    global $ydb;
+    $ydb->set_installed($bool);
 }
 
 /**
@@ -2352,8 +2308,31 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
-	$ydb->debug_log[] = $msg;
+    $ydb->getProfiler()->log($msg);
 	return $msg;
+}
+
+/**
+ * Get the debug log
+ *
+ * @since  1.7.3
+ * @return array
+ */
+function yourls_get_debug_log() {
+	global $ydb;
+    return $ydb->getProfiler()->get_log();
+}
+
+/**
+ * Debug mode toggle
+ *
+ * @since 1.7.3
+ * @param bool $bool  Debug on or off
+ */
+function yourls_debug_mode($bool) {
+    global $ydb;
+    $bool = (bool)$bool;
+    $ydb->getProfiler()->setActive($bool);
 }
 
 /**
@@ -2420,3 +2399,4 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
+

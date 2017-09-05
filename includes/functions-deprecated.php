@@ -110,4 +110,54 @@ function yourls_ex( $text, $context, $domain = 'default' ) {
 	echo yourls_xe( $text, $context, $domain );
 }
 
+/**
+ * Escape a string or an array of strings before DB usage. ALWAYS escape before using in a SQL query. Thanks.
+ *
+ * Deprecated in 1.7.3 because we moved onto using PDO and using built-in escaping functions, instead of
+ * rolling our own.
+ *
+ * @deprecated 1.7.3
+ * @param string|array $data string or array of strings to be escaped
+ * @return string|array escaped data
+ */
+function yourls_escape( $data ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
+	if( is_array( $data ) ) {
+		foreach( $data as $k => $v ) {
+			if( is_array( $v ) ) {
+				$data[ $k ] = yourls_escape( $v );
+			} else {
+				$data[ $k ] = yourls_escape_real( $v );
+			}
+		}
+	} else {
+		$data = yourls_escape_real( $data );
+	}
+
+	return $data;
+}
+
+/**
+ * "Real" escape. This function should NOT be called directly. Use yourls_escape() instead.
+ *
+ * This function uses a "real" escape if possible, using PDO, MySQL or MySQLi functions,
+ * with a fallback to a "simple" addslashes
+ * If you're implementing a custom DB engine or a custom cache system, you can define an
+ * escape function using filter 'custom_escape_real'
+ *
+ * @since 1.7
+ * @deprecated 1.7.3
+ * @param string $a string to be escaped
+ * @return string escaped string
+ */
+function yourls_escape_real( $string ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
+	global $ydb;
+	if( isset( $ydb ) && ( $ydb instanceof \YOURLS\Database\YDB ) )
+		return $ydb->escape( $string );
+
+	// YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
+	return yourls_apply_filter( 'custom_escape_real', addslashes( $string ), $string );
+}
+
 // @codeCoverageIgnoreEnd

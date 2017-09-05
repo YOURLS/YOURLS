@@ -18,7 +18,7 @@ require_once( YOURLS_CONFIGFILE );
 if( !defined( 'YOURLS_DB_PREFIX' ) )
 	die( '<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>' );
 
-	
+
 // Define core constants that have not been user defined in config.php
 
 // physical path of YOURLS root
@@ -36,7 +36,7 @@ if( !defined( 'YOURLS_USERDIR' ) )
 // URL of user directory
 if( !defined( 'YOURLS_USERURL' ) )
 	define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
-	
+
 // physical path of translations directory
 if( !defined( 'YOURLS_LANG_DIR' ) )
 	define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
@@ -48,7 +48,7 @@ if( !defined( 'YOURLS_PLUGINDIR' ) )
 // URL of plugins directory
 if( !defined( 'YOURLS_PLUGINURL' ) )
 	define( 'YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins' );
-	
+
 // physical path of pages directory
 if( !defined( 'YOURLS_PAGEDIR' ) )
 	define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );
@@ -92,7 +92,7 @@ if( !defined( 'YOURLS_ADMIN_SSL' ) )
 // if set to true, verbose debug infos. Will break things. Don't enable.
 if( !defined( 'YOURLS_DEBUG' ) )
 	define( 'YOURLS_DEBUG', false );
-	
+
 // Error reporting
 if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 	error_reporting( -1 );
@@ -100,7 +100,7 @@ if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 	error_reporting( E_ERROR | E_PARSE );
 }
 
-// Load 3rd party libraries
+// Load 3rd party and YOURLS libraries
 require_once YOURLS_INC. '/vendor/autoload.php';
 
 // Include all functions
@@ -115,6 +115,7 @@ require_once( YOURLS_INC.'/functions-compat.php' );
 require_once( YOURLS_INC.'/functions-html.php' );
 require_once( YOURLS_INC.'/functions-http.php' );
 require_once( YOURLS_INC.'/functions-infos.php' );
+require_once( YOURLS_INC.'/functions-deprecated.php' );
 
 // Load auth functions if needed
 if( yourls_is_private() ) {
@@ -132,7 +133,7 @@ yourls_check_maintenance_mode();
 
 // Fix REQUEST_URI for IIS
 yourls_fix_request_uri();
-	
+
 // If request for an admin page is http:// and SSL is required, redirect
 if( yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl() ) {
 	if ( 0 === strpos( $_SERVER['REQUEST_URI'], 'http' ) ) {
@@ -158,6 +159,11 @@ if( file_exists( YOURLS_USERDIR.'/db.php' ) ) {
 // Allow early inclusion of a cache layer
 if( file_exists( YOURLS_USERDIR.'/cache.php' ) )
 	require_once( YOURLS_USERDIR.'/cache.php' );
+
+// Abort initialization here if fast init wanted (for tests/debug/do not use)
+if (defined('YOURLS_FAST_INIT') && YOURLS_FAST_INIT){
+    return;
+}
 
 // Read options right from start
 yourls_get_all_options();
