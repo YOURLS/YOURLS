@@ -70,10 +70,6 @@ class YDB extends ExtendedPdo {
     protected $is_emulate_prepare;
 
     /**
-     * Class constructor
-     *
-     * Don't forget to end with a call to the parent constructor
-     *
      * @since 1.7.3
      * @param string $dsn         The data source name
      * @param string $user        The username
@@ -83,12 +79,24 @@ class YDB extends ExtendedPdo {
      */
     public function __construct($dsn, $user, $pass, $options, $attributes) {
         parent::__construct($dsn, $user, $pass, $options, $attributes);
+    }
 
+    /**
+     * Init everything needed
+     *
+     * Everything we need to set up is done here in init(), not in the constructor, so even
+     * when the connection fails (eg config error or DB dead), the constructor has worked
+     * and we have a $ydb object properly instantiated (and for instance yourls_die() can
+     * correctly die, even if using $ydb methods)
+     *
+     * @since  1.7.3
+     * @return void
+     */
+    public function init() {
         $this->connect_to_DB();
 
         $this->set_emulate_state();
 
-        // Log query infos
         $this->start_profiler();
     }
 
@@ -132,6 +140,17 @@ class YDB extends ExtendedPdo {
         try {
             $this->connect();
         } catch ( \Exception $e ) {
+            $this->dead_or_error($e);
+        }
+    }
+
+    /**
+     * Die with an error message
+     *
+     * @since  1.7.3
+     * @return void
+     */
+    public function dead_or_error(\Exception $exception) {
             // Use any /user/db_error.php file
             if( file_exists( YOURLS_USERDIR . '/db_error.php' ) ) {
                 include_once( YOURLS_USERDIR . '/db_error.php' );
@@ -139,11 +158,10 @@ class YDB extends ExtendedPdo {
             }
 
             $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
-            $message .= '<br/>' . get_class($e) .': ' . $e->getMessage();
+            $message .= '<br/>' . get_class($exception) .': ' . $exception->getMessage();
 
             yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
             die();
-        }
     }
 
     /**

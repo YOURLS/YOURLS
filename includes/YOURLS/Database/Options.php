@@ -18,7 +18,7 @@
 namespace YOURLS\Database;
 
 use YOURLS\Database\YDB;
-
+use PDOException;
 
 class Options {
 
@@ -34,22 +34,43 @@ class Options {
     }
 
     /**
-     * Read all options from DB at once
+     * Read all options from DB at once, return bool
      *
      * @since  1.7.3
-     * @return bool
+     * @return bool    True on success, false on failure (eg table missing or empty)
      */
     public function get_all_options() {
         // Get option values from DB
         $table = YOURLS_DB_TABLE_OPTIONS;
         $sql = "SELECT option_name, option_value FROM $table WHERE 1=1";
-        $options = (array) $this->ydb->fetchPairs($sql);
 
-        if(empty($options)) {
+        try {
+            $options = (array) $this->ydb->fetchPairs($sql);
+
+        } catch ( PDOException $e ) {
+
+            // We could not fetch value from the table. Let's check if the option table exists
+            try {
+                $check = $this->ydb->fetchAffected(sprintf("SHOW TABLES LIKE '%s'", $table));
+                // Table doesn't exist
+                if ($check ==0) {
+                    return false;
+                }
+
+            // Error at this point means the database isn't readable
+            } catch ( PDOException $e ) {
+                $this->ydb->dead_or_error($e);
+            }
+
+        }
+
+
+        // Unlikely scenario, but who knows: table exists, but is empty
+        if (empty($options)) {
             return false;
         }
 
-        foreach($options as $name => $value) {
+        foreach ($options as $name => $value) {
             $this->ydb->set_option($name, yourls_maybe_unserialize($value));
         }
 
