@@ -1094,12 +1094,10 @@ function yourls_get_all_options() {
 	global $ydb;
     $options = new \YOURLS\Database\Options($ydb);
 
-    if($options->get_all_options() === false) {
-		// Zero option found: either YOURLS is not installed or DB server is dead
-        if( !yourls_is_db_alive() ) {
-            yourls_db_dead(); // YOURLS will die here
-        }
+    if ($options->get_all_options() === false) {
+		// Zero option found but no unexpected error so far: YOURLS isn't installed
         yourls_set_installed(false);
+        return;
     }
 
 	yourls_set_installed(true);
@@ -2320,7 +2318,13 @@ function yourls_debug_log( $msg ) {
  */
 function yourls_get_debug_log() {
 	global $ydb;
-    return $ydb->getProfiler()->get_log();
+
+    // Check if we have a profiler registered (will not be the case if the DB hasn't been properly connected to)
+    if ($ydb->getProfiler()) {
+        return $ydb->getProfiler()->get_log();
+    }
+
+    return array();
 }
 
 /**
