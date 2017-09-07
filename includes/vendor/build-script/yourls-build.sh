@@ -35,6 +35,7 @@ PRESERVE_IN_LIB=(
     'library'
     'lib'
     'README.md'
+    'readme.md'
 )
 
 # Nothing to edit past this line !
@@ -94,7 +95,7 @@ cleanup () {
 
     # Directory we are in
     CUR=$1
-    
+
     # Loop over each file and delete those we don't want to keep
     echo -e "${PURPLE}Cleaning: $(basename $(dirname "$CUR"))/$(basename "$CUR") ${NORM}"
     for FILE in $(ls -A $CUR)
@@ -109,14 +110,14 @@ cleanup () {
         fi
 
     done;
-    
+
     # If directory is empty, delete
     if [ ! "$(ls -A $CUR)" ]
     then
         echo -e "${RED}-${NORM} del : $(basename "$CUR") (empty dir)"
         maybe_delete "$CUR"
     fi
-    
+
     echo ""
 
 }
@@ -180,7 +181,7 @@ then
 fi
 
 
-# 1. Get list of all directories in target directory, except the one 
+# 1. Get list of all directories in target directory, except the one
 #    listed in PRESERVE_IN_VENDOR that we don't want to touch
 #
 VENDORS=($(ls -d $TARGETDIR/*/))
@@ -198,7 +199,7 @@ done
 VENDORS=(${TEMP[@]})
 
 # 2. Loop over each directory and clean up
-#    
+#
 for DIR in ${VENDORS[@]}
 do
     SUBDIRS=$(ls -d $DIR*/ 2>/dev/null)
@@ -207,11 +208,11 @@ do
         # This VENDORS directory has subdirectory: process each subdir
         for SUBDIR in $SUBDIRS
         do
-            cleanup $SUBDIR 
+            cleanup $SUBDIR
         done;
     else
         # This directory contains no subdirectory
-        cleanup $DIR 
+        cleanup $DIR
     fi
 done
 
