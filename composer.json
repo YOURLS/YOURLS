@@ -13,12 +13,18 @@
         "pomo/pomo" : "1.3.0",
         "geoip2/geoip2" : "2.5.0",
         "aura/sql": "~2.",
-        "jakeasmith/http_build_url": "1.0.1"
+        "jakeasmith/http_build_url": "1.0.1",
+        "symfony/polyfill-mbstring" : "1.5.0"
     },
     "config": {
         "vendor-dir": "includes/vendor"
     },
     "autoload": {
         "psr-4": {"YOURLS\\": "includes/YOURLS"}
+    },
+    "suggest": {
+        "ext-mbstring": "For best performance",
+        "ext-curl": "For best performance",
+        "ext-lulz": "For the lulz"
     }
 }
