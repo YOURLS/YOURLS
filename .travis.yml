@@ -1,31 +1,36 @@
 sudo: false
-
+dist: trusty
 language: php
-php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-  - nightly
-  - hhvm
+
+env:
+  global:
+  - DB=mysql
 
 matrix:
+  include:
+  - php: 5.3
+    dist: precise
+  - php: 5.4
+  - php: 5.5
+  - php: 5.6
+  - php: 7.0
+  - php: 7.1
+  - php: 7.2
+  - php: nightly
+  - php: hhvm
   fast_finish: true
   allow_failures:
   - php: nightly
+  - php: 7.2
   - php: hhvm
 
-env:
-  - DB=mysql
-
 before_script:
+  - which phpunit
+  - phpunit --version
+  - mysql --version
   - git clone git://github.com/YOURLS/YOURLS.git
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp yourls-tests-config-travis.php YOURLS/user/config.php
-  - which phpunit  
-  - phpunit --version
 
 script: phpunit --configuration ./phpunit-travis.xml.dist
 
