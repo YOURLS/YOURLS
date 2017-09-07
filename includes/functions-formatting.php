@@ -561,54 +561,43 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 function yourls_lowercase_scheme_domain( $url ) {
     $scheme = yourls_get_protocol( $url );
 
-    if( '' == $scheme ) {
+    if ('' == $scheme) {
         // Scheme not found, malformed URL? Something else? Not sure.
         return $url;
     }
 
-    // Case 1 : scheme like "stuff://" (eg "http://example.com/" or "ssh://joe@joe.com")
-    if( substr( $scheme, -2, 2 ) == '//' ) {
-
-        $parts = parse_url( $url );
-
-        // Most likely malformed stuff, could not parse : we'll just lowercase the scheme and leave the rest untouched
-        if( false == $parts ) {
-            $url = str_replace( $scheme, strtolower( $scheme ), $url );
-
-        // URL seems parsable, let's do the best we can
-        } else {
-
-            $lower = array();
-
-            $lower['scheme'] = strtolower( $parts['scheme'] );
-
-            if( isset( $parts['host'] ) ) {
-                $lower['host'] = strtolower( $parts['host'] );
-            } else {
-                $parts['host'] = '***';
-            }
-
-            // We're not going to glue back things that could be modified in the process
-            unset( $parts['path'] );
-            unset( $parts['query'] );
-            unset( $parts['fragment'] );
-
-            // original beginning of the URL and its lowercase-where-needed counterpart
-            // We trim the / after the domain to avoid avoid "http://example.com" being reconstructed as "http://example.com/"
-            $partial_original_url       = trim( http_build_url( $parts ), '/' );
-            $partial_lower_original_url = trim( http_build_url( $parts, $lower ), '/' );
-
-            $url = str_replace( $partial_original_url , $partial_lower_original_url, $url );
-
-        }
-
-    // Case 2 : scheme like "stuff:" (eg "mailto:joe@joe.com" or "bitcoin:15p1o8vnWqNkJBJGgwafNgR1GCCd6EGtQR?amount=1&label=Ozh")
-    // In this case, we only lowercase the scheme, because depending on it, things after should or should not be lowercased
-    } else {
-
+    /**
+     * Case 1 : scheme like "stuff:", as opposed to "stuff://"
+     * Examples: "mailto:joe@joe.com" or "bitcoin:15p1o8vnWqNkJBJGgwafNgR1GCCd6EGtQR?amount=1&label=Ozh"
+     * In this case, we only lowercase the scheme, because depending on it, things after should or should not be lowercased
+     */
+    if (substr($scheme, -2, 2) != '//') {
         $url = str_replace( $scheme, strtolower( $scheme ), $url );
-
+        return $url;
     }
+
+    /**
+     * Case 2 : scheme like "stuff://" (eg "http://example.com/" or "ssh://joe@joe.com")
+     * Here we lowercase the scheme and domain parts
+     */
+    $parts = parse_url($url);
+
+    // Most likely malformed stuff, could not parse : we'll just lowercase the scheme and leave the rest untouched
+    if (false == $parts) {
+        $url = str_replace( $scheme, strtolower( $scheme ), $url );
+        return $url;
+    }
+
+    // URL seems parsable, let's do the best we can
+    $lower = array();
+    $lower['scheme'] = strtolower( $parts['scheme'] );
+    if( isset( $parts['host'] ) ) {
+        $lower['host'] = strtolower( $parts['host'] );
+    } else {
+        $parts['host'] = '***';
+    }
+
+    $url = http_build_url($url, $lower);
 
     return $url;
 }

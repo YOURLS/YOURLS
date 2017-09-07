@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
 {
+    public static $files = array (
+        'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'Y' => 
         array (

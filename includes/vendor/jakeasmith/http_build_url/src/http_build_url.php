@@ -137,7 +137,7 @@ if (!function_exists('http_build_url')) {
 			$parsed_string .= $url['scheme'] . '://';
 		}
 
-		if (isset($url['user'])) {
+		if (!empty($url['user'])) {
 			$parsed_string .= $url['user'];
 
 			if (isset($url['pass'])) {
