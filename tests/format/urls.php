@@ -52,9 +52,9 @@ class Format_URL extends PHPUnit_Framework_TestCase {
         return array(
             array( 'http://example.com' ),
             array( 'http://example.com/' ),
-            array( 'http://@example.com/' ),
+            array( 'http://ozh@example.com/' ),
             array( 'http://example.com/?@OMG' ), // #1890
-            array( 'http://@example.com#BLAH' ),
+            array( 'http://ozh@example.com#BLAH' ),
             array( 'http://Ozh:Password@example.com/' ),
             array( 'http://Ozh:Password@example.com#OMG' ),
             array( 'http://Ozh:Password@example.com:1337/' ),
@@ -62,7 +62,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://Ozh:Password@example.com/hey@ho' ),
             array( 'http://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose:@:@' ),
             array( 'mailto:ozh@ozh.org' ),
-            array( 'http://example.com/watchtheallowedcharacters-~+_.?#=&;,/:%!*stay' ),
+            array( 'http://example.com/?watchtheallowedcharacters-~+_.#=&;,/:%!*stay' ),
             array( 'http://example.com/search.php?search=(amistillhere)' ),
             array( 'http://example.com/?test=%2812345%29abcdef[gh]' ),
             array( 'http://example.com/?test=(12345)abcdef[gh]' ),
@@ -143,6 +143,8 @@ class Format_URL extends PHPUnit_Framework_TestCase {
      */
     function list_of_mixed_case() {
         return array(
+            array( 'http://example.com'                               , 'http://example.com' ),    # normal, no trailing slash
+            array( 'http://example.com/'                              , 'http://example.com/' ),   # normal, trailing slash
             array( 'http://example.com'                               , 'HTTP://example.com' ),
             array( 'http://example.com'                               , 'Http://example.com' ),
             array( 'http://example.com'                               , 'Http://ExAmPlE.com' ),
@@ -150,7 +152,8 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://http/HTTP?HTTP#HTTP'                       , 'HTTP://HTTP/HTTP?HTTP#HTTP' ),
             array( 'http://example.com/?@BLaH'                        , 'Http://ExAmPlE.com/?@BLaH' ), #1890
             array( 'http://example.com#BLAH'                          , 'Http://ExAmPlE.com#BLAH' ),
-            array( 'http://@example.com#BLAH'                         , 'Http://@ExAmPlE.com#BLAH' ),
+            array( 'http://example.com#BLAH'                          , 'Http://@ExAmPlE.com#BLAH' ),
+            array( 'http://example.com#BLAH'                          , 'Http://:@ExAmPlE.com#BLAH' ),
             array( 'http://example.com?BLAH'                          , 'Http://ExAmPlE.com?BLAH' ),
             array( 'http://Ozh:Password@example.com:1337#OMG'         , 'http://Ozh:Password@Example.COM:1337#OMG' ),
             array( 'http://User:PWd@example.com?User:PWd@Example.com' , 'http://User:PWd@Example.com?User:PWd@Example.com' ),
