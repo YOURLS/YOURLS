@@ -4,14 +4,38 @@
  * Auth functions other than login
  *
  * @group auth
- * @since 0.1
  */
 class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
+    
+    protected $random_password;
+    
+    protected $yourls_user_passwords_copy;
+    
+    public static function setUpBeforeClass() {
+        global $yourls_user_passwords;
+
+        $this->yourls_user_passwords_copy = $yourls_user_passwords;
+
+        $this->random_password = rand_str();
+
+        $salt = rand( 10000, 99999 );
+        $md5  = 'md5:' . $salt . ':' . md5( $salt . $this->random_password );
+        $phpassword_1 = 'phpass:' . str_replace( '$', '!', yourls_phpass_hash( $this->random_password ) );
+        $phpassword_2 = 'phpass:' . yourls_phpass_hash( $this->random_password );
+        
+        $yourls_user_passwords['random_md5'] = $md5;
+        $yourls_user_passwords['random_phpass1'] = $phpassword_1;
+        $yourls_user_passwords['random_phpass2'] = $phpassword_2;
+    }
+    
+    protected function setUp() {
+        
+        // global $yourls_user_passwords;
+        
+    }
 
     /**
      * Check logout procedure
-     *
-     * @since 0.1
      */
     public function test_logout() {
         $this->assertTrue( yourls_is_valid_user() );
@@ -20,16 +44,52 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         unset( $_GET['action'] );
         $this->assertTrue( yourls_is_valid_user() );
     }
-    
+
     /**
      * Check that we have some password in clear text
-     *
-     * @since 0.1
      */
     public function test_has_cleartext() {
         $this->assertTrue( yourls_has_cleartext_passwords() );
     }
-    
+
+    /**
+     * Check that we have no password in clear text
+     */
+    public function test_has_no_cleartext() {
+        global $yourls_user_passwords;
+        
+        $copy = $yourls_user_passwords;
+        
+        $yourls_user_passwords = array();
+        $yourls_user_passwords['md5'] = $copy['md5'];
+        $yourls_user_passwords['phpass'] = $copy['phpass'];
+        $yourls_user_passwords['phpass2'] = $copy['phpass2'];
+        
+        $this->assertFalse( yourls_has_cleartext_passwords() );
+        
+        $yourls_user_passwords = $copy;
+    }
+
+    /**
+     * Check that user md5 has a MD5 hashed password
+     */
+    public function test_has_md5() {
+        $this->assertTrue( yourls_has_md5_password('md5') );
+        $this->assertTrue( yourls_has_md5_password('random_md5') );
+        $this->assertFalse( yourls_has_md5_password(rand_str()) );
+    }
+
+    /**
+     * Check that users phpass and phpass2 have PHPass'd passwords
+     */
+    public function test_has_phpass() {
+        $this->assertTrue( yourls_has_phpass_password('phpass') );
+        $this->assertTrue( yourls_has_phpass_password('phpass2') );
+        $this->assertTrue( yourls_has_phpass_password('random_phpass1') );
+        $this->assertTrue( yourls_has_phpass_password('random_phpass2') );
+        $this->assertFalse( yourls_has_phpass_password(rand_str()) );
+    }
+
     /**
      * Provide strings to hash
      */
@@ -50,7 +110,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
      * Check that a hash can be verified
      *
      * @dataProvider strings_to_hash
-     * @since 0.1
      */
     public function test_hash_and_check( $string ) {
         $hash = yourls_phpass_hash( $string );
@@ -59,8 +118,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
 
     /**
      * Check that valid login / clear text password is deemed valid
-     *
-     * @since 0.1
      */
     public function test_valid_cleartext() {
         $this->assertTrue(  yourls_check_password_hash( 'clear', 'somepassword' ) );
@@ -70,23 +127,16 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     
     /**
      * Check that valid login / md5 password is deemed valid
-     *
-     * @since 0.1
      */
     public function test_valid_md5() {
-        global $random_password;
-        
-        $rnd_user = rand_str();
-        
         // Check if users have md5'd passwords
-        $this->assertTrue(  yourls_has_md5_password( 'md5' ) );
-        $this->assertFalse( yourls_has_md5_password( $rnd_user ) );
+        $this->assertTrue(  yourls_has_md5_password( 'random_md5' ) );
         
         // Check that md5 hashed passwords match the password
-        $this->assertTrue( yourls_check_password_hash( 'md5', $random_password ) );
+        $this->assertTrue( yourls_check_password_hash( 'random_md5', $this->random_password ) );
         
         // Unknow user, existing password
-        $this->assertFalse( yourls_check_password_hash( $rnd_user, $random_password ) );
+        $this->assertFalse( yourls_check_password_hash( rand_str(), $this->random_password ) );
         
         // Known user, invalid password
         $this->assertFalse( yourls_check_password_hash( 'md5', rand_str() ) );
@@ -94,25 +144,14 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     
     /**
      * Check that valid login / phpass password is deemed valid
-     *
-     * @since 0.1
      */
     public function test_valid_phpass() {
-        global $random_password;
-        
-        $rnd_user = rand_str();
-        
-        // Check if users have phpass'd passwords    
-        $this->assertTrue(  yourls_has_phpass_password( 'phpass' ) );
-        $this->assertTrue(  yourls_has_phpass_password( 'phpass2' ) );
-        $this->assertFalse( yourls_has_phpass_password( $rnd_user ) ); // random username
-        
         // Check that phppass hashed passwords match the password
-        $this->assertTrue(  yourls_check_password_hash( 'phpass', $random_password ) );
-        $this->assertTrue(  yourls_check_password_hash( 'phpass2', $random_password ) );
+        $this->assertTrue(  yourls_check_password_hash( 'random_phpass1', $this->random_password ) );
+        $this->assertTrue(  yourls_check_password_hash( 'random_phpass2', $this->random_password ) );
         
         // unknow user, existing valid password
-        $this->assertFalse( yourls_check_password_hash( $rnd_user, $random_password ) );
+        $this->assertFalse( yourls_check_password_hash( rand_str(), $this->random_password ) );
         
         // known users, invalid passwords
         $this->assertFalse( yourls_check_password_hash( 'phpass', rand_str() ) );
@@ -121,8 +160,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     
     /**
      * Check that in-file password encryption works as expected
-     *
-     * @since 0.1
      */
     public function test_hash_passwords_now() {
         // If local: make a copy of user/config-sample.php to user/config-test.php in case tests not run on a clean install
@@ -159,8 +196,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
      * This test checks that encrypting the config file, with different kinds of pwd, results in a valid
      * PHP file as expected. It doesn't test that the different kinds of password get correctly hashed
      * and can be correctly decyphered. This task is covered in test_hash_and_check()
-     *
-     * @since 0.1
      */
     public function test_hash_passwords_special_chars_now() {
 
