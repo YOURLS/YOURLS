@@ -403,7 +403,7 @@ function yourls_get_plugin_data( $file ) {
 // Include active plugins
 function yourls_load_plugins() {
 	// Don't load plugins when installing or updating
-	if( yourls_is_installing() OR yourls_is_upgrading() )
+	if( yourls_is_installing() OR yourls_is_upgrading() OR !yourls_is_installed() )
 		return;
 
 	$active_plugins = yourls_get_option( 'active_plugins' );
