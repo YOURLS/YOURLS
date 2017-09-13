@@ -2336,7 +2336,16 @@ function yourls_get_debug_log() {
 function yourls_debug_mode($bool) {
     global $ydb;
     $bool = (bool)$bool;
+
+    // log queries if true
     $ydb->getProfiler()->setActive($bool);
+
+    // report notices if true
+    if ($bool === true) {
+        error_reporting(-1);
+    } else {
+        error_reporting(E_ERROR | E_PARSE);
+    }
 }
 
 /**
