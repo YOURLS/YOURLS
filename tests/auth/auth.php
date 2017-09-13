@@ -6,32 +6,30 @@
  * @group auth
  */
 class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
-    
-    protected $random_password;
-    
-    protected $yourls_user_passwords_copy;
-    
+
+    protected static $random_password;
+
+    protected static $yourls_user_passwords_copy;
+
     public static function setUpBeforeClass() {
         global $yourls_user_passwords;
+        self::$yourls_user_passwords_copy = $yourls_user_passwords;
 
-        $this->yourls_user_passwords_copy = $yourls_user_passwords;
-
-        $this->random_password = rand_str();
+        self::$random_password = rand_str();
 
         $salt = rand( 10000, 99999 );
-        $md5  = 'md5:' . $salt . ':' . md5( $salt . $this->random_password );
-        $phpassword_1 = 'phpass:' . str_replace( '$', '!', yourls_phpass_hash( $this->random_password ) );
-        $phpassword_2 = 'phpass:' . yourls_phpass_hash( $this->random_password );
-        
+        $md5  = 'md5:' . $salt . ':' . md5( $salt . self::$random_password );
+        $phpassword_1 = 'phpass:' . str_replace( '$', '!', yourls_phpass_hash( self::$random_password ) );
+        $phpassword_2 = 'phpass:' . yourls_phpass_hash( self::$random_password );
+
         $yourls_user_passwords['random_md5'] = $md5;
         $yourls_user_passwords['random_phpass1'] = $phpassword_1;
         $yourls_user_passwords['random_phpass2'] = $phpassword_2;
     }
-    
-    protected function setUp() {
-        
-        // global $yourls_user_passwords;
-        
+
+    public static function tearDownAfterClass() {
+        global $yourls_user_passwords;
+        $yourls_user_passwords = self::$yourls_user_passwords_copy;        
     }
 
     /**
@@ -124,7 +122,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_check_password_hash( 'unknown', 'somepassword' ) );
         $this->assertFalse( yourls_check_password_hash( 'clear', 'wrongpassword' ) );
     }
-    
+
     /**
      * Check that valid login / md5 password is deemed valid
      */
@@ -133,31 +131,31 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         $this->assertTrue(  yourls_has_md5_password( 'random_md5' ) );
         
         // Check that md5 hashed passwords match the password
-        $this->assertTrue( yourls_check_password_hash( 'random_md5', $this->random_password ) );
+        $this->assertTrue( yourls_check_password_hash( 'random_md5', self::$random_password ) );
         
         // Unknow user, existing password
-        $this->assertFalse( yourls_check_password_hash( rand_str(), $this->random_password ) );
+        $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
         
         // Known user, invalid password
         $this->assertFalse( yourls_check_password_hash( 'md5', rand_str() ) );
     }
-    
+
     /**
      * Check that valid login / phpass password is deemed valid
      */
     public function test_valid_phpass() {
         // Check that phppass hashed passwords match the password
-        $this->assertTrue(  yourls_check_password_hash( 'random_phpass1', $this->random_password ) );
-        $this->assertTrue(  yourls_check_password_hash( 'random_phpass2', $this->random_password ) );
+        $this->assertTrue(  yourls_check_password_hash( 'random_phpass1', self::$random_password ) );
+        $this->assertTrue(  yourls_check_password_hash( 'random_phpass2', self::$random_password ) );
         
         // unknow user, existing valid password
-        $this->assertFalse( yourls_check_password_hash( rand_str(), $this->random_password ) );
+        $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
         
         // known users, invalid passwords
         $this->assertFalse( yourls_check_password_hash( 'phpass', rand_str() ) );
         $this->assertFalse( yourls_check_password_hash( 'phpass2', rand_str() ) );
     }
-    
+
     /**
      * Check that in-file password encryption works as expected
      */
@@ -187,7 +185,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         
         exec( YOURLS_PHP_BIN . ' -l ' .  escapeshellarg( $config_file ), $output, $return );
         $this->assertEquals( 0, $return );
-        
     }
 
     /**
@@ -216,7 +213,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         
         exec( YOURLS_PHP_BIN . ' -l ' .  escapeshellarg( $config_file ), $output, $return );
         $this->assertEquals( 0, $return );
-        
     }
 
 }
