@@ -45,9 +45,14 @@ class Config {
     public function find_config($config) {
 
         $config = $this->fix_win32_path($config);
-        if (file_exists($config)) {
+        if (!empty($config) && file_exists($config)) {
             return $config;
         }
+
+        if (!empty($config) && !file_exists($config)) {
+            throw new \YOURLS\Exceptions\Config("User defined config not found at '$config'");
+        }
+
 
         // config.php in /user/
         if (file_exists($this->root . '/user/config.php')) {
@@ -60,7 +65,8 @@ class Config {
         }
 
         // config.php not found :(
-        die( '<p class="error">Cannot find <tt>config.php</tt>.</p><p>Please read the <tt><a href="../readme.html#Install">readme.html</a></tt> to learn how to install YOURLS</p>' );
+
+        throw new \YOURLS\Exceptions\Config('Cannot find config.php. Please read the readme.html to learn how to install YOURLS');
     }
 
     /**
@@ -70,9 +76,12 @@ class Config {
      * @return void
      */
     public function define_core_constants() {
-        // Check if config.php was properly updated for 1.4
-        if (!defined( 'YOURLS_DB_PREFIX' )) {
-            die( '<p class="error">Your <tt>config.php</tt> does not contain all the required constant definitions.</p><p>Please check <tt>config-sample.php</tt> and update your config accordingly, there are new stuffs!</p>' );
+        // Check minimal config job has been properly done
+        $must_haves = array('YOURLS_DB_USER', 'YOURLS_DB_PASS', 'YOURLS_DB_NAME', 'YOURLS_DB_HOST', 'YOURLS_DB_PREFIX', 'YOURLS_SITE');
+        foreach($must_haves as $must_have) {
+            if (!defined($must_have)) {
+                throw new \YOURLS\Exceptions\Config('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
+            }
         }
 
         /**
