@@ -16,7 +16,6 @@ class Config {
     /**
      * @since  1.7.3
      * @param  mixed $config   Optional user defined config path
-     * @return void
      */
     public function __construct($config = false) {
         $this->root = $this->fix_win32_path(realpath(__DIR__ . '../../../..'));
@@ -101,6 +100,14 @@ class Config {
         if (!defined( 'YOURLS_USERURL' ))
             define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
 
+        // physical path of asset directory
+        if( !defined( 'YOURLS_ASSETDIR' ) )
+            define( 'YOURLS_ASSETDIR', YOURLS_ABSPATH.'/assets' );
+
+        // URL of asset directory
+        if( !defined( 'YOURLS_ASSETURL' ) )
+            define( 'YOURLS_ASSETURL', YOURLS_SITE.'/assets' );
+
         // physical path of translations directory
         if (!defined( 'YOURLS_LANG_DIR' ))
             define( 'YOURLS_LANG_DIR', YOURLS_USERDIR.'/languages' );
@@ -112,6 +119,14 @@ class Config {
         // URL of plugins directory
         if (!defined( 'YOURLS_PLUGINURL' ))
             define( 'YOURLS_PLUGINURL', YOURLS_USERURL.'/plugins' );
+
+        // physical path of themes directory
+        if( !defined( 'YOURLS_THEMEDIR' ) )
+            define( 'YOURLS_THEMEDIR', YOURLS_USERDIR.'/themes' );
+
+        // URL of themes directory
+        if( !defined( 'YOURLS_THEMEURL' ) )
+            define( 'YOURLS_THEMEURL', YOURLS_USERURL.'/themes' );
 
         // physical path of pages directory
         if (!defined( 'YOURLS_PAGEDIR' ))

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Initialize the YOURLS dependencies.
+ * YOURLS actions upon instantiating
  */
 
 namespace YOURLS\Config;
@@ -9,10 +9,16 @@ namespace YOURLS\Config;
 class Init {
 
     /**
+     * @param InitDefaults
+     */
+    protected $actions;
+
+    /**
      * @since  1.7.3
-     * @return void
      */
     public function __construct(InitDefaults $actions) {
+
+        $this->actions = $actions;
 
         // Include core files
         if ($actions->include_core_funcs === true) {
@@ -88,9 +94,13 @@ class Init {
             }
         }
 
-        // Init all plugins
+        // Load all plugins
         if ($actions->load_plugins === true) {
             yourls_load_plugins();
+        }
+
+        // Trigger plugin loaded action
+        if ($actions->plugins_loaded_action === true) {
             yourls_do_action( 'plugins_loaded' );
         }
 
@@ -167,8 +177,14 @@ class Init {
         require_once YOURLS_INC.'/functions-deprecated.php';
 
         // Load auth functions if needed
-        if (yourls_is_private()) {
+        if (yourls_is_private() || $this->actions->include_auth_funcs === true) {
             require_once YOURLS_INC.'/functions-auth.php';
+        }
+
+        // Load install & upgrade functions if needed
+        if ($this->actions->include_install_upgrade_funcs === true) {
+            require_once YOURLS_INC.'/functions-upgrade.php';
+            require_once YOURLS_INC.'/functions-install.php';
         }
     }
 
