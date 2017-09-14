@@ -514,8 +514,8 @@ var response = $.get( api_url, {
     },
     // callback function that will deal with the server response
     function( data) {
-        // for instance, return short URL
-        return data.shorturl;
+        // now do something with the data, for instance show new short URL:
+        alert(data.shorturl);
     }
 );</tt></pre>
 
