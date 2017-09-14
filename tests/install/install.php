@@ -9,8 +9,6 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 
     /**
 	 * Check if YOURLS is declared installed
-	 *
-	 * @since 0.1
 	 */
 	public function test_install() {
 		$this->assertFalse( yourls_is_installed() );
@@ -20,8 +18,6 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Check that tables were correctly populated during install
-	 *
-	 * @since 0.1
 	 */
 	public function test_init_tables() {
 		// This should fail because these inserts have been taken care of during install
@@ -31,8 +27,6 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test (sort of) table creation
-	 *
-	 * @since 0.1
 	 */
 	public function test_create_tables() {
         
@@ -63,5 +57,67 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
         
         $this->assertSame( $expected, yourls_create_sql_tables() );
 	}
+    
+	/**
+	 * Test (sort of) defining constants
+	 */
+    public function test_correct_config() {
+        $test = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
+        
+        // This should return a readable file
+        $this->assertFileIsReadable($test->find_config(YOURLS_CONFIGFILE));
+        
+        // redefining YOURLS_ constants should not throw any error ("constant already defined...")
+        // or define any new constants
+        $consts = get_defined_constants(true);
+        $before = $consts['user'];
+        $test->define_core_constants();
+        $consts = get_defined_constants(true);
+        $after = $consts['user'];
+        $this->assertSame($before,$after);
+    }
 
+	/**
+	 * Test incorrect config provided
+     * @expectedException YOURLS\Exceptions\Config
+	 */
+    public function test_incorrect_config() {
+        $test = new \YOURLS\Config\Config(rand_str());
+        $test->find_config(rand_str());
+    }
+
+	/**
+	 * Test Init actions. Not sure this is a good idea, might become cumbersome to maintain?
+	 */
+    public function test_init_defaults() {
+        $test = new \YOURLS\Config\InitDefaults();
+        
+        $expected = array (
+            'include_core_funcs' => true,
+            'include_auth_funcs' => false,
+            'include_install_upgrade_funcs' => false,
+            'default_timezone' => true,
+            'load_default_textdomain' => true,
+            'check_maintenance_mode' => true,
+            'fix_request_uri' => true,
+            'redirect_ssl' => true,
+            'include_db' => true,
+            'include_cache' => true,
+            'return_if_fast_init' => true,
+            'get_all_options' => true,
+            'register_shutdown' => true,
+            'core_loaded' => true,
+            'redirect_to_install' => true,
+            'check_if_upgrade_needed' => true,
+            'load_plugins' => true,
+            'plugins_loaded_action' => true,
+            'check_new_version' => true,
+            'init_admin' => true,
+        );
+        
+        $actual = get_class_vars(get_class($test));
+        
+        $this->assertSame($expected, $actual);
+    }
+  
 }
