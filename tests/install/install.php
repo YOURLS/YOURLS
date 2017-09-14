@@ -65,7 +65,9 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
         $test = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
         
         // This should return a readable file
-        $this->assertFileIsReadable($test->find_config(YOURLS_CONFIGFILE));
+        $readable = is_readable($test->find_config(YOURLS_CONFIGFILE));
+        $this->assertTrue($readable);
+        // For the record, $this->assertFileIsReadable() was introduced around PHPUnit 5.6
         
         // redefining YOURLS_ constants should not throw any error ("constant already defined...")
         // or define any new constants
