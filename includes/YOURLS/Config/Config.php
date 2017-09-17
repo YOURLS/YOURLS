@@ -14,14 +14,17 @@ class Config {
     protected $root;
 
     /**
+     * @param mixed
+     */
+    protected $config;
+
+    /**
      * @since  1.7.3
      * @param  mixed $config   Optional user defined config path
      */
     public function __construct($config = false) {
-        $this->root = $this->fix_win32_path(realpath(__DIR__ . '../../../..'));
-        if (!defined('YOURLS_CONFIGFILE')) {
-            define('YOURLS_CONFIGFILE', $this->find_config($config));
-        }
+        $this->set_root( $this->fix_win32_path(realpath(__DIR__ . '../../../..')) );
+        $this->set_config($config);
     }
 
     /**
@@ -36,23 +39,41 @@ class Config {
     }
 
     /**
+     * @since  1.7.3
+     * @param  string  path to config file
+     * @return void
+     */
+    public function set_config($config) {
+        $this->config = $config;
+    }
+
+    /**
+     * @since  1.7.3
+     * @param  string  path to YOURLS root directory
+     * @return void
+     */
+    public function set_root($root) {
+        $this->root = $root;
+    }
+
+    /**
      * Find config.php, either user defined or from standard location
      *
      * @since  1.7.3
      * @param  mixed $config  path to user defined config file
      * @return string         path to found config file
      */
-    public function find_config($config) {
+    public function find_config() {
 
-        $config = $this->fix_win32_path($config);
-        if (!empty($config) && file_exists($config)) {
+        $config = $this->fix_win32_path($this->config);
+
+        if (!empty($config) && is_readable($config)) {
             return $config;
         }
 
-        if (!empty($config) && !file_exists($config)) {
+        if (!empty($config) && !is_readable($config)) {
             throw new \YOURLS\Exceptions\Config("User defined config not found at '$config'");
         }
-
 
         // config.php in /user/
         if (file_exists($this->root . '/user/config.php')) {

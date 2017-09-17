@@ -14,6 +14,9 @@ $config = new \YOURLS\Config\Config;
  * are registered in the global scope. If this require is moved in \YOURLS\Config\Config, $yourls_user_passwords for
  * instance isn't registered.
  */
+if (!defined('YOURLS_CONFIGFILE')) {
+    define('YOURLS_CONFIGFILE', $config->find_config());
+}
 require_once YOURLS_CONFIGFILE;
 $config->define_core_constants();
 
