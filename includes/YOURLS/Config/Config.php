@@ -60,7 +60,6 @@ class Config {
      * Find config.php, either user defined or from standard location
      *
      * @since  1.7.3
-     * @param  mixed $config  path to user defined config file
      * @return string         path to found config file
      */
     public function find_config() {
