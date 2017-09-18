@@ -81,7 +81,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test incorrect config provided
-     * @expectedException YOURLS\Exceptions\Config
+     * @expectedException YOURLS\Exceptions\ConfigException
 	 */
     public function test_incorrect_config() {
         $test = new \YOURLS\Config\Config(rand_str());
@@ -90,7 +90,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test config not found
-     * @expectedException YOURLS\Exceptions\Config
+     * @expectedException YOURLS\Exceptions\ConfigException
 	 */
     public function test_not_found_config() {
         $test = new \YOURLS\Config\Config();
