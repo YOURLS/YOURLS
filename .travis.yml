@@ -28,9 +28,18 @@ before_script:
   - which phpunit
   - phpunit --version
   - mysql --version
-  - export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-  - echo $CURRENT_BRANCH
   - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
+  - |
+    export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    echo "Current YOURLS branch: $CURRENT_BRANCH"
+    cd tests
+    if [ `git branch --list $CURRENT_BRANCH `]
+    then
+      echo "Using branch $CURRENT_BRANCH for Tests as well"
+      git checkout $CURRENT_BRANCH
+    else
+      echo "Using branch master for Tests"
+    fi
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
