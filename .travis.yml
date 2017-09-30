@@ -28,6 +28,8 @@ before_script:
   - which phpunit
   - phpunit --version
   - mysql --version
+  - export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - echo $CURRENT_BRANCH
   - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
