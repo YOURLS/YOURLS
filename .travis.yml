@@ -33,10 +33,9 @@ before_script:
     export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     echo "Current Tests branch: $CURRENT_BRANCH"
     cd YOURLS
-    if [ `git branch --list $CURRENT_BRANCH `]
+    if [ `git checkout $CURRENT_BRANCH &> /dev/null; echo $?` == 0 ]
     then
       echo "Using branch $CURRENT_BRANCH for YOURLS as well"
-      git checkout $CURRENT_BRANCH
     else
       echo "Using branch master for YOURLS"
     fi
