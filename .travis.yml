@@ -25,11 +25,19 @@ matrix:
   - php: hhvm
 
 before_script:
+  - |
+    # Remove Xdebug for performance increase:
+    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
+      phpenv config-rm xdebug.ini
+    else
+      echo "xdebug.ini does not exist"
+    fi
   - which phpunit
   - phpunit --version
   - mysql --version
   - git clone git://github.com/YOURLS/YOURLS.git
   - |
+    # Use same branch in YOURLS and YOURLS-unit-tests
     export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     echo "Current Tests branch: $CURRENT_BRANCH"
     cd YOURLS
