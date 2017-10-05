@@ -1,4 +1,4 @@
-Before my submission:
+<!-- Before my submission: -->
 
 - [ ] Check you are using the [**LATEST** release](https://github.com/YOURLS/YOURLS/releases/latest) or the development branch.
 - [ ] Make sure you have [**SEARCHED** existing issues](https://github.com/YOURLS/YOURLS/issues?utf8=%E2%9C%93&q=is%3Aissue) first. 
@@ -10,6 +10,7 @@ Before my submission:
 ### Technical details regarding my environment
 
 * YOURLS version:
+  * Plugins enabled:
 * PHP version:
 * Any other useful information depending on context (server OS & version, MySQL version, browser version, …)
 
