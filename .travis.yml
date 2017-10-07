@@ -25,13 +25,6 @@ matrix:
   - php: hhvm
 
 before_script:
-  - |
-    # Remove Xdebug for performance increase:
-    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
-      phpenv config-rm xdebug.ini
-    else
-      echo "xdebug.ini does not exist"
-    fi
   - which phpunit
   - phpunit --version
   - mysql --version
