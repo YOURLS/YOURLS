@@ -237,7 +237,7 @@ function yourls_html_tfooter( $params = array() ) {
 							'ip'      => yourls__( 'IP' ),
 						);
 						$label = yourls__( 'Search in' );
-						$_select = yourls_html_select(  $label, 'search_in', $_options, $search_in);
+						$_select = yourls_html_select( 'search_in', $_options, $search_in, $display, $label);
 						/* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
 						yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
 						echo "&ndash;\n";
@@ -251,14 +251,14 @@ function yourls_html_tfooter( $params = array() ) {
 							'clicks'       => yourls__( 'Clicks' ),
 						);
 						$label = yourls__( 'Sort by' );
-						$_select = yourls_html_select( $label, 'sort_by', $_options, $sort_by );
+						$_select = yourls_html_select( 'sort_by', $_options, $sort_by, $display, $label );
 						$sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
 						$_options = array(
 							'asc'  => yourls__( 'Ascending' ),
 							'desc' => yourls__( 'Descending' ),
 						);
 						$label = yourls__( 'Sort order' );
-						$_select2 = yourls_html_select( $label, 'sort_order', $_options, $sort_order );
+						$_select2 = yourls_html_select( 'sort_order', $_options, $sort_order, $display, $label );
 						/* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
 						yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
 						echo "&ndash;\n";
@@ -275,7 +275,7 @@ function yourls_html_tfooter( $params = array() ) {
 							'less' => yourls__( 'less' ),
 						);
 						$label = yourls__( 'Show links with' );
-						$_select = yourls_html_select( $label, 'click_filter', $_options, $click_filter );
+						$_select = yourls_html_select( 'click_filter', $_options, $click_filter, $display, $label );
 						$_input  = '<input aria-label="' .yourls__( 'Number of clicks' ). '" type="text" name="click_limit" class="text" size="4" value="' . $click_limit . '" /> ';
 						/* //translators: "Show links with <more/less> than <text field> clicks" */
 						yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
@@ -288,7 +288,7 @@ function yourls_html_tfooter( $params = array() ) {
 							'between' => yourls__('between'),
 						);
 						$label = yourls__('Show links created') ; 
-						$_select = yourls_html_select( $label, 'date_filter', $_options, $date_filter );
+						$_select = yourls_html_select( 'date_filter', $_options, $date_filter, $display, $label );
 						$_input  = '<input aria-label="' .yourls__('Select a date') . '" type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
 						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
 						$_input2 = '<input aria-label="' .yourls__('Select an end date') . '" type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
@@ -365,7 +365,7 @@ function yourls_html_tfooter( $params = array() ) {
  * @param boolean $display false (default) to return, true to echo
  * @return string HTML content of the select element
  */
-function yourls_html_select( $label, $name, $options, $selected = '', $display = false ) {
+function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '') {
 	$html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
 	foreach( $options as $value => $text ) {
 		$html .= "<option value='$value' ";
