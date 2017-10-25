@@ -236,7 +236,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		if( isset( $title ) && !empty( $title ) ) {
 			$title = yourls_sanitize_title( $title );
 		} else {
-			$title = yourls_get_remote_title( $url );
+			$title = $url;
 		}
 		$title = yourls_apply_filter( 'add_new_title', $title, $url, $keyword );
 
