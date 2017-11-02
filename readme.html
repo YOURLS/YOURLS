@@ -639,6 +639,14 @@ echo $data->longurl;</tt></pre>
 				<li>If you prefer random short URLs (ie <code>j3kz1</code> then <code>13hz7</code> like Bitly does), just activate the plugin that comes with YOURLS.</li>
 			</ul>
 
+			<h3 id="stats">"Stats don't update as I think they should", "difference with Google Analytics", etc...</h3>
+			<ul>
+				<li>Out of the box, YOURLS updates traffic stats every time a short URL is requested. Period.</li>
+                <li>This said, some clients (like indexing bots, your internet browser) may skip requesting a short URL if they have the final destination known in cache.</li>
+                <li>Conversely, other stat tools may use different techniques to track hits (using javascript or not, using IP adress, filtering multiple requests by same client, etc...)</li>
+				<li>Bottom line: your mileage may vary with different tools, but there is no bug in YOURLS regarding that matter.</li>
+			</ul>
+
 			<h3 id="noindex">There is no index page at the root of the install</h3>
 			<ul>
 				<li>Indeed. It's intended. It's up to the user to make what they need. Some will redirect the root to a different place, some make a public interface for anyone to shorten links, some make a portfolio. You make it.</li>
