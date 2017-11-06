@@ -23,7 +23,7 @@ class Config {
      * @param  mixed $config   Optional user defined config path
      */
     public function __construct($config = false) {
-        $this->set_root( $this->fix_win32_path(realpath(__DIR__ . '/../../../..')) );
+        $this->set_root($this->fix_win32_path( dirname(dirname(dirname(__DIR__))) ));
         $this->set_config($config);
     }
 
