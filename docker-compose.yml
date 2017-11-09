@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  yourls:
+    build: .
+    restart: always
+    environment:
+      YOURLS_USER: 'root'
+      YOURLS_PASS: 'adminbla'
+      YOURLS_DB_HOST: 'mysql'
+      YOURLS_DB_NAME: 'yourls_db'
+      YOURLS_DB_USER: 'yourls_user'
+      YOURLS_DB_PASS: 'yourls_pass'
+      YOURLS_SITE: 'http://localhost'
+      YOURLS_COOKIEKEY: 'thisissupersecret'
+    ports:
+      - 80:80
+    networks:
+       - yourls
+
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'yourls_db'
+      MYSQL_USER: 'yourls_user'
+      MYSQL_PASSWORD: 'yourls_pass'
+      MYSQL_RANDOM_ROOT_PASSWORD: 'true'
+    volumes:
+       - mysql-data:/var/lib/mysql
+    networks:
+       - yourls
+
+volumes:
+  mysql-data:
+
+networks:
+  yourls:
