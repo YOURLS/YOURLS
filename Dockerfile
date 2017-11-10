@@ -21,6 +21,7 @@ COPY composer.json ./
 COPY composer.lock ./
 RUN composer install --no-scripts --no-autoloader
 COPY . ./
+COPY ./user/config-sample-docker.php ./user/config.php
 
 
 RUN chown -R www-data:www-data ./
