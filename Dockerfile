@@ -7,7 +7,8 @@ LABEL maintainer="Zabielski, Kamil <kamil.zabielski@outlook.com>"
 ## * composer.
 RUN set -e && \
     apt-get -y update && \
-    apt-get -y install git zip && \
+    apt-get -y --no-install-recommends install git zip unzip && \
+    rm -rf /var/lib/apt/lists/* && \
     curl -s https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer
