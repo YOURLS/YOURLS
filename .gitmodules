@@ -16,3 +16,6 @@
 [submodule "user/plugins/302-instead"]
 	path = user/plugins/302-instead
 	url = git@github.com:EpicPilgrim/302-instead.git
+[submodule "user/_plugins/google-auth-yourls"]
+	path = user/_plugins/google-auth-yourls
+	url = git@github.com:8thwall/google-auth-yourls.git

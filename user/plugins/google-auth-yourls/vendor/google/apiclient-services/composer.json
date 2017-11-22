@@ -1,0 +1,19 @@
+{
+    "name": "google/apiclient-services",
+    "type": "library",
+    "description": "Client library for Google APIs",
+    "keywords": ["google"],
+    "homepage": "http://developers.google.com/api-client-library/php",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8"
+    },
+    "autoload": {
+        "psr-0": {
+            "Google_Service_": "src"
+        }
+    }
+}
