@@ -2,7 +2,7 @@
 
 - [ ] Check you are using the [**LATEST** release](https://github.com/YOURLS/YOURLS/releases/latest) or the development branch.
 - [ ] Make sure you have [**SEARCHED** existing issues](https://github.com/YOURLS/YOURLS/issues?utf8=%E2%9C%93&q=is%3Aissue) first. 
-- [ ] Read the [**GUIDELINES**](https://github.com/YOURLS/YOURLS/blob/master/CONTRIBUTING.md) linked in the yellow notice box above.
+- [ ] Read the [**GUIDELINES**](https://github.com/YOURLS/YOURLS/blob/master/.github/CONTRIBUTING.md) linked in the yellow notice box above.
 - [ ] **COMPLETE** this issue template.
 
 <!-- Thank you! -->
@@ -14,7 +14,7 @@
 * PHP version:
 * Any other useful information depending on context (server OS & version, MySQL version, browser version, …)
 
-### Reproducible bug summary 
+### Bug description 
 
 **What is the current behavior?**
 
