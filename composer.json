@@ -1,9 +1,20 @@
 {
     "name": "yourls/yourls",
     "description": "Your Own URL Shortener",
-    "keywords": ["shortener", "url shortener", "short url", "url", "bitly"],
-    "homepage": "http://yourls.org",
+    "type": "project",
+    "keywords": [
+        "shortener",
+        "url shortener",
+        "short url",
+        "url",
+        "bitly"
+    ],
+    "homepage": "https://yourls.org",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/YOURLS/YOURLS/issues",
+        "source": "https://github.com/YOURLS/YOURLS"
+    },
     "require": {
         "php": ">=5.3",
         "ext-pdo": "*",
@@ -14,17 +25,18 @@
         "geoip2/geoip2" : "2.5.0",
         "aura/sql": "~2.",
         "jakeasmith/http_build_url": "1.0.1",
-        "symfony/polyfill-mbstring" : "1.5.0"
+        "symfony/polyfill-mbstring": "1.5.0"
     },
     "config": {
         "vendor-dir": "includes/vendor"
     },
     "autoload": {
-        "psr-4": {"YOURLS\\": "includes/YOURLS"}
+        "psr-4": {
+            "YOURLS\\": "includes/YOURLS"
+        }
     },
     "suggest": {
         "ext-mbstring": "For best performance",
-        "ext-curl": "For best performance",
-        "ext-lulz": "For the lulz"
+        "ext-curl": "Required for API usage"
     }
 }
