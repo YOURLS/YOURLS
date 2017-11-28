@@ -1,5 +1,3 @@
-sudo: false
-dist: trusty
 language: php
 
 env:
@@ -17,12 +15,10 @@ matrix:
   - php: 7.1
   - php: 7.2
   - php: nightly
-  - php: hhvm
   fast_finish: true
   allow_failures:
   - php: nightly
   - php: 7.2
-  - php: hhvm
 
 before_script:
   - which phpunit
