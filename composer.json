@@ -32,7 +32,7 @@
     },
     "autoload": {
         "psr-4": {
-            "YOURLS\\": "includes/YOURLS"
+            "YOURLS\\": "includes/"
         }
     },
     "suggest": {
