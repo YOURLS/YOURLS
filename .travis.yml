@@ -24,25 +24,12 @@ before_script:
   - which phpunit
   - phpunit --version
   - mysql --version
-  - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
-  - |
-    # Use same branch in YOURLS and YOURLS-unit-tests
-    export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-    echo "Current YOURLS branch: $CURRENT_BRANCH"
-    cd tests
-    if [ `git checkout $CURRENT_BRANCH &> /dev/null; echo $?` == 0 ]
-    then
-      echo "Using branch $CURRENT_BRANCH for Tests as well"
-    else
-      echo "Using branch master for Tests"
-    fi
-    cd ..
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
-  - cp tests/yourls-tests-config-travis.php user/config.php
+  - cp tests/data/config/yourls-tests-config-travis.php user/config.php
 
-script: phpunit --configuration ./tests/phpunit-travis.xml.dist
+script: phpunit --configuration phpunit-travis.xml.dist
 
 notifications:
   email: false

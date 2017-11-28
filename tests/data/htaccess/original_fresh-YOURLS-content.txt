@@ -1,0 +1,10 @@
+
+# BEGIN YOURLS
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /ozh.in/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /ozh.in/yourls-loader.php [L]
+</IfModule>
+# END YOURLS

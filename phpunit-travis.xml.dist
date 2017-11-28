@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+	backupGlobals="false"
+	colors="false"
+	stopOnFailure="false"
+	verbose="true"
+	bootstrap="tests/bootstrap.php"
+	>
+	<testsuites>
+		<testsuite name="YOURLS Test Suite">
+			<directory suffix=".php">./tests</directory>
+		</testsuite>
+	</testsuites>
+	<groups>
+		<exclude>
+			<group>ajax</group>
+		</exclude>
+	</groups>
+	<php>
+		<!-- Constants -->
+		<const name="PHPUNIT_TESTSUITE" value="true" />
+		<const name="TRAVIS_TESTSUITE" value="true" />
+		<!-- Login -->
+		<request name="username" value="yourls"/>
+		<request name="password" value="travis-ci-test"/>
+		<!-- Install -->
+		<server name="SERVER_SOFTWARE" value="TRAVIS APACHE"/>
+		<!-- Stats data -->
+		<server name="HTTP_USER_AGENT" value="Travis-CI (PHPUnit\3.7)"/>
+		<server name="HTTP_HOST" value="travis.com"/>
+		<server name="HTTP_CLIENT_IP" value="10.10.10.1"/>
+		<!-- API -->
+		<request name="format" value="simple"/>
+	</php>
+	<logging>
+		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+	</logging>
+</phpunit>
