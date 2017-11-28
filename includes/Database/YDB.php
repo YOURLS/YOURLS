@@ -135,6 +135,7 @@ class YDB extends ExtendedPdo {
      *
      * @since  1.7.3
      * @return void
+     * @throws \PDOException
      */
     public function connect_to_DB() {
         try {
@@ -148,6 +149,9 @@ class YDB extends ExtendedPdo {
      * Die with an error message
      *
      * @since  1.7.3
+     *
+     * @param \Exception $exception
+     *
      * @return void
      */
     public function dead_or_error(\Exception $exception) {

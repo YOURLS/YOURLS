@@ -6,6 +6,8 @@
 
 namespace YOURLS\Config;
 
+use YOURLS\Exceptions\ConfigException;
+
 class Config {
 
     /**
@@ -61,6 +63,7 @@ class Config {
      *
      * @since  1.7.3
      * @return string         path to found config file
+     * @throws ConfigException
      */
     public function find_config() {
 
@@ -71,7 +74,7 @@ class Config {
         }
 
         if (!empty($config) && !is_readable($config)) {
-            throw new \YOURLS\Exceptions\ConfigException("User defined config not found at '$config'");
+            throw new ConfigException("User defined config not found at '$config'");
         }
 
         // config.php in /user/
@@ -86,7 +89,7 @@ class Config {
 
         // config.php not found :(
 
-        throw new \YOURLS\Exceptions\ConfigException('Cannot find config.php. Please read the readme.html to learn how to install YOURLS');
+        throw new ConfigException('Cannot find config.php. Please read the readme.html to learn how to install YOURLS');
     }
 
     /**
@@ -94,13 +97,14 @@ class Config {
      *
      * @since  1.7.3
      * @return void
+     * @throws ConfigException
      */
     public function define_core_constants() {
         // Check minimal config job has been properly done
         $must_haves = array('YOURLS_DB_USER', 'YOURLS_DB_PASS', 'YOURLS_DB_NAME', 'YOURLS_DB_HOST', 'YOURLS_DB_PREFIX', 'YOURLS_SITE');
         foreach($must_haves as $must_have) {
             if (!defined($must_have)) {
-                throw new \YOURLS\Exceptions\ConfigException('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
+                throw new ConfigException('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
             }
         }
 

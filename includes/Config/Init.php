@@ -15,6 +15,8 @@ class Init {
 
     /**
      * @since  1.7.3
+     *
+     * @param InitDefaults $actions
      */
     public function __construct(InitDefaults $actions) {
 

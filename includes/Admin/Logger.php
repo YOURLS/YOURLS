@@ -14,7 +14,7 @@ class Logger extends \Aura\Sql\Profiler {
 
     /**
      * the YDB instance
-     * @var YOURLS\Database\YDB
+     * @var YDB
      */
     protected $ydb;
 
