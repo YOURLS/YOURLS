@@ -2,8 +2,8 @@
  * Enforce Issue Template review
  */
 on('issues.opened')
-  .filter(context => !context.issue.body.match(/### Reproducible bug summary/)
-       || context.issue.body.includes('- [ ]'))
+  .filter(context => !context.payload.issue.body.match(/### Reproducible bug summary/)
+       || context.payload.issue.body.includes('- [ ]'))
   .comment(contents('.github/MISSING_ISSUE_TEMPLATE_AUTOREPLY.md'))
   .label('insufficient-info');
 
