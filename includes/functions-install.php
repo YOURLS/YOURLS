@@ -105,12 +105,47 @@ function yourls_create_htaccess() {
 		// Prepare content for a .htaccess file
 		$content = array(
 			'<IfModule mod_rewrite.c>',
-			'RewriteEngine On',
-			'RewriteBase '.$path.'/',
-			'RewriteCond %{REQUEST_FILENAME} !-f',
-			'RewriteCond %{REQUEST_FILENAME} !-d',
-			'RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
+			'  RewriteEngine On',
+			'  RewriteBase '.$path.'/',
+			'  RewriteCond %{REQUEST_FILENAME} !-f',
+			'  RewriteCond %{REQUEST_FILENAME} !-d',
+			'  RewriteRule ^.*$ '.$path.'/yourls-loader.php [L]',
 			'</IfModule>',
+			'', // empty line
+			'# avoid file listing',
+			'<IfModule mod_autoindex.c>',
+			'  Options -Indexes',
+			'</IfModule>',
+			'', // empty line
+			'# avoid config content leak',
+			'<Files config*.php>',
+			'  Order Allow,Deny',
+			'  Deny from All',
+			'</Files>',
+			'', // empty line
+			'# avoid information leak',
+			'<Files sample*.txt>',
+			'  Order Allow,Deny',
+			'  Deny from All',
+			'</Files>',
+			'', // empty line
+			'# avoid running app version exposure',
+			'<Files composer*>',
+			'  Order Allow,Deny',
+			'  Deny from All',
+			'</Files>',
+			'', // empty line
+			'# avoid running app version exposure',
+			'<Files LICENSE>',
+			'  Order Allow,Deny',
+			'  Deny from All',
+			'</Files>',
+			'', // empty line
+			'# avoid information leak by file extension',
+			'<FilesMatch "\.(htaccess|htpasswd|ini|psd|log|sh|bat|json|md|html|dat|txt|inc|pem|svn|git|gitignore|gitattributes|github|yml|json|lock|editorconfig)$">',
+			'  Order Allow,Deny',
+			'  Deny from All',
+			'</FilesMatch>',
 		);
 
 		$filename = YOURLS_ABSPATH.'/.htaccess';
