@@ -5,6 +5,7 @@
 # Configuration
 user/*
 !user/config-sample.php
+!user/config-env.php
 .htaccess
 *.config
 *.conf

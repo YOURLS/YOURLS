@@ -1,0 +1,21 @@
+[submodule "user/_plugins/YOURLS-Remove-the-Share-Function"]
+	path = user/_plugins/YOURLS-Remove-the-Share-Function
+	url = git@github.com:seandrickson/YOURLS-Remove-the-Share-Function.git
+[submodule "user/_plugins/YOURLS-Case-Insensitive"]
+	path = user/_plugins/YOURLS-Case-Insensitive
+	url = git@github.com:seandrickson/YOURLS-Case-Insensitive.git
+[submodule "user/_plugins/yourls-check-url"]
+	path = user/_plugins/yourls-check-url
+	url = git@github.com:adigitalife/yourls-check-url.git
+[submodule "user/_plugins/yourls-fix-long-url"]
+	path = user/_plugins/yourls-fix-long-url
+	url = git@github.com:adigitalife/yourls-fix-long-url.git
+[submodule "user/plugins/append-qs"]
+	path = user/plugins/append-qs
+	url = git@github.com:drockney/append-qs.git
+[submodule "user/plugins/302-instead"]
+	path = user/plugins/302-instead
+	url = git@github.com:EpicPilgrim/302-instead.git
+[submodule "user/_plugins/google-auth-yourls"]
+	path = user/_plugins/google-auth-yourls
+	url = git@github.com:8thwall/google-auth-yourls.git

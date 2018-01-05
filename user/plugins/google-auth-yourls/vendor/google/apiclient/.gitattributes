@@ -1,0 +1,9 @@
+/.github export-ignore
+/.gitignore export-ignore
+/.travis.yml export-ignore
+/CONTRIBUTING.md export-ignore
+/examples export-ignore
+/phpunit.xml.dist export-ignore
+/style export-ignore
+/tests export-ignore
+/UPGRADING.md export-ignore

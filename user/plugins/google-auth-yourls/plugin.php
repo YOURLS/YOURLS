@@ -1,0 +1,1 @@
+../../_plugins/google-auth-yourls/plugin.php

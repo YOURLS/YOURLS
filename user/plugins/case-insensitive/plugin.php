@@ -1,0 +1,1 @@
+../../_plugins/yourls-case-insensitive/case-insensitive/plugin.php
