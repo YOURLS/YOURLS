@@ -176,9 +176,10 @@ function yourls_html_footer($can_query = true) {
  * @param string $keyword Keyword to prefill the input with
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
-	$pre = yourls_apply_filter( 'shunt_html_addnew', false, $url, $keyword  );
-		if ( false !== $pre )
-			return $pre;
+    $pre = yourls_apply_filter( 'shunt_html_addnew', false, $url, $keyword );
+    if ( false !== $pre ) {
+        return $pre;
+    }
 	?>
 	<main role="main">
 	<div id="new_url">
