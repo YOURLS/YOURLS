@@ -9,8 +9,8 @@ $(document).ready(function(){
 function update_share() {
 	var text = encodeURIComponent( $('#tweet_body').val() );
 	var url = encodeURIComponent( $('#copylink').val() );
-	var tw = 'http://twitter.com/intent/tweet?status='+text;
-	var fb = 'http://www.facebook.com/share.php?u='+url ;
+	var tw = 'https://twitter.com/intent/tweet?status='+text;
+	var fb = 'https://www.facebook.com/share.php?u='+url ;
 	$('#share_tw').attr('href', tw);
 	$('#share_fb').attr('href', fb);
 	
