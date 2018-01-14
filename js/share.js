@@ -14,7 +14,7 @@ function update_share() {
 	$('#share_tw').attr('href', tw);
 	$('#share_fb').attr('href', fb);
 	
-	var charcount = parseInt(140 - $('#tweet_body').val().length);
+	var charcount = parseInt(280 - $('#tweet_body').val().length);
 	$('#charcount')
 		.toggleClass("negative", charcount < 0)
 		.text( charcount );
