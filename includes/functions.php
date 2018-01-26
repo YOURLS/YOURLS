@@ -338,6 +338,13 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 
     $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
+	//Check if the new url is blank
+	if ($url == ''){
+		$new_url_is_blank = true;
+	} else {
+		$new_url_is_blank = false;
+	}
+
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
 		$new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
@@ -355,7 +362,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	yourls_do_action( 'pre_edit_link', $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
 
 	// All clear, update
-	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
+	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok && !$new_url_is_blank) {
             $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
 			$update_url = $ydb->fetchAffected($sql, $binds);
@@ -368,11 +375,14 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 			$return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_trim_long_string( $strip_url ), $keyword ) ;
 		}
 
-	// Nope
-	} else {
-		$return['status']  = 'fail';
-		$return['message'] = yourls__( 'URL or keyword already exists in database' );
-	}
+		// Nope
+	} elseif ($new_url_is_blank) {
+			$return['status']  = 'fail';
+			$return['message'] = yourls__( 'URL cannot be left blank' );
+		} else {
+			$return['status']  = 'fail';
+			$return['message'] = yourls__( 'URL or keyword already exists in database' );
+		}
 
 	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title, $new_url_already_there, $keyword_is_ok );
 }
@@ -2412,4 +2422,3 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
-
