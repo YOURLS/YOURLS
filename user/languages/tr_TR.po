@@ -1,0 +1,1429 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: YOURLS 1.7\n"
+"POT-Creation-Date: 2014-01-11 11:50+0100\n"
+"PO-Revision-Date: 2018-02-07 21:40+0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-KeywordsList: yourls__;yourls_e;yourls_s;yourls_se;"
+"yourls_esc_attr__;yourls_esc_html__;yourls_x;yourls_ex;yourls_esc_attr_x;"
+"yourls_esc_html_x;yourls_n:1,2;yourls_nx:1,2;yourls_n_noop:1,2;"
+"yourls_nx_noop:1,2\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: \n"
+"Language: tr\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: yourls-infos.php:204
+#, php-format
+msgid "Statistics for %s"
+msgstr "%s için istatistikler"
+
+#: yourls-infos.php:211 admin/index.php:15 admin/index.php:34
+#: admin/index.php:93 includes/functions-html.php:209
+#: includes/functions-html.php:221 includes/functions-html.php:464
+#: includes/functions-html.php:626
+msgid "Short URL"
+msgstr "Kısa URL"
+
+#: yourls-infos.php:227
+msgid "Aggregate stats for duplicate short URLs"
+msgstr "Tekrarlanan kısa URL'ler için toplu istatistikler"
+
+#: yourls-infos.php:229 includes/functions-html.php:464
+msgid "Long URL"
+msgstr "Uzun URL"
+
+#: yourls-infos.php:235 yourls-infos.php:246
+msgid "Traffic statistics"
+msgstr "Trafik İstatistikleri"
+
+#: yourls-infos.php:236 yourls-infos.php:432
+msgid "Traffic location"
+msgstr "Trafik konumu"
+
+#: yourls-infos.php:237 yourls-infos.php:469
+msgid "Traffic sources"
+msgstr "Trafik kaynakları"
+
+#: yourls-infos.php:239 yourls-infos.php:539 includes/functions-html.php:505
+#: includes/functions-html.php:506
+msgid "Share"
+msgstr "Paylaşma"
+
+#: yourls-infos.php:254 yourls-infos.php:294
+msgid "Last 24 hours"
+msgstr "Son 24 saat"
+
+#: yourls-infos.php:255 yourls-infos.php:296
+msgid "Last 7 days"
+msgstr "Son 7 gün"
+
+#: yourls-infos.php:256 yourls-infos.php:298
+msgid "Last 30 days"
+msgstr "Son 30 gün"
+
+#: yourls-infos.php:257 yourls-infos.php:300
+msgid "All time"
+msgstr "Tüm zamanlar"
+
+#: yourls-infos.php:309
+#, php-format
+msgid "Number of hits : %s"
+msgstr "Tıklanma sayısı : %s"
+
+#: yourls-infos.php:332
+msgid "Historical click count"
+msgstr "Geçmiş tıklama sayısı"
+
+#: yourls-infos.php:338
+#, php-format
+msgid "about 1 day ago"
+msgid_plural "about %s days ago"
+msgstr[0] "yaklaşık 1 gün önce"
+msgstr[1] "yaklaşık %s günler önce"
+
+#. //translators: eg Short URL created on March 23rd 1972
+#: yourls-infos.php:341
+#, php-format
+msgid "Short URL created on %s"
+msgstr "Kısa URL oluşturuldu %s"
+
+#: yourls-infos.php:356 yourls-infos.php:363
+#, php-format
+msgid "%s per day"
+msgstr "%s gün başına"
+
+#: yourls-infos.php:359
+#, php-format
+msgid "%s per hour"
+msgstr "%s saat başına"
+
+#: yourls-infos.php:366
+#, php-format
+msgid "%s hit"
+msgid_plural "%s hits"
+msgstr[0] "%s tıklama"
+msgstr[1] "%s tıklamalar"
+
+#: yourls-infos.php:373
+msgid "Best day"
+msgstr "En iyi gün"
+
+#. //translators: eg. 43 hits on January 1, 1970
+#: yourls-infos.php:380
+#, php-format
+msgid "<strong>%1$s</strong> hit on %2$s"
+msgid_plural "<strong>%1$s</strong> hits on %2$s"
+msgstr[0] "<strong>%1$s</strong> tıklama %2$s"
+msgstr[1] "<strong>%1$s</strong> tıklamalar %2$s"
+
+#: yourls-infos.php:381 yourls-infos.php:443
+msgid "Click for more details"
+msgstr "Daha fazla detay için tıklayın"
+
+#: yourls-infos.php:387 yourls-infos.php:390
+#, php-format
+msgid "Year %s"
+msgstr "Yıl %s"
+
+#: yourls-infos.php:409 yourls-infos.php:447
+#, php-format
+msgid "1 hit"
+msgid_plural "%s hits"
+msgstr[0] "1 tıklama"
+msgstr[1] "%s tıklamalar"
+
+#: yourls-infos.php:426
+msgid "No traffic yet. Get some clicks first!"
+msgstr "Henüz trafik yok. Önce biraz tıklanma alın!"
+
+#: yourls-infos.php:441
+msgid "Top 5 countries"
+msgstr "En yüksek 5 ülke"
+
+#: yourls-infos.php:454
+msgid "Overall traffic"
+msgstr "Genel trafik"
+
+#: yourls-infos.php:463
+msgid "No country data."
+msgstr "Ülke verisi yok."
+
+#: yourls-infos.php:478
+msgid "Referrer shares"
+msgstr "Başvuran paylaşımları"
+
+#: yourls-infos.php:481
+msgid "Others"
+msgstr "Dİğerleri"
+
+#: yourls-infos.php:485 yourls-infos.php:518
+msgid "Referrers"
+msgstr "Başvuranlar"
+
+#: yourls-infos.php:492 yourls-infos.php:502
+msgid "(details)"
+msgstr "(detaylar)"
+
+#: yourls-infos.php:502
+msgid "Various:"
+msgstr "Çeşitler:"
+
+#: yourls-infos.php:516
+msgid "Direct vs Referrer Traffic"
+msgstr "Yönlendirme vs Başvuran Trafik"
+
+#: yourls-infos.php:518
+msgid "Direct"
+msgstr "Yönlendirme"
+
+#: yourls-infos.php:520
+msgid "Direct traffic:"
+msgstr "Yönlendirme Trafiği:"
+
+#: yourls-infos.php:520 yourls-infos.php:521
+#, php-format
+msgid "<strong>%s</strong> hit"
+msgid_plural "<strong>%s</strong> hits"
+msgstr[0] "<strong>%s</strong> tıkla"
+msgstr[1] "<strong>%s</strong> tıklamalar"
+
+#: yourls-infos.php:521
+msgid "Referrer traffic:"
+msgstr "Başvuran trafiği:"
+
+#: yourls-infos.php:530
+msgid "No referrer data."
+msgstr "Başvuran verisi yok."
+
+#: yourls-infos.php:541
+msgid "Short link"
+msgstr "Kısa bağlantı"
+
+#: yourls-infos.php:541 includes/functions-html.php:359
+msgid "Quick Share"
+msgstr "Hızlı paylaşım"
+
+#: admin/index.php:13 admin/index.php:38 admin/index.php:97
+#: includes/functions-html.php:210 includes/functions-html.php:222
+msgid "URL"
+msgstr "URL"
+
+#: admin/index.php:42 includes/functions-html.php:211
+#: includes/functions-html.php:464
+msgid "Title"
+msgstr "Başlık"
+
+#: admin/index.php:46 admin/index.php:105
+msgid "IP Address"
+msgstr "IP adresi"
+
+#: admin/index.php:50
+#, php-format
+msgid "Searching for <strong>%1$s</strong> in <strong>%2$s</strong>."
+msgstr "Arıyor <strong>%1$s</strong> içinde <strong>%2$s</strong>."
+
+#: admin/index.php:101 includes/functions-html.php:223
+#: includes/functions-html.php:628
+msgid "Date"
+msgstr "Tarih"
+
+#: admin/index.php:109 includes/functions-html.php:225
+#: includes/functions-html.php:630
+msgid "Clicks"
+msgstr "Tıklamalar"
+
+#: admin/index.php:187 admin/index.php:198 admin/index.php:209
+#, php-format
+msgid "Short URL created, but could not redirect to %s !"
+msgstr "Kısa URL oluşturuldu, ancak %s'ye yönlendirilemedi!"
+
+#: admin/index.php:219
+msgid "Unknown \"Share\" bookmarklet"
+msgstr "Bilinmeyen \"Paylaş\" bookmarklet"
+
+#: admin/index.php:272
+#, php-format
+msgid ""
+"Display <strong>%1$s</strong> to <strong class=\"increment\">%2$s</strong> "
+"of <strong class=\"increment\">%3$s</strong> URLs"
+msgstr ""
+"Görüntüle <strong>%1$s</strong> için <strong class=\"increment\">%2$s</"
+"strong> den <strong class=\"increment\">%3$s</strong> URL'leri"
+
+#: admin/index.php:274
+#, php-format
+msgid "counting <strong>1</strong> click"
+msgid_plural "counting <strong>%s</strong> clicks"
+msgstr[0] "sayılıyor <strong>1</strong> tıklama"
+msgstr[1] "sayılıyor <strong>%s</strong> tıklamalar"
+
+#: admin/index.php:277
+#, php-format
+msgid ""
+"Overall, tracking <strong class=\"increment\">%1$s</strong> links, <strong>"
+"%2$s</strong> clicks, and counting!"
+msgstr ""
+"Genel, izleniyor <strong class=\"increment\">%1$s</strong> linkleri,, "
+"<strong>%2$s</strong> tıklamalar, ve sayma!"
+
+#: admin/index.php:337
+msgid "No URL"
+msgstr "URL yok"
+
+#: admin/install.php:13 admin/install.php:18
+#, php-format
+msgid "%s version is too old. Ask your server admin for an upgrade."
+msgstr ""
+"%s versiyonu çok eski. Sunucu yöneticinize bir yükseltme isteğinde bulunun."
+
+#: admin/install.php:24
+msgid "YOURLS already installed."
+msgstr "YOURLS zaten kurulmuş."
+
+#: admin/install.php:35
+msgid "File <tt>.htaccess</tt> successfully created/updated."
+msgstr "Dosya <tt>.htaccess</tt> başarıyla oluşturuldu/güncellendi."
+
+#: admin/install.php:37
+msgid ""
+"Could not write file <tt>.htaccess</tt> in YOURLS root directory. You will "
+"have to do it manually. See <a href=\"http://yourls.org/htaccess\">how</a>."
+msgstr ""
+"Dosyaya yazılamadı <tt>.htaccess</tt>sizin YOURLS temel rehberiniz. Elle "
+"yapmak zorunda kalacaksınız. Bakınız <a href=\"http://yourls.org/htaccess"
+"\">nasıl</a>."
+
+#: admin/install.php:50 admin/install.php:71
+msgid "Install YOURLS"
+msgstr "YOURLS yükleme"
+
+#: admin/install.php:74
+msgid "YOURLS Administration Page"
+msgstr "YOURLS Yönetim Sayfası"
+
+#: admin/plugins.php:38
+msgid "Unsupported action"
+msgstr "Desteklenmeyen eylem"
+
+#: admin/plugins.php:42
+msgid "No plugin specified, or not a valid plugin"
+msgstr "Hiçbir eklenti belirtilmedi, yada geçerli bir eklenti değil"
+
+#: admin/plugins.php:51
+msgid "Plugin has been activated"
+msgstr "Eklenti aktifleştirildi"
+
+#: admin/plugins.php:53
+msgid "Plugin has been deactivated"
+msgstr "Eklenti devre dışı bırakıldı"
+
+#: admin/plugins.php:58 includes/functions-html.php:745
+msgid "Manage Plugins"
+msgstr "Eklentileri Yönetme"
+
+#: admin/plugins.php:63
+msgid "Plugins"
+msgstr "Eklentiler"
+
+#: admin/plugins.php:70
+#, php-format
+msgid "%s plugin"
+msgid_plural "%s plugins"
+msgstr[0] "%s eklenti"
+msgstr[1] "%s eklentiler"
+
+#. //translators: "you have '3 plugins' installed and '1' activated"
+#: admin/plugins.php:74
+#, php-format
+msgid ""
+"You currently have <strong>%1$s</strong> installed, and <strong>%2$s</"
+"strong> activated"
+msgstr ""
+"Şu anda bu var <strong>%1$s</strong> yüklendi, ve<strong>%2$s</strong> "
+"etkinleştirildi"
+
+#: admin/plugins.php:79
+msgid "Plugin Name"
+msgstr "Eklenti Adı"
+
+#: admin/plugins.php:80
+msgid "Version"
+msgstr "Sürüm"
+
+#: admin/plugins.php:81
+msgid "Description"
+msgstr "Tanımlama"
+
+#: admin/plugins.php:82
+msgid "Author"
+msgstr "Yaratıcı"
+
+#: admin/plugins.php:83
+msgid "Action"
+msgstr "Eylem"
+
+#: admin/plugins.php:118
+msgid "Deactivate"
+msgstr "Devre dışı"
+
+#: admin/plugins.php:122
+msgid "Activate"
+msgstr "Aktif"
+
+#: admin/plugins.php:133
+#, php-format
+msgid "plugin file location: %s"
+msgstr "eklenti dosya konumu: %s"
+
+#: admin/plugins.php:150
+msgid "Toggle active/inactive plugins"
+msgstr "Aktif /pasif olmayan eklentileri değiştir"
+
+#: admin/plugins.php:157
+msgid ""
+"If something goes wrong after you activate a plugin and you cannot use "
+"YOURLS or access this page, simply rename or delete its directory, or rename "
+"the plugin file to something different than <code>plugin.php</code>."
+msgstr ""
+"Bir eklenti etkinleştirdikten sonra bir şeyler ters giderse ve YOURLS'unuzu "
+"kullanamaz ya da bu sayfaya erişemezseniz, dizinini yeniden adlandırın veya "
+"rehberini silin veya eklenti dosyasını bunlardan farklı bir adla yeniden "
+"adlandırın <code>plugin.php</code>."
+
+#: admin/plugins.php:159
+msgid "More plugins"
+msgstr "Daha fazla eklenti"
+
+#: admin/plugins.php:161
+msgid ""
+"For more plugins, head to the official <a href=\"http://yourls.org/pluginlist"
+"\">Plugin list</a>."
+msgstr ""
+"Daha fazla eklenti için, resmi yetkiliye yönelin <a href=\"http://yourls.org/"
+"pluginlist\">Eklenti liste</a>."
+
+#: admin/tools.php:6
+msgid "Cool YOURLS Tools"
+msgstr "Çok iyi YOURLS Araçları"
+
+#: admin/tools.php:13
+msgid "Bookmarklets"
+msgstr "Bookmarkletler"
+
+#: admin/tools.php:15
+msgid ""
+"YOURLS comes with handy <span>bookmarklets</span> for easier link shortening "
+"and sharing."
+msgstr ""
+"YOURLS kullanışlı <span>bookmarkletler</span> daha kolay bağlantı "
+"kısaltılması ve paylaşımı için gelir."
+
+#: admin/tools.php:17
+msgid "Standard or Instant, Simple or Custom"
+msgstr "Standart veya Anlık, Basit veya Özel"
+
+#: admin/tools.php:20
+msgid ""
+"The <span>Standard Bookmarklets</span> will take you to a page where you can "
+"easily edit or delete your brand new short URL."
+msgstr ""
+"<span>Standart Bookmarkletler</span> sizi, markanıza yeni kısa URL'nizi "
+"kolayca düzenleyebileceğiniz veya silebileceğiniz bir sayfaya yönlendirir."
+
+#: admin/tools.php:22
+msgid ""
+"The <span>Instant Bookmarklets</span> will pop the short URL without leaving "
+"the page you are viewing."
+msgstr ""
+"<span>Anlık Bookmarkletler</span> kısa URL'yi görüntülediğiniz sayfadan "
+"ayrılmadan açılır."
+
+#: admin/tools.php:24
+msgid ""
+"The <span>Simple Bookmarklets</span> will generate a short URL with a random "
+"or sequential keyword."
+msgstr ""
+"<span>Basit Bookmarkletler</span> rastgele veya ardışık bir anahtar kelime "
+"içeren kısa bir URL oluşturacaktır."
+
+#: admin/tools.php:26
+msgid ""
+"The <span>Custom Keyword Bookmarklets</span> will prompt you for a custom "
+"keyword first."
+msgstr ""
+"<span>Özel Anahtar Kelime Bookmarkletler</span> önce özel bir anahtar kelime "
+"girmenizi ister."
+
+#: admin/tools.php:30
+msgid ""
+"If you want to share a description along with the link you're shortening, "
+"simply <span>select text</span> on the page you're viewing before clicking "
+"on your bookmarklet link"
+msgstr ""
+"Bir açıklamayı, kısaltmakta olduğunuz bağlantı ile birlikte paylaşmak "
+"isterseniz, bookmarklet bağlantınızı tıklamadan önce görüntülediğiniz "
+"sayfada basitçe <span>metni seçin</span>"
+
+#: admin/tools.php:33
+msgid "The Bookmarklets"
+msgstr "Bookmarkletler"
+
+#: admin/tools.php:35 admin/tools.php:62
+msgid "Click and drag links to your toolbar (or right-click and bookmark it)"
+msgstr ""
+"Araç çubuğunuza tıklayıp sürükleyin (veya sağ tıklayın ve yer imi koyun)"
+
+#: admin/tools.php:41
+msgid "Standard (new page)"
+msgstr "Standart (yeni sayfa)"
+
+#: admin/tools.php:42
+msgid "Instant (popup)"
+msgstr "Anında (açılır pencere)"
+
+#: admin/tools.php:47
+msgid "Simple"
+msgstr "Basit"
+
+#: admin/tools.php:48 admin/tools.php:49 admin/tools.php:53 admin/tools.php:54
+#: admin/tools.php:68 admin/tools.php:70 admin/tools.php:72
+msgid "Drag to your toolbar!"
+msgstr "Araç çubuğunuza sürükleyin!"
+
+#: admin/tools.php:48
+msgid "Shorten"
+msgstr "Kısaltma"
+
+#: admin/tools.php:49
+msgid "Instant Shorten"
+msgstr "Anlık Kısaltma"
+
+#: admin/tools.php:52
+msgid "Custom Keyword"
+msgstr "Özel Anahtar Kelime"
+
+#: admin/tools.php:53
+msgid "Custom shorten"
+msgstr "Özel Kısaltma"
+
+#: admin/tools.php:54
+msgid "Instant Custom Shorten"
+msgstr "Anında Özel Kısaltma"
+
+#: admin/tools.php:59
+msgid "Social Bookmarklets"
+msgstr "Sosyal Bookmarkletler"
+
+#: admin/tools.php:61
+msgid "Create a short URL and share it on social networks, all in one click!"
+msgstr ""
+"Kısa bir URL oluşturun ve hepsini tek bir tıklamayla sosyal paylaşım "
+"ağlarında paylaşın!"
+
+#: admin/tools.php:64
+msgid "Shorten and share:"
+msgstr "Kısaltma ve paylaşma:"
+
+#: admin/tools.php:68
+msgid "YOURLS &amp; Facebook"
+msgstr "YOURLS & amp; Facebook"
+
+#: admin/tools.php:70
+msgid "YOURLS &amp; Twitter"
+msgstr "YOURLS &amp; Twitter"
+
+#: admin/tools.php:72
+msgid "YOURLS &amp; Tumblr"
+msgstr "YOURLS &amp; Tumblr"
+
+#: admin/tools.php:80
+msgid "Prefix-n-Shorten"
+msgstr "Önek-n-kısaltmak"
+
+#: admin/tools.php:82
+#, php-format
+msgid ""
+"When viewing a page, you can also prefix its full URL: just head to your "
+"browser's address bar, add \"<span>%s</span>\" to the beginning of the "
+"current URL (right before its 'http://' part) and hit enter."
+msgstr ""
+"Bir sayfayı görüntülerken,tam URL'nin önüne de girebilirsiniz:tarayıcınızın "
+"adres çubuğuna gidin,\"<span>%s</span>\" geçerli URL'nin başlangıcına "
+"('http: //' bölümünden hemen önce) ekleyin ve enter tuşuna basın."
+
+#: admin/tools.php:85
+msgid ""
+"Note: this will probably not work if your web server is running on Windows"
+msgstr "Not: Web sunucunuz Windows'ta çalışıyorsa bu muhtemelen çalışmayabilir"
+
+#: admin/tools.php:87
+msgid " (which seems to be the case here)"
+msgstr "(burada durum böyle görünüyor)"
+
+#: admin/tools.php:93
+msgid "Secure passwordless API call"
+msgstr "Güvenli şifresiz API çağrısı"
+
+#: admin/tools.php:96
+msgid ""
+"YOURLS allows API calls the old fashioned way, using <tt>username</tt> and "
+"<tt>password</tt> parameters."
+msgstr ""
+"YOURLS, <tt>kullanıcı adı</tt> ve <tt>şifre</tt> parametrelerini kullanarak "
+"eski yollarla API çağrıları sağlar."
+
+#: admin/tools.php:98
+msgid ""
+"If you're worried about sending your credentials into the wild, you can also "
+"make API calls without using your login or your password, using a secret "
+"signature token."
+msgstr ""
+"Kimlik bilgilerini bilinmeyen yollarla göndermekten endişeleniyorsanız, "
+"gizli bir imza simgesi kullanarak, oturum açma adınızı veya şifrenizi "
+"kullanmadan API çağrıları yapabilirsiniz."
+
+#: admin/tools.php:102
+#, php-format
+msgid "Your secret signature token: <strong><code>%s</code></strong>"
+msgstr "Gizli imzanızın belirteci: <strong><code>%s</code></strong>"
+
+#: admin/tools.php:103
+msgid "(It's a secret. Keep it secret) "
+msgstr "(Bu bir sır. Gizli tutun) "
+
+#: admin/tools.php:106
+msgid ""
+"This signature token can only be used with the API, not with the admin "
+"interface."
+msgstr "Bu imza simgesi yönetici arayüzüyle değil API ile kullanılabilir."
+
+#: admin/tools.php:109
+msgid "Usage of the signature token"
+msgstr "İmza belirtecinin kullanımı"
+
+#: admin/tools.php:110
+msgid "Simply use parameter <tt>signature</tt> in your API requests. Example:"
+msgstr "API isteklerinizde <tt>imza</tt> parametresini kullanın. Örneğin:"
+
+#: admin/tools.php:114
+msgid "Usage of a time limited signature token"
+msgstr "Sınırlı imza belirtecinin kullanımı"
+
+#: admin/tools.php:117 admin/tools.php:119
+msgid "actual value:"
+msgstr "güncel değer:"
+
+#: admin/tools.php:122
+msgid ""
+"Now use parameters <tt>signature</tt> and <tt>timestamp</tt> in your API "
+"requests. Example:"
+msgstr ""
+"Artık API isteklerinizde<tt>imza</tt> ve<tt>zaman damgası</tt> "
+"parametrelerini kullanın. Örneğin:"
+
+#: admin/tools.php:124
+msgid "Actual values:"
+msgstr "Güncel değerler:"
+
+#: admin/tools.php:126
+#, php-format
+msgid "This URL would be valid for only %s seconds"
+msgstr "Bu URL yalnızca %s saniye boyunca geçerli olur"
+
+#: admin/tools.php:130
+#, php-format
+msgid "See the <a href=\"%s\">API documentation</a> for more"
+msgstr "Daha fazla bilgi için <a href=\"%s\">API belgeleri</a>'ne bakın"
+
+#: admin/upgrade.php:9 admin/upgrade.php:13
+msgid "Upgrade YOURLS"
+msgstr "YOURLS yükseltme"
+
+#: admin/upgrade.php:18
+#, php-format
+msgid "Upgrade not required. Go <a href=\"%s\">back to play</a>!"
+msgstr "Yükseltme gerekli değil. Git <a href=\"%s\">oynaya geri dön</a>!"
+
+#: admin/upgrade.php:51
+msgid "Your current installation needs to be upgraded."
+msgstr "Geçerli kurulumunuz yükseltilmelidir."
+
+#: admin/upgrade.php:52
+msgid ""
+"Please, pretty please, it is recommended that you <strong>backup</strong> "
+"your database<br/>(you should do this regularly anyway)"
+msgstr ""
+"Lütfen, lütfen, <strong>yedekleme</strong>veritabanınız<br/>için önerilir "
+"(yine de bunu düzenli olarak yapmalısınız)"
+
+#: admin/upgrade.php:53
+msgid ""
+"Nothing awful <em>should</em> happen, but this doesn't mean it <em>won't</"
+"em> happen, right? ;)"
+msgstr ""
+"<em>olması gereken</em>konusunda korkunç hiçbir şey olmaz, ancak bu  "
+"<em>olmayacak</em> anlamına gelmez, değil mi? ;)"
+
+#: admin/upgrade.php:54
+msgid ""
+"On every step, if <span class='error'>something goes wrong</span>, you'll "
+"see a message and hopefully a way to fix."
+msgstr ""
+"Her adımda, eğer <span class='error'>bir şeyler ters giderse</span>,  bir "
+"mesaj görürsünüz ve umarız düzeltecek bir yol bulursunuz."
+
+#: admin/upgrade.php:55
+msgid ""
+"If everything goes too fast and you cannot read, <span class=\"success"
+"\">good for you</span>, let it go :)"
+msgstr ""
+"Her şey çok hızlı giderse ve okuyamazsanız, <span class=\"success\"> sizin "
+"için iyisi </span>, kafaya takmamak:)"
+
+#: admin/upgrade.php:56
+msgid "Once you are ready, press \"Upgrade\" !"
+msgstr "Hazır olduğunuzda, \"Yükseltme\"ye basın!"
+
+#: admin/upgrade.php:65
+msgid "Upgrade"
+msgstr "Yükseltme"
+
+#: admin/upgrade.php:77
+msgid "Your installation is now up to date ! "
+msgstr "Kurulumunuz şimdi güncel! "
+
+#: admin/upgrade.php:78
+#, php-format
+msgid "Go back to <a href=\"%s\">the admin interface</a>"
+msgstr "<a href=\"%s\">yönetici arayüzü</a>'ne dönün"
+
+#: includes/auth.php:53
+#, php-format
+msgid "Could not auto-encrypt passwords. Error was: \"%s\"."
+msgstr "Şifreler otomatik olarak kriptolonamadı. Sorun buydu: \"%s\"."
+
+#: includes/auth.php:55
+#, php-format
+msgid "<a href=\"%s\">Get help</a>."
+msgstr "<a href=\"%s\">Yardım alma</a>."
+
+#: includes/auth.php:57
+#, php-format
+msgid "<a href=\"%s\">Click here</a> to dismiss this message for one week."
+msgstr ""
+"<a href=\"%s\">Buraya tıklayın</a> bu mesajı bir hafta boyunca görmemek için."
+
+#: includes/class-mysql.php:39
+msgid ""
+"YOURLS requires the mysql, mysqli or pdo_mysql PHP extension. No extension "
+"found. Check your server config, or contact your host."
+msgstr ""
+"YOURLS, mysql, mysqli veya pdo_mysql PHP uzantısını gerektirir. Uzantı "
+"bulunamadı. Sunucu yapılandırmanızı kontrol edin veya ana makinenize "
+"başvurun."
+
+#: includes/class-mysql.php:40 includes/functions-install.php:16
+#: includes/functions.php:438 includes/functions.php:450
+msgid "Fatal error"
+msgstr "Kaçınılmaz hata"
+
+#: includes/functions-auth.php:26
+msgid "Logged out successfully"
+msgstr "Başarıyla çıkış yapıldı"
+
+#: includes/functions-auth.php:102
+msgid "Invalid username or password"
+msgstr "Geçersiz kullanıcı adı veya şifre"
+
+#: includes/functions-auth.php:104
+msgid "Please log in"
+msgstr "Lütfen giriş yapın"
+
+#: includes/functions-html.php:142
+#, php-format
+msgid "1 query"
+msgid_plural "%s queries"
+msgstr[0] "1 soru işareti"
+msgstr[1] "%s soru işaretleri"
+
+#: includes/functions-html.php:147
+#, php-format
+msgid "Powered by %s"
+msgstr "Tarafından güçlendirildi %s"
+
+#: includes/functions-html.php:175
+msgid "Enter the URL"
+msgstr "URL girin"
+
+#: includes/functions-html.php:176
+msgid "Optional "
+msgstr "İsteğe bağlı "
+
+#: includes/functions-html.php:176
+msgid "Custom short URL"
+msgstr "Özel Kısa URL"
+
+#: includes/functions-html.php:178
+msgid "Shorten The URL"
+msgstr "Kısaltılmış URL"
+
+#: includes/functions-html.php:212 includes/functions-html.php:224
+#: includes/functions-html.php:629
+msgid "IP"
+msgstr "IP"
+
+#. //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>"
+#: includes/functions-html.php:216
+#, php-format
+msgid "Search for %1$s in %2$s"
+msgstr "%1$s içinde %2$s arayın"
+
+#: includes/functions-html.php:230
+msgid "Ascending"
+msgstr "Yükselen"
+
+#: includes/functions-html.php:231
+msgid "Descending"
+msgstr "Azalan"
+
+#. //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>"
+#: includes/functions-html.php:235
+#, php-format
+msgid "Order by %1$s %2$s"
+msgstr "Tarafından sipariş %1$s %2$s"
+
+#. //translators: "Show <text field> rows"
+#: includes/functions-html.php:240
+#, php-format
+msgid "Show %s rows"
+msgstr "%s satırlarını göster"
+
+#: includes/functions-html.php:245
+msgid "more"
+msgstr "dahası"
+
+#: includes/functions-html.php:246
+msgid "less"
+msgstr "daha az"
+
+#. //translators: "Show links with <more/less> than <text field> clicks"
+#: includes/functions-html.php:251
+#, php-format
+msgid "Show links with %1$s than %2$s clicks"
+msgstr "Bağlantıları %1$s den %2$s ile tıklamaları göster"
+
+#: includes/functions-html.php:256
+msgid "before"
+msgstr "önce"
+
+#: includes/functions-html.php:257
+msgid "after"
+msgstr "sonra"
+
+#: includes/functions-html.php:258
+msgid "between"
+msgstr "arasında"
+
+#. //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>"
+#: includes/functions-html.php:265
+#, php-format
+msgid "Show links created %1$s %2$s %3$s %4$s"
+msgstr "Oluşturulan bağlantıları göster %1$s %2$s %3$s %4$s"
+
+#: includes/functions-html.php:269
+msgid "Search"
+msgstr "Arama"
+
+#: includes/functions-html.php:271
+msgid "Clear"
+msgstr "Temizle"
+
+#: includes/functions-html.php:291
+#, php-format
+msgid "1 page"
+msgid_plural "%s pages"
+msgstr[0] "1 sayfa"
+msgstr[1] "%s sayfalar"
+
+#: includes/functions-html.php:299 includes/functions-html.php:313
+msgid "Go to First Page"
+msgstr "İlk Sayfaya git"
+
+#: includes/functions-html.php:299
+msgid "&laquo; First"
+msgstr "&laquo; İlk"
+
+#: includes/functions-html.php:313
+msgid "Last &raquo;"
+msgstr "Son &raquo;"
+
+#: includes/functions-html.php:357
+msgid "Your short link"
+msgstr "Kısa linkiniz"
+
+#: includes/functions-html.php:388
+msgid "Long link"
+msgstr "Uzun link"
+
+#: includes/functions-html.php:390 includes/functions-html.php:499
+#: includes/functions-html.php:500
+msgid "Stats"
+msgstr "İstatistikler"
+
+#: includes/functions-html.php:404
+msgid "Share with"
+msgstr "İle paylaş"
+
+#: includes/functions-html.php:405
+msgid "Tweet this!"
+msgstr "Bunu Tweetle!"
+
+#: includes/functions-html.php:406
+msgid "Share on Facebook"
+msgstr "Facebook'ta paylaş"
+
+#: includes/functions-html.php:407
+msgid "Share on Friendfeed"
+msgstr "Friendfeed'de paylaş"
+
+#: includes/functions-html.php:464
+msgid "Save"
+msgstr "Kaydet"
+
+#: includes/functions-html.php:464
+msgid "Save new values"
+msgstr "Yeni değerleri kaydet"
+
+#: includes/functions-html.php:464
+msgid "Cancel"
+msgstr "İptal"
+
+#: includes/functions-html.php:464
+msgid "Cancel editing"
+msgstr "Düzenlemeyi iptal etme"
+
+#: includes/functions-html.php:466
+msgid "Error, URL not found"
+msgstr "Hata, URL bulunamadı"
+
+#: includes/functions-html.php:512 includes/functions-html.php:513
+msgid "Edit"
+msgstr "Düzenleme"
+
+#: includes/functions-html.php:519 includes/functions-html.php:520
+msgid "Delete"
+msgstr "Sil"
+
+#: includes/functions-html.php:541
+msgid "Not a common link"
+msgstr "Ortak bir link değil"
+
+#: includes/functions-html.php:627
+msgid "Original URL"
+msgstr "Orijinal URL"
+
+#: includes/functions-html.php:631
+msgid "Actions"
+msgstr "Eylemler"
+
+#: includes/functions-html.php:697
+msgid "Username"
+msgstr "Kullanıcı adı"
+
+#: includes/functions-html.php:701
+msgid "Password"
+msgstr "Şifre"
+
+#: includes/functions-html.php:705
+msgid "Login"
+msgstr "Oturum açma"
+
+#: includes/functions-html.php:723 user/themes/full-bootstrap/theme.php:87
+#, php-format
+msgid "Hello <strong>%s</strong>"
+msgstr "Merhaba <strong>%s</strong>"
+
+#: includes/functions-html.php:723 user/themes/full-bootstrap/theme.php:87
+msgid "Logout"
+msgstr "Oturum kapatma"
+
+#: includes/functions-html.php:727
+msgid "Help"
+msgstr "Yardım"
+
+#: includes/functions-html.php:734
+msgid "Go to the admin interface"
+msgstr "Yönetici arayüzüne git"
+
+#: includes/functions-html.php:735
+msgid "Admin interface"
+msgstr "Yönetici arayüzü"
+
+#: includes/functions-html.php:741
+msgid "Tools"
+msgstr "Araçlar"
+
+#: includes/functions-html.php:867 includes/functions-html.php:872
+msgid "Today"
+msgstr "Bugün"
+
+#: includes/functions-html.php:868 includes/functions-html.php:873
+msgid "Close"
+msgstr "Kapat"
+
+#: includes/functions-html.php:889
+#, php-format
+msgid "<a href=\"%s\">YOURLS version %s</a> is available. Please update!"
+msgstr "<a href=\"%s\">YOURLS sürümü %s</a>hazır.Lütfen güncelleyin!"
+
+#: includes/functions-install.php:16 includes/functions.php:438
+msgid "Incorrect DB config, or could not connect to DB"
+msgstr "Yanlış DB yapılandırması veya DB'ye bağlanılamadı"
+
+#: includes/functions-install.php:241
+#, php-format
+msgid "Table '%s' created."
+msgstr "Tablo '%s' oluşturuldu."
+
+#: includes/functions-install.php:243
+#, php-format
+msgid "Error creating table '%s'."
+msgstr "'%s' tablosu oluşturulurken hata oluştu."
+
+#: includes/functions-install.php:249
+msgid "Could not initialize options"
+msgstr "Seçenekler başlatılamadı"
+
+#: includes/functions-install.php:253
+msgid "Could not insert sample short URLs"
+msgstr "Örnek kısa URL'ler eklenemedi"
+
+#: includes/functions-install.php:257
+msgid "YOURLS tables successfully created."
+msgstr "YOURLS  tabloları başarıyla oluşturuldu."
+
+#: includes/functions-install.php:259
+msgid "Error creating YOURLS tables."
+msgstr "YOURLS tabloları oluşturulurken hata oluştu."
+
+#. //translators: weekday
+#: includes/functions-l10n.php:795 includes/functions-l10n.php:805
+#: includes/functions-l10n.php:818
+msgid "Sunday"
+msgstr "Pazar"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:796 includes/functions-l10n.php:806
+#: includes/functions-l10n.php:819
+msgid "Monday"
+msgstr "Pazartesi"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:797 includes/functions-l10n.php:807
+#: includes/functions-l10n.php:820
+msgid "Tuesday"
+msgstr "Salı"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:798 includes/functions-l10n.php:808
+#: includes/functions-l10n.php:821
+msgid "Wednesday"
+msgstr "Çarşamba"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:799 includes/functions-l10n.php:809
+#: includes/functions-l10n.php:822
+msgid "Thursday"
+msgstr "Perşembe"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:800 includes/functions-l10n.php:810
+#: includes/functions-l10n.php:823
+msgid "Friday"
+msgstr "Cuma"
+
+#. //translators: weekday
+#: includes/functions-l10n.php:801 includes/functions-l10n.php:811
+#: includes/functions-l10n.php:824
+msgid "Saturday"
+msgstr "Cumartesi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:805
+msgid "S_Sunday_initial"
+msgstr "S_Pazar_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:806
+msgid "M_Monday_initial"
+msgstr "M_Pazartesi_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:807
+msgid "T_Tuesday_initial"
+msgstr "T_Salı_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:808
+msgid "W_Wednesday_initial"
+msgstr "W_Çarşamba_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:809
+msgid "T_Thursday_initial"
+msgstr "T_Perşembe_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:810
+msgid "F_Friday_initial"
+msgstr "F_Cuma_baş harfi"
+
+#. //translators: one-letter abbreviation of the weekday
+#: includes/functions-l10n.php:811
+msgid "S_Saturday_initial"
+msgstr "S_Cumartesi_baş harfi"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:818
+msgid "Sun"
+msgstr "Paz"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:819
+msgid "Mon"
+msgstr "Pzt"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:820
+msgid "Tue"
+msgstr "Sal"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:821
+msgid "Wed"
+msgstr "Çrş"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:822
+msgid "Thu"
+msgstr "Prş"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:823
+msgid "Fri"
+msgstr "Cum"
+
+#. //translators: three-letter abbreviation of the weekday
+#: includes/functions-l10n.php:824
+msgid "Sat"
+msgstr "Cts"
+
+#. //translators: month name
+#: includes/functions-l10n.php:827 includes/functions-l10n.php:842
+msgid "January"
+msgstr "Ocak"
+
+#. //translators: month name
+#: includes/functions-l10n.php:828 includes/functions-l10n.php:843
+msgid "February"
+msgstr "Şubat"
+
+#. //translators: month name
+#: includes/functions-l10n.php:829 includes/functions-l10n.php:844
+msgid "March"
+msgstr "Mart"
+
+#. //translators: month name
+#: includes/functions-l10n.php:830 includes/functions-l10n.php:845
+msgid "April"
+msgstr "Nisan"
+
+#. //translators: month name
+#: includes/functions-l10n.php:831 includes/functions-l10n.php:846
+msgid "May"
+msgstr "Mayıs"
+
+#. //translators: month name
+#: includes/functions-l10n.php:832 includes/functions-l10n.php:847
+msgid "June"
+msgstr "Haziran"
+
+#. //translators: month name
+#: includes/functions-l10n.php:833 includes/functions-l10n.php:848
+msgid "July"
+msgstr "Temmuz"
+
+#. //translators: month name
+#: includes/functions-l10n.php:834 includes/functions-l10n.php:849
+msgid "August"
+msgstr "Ağustos"
+
+#. //translators: month name
+#: includes/functions-l10n.php:835 includes/functions-l10n.php:850
+msgid "September"
+msgstr "Eylül"
+
+#. //translators: month name
+#: includes/functions-l10n.php:836 includes/functions-l10n.php:851
+msgid "October"
+msgstr "Ekim"
+
+#. //translators: month name
+#: includes/functions-l10n.php:837 includes/functions-l10n.php:852
+msgid "November"
+msgstr "Kasım"
+
+#. //translators: month name
+#: includes/functions-l10n.php:838 includes/functions-l10n.php:853
+msgid "December"
+msgstr "Aralık"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:842
+msgid "Jan_January_abbreviation"
+msgstr "Jan_Ocak_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:843
+msgid "Feb_February_abbreviation"
+msgstr "Feb_Şubat_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:844
+msgid "Mar_March_abbreviation"
+msgstr "Mar_Mart_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:845
+msgid "Apr_April_abbreviation"
+msgstr "Apr_Nisan_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:846
+msgid "May_May_abbreviation"
+msgstr "May_Mayıs_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:847
+msgid "Jun_June_abbreviation"
+msgstr "Jun_Haziran_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:848
+msgid "Jul_July_abbreviation"
+msgstr "Jul_Temmuz_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:849
+msgid "Aug_August_abbreviation"
+msgstr "Aug_Ağustos_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:850
+msgid "Sep_September_abbreviation"
+msgstr "Sep_Eylül_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:851
+msgid "Oct_October_abbreviation"
+msgstr "Oct_Ekim_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:852
+msgid "Nov_November_abbreviation"
+msgstr "Nov_Kasım_kısaltması"
+
+#. //translators: three-letter abbreviation of the month
+#: includes/functions-l10n.php:853
+msgid "Dec_December_abbreviation"
+msgstr "Dec_Aralık_kısaltması"
+
+#: includes/functions-l10n.php:860
+msgid "am"
+msgstr "öğleden önce"
+
+#: includes/functions-l10n.php:861
+msgid "pm"
+msgstr "öğleden sonra"
+
+#: includes/functions-l10n.php:862
+msgid "AM"
+msgstr "ÖĞLEDEN ÖNCE"
+
+#: includes/functions-l10n.php:863
+msgid "PM"
+msgstr "ÖĞLEDEN SONRA"
+
+#. //translators: $thousands_sep argument for http://php.net/number_format, default is ,
+#: includes/functions-l10n.php:869
+msgid "number_format_thousands_sep"
+msgstr "numara_biçim_binlerce_sep"
+
+#. //translators: $dec_point argument for http://php.net/number_format, default is .
+#: includes/functions-l10n.php:873
+msgid "number_format_decimal_point"
+msgstr "numara_biçim_ondalık_nokta"
+
+#. //translators: 'rtl' or 'ltr'. This sets the text direction for YOURLS.
+#: includes/functions-l10n.php:880
+msgid "ltr"
+msgstr "ltr"
+
+#: includes/functions-plugins.php:387
+msgid "Could not find and deactivated plugin :"
+msgid_plural "Could not find and deactivated plugins :"
+msgstr[0] "Eklenti bulunamadı ve devre dışı :"
+msgstr[1] "Eklentiler bulunamadı ve devre dışı :"
+
+#: includes/functions-plugins.php:425
+msgid "Not a valid plugin file"
+msgstr "Geçerli bir eklenti dosyası değil"
+
+#: includes/functions-plugins.php:430
+msgid "Plugin already activated"
+msgstr "Eklenti zaten aktifleştirilmiş"
+
+#: includes/functions-plugins.php:438
+#, php-format
+msgid "Plugin generated unexpected output. Error was: <br/><pre>%s</pre>"
+msgstr "Eklenti beklenmedik çıktı üretti. Hata oluştu: <br/><pre>%s</pre>"
+
+#: includes/functions-plugins.php:461
+msgid "Plugin not active"
+msgstr "Eklenti aktif değil"
+
+#: includes/functions-plugins.php:541
+msgid ""
+"This page does not exist. Maybe a plugin you thought was activated is "
+"inactive?"
+msgstr ""
+"Bu sayfa mevcut değil. Etkin olduğunu düşündüğünüz bir eklenti etkin değil "
+"mi?"
+
+#: includes/functions-plugins.php:541
+msgid "Invalid link"
+msgstr "Geçersiz link"
+
+#: includes/functions.php:201
+msgid "Missing or malformed URL"
+msgstr "Eksik veya hatalı URL"
+
+#: includes/functions.php:215
+msgid "URL is a short URL"
+msgstr "URL kısa bir URL'dir"
+
+#: includes/functions.php:247
+#, php-format
+msgid "Short URL %s already exists in database or is reserved"
+msgstr "Kısa URL %s veri tabanında zaten var veya ayrılmış"
+
+#. //translators: eg "http://someurl/ added to DB"
+#: includes/functions.php:253 includes/functions.php:275
+#, php-format
+msgid "%s added to database"
+msgstr "%s veri tabanına eklendi"
+
+#: includes/functions.php:283
+msgid "Error saving url to database"
+msgstr "Veri tabanına URL kaydetmede hata"
+
+#. //translators: eg "http://someurl/ already exists"
+#: includes/functions.php:300
+#, php-format
+msgid "%s already exists in database"
+msgstr "%s veri tabanında zaten mevcut"
+
+#: includes/functions.php:355
+msgid "Link updated in database"
+msgstr "Link veri tabanında güncellendi"
+
+#. //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)"
+#: includes/functions.php:358
+#, php-format
+msgid "Error updating %s (Short URL: %s)"
+msgstr "Güncellenirken hata %s (Kısa URL: %s)"
+
+#: includes/functions.php:364
+msgid "URL or keyword already exists in database"
+msgstr "URL veya anahtar kelime veri tabanında zaten mevcut"
+
+#: includes/functions.php:761
+#, php-format
+msgid ""
+"if you are not redirected after 10 seconds, please <a href=\"%s\">click "
+"here</a>"
+msgstr ""
+"10 saniye sonra yönlendirilmezseniz, lütfen <a href=\"%s\">buraya tıklayın</"
+"a>"
+
+#: includes/functions.php:769
+#, php-format
+msgid "Please <a href=\"%s\">click here</a>"
+msgstr "Lütfen <a href=\"%s\">buraya tıklayın</a>"
+
+#: includes/functions.php:1394
+msgid "Too many URLs added too fast. Slow down please."
+msgstr "Çok fazla URL çok hızlı eklendi. Yavaşla lütfen."
+
+#: includes/functions.php:1394
+msgid "Forbidden"
+msgstr "İzinsiz"
+
+#: includes/functions.php:1673
+msgid "Unauthorized action or expired link"
+msgstr "Yetkisiz işlem veya süresi dolan bağlantı"
+
+#: includes/functions.php:1673
+msgid "Error"
+msgstr "Hata"
+
+#: includes/functions.php:2064
+msgid "Service temporarily unavailable"
+msgstr "Hizmet geçici olarak kullanılamıyor"
+
+#: includes/functions.php:2065
+msgid "Our service is currently undergoing scheduled maintenance."
+msgstr "Hizmetimize halen programlı bakım yapılmaktadır."
+
+#: includes/functions.php:2066
+msgid ""
+"Things should not last very long, thank you for your patience and please "
+"excuse the inconvenience"
+msgstr ""
+"Her şey çok uzun sürmemeli, sabrınız için teşekkür ederiz ve lütfen "
+"verdiğimiz rahatsızlığı mazur görün"
+
+#: includes/functions.php:2186
+#, php-format
+msgid ""
+"%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead."
+msgstr ""
+"%1$s is <strong>kullanımdan kaldırıldı</strong> sürümden beri %2$s! Kullanın "
+"%3$s yerine."
+
+#: includes/functions.php:2188
+#, php-format
+msgid ""
+"%1$s is <strong>deprecated</strong> since version %2$s with no alternative "
+"available."
+msgstr ""
+"%1$s is <strong>kullanımdan kaldırıldı</strong> sürümden beri %2$s başka "
+"seçenek yok."
+
+#: user/plugins/sample-toolbar/plugin.php:62
+msgid "day"
+msgid_plural "days"
+msgstr[0] "gün"
+msgstr[1] "günler"
+
+#: user/plugins/sample-toolbar/plugin.php:67
+msgid "view"
+msgid_plural "views"
+msgstr[0] "görünüm"
+msgstr[1] "görünümler"
