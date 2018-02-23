@@ -123,5 +123,5 @@ YOURLS is made by these fine folks :
 License
 -------
 Free software. Do whatever the hell you want with it.
-YOURLS is released under the [MIT license](LICENSE.md)
+YOURLS is released under the [MIT license](LICENSE)
 
