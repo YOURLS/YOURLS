@@ -120,6 +120,10 @@ if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
 			$sort_by_text = yourls__( 'URL' );
 			$sort_by      = 'url';
 			break;
+		case 'title':
+			$sort_by_text = yourls__( 'Title' );
+			$sort_by      = 'title';
+			break;
 		case 'timestamp':
 			$sort_by_text = yourls__( 'Date' );
 			$sort_by      = 'timestamp';
