@@ -249,6 +249,7 @@ function yourls_html_tfooter( $params = array() ) {
 						$_options = array(
 							'keyword'      => yourls__( 'Short URL' ),
 							'url'          => yourls__( 'URL' ),
+							'title'        => yourls__( 'Title' ),
 							'timestamp'    => yourls__( 'Date' ),
 							'ip'           => yourls__( 'IP' ),
 							'clicks'       => yourls__( 'Clicks' ),
