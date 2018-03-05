@@ -360,6 +360,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	}
 
 	yourls_do_action( 'pre_edit_link', $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
+	$return = yourls_verify_edit($new_url_already_there, $keyword_is_ok, $new_url_is_blank)
 
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok && !$new_url_is_blank) {
@@ -374,15 +375,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 			$return['status']  = 'fail';
 			$return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_trim_long_string( $strip_url ), $keyword ) ;
 		}
-
-		// Nope
-	} elseif ($new_url_is_blank) {
-			$return['status']  = 'fail';
-			$return['message'] = yourls__( 'URL cannot be left blank' );
-		} else {
-			$return['status']  = 'fail';
-			$return['message'] = yourls__( 'URL or keyword already exists in database' );
-		}
+	}
 
 	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title, $new_url_already_there, $keyword_is_ok );
 }
@@ -2421,4 +2414,29 @@ function yourls_tell_if_new_version() {
     $check = yourls_maybe_check_core_version();
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
+}
+
+function yourls_verify_edit($new_url_already_there, $keyword_is_ok, $new_url_is_blank)
+{
+	// All clear, update
+	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok && !$new_url_is_blank) {
+		// Nope
+	} elseif ($new_url_is_blank) {
+			$return['status']  = 'fail';
+			$return['message'] = yourls_set_error_message('blank_url');
+		} else {
+			$return['status']  = 'fail';
+			$return['message'] = yourls__( 'URL or keyword already exists in database' );
+		}
+
+		return $return;
+}
+
+function yourls_set_error_message($condition)
+{
+	switch ($condition) {
+		case 'blank_url':
+			return yourls( 'URL cannot be left blank' );
+			break;
+	}
 }
