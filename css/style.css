@@ -127,22 +127,17 @@ td.url small a{
 	color:#bbc;
 }
 body.desktop td.actions input,body.desktop  td.actions a {
-	position:absolute;
-	left:-10000px;
-	top:auto;
-	width:1px;
-	height:1px;
-	overflow:hidden;
+position: absolute !important;
+clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+clip: rect(1px, 1px, 1px, 1px);
 }
 td.actions input.disabled, td.actions input.loading {
-	position:static;
-	width:auto;
-	height:auto;
+position: static;
+clip: auto;
 }
 tr:hover td.actions input, tr:hover td.actions a {
-	position:static;
-	width:auto;
-	height:auto;
+position: static;
+clip: auto;
 }
 td.actions .button {
 	font-family: Verdana, Arial;
@@ -336,15 +331,11 @@ a.bookmarklet:hover {
 }
 tr.plugin.active a{ font-weight:bolder;}
 body.desktop tr.plugin td.plugin_desc small{
-	position:absolute;
-	left:-10000px;
-	top:auto;
-	width:1px;
-		height:1px;
-	overflow:hidden;
+position: absolute !important;
+clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+clip: rect(1px, 1px, 1px, 1px);
 }
 tr:hover.plugin td.plugin_desc small{
-	position:static;
-	height:auto;
-	width:auto;
+position: static;
+clip: auto;
 }
