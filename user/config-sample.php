@@ -30,7 +30,7 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL -- all lowercase and with no trailing slash.
+/** YOURLS installation URL -- all lowercase, no trailing slash at the end.
  ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 

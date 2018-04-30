@@ -6,7 +6,7 @@
 
 /**
  * Determine the allowed character set in short URLs
- * 
+ *
  */
 function yourls_get_shorturl_charset() {
 	static $charset = null;
@@ -16,17 +16,17 @@ function yourls_get_shorturl_charset() {
     if( defined('YOURLS_URL_CONVERT') && in_array( YOURLS_URL_CONVERT, array( 62, 64 ) ) ) {
         $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     } else {
-        // defined to 36, or wrongly defined 
+        // defined to 36, or wrongly defined
         $charset = '0123456789abcdefghijklmnopqrstuvwxyz';
     }
 
 	$charset = yourls_apply_filter( 'get_shorturl_charset', $charset );
 	return $charset;
 }
- 
+
 /**
  * Make an optimized regexp pattern from a string of characters
- * 
+ *
  */
 function yourls_make_regexp_pattern( $string ) {
 	$pattern = preg_quote( $string, '@' ); // add @ as an escaped character because @ is used as the regexp delimiter in yourls-loader.php
@@ -36,25 +36,25 @@ function yourls_make_regexp_pattern( $string ) {
 
 /**
  * Is a URL a short URL? Accept either 'http://sho.rt/abc' or 'abc'
- * 
+ *
  */
 function yourls_is_shorturl( $shorturl ) {
 	// TODO: make sure this function evolves with the feature set.
-	
+
 	$is_short = false;
-	
+
 	// Is $shorturl a URL (http://sho.rt/abc) or a keyword (abc) ?
 	if( yourls_get_protocol( $shorturl ) ) {
 		$keyword = yourls_get_relative_url( $shorturl );
 	} else {
 		$keyword = $shorturl;
 	}
-	
+
 	// Check if it's a valid && used keyword
 	if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
 		$is_short = true;
 	}
-	
+
 	return yourls_apply_filter( 'is_shorturl', $is_short, $shorturl );
 }
 
@@ -66,13 +66,13 @@ function yourls_keyword_is_reserved( $keyword ) {
 	global $yourls_reserved_URL;
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$reserved = false;
-	
+
 	if ( in_array( $keyword, $yourls_reserved_URL)
 		or file_exists( YOURLS_ABSPATH ."/pages/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
 	)
 		$reserved = true;
-	
+
 	return yourls_apply_filter( 'keyword_is_reserved', $reserved, $keyword );
 }
 
@@ -91,11 +91,11 @@ function yourls_get_IP() {
 			break;
 		}
 	}
-	
+
 	// headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
 	if ( strpos( $ip, ',' ) !== false )
 		$ip = substr( $ip, 0, strpos( $ip, ',' ) );
-	
+
 	return yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
 
@@ -127,12 +127,12 @@ function yourls_delete_link_by_keyword( $keyword ) {
 	$pre = yourls_apply_filter( 'shunt_delete_link_by_keyword', null, $keyword );
 	if ( null !== $pre )
 		return $pre;
-		
+
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$delete = $ydb->query("DELETE FROM `$table` WHERE `keyword` = '$keyword';");
+    $keyword = yourls_sanitize_string($keyword);
+    $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 	yourls_do_action( 'delete_link', $keyword, $delete );
 	return $delete;
 }
@@ -143,24 +143,34 @@ function yourls_delete_link_by_keyword( $keyword ) {
  */
 function yourls_insert_link_in_db( $url, $keyword, $title = '' ) {
 	global $ydb;
-	
-	$url     = yourls_escape( yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title   = yourls_escape( yourls_sanitize_title( $title ) );
 
-	$table = YOURLS_DB_TABLE_URL;
-	$timestamp = date('Y-m-d H:i:s');
-	$ip = yourls_get_IP();
-	$insert = $ydb->query("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES('$keyword', '$url', '$title', '$timestamp', '$ip', 0);");
-	
+    $url       = yourls_sanitize_url($url);
+    $keyword   = yourls_sanitize_keyword($keyword);
+    $title     = yourls_sanitize_title($title);
+    $timestamp = date('Y-m-d H:i:s');
+    $ip        = yourls_get_IP();
+
+    $table = YOURLS_DB_TABLE_URL;
+    $binds = array(
+        'keyword'   => $keyword,
+        'url'       => $url,
+        'title'     => $title,
+        'timestamp' => $timestamp,
+        'ip'        => $ip,
+    );
+    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+
 	yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
-	
+
 	return (bool)$insert;
 }
 
 /**
- * Check if a URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+ * Check if a long URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
  *
+ * @since 1.5.1
+ * @param  string $url  URL to check if already shortened
+ * @return mixed        NULL if does not already exist in DB, or object with URL information as properties (eg keyword, url, title, ...)
  */
 function yourls_url_exists( $url ) {
 	// Allow plugins to short-circuit the whole function
@@ -170,9 +180,13 @@ function yourls_url_exists( $url ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-	$url   = yourls_escape( yourls_sanitize_url( $url) );
-	$url_exists = $ydb->get_row( "SELECT * FROM `$table` WHERE `url` = '".$url."';" );
-	
+    $url   = yourls_sanitize_url($url);
+	$url_exists = $ydb->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
+
+    if ($url_exists === false) {
+        $url_exists = NULL;
+    }
+
 	return yourls_apply_filter( 'url_exists', $url_exists, $url );
 }
 
@@ -185,9 +199,9 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	$pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
 	if ( false !== $pre )
 		return $pre;
-		
+
 	$url = yourls_encodeURI( $url );
-	$url = yourls_escape( yourls_sanitize_url( $url ) );
+	$url = yourls_sanitize_url( $url );
 	if ( !$url || $url == 'http://' || $url == 'https://' ) {
 		$return['status']    = 'fail';
 		$return['code']      = 'error:nourl';
@@ -195,11 +209,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['errorCode'] = '400';
 		return yourls_apply_filter( 'add_new_link_fail_nourl', $return, $url, $keyword, $title );
 	}
-	
+
 	// Prevent DB flood
 	$ip = yourls_get_IP();
 	yourls_check_IP_flood( $ip );
-	
+
 	// Prevent internal redirection loops: cannot shorten a shortened URL
 	if( yourls_get_relative_url( $url ) ) {
 		if( yourls_is_shorturl( $url ) ) {
@@ -212,13 +226,13 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 	}
 
 	yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
-	
+
 	$strip_url = stripslashes( $url );
 	$return = array();
 
 	// duplicates allowed or new URL => store it
 	if( yourls_allow_duplicate_longurls() || !( $url_exists = yourls_url_exists( $url ) ) ) {
-	
+
 		if( isset( $title ) && !empty( $title ) ) {
 			$title = yourls_sanitize_title( $title );
 		} else {
@@ -228,10 +242,10 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 		// Custom keyword provided
 		if ( $keyword ) {
-			
+
 			yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
-		
-			$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+
+			$keyword = yourls_sanitize_string( $keyword );
 			$keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 			if ( !yourls_keyword_is_free( $keyword ) ) {
 				// This shorturl either reserved or taken already
@@ -249,11 +263,11 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
 			}
 
-		// Create random keyword	
+		// Create random keyword
 		} else {
-			
+
 			yourls_do_action( 'add_new_link_create_keyword', $url, $keyword, $title );
-		
+
 			$timestamp = date( 'Y-m-d H:i:s' );
 			$id = yourls_get_next_decimal();
 			$ok = false;
@@ -261,7 +275,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$keyword = yourls_int2string( $id );
 				$keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
 				if ( yourls_keyword_is_free($keyword) ) {
-					if( @yourls_insert_link_in_db( $url, $keyword, $title ) ){
+					if (yourls_insert_link_in_db( $url, $keyword, $title )){
 						// everything ok, populate needed vars
 						$return['url']      = array('keyword' => $keyword, 'url' => $strip_url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
 						$return['status']   = 'success';
@@ -269,7 +283,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 						$return['title']    = $title;
 						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
 						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
-					}else{
+					} else {
 						// database error, couldnt store result
 						$return['status']   = 'fail';
 						$return['code']     = 'error:db';
@@ -284,17 +298,17 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
 	// URL was already stored
 	} else {
-			
+
 		yourls_do_action( 'add_new_link_already_stored', $url, $keyword, $title );
-		
+
 		$return['status']   = 'fail';
 		$return['code']     = 'error:url';
 		$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
 		$return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $strip_url ) );
-		$return['title']    = $url_exists->title; 
+		$return['title']    = $url_exists->title;
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
-	
+
 	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
 
 	$return['statusCode'] = 200; // regardless of result, this is still a valid request
@@ -315,33 +329,36 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	global $ydb;
 
 	$table = YOURLS_DB_TABLE_URL;
-	$url = yourls_escape (yourls_sanitize_url( $url ) );
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
-	$newkeyword = yourls_escape( yourls_sanitize_string( $newkeyword ) );
+	$url = yourls_sanitize_url($url);
+	$keyword = yourls_sanitize_string($keyword);
+	$title = yourls_sanitize_title($title);
+	$newkeyword = yourls_sanitize_string($newkeyword);
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
-	$old_url = $ydb->get_var( "SELECT `url` FROM `$table` WHERE `keyword` = '$keyword';" );
-	
+
+    $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+
 	// Check if new URL is not here already
 	if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-		$new_url_already_there = intval($ydb->get_var("SELECT COUNT(keyword) FROM `$table` WHERE `url` = '$url';"));
+		$new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
 	} else {
 		$new_url_already_there = false;
 	}
-	
+
 	// Check if the new keyword is not here already
 	if ( $newkeyword != $keyword ) {
 		$keyword_is_ok = yourls_keyword_is_free( $newkeyword );
 	} else {
 		$keyword_is_ok = true;
 	}
-	
+
 	yourls_do_action( 'pre_edit_link', $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
-	
+
 	// All clear, update
 	if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-			$update_url = $ydb->query( "UPDATE `$table` SET `url` = '$url', `keyword` = '$newkeyword', `title` = '$title' WHERE `keyword` = '$keyword';" );
+            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
+			$update_url = $ydb->fetchAffected($sql, $binds);
 		if( $update_url ) {
 			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status']  = 'success';
@@ -350,13 +367,13 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 			$return['status']  = 'fail';
 			$return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_trim_long_string( $strip_url ), $keyword ) ;
 		}
-	
+
 	// Nope
 	} else {
 		$return['status']  = 'fail';
 		$return['message'] = yourls__( 'URL or keyword already exists in database' );
 	}
-	
+
 	return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title, $new_url_already_there, $keyword_is_ok );
 }
 
@@ -371,12 +388,12 @@ function yourls_edit_link_title( $keyword, $title ) {
 		return $pre;
 
 	global $ydb;
-	
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
-	$title = yourls_escape( yourls_sanitize_title( $title ) );
-	
+
+	$keyword = yourls_sanitize_keyword( $keyword );
+	$title = yourls_sanitize_title( $title );
+
 	$table = YOURLS_DB_TABLE_URL;
-	$update = $ydb->query("UPDATE `$table` SET `title` = '$title' WHERE `keyword` = '$keyword';");
+	$update = $ydb->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
 
 	return $update;
 }
@@ -390,12 +407,12 @@ function yourls_keyword_is_free( $keyword ) {
 	$free = true;
 	if ( yourls_keyword_is_reserved( $keyword ) or yourls_keyword_is_taken( $keyword ) )
 		$free = false;
-		
+
 	return yourls_apply_filter( 'keyword_is_free', $free, $keyword );
 }
 
 /**
- * Check if a keyword is taken (ie there is already a short URL with this id). Return bool.		
+ * Check if a keyword is taken (ie there is already a short URL with this id). Return bool.
  *
  */
 function yourls_keyword_is_taken( $keyword ) {
@@ -404,12 +421,13 @@ function yourls_keyword_is_taken( $keyword ) {
 	$pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
 	if ( false !== $pre )
 		return $pre;
-	
+
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_keyword( $keyword ) );
+    $keyword = yourls_sanitize_keyword($keyword);
 	$taken = false;
 	$table = YOURLS_DB_TABLE_URL;
-	$already_exists = $ydb->get_var( "SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = '$keyword';" );
+
+	$already_exists = $ydb->fetchValue("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = :keyword;", array('keyword' => $keyword));
 	if ( $already_exists )
 		$taken = true;
 
@@ -429,30 +447,36 @@ function yourls_xml_encode( $array ) {
 /**
  * Return array of all information associated with keyword. Returns false if keyword not found. Set optional $use_cache to false to force fetching from DB
  *
+ * @since 1.4
+ * @param  string $keyword    Short URL keyword
+ * @param  bool   $use_cache  Default true, set to false to force fetching from DB
+ * @return false|object       false if not found, object with URL properties if found
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 
 	yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
-	if( isset( $ydb->infos[$keyword] ) && $use_cache == true ) {
-		return yourls_apply_filter( 'get_keyword_infos', $ydb->infos[$keyword], $keyword );
+	if( $ydb->has_infos($keyword) && $use_cache === true ) {
+		return yourls_apply_filter( 'get_keyword_infos', $ydb->get_infos($keyword), $keyword );
 	}
-	
+
 	yourls_do_action( 'get_keyword_not_cached', $keyword );
-	
+
 	$table = YOURLS_DB_TABLE_URL;
-	$infos = $ydb->get_row( "SELECT * FROM `$table` WHERE `keyword` = '$keyword'" );
-	
+	$infos = $ydb->fetchObject("SELECT * FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+
 	if( $infos ) {
 		$infos = (array)$infos;
-		$ydb->infos[ $keyword ] = $infos;
+		$ydb->set_infos($keyword, $infos);
 	} else {
-		$ydb->infos[ $keyword ] = false;
+        // is NULL if not found
+        $infos = false;
+		$ydb->set_infos($keyword, false);
 	}
-		
-	return yourls_apply_filter( 'get_keyword_infos', $ydb->infos[$keyword], $keyword );
+
+	return yourls_apply_filter( 'get_keyword_infos', $infos, $keyword );
 }
 
 /**
@@ -468,12 +492,12 @@ function yourls_get_keyword_info( $keyword, $field, $notfound = false ) {
 
 	$keyword = yourls_sanitize_string( $keyword );
 	$infos = yourls_get_keyword_infos( $keyword );
-	
+
 	$return = $notfound;
 	if ( isset( $infos[ $field ] ) && $infos[ $field ] !== false )
 		$return = $infos[ $field ];
 
-	return yourls_apply_filter( 'get_keyword_info', $return, $keyword, $field, $notfound );	
+	return yourls_apply_filter( 'get_keyword_info', $return, $keyword, $field, $notfound );
 }
 
 /**
@@ -527,12 +551,12 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_escape( yourls_sanitize_string( $keyword ) );
+	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = $clicks WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", array('clicks' => $clicks, 'keyword' => $keyword) );
 	else
-		$update = $ydb->query( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = '$keyword'" );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", array('keyword' => $keyword) );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -565,18 +589,18 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 			$sort_order = 'desc';
 			break;
 	}
-	
+
 	// Fetch links
 	$limit = intval( $limit );
 	$start = intval( $start );
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->get_results( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
-		
+		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+
 		$return = array();
 		$i = 1;
-		
+
 		foreach ( (array)$results as $res ) {
 			$return['links']['link_'.$i++] = array(
 				'shorturl' => YOURLS_SITE .'/'. $res->keyword,
@@ -590,7 +614,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	}
 
 	$return['stats'] = yourls_get_db_stats();
-	
+
 	$return['statusCode'] = 200;
 
 	return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
@@ -604,9 +628,9 @@ function yourls_get_link_stats( $shorturl ) {
 	global $ydb;
 
 	$table_url = YOURLS_DB_TABLE_URL;
-	$shorturl  = yourls_escape( yourls_sanitize_keyword( $shorturl ) );
-	
-	$res = $ydb->get_row( "SELECT * FROM `$table_url` WHERE keyword = '$shorturl';" );
+	$shorturl  = yourls_sanitize_keyword( $shorturl );
+
+    $res = $ydb->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
 	$return = array();
 
 	if( !$res ) {
@@ -636,17 +660,20 @@ function yourls_get_link_stats( $shorturl ) {
 /**
  * Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
  *
- * IMPORTANT NOTE: make sure arguments for the $where clause have been sanitized and yourls_escape()'d
- * before calling this function.
+ * The $where parameter will contain additional SQL arguments:
+ *   $where['sql'] will concatenate SQL clauses: $where['sql'] = ' AND something = :value AND otherthing < :othervalue';
+ *   $where['binds'] will hold the (name => value) placeholder pairs: $where['binds'] = array('value' => $value, 'othervalue' => $value2)
  *
+ * @param  $where array  See comment above
+ * @return array
  */
-function yourls_get_db_stats( $where = '' ) {
+function yourls_get_db_stats( $where = array('sql' => '', 'binds' => array()) ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->get_row( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 $where" );
+	$totals = $ydb->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
 	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
-	
+
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
 }
 
@@ -657,7 +684,7 @@ function yourls_get_db_stats( $where = '' ) {
 function yourls_get_num_queries() {
 	global $ydb;
 
-	return yourls_apply_filter( 'get_num_queries', $ydb->num_queries );
+	return yourls_apply_filter( 'get_num_queries', $ydb->get_num_queries() );
 }
 
 /**
@@ -667,10 +694,10 @@ function yourls_get_num_queries() {
 function yourls_get_user_agent() {
 	if ( !isset( $_SERVER['HTTP_USER_AGENT'] ) )
 		return '-';
-	
+
 	$ua = strip_tags( html_entity_decode( $_SERVER['HTTP_USER_AGENT'] ));
 	$ua = preg_replace('![^0-9a-zA-Z\':., /{}\(\)\[\]\+@&\!\?;_\-=~\*\#]!', '', $ua );
-		
+
 	return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 254 ) );
 }
 
@@ -701,10 +728,10 @@ function yourls_redirect( $location, $code = 301 ) {
  */
 function yourls_status_header( $code = 200 ) {
 	yourls_do_action( 'status_header', $code );
-    
+
 	if( headers_sent() )
 		return false;
-		
+
 	$protocol = $_SERVER['SERVER_PROTOCOL'];
 	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
 		$protocol = 'HTTP/1.0';
@@ -713,7 +740,7 @@ function yourls_status_header( $code = 200 ) {
 	$desc = yourls_get_HTTP_status( $code );
 
 	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
-    
+
     return true;
 }
 
@@ -829,15 +856,17 @@ function yourls_log_redirect( $keyword ) {
 
 	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
-	
-    $now      = date( 'Y-m-d H:i:s' );
-	$keyword  = yourls_escape( yourls_sanitize_string( $keyword ) );
-	$referrer = ( isset( $_SERVER['HTTP_REFERER'] ) ? yourls_escape( yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) ) : 'direct' );
-	$ua       = yourls_escape( yourls_get_user_agent() );
-	$ip       = yourls_escape( yourls_get_IP() );
-	$location = yourls_escape( yourls_geo_ip_to_countrycode( $ip ) );
-	
-	return $ydb->query( "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES ('$now', '$keyword', '$referrer', '$ua', '$ip', '$location')" );
+    $ip = yourls_get_IP();
+    $binds = array(
+        'now' => date( 'Y-m-d H:i:s' ),
+        'keyword'  => yourls_sanitize_string($keyword),
+        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe($_SERVER['HTTP_REFERER']) : 'direct',
+        'ua'       => yourls_get_user_agent(),
+        'ip'       => $ip,
+        'location' => yourls_geo_ip_to_countrycode($ip),
+    );
+
+    return $ydb->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
 }
 
 /**
@@ -861,60 +890,122 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	$location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
 	if ( false !== $location )
 		return $location;
-	
+
 	if ( $ip == '' )
 		$ip = yourls_get_IP();
-	
-	// Use IPv4 or IPv6 DB & functions
-	if( false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-		$db   = 'GeoIP.dat';
-		$func = 'geoip_country_code_by_addr';
-	} else {
-		$db   = 'GeoIPv6.dat';
-		$func = 'geoip_country_code_by_addr_v6';
-	}
-	
-	if ( !file_exists( YOURLS_INC . '/geo/' . $db ) || !file_exists( YOURLS_INC .'/geo/geoip.inc' ) )
-		return $default;
 
-	require_once( YOURLS_INC . '/geo/geoip.inc' );
-	$gi = geoip_open( YOURLS_INC . '/geo/' . $db, GEOIP_STANDARD );
-	try {
-		$location = call_user_func( $func, $gi, $ip );
-	} catch ( Exception $e ) {
-		$location = '';
-	}
-	geoip_close( $gi );
-	
-	if( '' == $location )
-		$location = $default;
+    // Allow plugins to stick to YOURLS internals but provide another DB
+    $db = yourls_apply_filter('geo_ip_path_to_db', YOURLS_INC.'/geo/GeoLite2-Country.mmdb');
+    if (!is_readable($db)) {
+        return $default;
+    }
 
-	return yourls_apply_filter( 'geo_ip_to_countrycode', $location, $ip, $default );
+    $reader = new \GeoIp2\Database\Reader($db);
+    try {
+        $record = $reader->country($ip);
+        $location = $record->country->isoCode; // eg 'US'
+    } catch (\Exception $e) {
+        /*
+        Unused for now, Exception and $e->getMessage() can be one of :
+
+        - Exception: \GeoIp2\Exception\AddressNotFoundException
+          When: valid IP not found
+          Error message: "The address 10.0.0.30 is not in the database"
+
+        - Exception: \InvalidArgumentException
+          When: IP is not valid, or DB not readable
+          Error message: "The value "10.0.0.300" is not a valid IP address", "The file "/path/to/GeoLite2-Country.mmdb" does not exist or is not readable"
+
+        - Exception: \MaxMind\Db\Reader\InvalidDatabaseException
+          When: DB is readable but is corrupt or invalid
+          Error message: "The MaxMind DB file's search tree is corrupt"
+
+        - or obviously \Exception for any other error (?)
+        */
+        $location = $default;
+    }
+
+    return yourls_apply_filter( 'geo_ip_to_countrycode', $location, $ip, $default );
 }
 
 /**
  * Converts a 2 letter country code to long name (ie AU -> Australia)
  *
+ * This associative array is the one used by MaxMind internal functions, it may differ from other lists (eg "A1" does not universally stand for "Anon proxy")
+ *
+ * @since 1.4
+ * @param string $code 2 letter country code, eg 'FR'
+ * @return string Country long name (eg 'France') or an empty string if not found
  */
 function yourls_geo_countrycode_to_countryname( $code ) {
-	// Allow plugins to short-circuit the Geo IP API
+	// Allow plugins to short-circuit the function
 	$country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
 	if ( false !== $country )
 		return $country;
 
-	// Load the Geo class if not already done
-	if( !class_exists( 'GeoIP', false ) ) {
-		$temp = yourls_geo_ip_to_countrycode( '127.0.0.1' );
-	}
-	
-	if( class_exists( 'GeoIP', false ) ) {
-		$geo  = new GeoIP;
-		$id   = $geo->GEOIP_COUNTRY_CODE_TO_NUMBER[ $code ];
-		$long = $geo->GEOIP_COUNTRY_NAMES[ $id ];
-		return $long;
-	} else {
-		return false;
-	}
+    // Weeeeeeeeeeee
+    $countries = array(
+        'A1' => 'Anonymous Proxy', 'A2' => 'Satellite Provider', 'AD' => 'Andorra', 'AE' => 'United Arab Emirates', 'AF' => 'Afghanistan',
+        'AG' => 'Antigua and Barbuda', 'AI' => 'Anguilla', 'AL' => 'Albania', 'AM' => 'Armenia', 'AO' => 'Angola',
+        'AP' => 'Asia/Pacific Region', 'AQ' => 'Antarctica', 'AR' => 'Argentina', 'AS' => 'American Samoa', 'AT' => 'Austria',
+        'AU' => 'Australia', 'AW' => 'Aruba', 'AX' => 'Aland Islands', 'AZ' => 'Azerbaijan', 'BA' => 'Bosnia and Herzegovina',
+        'BB' => 'Barbados', 'BD' => 'Bangladesh', 'BE' => 'Belgium', 'BF' => 'Burkina Faso', 'BG' => 'Bulgaria',
+        'BH' => 'Bahrain', 'BI' => 'Burundi', 'BJ' => 'Benin', 'BL' => 'Saint Barthelemy', 'BM' => 'Bermuda',
+        'BN' => 'Brunei Darussalam', 'BO' => 'Bolivia', 'BQ' => 'Bonaire, Saint Eustatius and Saba', 'BR' => 'Brazil', 'BS' => 'Bahamas',
+        'BT' => 'Bhutan', 'BV' => 'Bouvet Island', 'BW' => 'Botswana', 'BY' => 'Belarus', 'BZ' => 'Belize',
+        'CA' => 'Canada', 'CC' => 'Cocos (Keeling) Islands', 'CD' => 'Congo, The Democratic Republic of the', 'CF' => 'Central African Republic', 'CG' => 'Congo',
+        'CH' => 'Switzerland', 'CI' => 'Cote D\'Ivoire', 'CK' => 'Cook Islands', 'CL' => 'Chile', 'CM' => 'Cameroon',
+        'CN' => 'China', 'CO' => 'Colombia', 'CR' => 'Costa Rica', 'CU' => 'Cuba', 'CV' => 'Cape Verde',
+        'CW' => 'Curacao', 'CX' => 'Christmas Island', 'CY' => 'Cyprus', 'CZ' => 'Czech Republic', 'DE' => 'Germany',
+        'DJ' => 'Djibouti', 'DK' => 'Denmark', 'DM' => 'Dominica', 'DO' => 'Dominican Republic', 'DZ' => 'Algeria',
+        'EC' => 'Ecuador', 'EE' => 'Estonia', 'EG' => 'Egypt', 'EH' => 'Western Sahara', 'ER' => 'Eritrea',
+        'ES' => 'Spain', 'ET' => 'Ethiopia', 'EU' => 'Europe', 'FI' => 'Finland', 'FJ' => 'Fiji',
+        'FK' => 'Falkland Islands (Malvinas)', 'FM' => 'Micronesia, Federated States of', 'FO' => 'Faroe Islands', 'FR' => 'France', 'GA' => 'Gabon',
+        'GB' => 'United Kingdom', 'GD' => 'Grenada', 'GE' => 'Georgia', 'GF' => 'French Guiana', 'GG' => 'Guernsey',
+        'GH' => 'Ghana', 'GI' => 'Gibraltar', 'GL' => 'Greenland', 'GM' => 'Gambia', 'GN' => 'Guinea',
+        'GP' => 'Guadeloupe', 'GQ' => 'Equatorial Guinea', 'GR' => 'Greece', 'GS' => 'South Georgia and the South Sandwich Islands', 'GT' => 'Guatemala',
+        'GU' => 'Guam', 'GW' => 'Guinea-Bissau', 'GY' => 'Guyana', 'HK' => 'Hong Kong', 'HM' => 'Heard Island and McDonald Islands',
+        'HN' => 'Honduras', 'HR' => 'Croatia', 'HT' => 'Haiti', 'HU' => 'Hungary', 'ID' => 'Indonesia',
+        'IE' => 'Ireland', 'IL' => 'Israel', 'IM' => 'Isle of Man', 'IN' => 'India', 'IO' => 'British Indian Ocean Territory',
+        'IQ' => 'Iraq', 'IR' => 'Iran, Islamic Republic of', 'IS' => 'Iceland', 'IT' => 'Italy', 'JE' => 'Jersey',
+        'JM' => 'Jamaica', 'JO' => 'Jordan', 'JP' => 'Japan', 'KE' => 'Kenya', 'KG' => 'Kyrgyzstan',
+        'KH' => 'Cambodia', 'KI' => 'Kiribati', 'KM' => 'Comoros', 'KN' => 'Saint Kitts and Nevis', 'KP' => 'Korea, Democratic People\'s Republic of',
+        'KR' => 'Korea, Republic of', 'KW' => 'Kuwait', 'KY' => 'Cayman Islands', 'KZ' => 'Kazakhstan', 'LA' => 'Lao People\'s Democratic Republic',
+        'LB' => 'Lebanon', 'LC' => 'Saint Lucia', 'LI' => 'Liechtenstein', 'LK' => 'Sri Lanka', 'LR' => 'Liberia',
+        'LS' => 'Lesotho', 'LT' => 'Lithuania', 'LU' => 'Luxembourg', 'LV' => 'Latvia', 'LY' => 'Libya',
+        'MA' => 'Morocco', 'MC' => 'Monaco', 'MD' => 'Moldova, Republic of', 'ME' => 'Montenegro', 'MF' => 'Saint Martin',
+        'MG' => 'Madagascar', 'MH' => 'Marshall Islands', 'MK' => 'Macedonia', 'ML' => 'Mali', 'MM' => 'Myanmar',
+        'MN' => 'Mongolia', 'MO' => 'Macau', 'MP' => 'Northern Mariana Islands', 'MQ' => 'Martinique', 'MR' => 'Mauritania',
+        'MS' => 'Montserrat', 'MT' => 'Malta', 'MU' => 'Mauritius', 'MV' => 'Maldives', 'MW' => 'Malawi',
+        'MX' => 'Mexico', 'MY' => 'Malaysia', 'MZ' => 'Mozambique', 'NA' => 'Namibia', 'NC' => 'New Caledonia',
+        'NE' => 'Niger', 'NF' => 'Norfolk Island', 'NG' => 'Nigeria', 'NI' => 'Nicaragua', 'NL' => 'Netherlands',
+        'NO' => 'Norway', 'NP' => 'Nepal', 'NR' => 'Nauru', 'NU' => 'Niue', 'NZ' => 'New Zealand',
+        'O1' => 'Other', 'OM' => 'Oman', 'PA' => 'Panama', 'PE' => 'Peru', 'PF' => 'French Polynesia',
+        'PG' => 'Papua New Guinea', 'PH' => 'Philippines', 'PK' => 'Pakistan', 'PL' => 'Poland', 'PM' => 'Saint Pierre and Miquelon',
+        'PN' => 'Pitcairn Islands', 'PR' => 'Puerto Rico', 'PS' => 'Palestinian Territory', 'PT' => 'Portugal', 'PW' => 'Palau',
+        'PY' => 'Paraguay', 'QA' => 'Qatar', 'RE' => 'Reunion', 'RO' => 'Romania', 'RS' => 'Serbia',
+        'RU' => 'Russian Federation', 'RW' => 'Rwanda', 'SA' => 'Saudi Arabia', 'SB' => 'Solomon Islands', 'SC' => 'Seychelles',
+        'SD' => 'Sudan', 'SE' => 'Sweden', 'SG' => 'Singapore', 'SH' => 'Saint Helena', 'SI' => 'Slovenia',
+        'SJ' => 'Svalbard and Jan Mayen', 'SK' => 'Slovakia', 'SL' => 'Sierra Leone', 'SM' => 'San Marino', 'SN' => 'Senegal',
+        'SO' => 'Somalia', 'SR' => 'Suriname', 'SS' => 'South Sudan', 'ST' => 'Sao Tome and Principe', 'SV' => 'El Salvador',
+        'SX' => 'Sint Maarten (Dutch part)', 'SY' => 'Syrian Arab Republic', 'SZ' => 'Swaziland', 'TC' => 'Turks and Caicos Islands', 'TD' => 'Chad',
+        'TF' => 'French Southern Territories', 'TG' => 'Togo', 'TH' => 'Thailand', 'TJ' => 'Tajikistan', 'TK' => 'Tokelau',
+        'TL' => 'Timor-Leste', 'TM' => 'Turkmenistan', 'TN' => 'Tunisia', 'TO' => 'Tonga', 'TR' => 'Turkey',
+        'TT' => 'Trinidad and Tobago', 'TV' => 'Tuvalu', 'TW' => 'Taiwan', 'TZ' => 'Tanzania, United Republic of', 'UA' => 'Ukraine',
+        'UG' => 'Uganda', 'UM' => 'United States Minor Outlying Islands', 'US' => 'United States', 'UY' => 'Uruguay', 'UZ' => 'Uzbekistan',
+        'VA' => 'Holy See (Vatican City State)', 'VC' => 'Saint Vincent and the Grenadines', 'VE' => 'Venezuela', 'VG' => 'Virgin Islands, British', 'VI' => 'Virgin Islands, U.S.',
+        'VN' => 'Vietnam', 'VU' => 'Vanuatu', 'WF' => 'Wallis and Futuna', 'WS' => 'Samoa', 'YE' => 'Yemen',
+        'YT' => 'Mayotte', 'ZA' => 'South Africa', 'ZM' => 'Zambia', 'ZW' => 'Zimbabwe',
+    );
+
+    $code = strtoupper($code);
+    if(array_key_exists($code, $countries)) {
+        $name = $countries[$code];
+    } else {
+        $name = '';
+    }
+
+    return yourls_apply_filter( 'geo_countrycode_to_countryname', $name );
 }
 
 /**
@@ -940,7 +1031,7 @@ function yourls_upgrade_is_needed() {
 	list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
 	if( $currentsql < YOURLS_DB_VERSION )
 		return true;
-		
+
 	return false;
 }
 
@@ -957,7 +1048,7 @@ function yourls_get_current_version_from_sql() {
 		$currentver = '1.3';
 	if( !$currentsql )
 		$currentsql = '100';
-		
+
 	return array( $currentver, $currentsql);
 }
 
@@ -967,32 +1058,21 @@ function yourls_get_current_version_from_sql() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $default Optional value to return if option doesn't exist. Default false.
  * @return mixed Value set for the option.
  */
 function yourls_get_option( $option_name, $default = false ) {
-	global $ydb;
-	
 	// Allow plugins to short-circuit options
 	$pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
 	if ( false !== $pre )
 		return $pre;
 
-	// If option not cached already, get its value from the DB
-	if ( !isset( $ydb->option[$option_name] ) ) {
-		$table = YOURLS_DB_TABLE_OPTIONS;
-		$option_name = yourls_escape( $option_name );
-		$row = $ydb->get_row( "SELECT `option_value` FROM `$table` WHERE `option_name` = '$option_name' LIMIT 1" );
-		if ( is_object( $row) ) { // Has to be get_row instead of get_var because of funkiness with 0, false, null values
-			$value = $row->option_value;
-		} else { // option does not exist, so we must cache its non-existence
-			$value = $default;
-		}
-		$ydb->option[ $option_name ] = yourls_maybe_unserialize( $value );
-	}
+	global $ydb;
+    $option = new \YOURLS\Database\Options($ydb);
+    $value  = $option->get($option_name, $default);
 
-	return yourls_apply_filter( 'get_option_'.$option_name, $ydb->option[$option_name] );
+    return yourls_apply_filter( 'get_option_'.$option_name, $value );
 }
 
 /**
@@ -1006,31 +1086,21 @@ function yourls_get_option( $option_name, $default = false ) {
  * @since 1.4
  */
 function yourls_get_all_options() {
-	global $ydb;
-
 	// Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
 	$pre = yourls_apply_filter( 'shunt_all_options', false );
 	if ( false !== $pre )
 		return $pre;
 
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	
-	$allopt = $ydb->get_results( "SELECT `option_name`, `option_value` FROM `$table` WHERE 1=1" );
-	
-	foreach( (array)$allopt as $option ) {
-		$ydb->option[ $option->option_name ] = yourls_maybe_unserialize( $option->option_value );
-	}
+	global $ydb;
+    $options = new \YOURLS\Database\Options($ydb);
 
-	if( property_exists( $ydb, 'option' ) ) {
-		$ydb->option = yourls_apply_filter( 'get_all_options', $ydb->option );
-		$ydb->installed = true;
-	} else {
-		// Zero option found: either YOURLS is not installed or DB server is dead
-        if( !yourls_is_db_alive() ) {
-            yourls_db_dead(); // YOURLS will die here
-        }
-        $ydb->installed = false;
-	}
+    if ($options->get_all_options() === false) {
+		// Zero option found but no unexpected error so far: YOURLS isn't installed
+        yourls_set_installed(false);
+        return;
+    }
+
+	yourls_set_installed(true);
 }
 
 /**
@@ -1039,46 +1109,17 @@ function yourls_get_all_options() {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name. Expected to not be SQL-escaped.
+ * @param string $option_name Option name. Expected to not be SQL-escaped.
  * @param mixed $newvalue Option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	
-	$option_name = trim( $option_name );
-	if ( empty( $option_name ) )
-		return false;
-		
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $newvalue ) )
-		$newvalue = clone $newvalue;
 
-	$option_name = yourls_escape( $option_name );
+    $option = new \YOURLS\Database\Options($ydb);
+    $update = $option->update($option_name, $newvalue);
 
-	$oldvalue = yourls_get_option( $option_name );
-
-	// If the new and old values are the same, no need to update.
-	if ( $newvalue === $oldvalue )
-		return false;
-
-	if ( false === $oldvalue ) {
-		yourls_add_option( $option_name, $newvalue );
-		return true;
-	}
-
-	$_newvalue = yourls_escape( yourls_maybe_serialize( $newvalue ) );
-	
-	yourls_do_action( 'update_option', $option_name, $oldvalue, $newvalue );
-
-	$ydb->query( "UPDATE `$table` SET `option_value` = '$_newvalue' WHERE `option_name` = '$option_name'" );
-
-	if ( $ydb->rows_affected == 1 ) {
-		$ydb->option[ $option_name ] = $newvalue;
-		return true;
-	}
-	return false;
+    return $update;
 }
 
 /**
@@ -1087,35 +1128,17 @@ function yourls_update_option( $option_name, $newvalue ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Name of option to add. Expected to not be SQL-escaped.
+ * @param string $name Name of option to add. Expected to not be SQL-escaped.
  * @param mixed $value Optional option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
  * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	
-	$name = trim( $name );
-	if ( empty( $name ) )
-		return false;
-	
-	// Use clone to break object refs -- see commit 09b989d375bac65e692277f61a84fede2fb04ae3
-	if ( is_object( $value ) )
-		$value = clone $value;
-	
-	$name = yourls_escape( $name );
 
-	// Make sure the option doesn't already exist
-	if ( false !== yourls_get_option( $name ) )
-		return false;
+    $option = new \YOURLS\Database\Options($ydb);
+    $add    = $option->add($name, $value);
 
-	$_value = yourls_escape( yourls_maybe_serialize( $value ) );
-
-	yourls_do_action( 'add_option', $name, $_value );
-
-	$ydb->query( "INSERT INTO `$table` (`option_name`, `option_value`) VALUES ('$name', '$_value')" );
-	$ydb->option[ $name ] = $value;
-	return true;
+    return $add;
 }
 
 
@@ -1125,24 +1148,16 @@ function yourls_add_option( $name, $value = '' ) {
  * Pretty much stolen from WordPress
  *
  * @since 1.4
- * @param string $option Option name to delete. Expected to not be SQL-escaped.
+ * @param string $name Option name to delete. Expected to not be SQL-escaped.
  * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
 	global $ydb;
-	$table = YOURLS_DB_TABLE_OPTIONS;
-	$name = yourls_escape( $name );
 
-	// Get the ID, if no ID then return
-	$option = $ydb->get_row( "SELECT option_id FROM `$table` WHERE `option_name` = '$name'" );
-	if ( is_null( $option ) || !$option->option_id )
-		return false;
-		
-	yourls_do_action( 'delete_option', $name );
-		
-	$ydb->query( "DELETE FROM `$table` WHERE `option_name` = '$name'" );
-	unset( $ydb->option[ $name ] );
-	return true;
+    $option = new \YOURLS\Database\Options($ydb);
+    $delete = $option->delete($name);
+
+    return $delete;
 }
 
 
@@ -1244,24 +1259,24 @@ function yourls_is_private() {
 	if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) {
 
 		// Allow overruling for particular pages:
-		
+
 		// API
 		if( yourls_is_API() ) {
 			if( !defined('YOURLS_PRIVATE_API') || YOURLS_PRIVATE_API != false )
-				$private = true;		
+				$private = true;
 
 		// Infos
 		} elseif( yourls_is_infos() ) {
 			if( !defined('YOURLS_PRIVATE_INFOS') || YOURLS_PRIVATE_INFOS !== false )
 				$private = true;
-		
+
 		// Others
 		} else {
 			$private = true;
 		}
-		
+
 	}
-			
+
 	return yourls_apply_filter( 'is_private', $private );
 }
 
@@ -1285,7 +1300,7 @@ function yourls_maybe_require_auth() {
 function yourls_allow_duplicate_longurls() {
 	// special treatment if API to check for WordPress plugin requests
 	if( yourls_is_API() ) {
-		if ( isset($_REQUEST['source']) && $_REQUEST['source'] == 'plugin' ) 
+		if ( isset($_REQUEST['source']) && $_REQUEST['source'] == 'plugin' )
 			return false;
 	}
 	return ( defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS == false );
@@ -1296,24 +1311,20 @@ function yourls_allow_duplicate_longurls() {
  *
  * @since 1.7
  * @param string $longurl long url
- * @param string $sort Optional ORDER BY order (can be 'keyword', 'title', 'timestamp' or'clicks')
  * @param string $order Optional SORT order (can be 'ASC' or 'DESC')
  * @return array array of keywords
  */
-function yourls_get_longurl_keywords( $longurl, $sort = 'none', $order = 'ASC' ) {
+function yourls_get_longurl_keywords( $longurl, $order = 'ASC' ) {
 	global $ydb;
-	$longurl = yourls_escape( yourls_sanitize_url( $longurl ) );
+	$longurl = yourls_sanitize_url($longurl);
 	$table   = YOURLS_DB_TABLE_URL;
-	$query   = "SELECT `keyword` FROM `$table` WHERE `url` = '$longurl'";
-	
-	// Ensure sort is a column in database (@TODO: update verification array if database changes)
-	if ( in_array( $sort, array('keyword','title','timestamp','clicks') ) ) {
-		$query .= " ORDER BY '".$sort."'";
-		if ( in_array( $order, array( 'ASC','DESC' ) ) ) {
-			$query .= " ".$order;
-		}
-	}
-	return yourls_apply_filter( 'get_longurl_keywords', $ydb->get_col( $query ), $longurl );
+    $sql     = "SELECT `keyword` FROM `$table` WHERE `url` = :url";
+
+    if (in_array($order, array('ASC','DESC'))) {
+        $sql .= " ORDER BY `keyword` ".$order;
+    }
+
+    return yourls_apply_filter( 'get_longurl_keywords', $ydb->fetchCol($sql, array('url'=>$longurl)), $longurl );
 }
 
 /**
@@ -1342,7 +1353,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 		 if( yourls_is_valid_user() === true )
 			return true;
 	}
-	
+
 	// Don't throttle whitelist IPs
 	if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
 		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
@@ -1352,26 +1363,25 @@ function yourls_check_IP_flood( $ip = '' ) {
 				return true;
 		}
 	}
-	
+
 	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
-	$ip = yourls_escape( $ip );
 
 	yourls_do_action( 'check_ip_flood', $ip );
-	
+
 	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-	
-	$lasttime = $ydb->get_var( "SELECT `timestamp` FROM $table WHERE `ip` = '$ip' ORDER BY `timestamp` DESC LIMIT 1" );
+
+	$lasttime = $ydb->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", array('ip' => $ip) );
 	if( $lasttime ) {
 		$now = date( 'U' );
 		$then = date( 'U', strtotime( $lasttime ) );
 		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
 			// Flood!
 			yourls_do_action( 'ip_flood', $ip, $now - $then );
-			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Forbidden' ), 403 );
+			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
 		}
 	}
-	
+
 	return true;
 }
 
@@ -1408,13 +1418,19 @@ function yourls_is_upgrading() {
  */
 function yourls_is_installed() {
 	global $ydb;
-	$is_installed = ( property_exists( $ydb, 'installed' ) && $ydb->installed == true );
-	return yourls_apply_filter( 'is_installed', $is_installed );
-	
-	/* Note: this test won't work on YOURLS 1.3 or older (Aug 2009...)
-	   Should someone complain that they cannot upgrade directly from
-	   1.3 to 1.7: first, laugh at them, then ask them to install 1.6 first.
-	*/
+	return yourls_apply_filter( 'is_installed', $ydb->is_installed() );
+}
+
+/**
+ * Set installed state
+ *
+ * @since  1.7.3
+ * @param  bool $bool  whether YOURLS is installed or not
+ * @return void
+ */
+function yourls_set_installed($bool) {
+    global $ydb;
+    $ydb->set_installed($bool);
 }
 
 /**
@@ -1432,41 +1448,41 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 		case '0':
 			$possible = $charlist ? $charlist : yourls_get_shorturl_charset() ;
 			break;
-	
+
 		// no vowels to make no offending word, no 0/1/o/l to avoid confusion between letters & digits. Perfect for passwords.
 		case '1':
 			$possible = "23456789bcdfghjkmnpqrstvwxyz";
 			break;
-		
+
 		// Same, with lower + upper
 		case '2':
 			$possible = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ";
 			break;
-		
+
 		// all letters, lowercase
 		case '3':
 			$possible = "abcdefghijklmnopqrstuvwxyz";
 			break;
-		
+
 		// all letters, lowercase + uppercase
 		case '4':
 			$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			break;
-		
-		// all digits & letters lowercase 
+
+		// all digits & letters lowercase
 		case '5':
 			$possible = "0123456789abcdefghijklmnopqrstuvwxyz";
 			break;
-		
+
 		// all digits & letters lowercase + uppercase
 		case '6':
 			$possible = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			break;
-		
+
 	}
 
     $str = substr( str_shuffle( $possible ), 0, $length );
-	
+
 	return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
 }
 
@@ -1481,12 +1497,12 @@ function yourls_salt( $string ) {
 
 /**
  * Add a query var to a URL and return URL. Completely stolen from WP.
- * 
+ *
  * Works with one of these parameter patterns:
  *     array( 'var' => 'value' )
  *     array( 'var' => 'value' ), $url
  *     'var', 'value'
- *     'var', 'value', $url 
+ *     'var', 'value', $url
  * If $url omitted, uses $_SERVER['REQUEST_URI']
  *
  * The result of this function call is a URL : it should be escaped before being printed as HTML
@@ -1510,10 +1526,10 @@ function yourls_add_query_arg() {
 		else
 			$uri = @func_get_arg( 2 );
 	}
-	
+
 	$uri = str_replace( '&amp;', '&', $uri );
 
-	
+
 	if ( $frag = strstr( $uri, '#' ) )
 		$uri = substr( $uri, 0, -strlen( $frag ) );
 	else
@@ -1634,7 +1650,7 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
 
 /**
  * Check validity of a nonce (ie time span, user and action match).
- * 
+ *
  * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
  * if $nonce is false or unspecified, it will use $_REQUEST['nonce']
  *
@@ -1643,14 +1659,14 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 	// get user
 	if( false == $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
-		
+
 	// get current nonce value
 	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
 		$nonce = $_REQUEST['nonce'];
 
 	// what nonce should be
 	$valid = yourls_create_nonce( $action, $user );
-	
+
 	if( $nonce == $valid ) {
 		return true;
 	} else {
@@ -1761,7 +1777,7 @@ function yourls_admin_url( $page = '' ) {
 function yourls_site_url( $echo = true, $url = '' ) {
 	$url = yourls_get_relative_url( $url );
 	$url = trim( YOURLS_SITE . '/' . $url, '/' );
-	
+
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() ) {
 		$url = yourls_set_url_scheme( $url, 'https' );
@@ -1807,25 +1823,25 @@ function yourls_get_remote_title( $url ) {
 		return $pre;
 
 	$url = yourls_sanitize_url( $url );
-	
-	// Only deal with http(s):// 
+
+	// Only deal with http(s)://
 	if( !in_array( yourls_get_protocol( $url ), array( 'http://', 'https://' ) ) )
-		return $url;	
+		return $url;
 
 	$title = $charset = false;
-    
+
     $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
-	
+
 	$response = yourls_http_get( $url, array(), array(), array( 'max_bytes' => $max_bytes ) ); // can be a Request object or an error string
 	if( is_string( $response ) ) {
 		return $url;
 	}
-	
+
 	// Page content. No content? Return the URL
 	$content = $response->body;
 	if( !$content )
 		return $url;
-	
+
 	// look for <title>. No title found? Return the URL
 	if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
 		$title = $found[1];
@@ -1833,9 +1849,9 @@ function yourls_get_remote_title( $url ) {
 	}
 	if( !$title )
 		return $url;
-		
+
 	// Now we have a title. We'll try to get proper utf8 from it.
-	
+
 	// Get charset as (and if) defined by the HTML meta tag. We should match
 	// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	// or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
@@ -1860,13 +1876,13 @@ function yourls_get_remote_title( $url ) {
 			$title = @mb_convert_encoding( $title, 'UTF-8' );
 		}
 	}
-	
+
 	// Remove HTML entities
 	$title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
-	
+
 	// Strip out evil things
 	$title = yourls_sanitize_title( $title, $url );
-		
+
 	return yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
@@ -1884,10 +1900,10 @@ function yourls_is_mobile_device() {
 		'palm', 'phone', 'pocket', 'psp', 'symbian',
 		'treo', 'wap', 'windows ce', 'windows phone'
 	);
-	
+
 	// Current user-agent
 	$current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
-	
+
 	// Check and return
 	$is_mobile = ( str_replace( $mobiles, '', $current ) != $current );
 	return yourls_apply_filter( 'is_mobile_device', $is_mobile );
@@ -1896,30 +1912,44 @@ function yourls_is_mobile_device() {
 /**
  * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
  *
+ * With no parameter passed, this function will guess current page and consider
+ * it is the current page requested.
+ * For testing purposes, parameters can be passed.
+ *
+ * @since 1.5
+ * @param string $yourls_site   Optional, YOURLS installation URL (default to constant YOURLS_SITE)
+ * @param string $uri           Optional, page requested (default to $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] eg 'sho.rt/yourls/abcd' )
+ * @return string               request relative to YOURLS base (eg 'abdc')
  */
-function yourls_get_request() {
+function yourls_get_request($yourls_site = false, $uri = false) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_get_request', false );
 	if ( false !== $pre )
 		return $pre;
-		
-	static $request = null;
 
-	yourls_do_action( 'pre_get_request', $request );
-	
-	if( $request !== null )
-		return $request;
-	
-	// Ignore protocol & www. prefix
-	$root = str_replace( array( 'https://', 'http://', 'https://www.', 'http://www.' ), '', YOURLS_SITE );
-	// Case insensitive comparison of the YOURLS root to match both http://Sho.rt/blah and http://sho.rt/blah
-	$request = preg_replace( "!$root/!i", '', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 1 );
+	yourls_do_action( 'pre_get_request', $yourls_site, $uri );
+
+    // Default values
+    if (false === $yourls_site) {
+        $yourls_site = YOURLS_SITE;
+    }
+    if (false === $uri) {
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    }
+
+    // Even though the config sample states YOURLS_SITE should be set without trailing slash...
+    $yourls_site = rtrim($yourls_site,'/');
+
+    // Ignore protocol & www. prefix
+	$root = str_replace( array( 'https://www.', 'http://www.', 'https://', 'http://'  ), '', $yourls_site );
+	// Case insensitive comparison of the YOURLS root with the requested URL, to match http://Sho.rt/blah, http://sho.rt/blah, http://www.Sho.rt/blah ...
+	$request = preg_replace( "!(?:www\.)?$root/!i", '', $uri, 1 );
 
 	// Unless request looks like a full URL (ie request is a simple keyword) strip query string
 	if( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
 		$request = current( explode( '?', $request ) );
 	}
-	
+
 	return yourls_apply_filter( 'get_request', $request );
 }
 
@@ -1990,14 +2020,14 @@ function yourls_shutdown() {
  */
 function yourls_favicon( $echo = true ) {
 	static $favicon = null;
-    
+
 	if( $favicon !== null ) {
         if( $echo ) {
             echo $favicon;
         }
-        return $favicon;    
+        return $favicon;
     }
-	
+
 	$custom = null;
 	// search for favicon.(gif|ico|png|jpg|svg)
 	foreach( array( 'gif', 'ico', 'png', 'jpg', 'svg' ) as $ext ) {
@@ -2006,7 +2036,7 @@ function yourls_favicon( $echo = true ) {
 			break;
 		}
 	}
-	
+
 	if( $custom ) {
 		$favicon = yourls_site_url( false, YOURLS_USERURL . '/' . $custom );
 	} else {
@@ -2028,7 +2058,7 @@ function yourls_check_maintenance_mode() {
 	$file = YOURLS_ABSPATH . '/.maintenance' ;
 	if ( !file_exists( $file ) || yourls_is_upgrading() || yourls_is_installing() )
 		return;
-	
+
 	global $maintenance_start;
 
 	include_once( $file );
@@ -2041,7 +2071,7 @@ function yourls_check_maintenance_mode() {
 		include_once( YOURLS_USERDIR.'/maintenance.php' );
 		die();
 	}
-	
+
 	// https://www.youtube.com/watch?v=Xw-m4jEY-Ns
 	$title   = yourls__( 'Service temporarily unavailable' );
 	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p>\n<p>" .
@@ -2059,9 +2089,9 @@ function yourls_check_maintenance_mode() {
 function yourls_current_admin_page() {
 	if( yourls_is_admin() ) {
 		$current = substr( yourls_get_request(), 6 );
-		if( $current === false ) 
+		if( $current === false )
 			$current = 'index.php'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index.php
-			
+
 		return $current;
 	}
 	return null;
@@ -2086,7 +2116,7 @@ function yourls_is_allowed_protocol( $url, $protocols = array() ) {
 		global $yourls_allowedprotocols;
 		$protocols = $yourls_allowedprotocols;
 	}
-	
+
 	$protocol = yourls_get_protocol( $url );
 	return yourls_apply_filter( 'is_allowed_protocol', in_array( $protocol, $protocols ), $url, $protocols );
 }
@@ -2128,15 +2158,15 @@ function yourls_get_protocol( $url ) {
  * @since 1.6
  * @param string $url URL to relativize
  * @param bool $strict if true and if URL isn't relative to YOURLS install, return empty string
- * @return string URL 
+ * @return string URL
  */
 function yourls_get_relative_url( $url, $strict = true ) {
 	$url = yourls_sanitize_url( $url );
-	
+
 	// Remove protocols to make it easier
 	$noproto_url  = str_replace( 'https:', 'http:', $url );
 	$noproto_site = str_replace( 'https:', 'http:', YOURLS_SITE );
-	
+
 	// Trim URL from YOURLS root URL : if no modification made, URL wasn't relative
 	$_url = str_replace( $noproto_site . '/', '', $noproto_url );
 	if( $_url == $noproto_url )
@@ -2276,8 +2306,46 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
-	$ydb->debug_log[] = $msg;
+    $ydb->getProfiler()->log($msg);
 	return $msg;
+}
+
+/**
+ * Get the debug log
+ *
+ * @since  1.7.3
+ * @return array
+ */
+function yourls_get_debug_log() {
+	global $ydb;
+
+    // Check if we have a profiler registered (will not be the case if the DB hasn't been properly connected to)
+    if ($ydb->getProfiler()) {
+        return $ydb->getProfiler()->get_log();
+    }
+
+    return array();
+}
+
+/**
+ * Debug mode toggle
+ *
+ * @since 1.7.3
+ * @param bool $bool  Debug on or off
+ */
+function yourls_debug_mode($bool) {
+    global $ydb;
+    $bool = (bool)$bool;
+
+    // log queries if true
+    $ydb->getProfiler()->setActive($bool);
+
+    // report notices if true
+    if ($bool === true) {
+        error_reporting(-1);
+    } else {
+        error_reporting(E_ERROR | E_PARSE);
+    }
 }
 
 /**
@@ -2305,14 +2373,14 @@ function yourls_debug_log( $msg ) {
  */
 function yourls_get_protocol_slashes_and_rest( $url, $array = array( 'protocol', 'slashes', 'rest' ) ) {
 	$proto = yourls_get_protocol( $url );
-	
+
 	if( !$proto or count( $array ) != 3 )
 		return false;
-	
+
 	list( $null, $rest ) = explode( $proto, $url, 2 );
-	
+
 	list( $proto, $slashes ) = explode( ':', $proto );
-	
+
 	return array( $array[0] => $proto . ':', $array[1] => $slashes, $array[2] => $rest );
 }
 
@@ -2329,5 +2397,19 @@ function yourls_set_url_scheme( $url, $scheme = false ) {
         return $url;
     }
     return preg_replace( '!^[a-zA-Z0-9\+\.-]+://!', $scheme . '://', $url );
+}
+
+/**
+ * Tell if there is a new YOURLS version
+ *
+ * This function checks, if needed, if there's a new version of YOURLS and, if applicable, display
+ * an update notice.
+ *
+ * @since 1.7.3
+ */
+function yourls_tell_if_new_version() {
+    $check = yourls_maybe_check_core_version();
+    yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
+    yourls_new_core_version_notice();
 }
 

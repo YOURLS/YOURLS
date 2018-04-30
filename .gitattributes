@@ -5,7 +5,7 @@
 *.php diff=php
 
 # Exclude certain files or directories when generating an archive
-assets/less/ export-ignore
-.travis.yml export-ignore
-composer.json
-.git* export-ignore
+assets/less/    export-ignore
+.travis.yml     export-ignore
+/.git*          export-ignore
+/*.md           export-ignore

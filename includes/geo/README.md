@@ -4,27 +4,20 @@ GeoIP package for YOURLS
 What the hell?
 --------------
 
-Text files from this package (GeoIP.dat and geoip.inc) are provided free by
+The DB file from this package (GeoLite2-Country.mmdb) is provided free by
 MaxMind. Accuracy is 99.5% so don't sweat it if you get unrealistic results.
 
-If unsure, you can always get the latest version of the GeoIP database
-from the following URL: http://www.maxmind.com/app/geolitecountry
-(look for a link pointing to a file named "GeoIP.dat.gz")
+If unsure, you can always get the latest version of the GeoIP2 database
+from the following URL: http://dev.maxmind.com/geoip/geoip2/geolite2/
+(look for a link pointing to a file named "GeoLite2-Country.tar.gz")
 
 Flag files from this package come from various sources. Feel free to copy and
 redistribute them just as I'm doing :)
 
-How to install this package
----------------------------
 
-* In directory "includes", create a subdirectory "geo", so you have the
-following directory structure:   
+Copyright and License
+---------------------
 
-		[yourls_root]
-			  +--admin
-			  +--[other directories...]
-			  +--includes
-				   +--geo
+Database and Contents Copyright (c) 2017 MaxMind, Inc. This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
-* Put the content of this package (files GeoIP.dat and geoip.inc) into
-the freshly created "geo" subdirectory
+This database incorporates GeoNames [http://www.geonames.org] geographical data, which is made available under the Creative Commons Attribution 3.0 License. To view a copy of this license, visit http://www.creativecommons.org/licenses/by/3.0/us/.

@@ -229,14 +229,10 @@ function yourls_phpass_check( $password, $hash ) {
 function yourls_phpass_instance( $iteration = 8, $portable = false ) {
 	$iteration = yourls_apply_filter( 'phpass_new_instance_iteration', $iteration );
 	$portable  = yourls_apply_filter( 'phpass_new_instance_portable', $portable );
-
-	if( !class_exists( 'PasswordHash' ) ) {
-		require_once( YOURLS_INC.'/phpass/PasswordHash.php' );
-	}
-
+    
 	static $instance = false;
 	if( $instance == false ) {
-		$instance = new PasswordHash( $iteration, $portable );
+		$instance = new \Ozh\Phpass\PasswordHash( $iteration, $portable );
 	}
 	
 	return $instance;
@@ -393,18 +389,14 @@ function yourls_check_timestamp( $time ) {
 /**
  * Store new cookie. No $user will delete the cookie.
  *
+ * @param mixed $user  String, user login, or null to delete cookie
  */
 function yourls_store_cookie( $user = null ) {
+
+    // No user will delete the cookie with a cookie time from the past
 	if( !$user ) {
-		$pass = null;
 		$time = time() - 3600;
 	} else {
-		global $yourls_user_passwords;
-		if( isset($yourls_user_passwords[$user]) ) {
-			$pass = $yourls_user_passwords[$user];
-		} else {
-			die( 'Stealing cookies?' ); // This should never happen
-		}
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
 	
@@ -417,12 +409,7 @@ function yourls_store_cookie( $user = null ) {
 		$domain = '';
    
     if ( !headers_sent( $filename, $linenum ) ) {
-		// Set httponly if the php version is >= 5.2.0
-		if( version_compare( phpversion(), '5.2.0', 'ge' ) ) {
-			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
-		} else {
-			setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure );
-		}
+        setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
 		yourls_do_action( 'setcookie_failed', $user );
