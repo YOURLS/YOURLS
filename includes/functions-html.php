@@ -161,7 +161,7 @@ function yourls_html_footer($can_query = true) {
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", yourls_get_debug_log() );
-		echo '</div>';
+		echo '</pre></div>';
 	} ?>
 	<?php yourls_do_action( 'html_footer', yourls_get_html_context() ); ?>
 	</body>
