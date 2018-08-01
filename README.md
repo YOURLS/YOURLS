@@ -118,7 +118,7 @@ Contributors
 ------------
 
 YOURLS is made by these fine folks :
-<a href="graphs/contributors"><img src="https://opencollective.com/yourls/contributors.svg?width=890" /></a>
+<a href="https://github.com/YOURLS/YOURLS/graphs/contributors"><img src="https://opencollective.com/yourls/contributors.svg?width=890" /></a>
 
 License
 -------
