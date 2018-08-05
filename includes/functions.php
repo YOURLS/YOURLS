@@ -720,6 +720,34 @@ function yourls_redirect( $location, $code = 301 ) {
 }
 
 /**
+ * Redirect to an existing short URL
+ *
+ * Redirect client to an existing short URL (no check performed) and execute misc tasks: update
+ * clicks for short URL, update logs, and send a nocache header to prevent bots indexing short
+ * URLS (see #2202)
+ *
+ * @since  1.7.3
+ * @param  string $url
+ * @param  string $keyword
+ */
+function yourls_redirect_shorturl($url, $keyword) {
+    yourls_do_action('redirect_shorturl', $url, $keyword);
+
+    // Update click count in main table
+    $update_clicks = yourls_update_clicks($keyword);
+
+    // Update detailed log for stats
+    $log_redirect = yourls_log_redirect($keyword);
+
+    // Tell (Google)bots not to index this short URL, see #2202
+    if( !headers_sent() ) {
+        header("X-Robots-Tag: noindex", true);
+    }
+
+    yourls_redirect($url, 301);
+}
+
+/**
  * Set HTTP status header
  *
  * @since 1.4
