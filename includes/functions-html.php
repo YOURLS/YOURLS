@@ -727,6 +727,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				if( !empty( $error_msg ) ) {
 					echo '<p class="error">'.$error_msg.'</p>';
 				}
+				yourls_do_action( 'login_form_top' );
 			?>
 			<p>
 				<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
@@ -736,9 +737,15 @@ function yourls_login_screen( $error_msg = '' ) {
 				<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
 				<input type="password" id="password" name="password" size="30" class="text" />
 			</p>
+			<?php
+				yourls_do_action( 'login_form_bottom' );
+			?>
 			<p style="text-align: right;">
 				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 			</p>
+			<?php
+				yourls_do_action( 'login_form_end' );
+			?>
 		</form>
 		<script type="text/javascript">$('#username').focus();</script>
 	</div>
