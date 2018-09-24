@@ -80,7 +80,12 @@ function yourls_is_valid_user() {
 			
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-				$url = yourls_match_current_protocol(yourls_sanitize_url(sprintf("%s%s", $_SERVER['SERVER_NAME'], $_SERVER['REQUEST_URI'])));
+				$yourls_url = parse_url( YOURLS_SITE );
+				unset($yourls_url['path']);
+				unset($yourls_url['query']);
+				unset($yourls_url['fragment']);
+				$redirect_url = yourls_unparse_url($yourls_url);
+				$url = yourls_match_current_protocol(yourls_sanitize_url(sprintf("%s%s", $redirect_url, $_SERVER['REQUEST_URI'])));
 				yourls_redirect( yourls_sanitize_url_safe($url) );
 			}
 		}
