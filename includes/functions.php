@@ -309,7 +309,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
 
-	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
+	yourls_do_action( 'post_add_new_link', $url, $keyword, $title, $return );
 
 	$return['statusCode'] = 200; // regardless of result, this is still a valid request
 	return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
