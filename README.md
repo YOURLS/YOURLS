@@ -2,25 +2,25 @@
 [![OpenCollective](https://opencollective.com/yourls/sponsors/badge.svg)](#sponsors) ![&hearts;](https://img.shields.io/badge/made%20with-%E2%9D%A4-ff69b4.svg)
 ========
 
-**YOURLS** is a set of PHP scripts that will allow you to run <strong>Y</strong>our <strong>O</strong>wn <strong>URL</strong> <strong>S</strong>hortener. You'll have full control over your data, detailed stats, analytics, plugins, and more. It's free.
+**YOURLS** is a set of PHP scripts that will allow you to run <strong>Y</strong>our <strong>O</strong>wn <strong>URL</strong> <strong>S</strong>hortener. You'll have full control over your data, detailed stats, analytics, plugins, and more. It's free and open-source.
 
 
 Quick Start
 -----------
-To get started, check [yourls.org](https://yourls.org)!  
+To get started, check [yourls.org](https://yourls.org)!
 Learn more tweaks in the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
 
 
 Community news, tips and tricks
 -------------------------------
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
-* Follow [@yourls](https://twitter.com/yourls)
-* Subscribe to the [YOURLS User Newsletter](http://yourls.org/newsletter) (infrequent, low volume)
+* Follow [@yourls](https://twitter.com/yourls) on Twitter
+* Subscribe to the [YOURLS User Newsletter](https://yourls.org/newsletter) (infrequent, low volume)
 
 
 Keep track of development
 -------------------------
-* Follow [@yourls_dev](http://twitter.com/yourls_dev)
+* Follow [@yourls_dev](https://twitter.com/yourls_dev)
 * Check [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
 * Check the [Road map](https://github.com/YOURLS/YOURLS/wiki/Road-Map)
 
@@ -34,7 +34,7 @@ Have a **new bug** to report? [Please open a new issue](https://github.com/YOURL
 
 Versioning
 ----------
-For transparency, YOURLS will be maintained under the [Semantic Versioning](http://semver.org) principles as much as possible. Releases are numbered with the following format: `<major>.<minor>.<patch>` and the following guidelines:
+For transparency, YOURLS will be maintained under the [Semantic Versioning](https://semver.org) principles as much as possible. Releases are numbered with the following format: `<major>.<minor>.<patch>` and the following guidelines:
 * Breaking backward compatibility bumps the major (and resets the minor and patch)
 * New additions without breaking backward compatibility bumps the minor (and resets the patch)
 * Bug fixes and misc changes bumps the patch
@@ -123,5 +123,5 @@ YOURLS is made by these fine folks :
 License
 -------
 Free software. Do whatever the hell you want with it.
-YOURLS is released under the [MIT license](LICENSE)
+YOURLS is released under the [MIT license](LICENSE).
 
