@@ -35,6 +35,8 @@ class Profiler implements ProfilerInterface
      */
     protected $profiles = array();
 
+    protected static $count = 0;
+
     /**
      *
      * Turns the profiler on and off.
@@ -87,7 +89,11 @@ class Profiler implements ProfilerInterface
         }
 
         $e = new \Exception;
-        $this->profiles[] = array(
+
+        // this allows for multiple profilers getting inter-sorted later
+        $k = self::$count ++;
+
+        $this->profiles[$k] = array(
             'duration'    => $duration,
             'function'    => $function,
             'statement'   => $statement,
@@ -118,5 +124,6 @@ class Profiler implements ProfilerInterface
     public function resetProfiles()
     {
         $this->profiles = array();
+        self::$count = 0;
     }
 }

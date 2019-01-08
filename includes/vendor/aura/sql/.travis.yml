@@ -1,0 +1,40 @@
+language: php
+sudo: false
+
+matrix:
+    include:
+        - os: linux
+          dist: precise
+          php: 5.3
+        - os: linux
+          dist: precise
+          php: 5.4
+        - os: linux
+          dist: precise
+          php: 5.5
+        - os: linux
+          dist: precise
+          php: 5.6
+          env:
+            - TEST_COVERAGE=true
+        - os: linux
+          dist: trusty
+          php: 7
+        - os: linux
+          dist: trusty
+          php: 7.1
+        - os: linux
+          dist: trusty
+          php: 7.2
+        - os: linux
+          dist: trusty
+          php: nightly
+
+before_script:
+  - composer self-update
+  - composer install
+script:
+  - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/phpunit --coverage-clover=coverage.clover ; else vendor/bin/phpunit ; fi
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - if [[ $TEST_COVERAGE == 'true' ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover ; fi

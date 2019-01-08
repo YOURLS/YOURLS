@@ -8,13 +8,13 @@
 
 namespace POMO;
 
-use POMO\Streams\NOOPReader;
 use POMO\Streams\FileReader;
-use POMO\Translations\GettextTranslations;
+use POMO\Streams\NOOPReader;
 use POMO\Translations\EntryTranslations;
+use POMO\Translations\GettextTranslations;
 
 /**
- * Class for working with MO files
+ * Class for working with MO files.
  */
 class MO extends GettextTranslations
 {
@@ -38,10 +38,11 @@ class MO extends GettextTranslations
     }
 
     /**
-     * Fills up with the entries from MO file $filename
+     * Fills up with the entries from MO file $filename.
      *
-     * @param  string $filename MO file to load
-     * @return bool   Success
+     * @param string $filename MO file to load
+     *
+     * @return bool Success
      */
     public function import_from_file($filename)
     {
@@ -57,6 +58,7 @@ class MO extends GettextTranslations
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
     public function export_to_file($filename)
@@ -76,7 +78,7 @@ class MO extends GettextTranslations
      */
     public function export()
     {
-        $tmp_fh = fopen("php://temp", 'r+');
+        $tmp_fh = fopen('php://temp', 'r+');
         if (!$tmp_fh) {
             return false;
         }
@@ -88,6 +90,7 @@ class MO extends GettextTranslations
 
     /**
      * @param EntryTranslations $entry
+     *
      * @return bool
      */
     public function is_entry_good_for_export(EntryTranslations $entry)
@@ -105,6 +108,7 @@ class MO extends GettextTranslations
 
     /**
      * @param resource $fh
+     *
      * @return true
      */
     public function export_to_file_handle($fh)
@@ -142,7 +146,7 @@ class MO extends GettextTranslations
         $reader = new NOOPReader();
 
         foreach ($entries as $entry) {
-            $originals_table .= $this->export_original($entry) . chr(0);
+            $originals_table .= $this->export_original($entry).chr(0);
             $length = $reader->strlen($this->export_original($entry));
             fwrite($fh, pack('VV', $length, $current_addr));
             $current_addr += $length + 1; // account for the NULL byte after
@@ -155,7 +159,7 @@ class MO extends GettextTranslations
             $current_addr
         ));
         $current_addr += strlen($exported_headers) + 1;
-        $translations_table = $exported_headers . chr(0);
+        $translations_table = $exported_headers.chr(0);
 
         foreach ($entries as $entry) {
             $translations_table .= $this->export_translations($entry).chr(0);
@@ -172,6 +176,7 @@ class MO extends GettextTranslations
 
     /**
      * @param EntryTranslations $entry
+     *
      * @return string
      */
     public function export_original(EntryTranslations $entry)
@@ -190,6 +195,7 @@ class MO extends GettextTranslations
 
     /**
      * @param EntryTranslations $entry
+     *
      * @return string
      */
     public function export_translations(EntryTranslations $entry)
@@ -213,15 +219,16 @@ class MO extends GettextTranslations
 
     /**
      * @param int $magic
+     *
      * @return string|false
      */
     public function get_byteorder($magic)
     {
         // The magic is 0x950412de
-        $magic_little = (int) - 1794895138;
+        $magic_little = (int) -1794895138;
         $magic_little_64 = (int) 2500072158;
         // 0xde120495
-        $magic_big = ((int) - 569244523) & 0xFFFFFFFF;
+        $magic_big = ((int) -569244523) & 0xFFFFFFFF;
         if ($magic_little == $magic || $magic_little_64 == $magic) {
             return 'little';
         } elseif ($magic_big == $magic) {
@@ -233,6 +240,7 @@ class MO extends GettextTranslations
 
     /**
      * @param FileReader $reader
+     *
      * @return bool
      */
     public function import_from_reader(FileReader $reader)
@@ -287,7 +295,7 @@ class MO extends GettextTranslations
         }
 
         // transform raw data into set of indices
-        $originals    = $reader->str_split($originals, 8);
+        $originals = $reader->str_split($originals, 8);
         $translations = $reader->str_split($translations, 8);
 
         // skip hash table
@@ -309,7 +317,7 @@ class MO extends GettextTranslations
             $o['pos'] -= $strings_addr;
             $t['pos'] -= $strings_addr;
 
-            $original    = $reader->substr($strings, $o['pos'], $o['length']);
+            $original = $reader->substr($strings, $o['pos'], $o['length']);
             $translation = $reader->substr($strings, $t['pos'], $t['length']);
 
             if ('' === $original) {
@@ -325,13 +333,14 @@ class MO extends GettextTranslations
 
     /**
      * Build a  from original string and translation strings,
-     * found in a MO file
+     * found in a MO file.
      *
      * @param string $original    original string to translate from MO file.
      *                            Might contain 0x04 as context separator or
      *                            0x00 as singular/plural separator
      * @param string $translation translation string from MO file.Might contain
      *                            0x00 as a plural translations separator
+     *
      * @return EntryTranslations New entry
      */
     public static function &make_entry($original, $translation)
@@ -358,6 +367,7 @@ class MO extends GettextTranslations
 
     /**
      * @param int $count
+     *
      * @return string
      */
     public function select_plural_form($count)
