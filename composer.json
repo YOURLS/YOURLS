@@ -38,5 +38,8 @@
     "suggest": {
         "ext-mbstring": "For best performance",
         "ext-curl": "Required for API usage"
+    },
+    "script": {
+        "post-update-cmd": "./includes/vendor/build-script/yourls-build.sh includes/vendor"
     }
 }
