@@ -22,10 +22,10 @@
         "ozh/phpass": "1.2.0",
         "rmccue/Requests" : "1.7",
         "pomo/pomo" : "1.4.1",
-        "geoip2/geoip2" : "2.5.0",
+        "geoip2/geoip2" : "2.9.0",
         "aura/sql": "~2.",
         "jakeasmith/http_build_url": "1.0.1",
-        "symfony/polyfill-mbstring": "1.5.0"
+        "symfony/polyfill-mbstring": "1.10.0"
     },
     "config": {
         "vendor-dir": "includes/vendor"
@@ -39,7 +39,7 @@
         "ext-mbstring": "For best performance",
         "ext-curl": "Required for API usage"
     },
-    "script": {
-        "post-update-cmd": "./includes/vendor/build-script/yourls-build.sh includes/vendor"
+    "scripts": {
+        "post-update-cmd": "bash ./includes/vendor/build-script/yourls-build.sh ./includes/vendor"
     }
 }

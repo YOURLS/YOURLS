@@ -117,30 +117,30 @@
     },
     {
         "name": "geoip2/geoip2",
-        "version": "v2.5.0",
-        "version_normalized": "2.5.0.0",
+        "version": "v2.9.0",
+        "version_normalized": "2.9.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/maxmind/GeoIP2-php.git",
-            "reference": "87602e1c9f5014291b06e126847123360cb6c2db"
+            "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/87602e1c9f5014291b06e126847123360cb6c2db",
-            "reference": "87602e1c9f5014291b06e126847123360cb6c2db",
+            "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/a807fbf65212eef5d8d2db1a1b31082b53633d77",
+            "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77",
             "shasum": ""
         },
         "require": {
             "maxmind-db/reader": "~1.0",
-            "maxmind/web-service-common": "~0.3",
-            "php": ">=5.3.1"
+            "maxmind/web-service-common": "~0.5",
+            "php": ">=5.4"
         },
         "require-dev": {
-            "apigen/apigen": "^4.1",
-            "phpunit/phpunit": "4.2.*",
-            "squizlabs/php_codesniffer": "2.*"
+            "friendsofphp/php-cs-fixer": "2.*",
+            "phpunit/phpunit": "4.*",
+            "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2017-05-08T20:05:30+00:00",
+        "time": "2018-04-10T15:32:59+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -508,17 +508,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.5.0",
-        "version_normalized": "1.5.0.0",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
-            "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
+            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
             "shasum": ""
         },
         "require": {
@@ -527,11 +527,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2017-06-14T15:44:48+00:00",
+        "time": "2018-09-21T13:07:52+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.5-dev"
+                "dev-master": "1.9-dev"
             }
         },
         "installation-source": "dist",

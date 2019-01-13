@@ -257,7 +257,7 @@ print($record->ipAddress . "\n"); // '128.101.101.101'
 ### Usage ###
 
 To use this API, you must create a new `\GeoIp2\WebService\Client`
-object with your `$userId` and `$licenseKey`, then you call the method
+object with your `$accountId` and `$licenseKey`, then you call the method
 corresponding to a specific end point, passing it the IP address you want to
 look up.
 
@@ -277,7 +277,7 @@ require_once 'vendor/autoload.php';
 use GeoIp2\WebService\Client;
 
 // This creates a Client object that can be reused across requests.
-// Replace "42" with your user ID and "license_key" with your license
+// Replace "42" with your account ID and "license_key" with your license
 // key.
 $client = new Client(42, 'abcdef123456');
 
@@ -376,13 +376,10 @@ to the client API, please see
 
 ## Requirements  ##
 
-This code requires PHP 5.3 or greater. Older versions of PHP are not
-supported. This library works and is tested with HHVM.
+This library requires PHP 5.4 or greater. This library works and is tested
+with HHVM.
 
 This library also relies on the [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php).
-
-If you are using PHP 5.3 with an autoloader besides Composer, you must load
-`JsonSerializable.php` in the `compat` directory.
 
 ## Contributing ##
 
@@ -398,7 +395,7 @@ The GeoIP2 PHP API uses [Semantic Versioning](http://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2013-2016 by MaxMind, Inc.
+This software is Copyright (c) 2013-2018 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
 
