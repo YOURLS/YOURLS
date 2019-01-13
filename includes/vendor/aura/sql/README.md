@@ -58,13 +58,12 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Sql/releases
 
 ### Quality
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/quality-score.png?b=develop-2)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
-[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/coverage.png?b=develop-2)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
-[![Build Status](https://travis-ci.org/auraphp/Aura.Sql.png?branch=develop-2)](https://travis-ci.org/auraphp/Aura.Sql)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
+[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/coverage.png?b=2.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
+[![Build Status](https://travis-ci.org/auraphp/Aura.Sql.png?branch=2.x)](https://travis-ci.org/auraphp/Aura.Sql)
 
-To run the unit tests at the command line, issue `phpunit` at the package root. (This requires [PHPUnit][] to be available as `phpunit`.)
+To run the [PHPUnit](http://phpunit.de/manual/) unit tests at the command line, issue `composer install` and then `vendor/bin/phpunit` at the package root. (This requires [Composer](http://getcomposer.org/) to be available as `composer`.)
 
-[PHPUnit]: http://phpunit.de/manual/
 
 This library attempts to comply with [PSR-1][], [PSR-2][], and [PSR-4][]. If
 you notice compliance oversights, please send a patch via pull request.
@@ -91,7 +90,6 @@ parameter that allows you to pass attributes to be set after the connection is
 made.
 
 ```php
-<?php
 use Aura\Sql\ExtendedPdo;
 
 $pdo = new ExtendedPdo(
@@ -101,7 +99,6 @@ $pdo = new ExtendedPdo(
     array(), // driver options as key-value pairs
     array()  // attributes as key-value pairs
 );
-?>
 ```
 
 > N.b.: The `sqlsrv` extension will fail to connect when using error mode `PDO::ERRMODE_EXCEPTION`. To connect, you will need to explicitly pass `array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)` (or `PDO::ERRMODE_SILENT`) when using `sqlsrv`.
@@ -111,7 +108,6 @@ Whereas the native _PDO_ connects on instantiation, _ExtendedPdo_ does not conne
 If you want to force a connection, call the `connect()` method.
 
 ```php
-<?php
 // does not connect to the database
 $pdo = new ExtendedPdo(
     'mysql:host=localhost;dbname=test',
@@ -124,16 +120,13 @@ $pdo->exec('SELECT * FROM test');
 
 // explicitly forces a connection
 $pdo->connect();
-?>
 ```
 
 If you want to explicitly force a disconnect, call the `disconnect()` method.
 
 ```php
-<?php
 // explicitly forces disconnection
 $pdo->disconnect();
-?>
 ```
 
 Doing so will close the connection by unsetting the internal _PDO_ instance. However, calling an _ExtendedPdo_ method that implicitly establishes a connection, such as `query()` or one of the `fetch*()` methods, will automatically re-connect to the database.
@@ -143,12 +136,10 @@ Doing so will close the connection by unsetting the internal _PDO_ instance. How
 The _ExtendedPdo_ class can be used to decorate an existing PDO connection as well. To do so, instantiate _ExtendedPdo_ by passing an existing PDO connection:
 
 ```php
-<?php
 use Aura\Sql\ExtendedPdo;
 
 $pdo = new PDO(...);
 $extended_pdo = new ExtendedPdo($pdo);
-?>
 ```
 
 The decorated _PDO_ instance now provides all the _ExtendedPdo_ functionality (aside from lazy connection, which is not possible since the _PDO_ instance by definition has already connected).
@@ -165,7 +156,6 @@ However, _ExtendedPdo_ recognizes arrays and converts them into comma-
 separated quoted strings.
 
 ```php
-<?php
 // the array to be quoted
 $array = array('foo', 'bar', 'baz');
 
@@ -178,7 +168,6 @@ $cond = 'IN (' . $pdo->quote($array) . ')';
 // "IN ('foo', 'bar', 'baz')"
 $pdo = new ExtendedPdo(...);
 $cond = 'IN (' . $pdo->quote($array) . ')';
-?>
 ```
 
 ### The `perform()` Method
@@ -191,7 +180,6 @@ the query string itself is modified before passing to the database for value
 binding.
 
 ```php
-<?php
 // the array to be quoted
 $array = array('foo', 'bar', 'baz');
 
@@ -212,7 +200,6 @@ $sth = $pdo->perform($stm, $bind_values);
 echo $sth->queryString;
 // the query string has been modified by ExtendedPdo to become
 // "SELECT * FROM test WHERE foo IN ('foo', 'bar', 'baz')"
-?>
 ```
 
 Finally, note that array quoting works only via the `perform()` method,
@@ -228,7 +215,6 @@ in one call on _ExtendedPdo_ directly.  (The `fetch*()` methods use `perform()`
 internally, so quoting-and-replacement of array placeholders is supported.)
 
 ```php
-<?php
 $stm  = 'SELECT * FROM test WHERE foo = :foo AND bar = :bar';
 $bind = array('foo' => 'baz', 'bar' => 'dib');
 
@@ -278,7 +264,6 @@ $result = $pdo->fetchValue($stm, $bind);
 // fetchAffected() returns the number of affected rows
 $stm = "UPDATE test SET incr = incr + 1 WHERE foo = :foo AND bar = :bar";
 $row_count = $pdo->fetchAffected($stm, $bind);
-?>
 ```
 
 The methods `fetchAll()`, `fetchAssoc()`, `fetchCol()`, and `fetchPairs()`
@@ -286,12 +271,10 @@ take an optional third parameter, a callable, to apply to each row of the
 results before returning.
 
 ```php
-<?php
 $result = $pdo->fetchAssoc($stm, $bind, function (&$row) {
     // add a column to the row
     $row['my_new_col'] = 'Added this column from the callable.';
 });
-?>
 ```
 
 ### New `yield*()` Methods
@@ -325,7 +308,7 @@ foreach ($pdo->yieldCol($stm, $bind) as $val) {
 // class name and optional array of constructor arguments.
 $class = 'ClassName';
 $args = ['arg0', 'arg1', 'arg2'];
-foreach ($pdo->yieldCol($stm, $bind, $class, $args) as $object) {
+foreach ($pdo->yieldObjects($stm, $bind, $class, $args) as $object) {
     // ...
 }
 
@@ -344,7 +327,6 @@ complete. _ExtendedPdo_ comes with an optional profiler that you can use to
 discover that information.
 
 ```php
-<?php
 use Aura\Sql\ExtendedPdo;
 use Aura\Sql\Profiler;
 
@@ -357,7 +339,6 @@ $pdo->setProfiler(new Profiler);
 
 // now retrieve the profile information:
 $profiles = $pdo->getProfiler()->getProfiles();
-?>
 ```
 
 Each profile entry will have these keys:
@@ -383,7 +364,6 @@ is set, you can activate and deactivate it as you wish using the
 retained.
 
 ```php
-<?php
 $pdo = new ExtendedPdo(...);
 $pdo->setProfiler(new Profiler);
 
@@ -392,7 +372,6 @@ $pdo->setProfiler(new Profiler);
 $pdo->getProfiler()->setActive(false);
 $pdo->fetchAll('SELECT * FROM foo');
 $pdo->getProfiler()->setActive(true);
-?>
 ```
 
 ## Connection Locator
@@ -406,12 +385,10 @@ called. The creation logic is wrapped in a callable.
 First, create the _ConnectionLocator_:
 
 ```php
-<?php
 use Aura\Sql\ExtendedPdo;
 use Aura\Sql\ConnectionLocator;
 
-$connections = new ConnectionLocator;
-?>
+$connectionLocator = new ConnectionLocator;
 ```
 
 Now add a default connection; this will be used when a read or write
@@ -419,23 +396,20 @@ connection is not defined. (This is also useful for setting up connection
 location in advance of actually having multiple database servers.)
 
 ```php
-<?php
-$connections->setDefault(function () {
+$connectionLocator->setDefault(function () {
     return new ExtendedPdo(
         'mysql:host=default.db.localhost;dbname=database',
         'username',
         'password'
     );
 });
-?>
 ```
 
 Next, add as many named read and write connections as you like:
 
 ```php
-<?php
 // the write (master) server
-$connections->setWrite('master', function () {
+$connectionLocator->setWrite('master', function () {
     return new ExtendedPdo(
         'mysql:host=master.db.localhost;dbname=database',
         'username',
@@ -444,7 +418,7 @@ $connections->setWrite('master', function () {
 });
 
 // read (slave) #1
-$connections->setRead('slave1', function () {
+$connectionLocator->setRead('slave1', function () {
     return new ExtendedPdo(
         'mysql:host=slave1.db.localhost;dbname=database',
         'username',
@@ -453,7 +427,7 @@ $connections->setRead('slave1', function () {
 });
 
 // read (slave) #2
-$connections->setRead('slave2', function () {
+$connectionLocator->setRead('slave2', function () {
     return new ExtendedPdo(
         'mysql:host=slave2.db.localhost;dbname=database',
         'username',
@@ -462,14 +436,13 @@ $connections->setRead('slave2', function () {
 });
 
 // read (slave) #3
-$connections->setRead('slave3', function () {
+$connectionLocator->setRead('slave3', function () {
     return new ExtendedPdo(
         'mysql:host=slave3.db.localhost;dbname=database',
         'username',
         'password'
     );
 });
-?>
 ```
 
 Finally, retrieve a connection from the locator when you need it. This will
@@ -486,10 +459,8 @@ create the connection (if needed) and then return it.
   defined, it will return the default connection.
 
 ```php
-<?php
-$read = $connections->getRead();
+$read = $connectionLocator->getRead();
 $results = $read->fetchAll('SELECT * FROM table_name LIMIT 10');
-?>
 ```
 
 ### Construction-Time Configuration
@@ -498,7 +469,6 @@ The _ConnectionLocator_ can be configured with all its connections at
 construction time; this is useful with dependency injection mechanisms.
 
 ```php
-<?php
 use Aura\Sql\ConnectionLocator;
 use Aura\Sql\ExtendedPdo;
 
@@ -548,6 +518,19 @@ $write = array(
 );
 
 // configure locator at construction time
-$connections = new ConnectionLocator($default, $read, $write);
-?>
+$connectionLocator = new ConnectionLocator($default, $read, $write);
 ```
+
+### Profiler
+
+You can turn profiling on and off for all connections in the locator using the
+`setProfiling()` method. (If no profiler has been set on a connection, the
+locator will set a default profiler into it automatically.) To get all the
+profiled queries using the `getProfiles()` method.
+
+```php
+$connectionLocator->setProfiling(true);
+// perform queries, then:
+$profiles = $connectionLocator->getProfiles();
+```
+
