@@ -828,7 +828,7 @@ function yourls_html_menu() {
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 	*/
 }
 
@@ -839,7 +839,7 @@ function yourls_html_menu() {
 function yourls_add_notice( $message, $style = 'notice' ) {
 	// Escape single quotes in $message to avoid breaking the anonymous function
 	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 }
 
 /**
