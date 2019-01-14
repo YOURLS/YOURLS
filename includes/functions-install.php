@@ -36,11 +36,11 @@ function yourls_get_database_version() {
 }
 
 /**
- * Check if PHP > 5.3
+ * Check if PHP > 5.6
  *
  */
 function yourls_check_php_version() {
-    return(defined('PHP_VERSION_ID') && PHP_VERSION_ID > 50300);
+    return version_compare( PHP_VERSION, '5.6.0', '>=' );
 }
 
 /**
