@@ -16,7 +16,7 @@
         "source": "https://github.com/YOURLS/YOURLS"
     },
     "require": {
-        "php": ">=5.3",
+        "php": ">=5.6",
         "ext-pdo": "*",
         "ozh/bookmarkletgen": "1.2",
         "ozh/phpass": "1.2.0",
