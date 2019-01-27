@@ -1060,6 +1060,10 @@ function yourls_upgrade_is_needed() {
 	if( $currentsql < YOURLS_DB_VERSION )
 		return true;
 
+	// Check if YOURLS_VERSION exist && match value stored in YOURLS_DB_TABLE_OPTIONS, update DB if required
+	if( $currentver < YOURLS_VERSION )
+		yourls_update_option( 'version', YOURLS_VERSION );
+    
 	return false;
 }
 
