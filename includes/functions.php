@@ -1649,11 +1649,13 @@ function yourls_tick() {
  * Create a time limited, action limited and user limited token
  *
  */
-function yourls_create_nonce( $action, $user = false ) {
+function yourls_create_nonce( $action, $user = false) {
 	if( false == $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
-	return substr( yourls_salt($tick . $action . $user), 0, 10 );
+	$salt = substr( yourls_salt($tick . $action . $user), 0, 10 );
+    $maxTime = time() + YOURLS_NONCE_LIFE;
+    return $salt . "," . $maxTime . "," . sha1( $salt . YOURLS_COOKIEKEY . $maxTime );
 }
 
 /**
@@ -1693,9 +1695,11 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 		$nonce = $_REQUEST['nonce'];
 
 	// what nonce should be
-	$valid = yourls_create_nonce( $action, $user );
+    $tick = yourls_tick();
+    $valid = substr( yourls_salt($tick . $action . $user), 0, 10 );
+    $nonce_parts = explode(',', urldecode($nonce));
 
-	if( $nonce == $valid ) {
+	if( $nonce_parts[0] == $valid && $nonce_parts[2] == sha1( $valid . YOURLS_COOKIEKEY . $nonce_parts[1] ) ) {
 		return true;
 	} else {
 		if( $return )
