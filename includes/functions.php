@@ -571,11 +571,11 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 	switch( $filter ) {
 		case 'bottom':
-			$sort_by    = 'clicks';
+			$sort_by    = '`clicks`';
 			$sort_order = 'asc';
 			break;
 		case 'last':
-			$sort_by    = 'timestamp';
+			$sort_by    = '`timestamp`';
 			$sort_order = 'desc';
 			break;
 		case 'rand':
@@ -585,7 +585,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 			break;
 		case 'top':
 		default:
-			$sort_by    = 'clicks';
+			$sort_by    = '`clicks`';
 			$sort_order = 'desc';
 			break;
 	}
@@ -596,7 +596,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
 		$return = array();
 		$i = 1;
@@ -1063,7 +1063,7 @@ function yourls_upgrade_is_needed() {
 	// Check if YOURLS_VERSION exist && match value stored in YOURLS_DB_TABLE_OPTIONS, update DB if required
 	if( $currentver < YOURLS_VERSION )
 		yourls_update_option( 'version', YOURLS_VERSION );
-    
+
 	return false;
 }
 
