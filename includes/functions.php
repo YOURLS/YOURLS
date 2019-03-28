@@ -1655,7 +1655,10 @@ function yourls_create_nonce( $action, $user = false) {
 	$tick = yourls_tick();
 	$salt = substr( yourls_salt($tick . $action . $user), 0, 10 );
     $maxTime = time() + YOURLS_NONCE_LIFE;
-    return $salt . "," . $maxTime . "," . sha1( $salt . YOURLS_COOKIEKEY . $maxTime );
+
+    $nonce = $salt . "," . $maxTime . "," . sha1( $salt . YOURLS_COOKIEKEY . $maxTime );
+    yourls_update_option('YOURLS_NONCE_' . $action, $nonce);
+    return $nonce;
 }
 
 /**
@@ -1699,7 +1702,8 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
     $valid = substr( yourls_salt($tick . $action . $user), 0, 10 );
     $nonce_parts = explode(',', urldecode($nonce));
 
-	if( $nonce_parts[0] == $valid && $nonce_parts[2] == sha1( $valid . YOURLS_COOKIEKEY . $nonce_parts[1] ) ) {
+	if( $nonce_parts[0] == $valid && $nonce_parts[2] == sha1( $valid . YOURLS_COOKIEKEY . $nonce_parts[1] ) && yourls_get_option('YOURLS_NONCE_' . $action) === urldecode($nonce) ) {
+        yourls_delete_option('YOURLS_NONCE_' . $action);
 		return true;
 	} else {
 		if( $return )
