@@ -1645,20 +1645,18 @@ function yourls_tick() {
 	return ceil( time() / YOURLS_NONCE_LIFE );
 }
 
+
 /**
  * Create a time limited, action limited and user limited token
  *
  */
-function yourls_create_nonce( $action, $user = false) {
+function yourls_create_nonce( $action, $user = false ) {
 	if( false == $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
-	$salt = substr( yourls_salt($tick . $action . $user), 0, 10 );
-    $maxTime = time() + YOURLS_NONCE_LIFE;
-
-    $nonce = $salt . "," . $maxTime . "," . sha1( $salt . YOURLS_COOKIEKEY . $maxTime );
-    yourls_update_option('YOURLS_NONCE_' . $action, $nonce);
-    return $nonce;
+	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
+	// Allow plugins to alter the nonce
+	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
 }
 
 /**
@@ -1697,13 +1695,16 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
 		$nonce = $_REQUEST['nonce'];
 
-	// what nonce should be
-    $tick = yourls_tick();
-    $valid = substr( yourls_salt($tick . $action . $user), 0, 10 );
-    $nonce_parts = explode(',', urldecode($nonce));
+	// Allow plugins to short-circuit the rest of the function
+	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
+	if ($valid) {
+		return true;
+	}
 
-	if( $nonce_parts[0] == $valid && $nonce_parts[2] == sha1( $valid . YOURLS_COOKIEKEY . $nonce_parts[1] ) && yourls_get_option('YOURLS_NONCE_' . $action) === urldecode($nonce) ) {
-        yourls_delete_option('YOURLS_NONCE_' . $action);
+	// what nonce should be
+	$valid = yourls_create_nonce( $action, $user );
+
+	if( $nonce == $valid ) {
 		return true;
 	} else {
 		if( $return )
