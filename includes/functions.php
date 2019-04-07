@@ -1649,6 +1649,7 @@ function yourls_tick() {
 	return ceil( time() / YOURLS_NONCE_LIFE );
 }
 
+
 /**
  * Create a time limited, action limited and user limited token
  *
@@ -1657,7 +1658,9 @@ function yourls_create_nonce( $action, $user = false ) {
 	if( false == $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
-	return substr( yourls_salt($tick . $action . $user), 0, 10 );
+	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
+	// Allow plugins to alter the nonce
+	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
 }
 
 /**
@@ -1695,6 +1698,12 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 	// get current nonce value
 	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
 		$nonce = $_REQUEST['nonce'];
+
+	// Allow plugins to short-circuit the rest of the function
+	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
+	if ($valid) {
+		return true;
+	}
 
 	// what nonce should be
 	$valid = yourls_create_nonce( $action, $user );
