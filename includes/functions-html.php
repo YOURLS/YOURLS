@@ -88,7 +88,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-2.2.4.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -98,7 +98,8 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php } ?>
 	<?php if ( $tablesorter ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php yourls_site_url(); ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/jquery-3.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/tablesorte.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $insert ) { ?>
 		<script src="<?php yourls_site_url(); ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
@@ -827,7 +828,7 @@ function yourls_html_menu() {
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 	*/
 }
 
@@ -838,7 +839,7 @@ function yourls_html_menu() {
 function yourls_add_notice( $message, $style = 'notice' ) {
 	// Escape single quotes in $message to avoid breaking the anonymous function
 	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 }
 
 /**

@@ -45,6 +45,15 @@ class ConnectionLocator implements ConnectionLocatorInterface
 
     /**
      *
+     * Whether or not to turn on profiling when retrieving a connection.
+     *
+     * @var bool
+     *
+     */
+    protected $profiling = false;
+
+    /**
+     *
      * Constructor.
      *
      * @param callable $default A callable to create a default connection.
@@ -100,7 +109,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
             $this->converted['default'] = true;
         }
 
-        return $this->registry['default'];
+        $connection = $this->registry['default'];
+        $this->setProfiler($connection);
+        return $connection;
     }
 
     /**
@@ -201,6 +212,104 @@ class ConnectionLocator implements ConnectionLocatorInterface
             $this->converted[$type][$name] = true;
         }
 
-        return $this->registry[$type][$name];
+        $connection = $this->registry[$type][$name];
+        $this->setProfiler($connection);
+        return $connection;
+    }
+
+    /**
+     *
+     * Given a connection, enable or disable profiling on it. If a profiler has
+     * not been set into the connection, this will instantiate and set one.
+     *
+     * @param ExtendedPdo $connection The connection.
+     *
+     * @return null
+     *
+     */
+    protected function setProfiler(ExtendedPdo $connection)
+    {
+        $profiler = $connection->getProfiler();
+
+        if (! $this->profiling && ! $profiler) {
+            return;
+        }
+
+        if (! $profiler) {
+            $profiler = new Profiler();
+            $connection->setProfiler($profiler);
+        }
+
+        $profiler->setActive($this->profiling);
+    }
+
+    /**
+     *
+     * Set profiling on all connections at retrieval time?
+     *
+     * @param bool $profiling True to enable, or false to disable, profiling on
+     * each connection as it is retrieved.
+     *
+     * @return null
+     *
+     */
+    public function setProfiling($profiling = true)
+    {
+        $this->profiling = (bool) $profiling;
+    }
+
+    /**
+     *
+     * Gets the profiles from all connections.
+     *
+     * @return array
+     *
+     */
+    public function getProfiles()
+    {
+        $profiles = array();
+
+        if ($this->converted['default']) {
+            $connection = $this->registry['default'];
+            $this->addProfiles('default', $connection, $profiles);
+        }
+
+        foreach (array('read', 'write') as $type) {
+            foreach ($this->registry[$type] as $name) {
+                if ($this->converted[$type][$name]) {
+                    $connection = $this->registry[$type][$name];
+                    $this->addProfiles("{$type}:{$name}", $connection, $profiles);
+                }
+            }
+        }
+
+        ksort($profiles);
+        return $profiles;
+    }
+
+    /**
+     *
+     * Adds profiles from a connection, with a label for the connection name.
+     *
+     * @param string $label The connection label.
+     *
+     * @param ExtendedPdo $connection The connection.
+     *
+     * @param array &$profiles Add the connection profiles to this array, in
+     * place.
+     *
+     * @return null
+     */
+    protected function addProfiles($label, ExtendedPdo $connection, &$profiles)
+    {
+        $profiler = $connection->getProfiler();
+        if (! $profiler) {
+            return;
+        }
+
+        foreach ($profiler->getProfiles() as $key => $profile) {
+            $profile = array('connection' => $label) + $profile;
+            $profiles[$key] = $profile;
+        }
     }
 }

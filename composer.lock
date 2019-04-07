@@ -1,27 +1,30 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45a0e0b790111024301ac36d90b0b9c6",
+    "content-hash": "6e793d6dbe55cfcda001aadc2d9c1c1b",
     "packages": [
         {
             "name": "aura/sql",
-            "version": "2.5.1",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Sql.git",
-                "reference": "ffc692d2037c1e8d17103ad0a128189ba6f59b96"
+                "reference": "16206efbe5ba63603fe3b18ba54a4c5296cd5f3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/ffc692d2037c1e8d17103ad0a128189ba6f59b96",
-                "reference": "ffc692d2037c1e8d17103ad0a128189ba6f59b96",
+                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/16206efbe5ba63603fe3b18ba54a4c5296cd5f3e",
+                "reference": "16206efbe5ba63603fe3b18ba54a4c5296cd5f3e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7 || ~4.8"
             },
             "type": "library",
             "extra": {
@@ -57,20 +60,20 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "time": "2016-10-03T20:31:07+00:00"
+            "time": "2018-08-15T13:33:56+00:00"
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.0.9",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "36344aeffdc37711335563e6108cda86566432a6"
+                "reference": "8afa52cd417f4ec417b4bfe86b68106538a87660"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/36344aeffdc37711335563e6108cda86566432a6",
-                "reference": "36344aeffdc37711335563e6108cda86566432a6",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/8afa52cd417f4ec417b4bfe86b68106538a87660",
+                "reference": "8afa52cd417f4ec417b4bfe86b68106538a87660",
                 "shasum": ""
             },
             "require": {
@@ -79,12 +82,9 @@
                 "php": "^5.3.2 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.5",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
                 "psr/log": "^1.0",
-                "symfony/process": "^2.5 || ^3.0"
-            },
-            "suggest": {
-                "symfony/process": "This is necessary to reliably check whether openssl_x509_parse is vulnerable on older php versions, but can be ignored on PHP 5.5.6+"
+                "symfony/process": "^2.5 || ^3.0 || ^4.0"
             },
             "type": "library",
             "extra": {
@@ -116,31 +116,31 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2017-11-13T15:51:25+00:00"
+            "time": "2018-10-18T06:09:13+00:00"
         },
         {
             "name": "geoip2/geoip2",
-            "version": "v2.5.0",
+            "version": "v2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maxmind/GeoIP2-php.git",
-                "reference": "87602e1c9f5014291b06e126847123360cb6c2db"
+                "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/87602e1c9f5014291b06e126847123360cb6c2db",
-                "reference": "87602e1c9f5014291b06e126847123360cb6c2db",
+                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/a807fbf65212eef5d8d2db1a1b31082b53633d77",
+                "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77",
                 "shasum": ""
             },
             "require": {
                 "maxmind-db/reader": "~1.0",
-                "maxmind/web-service-common": "~0.3",
-                "php": ">=5.3.1"
+                "maxmind/web-service-common": "~0.5",
+                "php": ">=5.4"
             },
             "require-dev": {
-                "apigen/apigen": "^4.1",
-                "phpunit/phpunit": "4.2.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "friendsofphp/php-cs-fixer": "2.*",
+                "phpunit/phpunit": "4.*",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
@@ -168,7 +168,7 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2017-05-08T20:05:30+00:00"
+            "time": "2018-04-10T15:32:59+00:00"
         },
         {
             "name": "jakeasmith/http_build_url",
@@ -205,29 +205,30 @@
         },
         {
             "name": "maxmind-db/reader",
-            "version": "v1.1.3",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
-                "reference": "7eeccf61b078bb23bb07b1a151a7e5db52871e65"
+                "reference": "eb83d0ee1c1f9b8a340206302136bc81ee02ae74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/7eeccf61b078bb23bb07b1a151a7e5db52871e65",
-                "reference": "7eeccf61b078bb23bb07b1a151a7e5db52871e65",
+                "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/eb83d0ee1c1f9b8a340206302136bc81ee02ae74",
+                "reference": "eb83d0ee1c1f9b8a340206302136bc81ee02ae74",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.1"
+                "php": ">=5.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.2.*",
+                "friendsofphp/php-cs-fixer": "2.*",
+                "phpunit/phpunit": "4.* || 5.*",
                 "satooshi/php-coveralls": "1.0.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "squizlabs/php_codesniffer": "3.*"
             },
             "suggest": {
-                "ext-bcmath": "bcmath or gmp is requred for decoding larger integers with the pure PHP decoder",
-                "ext-gmp": "bcmath or gmp is requred for decoding larger integers with the pure PHP decoder",
+                "ext-bcmath": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
+                "ext-gmp": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
                 "ext-maxminddb": "A C-based database decoder that provides significantly faster lookups"
             },
             "type": "library",
@@ -256,20 +257,20 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2017-01-19T23:49:38+00:00"
+            "time": "2019-01-04T19:55:56+00:00"
         },
         {
             "name": "maxmind/web-service-common",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maxmind/web-service-common-php.git",
-                "reference": "622f7c732a7f9c4c62497fc103939e042b6bdb88"
+                "reference": "61a9836fa3bb1743ab89752bae5005d71e78c73b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/622f7c732a7f9c4c62497fc103939e042b6bdb88",
-                "reference": "622f7c732a7f9c4c62497fc103939e042b6bdb88",
+                "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/61a9836fa3bb1743ab89752bae5005d71e78c73b",
+                "reference": "61a9836fa3bb1743ab89752bae5005d71e78c73b",
                 "shasum": ""
             },
             "require": {
@@ -302,7 +303,7 @@
             ],
             "description": "Internal MaxMind Web Service API",
             "homepage": "https://github.com/maxmind/web-service-common-php",
-            "time": "2017-07-06T17:48:21+00:00"
+            "time": "2018-02-12T22:31:54+00:00"
         },
         {
             "name": "ozh/bookmarkletgen",
@@ -391,23 +392,22 @@
         },
         {
             "name": "pomo/pomo",
-            "version": "v1.3.0",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LeoColomb/pomo.git",
-                "reference": "b03f6707db79ff250cf4042a23c70ce69548f277"
+                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/b03f6707db79ff250cf4042a23c70ce69548f277",
-                "reference": "b03f6707db79ff250cf4042a23c70ce69548f277",
+                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
+                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "codeclimate/php-test-reporter": "^0.4",
                 "phpunit/phpunit": ">=4.0",
                 "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
             },
@@ -424,12 +424,12 @@
             "authors": [
                 {
                     "name": "WordPress",
-                    "homepage": "http://wordpress.org",
+                    "homepage": "https://wordpress.org",
                     "role": "Author"
                 },
                 {
                     "name": "Léo Colombaro",
-                    "homepage": "http://colombaro.fr",
+                    "homepage": "https://colombaro.fr",
                     "role": "Maintainer"
                 }
             ],
@@ -442,7 +442,7 @@
                 "localization",
                 "translation"
             ],
-            "time": "2017-05-22T10:49:09+00:00"
+            "time": "2018-12-20T14:55:38+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -495,16 +495,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.5.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
                 "shasum": ""
             },
             "require": {
@@ -516,7 +516,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -550,7 +550,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-14T15:44:48+00:00"
+            "time": "2018-09-21T13:07:52+00:00"
         }
     ],
     "packages-dev": [],
@@ -560,7 +560,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3",
+        "php": ">=5.6",
         "ext-pdo": "*"
     },
     "platform-dev": []

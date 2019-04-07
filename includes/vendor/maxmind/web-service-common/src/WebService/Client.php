@@ -32,10 +32,10 @@ class Client
     private $proxy;
     private $timeout;
     private $userAgentPrefix;
-    private $userId;
+    private $accountId;
 
     /**
-     * @param int    $userId     your MaxMind user ID
+     * @param int    $accountId  your MaxMind account ID
      * @param string $licenseKey your MaxMind license key
      * @param array  $options    an array of options. Possible keys:
      *                           * `host` - The host to use when connecting to the web service.
@@ -47,11 +47,11 @@ class Client
      *                           username, and password, e.g., `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
-        $userId,
+        $accountId,
         $licenseKey,
         $options = []
     ) {
-        $this->userId = $userId;
+        $this->accountId = $accountId;
         $this->licenseKey = $licenseKey;
 
         $this->httpRequestFactory = isset($options['httpRequestFactory'])
@@ -152,7 +152,7 @@ class Client
         array_push(
             $headers,
             'Authorization: Basic '
-            . base64_encode($this->userId . ':' . $this->licenseKey),
+            . base64_encode($this->accountId . ':' . $this->licenseKey),
             'Accept: application/json'
         );
 
@@ -325,6 +325,8 @@ class Client
                     $statusCode,
                     $this->urlFor($path)
                 );
+            case 'ACCOUNT_ID_REQUIRED':
+            case 'ACCOUNT_ID_UNKNOWN':
             case 'AUTHORIZATION_INVALID':
             case 'LICENSE_KEY_REQUIRED':
             case 'USER_ID_REQUIRED':
