@@ -53,3 +53,18 @@ Desktop.ini
 
 # NetBeans files
 /nbproject/
+
+# Composer vendor
+includes/vendor/*
+!includes/vendor/aura
+!includes/vendor/build-script
+!includes/vendor/composer
+!includes/vendor/geoip2
+!includes/vendor/jakeasmith
+!includes/vendor/maxmind-db
+!includes/vendor/maxmind
+!includes/vendor/ozh
+!includes/vendor/pomo
+!includes/vendor/rmccue
+!includes/vendor/symfony
+!includes/vendor/autoload.php
