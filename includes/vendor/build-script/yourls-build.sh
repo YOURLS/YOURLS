@@ -26,6 +26,8 @@ PRESERVE_IN_VENDOR=(
     'composer'
     'build-script'
     'symfony'
+    'google/apiclient'
+    'phpseclib/phpseclib'
 )
 
 # Files & dirs to keep in each library directory
@@ -89,37 +91,37 @@ in_array () {
 # Cleans the mess
 cleanup () {
     # Return if function called with no parameter
-    if [ -z "$1" ]
-    then
-        return
-    fi
+    # if [ -z "$1" ]
+    # then
+    #     return
+    # fi
 
-    # Directory we are in
-    CUR=$1
+    # # Directory we are in
+    # CUR=$1
 
-    # Loop over each file and delete those we don't want to keep
-    echo -e "${PURPLE}Cleaning: $(basename $(dirname "$CUR"))/$(basename "$CUR") ${NORM}"
-    for FILE in $(ls -A $CUR)
-    do
+    # # Loop over each file and delete those we don't want to keep
+    # echo -e "${PURPLE}Cleaning: $(basename $(dirname "$CUR"))/$(basename "$CUR") ${NORM}"
+    # for FILE in $(ls -A $CUR)
+    # do
 
-        if in_array $FILE "${PRESERVE_IN_LIB[@]}"
-        then
-            echo -e "${GREEN}+${NORM} KEEP: $FILE"
-        else
-            echo -e "${RED}-${NORM} del : $FILE"
-            maybe_delete "${CUR}${FILE}"
-        fi
+    #     if in_array $FILE "${PRESERVE_IN_LIB[@]}"
+    #     then
+    #         echo -e "${GREEN}+${NORM} KEEP: $FILE"
+    #     else
+    #         echo -e "${RED}-${NORM} del : $FILE"
+    #         maybe_delete "${CUR}${FILE}"
+    #     fi
 
-    done;
+    # done;
 
-    # If directory is empty, delete
-    if [ ! "$(ls -A $CUR)" ]
-    then
-        echo -e "${RED}-${NORM} del : $(basename "$CUR") (empty dir)"
-        maybe_delete "$CUR"
-    fi
+    # # If directory is empty, delete
+    # if [ ! "$(ls -A $CUR)" ]
+    # then
+    #     echo -e "${RED}-${NORM} del : $(basename "$CUR") (empty dir)"
+    #     maybe_delete "$CUR"
+    # fi
 
-    echo ""
+    # echo ""
 
 }
 
