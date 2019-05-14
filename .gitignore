@@ -11,25 +11,25 @@ user/*
 [Rr]obots.txt
 
 # Languages
-user/languages/*
-!user/languages/
+# user/languages/*
+# !user/languages/
 
 # Plugins
-user/plugins/*
+# user/plugins/*
 # Core plugins
-!user/plugins/hyphens-in-urls/
-!user/plugins/random-bg/
-!user/plugins/sample-page/
-!user/plugins/sample-plugin/
-!user/plugins/sample-toolbar/
+# !user/plugins/hyphens-in-urls/
+# !user/plugins/random-bg/
+# !user/plugins/sample-page/
+# !user/plugins/sample-plugin/
+# !user/plugins/sample-toolbar/
 
 # Pages
-pages/*
-!pages/examplepage.php
+# pages/*
+# !pages/examplepage.php
 
 # Keep index.html
-!user/index.html
-!user/*/index.html
+# !user/index.html
+# !user/*/index.html
 
 ############
 ## Tests
