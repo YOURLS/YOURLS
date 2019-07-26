@@ -1,3 +1,11 @@
+## http://u.floev.com/xxxxxx 로 Short Url 생성
+
+1. 서브도메인 http://u.floev.com 이용
+2. http://u.floev.com 접근시 ~/www/yourls/ 폴더로 rewrite
+3  사용방법은 아래 readme 
+
+--
+
 <h1 align="center">
   <a href="https://yourls.org">
     <img src="images/yourls-logo.png" alt="YOURLS">
