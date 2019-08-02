@@ -133,7 +133,7 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 		return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
 	} else {
 		// Password stored in clear text
-		return( $yourls_user_passwords[ $user ] == $submitted_password );
+		return( $yourls_user_passwords[ $user ] === $submitted_password );
 	}
 }
 
@@ -297,7 +297,7 @@ function yourls_has_phpass_password( $user ) {
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if ( yourls_salt( $valid_user ) == $_COOKIE[ yourls_cookie_name() ] ) {
+		if ( yourls_salt( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
@@ -326,9 +326,9 @@ function yourls_check_signature_timestamp() {
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
 			(
-				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) == $_REQUEST['signature']
+				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
 				or
-				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) == $_REQUEST['signature']
+				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
 			)
 			&&
 			yourls_check_timestamp( $_REQUEST['timestamp'] )
@@ -355,7 +355,7 @@ function yourls_check_signature() {
 	// Check signature against all possible users
     global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if ( yourls_auth_signature( $valid_user ) == $_REQUEST['signature'] ) {
+		if ( yourls_auth_signature( $valid_user ) === $_REQUEST['signature'] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
