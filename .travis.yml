@@ -1,4 +1,3 @@
-sudo: false
 language: php
 
 env:
@@ -19,29 +18,17 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: nightly
- 
+
 before_script:
   - mysql --version
-  - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
-  - |
-    # Use same branch in YOURLS and YOURLS-unit-tests
-    export CURRENT_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-    echo "Current YOURLS branch: $CURRENT_BRANCH"
-    cd tests
-    if [ `git checkout $CURRENT_BRANCH &> /dev/null; echo $?` == 0 ]
-    then
-      echo "Using branch $CURRENT_BRANCH for Tests as well"
-    else
-      echo "Using branch master for Tests"
-    fi
-    composer install
-    cd ..
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
-  - cp tests/yourls-tests-config-travis.php user/config.php
+  - cp tests/data/config/yourls-tests-config-travis.php user/config.php
 
-script: tests/vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
+install: composer install -d ./tests
+
+script: tests/vendor/bin/phpunit --configuration ./phpunit-travis.xml.dist
 
 notifications:
   email: false
