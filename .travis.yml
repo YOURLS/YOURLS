@@ -43,7 +43,7 @@ before_script:
   - cp tests/yourls-tests-config-travis.php user/config.php
 
 install: composer install
-script: phpunit --configuration ./tests/phpunit-travis.xml.dist
+script: vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 notifications:
   email: false
