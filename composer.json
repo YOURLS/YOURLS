@@ -27,9 +27,6 @@
         "jakeasmith/http_build_url": "1.0.1",
         "symfony/polyfill-mbstring": "1.10.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^5.7"
-    },
     "config": {
         "vendor-dir": "includes/vendor"
     },
