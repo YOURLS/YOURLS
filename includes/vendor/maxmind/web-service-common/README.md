@@ -1,7 +1,7 @@
-# MaxMind Web Service Common #
+# Common Code for MaxMind Web Service Clients #
 
 This is _not_ intended for direct use by third parties. Rather, it is for
-shared code between MaxMind's various web service APIs.
+shared code between MaxMind's various web service client APIs.
 
 ## Requirements  ##
 
@@ -21,6 +21,6 @@ This API uses [Semantic Versioning](http://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2015-2017 by MaxMind, Inc.
+This software is Copyright (c) 2015-2018 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

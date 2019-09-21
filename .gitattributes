@@ -9,3 +9,5 @@ assets/less/    export-ignore
 .travis.yml     export-ignore
 /.git*          export-ignore
 /*.md           export-ignore
+tests/          export-ignore
+/*.dist         export-ignore

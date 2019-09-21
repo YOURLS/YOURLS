@@ -36,7 +36,7 @@ $(document).ready(function(){
 	
 	// If an image src is erroneous (404 or anything) replace it with a transparent gif
 	$('.fix_images').each(function(i,img) {
-		$(img).error(function(){
+		$(img).on("error", function(){
 			$(img).attr('src', 'images/blank.gif');
 		});
 	});

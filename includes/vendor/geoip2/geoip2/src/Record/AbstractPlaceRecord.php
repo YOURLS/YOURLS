@@ -8,8 +8,11 @@ abstract class AbstractPlaceRecord extends AbstractRecord
 
     /**
      * @ignore
+     *
+     * @param mixed $record
+     * @param mixed $locales
      */
-    public function __construct($record, $locales = array('en'))
+    public function __construct($record, $locales = ['en'])
     {
         $this->locales = $locales;
         parent::__construct($record);
@@ -17,31 +20,36 @@ abstract class AbstractPlaceRecord extends AbstractRecord
 
     /**
      * @ignore
+     *
+     * @param mixed $attr
      */
     public function __get($attr)
     {
-        if ($attr == 'name') {
+        if ($attr === 'name') {
             return $this->name();
-        } else {
-            return parent::__get($attr);
         }
+
+        return parent::__get($attr);
     }
 
     /**
      * @ignore
+     *
+     * @param mixed $attr
      */
     public function __isset($attr)
     {
-        if ($attr == 'name') {
-            return $this->firstSetNameLocale() == null ? false : true;
-        } else {
-            return parent::__isset($attr);
+        if ($attr === 'name') {
+            return $this->firstSetNameLocale() === null ? false : true;
         }
+
+        return parent::__isset($attr);
     }
 
     private function name()
     {
         $locale = $this->firstSetNameLocale();
+
         return $locale === null ? null : $this->names[$locale];
     }
 
@@ -52,6 +60,7 @@ abstract class AbstractPlaceRecord extends AbstractRecord
                 return $locale;
             }
         }
+
         return null;
     }
 }
