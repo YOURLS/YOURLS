@@ -22,13 +22,13 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, rand_str() );
         $this->assertTrue( yourls_has_action( $hook ) );
-        
+
         // Specific function name to test with yourls_do_action
         $hook = rand_str();
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, 'change_one_global' );
         $this->assertTrue( yourls_has_action( $hook ) );
-        
+
         return $hook;
 	}
 
@@ -49,7 +49,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         yourls_remove_action( $hook, $action );
         $this->assertFalse( yourls_has_action( $hook ) );
     }
-    
+
     /**
      * Add several actions on the same hook
      *
@@ -57,7 +57,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_add_several_actions_default_priority() {
         $hook = rand_str();
-        
+
         $times = mt_rand( 5, 15 );
         for ( $i = 1; $i <= $times; $i++ ) {
             yourls_add_action( $hook, rand_str() );
@@ -67,7 +67,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         global $yourls_filters;
         $this->assertSame( $times, count( $yourls_filters[ $hook ][10] ) );
     }
-    
+
     /**
      * Add several actions on the same hook with different priorities
      *
@@ -75,23 +75,23 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_add_several_actions_random_priorities() {
         $hook = rand_str();
-        
+
         $times = mt_rand( 5, 15 );
         for ( $i = 1; $i <= $times; $i++ ) {
             yourls_add_action( $hook, rand_str(), mt_rand( 1, 10 ) );
         }
 
         $this->assertTrue( yourls_has_action( $hook ) );
-        
+
         global $yourls_filters;
         $total = 0;
         foreach( $yourls_filters[ $hook ] as $prio => $action ) {
             $total += count( $yourls_filters[ $hook ][ $prio ] );
         }
-        
+
         $this->assertSame( $times, $total );
     }
-    
+
     /**
      * Remove all actions on a hook
      *
@@ -99,17 +99,17 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_remove_all_actions() {
         $hook = rand_str();
-        
+
         $times = mt_rand( 5, 15 );
         for ( $i = 1; $i <= $times; $i++ ) {
             yourls_add_action( $hook, rand_str() );
         }
-        
+
         $this->assertTrue( yourls_has_action( $hook ) );
         yourls_remove_all_actions( $hook );
         $this->assertFalse( yourls_has_action( $hook ) );
     }
-    
+
     /**
      * Remove all actions with random priorities on a hook
      *
@@ -117,17 +117,17 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_remove_all_actions_random_prio() {
         $hook = rand_str();
-        
+
         $times = mt_rand( 5, 15 );
         for ( $i = 1; $i <= $times; $i++ ) {
             yourls_add_action( $hook, rand_str(), mt_rand( 1, 10 ) );
         }
-        
+
         $this->assertTrue( yourls_has_action( $hook ) );
         yourls_remove_all_actions( $hook );
         $this->assertFalse( yourls_has_action( $hook ) );
     }
-    
+
     /**
      * Remove all actions with specific priority
      *
@@ -136,7 +136,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     public function test_remove_only_actions_with_given_prio() {
         $hook = rand_str();
         $priorities = array();
-        
+
         $times = mt_rand( 10, 30 );
         for ( $i = 1; $i <= $times; $i++ ) {
             $prio = mt_rand( 1, 100 );
@@ -144,7 +144,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
             yourls_add_action( $hook, rand_str(), $prio );
         }
         $this->assertTrue( yourls_has_action( $hook ) );
-        
+
         global $yourls_filters;
 
         // Pick a random number of randomly picked priorities (but not all of them)
@@ -157,14 +157,14 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
             if( in_array( $prio, $random_priorities ) )
                 $removed += count( $yourls_filters[ $hook ][ $prio ] );
         }
-        
+
         // Remove the randomly picked priorities
         foreach( $random_priorities as $random_priority ) {
             yourls_remove_all_actions( $hook, $random_priority );
         }
-        
+
         $this->assertTrue( yourls_has_action( $hook ) );
-        
+
         // Count how many are left
         $remaining = 0;
         foreach( $yourls_filters[ $hook ] as $prio => $action ) {
@@ -172,7 +172,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         }
         $this->assertSame( $remaining, $times - $removed );
     }
-    
+
 	/**
 	 * Check 'doing' an action hooked with a simple function name
 	 *
@@ -184,13 +184,13 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
 
@@ -202,16 +202,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
 	public function test_do_action_several_times_and_count() {
         $hook = rand_str();
         $this->assertSame( 0, yourls_did_action( $hook ) );
-        
+
         $times = mt_rand( 5, 15 );
         for ( $i = 1; $i <= $times; $i++ ) {
             yourls_do_action( $hook );
         }
-        
+
         $this->assertSame( $times, yourls_did_action( $hook ) );
 	}
 
-    
+
 	/**
 	 * Check adding an action with an anonymous function using create_function()
      *
@@ -222,12 +222,14 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
 	public function test_add_action_create_function() {
         $hook = rand_str();
         $this->assertFalse( yourls_has_action( $hook ) );
-        yourls_add_action( $hook, create_function( '', '$var_name = $GLOBALS["test_var"]; $GLOBALS[ $var_name ] = rand_str();' ) );
+        yourls_add_action( $hook, function() {
+            $var_name = $GLOBALS["test_var"]; $GLOBALS[ $var_name ] = rand_str();
+        } );
         $this->assertTrue( yourls_has_action( $hook ) );
-               
+
         return $hook;
 	}
-    
+
 	/**
 	 * Check 'doing' an action hooked with an anonymous function using create_function()
 	 *
@@ -239,17 +241,17 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
-    
-    
+
+
 	/**
 	 * Check adding an action with function within class
      *
@@ -262,10 +264,10 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, 'Change_One_Global::change_it' );
         $this->assertTrue( yourls_has_action( $hook ) );
-               
+
         return $hook;
 	}
-    
+
 	/**
 	 * Check 'doing' an action hooked with function within class
 	 *
@@ -277,16 +279,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
-    
+
 
 	/**
 	 * Check adding an action with function within class using an array
@@ -300,10 +302,10 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, array( 'Change_One_Global', 'change_it' ) );
         $this->assertTrue( yourls_has_action( $hook ) );
-               
+
         return $hook;
 	}
-    
+
 	/**
 	 * Check 'doing' an action hooked with function within class
 	 *
@@ -315,16 +317,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
-    
+
 
 	/**
 	 * Check adding an action with function within class instance
@@ -338,10 +340,10 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, array( $this, 'change_one_global' ) );
         $this->assertTrue( yourls_has_action( $hook ) );
-               
+
         return $hook;
 	}
-    
+
 	/**
 	 * Check 'doing' an action hooked with function within class instance
 	 *
@@ -353,16 +355,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
-    
+
 
 	/**
 	 * Check that hooking to 'Class::Method' or array( 'Class', 'Method') is the same
@@ -371,14 +373,14 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_add_action_class_and_array() {
         $hook = rand_str();
-        
+
         $this->assertFalse( yourls_has_action( $hook ) );
-        
+
         yourls_add_action( $hook, array( 'Class', 'Method' ) );
         $this->assertSame( 10, yourls_has_action( $hook, array( 'Class', 'Method' ) ) );
         $this->assertSame( 10, yourls_has_action( $hook, 'Class::Method' ) );
 	}
-    
+
 
 	/**
 	 * Check adding an action with anonymous function using closure
@@ -392,10 +394,10 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_has_action( $hook ) );
         yourls_add_action( $hook, function() { $var_name = $GLOBALS['test_var']; $GLOBALS[ $var_name ] = rand_str(); } );
         $this->assertTrue( yourls_has_action( $hook ) );
-               
+
         return $hook;
 	}
-    
+
 	/**
 	 * Check 'doing' an action hooked with anonymous function using closure
 	 *
@@ -407,16 +409,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         $var_value = rand_str();
         $GLOBALS['test_var']  = $var_name;
         $GLOBALS[ $var_name ] = $var_value;
-        
+
         $this->assertSame( $var_value, $GLOBALS[ $var_name ] );
         $this->assertSame( 0, yourls_did_action( $hook ) );
         yourls_do_action( $hook );
         $this->assertSame( 1, yourls_did_action( $hook ) );
         $this->assertNotSame( $var_value, $GLOBALS[ $var_name ] );
-        
+
         return $hook;
 	}
-    
+
     /**
      * Check that applied function must exist
      *
@@ -429,7 +431,7 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
         // this will trigger an error, converted to an exception by PHPUnit
         yourls_do_action( $hook );
     }
-    
+
     /**
      * Test yourls_do_action() with multiple params
      *
@@ -440,11 +442,11 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     public function test_do_action_no_params() {
         $hook = rand_str();
         yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
-        
+
         $this->expectOutputString( "array (0 => '',)" );
         yourls_do_action( $hook );
     }
-    
+
     /**
      * Test yourls_do_action() with multiple params
      *
@@ -455,11 +457,11 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     public function test_do_action_1_params() {
         $hook = rand_str();
         yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
-        
+
         $this->expectOutputString( "array (0 => 'hello',)" );
         yourls_do_action( $hook, 'hello' );
     }
-    
+
     /**
      * Test yourls_do_action() with multiple params
      *
@@ -470,11 +472,11 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     public function test_do_action_2_params() {
         $hook = rand_str();
         yourls_add_action( $hook, array( $this, 'accept_multiple_params' ) );
-        
+
         $this->expectOutputString( "array (0 => 'hello',1 => 'world',)" );
         yourls_do_action( $hook, 'hello', 'world' );
     }
-    
+
     /**
      * Dummy function -- just modifies the value of a global var
      */

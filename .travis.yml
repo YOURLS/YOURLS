@@ -18,14 +18,15 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: nightly
- 
+
 before_script:
   - mysql --version
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/data/config/yourls-tests-config-travis.php user/config.php
-  - cd test/ && composer install
+
+install: composer install -d ./tests
 
 script: tests/vendor/bin/phpunit --configuration ./phpunit-travis.xml.dist
 

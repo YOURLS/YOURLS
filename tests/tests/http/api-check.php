@@ -11,7 +11,7 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         yourls_remove_all_filters( 'is_admin' );
     }
-    
+
     /**
      * Check that version checking returns expected stuff and updates the relevant option
      *
@@ -21,11 +21,11 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         $before = yourls_get_option( 'core_version_checks' );
         $check = yourls_check_core_version();
         $after = yourls_get_option( 'core_version_checks' );
-        
+
         if( $check === false ) {
             $this->markTestSkipped( 'api.yourls.org unreachable or broken' );
         }
-        
+
         $this->assertNotSame( $before, $after );
         $this->assertTrue( isset( $check->latest ) );
         $this->assertTrue( isset( $check->zipurl ) );
@@ -40,7 +40,7 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         yourls_add_filter( 'is_admin', 'yourls_return_false' );
         $this->assertFalse( yourls_maybe_check_core_version() );
     }
-    
+
     /**
      * Generate an object to mock last attempt of checking against api.yourls.org
      */
@@ -50,7 +50,7 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         $checks->failed_attempts = $failed_attempts;
         $checks->last_attempt    = $last_attempt;
         $checks->version_checked = $version_checked;
-        
+
         return $checks;
     }
 
@@ -67,14 +67,14 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
          * Then : we DO want to check
          */
         $name = 'Case 0';
-        $checks = null;
+        $checks = '';
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         // Now all possible cases : see https://gist.github.com/ozh/17ea830b2f688613927f
 
         /**
-         * Case 1 : previous check 
+         * Case 1 : previous check
          * - was SUCCESSFUL,
          * - was performed MORE than 24 hours ago,
          * - and version checked DID match current version
@@ -88,9 +88,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 2 : previous check 
+         * Case 2 : previous check
          * - was SUCCESSFUL,
          * - was performed MORE than 24 hours ago,
          * - and version checked DID NOT match current version
@@ -104,9 +104,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 3 : previous check 
+         * Case 3 : previous check
          * - was SUCCESSFUL,
          * - was performed LESS than 24 hours ago,
          * - and version checked DID match current version
@@ -120,9 +120,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = false;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 4 : previous check 
+         * Case 4 : previous check
          * - was SUCCESSFUL,
          * - was performed LESS than 24 hours ago,
          * - and version checked DID NOT match current version
@@ -136,9 +136,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 5 : previous check 
+         * Case 5 : previous check
          * - was NOT SUCCESSFUL,
          * - was performed MORE than 2 hours ago,
          * - and version checked DID match current version
@@ -152,9 +152,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 6 : previous check 
+         * Case 6 : previous check
          * - was NOT SUCCESSFUL,
          * - was performed MORE than 2 hours ago,
          * - and version checked DID NOT match current version
@@ -168,9 +168,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 7 : previous check 
+         * Case 7 : previous check
          * - was NOT SUCCESSFUL,
          * - was performed LESS than 2 hours ago,
          * - and version checked DID match current version
@@ -184,9 +184,9 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = false;
         $return[] = array( $name, $checks, $expected );
-        
+
         /**
-         * Case 8 : previous check 
+         * Case 8 : previous check
          * - was NOT SUCCESSFUL,
          * - was performed LESS than 2 hours ago,
          * - and version checked DID NOT match current version
@@ -200,8 +200,8 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         );
         $expected = true;
         $return[] = array( $name, $checks, $expected );
-        
-        return $return;        
+
+        return $return;
     }
 
     /**
@@ -214,7 +214,7 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
     public function test_api_check_in_various_scenario( $name, $checks, $expected ) {
         yourls_add_filter( 'is_admin', 'yourls_return_true' );
         yourls_update_option( 'core_version_checks', $checks );
-        
+
         $this->assertSame( $expected, yourls_maybe_check_core_version() );
     }
 
