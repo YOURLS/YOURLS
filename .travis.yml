@@ -21,8 +21,6 @@ matrix:
   - php: nightly
  
 before_script:
-  - which phpunit
-  - phpunit --version
   - mysql --version
   - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
   - |
