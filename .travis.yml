@@ -42,8 +42,8 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
 
-install: composer install
-script: includes/vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
+install: cd test && composer install
+script: tests/vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 notifications:
   email: false
