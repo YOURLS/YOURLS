@@ -1,8 +1,12 @@
+sudo: false
 language: php
 
 env:
   global:
   - DB=mysql
+
+services:
+  - mysql
 
 matrix:
   include:
@@ -15,12 +19,8 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: nightly
-  - php: 7.2
-  - php: 7.3
-
+ 
 before_script:
-  - which phpunit
-  - phpunit --version
   - mysql --version
   - git clone git://github.com/YOURLS/YOURLS-unit-tests.git tests
   - |
@@ -34,13 +34,14 @@ before_script:
     else
       echo "Using branch master for Tests"
     fi
+    composer install
     cd ..
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
 
-script: phpunit --configuration ./tests/phpunit-travis.xml.dist
+script: tests/vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 notifications:
   email: false
