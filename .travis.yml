@@ -36,13 +36,13 @@ before_script:
     else
       echo "Using branch master for Tests"
     fi
+    composer install
     cd ..
   - git clone git://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
   - cp user/languages/fr/fr_FR.* user/languages
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/yourls-tests-config-travis.php user/config.php
 
-install: cd test && composer install
 script: tests/vendor/bin/phpunit --configuration ./tests/phpunit-travis.xml.dist
 
 notifications:
