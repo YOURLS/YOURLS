@@ -12,16 +12,13 @@ class NOOPReader extends Reader implements StreamInterface
 {
     public function read($bytes)
     {
-        return null;
     }
 
     public function read_all()
     {
-        return null;
     }
 
     public function seekto($pos)
     {
-        return null;
     }
 }

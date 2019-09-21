@@ -183,14 +183,36 @@ class Rebuilder
     protected function prepareValuePlaceholders(array $subs)
     {
         foreach ($subs as $i => $sub) {
-            $char = substr($sub, 0, 1);
-            if ($char == '?') {
+
+            // is the subpart a ?-mark?
+            if ($sub == '?') {
+                // prepare as numbered placeholder
                 $subs[$i] = $this->prepareNumberedPlaceholder($sub);
             }
 
-            if ($char == ':') {
-                $subs[$i] = $this->prepareNamedPlaceholder($sub);
+            // is the subpart only a colon?
+            if ($sub == ':') {
+                // ignore it
+                continue;
             }
+
+            // does the subpart begin with a colon?
+            $char = substr($sub, 0, 1);
+            if ($char != ':') {
+                // no, so cannot be named placeholder
+                continue;
+            }
+
+            // does previous subpart (if there is one) end in a colon?
+            if ($i > 0 && substr($subs[$i - 1], -1) == ':') {
+                // prev ended in ':', and current begins with ':', making it a
+                // double-colon, so ignore it
+                continue;
+            }
+
+            // begins with colon, previous did not end with colon, so prepare
+            // as a named placeholder
+            $subs[$i] = $this->prepareNamedPlaceholder($sub);
         }
 
         return $subs;

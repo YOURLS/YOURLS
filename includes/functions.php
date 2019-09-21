@@ -309,7 +309,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
 	}
 
-	yourls_do_action( 'post_add_new_link', $url, $keyword, $title );
+	yourls_do_action( 'post_add_new_link', $url, $keyword, $title, $return );
 
 	$return['statusCode'] = 200; // regardless of result, this is still a valid request
 	return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
@@ -571,11 +571,11 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 	switch( $filter ) {
 		case 'bottom':
-			$sort_by    = 'clicks';
+			$sort_by    = '`clicks`';
 			$sort_order = 'asc';
 			break;
 		case 'last':
-			$sort_by    = 'timestamp';
+			$sort_by    = '`timestamp`';
 			$sort_order = 'desc';
 			break;
 		case 'rand':
@@ -585,7 +585,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 			break;
 		case 'top':
 		default:
-			$sort_by    = 'clicks';
+			$sort_by    = '`clicks`';
 			$sort_order = 'desc';
 			break;
 	}
@@ -596,7 +596,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY `$sort_by` $sort_order LIMIT $start, $limit;" );
+		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
 		$return = array();
 		$i = 1;
@@ -717,6 +717,34 @@ function yourls_redirect( $location, $code = 301 ) {
 		yourls_redirect_javascript( $location );
 	}
 	die();
+}
+
+/**
+ * Redirect to an existing short URL
+ *
+ * Redirect client to an existing short URL (no check performed) and execute misc tasks: update
+ * clicks for short URL, update logs, and send a nocache header to prevent bots indexing short
+ * URLS (see #2202)
+ *
+ * @since  1.7.3
+ * @param  string $url
+ * @param  string $keyword
+ */
+function yourls_redirect_shorturl($url, $keyword) {
+    yourls_do_action('redirect_shorturl', $url, $keyword);
+
+    // Update click count in main table
+    $update_clicks = yourls_update_clicks($keyword);
+
+    // Update detailed log for stats
+    $log_redirect = yourls_log_redirect($keyword);
+
+    // Tell (Google)bots not to index this short URL, see #2202
+    if( !headers_sent() ) {
+        header("X-Robots-Tag: noindex", true);
+    }
+
+    yourls_redirect($url, 301);
 }
 
 /**
@@ -1031,6 +1059,10 @@ function yourls_upgrade_is_needed() {
 	list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
 	if( $currentsql < YOURLS_DB_VERSION )
 		return true;
+
+	// Check if YOURLS_VERSION exist && match value stored in YOURLS_DB_TABLE_OPTIONS, update DB if required
+	if( $currentver < YOURLS_VERSION )
+		yourls_update_option( 'version', YOURLS_VERSION );
 
 	return false;
 }
@@ -1378,7 +1410,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
 			// Flood!
 			yourls_do_action( 'ip_flood', $ip, $now - $then );
-			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Forbidden' ), 403 );
+			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
 		}
 	}
 
@@ -1617,6 +1649,7 @@ function yourls_tick() {
 	return ceil( time() / YOURLS_NONCE_LIFE );
 }
 
+
 /**
  * Create a time limited, action limited and user limited token
  *
@@ -1625,7 +1658,9 @@ function yourls_create_nonce( $action, $user = false ) {
 	if( false == $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
-	return substr( yourls_salt($tick . $action . $user), 0, 10 );
+	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
+	// Allow plugins to alter the nonce
+	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
 }
 
 /**
@@ -1663,6 +1698,12 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 	// get current nonce value
 	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
 		$nonce = $_REQUEST['nonce'];
+
+	// Allow plugins to short-circuit the rest of the function
+	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
+	if ($valid) {
+		return true;
+	}
 
 	// what nonce should be
 	$valid = yourls_create_nonce( $action, $user );

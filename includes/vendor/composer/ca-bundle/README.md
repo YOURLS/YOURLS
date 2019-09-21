@@ -71,6 +71,14 @@ $context = stream_context_create($opts);
 $result = file_get_contents('https://example.com', false, $context);
 ```
 
+## To use with Guzzle
+
+```php
+$client = new \GuzzleHttp\Client([
+    \GuzzleHttp\RequestOptions::VERIFY => \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath()
+]);
+```
+
 License
 -------
 

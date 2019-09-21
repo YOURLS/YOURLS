@@ -8,9 +8,8 @@ namespace POMO\Streams;
 /**
  * Classes, which help reading streams of data from files.
  *
- * @property bool is_overloaded
- * @property int _pos
- *
+ * @property bool $is_overloaded
+ * @property int $_pos
  * @author Danilo Segan <danilo@kvota.net>
  */
 abstract class Reader implements StreamInterface
@@ -20,7 +19,7 @@ abstract class Reader implements StreamInterface
 
     public function __construct()
     {
-        $this->is_overloaded = ((ini_get("mbstring.func_overload") & 2) != 0) &&
+        $this->is_overloaded = ((ini_get('mbstring.func_overload') & 2) != 0) &&
             function_exists('mb_substr');
         $this->_pos = 0;
     }

@@ -18,15 +18,7 @@ $url = yourls_get_keyword_longurl( $keyword );
 
 // URL found
 if( !empty( $url ) ) {
-	yourls_do_action( 'redirect_shorturl', $url, $keyword );
-
-	// Update click count in main table
-	$update_clicks = yourls_update_clicks( $keyword );
-
-	// Update detailed log for stats
-	$log_redirect = yourls_log_redirect( $keyword );
-	
-	yourls_redirect( $url, 301 );
+    yourls_redirect_shorturl($url, $keyword);
 
 // URL not found. Either reserved, or page, or doesn't exist
 } else {
@@ -38,7 +30,7 @@ if( !empty( $url ) ) {
 	// Either reserved id, or no such id
 	} else {
 		yourls_do_action( 'redirect_keyword_not_found', $keyword );
-		
+
 		yourls_redirect( YOURLS_SITE, 302 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
 }

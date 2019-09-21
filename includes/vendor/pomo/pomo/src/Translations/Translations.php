@@ -9,15 +9,10 @@
 namespace POMO\Translations;
 
 /**
- * Class for a set of entries for translation and their associated headers
+ * Class for a set of entries for translation and their associated headers.
  */
 class Translations implements TranslationsInterface
 {
-    /**
-     * Entries provided availible
-     *
-     * @var array
-     */
     public $entries = array();
     public $headers = array();
 
@@ -37,6 +32,7 @@ class Translations implements TranslationsInterface
 
     /**
      * @param array|EntryTranslations $entry
+     *
      * @return bool
      */
     public function add_entry_or_merge($entry)
@@ -85,7 +81,7 @@ class Translations implements TranslationsInterface
     {
         $entry = new EntryTranslations(array(
                 'singular' => $singular,
-                'context' => $context
+                'context' => $context,
             ));
         $translated = $this->translate_entry($entry);
 
@@ -113,7 +109,7 @@ class Translations implements TranslationsInterface
         $entry = new EntryTranslations(array(
                 'singular' => $singular,
                 'plural' => $plural,
-                'context' => $context
+                'context' => $context,
             ));
         $translated = $this->translate_entry($entry);
         $index = $this->select_plural_form($count);

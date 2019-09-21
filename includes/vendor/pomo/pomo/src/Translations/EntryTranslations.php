@@ -10,14 +10,14 @@ namespace POMO\Translations;
 
 /**
  * Contains EntryTranslations class
- * EntryTranslations class encapsulates a translatable string
+ * EntryTranslations class encapsulates a translatable string.
  */
 class EntryTranslations
 {
     /**
-     * Whether the entry contains a string and its plural form, default is false
+     * Whether the entry contains a string and its plural form, default is false.
      *
-     * @var boolean
+     * @var bool
      */
     public $is_plural = false;
 
@@ -32,14 +32,14 @@ class EntryTranslations
 
     /**
      * @param array $args associative array, support following keys:
-     *     - singular (string) -- the string to translate, if omitted and empty entry will be created
-     *     - plural (string) -- the plural form of the string, setting this will set {@link $is_plural} to true
-     *     - translations (array) -- translations of the string and possibly -- its plural forms
-     *     - context (string) -- a string differentiating two equal strings used in different contexts
-     *     - translator_comments (string) -- comments left by translators
-     *     - extracted_comments (string) -- comments left by developers
-     *     - references (array) -- places in the code this strings is used, in relative_to_root_path/file.php:linenum form
-     *     - flags (array) -- flags like php-format
+     *                    - singular (string) -- the string to translate, if omitted and empty entry will be created
+     *                    - plural (string) -- the plural form of the string, setting this will set {@link $is_plural} to true
+     *                    - translations (array) -- translations of the string and possibly -- its plural forms
+     *                    - context (string) -- a string differentiating two equal strings used in different contexts
+     *                    - translator_comments (string) -- comments left by translators
+     *                    - extracted_comments (string) -- comments left by developers
+     *                    - references (array) -- places in the code this strings is used, in relative_to_root_path/file.php:linenum form
+     *                    - flags (array) -- flags like php-format
      */
     public function __construct($args = array())
     {
@@ -66,7 +66,7 @@ class EntryTranslations
     }
 
     /**
-     * Generates a unique key for this entry
+     * Generates a unique key for this entry.
      *
      * @return string|bool the key or false if the entry is empty
      */
@@ -77,9 +77,9 @@ class EntryTranslations
         }
 
         // Prepend context and EOT, like in MO files
-        $key = !$this->context? $this->singular : $this->context.chr(4).$this->singular;
+        $key = !$this->context ? $this->singular : $this->context.chr(4).$this->singular;
         // Standardize on \n line endings
-        $key = str_replace(array( "\r\n", "\r" ), "\n", $key);
+        $key = str_replace(array("\r\n", "\r"), "\n", $key);
 
         return $key;
     }

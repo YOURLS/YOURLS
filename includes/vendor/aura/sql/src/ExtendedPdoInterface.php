@@ -14,6 +14,11 @@ namespace Aura\Sql;
  *
  * @package Aura.Sql
  *
+ * @method Iterator\AllIterator yieldAll(string $statment, array $values = array())     Yields rows from the database keyed on the first column of each row.
+ * @method Iterator\AssocIterator yieldAssoc(string $statment, array $values = array())   Yields rows from the database keyed on the first column of each row.
+ * @method Iterator\ColIterator yieldCol(string $statment, array $values = array())   Yields the first column of each row.
+ * @method Iterator\ObjectsIterator yieldObjects(string $statment, array $values = array(), $class_name = 'stdClass', array $ctor_args = array())  Yields objects where the column values are mapped to object properties.
+ * @method Iterator\PairsIterator yieldPairs(string $statment, array $values = array())   Yields key-value pairs (first column is the key, second column is the value).
  */
 interface ExtendedPdoInterface extends PdoInterface
 {

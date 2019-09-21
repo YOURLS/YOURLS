@@ -86,10 +86,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta http-equiv="Content-Type" content="<?php echo yourls_apply_filter( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
-	<meta name="referrer" content="always" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
 	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-2.2.4.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -99,7 +98,8 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<?php } ?>
 	<?php if ( $tablesorter ) { ?>
 		<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-		<script src="<?php yourls_site_url(); ?>/js/jquery.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/jquery-3.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+		<script src="<?php yourls_site_url(); ?>/js/tablesorte.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<?php } ?>
 	<?php if ( $insert ) { ?>
 		<script src="<?php yourls_site_url(); ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
@@ -161,7 +161,7 @@ function yourls_html_footer($can_query = true) {
 	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", yourls_get_debug_log() );
-		echo '</div>';
+		echo '</pre></div>';
 	} ?>
 	<?php yourls_do_action( 'html_footer', yourls_get_html_context() ); ?>
 	</body>
@@ -176,6 +176,10 @@ function yourls_html_footer($can_query = true) {
  * @param string $keyword Keyword to prefill the input with
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
+    $pre = yourls_apply_filter( 'shunt_html_addnew', false, $url, $keyword );
+    if ( false !== $pre ) {
+        return $pre;
+    }
 	?>
 	<main role="main">
 	<div id="new_url">
@@ -245,6 +249,7 @@ function yourls_html_tfooter( $params = array() ) {
 						$_options = array(
 							'keyword'      => yourls__( 'Short URL' ),
 							'url'          => yourls__( 'URL' ),
+							'title'        => yourls__( 'Title' ),
 							'timestamp'    => yourls__( 'Date' ),
 							'ip'           => yourls__( 'IP' ),
 							'clicks'       => yourls__( 'Clicks' ),
@@ -723,6 +728,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				if( !empty( $error_msg ) ) {
 					echo '<p class="error">'.$error_msg.'</p>';
 				}
+				yourls_do_action( 'login_form_top' );
 			?>
 			<p>
 				<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
@@ -732,9 +738,15 @@ function yourls_login_screen( $error_msg = '' ) {
 				<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
 				<input type="password" id="password" name="password" size="30" class="text" />
 			</p>
+			<?php
+				yourls_do_action( 'login_form_bottom' );
+			?>
 			<p style="text-align: right;">
 				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 			</p>
+			<?php
+				yourls_do_action( 'login_form_end' );
+			?>
 		</form>
 		<script type="text/javascript">$('#username').focus();</script>
 	</div>
@@ -816,7 +828,7 @@ function yourls_html_menu() {
 	/*
 	To display a notice:
 	$message = "<div>OMG, dude, I mean!</div>" );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 	*/
 }
 
@@ -827,7 +839,7 @@ function yourls_html_menu() {
 function yourls_add_notice( $message, $style = 'notice' ) {
 	// Escape single quotes in $message to avoid breaking the anonymous function
 	$message = yourls_notice_box( strtr( $message, array( "'" => "\'" ) ), $style );
-	yourls_add_action( 'admin_notices', create_function( '', "echo '$message';" ) );
+	yourls_add_action( 'admin_notices', function() use ( $message ) { echo (string) $message; } );
 }
 
 /**

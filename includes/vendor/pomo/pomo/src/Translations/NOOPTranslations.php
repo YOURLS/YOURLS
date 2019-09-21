@@ -9,15 +9,10 @@
 namespace POMO\Translations;
 
 /**
- * Provides the same interface as Translations, but doesn't do anything
+ * Provides the same interface as Translations, but doesn't do anything.
  */
 class NOOPTranslations implements TranslationsInterface
 {
-    /**
-     * Entries provided availible
-     *
-     * @var array
-     */
     public $entries = array();
     public $headers = array();
 
