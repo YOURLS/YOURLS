@@ -4,6 +4,18 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.7.4
+---
+- fixed: type juggling vulnerability in the API
+- improved: several little things and several little updates
+- dropped: PHP <= 5.5 support
+
+1.7.3
+---
+- improved: some little things
+- added: some hooks here and there to allow more pluginness
+- fixed: some little bugs
+- updated: jquery and some javascript stuff
 
 1.7.2
 ---
