@@ -96,7 +96,6 @@ $yourls_reserved_URL = array(
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 
-
 /*
  ** Personal settings would go after here.
  */
