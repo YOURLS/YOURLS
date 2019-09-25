@@ -383,6 +383,8 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
  *
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
+	global $yourls_sharing_enabled;
+	
 	if ( $shortlink_title == '' )
 		$shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
 	if ( $share_title == '' )
@@ -396,7 +398,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	$text   = ( $text ? '"'.$text.'" ' : '' );
 	$title  = ( $title ? "$title " : '' );
 	$share  = yourls_esc_textarea( $title.$text.$shorturl );
-	$count  = 140 - strlen( $share );
+	$count  = 280 - strlen( $share );
 	$hidden = ( $hidden ? 'style="display:none;"' : '' );
 
 	// Allow plugins to filter all data
@@ -406,6 +408,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 
 	$_share = rawurlencode( $share );
 	$_url   = rawurlencode( $shorturl );
+	$_title   = rawurlencode( $title );
 	?>
 
 	<div id="shareboxes" <?php echo $hidden; ?>>
@@ -429,11 +432,16 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 			<?php echo $share_title; ?>
 			<div id="tweet">
 				<span id="charcount" class="hide-if-no-js"><?php echo $count; ?></span>
-				<textarea id="tweet_body"><?php echo $share; ?></textarea>
+				<textarea id="share_body"><?php echo $share; ?></textarea>
 			</div>
 			<p id="share_links"><?php yourls_e( 'Share with' ); ?>
-				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
-				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
+			
+				<?php if ( $yourls_sharing_enabled === NULL || in_array( 'twitter', $yourls_sharing_enabled ) ) { ?>
+					<a id="share_tw" href="https://twitter.com/intent/tweet?text=<?php echo $_share; ?>" data-shareurl="https://twitter.com/intent/tweet?text=#share#" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share(this, 'toolbar=no,width=1000,height=470');return false;">Twitter</a>
+				<?php } ?>
+				<?php if ( $yourls_sharing_enabled === NULL || in_array( 'facebook', $yourls_sharing_enabled ) ) { ?>
+					<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>&quote=<?php echo $_title; ?>" data-shareurl="http://www.facebook.com/share.php?u=<?php echo $_url; ?>&quote=#share#" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share(this, 'toolbar=no,width=800,height=550');return false;">Facebook</a>
+				<?php } ?>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.

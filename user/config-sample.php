@@ -69,6 +69,13 @@ $yourls_user_passwords = array(
  ** Default is false for live site. Enable when coding or before submitting a new issue */
 define( 'YOURLS_DEBUG', false );
 	
+	
+/** Enabled sharing-buttons **/
+$yourls_sharing_enabled = array(
+	'twitter', 'facebook'
+	);
+	
+	
 /*
  ** URL Shortening settings
  */
@@ -88,6 +95,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
 $yourls_reserved_URL = array(
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
+
 
 /*
  ** Personal settings would go after here.
