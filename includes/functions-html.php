@@ -405,10 +405,6 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	$data = compact( 'longurl', 'shorturl', 'title', 'text', 'shortlink_title', 'share_title', 'share', 'count', 'hidden' );
 	$data = yourls_apply_filter( 'share_box_data', $data );
 	extract( $data );
-
-	$_share = rawurlencode( $share );
-	$_url   = rawurlencode( $shorturl );
-	$_title   = rawurlencode( $title );
 	?>
 
 	<div id="shareboxes" <?php echo $hidden; ?>>
