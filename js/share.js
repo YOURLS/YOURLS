@@ -9,10 +9,14 @@ $(document).ready(function(){
 	});
 })
 
+/** Builds new url from template and current text
+ *  then opens a new window (no options) or popup (with options)
+ *	src is the anchor containing the onClick
+ */
 function share(src, options) {
 	var new_url = $(src).data('shareurl');
-	new_url = new_url.replace('#share#', encodeURI($('#share_body').val()));
 	
+	new_url = new_url.replace('#share#', encodeURI($('#share_body').val())); // replace keyword with current text
 	$(src).attr('href', new_url);
 	
 	window.open(new_url, '_blank', options);
