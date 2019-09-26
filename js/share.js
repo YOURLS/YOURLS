@@ -1,8 +1,8 @@
 $(document).ready(function(){
-	$('#share_body').focus();
+	$('#tweet_body').focus();
 
-	$('#share_body').keypress(function(){
-		var charcount = parseInt(280 - $('#share_body').val().length);
+	$('#tweet_body').keypress(function(){
+		var charcount = parseInt(280 - $('#tweet_body').val().length);
 		$('#charcount')
 			.toggleClass("negative", charcount < 0)
 			.text( charcount );
@@ -16,7 +16,7 @@ $(document).ready(function(){
 function share(src, options) {
 	var new_url = $(src).data('shareurl');
 	
-	new_url = new_url.replace('#share#', encodeURI($('#share_body').val())); // replace keyword with current text
+	new_url = new_url.replace('#share#', encodeURI($('#tweet_body').val())); // replace keyword with current text
 	$(src).attr('href', new_url);
 	
 	window.open(new_url, '_blank', options);
