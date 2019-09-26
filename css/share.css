@@ -50,6 +50,9 @@ div.share {
 #share_links a:hover {
 	background-position:2px center;
 }
+#share_tw {background:transparent url(../images/twitter.png) left center no-repeat;}
+#share_fb {background:transparent url(../images/facebook.png) left center no-repeat;}
+
 #copylink{
 	cursor:pointer;
 	background:transparent url(../images/copy.png) 130% center no-repeat;
