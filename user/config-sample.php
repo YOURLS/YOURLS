@@ -69,13 +69,7 @@ $yourls_user_passwords = array(
  ** Default is false for live site. Enable when coding or before submitting a new issue */
 define( 'YOURLS_DEBUG', false );
 	
-	
-/** Enabled sharing-buttons **/
-$yourls_sharing_enabled = array(
-	'twitter', 'facebook'
-	);
-	
-	
+
 /*
  ** URL Shortening settings
  */
