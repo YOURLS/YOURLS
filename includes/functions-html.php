@@ -383,8 +383,6 @@ function yourls_html_select( $name, $options, $selected = '', $display = false )
  *
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
-	global $yourls_sharing_enabled;
-	
 	if ( $shortlink_title == '' )
 		$shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
 	if ( $share_title == '' )
