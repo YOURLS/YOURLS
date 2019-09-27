@@ -37,7 +37,7 @@ function ozh_random_shorturl_next_decimal( $next ) {
 // Refuse to activate if old Random Keywords plugin is active
 yourls_add_action( 'activated_random-shorturls', 'ozh_random_shorturl_conflict_preventer' );
 function ozh_random_shorturl_conflict_preventer() {
-        if yourls_is_active_plugin( 'random-keywords' ) {
+        if( yourls_is_active_plugin( 'random-keywords' ) ) {
                 echo 'You cannot activate the plugin "Random ShortURLs" unless plugin "Random Keywords" is deactivated first.';
         }
 }
