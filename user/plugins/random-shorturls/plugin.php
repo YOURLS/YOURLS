@@ -17,8 +17,17 @@ Author URI: https://ozh.org/
 * Now configured via YOURLS options instead of editing plugin file
 */
 
+// Only register things if the old third-party plugin is not present
+if( function_exists('ozh_random_keyword') ) {
+        yourls_add_notice( "<b>Random ShortURLs</b> plugin cannot function unless <b>Random Keywords</b> is removed first." );
+} else {
+        // filter registration happens conditionally, to avoid conflicts
+        // settings action is left out here, as it allows checking settings before deleting the old plugin
+        yourls_add_filter( 'random_shorturl', 'ozh_random_shorturl' );
+        yourls_add_filter( 'get_next_decimal', 'ozh_random_shorturl_next_decimal' );
+}
+
 // Generate a random keyword
-yourls_add_filter( 'random_shorturl', 'ozh_random_shorturl' );
 function ozh_random_shorturl() {
         $possible = yourls_get_shorturl_charset() ;
         $str='';
@@ -29,17 +38,8 @@ function ozh_random_shorturl() {
 }
 
 // Don't increment sequential keyword tracker
-yourls_add_filter( 'get_next_decimal', 'ozh_random_shorturl_next_decimal' );
 function ozh_random_shorturl_next_decimal( $next ) {
         return ( $next - 1 );
-}
-
-// Refuse to activate if old Random Keywords plugin is active
-yourls_add_action( 'activated_random-shorturls', 'ozh_random_shorturl_conflict_preventer' );
-function ozh_random_shorturl_conflict_preventer() {
-        if( yourls_is_active_plugin( 'random-keywords' ) ) {
-                echo 'You cannot activate the plugin "Random ShortURLs" unless plugin "Random Keywords" is deactivated first.';
-        }
 }
 
 // Plugin settings page etc.
