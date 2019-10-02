@@ -20,7 +20,7 @@
         "ext-pdo": "*",
         "ozh/bookmarkletgen": "1.2",
         "ozh/phpass": "1.2.0",
-        "rmccue/Requests" : "1.7",
+        "rmccue/requests" : "1.7",
         "pomo/pomo" : "1.4.1",
         "geoip2/geoip2" : "2.9.0",
         "aura/sql": "~2.",
