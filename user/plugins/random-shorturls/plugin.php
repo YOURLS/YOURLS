@@ -17,6 +17,9 @@ Author URI: https://ozh.org/
 * Now configured via YOURLS options instead of editing plugin file
 */
 
+// No direct call
+if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 // Only register things if the old third-party plugin is not present
 if( function_exists('ozh_random_keyword') ) {
     yourls_add_notice( "<b>Random ShortURLs</b> plugin cannot function unless <b>Random Keywords</b> is removed first." );
