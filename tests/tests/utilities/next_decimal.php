@@ -18,20 +18,22 @@ class NextDecimal_Tests extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends test_get_next_decimal
 	 */
-    public function test_update_next_decimal($id) {
-        // with no arg
+    public function test_update_next_decimal_no_arg($id) {
         $update = yourls_update_next_decimal();
         $this->assertTrue($update);
         $next = yourls_get_next_decimal();
         $this->assertSame($next, $id + 1);
+    }
 
-        // with arg
-        $rand   = mt_rand(150,200);
+    /**
+     * @depends test_get_next_decimal
+     */
+    public function test_update_next_decimal_with_arg($id) {
+        $rand   = mt_rand(1500,2000);
         $update = yourls_update_next_decimal($rand);
         $this->assertTrue($update);
         $next = yourls_get_next_decimal();
         $this->assertSame($next, $rand);
-
     }
 
 }
