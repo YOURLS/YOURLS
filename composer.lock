@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e793d6dbe55cfcda001aadc2d9c1c1b",
+    "hash": "02dbbf7d29007948ffe9fb35753f67b0",
+    "content-hash": "6b7003735dfad29c7eac5a5a78373396",
     "packages": [
         {
             "name": "aura/sql",
@@ -60,7 +61,7 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "time": "2018-08-15T13:33:56+00:00"
+            "time": "2018-08-15 13:33:56"
         },
         {
             "name": "composer/ca-bundle",
@@ -116,7 +117,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2018-10-18T06:09:13+00:00"
+            "time": "2018-10-18 06:09:13"
         },
         {
             "name": "geoip2/geoip2",
@@ -168,7 +169,7 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2018-04-10T15:32:59+00:00"
+            "time": "2018-04-10 15:32:59"
         },
         {
             "name": "jakeasmith/http_build_url",
@@ -201,7 +202,7 @@
                 }
             ],
             "description": "Provides functionality for http_build_url() to environments without pecl_http.",
-            "time": "2017-05-01T15:36:40+00:00"
+            "time": "2017-05-01 15:36:40"
         },
         {
             "name": "maxmind-db/reader",
@@ -257,7 +258,7 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2019-01-04T19:55:56+00:00"
+            "time": "2019-01-04 19:55:56"
         },
         {
             "name": "maxmind/web-service-common",
@@ -303,7 +304,7 @@
             ],
             "description": "Internal MaxMind Web Service API",
             "homepage": "https://github.com/maxmind/web-service-common-php",
-            "time": "2018-02-12T22:31:54+00:00"
+            "time": "2018-02-12 22:31:54"
         },
         {
             "name": "ozh/bookmarkletgen",
@@ -344,7 +345,7 @@
                 "bookmarklet",
                 "javascript"
             ],
-            "time": "2017-05-18T12:46:21+00:00"
+            "time": "2017-05-18 12:46:21"
         },
         {
             "name": "ozh/phpass",
@@ -388,7 +389,7 @@
                 "password",
                 "security"
             ],
-            "time": "2017-05-17T23:30:20+00:00"
+            "time": "2017-05-17 23:30:20"
         },
         {
             "name": "pomo/pomo",
@@ -442,7 +443,7 @@
                 "localization",
                 "translation"
             ],
-            "time": "2018-12-20T14:55:38+00:00"
+            "time": "2018-12-20 14:55:38"
         },
         {
             "name": "rmccue/requests",
@@ -491,7 +492,7 @@
                 "iri",
                 "sockets"
             ],
-            "time": "2016-10-13T00:11:37+00:00"
+            "time": "2016-10-13 00:11:37"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -550,7 +551,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-09-21T13:07:52+00:00"
+            "time": "2018-09-21 13:07:52"
         }
     ],
     "packages-dev": [],
