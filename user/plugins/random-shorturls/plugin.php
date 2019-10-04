@@ -26,7 +26,7 @@ if( function_exists('ozh_random_keyword') ) {
 } else {
     // filter registration happens conditionally, to avoid conflicts
     // settings action is left out here, as it allows checking settings before deleting the old plugin
-    yourls_add_filter( 'random_shorturl', 'ozh_random_shorturl' );
+    yourls_add_filter( 'random_keyword', 'ozh_random_shorturl' );
     yourls_add_filter( 'get_next_decimal', 'ozh_random_shorturl_next_decimal' );
 }
 
