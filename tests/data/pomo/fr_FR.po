@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: YOURLS 1.7\n"
+"POT-Creation-Date: 2014-01-11 11:50+0100\n"
+"PO-Revision-Date: 2015-05-31 12:18+0100\n"
+"Last-Translator: Ozh <ozh[at]ozh.org>\n"
+"Language-Team: \n"
+"Language: Français\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: yourls__;yourls_e;yourls_s;yourls_se;"
+"yourls_esc_attr__;yourls_esc_html__;yourls_x;yourls_ex;yourls_esc_attr_x;"
+"yourls_esc_html_x;yourls_n:1,2;yourls_nx:1,2;yourls_n_noop:1,2;"
+"yourls_nx_noop:1,2\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid "Short"
+msgstr "Court (default)"
+
+msgctxt "data"
+msgid "Simple string"
+msgstr "Chaine simple (default)"
+
+msgctxt "rope"
+msgid "Simple string"
+msgstr "Ficelle simple (default)"
+
+msgid "String with %s"
+msgstr "Chaine avec %s (default)"
+
+msgid "Hello %s you are %s"
+msgstr "Bonjour %s tu es %s (default)"
+
+msgid "1 item"
+msgid_plural "%s items"
+msgstr[0] "1 truc (default)"
+msgstr[1] "%s trucs (default)"
+
+msgctxt "boing"
+msgid "1 spring"
+msgid_plural "%s springs"
+msgstr[0] "1 ressort (default)"
+msgstr[1] "%s ressorts (default)"
+
+msgctxt "water"
+msgid "1 spring"
+msgid_plural "%s springs"
+msgstr[0] "1 source (default)"
+msgstr[1] "%s sources (default)"
+
+msgid "Untranslated string"
+msgstr ""
+
+msgid "number_format_thousands_sep"
+msgstr " "
+
+msgid "number_format_decimal_point"
+msgstr ","
+
+msgid "Feb_February_abbreviation"
+msgstr "Fév"
+
+msgid "Mon"
+msgstr "Lun"
+
+msgid "M_Monday_initial"
+msgstr "L"

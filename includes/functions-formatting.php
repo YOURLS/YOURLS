@@ -250,7 +250,7 @@ function yourls_seems_utf8( $str ) {
  * Check for PCRE /u modifier support. Stolen from WP.
  *
  * Just in case "PCRE is not compiled with PCRE_UTF8" which seems to happen
- * on some distros even for PHP 5.3
+ * on some distros
  *
  * @since 1.7.1
  *
@@ -655,7 +655,7 @@ function yourls_encodeURI( $url ) {
 		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
     ) );
 	// @TODO:
-	// Known limit: this will most likely break IDN URLs such as http://www.académie-française.fr/
+	// Known limit: this will most likely break IDN URLs such as http://www.acadÃ©mie-franÃ§aise.fr/
 	// To fully support IDN URLs, advocate use of a plugin.
 	return yourls_apply_filter( 'encodeURI', $result, $url );
 }

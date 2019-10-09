@@ -198,7 +198,7 @@ class ExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @return null
      *
-     * @throws PDOException if the connection fails.
+     * @throws \PDOException if the connection fails.
      *
      */
     public function connect()
@@ -1116,6 +1116,9 @@ class ExtendedPdo extends PDO implements ExtendedPdoInterface
         }
 
         if (is_bool($val)) {
+            // bind booleans as string '1' or string '0'.
+            // cf. https://bugs.php.net/bug.php?id=49255
+            $val = $val ? '1' : '0';
             return $sth->bindValue($key, $val, self::PARAM_BOOL);
         }
 

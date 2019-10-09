@@ -3,6 +3,7 @@
 ############
 
 # Configuration
+*config.php
 user/*
 !user/config-sample.php
 .htaccess
@@ -11,14 +12,13 @@ user/*
 [Rr]obots.txt
 
 # Languages
-user/languages/*
 !user/languages/
 
 # Plugins
-user/plugins/*
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
+!user/plugins/random-shorturls/
 !user/plugins/sample-page/
 !user/plugins/sample-plugin/
 !user/plugins/sample-toolbar/
@@ -29,14 +29,18 @@ pages/*
 
 # Keep index.html
 !user/index.html
-!user/*/index.html
+!user/**/index.html
 
 ############
 ## Tests
 ############
 
-test*.php
-tests/
+includes/**/tests/
+build/
+coverage/
+phpunit.xml
+tests/vendor/
+tests/data/auth/config-test-auth-hashed.php
 
 ############
 ## Environnement

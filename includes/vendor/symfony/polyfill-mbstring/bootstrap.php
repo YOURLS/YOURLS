@@ -19,6 +19,8 @@ if (!function_exists('mb_strlen')) {
     function mb_convert_encoding($s, $to, $from = null) { return p\Mbstring::mb_convert_encoding($s, $to, $from); }
     function mb_decode_mimeheader($s) { return p\Mbstring::mb_decode_mimeheader($s); }
     function mb_encode_mimeheader($s, $charset = null, $transferEnc = null, $lf = null, $indent = null) { return p\Mbstring::mb_encode_mimeheader($s, $charset, $transferEnc, $lf, $indent); }
+    function mb_decode_numericentity($s, $convmap, $enc = null) { return p\Mbstring::mb_decode_numericentity($s, $convmap, $enc); }
+    function mb_encode_numericentity($s, $convmap, $enc = null, $is_hex = false) { return p\Mbstring::mb_encode_numericentity($s, $convmap, $enc, $is_hex); }
     function mb_convert_case($s, $mode, $enc = null) { return p\Mbstring::mb_convert_case($s, $mode, $enc); }
     function mb_internal_encoding($enc = null) { return p\Mbstring::mb_internal_encoding($enc); }
     function mb_language($lang = null) { return p\Mbstring::mb_language($lang); }

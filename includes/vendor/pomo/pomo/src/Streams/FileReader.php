@@ -8,7 +8,7 @@ namespace POMO\Streams;
 /**
  * Classes, which help reading streams of data from files.
  *
- * @property bool|resource _f
+ * @property bool|resource $_f
  *
  * @author Danilo Segan <danilo@kvota.net>
  */

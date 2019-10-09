@@ -9,7 +9,7 @@ namespace GeoIp2\Exception;
 class InvalidRequestException extends HttpException
 {
     /**
-     * The code returned by the MaxMind web service
+     * The code returned by the MaxMind web service.
      */
     public $error;
 

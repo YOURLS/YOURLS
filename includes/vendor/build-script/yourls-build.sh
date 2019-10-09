@@ -25,6 +25,7 @@
 PRESERVE_IN_VENDOR=(
     'composer'
     'build-script'
+    'symfony'
 )
 
 # Files & dirs to keep in each library directory
