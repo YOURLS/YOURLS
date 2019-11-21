@@ -321,14 +321,20 @@ function yourls_check_signature_timestamp() {
 	// Timestamp in PHP : time()
 	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
     
+	if ( strlen( $_REQUEST['signature'] ) === 40 ) {
+		$hash_function = "sha1";
+	} else {
+		$hash_function = "md5";
+	}
+    
 	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
 			(
-				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+				$hash_function( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
 				or
-				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
+				$hash_function( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
 			)
 			&&
 			yourls_check_timestamp( $_REQUEST['timestamp'] )
