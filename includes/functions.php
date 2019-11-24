@@ -625,38 +625,39 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
  *
  */
 function yourls_get_link_stats( $shorturl ) {
-	global $ydb;
+    global $ydb;
 
-	$table_url = YOURLS_DB_TABLE_URL;
-	$shorturl  = yourls_sanitize_keyword( $shorturl );
+    $table_url = YOURLS_DB_TABLE_URL;
+    $shorturl  = yourls_sanitize_keyword( $shorturl );
 
-    $res = $ydb->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
-	$return = array();
+    //$res = $ydb->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
+    $stmt = $ydb->base_query("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
+    $return = array();
 
-	if( !$res ) {
-		// non existent link
-		$return = array(
-			'statusCode' => 404,
-			'message'    => 'Error: short URL not found',
-		);
-	} else {
-		$return = array(
-			'statusCode' => 200,
-			'message'    => 'success',
-			'link'       => array(
-				'shorturl' => YOURLS_SITE .'/'. $res->keyword,
-				'url'      => $res->url,
-				'title'    => $res->title,
-				'timestamp'=> $res->timestamp,
-				'ip'       => $res->ip,
-				'clicks'   => $res->clicks,
-			)
-		);
-	}
+    if ($res = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $return = array(
+            'statusCode' => 200,
+            'message'    => 'success',
+            'link'       => array(
+                'shorturl' => YOURLS_SITE .'/'. $res['keyword'],
+                'url'      => $res['url'],
+                'title'    => $res['title'],
+                'timestamp'=> $res['timestamp'],
+                'ip'       => $res['ip'],
+                'clicks'   => $res['clicks'],
+            )
+        );
+    }
+    else {
+        // non existent link
+        $return = array(
+            'statusCode' => 404,
+            'message'    => 'Error: short URL not found',
+        );
+    }
 
-	return yourls_apply_filter( 'get_link_stats', $return, $shorturl );
+    return yourls_apply_filter( 'get_link_stats', $return, $shorturl );
 }
-
 /**
  * Get total number of URLs and sum of clicks. Input: optional "AND WHERE" clause. Returns array
  *

@@ -481,5 +481,38 @@ class YDB extends ExtendedPdo {
         yourls_debug_log('LEGACY SQL: '.$query);
         return $this->fetchAffected($query);
     }
+
+    public function fetchValue($statement, array $values = array())
+    {
+        $pdo = parent::getPdo();
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $sth = $pdo->prepare($statement);
+        foreach ($values as $key => $val) {
+            $sth->bindValue(':'.$key, $val);
+        }
+        $sth->execute();
+        return $sth->fetchColumn();
+    }
+
+    public function fetchAffected($statement, array $values = array())
+    {
+        $pdo = parent::getPdo();
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $sth = $pdo->prepare($statement);
+        foreach ($values as $key => $val) {
+            $sth->bindValue(':'.$key, $val);
+        }
+        $sth->execute();
+        return $sth->rowCount();
+    }
+
+    public function base_query($query) {
+        $pdo = parent::getPdo();
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        return $pdo->query($query);
+    }
     // @codeCoverageIgnoreEnd
 }
