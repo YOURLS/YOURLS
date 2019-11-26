@@ -332,9 +332,9 @@ function yourls_check_signature_timestamp() {
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
 			(
-				$hash_function( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+				hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
 				or
-				$hash_function( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
+				hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
 			)
 			&&
 			yourls_check_timestamp( $_REQUEST['timestamp'] )
