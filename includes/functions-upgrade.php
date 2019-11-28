@@ -50,7 +50,7 @@ function yourls_patch_483() {
 	// Change URL title charset to UTF8
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
-	$sql = "CREATE INDEX url ON $table_url (url);"
+	$sql = "CREATE INDEX url ON $table_url (url);";
 	$ydb->query( $sql );
 	echo "<p>Applying table index patch. Please wait...</p>";
 }
