@@ -27,6 +27,9 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		if( $oldsql < 482 )
 			yourls_upgrade_482();
 
+		if( $oldsql < 483 )
+			yourls_patch_483();
+
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
 		break;
@@ -37,6 +40,19 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		yourls_update_option( 'db_version', YOURLS_DB_VERSION );
 		break;
 	}
+}
+
+/**
+ * Patch 483
+ *   -  Create index on `url` this will decrease DB load for big databases with 3mil+ url rows
+ */
+function yourls_patch_483() {
+	// Change URL title charset to UTF8
+	global $ydb;
+	$table_url = YOURLS_DB_TABLE_URL;
+	$sql = "CREATE INDEX url ON $table_url (url);"
+	$ydb->query( $sql );
+	echo "<p>Applying table index patch. Please wait...</p>";
 }
 
 /**

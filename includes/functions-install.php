@@ -210,14 +210,15 @@ function yourls_create_sql_tables() {
 	$create_tables[YOURLS_DB_TABLE_URL] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
 		'`keyword` varchar(200) BINARY NOT NULL,'.
-		'`url` text BINARY NOT NULL,'.
+		'`url` varchar(1024) BINARY NOT NULL,'.
 		'`title` text CHARACTER SET utf8,'.
 		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
 		'`ip` VARCHAR(41) NOT NULL,'.
 		'`clicks` INT(10) UNSIGNED NOT NULL,'.
 		' PRIMARY KEY  (`keyword`),'.
 		' KEY `timestamp` (`timestamp`),'.
-		' KEY `ip` (`ip`)'.
+		' KEY `ip` (`ip`),'.
+		' KEY `url` (`url`)'.
 		');';
 
 	$create_tables[YOURLS_DB_TABLE_OPTIONS] =
