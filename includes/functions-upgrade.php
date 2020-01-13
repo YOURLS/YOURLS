@@ -47,7 +47,7 @@ function yourls_upgrade_482() {
 	// Change URL title charset to UTF8
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
-	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
+	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8mb4;";
 	$ydb->query( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 }
@@ -89,7 +89,7 @@ function yourls_upgrade_to_143( ) {
 	$sql = "SHOW COLUMNS FROM `$table_log`";
 	$cols = $ydb->fetchObjects( $sql );
 	if ( $cols[2]->Field == 'keyword' ) {
-		$sql = "ALTER TABLE `$table_log` CHANGE `keyword` `shorturl` VARCHAR( 200 ) BINARY;";
+		$sql = "ALTER TABLE `$table_log` CHANGE `keyword` `shorturl` VARCHAR( 191 ) BINARY;";
 		$ydb->query( $sql );
 	}
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
@@ -118,7 +118,7 @@ function yourls_upgrade_to_141( ) {
 function yourls_alter_url_table_to_141() {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
-	$alter = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 200 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
+	$alter = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 191 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
 	$ydb->query( $alter );
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
 }
@@ -204,7 +204,7 @@ function yourls_create_tables_for_14() {
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
 		'`click_id` int(11) NOT NULL auto_increment,'.
 		'`click_time` datetime NOT NULL,'.
-		'`shorturl` varchar(200) NOT NULL,'.
+		'`shorturl` varchar(191) NOT NULL,'.
 		'`referrer` varchar(200) NOT NULL,'.
 		'`user_agent` varchar(255) NOT NULL,'.
 		'`ip_address` varchar(41) NOT NULL,'.
@@ -231,7 +231,7 @@ function yourls_alter_url_table_to_14() {
 
 	$alters = array();
 	$results = array();
-	$alters[] = "ALTER TABLE `$table` CHANGE `id` `keyword` VARCHAR( 200 ) NOT NULL";
+	$alters[] = "ALTER TABLE `$table` CHANGE `id` `keyword` VARCHAR( 191 ) NOT NULL";
 	$alters[] = "ALTER TABLE `$table` CHANGE `url` `url` TEXT NOT NULL";
 	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
 
