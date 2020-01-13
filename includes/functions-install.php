@@ -249,8 +249,19 @@ function yourls_create_sql_tables() {
 
 	// Create tables
 	foreach ( $create_tables as $table_name => $table_query ) {
-		$ydb->perform( $table_query );
-		$create_success = $ydb->fetchAffected( "SHOW TABLES LIKE '$table_name'" );
+	    try {
+            $ydb->perform($table_query);
+        }
+        catch ( Exception $e ) {
+            $error_msg[] = yourls_s(
+                "Error creating table '%s' because of error message: '%s'. Create statement: '%s'",
+                $table_name,
+                $e ->getMessage(),
+                $table_query
+            );
+        }
+        $create_success = $ydb->fetchAffected( "SHOW TABLES LIKE '$table_name'" );
+
 		if( $create_success ) {
 			$create_table_count++;
 			$success_msg[] = yourls_s( "Table '%s' created.", $table_name );
@@ -258,6 +269,10 @@ function yourls_create_sql_tables() {
 			$error_msg[] = yourls_s( "Error creating table '%s'.", $table_name );
 		}
 	}
+
+	if( sizeof( $error_msg ) > 0 ) {
+        return array( 'success' => $success_msg, 'error' => $error_msg );
+    }
 
 	// Initializes the option table
 	if( !yourls_initialize_options() )
