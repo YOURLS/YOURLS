@@ -3,7 +3,7 @@
  * YOURLS version
  *
  */
-define( 'YOURLS_VERSION', '1.7.5' );
+define( 'YOURLS_VERSION', '1.7.6' );
 
 /**
  * YOURLS DB version. Increments when changes are made to the DB schema, to trigger a DB update
