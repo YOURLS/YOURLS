@@ -1951,7 +1951,7 @@ function yourls_is_mobile_device() {
 }
 
 /**
- * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
+ * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abcd')
  *
  * With no parameter passed, this function will guess current page and consider
  * it is the current page requested.
@@ -1959,7 +1959,7 @@ function yourls_is_mobile_device() {
  *
  * @since 1.5
  * @param string $yourls_site   Optional, YOURLS installation URL (default to constant YOURLS_SITE)
- * @param string $uri           Optional, page requested (default to $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] eg 'sho.rt/yourls/abcd' )
+ * @param string $uri           Optional, page requested (default to $_SERVER['REQUEST_URI'] eg 'abcd' )
  * @return string               request relative to YOURLS base (eg 'abdc')
  */
 function yourls_get_request($yourls_site = false, $uri = false) {
@@ -1975,8 +1975,8 @@ function yourls_get_request($yourls_site = false, $uri = false) {
         $yourls_site = YOURLS_SITE;
     }
     if (false === $uri) {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    }
+        $uri = ltrim($_SERVER['REQUEST_URI'], '/');
+	}
 
     // Even though the config sample states YOURLS_SITE should be set without trailing slash...
     $yourls_site = rtrim($yourls_site,'/');
