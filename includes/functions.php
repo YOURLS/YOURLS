@@ -1591,6 +1591,14 @@ function yourls_add_query_arg() {
 		$query = $uri;
 	}
 
+	// If the protocol is empty, this means that we don't have the
+	// site URL at the front. Add it to the base so that it becomes
+	// an absolute URL rather than an relative one. This simplifies
+	// the challenge of proxying with Apache and an application path.
+	if ( empty( $protocol ) ) {
+		$base = YOURLS_SITE . $base;
+	}
+
 	parse_str( $query, $qs );
 	$qs = yourls_urlencode_deep( $qs ); // this re-URL-encodes things that were already in the query string
 	if ( is_array( func_get_arg( 0 ) ) ) {
