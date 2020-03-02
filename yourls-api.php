@@ -43,6 +43,8 @@ if ( false === $return ) {
 
 if( isset( $_REQUEST['callback'] ) )
 	$return['callback'] = $_REQUEST['callback'];
+elseif ( isset( $_REQUEST['jsonp'] ) )
+	$return['callback'] = $_REQUEST['jsonp'];
 
 $format = ( isset( $_REQUEST['format'] ) ? $_REQUEST['format'] : 'xml' );
 
