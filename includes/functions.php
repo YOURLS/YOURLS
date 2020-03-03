@@ -1976,6 +1976,9 @@ function yourls_get_request($yourls_site = false, $uri = false) {
     }
     if (false === $uri) {
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        // Remove standard ports from $uri in case the HOST header is set to include them since they will never be in $yourls_site
+        // See #2613
+        $uri = str_replace( array( ':80', ':443'), '', $uri);
     }
 
     // Even though the config sample states YOURLS_SITE should be set without trailing slash...
