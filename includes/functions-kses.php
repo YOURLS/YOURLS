@@ -550,6 +550,7 @@ function yourls_kses_allowed_protocols() {
 		'steam:', 'steam://',
 		'bitcoin:',
 		'ldap://', 'ldaps://',
+		'webcal://', 'webcals://',
 		
 		// Purposedly removed for security
 		/*
