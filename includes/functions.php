@@ -2245,7 +2245,7 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 	yourls_do_action( 'deprecated_function', $function, $replacement, $version );
 
 	// Allow plugin to filter the output error trigger
-	if ( YOURLS_DEBUG && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
+	if ( yourls_get_debug_mode() && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
 		if ( ! is_null( $replacement ) )
 			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
 		else
@@ -2372,7 +2372,7 @@ function yourls_get_debug_log() {
 }
 
 /**
- * Debug mode toggle
+ * Debug mode set
  *
  * @since 1.7.3
  * @param bool $bool  Debug on or off
@@ -2390,6 +2390,16 @@ function yourls_debug_mode($bool) {
     } else {
         error_reporting(E_ERROR | E_PARSE);
     }
+}
+
+/**
+ * Return YOURLS debug mode
+ *
+ * @since 1.7.7
+ * @return bool
+ */
+function yourls_get_debug_mode() {
+    return ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true );
 }
 
 /**

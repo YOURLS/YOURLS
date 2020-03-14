@@ -142,9 +142,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  * @return void
  */
 function yourls_html_footer($can_query = true) {
-    if($can_query) {
+    if($can_query & yourls_get_debug_mode()) {
         $num_queries = yourls_get_num_queries();
-        $num_queries = sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
+        $num_queries = ' &ndash; '. sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
     } else {
         $num_queries = '';
     }
@@ -154,11 +154,11 @@ function yourls_html_footer($can_query = true) {
 	<footer id="footer" role="contentinfo"><p>
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
-		$footer .= ' &ndash; '.$num_queries;
+		$footer .= $num_queries;
 		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
 	</p></footer>
-	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+	<?php if( yourls_get_debug_mode() ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", yourls_get_debug_log() );
 		echo '</pre></div>';
