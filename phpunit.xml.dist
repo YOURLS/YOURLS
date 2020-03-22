@@ -5,6 +5,7 @@
 	colors="false"
 	stopOnFailure="false"
 	verbose="true"
+    cacheResult="true"
 	bootstrap="tests/bootstrap.php"
 	>
 	<testsuites>
@@ -43,6 +44,6 @@
 		<request name="format" value="simple"/>
 	</php>
 	<logging>
-		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+		<log type="junit" target="build/logs/junit.xml" />
 	</logging>
 </phpunit>

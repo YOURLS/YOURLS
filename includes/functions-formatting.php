@@ -487,10 +487,6 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	if ( '' == $url )
 		return $url;
 
-	// make sure there's a protocol, add http:// if not
-	if ( ! yourls_get_protocol( $url ) )
-		$url = 'http://'.$url;
-
 	$original_url = $url;
 
 	// force scheme and domain to lowercase - see issues 591 and 1630
@@ -514,16 +510,19 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 		$url = str_replace( "'", '&#039;', $url );
 	}
 
-	if ( ! is_array( $protocols ) or ! $protocols ) {
-		global $yourls_allowedprotocols;
-		$protocols = yourls_apply_filter( 'esc_url_protocols', $yourls_allowedprotocols );
-		// Note: $yourls_allowedprotocols is also globally filterable in functions-kses.php/yourls_kses_init()
-	}
+    // If there's a protocol, make sure it's OK
+    if( yourls_get_protocol($url) !== '' ) {
+        if ( ! is_array( $protocols ) or ! $protocols ) {
+            global $yourls_allowedprotocols;
+            $protocols = yourls_apply_filter( 'esc_url_protocols', $yourls_allowedprotocols );
+            // Note: $yourls_allowedprotocols is also globally filterable in functions-kses.php/yourls_kses_init()
+        }
 
-	if ( !yourls_is_allowed_protocol( $url, $protocols ) )
-		return '';
+        if ( !yourls_is_allowed_protocol( $url, $protocols ) )
+            return '';
 
-	// I didn't use KSES function kses_bad_protocol() because it doesn't work the way I liked (returns //blah from illegal://blah)
+        // I didn't use KSES function kses_bad_protocol() because it doesn't work the way I liked (returns //blah from illegal://blah)
+    }
 
 	return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
 }

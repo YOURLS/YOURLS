@@ -1998,13 +1998,29 @@ function yourls_get_request($yourls_site = false, $uri = false) {
 }
 
 /**
- * Change protocol to match current scheme used (http or https)
+ * Change protocol of a URL to HTTPS if we are currently on HTTPS
  *
+ * This function is used to avoid insert 'http://' images or scripts in a page when it's served through HTTPS,
+ * to avoid "mixed content" errors.
+ * So:
+ *   - if you are on http://sho.rt/, 'http://something' and 'https://something' are left untouched.
+ *   - if you are on https:/sho.rt/, 'http://something' is changed to 'https://something'
+ *
+ * So, arguably, this function is poorly named. It should be something like yourls_match_current_protocol_if_we_re_on_https
+ *
+ * @since 1.5.1
+ * @param string $url        a URL
+ * @param string $normal     Optional, the standard scheme (defaults to 'http://')
+ * @param string $ssl        Optional, the SSL scheme (defaults to 'https://')
+ * @return string            the modified URL, if applicable
  */
 function yourls_match_current_protocol( $url, $normal = 'http://', $ssl = 'https://' ) {
-	if( yourls_is_ssl() )
-		$url = str_replace( $normal, $ssl, $url );
-	return yourls_apply_filter( 'match_current_protocol', $url );
+    // we're only doing something if we're currently serving through SSL and the input URL begins with 'http://' or 'https://'
+    if( yourls_is_ssl() and in_array( yourls_get_protocol($url), array('http://', 'https://') ) ) {
+        $url = str_replace( $normal, $ssl, $url );
+    }
+
+    return yourls_apply_filter( 'match_current_protocol', $url );
 }
 
 /**
