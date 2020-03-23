@@ -704,6 +704,14 @@ function yourls_get_user_agent() {
 /**
  * Redirect to another page
  *
+ * YOURLS redirection, either to internal or external URLs. If headers have not been sent, redirection
+ * is achieved with PHP's header(). If headers have been sent already and we're not in a command line
+ * client, redirection occurs with Javascript.
+ *
+ * @since 1.4
+ * @param string $location      URL to redirect to
+ * @param int    $code          HTTP status code to send
+ * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise
  */
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
@@ -713,10 +721,15 @@ function yourls_redirect( $location, $code = 301 ) {
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
 		header( "Location: $location" );
-	} else {
-		yourls_redirect_javascript( $location );
+        return 1;
 	}
-	die();
+
+	if( php_sapi_name() !== 'cli') {
+        yourls_redirect_javascript( $location );
+        return 2;
+	}
+
+	return 3;
 }
 
 /**

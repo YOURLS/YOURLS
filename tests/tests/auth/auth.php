@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auth functions other than login
+ * Auth functions other than login and logout
  *
  * @group auth
  */
@@ -30,17 +30,6 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     public static function tearDownAfterClass() {
         global $yourls_user_passwords;
         $yourls_user_passwords = self::$yourls_user_passwords_copy;
-    }
-
-    /**
-     * Check logout procedure
-     */
-    public function test_logout() {
-        $this->assertTrue( yourls_is_valid_user() );
-        $_GET['action'] = 'logout';
-        $this->assertNotTrue( yourls_is_valid_user() );
-        unset( $_GET['action'] );
-        $this->assertTrue( yourls_is_valid_user() );
     }
 
     /**
