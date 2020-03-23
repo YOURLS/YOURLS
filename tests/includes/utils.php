@@ -74,7 +74,7 @@ class Change_Variable {
 */
 function ut_var_dump( ...$what ) {
     ob_start();
-    if( count($what) == 1 ) {
+    if( count($what) === 1 ) {
         $what = $what[0];
     }
     var_dump( $what );
@@ -117,4 +117,3 @@ class Log_in_File {
 	}
 
 }
-
