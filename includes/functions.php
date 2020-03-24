@@ -2039,7 +2039,7 @@ function yourls_get_request($yourls_site = false, $uri = false) {
  */
 function yourls_match_current_protocol( $url, $normal = 'http://', $ssl = 'https://' ) {
     // we're only doing something if we're currently serving through SSL and the input URL begins with 'http://' or 'https://'
-    if( yourls_is_ssl() and in_array( yourls_get_protocol($url), array('http://', 'https://') ) ) {
+    if( yourls_is_ssl() && in_array( yourls_get_protocol($url), array('http://', 'https://') ) ) {
         $url = str_replace( $normal, $ssl, $url );
     }
 
@@ -2505,4 +2505,3 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
-
