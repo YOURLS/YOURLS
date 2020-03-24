@@ -1112,10 +1112,25 @@ function yourls_get_option( $option_name, $default = false ) {
 		return $pre;
 
 	global $ydb;
-    $option = new \YOURLS\Database\Options($ydb);
-    $value  = $option->get($option_name, $default);
+    $value  = $ydb->yourls_options->get($option_name, $default);
 
     return yourls_apply_filter( 'get_option_'.$option_name, $value );
+}
+
+/**
+ * Init option
+ *
+ * Create an option object to be re-used
+ *
+ * @since
+ * @param unknown_type $a
+ * @param unknown_type $b
+ * @return unknown
+ */
+function yourls_init_options() {
+	global $ydb;
+
+    $ydb->yourls_options = new \YOURLS\Database\Options($ydb);
 }
 
 /**
@@ -1135,9 +1150,7 @@ function yourls_get_all_options() {
 		return $pre;
 
 	global $ydb;
-    $options = new \YOURLS\Database\Options($ydb);
-
-    if ($options->get_all_options() === false) {
+    if ($ydb->yourls_options->get_all_options() === false) {
 		// Zero option found but no unexpected error so far: YOURLS isn't installed
         yourls_set_installed(false);
         return;
@@ -1158,9 +1171,7 @@ function yourls_get_all_options() {
  */
 function yourls_update_option( $option_name, $newvalue ) {
 	global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
-    $update = $option->update($option_name, $newvalue);
+    $update = $ydb->yourls_options->update($option_name, $newvalue);
 
     return $update;
 }
@@ -1177,9 +1188,7 @@ function yourls_update_option( $option_name, $newvalue ) {
  */
 function yourls_add_option( $name, $value = '' ) {
 	global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
-    $add    = $option->add($name, $value);
+    $add    = $ydb->yourls_options->add($name, $value);
 
     return $add;
 }
@@ -1196,9 +1205,7 @@ function yourls_add_option( $name, $value = '' ) {
  */
 function yourls_delete_option( $name ) {
 	global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
-    $delete = $option->delete($name);
+    $delete = $ydb->yourls_options->delete($name);
 
     return $delete;
 }

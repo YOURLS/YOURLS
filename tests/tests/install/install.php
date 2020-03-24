@@ -29,7 +29,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 	 * Test (sort of) table creation
 	 */
 	public function test_create_tables() {
-        
+
         /* The expected result has:
          *   - success messages: the table are created with a "CREATE IF NOT EXISTS",
          *     hence, will not be recreated once more, they're already created
@@ -41,7 +41,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
          * set of tables (with another prefix for instance).
          * Well. Consider this for next DB engine maybe? :)
          */
-        
+
         $expected = array(
             'success' => array (
                 "Table 'yourls_url' created.",
@@ -54,21 +54,21 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
                 'Could not insert sample short URLs',
             ),
         );
-        
+
         $this->assertSame( $expected, yourls_create_sql_tables() );
 	}
-    
+
 	/**
 	 * Test (sort of) defining constants
 	 */
     public function test_correct_config() {
         $test = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
-        
+
         // This should return a readable file
         $readable = is_readable($test->find_config(YOURLS_CONFIGFILE));
         $this->assertTrue($readable);
         // For the record, $this->assertFileIsReadable() was introduced around PHPUnit 5.6
-        
+
         // redefining YOURLS_ constants should not throw any error ("constant already defined...")
         // or define any new constants
         $consts = get_defined_constants(true);
@@ -103,7 +103,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 	 */
     public function test_init_defaults() {
         $test = new \YOURLS\Config\InitDefaults();
-        
+
         $expected = array (
             'include_core_funcs' => true,
             'include_auth_funcs' => false,
@@ -116,6 +116,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
             'include_db' => true,
             'include_cache' => true,
             'return_if_fast_init' => true,
+            'init_options' => true,
             'get_all_options' => true,
             'register_shutdown' => true,
             'core_loaded' => true,
@@ -126,10 +127,10 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
             'check_new_version' => true,
             'init_admin' => true,
         );
-        
+
         $actual = get_class_vars(get_class($test));
-        
+
         $this->assertSame($expected, $actual);
     }
-  
+
 }
