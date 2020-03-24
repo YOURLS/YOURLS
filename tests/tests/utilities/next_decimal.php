@@ -15,6 +15,7 @@ class NextDecimal_Tests extends PHPUnit_Framework_TestCase {
 
     public function test_update_next_decimal_no_arg() {
         $id = yourls_get_next_decimal();
+        yourls_update_next_decimal();
         $next = yourls_get_next_decimal();
         $this->assertSame($next, $id + 1);
     }
