@@ -1967,12 +1967,12 @@ function yourls_is_mobile_device() {
  * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
  *
  * With no parameter passed, this function will guess current page and consider
- * it is the current page requested.
+ * it is the requested page.
  * For testing purposes, parameters can be passed.
  *
  * @since 1.5
  * @param string $yourls_site   Optional, YOURLS installation URL (default to constant YOURLS_SITE)
- * @param string $uri           Optional, page requested (default to $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] eg 'sho.rt/yourls/abcd' )
+ * @param string $uri           Optional, page requested (default to $_SERVER['REQUEST_URI'] eg '/yourls/abcd' )
  * @return string               request relative to YOURLS base (eg 'abdc')
  */
 function yourls_get_request($yourls_site = false, $uri = false) {
@@ -1988,19 +1988,29 @@ function yourls_get_request($yourls_site = false, $uri = false) {
         $yourls_site = YOURLS_SITE;
     }
     if (false === $uri) {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        // Remove standard ports from $uri in case the HOST header is set to include them since they will never be in $yourls_site
-        // See #2613
-        $uri = str_replace( array( ':80', ':443'), '', $uri);
+        $uri = $_SERVER['REQUEST_URI'];
     }
 
     // Even though the config sample states YOURLS_SITE should be set without trailing slash...
     $yourls_site = rtrim($yourls_site,'/');
 
-    // Ignore protocol & www. prefix
-	$root = str_replace( array( 'https://www.', 'http://www.', 'https://', 'http://'  ), '', $yourls_site );
-	// Case insensitive comparison of the YOURLS root with the requested URL, to match http://Sho.rt/blah, http://sho.rt/blah, http://www.Sho.rt/blah ...
-	$request = preg_replace( "!(?:www\.)?$root/!i", '', $uri, 1 );
+    // Now strip the YOURLS_SITE path part out of the requested URI, and get the request relative to YOURLS base
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // |       if we request       | and YOURLS is hosted on | YOURLS path part is | "request" is |
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // | http://sho.rt/abc         | http://sho.rt           | /                   | abc          |
+    // | https://SHO.rt/subdir/abc | https://shor.rt/subdir/ | /subdir/            | abc          |
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // and so on. You can find various test cases in /tests/tests/utilities/get_request.php
+
+    // Take only the URL_PATH part of YOURLS_SITE (ie "https://sho.rt:1337/path/to/yourls" -> "/path/to/yourls")
+    $yourls_site = parse_url($yourls_site, PHP_URL_PATH) . '/';
+
+    // Strip path part from request if exists
+    $request = $uri;
+    if( substr($uri, 0, strlen($yourls_site)) == $yourls_site) {
+        $request = ltrim( substr($uri, strlen($yourls_site)), '/');
+    }
 
 	// Unless request looks like a full URL (ie request is a simple keyword) strip query string
 	if( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
