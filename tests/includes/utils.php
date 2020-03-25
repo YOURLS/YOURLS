@@ -10,7 +10,7 @@
  * @since 0.1
  * @param string $len Optional string length
  * @return string Random string
- */ 
+ */
 function rand_str( $len=32 ) {
 	return substr( md5( uniqid( rand() ) ), 0, $len );
 }
@@ -66,14 +66,17 @@ class Change_Variable {
         return rand_str();
     }
 }
- 
+
 /**
 * var_dump() for Unit Tests
 *
 * @since 0.1
 */
-function ut_var_dump( $what ) {
+function ut_var_dump( ...$what ) {
     ob_start();
+    if( count($what) === 1 ) {
+        $what = $what[0];
+    }
     var_dump( $what );
     $display = ob_get_contents();
     ob_end_clean();
@@ -91,27 +94,26 @@ function ut_var_dump( $what ) {
 class Log_in_File {
 
 	public static $has_logged = false;
-	
+
 	public static function log( $what ) {
 		// Don't mess with Travis
 		if( !yut_is_local() )
 			return;
-	
+
 		if( ! self::$has_logged ) {
 			self::$has_logged = true;
 			self::start_log();
 		}
-		
+
 		ob_start();
 		var_dump( $what );
 		$what = ob_get_clean();
-	
+
 		error_log( $what."\n", 3, dirname( dirname( __FILE__ ) ) . '/log.txt' );
 	}
-	
+
 	public static function start_log() {
 		self::log( "---------------- START TESTS ----------------" );
 	}
-	
+
 }
- 

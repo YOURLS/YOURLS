@@ -9,6 +9,11 @@
  */
 class Format_URL extends PHPUnit_Framework_TestCase {
 
+    protected function tearDown() {
+        yourls_remove_filter( 'is_ssl', 'yourls_return_true' );
+        yourls_remove_filter( 'is_ssl', 'yourls_return_false' );
+    }
+
     /**
      * List of schemes to test. Structure: array( string to test, expected scheme )
      */
@@ -33,7 +38,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
            array( 'scheme'                      , '' ),
         );
     }
-    
+
     /**
      * Correctly get protocols
      *
@@ -43,8 +48,8 @@ class Format_URL extends PHPUnit_Framework_TestCase {
     function test_correcttly_get_protocols( $test_this, $expected ) {
         $this->assertSame( yourls_get_protocol( $test_this ), $expected );
     }
-    
-    
+
+
     /**
      * List of valid URLs that should not be changed when sanitized
      */
@@ -68,10 +73,16 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://example.com/?test=(12345)abcdef[gh]' ),
             array( 'http://[0:0:0:0:0:0:0:1]/' ),
             array( 'http://[2001:db8:1f70::999:de8:7648:6e8]:100/' ),
-            array( 'http://example.com/?req=http;//blah' ), // 
+            array( 'http://example.com/?req=http;//blah' ), //
+            array( 'relative' ),
+            array( 'Relative/path/' ),
+            array( 'relative/Path/#yes' ),
+            array( '/absolute' ),
+            array( '/Absolute/Path/' ),
+            array( '/absolute/path/?omg#also' ),
         );
     }
-    
+
     /**
      * Test that valid URLs are not modified
      *
@@ -86,7 +97,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	 * URL with spaces
 	 *
 	 * @since 0.1
-	 */		
+	 */
 	function test_url_with_spaces() {
 		$this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
 		$this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
@@ -99,13 +110,13 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	 * URL with bad chars
 	 *
 	 * @since 0.1
-	 */	
+	 */
 	function test_url_with_bad_characters() {
         // regular sanitize leaves %0A & %0D alone
         $this->assertEquals( 'http://example.com/keep%0Dlinefeed%0A', yourls_sanitize_url( 'http://example.com/keep%0Dlinefeed%0A' ) );
         $this->assertEquals( 'http://example.com/%0%0%0DAD', yourls_sanitize_url( 'http://example.com/%0%0%0DAD' ) );
-        
-        // sanitize with anti CRLF 
+
+        // sanitize with anti CRLF
 		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
 		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
 		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
@@ -124,10 +135,10 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	 * Test valid, missing and fake protocols
 	 *
 	 * @since 0.1
-	 */	
+	 */
 	function test_url_with_protocols() {
 		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'http://example.com' ) );
-		$this->assertEquals( 'http://example.php', yourls_sanitize_url( 'example.php' ) );
+		$this->assertEquals( 'example.php', yourls_sanitize_url( 'example.php' ) );
 		$this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
 		$this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
         // play with allowed protocols
@@ -137,7 +148,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
         $yourls_allowedprotocols[] = 'evil://';
         $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
 	}
-    
+
     /**
      * List of URLs with MiXeD CaSe to test. Structure: array( sanitized url, unsanitized url with mixed case )
      */
@@ -158,7 +169,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://Ozh:Password@example.com:1337#OMG'         , 'http://Ozh:Password@Example.COM:1337#OMG' ),
             array( 'http://User:PWd@example.com?User:PWd@Example.com' , 'http://User:PWd@Example.com?User:PWd@Example.com' ),
             array( 'mailto:Ozh@Ozh.org?omg'                           , 'MAILTO:Ozh@Ozh.org?omg' ),
-            array( 'http://omg'                                       , 'OMG' ),
+            array( 'OMg'                                              , 'OMg' ),
         );
     }
 
@@ -167,11 +178,53 @@ class Format_URL extends PHPUnit_Framework_TestCase {
 	 *
 	 * @since 0.1
      * @dataProvider list_of_mixed_case
-	 */	
+	 */
 	function test_url_with_protocol_case( $sanitized, $unsanitized ) {
 		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
 	}
-	
+
+    /**
+     * List of URLS and expected matches whether we're on SSL or not.
+     * Structure: array(original URL, expected URL if we're on HTTP, expected URL if we're on HTTPS)
+     */
+    function list_of_urls_with_and_without_https() {
+        return array(
+            array( 'http://omg',         'http://omg',        'https://omg' ),
+            array( 'https://omg',        'https://omg',       'https://omg' ),
+            array( 'http://omg?http',    'http://omg?http',   'https://omg?http' ),
+            array( 'https://omg?http',   'https://omg?http',  'https://omg?http' ),
+            array( 'omg?http://bleh',    'omg?http://bleh',   'omg?http://bleh' ),
+            array( 'omg?https://bleh',   'omg?https://bleh',  'omg?https://bleh' ),
+            array( 'http',               'http',              'http' ),
+            array( 'https',              'https',             'https' ),
+            array( 'http://https',       'http://https',      'https://https' ),
+            array( 'https://https',      'https://https',     'https://https' ),
+        );
+    }
+    /**
+     * Test matching protocol with no SSL
+     *
+     * Feed URL and return a result that matches "http"
+     *
+     * @dataProvider list_of_urls_with_and_without_https
+     */
+    function test_matching_protocols_with_no_ssl( $url, $without_ssl, $with_ssl ) {
+        yourls_add_filter('is_ssl', 'yourls_return_false');
+        $this->assertEquals( $without_ssl, yourls_match_current_protocol($url) );
+    }
+
+    /**
+     * Test matching protocol with SSL
+     *
+     * Feed URL and return a result that matches "https"
+     *
+     * @dataProvider list_of_urls_with_and_without_https
+     */
+    function test_matching_protocols_with_ssl( $url, $without_ssl, $with_ssl ) {
+        yourls_add_filter('is_ssl', 'yourls_return_true');
+        $this->assertEquals( $with_ssl, yourls_match_current_protocol($url) );
+    }
+
 	/*
 	More stuff to test:
 	At some point, the following URLs should be equal, as this is correctly handled by YOURLS
