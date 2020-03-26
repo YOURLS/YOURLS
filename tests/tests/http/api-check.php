@@ -10,6 +10,74 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
         yourls_remove_all_filters( 'is_admin' );
+        yourls_remove_all_filters( 'shunt_yourls_http_request' );
+    }
+
+    /**
+     * Emulate succesfull HTTP request to api.yourls.org
+     */
+    public function fake_http_request_success() {
+        $return = (object) array();
+        $return->body = '{
+            "latest": "1.0.1",
+            "zipurl": "https:\/\/api.github.com\/repos\/YOURLS\/YOURLS\/zipball\/1.0.1"
+            }';
+        $return->success = true;
+
+        return $return;
+    }
+
+    /**
+     * Emulate failed HTTP request to api.yourls.org
+     */
+    public function fake_http_request_failure() {
+        return 'cURL error 28: Connection timed out after 3000 milliseconds (GET on http://api.yourls.org/)';
+    }
+
+    /**
+     * Emulate HTTP request to api.yourls.org with a server error
+     */
+    public function fake_http_request_server_error() {
+        $return = (object) array();
+        $return->body = 'Error 500';
+        $return->success = false;
+
+        return $return;
+    }
+
+    /**
+     * Check that version checking returns false if host is unreachable, and that failed attemps counter increments
+     */
+    public function test_api_failed_request() {
+        yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_failure') );
+        $this->check_and_assert();
+    }
+
+    /**
+     * Check that version checking returns false if host errors, and that failed attemps counter increments
+     */
+    public function test_api_failed_request_server_error() {
+        yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_server_error') );
+        $this->check_and_assert();
+    }
+
+    /**
+     * Helper function for test_api_failed_request() and test_api_failed_request_server_error()
+     */
+    public function check_and_assert() {
+        $checks = yourls_get_option( 'core_version_checks' );
+        if( !is_object( $checks ) ) {
+            $checks = new stdClass;
+            $checks->failed_attempts = 0;
+        }
+        $before_check = $checks->failed_attempts;
+
+        $this->assertFalse( yourls_check_core_version() );
+
+        $checks = yourls_get_option( 'core_version_checks' );
+        $after_check = $checks->failed_attempts;
+
+        $this->assertEquals( $after_check, $before_check + 1 );
     }
 
     /**
@@ -18,6 +86,8 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_check_core_version() {
+        yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_success') );
+
         $before = yourls_get_option( 'core_version_checks' );
         $check = yourls_check_core_version();
         $after = yourls_get_option( 'core_version_checks' );
@@ -37,6 +107,8 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_check_only_in_admin() {
+        yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_success') );
+
         yourls_add_filter( 'is_admin', 'yourls_return_false' );
         $this->assertFalse( yourls_maybe_check_core_version() );
     }
@@ -212,6 +284,8 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * @since 0.1
      */
     public function test_api_check_in_various_scenario( $name, $checks, $expected ) {
+        yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_success') );
+
         yourls_add_filter( 'is_admin', 'yourls_return_true' );
         yourls_update_option( 'core_version_checks', $checks );
 
