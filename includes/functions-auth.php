@@ -9,7 +9,7 @@ function yourls_is_valid_user() {
 	if ( null !== $pre ) {
 		return $pre;
 	}
-	
+
 	// $unfiltered_valid : are credentials valid? Boolean value. It's "unfiltered" to allow plugins to eventually filter it.
 	$unfiltered_valid = false;
 
@@ -19,7 +19,7 @@ function yourls_is_valid_user() {
 		yourls_store_cookie( null );
 		return yourls__( 'Logged out successfully' );
 	}
-	
+
 	// Check cookies or login request. Login form has precedence.
 
 	yourls_do_action( 'pre_login' );
@@ -36,7 +36,7 @@ function yourls_is_valid_user() {
 			yourls_do_action( 'pre_login_signature_timestamp' );
 			$unfiltered_valid = yourls_check_signature_timestamp();
 		}
-		
+
 	elseif
 		// API only: Secure (no login or pwd)
 		// ?signature=md5(totoblah)
@@ -48,7 +48,7 @@ function yourls_is_valid_user() {
 			yourls_do_action( 'pre_login_signature' );
 			$unfiltered_valid = yourls_check_signature();
 		}
-	
+
 	elseif
 		// API or normal: login with username & pwd
 		( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] )
@@ -57,38 +57,37 @@ function yourls_is_valid_user() {
 			yourls_do_action( 'pre_login_username_password' );
 			$unfiltered_valid = yourls_check_username_password();
 		}
-	
+
 	elseif
 		// Normal only: cookies
-		( !yourls_is_API() && 
+		( !yourls_is_API() &&
 		  isset( $_COOKIE[ yourls_cookie_name() ] ) )
 		{
 			yourls_do_action( 'pre_login_cookie' );
 			$unfiltered_valid = yourls_check_auth_cookie();
 		}
-	
+
 	// Regardless of validity, allow plugins to filter the boolean and have final word
 	$valid = yourls_apply_filter( 'is_valid_user', $unfiltered_valid );
 
 	// Login for the win!
 	if ( $valid ) {
 		yourls_do_action( 'login' );
-		
+
 		// (Re)store encrypted cookie if needed
 		if ( !yourls_is_API() ) {
 			yourls_store_cookie( YOURLS_USER );
-			
+
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-				$url = yourls_match_current_protocol(yourls_sanitize_url(sprintf("%s%s", $_SERVER['SERVER_NAME'], $_SERVER['REQUEST_URI'])));
-				yourls_redirect( yourls_sanitize_url_safe($url) );
+				yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
 			}
 		}
-		
+
 		// Login successful
 		return true;
 	}
-	
+
 	// Login failed
 	yourls_do_action( 'login_failed' );
 
@@ -118,10 +117,10 @@ function yourls_check_username_password() {
  */
 function yourls_check_password_hash( $user, $submitted_password ) {
 	global $yourls_user_passwords;
-	
+
 	if( !isset( $yourls_user_passwords[ $user ] ) )
 		return false;
-	
+
 	if ( yourls_has_phpass_password( $user ) ) {
 		// Stored password is hashed with phpass
 		list( , $hash ) = explode( ':', $yourls_user_passwords[ $user ] );
@@ -147,17 +146,17 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 function yourls_hash_passwords_now( $config_file ) {
 	if( !is_readable( $config_file ) )
 		return 'cannot read file'; // not sure that can actually happen...
-		
+
 	if( !is_writable( $config_file ) )
-		return 'cannot write file';	
-	
+		return 'cannot write file';
+
 	// Include file to read value of $yourls_user_passwords
 	// Temporary suppress error reporting to avoid notices about redeclared constants
 	$errlevel = error_reporting();
 	error_reporting( 0 );
 	require $config_file;
 	error_reporting( $errlevel );
-	
+
 	$configdata = file_get_contents( $config_file );
 	if( $configdata == false )
 		return 'could not read file';
@@ -181,10 +180,10 @@ function yourls_hash_passwords_now( $config_file ) {
 			}
 		}
 	}
-	
+
 	if( $to_hash == 0 )
 		return 0; // There was no password to encrypt
-	
+
 	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
 		yourls_debug_log( 'Failed writing to ' . $config_file );
@@ -229,19 +228,19 @@ function yourls_phpass_check( $password, $hash ) {
 function yourls_phpass_instance( $iteration = 8, $portable = false ) {
 	$iteration = yourls_apply_filter( 'phpass_new_instance_iteration', $iteration );
 	$portable  = yourls_apply_filter( 'phpass_new_instance_portable', $portable );
-    
+
 	static $instance = false;
 	if( $instance == false ) {
 		$instance = new \Ozh\Phpass\PasswordHash( $iteration, $portable );
 	}
-	
+
 	return $instance;
 }
 
 
 /**
  * Check to see if any passwords are stored as cleartext.
- * 
+ *
  * @since 1.7
  * @return bool true if any passwords are cleartext
  */
@@ -320,7 +319,7 @@ function yourls_check_signature_timestamp() {
 
 	// Timestamp in PHP : time()
 	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
-    
+
 	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
@@ -351,7 +350,7 @@ function yourls_check_signature_timestamp() {
 function yourls_check_signature() {
     if( !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] ) )
         return false;
-    
+
 	// Check signature against all possible users
     global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
@@ -360,7 +359,7 @@ function yourls_check_signature() {
 			return true;
 		}
 	}
-    
+
     // Signature doesn't match known user
 	return false;
 }
@@ -399,15 +398,15 @@ function yourls_store_cookie( $user = null ) {
 	} else {
 		$time = time() + YOURLS_COOKIE_LIFE;
 	}
-	
+
 	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, PHP_URL_HOST ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 
 	// Some browsers refuse to store localhost cookie
-	if ( $domain == 'localhost' ) 
+	if ( $domain == 'localhost' )
 		$domain = '';
-   
+
     if ( !headers_sent( $filename, $linenum ) ) {
         setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
 	} else {
