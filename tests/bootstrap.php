@@ -42,6 +42,10 @@ new \YOURLS\Config\Init($init);
 // All set -- install
 yut_install_yourls();
 
+// All set -- instantiate the rest
+yourls_get_all_options();
+yourls_load_plugins();
+
 // PHPUnit 6 compatibility for previous versions
 if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {
     class_alias( 'PHPUnit\Framework\Assert',        'PHPUnit_Framework_Assert' );
