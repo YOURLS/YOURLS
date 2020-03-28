@@ -579,7 +579,6 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
 	if ( empty( YOURLS_TIMEZONE ) ) {
 		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );
-		echo "Test";
 	}
 	else {
 		$datetime = new DateTime( "@$timestamp" );

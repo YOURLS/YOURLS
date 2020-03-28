@@ -351,7 +351,8 @@ yourls_html_menu();
 				<td valign="top">
 				<h3><?php yourls_e( 'Historical click count' ); ?></h3>
 				<?php
-				$ago = round( (date('U') - strtotime($timestamp)) / (24* 60 * 60 ) );
+				$timestamp = strtotime( $timestamp );
+				$ago = round( (date('U') - $timestamp) / (24* 60 * 60 ) );
 				if( $ago <= 1 ) {
 					$daysago = '';
 				} else {
@@ -359,8 +360,6 @@ yourls_html_menu();
 				}
 				?>
 				<p><?php
-
-				$timestamp = strtotime( $timestamp );
 
 				// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
 				if ( empty( YOURLS_TIMEZONE ) ) {
