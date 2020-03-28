@@ -35,13 +35,18 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
 /** Server timezone GMT offset */
-define( 'YOURLS_HOURS_OFFSET', 0 ); 
+define( 'YOURLS_HOURS_OFFSET', 0 );
+
+/** Server timezone.
+ ** Please use one of the listed timezones in the PHP documentation: https://www.php.net/manual/en/timezones.php .
+ ** If left empty, YOURLS_HOURS_OFFSET will be used. */
+define( 'YOURLS_TIMEZONE', '' );
 
 /** YOURLS language
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
  ** See http://yourls.org/translations for more information */
-define( 'YOURLS_LANG', '' ); 
+define( 'YOURLS_LANG', '' );
 
 /** Allow multiple short URLs for a same long URL
  ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
@@ -68,7 +73,7 @@ $yourls_user_passwords = array(
 /** Debug mode to output some internal information
  ** Default is false for live site. Enable when coding or before submitting a new issue */
 define( 'YOURLS_DEBUG', false );
-	
+
 /*
  ** URL Shortening settings
  */
@@ -81,7 +86,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
  * Stick to one setting. It's best not to change after you've started creating links.
  */
 
-/** 
+/**
 * Reserved keywords (so that generated URLs won't match them)
 * Define here negative, unwanted or potentially misleading keywords.
 */
@@ -92,4 +97,3 @@ $yourls_reserved_URL = array(
 /*
  ** Personal settings would go after here.
  */
-

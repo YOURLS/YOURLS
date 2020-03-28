@@ -576,6 +576,17 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
 		$protocol_warning = yourls_apply_filter( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
+	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
+	if ( empty( YOURLS_TIMEZONE ) ) {
+		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );
+		echo "Test";
+	}
+	else {
+		$datetime = new DateTime( "@$timestamp" );
+		$datetime->setTimeZone( new DateTimeZone( YOURLS_TIMEZONE ) );
+		$timestamp_string = $datetime->format( 'M d, Y H:i' );
+	}
+
 	// Row cells: the array
 	$cells = array(
 		'keyword' => array(
@@ -593,7 +604,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		),
 		'timestamp' => array(
 			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
+			'date'     => $timestamp_string,
 		),
 		'ip' => array(
 			'template' => '%ip%',
@@ -1014,4 +1025,3 @@ function yourls_get_html_context() {
     global $ydb;
     $ydb->get_html_context();
 }
-
