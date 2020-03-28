@@ -578,9 +578,10 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
 	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-		$datetime = new DateTime( "@$timestamp" );
-		$datetime->setTimeZone( new DateTimeZone( YOURLS_TIMEZONE ) );
-		$timestamp_string = $datetime->format( 'M d, Y H:i' );
+		$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
+		// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
+		$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
+		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( $offset * 3600 ) );
 	}
 	else {
 		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );

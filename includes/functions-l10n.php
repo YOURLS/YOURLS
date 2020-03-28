@@ -690,20 +690,21 @@ function yourls_current_time( $type, $gmt = 0 ) {
 
 	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
 	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-		$datetime = new DateTime();
-		$datetime->setTimeZone( new DateTimeZone( YOURLS_TIMEZONE ) );
-		$timestamp_now = $datetime->getTimestamp();
+		$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
+		// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
+		$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
+		$timestamp = time() + $offset * 3600
 	}
 	else {
-		$timestamp_now = time() + YOURLS_HOURS_OFFSET * 3600;
+		$timestamp = time() + YOURLS_HOURS_OFFSET * 3600 ;
 	}
 
 	switch ( $type ) {
 		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', $timestamp_now );
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', $timestamp);
 			break;
 		case 'timestamp':
-			return ( $gmt ) ? time() : $timestamp_now;
+			return ( $gmt ) ? time() : $timestamp;
 			break;
 	}
 }
