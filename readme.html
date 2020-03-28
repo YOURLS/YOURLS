@@ -342,6 +342,7 @@
 				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 			</ol>
 			<h3 class='first' id="auto">Install Guides</h3>
+            <p>The <a href="https://yourls.org/wiki">wiki</a> is full of important information. Regarding installation, you'll find help for Apache, IIS and Nginx</p>
             <p>Here is a list of some (unofficial) install guides using automated tools:</p>
 			<ul>
 				<li><a href="https://www.rosehosting.com/blog/how-to-install-yourls-on-ubuntu-14-04/">How to Install YOURLS on Ubuntu 14.04</a></li>
@@ -445,7 +446,7 @@
 			<h3 id="plugins">Plugins?</h3>
 			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
 			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation and you can easily activate and deactivate a plugin from the admin interface.</p>
-			<p>There's a growing number of plugins available: check the <a href="https://yourls.org/pluginlist">Plugin list</a>.</p>
+			<p>There's a growing number of plugins available: check the <a href="https://yourls.org/awesome">Plugin list</a>.</p>
 
 			<h3 id="documentation">Documentation</h3>
 			<p>Several sample plugins are included in the archive. Read the source and learn the concept. It's easy and fun!</p>
@@ -578,7 +579,7 @@ echo $data->longurl;</tt></pre>
 			<p>There's a sample PHP file included that serves as an example on how to play with the API</p>
 
 			<h3 id="expand_api">Expand the API</h3>
-			<p>You can easily implement custom API actions with a plugin. See the <a href="https://yourls.org/pluginlist">plugin list</a> for examples.</p>
+			<p>You can easily implement custom API actions with a plugin. See the <a href="https://yourls.org/awesome">plugin list</a> for examples.</p>
 
 		</div>
 
@@ -592,7 +593,7 @@ echo $data->longurl;</tt></pre>
 				<li>A server with <strong>mod_rewrite</strong> enabled</li>
 				<li>At least <strong>PHP 5.6</strong></li>
 				<li>At least <strong>MYSQL 5</strong></li>
-				<li><em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
+				<li><em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a>, <a href="https://github.com/YOURLS/YOURLS/wiki/Web-Config-IIS">IIS</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
 			</ol>
 
 			<h3 id="recommendation">Server recommendations</h3>
@@ -657,13 +658,12 @@ echo $data->longurl;</tt></pre>
 			<h3 id="lowercase">Uppercase letters in short URLs are eaten up, eg "<code>OmgOzh</code>" becomes "<code>mgzh</code>" !</h3>
 			<ul>
 				<li>Indeed. It's intented if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
-				<li>If you want to force lowercase, you'll need a <a href="https://yourls.org/pluginlist">plugin</a>.</li>
+				<li>If you want to force lowercase, you'll need a <a href="https://yourls.org/awesome">plugin</a>.</li>
 			</ul>
 
 			<h3 id="feedback">Feedback, feature requests and bug reporting</h3>
 			<ol>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="https://yourls.org/support">Please</a>.</li>
-				<li>Check the <a href="https://yourls.org/roadmap">Road Map</a> for future features.</li>
 				<li>Read all the <a href="https://yourls.org/wiki">wiki documents</a>.</li>
 				<li>Search in all the <a href="https://yourls.org/issues">issues</a>, open and closed.</li>
 				<li>Eventually raise a new issue. To do so, please read the <a href="https://yourls.org/contribute">contribute guidelines</a>. Thanks!</li>
