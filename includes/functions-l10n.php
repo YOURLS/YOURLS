@@ -689,13 +689,13 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 function yourls_current_time( $type, $gmt = 0 ) {
 
 	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
-	if ( empty( YOURLS_TIMEZONE ) ) {
-		$timestamp_now = time() + YOURLS_HOURS_OFFSET * 3600;
-	}
-	else {
+	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
 		$datetime = new DateTime();
 		$datetime->setTimeZone( new DateTimeZone( YOURLS_TIMEZONE ) );
 		$timestamp_now = $datetime->getTimestamp();
+	}
+	else {
+		$timestamp_now = time() + YOURLS_HOURS_OFFSET * 3600;
 	}
 
 	switch ( $type ) {

@@ -577,13 +577,13 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		$protocol_warning = yourls_apply_filter( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
 	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
-	if ( empty( YOURLS_TIMEZONE ) ) {
-		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );
-	}
-	else {
+	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
 		$datetime = new DateTime( "@$timestamp" );
 		$datetime->setTimeZone( new DateTimeZone( YOURLS_TIMEZONE ) );
 		$timestamp_string = $datetime->format( 'M d, Y H:i' );
+	}
+	else {
+		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );
 	}
 
 	// Row cells: the array
