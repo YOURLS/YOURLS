@@ -693,7 +693,7 @@ function yourls_current_time( $type, $gmt = 0 ) {
 		$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
 		// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
 		$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
-		$timestamp = time() + $offset * 3600
+		$timestamp = time() + $offset * 3600;
 	}
 	else {
 		$timestamp = time() + YOURLS_HOURS_OFFSET * 3600 ;
