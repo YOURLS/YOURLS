@@ -15,7 +15,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         // remove filters and actions
         yourls_remove_all_filters( 'is_ssl' );
         yourls_remove_all_filters( 'needs_ssl' );
-        yourls_remove_action('pre_yourls_die');
+        yourls_remove_all_actions('pre_yourls_die');
 
         // unregister plugin pages
         global $ydb;
