@@ -81,12 +81,6 @@ class InitDefaults {
     public $return_if_fast_init = true;
 
     /**
-     * Whether to init the option system
-     * @var bool
-     */
-    public $init_options = true;
-
-    /**
      * Whether to read all options at once during starting
      * @var bool
      */

@@ -67,11 +67,6 @@ class Init {
             return;
         }
 
-        // Init options
-        if ($actions->init_options === true) {
-            yourls_init_options();
-        }
-
         // Read options right from start
         if ($actions->get_all_options === true) {
             yourls_get_all_options();
