@@ -576,17 +576,6 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	if( ! in_array( yourls_get_protocol( $url ) , array( 'http://', 'https://' ) ) )
 		$protocol_warning = yourls_apply_filter( 'add_row_protocol_warning', '<span class="warning" title="' . yourls__( 'Not a common link' ) . '">&#9733;</span>' );
 
-	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
-	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-		$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
-		// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
-		$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
-		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( $offset * 3600 ) );
-	}
-	else {
-		$timestamp_string = date( 'M d, Y H:i', $timestamp + ( YOURLS_HOURS_OFFSET * 3600 ) );
-	}
-
 	// Row cells: the array
 	$cells = array(
 		'keyword' => array(
@@ -604,7 +593,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		),
 		'timestamp' => array(
 			'template' => '%date%',
-			'date'     => $timestamp_string,
+			'date'     => date( 'M d, Y H:i', yourls_get_timezoned_timestamp( $timestamp )),
 		),
 		'ip' => array(
 			'template' => '%ip%',

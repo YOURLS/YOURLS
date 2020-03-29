@@ -165,6 +165,8 @@ if( yourls_do_log_redirect() ) {
 		$offset = YOURLS_HOURS_OFFSET;
 	}
 
+	$offset = yourls_get_offset();
+
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$sql = "SELECT
 		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR), '%H %p') AS `time`,
@@ -359,20 +361,7 @@ yourls_html_menu();
 					$daysago = ' (' . sprintf( yourls_n( 'about 1 day ago', 'about %s days ago', $ago ), $ago ) . ')';
 				}
 				?>
-				<p><?php
-
-				// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
-				if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-					$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
-					// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
-					$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
-					$timestamp_converted = $timestamp + $offset * 3600;
-				}
-				else {
-					$timestamp_converted = $timestamp + YOURLS_HOURS_OFFSET * 3600;
-				}
-
-				echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", $timestamp_converted ) ) . $daysago; ?></p>
+				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", yourls_get_timezoned_timestamp( $timestamp ) ) ) . $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php

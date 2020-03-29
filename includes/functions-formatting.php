@@ -717,3 +717,37 @@ function yourls_make_bookmarklet( $code ) {
     $book = new \Ozh\Bookmarkletgen\Bookmarkletgen;
     return $book->crunch( $code );
 }
+
+/**
+ * Adapts an epoch timestamp to a timezone.
+ * When no timezone is specified, the YOURLS_HOURS_OFFSET is used.
+ *
+ * @since tbd
+ * @param  string $timestamp  					An epoch timestamp
+ * @return string $timestamp_timezoned	A timestamp
+ */
+function yourls_get_timezoned_timestamp( $timestamp ) {
+		$offset = yourls_get_offset();
+		$timestamp_timezoned = $timestamp + $offset * 3600;
+    return $timestamp_timezoned;
+}
+
+/**
+ * Get the offset in hours of a timezone.
+ * When no timezone is specified, the YOURLS_HOURS_OFFSET is used.
+ *
+ * @since tbd
+ * @return string $offset	Offset in hours
+ */
+function yourls_get_offset() {
+		// When no timezone is specified in YOURLS_TIMEZONE, fall back to YOURLS_HOURS_OFFSET.
+		if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
+			$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
+			// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
+			$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
+		}
+		else {
+			$offset = YOURLS_HOURS_OFFSET;
+		}
+    return $offset;
+}
