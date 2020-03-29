@@ -155,16 +155,6 @@ if( yourls_do_log_redirect() ) {
         unset($_lists);
 	}
 
-	// Fall back to YOURLS_HOURS_OFFSET when no timezone is specified in YOURLS_TIMEZONE.
-	if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-		$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
-		// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
-		$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
-	}
-	else {
-		$offset = YOURLS_HOURS_OFFSET;
-	}
-
 	$offset = yourls_get_offset();
 
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
