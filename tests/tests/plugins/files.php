@@ -9,6 +9,14 @@
 class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 
     /**
+	 * Reset active plugin list
+	 */
+    public static function tearDownAfterClass() {
+        global $ydb;
+        $ydb->set_plugins( array() );
+    }
+
+    /**
 	 * Return one of the core plugins
 	 */
 	public function pick_a_plugin() {
@@ -88,10 +96,10 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
         $ydb->add_plugin($fake_plugin);
         yourls_update_option( 'active_plugins', $ydb->get_plugins() );
 
-        // Check that a notice has been triggered to warn about deleted plugin
-        $this->assertFalse( yourls_has_action( 'admin_notices' ) );
-        yourls_load_plugins();
-        $this->assertTrue( yourls_has_action( 'admin_notices' ) );
+        // Check we have activated 1 and removed 1
+        $load = yourls_load_plugins();
+        $this->assertTrue( $load['loaded'] );
+        $this->assertSame( $load['info'], '1 activated, 1 removed' );
 
         // Check only our valid plugin is left registered
         $this->assertSame( $ydb->get_plugins(), array( $plugin ) );
