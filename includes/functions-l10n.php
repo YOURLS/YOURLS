@@ -690,10 +690,10 @@ function yourls_current_time( $type, $gmt = 0 ) {
 
 	switch ( $type ) {
 		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timezoned_timestamp( $timestamp ));
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timezoned_timestamp( time() ));
 			break;
 		case 'timestamp':
-			return ( $gmt ) ? time() : yourls_get_timezoned_timestamp( $timestamp );
+			return ( $gmt ) ? time() : yourls_get_timezoned_timestamp( time() );
 			break;
 	}
 }
