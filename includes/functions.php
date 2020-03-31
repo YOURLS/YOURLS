@@ -102,6 +102,8 @@ function yourls_get_IP() {
 /**
  * Get next id a new link will have if no custom keyword provided
  *
+ * @since 1.0
+ * @return int            id of next link
  */
 function yourls_get_next_decimal() {
 	return yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
@@ -110,6 +112,15 @@ function yourls_get_next_decimal() {
 /**
  * Update id for next link with no custom keyword
  *
+ * Note: this function relies upon yourls_update_option(), which will return either true or false
+ * depending if there has been an actual MySQL query updating the DB.
+ * In other words, this function may return false yet this would not mean it has functionnaly failed
+ * In other words I'm not sure we really need this function to return something :face_with_eyes_looking_up:
+ * See issue 2621 for more on this.
+ *
+ * @since 1.0
+ * @param integer $int     id for next link
+ * @return bool            true or false depending on if there has been an actual MySQL query. See note above.
  */
 function yourls_update_next_decimal( $int = '' ) {
 	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;

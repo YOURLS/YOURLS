@@ -8,9 +8,6 @@
  */
 class API_Func_Tests extends PHPUnit_Framework_TestCase {
 
-    protected function tearDown() {
-    }
-
     public function api_actions() {
         return array(
             array( 'shorturl', '' ),
@@ -30,7 +27,7 @@ class API_Func_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_api_actions( $action, $alias ) {
         $action = $alias ? $alias : $action;
-        
+
         $this->assertTrue( is_array( call_user_func( 'yourls_api_action_' . $action ) ) );
     }
 

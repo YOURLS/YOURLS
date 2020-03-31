@@ -12,7 +12,7 @@ function yourls_db_connect() {
 		or !defined( 'YOURLS_DB_PASS' )
 		or !defined( 'YOURLS_DB_NAME' )
 		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, or could not connect to DB' ), yourls__( 'Fatal error' ), 503 );
+	) yourls_die ( yourls__( 'Incorrect DB config, please refer to documentation' ), yourls__( 'Fatal error' ), 503 );
 
     $dbhost = YOURLS_DB_HOST;
     $user   = YOURLS_DB_USER;

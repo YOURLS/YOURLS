@@ -37,6 +37,7 @@ class Options {
      * Read all options from DB at once, return bool
      *
      * @since  1.7.3
+     * @see yourls_get_all_options()
      * @return bool    True on success, false on failure (eg table missing or empty)
      */
     public function get_all_options() {
@@ -83,8 +84,9 @@ class Options {
      * Get option value from DB (or from cache if available). Return value or $default if not found
      *
      * @since  1.7.3
+     * @see yourls_get_option()
      * @param  string $name     Option name
-     * @param  string $default  Optional value to return if option doesn't exist
+     * @param  string $default  Value to return if option doesn't exist
      * @return mixed            Value set for the option
      */
     public function get($name, $default) {
@@ -129,6 +131,7 @@ class Options {
      * Update (add if doesn't exist) an option to DB
      *
      * @since  1.7.3
+     * @see yourls_update_option()
      * @param  string $name      Option name. Expected to not be SQL-escaped.
      * @param  mixed  $newvalue  Option value.
      * @return bool              False if value was not updated, true otherwise.
@@ -177,8 +180,9 @@ class Options {
      * Add an option to the DB
      *
      * @since  1.7.3
+     * @see yourls_add_option()
      * @param  string $name   Name of option to add. Expected to not be SQL-escaped.
-     * @param  mixed  $value  Optional option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
+     * @param  mixed  $value  Option value. Must be serializable if non-scalar. Expected to not be SQL-escaped.
      * @return bool           False if option was not added (eg already exists), true otherwise.
      */
     public function add($name, $value) {
@@ -222,6 +226,7 @@ class Options {
      * Delete option from DB
      *
      * @since  1.7.3
+     * @see yourls_delete_option()
      * @param  string $name  Option name to delete. Expected to not be SQL-escaped.
      * @return bool          False if option was not deleted (eg not found), true otherwise.
      */
