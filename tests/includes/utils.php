@@ -68,11 +68,26 @@ class Change_Variable {
 }
 
 /**
+* print() for Unit Tests
+*/
+function yourls_ut_print( ...$what ) {
+    ob_start();
+    $count = count($what);
+    for ($i = 0; $i < $count; $i++) {
+        print($what[$i]);
+    }
+    $display = ob_get_contents();
+    ob_end_clean();
+
+    fwrite( STDERR, $display );
+}
+
+/**
 * var_dump() for Unit Tests
 *
 * @since 0.1
 */
-function ut_var_dump( ...$what ) {
+function yourls_ut_var_dump( ...$what ) {
     ob_start();
     $count = count($what);
     for ($i = 0; $i < $count; $i++) {
