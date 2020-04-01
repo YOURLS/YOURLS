@@ -11,8 +11,6 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 	 * Check if YOURLS is declared installed
 	 */
 	public function test_install() {
-		$this->assertFalse( yourls_is_installed() );
-		yourls_get_all_options();
 		$this->assertTrue( yourls_is_installed() );
 	}
 

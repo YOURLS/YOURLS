@@ -12,10 +12,11 @@
 class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
-        // remove SSL filters
+        // remove filters and actions
         yourls_remove_all_filters( 'is_ssl' );
         yourls_remove_all_filters( 'needs_ssl' );
-        
+        yourls_remove_all_actions('pre_yourls_die');
+
         // unregister plugin pages
         global $ydb;
         $ydb->set_plugin_pages(array());
@@ -28,7 +29,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     */
     public function test_yourls_plugin_url_ssl_mode_1() {
         $plugin = rand_str();
-        
+
         yourls_add_filter( 'is_ssl', 'yourls_return_false' );
         yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
         $plugin_url = yourls_plugin_url( $plugin );
@@ -42,7 +43,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     */
     public function test_yourls_plugin_url_ssl_mode_2() {
         $plugin = rand_str();
-        
+
         yourls_add_filter( 'is_ssl', 'yourls_return_true' );
         yourls_add_filter( 'needs_ssl', 'yourls_return_false' );
         $plugin_url = yourls_plugin_url( $plugin );
@@ -56,7 +57,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     */
     public function test_yourls_plugin_url_ssl_mode_3() {
         $plugin = rand_str();
-        
+
         yourls_add_filter( 'is_ssl', 'yourls_return_true' );
         yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
         $plugin_url = yourls_plugin_url( $plugin );
@@ -70,7 +71,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     */
     public function test_yourls_plugin_url_ssl_mode_4() {
         $plugin = rand_str();
-        
+
         yourls_add_filter( 'is_ssl', 'yourls_return_false' );
         yourls_add_filter( 'needs_ssl', 'yourls_return_true' );
         $plugin_url = yourls_plugin_url( $plugin );
@@ -101,7 +102,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         );
         $pages = $ydb->get_plugin_pages();
         $this->assertSame( $pages[ $plugin ], $expected );
-        
+
         // deregister it
         $ydb->set_plugin_pages(array());
     }
@@ -119,11 +120,11 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
 
         // no plugin page registered
         $this->assertEmpty( yourls_list_plugin_admin_pages() );
-        
+
         // register one plugin
         yourls_register_plugin_page( $plugin, $title, $func );
         $pages = yourls_list_plugin_admin_pages();
-        
+
         $this->assertSame( 1, count( $pages ) );
         $this->assertArrayHasKey( 'url', $pages[ $plugin ] );
         $this->assertArrayHasKey( 'anchor', $pages[ $plugin ] );
@@ -138,11 +139,11 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     public function test_plugin_admin_page_fake() {
         // intercept yourls_die() before it actually dies
         yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
-        
+
         // This should trigger yourls_die()
         yourls_plugin_admin_page( rand_str() );
     }
-    
+
     /**
     * Simulate a valid plugin admin page
     *
@@ -157,11 +158,11 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         yourls_register_plugin_page( $plugin, $title, $func );
 
         $this->assertSame( 0, yourls_did_action( 'load-' . $plugin ) );
-        
+
         ob_start();
         yourls_plugin_admin_page( $plugin );
         ob_end_clean();
-        
+
         // The page should have been drawn, and the plugin page callback should have been triggered
         $this->assertSame( 1, yourls_did_action( 'load-' . $plugin ) );
         $this->assertSame( 1, yourls_did_action( $action ) );

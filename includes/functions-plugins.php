@@ -400,15 +400,33 @@ function yourls_get_plugin_data( $file ) {
 	return $plugin_data;
 }
 
-// Include active plugins
+/**
+ * Include active plugins
+ *
+ * This function includes every 'YOURLS_PLUGINDIR/plugin_name/plugin.php' found in option 'active_plugins'
+ * It will return a diagnosis array with the following keys:
+ *    (bool)'loaded' : true if plugin(s) loaded, false otherwise
+ *    (string)'info' : extra information
+ *
+ * @since 1.5
+ * @return array    Array('loaded' => bool, 'info' => string)
+ */
 function yourls_load_plugins() {
 	// Don't load plugins when installing or updating
-	if( yourls_is_installing() OR yourls_is_upgrading() OR !yourls_is_installed() )
-		return;
+	if( yourls_is_installing() OR yourls_is_upgrading() OR !yourls_is_installed() ) {
+		return array(
+            'loaded' => false,
+            'info' => 'install/upgrade'
+        );
+    }
 
 	$active_plugins = yourls_get_option( 'active_plugins' );
-	if( false === $active_plugins )
-		return;
+	if( false === $active_plugins OR $active_plugins === array() ) {
+		return array(
+            'loaded' => false,
+            'info' => 'no active plugin'
+        );
+    }
 
 	global $ydb;
 	$plugins = array();
@@ -421,7 +439,9 @@ function yourls_load_plugins() {
 		}
 	}
 
+    // Replace active plugin list with list of plugins we just activated
     $ydb->set_plugins($plugins);
+    $info = count($plugins) . ' activated';
 
 	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
 	if( count( $active_plugins ) ) {
@@ -429,7 +449,14 @@ function yourls_load_plugins() {
 		$message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', count( $active_plugins ) );
 		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
 		yourls_add_notice( $message .' '. $missing );
+
+		$info .= ', ' . count($active_plugins) . ' removed';
 	}
+
+    return array(
+        'loaded' => true,
+        'info' => $info
+    );
 }
 
 /**

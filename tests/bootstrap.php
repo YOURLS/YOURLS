@@ -22,6 +22,7 @@ require_once YOURLS_CONFIGFILE;
 require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
 define('YOURLS_TESTDATA_DIR', dirname( __FILE__ ) . '/data');
 define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
+define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
 $config = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
 $config->define_core_constants();
 
@@ -41,6 +42,10 @@ new \YOURLS\Config\Init($init);
 
 // All set -- install
 yut_install_yourls();
+
+// All set -- instantiate the rest
+yourls_get_all_options();
+yourls_load_plugins();
 
 // PHPUnit 6 compatibility for previous versions
 if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {

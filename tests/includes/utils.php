@@ -68,18 +68,41 @@ class Change_Variable {
 }
 
 /**
+* print() for Unit Tests
+*/
+function yourls_ut_print( ...$what ) {
+    ob_start();
+    $count = count($what);
+    for ($i = 0; $i < $count; $i++) {
+        print($what[$i]);
+    }
+    $display = ob_get_contents();
+    ob_end_clean();
+
+    fwrite( STDERR, $display );
+}
+
+/**
 * var_dump() for Unit Tests
 *
 * @since 0.1
 */
-function ut_var_dump( ...$what ) {
+function yourls_ut_var_dump( ...$what ) {
     ob_start();
-    if( count($what) === 1 ) {
-        $what = $what[0];
+    $count = count($what);
+    for ($i = 0; $i < $count; $i++) {
+        var_dump($what[$i]); $line_of_vardump = __LINE__; // lazy: keep track of where var_dump() is called
     }
-    var_dump( $what );
     $display = ob_get_contents();
     ob_end_clean();
+
+    // If we have xdebug enabled, remove first line of output of each var_dump() (ie `/path/to/tests/includes/utils.php:79:`)
+    if( ini_get('xdebug.overload_var_dump') == 2 ) {
+        $line = __FILE__ . ':' . $line_of_vardump . ":";
+        $line = str_replace('\\', '\\\\', $line); // escape the backslashes on Windows paths otherwise they will break the regex
+        $display = preg_replace("/$line\n/", '', $display);
+    }
+
     fwrite( STDERR, $display );
 }
 

@@ -147,6 +147,7 @@ class Format_URL extends PHPUnit_Framework_TestCase {
         global $yourls_allowedprotocols;
         $yourls_allowedprotocols[] = 'evil://';
         $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
+        $yourls_allowedprotocols = yourls_kses_allowed_protocols();
 	}
 
     /**

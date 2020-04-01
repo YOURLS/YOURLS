@@ -7,7 +7,7 @@
 function yourls_stats_countries_map( $countries, $id = null ) {
 
 	yourls_do_action( 'pre_stats_countries_map' );
-	
+
 	// if $id is null then assign a random string
 	if( $id === null )
 		$id = uniqid ( 'yourls_stats_map_' );
@@ -23,7 +23,7 @@ function yourls_stats_countries_map( $countries, $id = null ) {
 		'theme'           => 'maximized'
 	);
 	$options = yourls_apply_filter( 'stats_countries_map_options', $options );
-	
+
 	$map = yourls_google_viz_code( 'GeoChart', $data, $options, $id );
 
 	echo yourls_apply_filter( 'stats_countries_map', $map, $countries, $options, $id );
@@ -36,7 +36,7 @@ function yourls_stats_countries_map( $countries, $id = null ) {
 function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 
 	yourls_do_action( 'pre_stats_pie' );
-	
+
 	// if $id is null then assign a random string
 	if( $id === null )
 		$id = uniqid ( 'yourls_stats_pie_' );
@@ -55,12 +55,12 @@ function yourls_stats_pie( $data, $limit = 10, $size = '340x220', $id = null ) {
 		}
 		$data = $trim_data;
 	}
-	
+
 	// Scale items
 	$_data = yourls_scale_data( $data );
-	
+
 	list($width, $height) = explode( 'x', $size );
-	
+
 	$options = array(
 		'theme'  => 'maximized',
 		'width'   => $width,
@@ -101,7 +101,7 @@ function yourls_build_list_of_days( $dates ) {
 			),
 		)
 	*/
-	
+
 	if( !$dates )
 		return array();
 
@@ -116,12 +116,12 @@ function yourls_build_list_of_days( $dates ) {
 	$_keys       = array_keys( $dates[ $last_year ] );
 	$last_month  = end( $_keys );
 	reset( $dates );
-	
+
 	// Get first & last days from our range. In our example: 29 & 05
 	$first_day = key( $dates[ $first_year ][ $first_month ] );
 	$_keys     = array_keys( $dates[ $last_year ][ $last_month ] );
 	$last_day  = end( $_keys );
-	
+
 	unset( $_keys );
 
 	// Now build a list of all years (2009), month (08 & 09) and days (all from 2009-08-29 to 2009-09-05)
@@ -145,7 +145,7 @@ function yourls_build_list_of_days( $dates ) {
 			}
 		}
 	}
-	
+
 	return array(
 		'list_of_days'   => $list_of_days,
 		'list_of_months' => $list_of_months,
@@ -155,28 +155,28 @@ function yourls_build_list_of_days( $dates ) {
 
 /**
  * Echoes an image tag of Google Charts line graph from array of values (eg 'number of clicks').
- * 
+ *
  * $legend1_list & legend2_list are values used for the 2 x-axis labels. $id is an HTML/JS id
  *
  */
 function yourls_stats_line( $values, $id = null ) {
 
 	yourls_do_action( 'pre_stats_line' );
-	
+
 	// if $id is null then assign a random string
 	if( $id === null )
 		$id = uniqid ( 'yourls_stats_line_' );
-		
+
 	// If we have only 1 day of data, prepend a fake day with 0 hits for a prettier graph
 	if ( count( $values ) == 1 )
 		array_unshift( $values, 0 );
-		
+
 	// Keep only a subset of values to keep graph smooth
 	$values = yourls_array_granularity( $values, 30 );
-	
+
 	$data = array_merge( array( 'Time' => 'Hits' ), $values );
 	$data = yourls_google_array_to_data_table( $data );
-	
+
 	$options = array(
 		"legend"      => "none",
 		"pointSize"   => "3",
@@ -189,7 +189,7 @@ function yourls_stats_line( $values, $id = null ) {
 		"colors"	  => "['#2a85b3']",
 	);
 	$options = yourls_apply_filter( 'stats_line_options', $options );
-	
+
 	$lineChart = yourls_google_viz_code( 'LineChart', $data, $options, $id );
 
 	echo yourls_apply_filter( 'stats_line', $lineChart, $values, $options, $id );
@@ -228,11 +228,11 @@ function yourls_get_domain( $url, $include_scheme = false ) {
 	$scheme = isset( $parse['scheme'] ) ? $parse['scheme'] : '';
 	$path = isset( $parse['path'] ) ? $parse['path'] : '';
 	if( !$host )
-		$host = $path;	
-		
+		$host = $path;
+
 	if ( $include_scheme && $scheme )
 		$host = $scheme.'://'.$host;
-		
+
 	return $host;
 }
 
@@ -241,7 +241,7 @@ function yourls_get_domain( $url, $include_scheme = false ) {
  *
  */
 function yourls_get_favicon_url( $url ) {
-	return yourls_match_current_protocol( 'http://www.google.com/s2/favicons?domain=' . yourls_get_domain( $url, false ) );
+	return yourls_match_current_protocol( '//www.google.com/s2/favicons?domain=' . yourls_get_domain( $url, false ) );
 }
 
 /**
@@ -293,17 +293,17 @@ function yourls_google_array_to_data_table( $data ){
 		if( !is_array( $values ) ) {
 			$values = array( $values );
 		}
-		$str .= "\t['$label',"; 
+		$str .= "\t['$label',";
 		foreach( $values as $value ){
-			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+			if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) {
 				$value = "'$value'";
 			}
 			$str .= "$value";
-		}		
+		}
 		$str .= "],\n";
 	}
 	$str = substr( $str, 0, -2 ) . "\n"; // remove the trailing comma/return, reappend the return
-	$str .= "]);\n"; // wrap it up	
+	$str .= "]);\n"; // wrap it up
 	return $str;
 }
 
@@ -320,7 +320,7 @@ function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 
 	$code .= "var options = {\n";
 	foreach( $options as $field => $value ) {
-		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) { 
+		if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) {
 			$value = "\"$value\"";
 		}
 		$code .= "\t'$field': $value,\n";
@@ -333,7 +333,7 @@ function yourls_google_viz_code( $graph_type, $data, $options, $id ) {
 	$code .= "google.setOnLoadCallback( $function_name );\n";
 	$code .= "</script>\n";
 	$code .= "<div id=\"visualization_$id\"></div>\n";
-	
+
 	return $code;
 }
 
