@@ -719,35 +719,32 @@ function yourls_make_bookmarklet( $code ) {
 }
 
 /**
- * Adapts an epoch timestamp to a timezone.
- * When no timezone is specified, the YOURLS_HOURS_OFFSET is used.
+ * Adapts an epoch timestamp to a time offset
  *
  * @since tbd
- * @param  string $timestamp  					An epoch timestamp
- * @return string $timestamp_timezoned	A timestamp
+ * @param  string $timestamp              an epoch timestamp
+ * @return string $timestamp_timezoned	  a timestamp
  */
 function yourls_get_timezoned_timestamp( $timestamp ) {
-		$offset = yourls_get_offset();
-		$timestamp_timezoned = $timestamp + $offset * 3600;
-    return $timestamp_timezoned;
-}
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_get_timezoned_timestamp', false, $timestamp );
+    if ( false !== $pre ) {
+        return $pre;
+    }
 
-/**
- * Get the offset in hours of a timezone.
- * When no timezone is specified, the YOURLS_HOURS_OFFSET is used.
- *
- * @since tbd
- * @return string $offset	Offset in hours
- */
-function yourls_get_offset() {
-		// When no timezone is specified in YOURLS_TIMEZONE, fall back to YOURLS_HOURS_OFFSET.
-		if ( defined( 'YOURLS_TIMEZONE' ) && !empty( YOURLS_TIMEZONE ) ) {
-			$datetimezone = new DateTimeZone( YOURLS_TIMEZONE );
-			// Get offset in hours. To do this, compare YOURLS_TIMEZONE with GMT.
-			$offset = $datetimezone->getOffset(new DateTime("now", new DateTimeZone("GMT"))) / 3600;
-		}
-		else {
-			$offset = YOURLS_HOURS_OFFSET;
-		}
-    return $offset;
+    // TODO : have some tests to validate that $timestamp is something we can play with ?
+
+    $offset = 0;
+
+    // Comply to (deprecated) YOURLS_HOURS_OFFSET if defined
+    if( defined('YOURLS_HOURS_OFFSET') && is_int(YOURLS_HOURS_OFFSET) ) {
+        $offset = YOURLS_HOURS_OFFSET;
+    }
+
+    // Allow plugin (particularly, core plugin Timezones) to modify this offset
+    $offset = yourls_apply_filter( 'get_timezoned_offset', $offset );
+
+    $timestamp_timezoned = $timestamp + ($offset * 3600);
+
+    return yourls_appply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $offset );
 }

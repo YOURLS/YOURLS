@@ -34,14 +34,6 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
-/** Server timezone GMT offset . Deprecate this. */
-define( 'YOURLS_HOURS_OFFSET', 0 );
-
-/** Server timezone.
- ** Please use one of the listed timezones in the PHP documentation: https://www.php.net/manual/en/timezones.php .
- ** If left empty, YOURLS_HOURS_OFFSET will be used. */
-define( 'YOURLS_TIMEZONE', '' );
-
 /** YOURLS language
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
