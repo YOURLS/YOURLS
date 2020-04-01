@@ -746,5 +746,5 @@ function yourls_get_timezoned_timestamp( $timestamp ) {
 
     $timestamp_timezoned = $timestamp + ($offset * 3600);
 
-    return yourls_appply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $offset );
+    return yourls_apply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $offset );
 }

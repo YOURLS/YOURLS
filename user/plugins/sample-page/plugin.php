@@ -25,14 +25,14 @@ function ozh_yourls_samplepage_do_page() {
 	if( isset( $_POST['test_option'] ) ) {
 		// Check nonce
 		yourls_verify_nonce( 'sample_page' );
-		
+
 		// Process form
 		ozh_yourls_samplepage_update_option();
 	}
 
 	// Get value from database
 	$test_option = yourls_get_option( 'test_option' );
-	
+
 	// Create nonce
 	$nonce = yourls_create_nonce( 'sample_page' );
 
@@ -51,12 +51,12 @@ HTML;
 // Update option in database
 function ozh_yourls_samplepage_update_option() {
 	$in = $_POST['test_option'];
-	
+
 	if( $in ) {
 		// Validate test_option. ALWAYS validate and sanitize user input.
 		// Here, we want an integer
 		$in = intval( $in);
-		
+
 		// Update value in database
 		yourls_update_option( 'test_option', $in );
 	}
