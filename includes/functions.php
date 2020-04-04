@@ -2315,6 +2315,7 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
+    yourls_do_action('debug_log', $msg);
     $ydb->getProfiler()->log($msg);
 	return $msg;
 }
