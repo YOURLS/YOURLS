@@ -399,6 +399,7 @@ function yourls_store_cookie( $user = null ) {
 		$time = time() + yourls_get_cookie_life();
 	}
 
+    $path     = yourls_apply_filter( 'setcookie_path',     '/' );
 	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, PHP_URL_HOST ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
@@ -408,12 +409,48 @@ function yourls_store_cookie( $user = null ) {
 		$domain = '';
 
     if ( !headers_sent( $filename, $linenum ) ) {
-        setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, '/', $domain, $secure, $httponly );
+        yourls_setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, $path, $domain, $secure, $httponly );
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
 		yourls_do_action( 'setcookie_failed', $user );
         yourls_debug_log( "Could not store cookie: headers already sent in $filename on line $linenum" );
 	}
+}
+
+/**
+ * Replacement for PHP's setcookie(), with support for SameSite cookie attribute
+ *
+ * @see https://github.com/GoogleChromeLabs/samesite-examples/blob/master/php.md
+ * @see https://stackoverflow.com/a/59654832/36850
+ * @see https://3v4l.org/uKEtH for compat tests
+ * @see https://www.php.net/manual/en/function.setcookie.php
+ *
+ * @since  1.7.7
+ * @param  string  $name       cookie name
+ * @param  string  $value      cookie value
+ * @param  int     $expire     time the cookie expires as a Unix timestamp (number of seconds since the epoch)
+ * @param  string  $path       path on the server in which the cookie will be available on
+ * @param  string  $domain     (sub)domain that the cookie is available to
+ * @param  bool    $secure     if cookie should only be transmitted over a secure HTTPS connection
+ * @param  bool    $httponly   if cookie will be made accessible only through the HTTP protocol
+ * @return bool                setcookie() result : false if output sent before, true otherwise. This does not indicate whether the user accepted the cookie.
+ */
+function yourls_setcookie($name, $value, $expire, $path, $domain, $secure, $httponly) {
+    $samesite = yourls_apply_filter('setcookie_samesite', 'Lax' );
+
+    if (PHP_VERSION_ID < 70300) {
+        return(setcookie($name, $value, $expire, "$path; samesite=$samesite", $domain, $secure, $httponly));
+    }
+    else {
+        return(setcookie($name, $value, array(
+            'expires'  => $expire,
+            'path'     => $path,
+            'domain'   => $domain,
+            'samesite' => $samesite,
+            'secure'   => $secure,
+            'httponly' => $httponly,
+        )));
+    }
 }
 
 /**
