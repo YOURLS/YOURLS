@@ -949,6 +949,8 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	if ( false !== $location )
 		return $location;
 
+    // At this point, $location == false
+
 	if ( $ip == '' )
 		$ip = yourls_get_IP();
 
@@ -980,6 +982,9 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 
         - or obviously \Exception for any other error (?)
         */
+    }
+
+    if(!$location) {
         $location = $default;
     }
 
