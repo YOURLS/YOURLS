@@ -347,6 +347,12 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
 
+    if(!$url OR !$newkeyword) {
+        $return['status']  = 'fail';
+        $return['message'] = yourls__( 'Long URL or Short URL cannot be blank' );
+        return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title );
+    }
+
     $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	// Check if new URL is not here already
