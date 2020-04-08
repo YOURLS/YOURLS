@@ -10,7 +10,7 @@
  * @since 0.1
  * @param string $len Optional string length
  * @return string Random string
- */ 
+ */
 function rand_str( $len=32 ) {
 	return substr( md5( uniqid( rand() ) ), 0, $len );
 }
@@ -66,17 +66,43 @@ class Change_Variable {
         return rand_str();
     }
 }
- 
+
+/**
+* print() for Unit Tests
+*/
+function yourls_ut_print( ...$what ) {
+    ob_start();
+    $count = count($what);
+    for ($i = 0; $i < $count; $i++) {
+        print($what[$i]);
+    }
+    $display = ob_get_contents();
+    ob_end_clean();
+
+    fwrite( STDERR, $display );
+}
+
 /**
 * var_dump() for Unit Tests
 *
 * @since 0.1
 */
-function ut_var_dump( $what ) {
+function yourls_ut_var_dump( ...$what ) {
     ob_start();
-    var_dump( $what );
+    $count = count($what);
+    for ($i = 0; $i < $count; $i++) {
+        var_dump($what[$i]); $line_of_vardump = __LINE__; // lazy: keep track of where var_dump() is called
+    }
     $display = ob_get_contents();
     ob_end_clean();
+
+    // If we have xdebug enabled, remove first line of output of each var_dump() (ie `/path/to/tests/includes/utils.php:79:`)
+    if( ini_get('xdebug.overload_var_dump') == 2 ) {
+        $line = __FILE__ . ':' . $line_of_vardump . ":";
+        $line = str_replace('\\', '\\\\', $line); // escape the backslashes on Windows paths otherwise they will break the regex
+        $display = preg_replace("/$line\n/", '', $display);
+    }
+
     fwrite( STDERR, $display );
 }
 
@@ -91,27 +117,26 @@ function ut_var_dump( $what ) {
 class Log_in_File {
 
 	public static $has_logged = false;
-	
+
 	public static function log( $what ) {
 		// Don't mess with Travis
 		if( !yut_is_local() )
 			return;
-	
+
 		if( ! self::$has_logged ) {
 			self::$has_logged = true;
 			self::start_log();
 		}
-		
+
 		ob_start();
 		var_dump( $what );
 		$what = ob_get_clean();
-	
+
 		error_log( $what."\n", 3, dirname( dirname( __FILE__ ) ) . '/log.txt' );
 	}
-	
+
 	public static function start_log() {
 		self::log( "---------------- START TESTS ----------------" );
 	}
-	
+
 }
- 
