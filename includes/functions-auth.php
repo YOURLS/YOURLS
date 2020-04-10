@@ -393,7 +393,7 @@ function yourls_auth_signature( $username = false ) {
 function yourls_check_timestamp( $time ) {
 	$now = time();
 	// Allow timestamp to be a little in the future or the past -- see Issue 766
-	return yourls_apply_filter( 'check_timestamp', abs( $now - $time ) < yourls_get_nonce_life(), $time );
+	return yourls_apply_filter( 'check_timestamp', abs( $now - (int)$time ) < yourls_get_nonce_life(), $time );
 }
 
 /**
