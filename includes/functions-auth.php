@@ -296,7 +296,7 @@ function yourls_has_phpass_password( $user ) {
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-		if ( yourls_salt( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
+		if ( yourls_cookie_value( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
 			yourls_set_user( $valid_user );
 			return true;
 		}
@@ -307,6 +307,12 @@ function yourls_check_auth_cookie() {
 /**
  * Check auth against signature and timestamp. Sets user if applicable, returns bool
  *
+ * Original usage :
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<md5 hash>&action=...
+ * Since 1.7.7 we allow a `hash` parameter and an arbitrary hashed signature, hashed
+ * with the `hash` function. Examples :
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<sha512 hash>&hash=sha512&action=...
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<crc32 hash>&hash=crc32&action=...
  *
  * @since 1.4.1
  * @return bool False if signature or timestamp missing or invalid, true if valid
@@ -314,23 +320,28 @@ function yourls_check_auth_cookie() {
 function yourls_check_signature_timestamp() {
     if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
        OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
-    )
+    ) {
         return false;
+    }
 
-	// Timestamp in PHP : time()
-	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
+    // Exit if the timestamp argument is outdated or invalid
+    if( !yourls_check_timestamp( $_REQUEST['timestamp'] )) {
+        return false;
+    }
+
+    // if there is a hash argument, make sure it's part of the availables algos
+    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : 'md5';
+    if( !in_array($hash_function, hash_algos()) ) {
+        return false;
+    }
 
 	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
-			(
-				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
-				or
-				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
-			)
-			&&
-			yourls_check_timestamp( $_REQUEST['timestamp'] )
+            hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+            or
+            hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
 			) {
 			yourls_set_user( $valid_user );
 			return true;
@@ -382,7 +393,7 @@ function yourls_auth_signature( $username = false ) {
 function yourls_check_timestamp( $time ) {
 	$now = time();
 	// Allow timestamp to be a little in the future or the past -- see Issue 766
-	return yourls_apply_filter( 'check_timestamp', abs( $now - $time ) < YOURLS_NONCE_LIFE, $time );
+	return yourls_apply_filter( 'check_timestamp', abs( $now - (int)$time ) < yourls_get_nonce_life(), $time );
 }
 
 /**
@@ -396,9 +407,10 @@ function yourls_store_cookie( $user = null ) {
 	if( !$user ) {
 		$time = time() - 3600;
 	} else {
-		$time = time() + YOURLS_COOKIE_LIFE;
+		$time = time() + yourls_get_cookie_life();
 	}
 
+    $path     = yourls_apply_filter( 'setcookie_path',     '/' );
 	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, PHP_URL_HOST ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
@@ -408,12 +420,48 @@ function yourls_store_cookie( $user = null ) {
 		$domain = '';
 
     if ( !headers_sent( $filename, $linenum ) ) {
-        setcookie( yourls_cookie_name(), yourls_salt( $user ), $time, '/', $domain, $secure, $httponly );
+        yourls_setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, $path, $domain, $secure, $httponly );
 	} else {
 		// For some reason cookies were not stored: action to be able to debug that
 		yourls_do_action( 'setcookie_failed', $user );
         yourls_debug_log( "Could not store cookie: headers already sent in $filename on line $linenum" );
 	}
+}
+
+/**
+ * Replacement for PHP's setcookie(), with support for SameSite cookie attribute
+ *
+ * @see https://github.com/GoogleChromeLabs/samesite-examples/blob/master/php.md
+ * @see https://stackoverflow.com/a/59654832/36850
+ * @see https://3v4l.org/uKEtH for compat tests
+ * @see https://www.php.net/manual/en/function.setcookie.php
+ *
+ * @since  1.7.7
+ * @param  string  $name       cookie name
+ * @param  string  $value      cookie value
+ * @param  int     $expire     time the cookie expires as a Unix timestamp (number of seconds since the epoch)
+ * @param  string  $path       path on the server in which the cookie will be available on
+ * @param  string  $domain     (sub)domain that the cookie is available to
+ * @param  bool    $secure     if cookie should only be transmitted over a secure HTTPS connection
+ * @param  bool    $httponly   if cookie will be made accessible only through the HTTP protocol
+ * @return bool                setcookie() result : false if output sent before, true otherwise. This does not indicate whether the user accepted the cookie.
+ */
+function yourls_setcookie($name, $value, $expire, $path, $domain, $secure, $httponly) {
+    $samesite = yourls_apply_filter('setcookie_samesite', 'Lax' );
+
+    if (PHP_VERSION_ID < 70300) {
+        return(setcookie($name, $value, $expire, "$path; samesite=$samesite", $domain, $secure, $httponly));
+    }
+    else {
+        return(setcookie($name, $value, array(
+            'expires'  => $expire,
+            'path'     => $path,
+            'domain'   => $domain,
+            'samesite' => $samesite,
+            'secure'   => $secure,
+            'httponly' => $httponly,
+        )));
+    }
 }
 
 /**
@@ -423,6 +471,35 @@ function yourls_store_cookie( $user = null ) {
 function yourls_set_user( $user ) {
 	if( !defined( 'YOURLS_USER' ) )
 		define( 'YOURLS_USER', $user );
+}
+
+/**
+ * Get YOURLS_COOKIE_LIFE value (ie the life span of an auth cookie in seconds)
+ *
+ * Use this function instead of directly using the constant. This way, its value can be modified by plugins
+ * on a per case basis
+ *
+ * @since 1.7.7
+ * @see includes/Config/Config.php
+ * @return integer     cookie life span, in seconds
+ */
+function yourls_get_cookie_life() {
+	return yourls_apply_filter( 'get_cookie_life', YOURLS_COOKIE_LIFE );
+}
+
+/**
+ * Get YOURLS_NONCE_LIFE value (ie life span of a nonce in seconds)
+ *
+ * Use this function instead of directly using the constant. This way, its value can be modified by plugins
+ * on a per case basis
+ *
+ * @since 1.7.7
+ * @see includes/Config/Config.php
+ * @see https://en.wikipedia.org/wiki/Cryptographic_nonce
+ * @return integer     nonce life span, in seconds
+ */
+function yourls_get_nonce_life() {
+	return yourls_apply_filter( 'get_nonce_life', YOURLS_NONCE_LIFE );
 }
 
 /**
@@ -436,5 +513,102 @@ function yourls_set_user( $user ) {
  * @return string  unique cookie name for a given YOURLS site
  */
 function yourls_cookie_name() {
-    return 'yourls_' . yourls_salt( YOURLS_SITE );
+    return yourls_apply_filter( 'cookie_name', 'yourls_' . yourls_salt( YOURLS_SITE ) );
+}
+
+/**
+ * Get auth cookie value
+ *
+ * @since 1.7.7
+ * @param string $user     user name
+ * @return string          cookie value
+ */
+function yourls_cookie_value( $user ) {
+	return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ), $user );
+}
+
+/**
+ * Return a time-dependent string for nonce creation
+ *
+ * Actually, this returns a float: ceil rounds up a value but is of type float, see https://www.php.net/ceil
+ *
+ */
+function yourls_tick() {
+	return ceil( time() / yourls_get_nonce_life() );
+}
+
+/**
+ * Return salted string
+ *
+ */
+function yourls_salt( $string ) {
+	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
+}
+
+/**
+ * Create a time limited, action limited and user limited token
+ *
+ */
+function yourls_create_nonce( $action, $user = false ) {
+	if( false == $user )
+		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	$tick = yourls_tick();
+	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
+	// Allow plugins to alter the nonce
+	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
+}
+
+/**
+ * Create a nonce field for inclusion into a form
+ *
+ */
+function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
+	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
+	if( $echo )
+		echo $field."\n";
+	return $field;
+}
+
+/**
+ * Add a nonce to a URL. If URL omitted, adds nonce to current URL
+ *
+ */
+function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false ) {
+	$nonce = yourls_create_nonce( $action, $user );
+	return yourls_add_query_arg( $name, $nonce, $url );
+}
+
+/**
+ * Check validity of a nonce (ie time span, user and action match).
+ *
+ * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
+ * if $nonce is false or unspecified, it will use $_REQUEST['nonce']
+ *
+ */
+function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
+	// get user
+	if( false == $user )
+		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+
+	// get current nonce value
+	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
+		$nonce = $_REQUEST['nonce'];
+
+	// Allow plugins to short-circuit the rest of the function
+	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
+	if ($valid) {
+		return true;
+	}
+
+	// what nonce should be
+	$valid = yourls_create_nonce( $action, $user );
+
+	if( $nonce == $valid ) {
+		return true;
+	} else {
+		if( $return )
+			die( $return );
+		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
+	}
 }

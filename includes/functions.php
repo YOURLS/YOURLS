@@ -347,6 +347,12 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
 
+    if(!$url OR !$newkeyword) {
+        $return['status']  = 'fail';
+        $return['message'] = yourls__( 'Long URL or Short URL cannot be blank' );
+        return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title );
+    }
+
     $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
 	// Check if new URL is not here already
@@ -943,6 +949,8 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	if ( false !== $location )
 		return $location;
 
+    // At this point, $location == false
+
 	if ( $ip == '' )
 		$ip = yourls_get_IP();
 
@@ -974,6 +982,9 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 
         - or obviously \Exception for any other error (?)
         */
+    }
+
+    if(!$location) {
         $location = $default;
     }
 
@@ -1543,15 +1554,6 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 }
 
 /**
- * Return salted string
- *
- */
-function yourls_salt( $string ) {
-	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
-}
-
-/**
  * Add a query var to a URL and return URL. Completely stolen from WP.
  *
  * Works with one of these parameter patterns:
@@ -1663,82 +1665,6 @@ function yourls_remove_query_arg( $key, $query = false ) {
 		return $query;
 	}
 	return yourls_add_query_arg( $key, false, $query );
-}
-
-/**
- * Return a time-dependent string for nonce creation
- *
- */
-function yourls_tick() {
-	return ceil( time() / YOURLS_NONCE_LIFE );
-}
-
-
-/**
- * Create a time limited, action limited and user limited token
- *
- */
-function yourls_create_nonce( $action, $user = false ) {
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
-	$tick = yourls_tick();
-	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
-	// Allow plugins to alter the nonce
-	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
-}
-
-/**
- * Create a nonce field for inclusion into a form
- *
- */
-function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
-	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
-	if( $echo )
-		echo $field."\n";
-	return $field;
-}
-
-/**
- * Add a nonce to a URL. If URL omitted, adds nonce to current URL
- *
- */
-function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false ) {
-	$nonce = yourls_create_nonce( $action, $user );
-	return yourls_add_query_arg( $name, $nonce, $url );
-}
-
-/**
- * Check validity of a nonce (ie time span, user and action match).
- *
- * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
- * if $nonce is false or unspecified, it will use $_REQUEST['nonce']
- *
- */
-function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
-	// get user
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
-
-	// get current nonce value
-	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
-		$nonce = $_REQUEST['nonce'];
-
-	// Allow plugins to short-circuit the rest of the function
-	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
-	if ($valid) {
-		return true;
-	}
-
-	// what nonce should be
-	$valid = yourls_create_nonce( $action, $user );
-
-	if( $nonce == $valid ) {
-		return true;
-	} else {
-		if( $return )
-			die( $return );
-		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
-	}
 }
 
 /**
@@ -2400,6 +2326,7 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
+    yourls_do_action('debug_log', $msg);
     $ydb->getProfiler()->log($msg);
 	return $msg;
 }
