@@ -307,6 +307,12 @@ function yourls_check_auth_cookie() {
 /**
  * Check auth against signature and timestamp. Sets user if applicable, returns bool
  *
+ * Original usage :
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<md5 hash>&action=...
+ * Since 1.7.7 we allow a `hash` parameter and an arbitrary hashed signature, hashed
+ * with the `hash` function. Examples :
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<sha512 hash>&hash=sha512&action=...
+ *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<crc32 hash>&hash=crc32&action=...
  *
  * @since 1.4.1
  * @return bool False if signature or timestamp missing or invalid, true if valid
@@ -314,23 +320,28 @@ function yourls_check_auth_cookie() {
 function yourls_check_signature_timestamp() {
     if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
        OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
-    )
+    ) {
         return false;
+    }
 
-	// Timestamp in PHP : time()
-	// Timestamp in JS: parseInt(new Date().getTime() / 1000)
+    // Exit if the timestamp argument is outdated or invalid
+    if( !yourls_check_timestamp( $_REQUEST['timestamp'] )) {
+        return false;
+    }
+
+    // if there is a hash argument, make sure it's part of the availables algos
+    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : 'md5';
+    if( !in_array($hash_function, hash_algos()) ) {
+        return false;
+    }
 
 	// Check signature & timestamp against all possible users
 	global $yourls_user_passwords;
 	foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
 		if (
-			(
-				md5( $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
-				or
-				md5( yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
-			)
-			&&
-			yourls_check_timestamp( $_REQUEST['timestamp'] )
+            hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+            or
+            hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
 			) {
 			yourls_set_user( $valid_user );
 			return true;
@@ -382,7 +393,7 @@ function yourls_auth_signature( $username = false ) {
 function yourls_check_timestamp( $time ) {
 	$now = time();
 	// Allow timestamp to be a little in the future or the past -- see Issue 766
-	return yourls_apply_filter( 'check_timestamp', abs( $now - $time ) < yourls_get_nonce_life(), $time );
+	return yourls_apply_filter( 'check_timestamp', abs( $now - (int)$time ) < yourls_get_nonce_life(), $time );
 }
 
 /**
@@ -518,6 +529,8 @@ function yourls_cookie_value( $user ) {
 
 /**
  * Return a time-dependent string for nonce creation
+ *
+ * Actually, this returns a float: ceil rounds up a value but is of type float, see https://www.php.net/ceil
  *
  */
 function yourls_tick() {
