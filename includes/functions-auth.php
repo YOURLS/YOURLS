@@ -530,6 +530,8 @@ function yourls_cookie_value( $user ) {
 /**
  * Return a time-dependent string for nonce creation
  *
+ * Actually, this returns a float: ceil rounds up a value but is of type float, see https://www.php.net/ceil
+ *
  */
 function yourls_tick() {
 	return ceil( time() / yourls_get_nonce_life() );
