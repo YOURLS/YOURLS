@@ -16,25 +16,25 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 	 * Check for valid nonce life
 	 */
 	public function test_nonce_life() {
-        $this->assertIsInt(yourls_get_cookie_life());
+        $this->assertTrue( is_int(yourls_get_cookie_life()) );
     }
 
 	/**
 	 * Check for valid tick
 	 */
 	public function test_tick() {
-        $this->assertIsFloat(yourls_tick());
+        $this->assertTrue( is_float(yourls_tick()) );
     }
 
 	/**
 	 * Check nonce creation
 	 */
 	public function test_create_nonce() {
-        $this->assertIsString(yourls_create_nonce( rand_str(), rand_str() ));
+        $this->assertTrue( is_string(yourls_create_nonce(rand_str(), rand_str())) );
 
         // we should raise an exception if param $action is not passed to yourls_create_nonce()
         $this->expectException(ArgumentCountError::class);
-        $this->assertIsString(yourls_create_nonce());
+        $this->assertTrue( is_string(yourls_create_nonce()) );
     }
 
 	/**
@@ -42,7 +42,7 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_create_nonce_field() {
         $field = yourls_nonce_field( rand_str(), rand_str(), rand_str(), false );
-        $this->assertIsString($field);
+        $this->assertTrue( is_string($field) );
     }
 
 	/**
@@ -50,7 +50,7 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_create_nonce_url() {
         $url = yourls_nonce_url( rand_str(), rand_str(), rand_str(), rand_str() );
-        $this->assertIsString($url);
+        $this->assertTrue( is_string($url) );
     }
 
 	/**

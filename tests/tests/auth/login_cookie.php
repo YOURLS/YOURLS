@@ -34,21 +34,21 @@ class Auth_Login_Cookie_Tests extends PHPUnit_Framework_TestCase {
 	 * Check for valid cookie name
 	 */
 	public function test_cookie_name() {
-        $this->assertIsString(yourls_cookie_name());
+        $this->assertTrue( is_string(yourls_cookie_name()) );
     }
 
 	/**
 	 * Check for valid cookie value
 	 */
 	public function test_cookie_value() {
-        $this->assertIsString(yourls_cookie_value(rand_str()));
+        $this->assertTrue( is_string(yourls_cookie_value(rand_str())) );
     }
 
 	/**
 	 * Check for valid cookie life
 	 */
 	public function test_cookie_life() {
-        $this->assertIsInt(yourls_get_cookie_life());
+        $this->assertTrue( is_int(yourls_get_cookie_life()) );
     }
 
 	/**
