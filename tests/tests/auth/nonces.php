@@ -31,10 +31,6 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_create_nonce() {
         $this->assertTrue( is_string(yourls_create_nonce(rand_str(), rand_str())) );
-
-        // we should raise an exception if param $action is not passed to yourls_create_nonce()
-        $this->expectException(ArgumentCountError::class);
-        $this->assertTrue( is_string(yourls_create_nonce()) );
     }
 
 	/**
@@ -51,6 +47,7 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 	public function test_create_nonce_url() {
         $url = yourls_nonce_url( rand_str(), rand_str(), rand_str(), rand_str() );
         $this->assertTrue( is_string($url) );
+        // $this->assertIsString($url);
     }
 
 	/**
