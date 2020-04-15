@@ -33,6 +33,12 @@ table.tblSorter tbody td {
 	background-color: #FFF;
 	vertical-align: top;
 }
+table.tblSorter tbody td.ip {
+    max-width: 9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 table.tblSorter tbody tr.normal-row td {
 	background: #F1F9FF;
 }
