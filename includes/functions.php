@@ -68,7 +68,7 @@ function yourls_keyword_is_reserved( $keyword ) {
 	$reserved = false;
 
 	if ( in_array( $keyword, $yourls_reserved_URL)
-		or file_exists( YOURLS_ABSPATH ."/pages/$keyword.php" )
+		or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
 		or is_dir( YOURLS_ABSPATH ."/$keyword" )
 	)
 		$reserved = true;
