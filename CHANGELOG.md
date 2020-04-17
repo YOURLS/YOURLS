@@ -4,6 +4,17 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.7.6
+---
+- improved: due to popular demand, "Random Keywords" is now a core plugin bundled with YOURLS
+- fixed: JSONP parameters now match the documentation, duh
+- fixed: various little things here and also there
+
+1.7.5
+---
+- fixed: long referrers or client name won't trigger errors
+- fixed: some little bugs
+
 1.7.4
 ---
 - fixed: type juggling vulnerability in the API
