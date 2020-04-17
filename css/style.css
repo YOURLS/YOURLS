@@ -39,7 +39,10 @@ h1 a {text-align:right;font-size:20px;float:right;}
 h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2a85b3}
 h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#88c0eb}
-
+#yourls-logo {
+    border:0px;
+    width:300px;
+}
 ul#admin_menu {
 	min-height:100px;
 	list-style-type:none;
@@ -61,7 +64,7 @@ code {
 }
 tt {
 	background:#ffc;
-	padding:0 2px;		
+	padding:0 2px;
 }
 
 input, textarea {
