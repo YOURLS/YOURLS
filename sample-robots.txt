@@ -4,6 +4,5 @@ Disallow: /css
 Disallow: /images
 Disallow: /includes
 Disallow: /js
-Disallow: /pages
 Disallow: /user
 
