@@ -23,6 +23,7 @@ require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
 define('YOURLS_TESTDATA_DIR', dirname( __FILE__ ) . '/data');
 define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
 define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
+define('YOURLS_PAGEDIR', YOURLS_TESTDATA_DIR.'/pages');
 $config = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
 $config->define_core_constants();
 

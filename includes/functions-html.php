@@ -855,18 +855,22 @@ HTML;
 }
 
 /**
- * Display a page
+ *  Display a page
  *
+ *  Includes content of a PHP file from the YOURLS_PAGEDIR directory, as if it
+ *  were a standard short URL (ie http://sho.rt/$page)
+ *
+ *  @since 1.0
+ *  @param $page      PHP file to display
  */
 function yourls_page( $page ) {
-	$include = YOURLS_ABSPATH . "/pages/$page.php";
+	$include = YOURLS_PAGEDIR . "/$page.php";
 	if( !file_exists( $include ) ) {
-		yourls_die( "Page '$page' not found", 'Not found', 404 );
+		yourls_die( yourls_s('Page "%1$s" not found', $page), yourls__('Not found'), 404 );
 	}
 	yourls_do_action( 'pre_page', $page );
 	include_once( $include );
 	yourls_do_action( 'post_page', $page );
-	die();
 }
 
 /**

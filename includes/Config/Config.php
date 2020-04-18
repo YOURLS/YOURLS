@@ -163,7 +163,7 @@ class Config {
 
         // physical path of pages directory
         if (!defined( 'YOURLS_PAGEDIR' ))
-            define('YOURLS_PAGEDIR', YOURLS_ABSPATH.'/pages' );
+            define('YOURLS_PAGEDIR', YOURLS_USERDIR.'/pages' );
 
         // table to store URLs
         if (!defined( 'YOURLS_DB_TABLE_URL' ))

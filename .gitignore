@@ -24,8 +24,7 @@ user/*
 !user/plugins/sample-toolbar/
 
 # Pages
-pages/*
-!pages/examplepage.php
+!user/pages/examplepage.php
 
 # Keep index.html
 !user/index.html
