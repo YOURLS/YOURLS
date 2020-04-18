@@ -66,21 +66,6 @@
 			background: -webkit-gradient(linear, left top, left bottom, from(rgba(227, 243, 255, 1)), to(rgba(227, 243, 255, 0)));
 			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */
 		}
-		/* Social */
-		@keyframes mymove { 0% {top:130px;} 50% {top:150px;} 100% {top:130px;} }
-		@-moz-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
-		@-webkit-keyframes mymove { 0% {top:130px;} 50% {top:140px;} 100% {top:130px;} }
-		@-o-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
-		#buttons{
-			width:80px; margin-top:10px; float:right; position:absolute; margin-left: 810px;
-			animation:mymove 0.5s ease 5s 7;
-			-moz-animation:mymove 0.5s ease 5s 7;
-			-webkit-animation:mymove 0.5s ease 5s 7;
-			-o-animation:mymove 0.5s ease 5s 7;
-		}
-		#fb,#g1,#tw{ float:left; margin:0 5px; width: 60px; height:63px; text-align: center; margin-bottom: 10px; padding:7px 2px; border:2px solid #2A85B3; background: #E3F3FF; border-radius:10px;}
-		#fb span {width:50px !important}
-		#fb .fb_iframe_widget iframe{position:relative}
 		/* Place Holder Style */
 		#Container {
 			width: 850px;
@@ -110,10 +95,11 @@
 			color: #2A85B3;
 			margin-top:0px;
 			margin-bottom: 0px;
-			background:transparent url(https://yourls.org/images/yourls-logo.png) left 5px no-repeat;
-			padding-top:15px;
+			background:transparent url(https://yourls.org/images/yourls-logo.svg) left 5px no-repeat;
+            background-size: 220px;
+            padding-top:15px;
 			height:80px;
-			padding-left:220px;
+			padding-left:250px;
 			text-align:left;
 		}
 		h1 a:hover{text-decoration:none}
@@ -260,27 +246,6 @@
 
 	<!-- Content -->
 	<div id="Content">
-
-		<div id="buttons">
-			<div id="fb">
-			<div class="fb-like" data-href="https://yourls.org/" data-send="false" data-share="true" data-layout="box_count" data-width="60" data-show-faces="false" data-font="verdana"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=125474947598196";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-			</div>
-			<div id="tw">
-			<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://yourls.org" data-via="ozh" data-lang="en" data-related="YOURLS">Tweet</a>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			</div>
-            <div id="g1">
-<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
-<script type="IN/Share" data-url="https://yourls.org/" data-counter="top"></script>
-            </div>
-		</div>
 
 		<!-- Index -->
 		<div id="AboutDiv">
