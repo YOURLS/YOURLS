@@ -38,7 +38,7 @@ class Option_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( yourls_delete_option( $key2 ) );
 		$this->assertFalse( yourls_get_option( $key2 ) );
 	}
-	
+
 	/**
 	 * Check with array and objects
 	 *
@@ -82,7 +82,7 @@ class Option_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_add_option( $empty, '' ) );
         $this->assertFalse( yourls_update_option( $empty, '' ) );
         $this->assertFalse( yourls_delete_option( $empty ) );
-	}	
+	}
 
 	function setUp() {
 		parent::setUp();

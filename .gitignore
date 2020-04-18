@@ -18,6 +18,7 @@ user/*
 # Core plugins
 !user/plugins/hyphens-in-urls/
 !user/plugins/random-bg/
+!user/plugins/random-shorturls/
 !user/plugins/sample-page/
 !user/plugins/sample-plugin/
 !user/plugins/sample-toolbar/

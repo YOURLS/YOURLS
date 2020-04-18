@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE-9"/>
@@ -66,21 +66,6 @@
 			background: -webkit-gradient(linear, left top, left bottom, from(rgba(227, 243, 255, 1)), to(rgba(227, 243, 255, 0)));
 			background: -moz-linear-gradient(top,  rgba(227, 243, 255, 1),  rgba(227, 243, 255, 0.1)); /* for firefox 3.6+ */
 		}
-		/* Social */
-		@keyframes mymove { 0% {top:130px;} 50% {top:150px;} 100% {top:130px;} }
-		@-moz-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
-		@-webkit-keyframes mymove { 0% {top:130px;} 50% {top:140px;} 100% {top:130px;} }
-		@-o-keyframes mymove { 0% {top:130px;} 50% {top:135px;} 100% {top:130px;} }
-		#buttons{
-			width:80px; margin-top:10px; float:right; position:absolute; margin-left: 810px;
-			animation:mymove 0.5s ease 5s 7;
-			-moz-animation:mymove 0.5s ease 5s 7;
-			-webkit-animation:mymove 0.5s ease 5s 7;
-			-o-animation:mymove 0.5s ease 5s 7;
-		}
-		#fb,#g1,#tw{ float:left; margin:0 5px; width: 60px; height:63px; text-align: center; margin-bottom: 10px; padding:7px 2px; border:2px solid #2A85B3; background: #E3F3FF; border-radius:10px;}
-		#fb span {width:50px !important}
-		#fb .fb_iframe_widget iframe{position:relative}
 		/* Place Holder Style */
 		#Container {
 			width: 850px;
@@ -110,10 +95,11 @@
 			color: #2A85B3;
 			margin-top:0px;
 			margin-bottom: 0px;
-			background:transparent url(https://yourls.org/images/yourls-logo.png) left 5px no-repeat;
-			padding-top:15px;
+			background:transparent url(https://yourls.org/images/yourls-logo.svg) left 5px no-repeat;
+            background-size: 220px;
+            padding-top:15px;
 			height:80px;
-			padding-left:220px;
+			padding-left:250px;
 			text-align:left;
 		}
 		h1 a:hover{text-decoration:none}
@@ -261,27 +247,6 @@
 	<!-- Content -->
 	<div id="Content">
 
-		<div id="buttons">
-			<div id="fb">
-			<div class="fb-like" data-href="https://yourls.org/" data-send="false" data-share="true" data-layout="box_count" data-width="60" data-show-faces="false" data-font="verdana"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=125474947598196";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-			</div>
-			<div id="tw">
-			<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://yourls.org" data-via="ozh" data-lang="en" data-related="YOURLS">Tweet</a>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			</div>
-            <div id="g1">
-<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
-<script type="IN/Share" data-url="https://yourls.org/" data-counter="top"></script>
-            </div>
-		</div>
-
 		<!-- Index -->
 		<div id="AboutDiv">
 			<h2 class='first'>About YOURLS</h2>
@@ -327,7 +292,7 @@
 
 			<p>YOURLS is made by <a href="https://github.com/YOURLS/YOURLS/graphs/contributors">awesome people</a>.</p>
 
-			<p>Keep up to date: follow <a href="https://twitter.com/yourls">@yourls</a>, <a href="https://twitter.com/ozh">@ozh</a> (lead developer) and read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>
+			<p>Keep up to date: read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>
 		</div>
 
 		<!-- Installation Instructions -->
@@ -342,6 +307,7 @@
 				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
 			</ol>
 			<h3 class='first' id="auto">Install Guides</h3>
+            <p>The <a href="https://yourls.org/wiki">wiki</a> is full of important information. Regarding installation, you'll find help for Apache, IIS and Nginx</p>
             <p>Here is a list of some (unofficial) install guides using automated tools:</p>
 			<ul>
 				<li><a href="https://www.rosehosting.com/blog/how-to-install-yourls-on-ubuntu-14-04/">How to Install YOURLS on Ubuntu 14.04</a></li>
@@ -353,9 +319,8 @@
 			<ol>
 				<li><strong>Backup the database!</strong></li>
 				<li>Unzip the YOURLS archive</li>
-				<li>Upload files to your server, overwriting your existing install</li>
+				<li>Upload files to your server, overwriting your existing install (this won't affect user files such as config or plugins)</li>
 				<li>Point your browser to <code>http://your-own-domain-here.com/admin/</code></li>
-				<li>Tip: you can now move your <code>config.php</code> file to the <code>/user</code> directory</li>
 			</ol>
 
 		</div>
@@ -392,11 +357,11 @@
 				<em>Example:</em> <tt>define( 'YOURLS_HOURS_OFFSET', '-5' );</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
 				Private means the admin area will be protected with login/pass as defined below. See <a href="https://yourls.org/privatepublic">Private or Public</a> for more.<br/>
-				<em>Example:</em> <tt>define( 'YOURLS_PRIVATE', 'true' );</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_PRIVATE', true );</tt></li>
 				<li><code>YOURLS_UNIQUE_URLS</code><br/>
 				Allow multiple short URLs for a same long URL<br/>
 				Set to <tt>true</tt> to allow only one pair of shortURL/longURL (default YOURLS behavior), or to <tt>false</tt> to allow creation of multiple short URLs pointing to the same long URL (as bit.ly does)<br/>
-				<em>Example:</em> <tt>define( 'YOURLS_UNIQUE_URLS', 'true' );</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_UNIQUE_URLS', true );</tt></li>
 				<li><code>YOURLS_COOKIEKEY</code><br/>
 				A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: generate a unique one at <a href="https://yourls.org/cookie">https://yourls.org/cookie</a><br/>
 				<em>Example:</em> <tt>define( 'YOURLS_COOKIEKEY', 'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm' );</tt></li>
@@ -431,10 +396,9 @@
 
 			<h3 id="advanced">Advanced settings</h3>
             <ul>
-                <li>YOURLS will look for the MySQL extension PDO, MySQLi or MySQL, in that order. If you want to force usage of one particular extension, add the following line to your <code>config.php</code>:<br/>
-                <tt>define( 'YOURLS_DB_DRIVER', 'mysqli' );</tt></li>
                 <li>You can install YOURLS behind a firewall or a proxy: see <a href="https://yourls.org/proxy">Proxy Support</a></li>
-                <li>File <code>includes/load-yourls.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</li>
+                <li>File <code>includes/Config/Config.php</code> contains a few more undocumented but self explanatory and commented settings. Add them to your own <code>config.php</code> if you know what you're doing.</li>
+                <li>There are numerous tips and guides on the <a href="https://yourls.org/wiki">Wiki</a>, be sure to read them.</li>
             </ul>
 		</div>
 
@@ -445,7 +409,7 @@
 			<h3 id="plugins">Plugins?</h3>
 			<p>Plugins are additional PHP scripts that extend the functionalities or features of YOURLS. The core of YOURLS is designed to be as light as possible and avoid bloat (implementing functions not everybody needs) and to allow for easy customization.</p>
 			<p>Using the plugin architecture, you can add new features to YOURLS without having to modify core files. This way, your changes won't be lost when you upgrade your YOURLS installation and you can easily activate and deactivate a plugin from the admin interface.</p>
-			<p>There's a growing number of plugins available: check the <a href="https://yourls.org/pluginlist">Plugin list</a>.</p>
+			<p>There's a growing number of plugins available: check the <a href="https://yourls.org/awesome">Plugin list</a>.</p>
 
 			<h3 id="documentation">Documentation</h3>
 			<p>Several sample plugins are included in the archive. Read the source and learn the concept. It's easy and fun!</p>
@@ -578,7 +542,7 @@ echo $data->longurl;</tt></pre>
 			<p>There's a sample PHP file included that serves as an example on how to play with the API</p>
 
 			<h3 id="expand_api">Expand the API</h3>
-			<p>You can easily implement custom API actions with a plugin. See the <a href="https://yourls.org/pluginlist">plugin list</a> for examples.</p>
+			<p>You can easily implement custom API actions with a plugin. See the <a href="https://yourls.org/awesome">plugin list</a> for examples.</p>
 
 		</div>
 
@@ -592,7 +556,7 @@ echo $data->longurl;</tt></pre>
 				<li>A server with <strong>mod_rewrite</strong> enabled</li>
 				<li>At least <strong>PHP 5.6</strong></li>
 				<li>At least <strong>MYSQL 5</strong></li>
-				<li><em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
+				<li><em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a>, <a href="https://github.com/YOURLS/YOURLS/wiki/Web-Config-IIS">IIS</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
 			</ol>
 
 			<h3 id="recommendation">Server recommendations</h3>
@@ -657,13 +621,12 @@ echo $data->longurl;</tt></pre>
 			<h3 id="lowercase">Uppercase letters in short URLs are eaten up, eg "<code>OmgOzh</code>" becomes "<code>mgzh</code>" !</h3>
 			<ul>
 				<li>Indeed. It's intented if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
-				<li>If you want to force lowercase, you'll need a <a href="https://yourls.org/pluginlist">plugin</a>.</li>
+				<li>If you want to force lowercase, you'll need a <a href="https://yourls.org/awesome">plugin</a>.</li>
 			</ul>
 
 			<h3 id="feedback">Feedback, feature requests and bug reporting</h3>
 			<ol>
 				<li>Please don't get in touch directly by mail or Twitter. <a href="https://yourls.org/support">Please</a>.</li>
-				<li>Check the <a href="https://yourls.org/roadmap">Road Map</a> for future features.</li>
 				<li>Read all the <a href="https://yourls.org/wiki">wiki documents</a>.</li>
 				<li>Search in all the <a href="https://yourls.org/issues">issues</a>, open and closed.</li>
 				<li>Eventually raise a new issue. To do so, please read the <a href="https://yourls.org/contribute">contribute guidelines</a>. Thanks!</li>
@@ -683,7 +646,6 @@ echo $data->longurl;</tt></pre>
 			<ul>
 				<li>The official <a href="http://blog.yourls.org">YOURLS blog</a>, for news, hints and showcase.</li>
 				<li>The <a href="https://yourls.org/wiki">wiki</a>: advanced documentation, plugins, tips and more</li>
-				<li>Follow <a href="https://twitter.com/YOURLS">@YOURLS</a> for hardcore development, and <a href="https://twitter.com/ozh">@Ozh</a> for tips and news (and random geekiness too)</li>
 			</ul>
 
 			<h2 id="showcase">Showcase</h2>

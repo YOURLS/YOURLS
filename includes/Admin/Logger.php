@@ -35,7 +35,6 @@ class Logger extends \Aura\Sql\Profiler {
      * @param string $message
      */
     public function log($message) {
-        yourls_do_action('debug_log', $message);
         $this->debug_log[] = $message;
     }
 

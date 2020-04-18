@@ -102,6 +102,8 @@ function yourls_get_IP() {
 /**
  * Get next id a new link will have if no custom keyword provided
  *
+ * @since 1.0
+ * @return int            id of next link
  */
 function yourls_get_next_decimal() {
 	return yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
@@ -110,6 +112,15 @@ function yourls_get_next_decimal() {
 /**
  * Update id for next link with no custom keyword
  *
+ * Note: this function relies upon yourls_update_option(), which will return either true or false
+ * depending if there has been an actual MySQL query updating the DB.
+ * In other words, this function may return false yet this would not mean it has functionnaly failed
+ * In other words I'm not sure we really need this function to return something :face_with_eyes_looking_up:
+ * See issue 2621 for more on this.
+ *
+ * @since 1.0
+ * @param integer $int     id for next link
+ * @return bool            true or false depending on if there has been an actual MySQL query. See note above.
  */
 function yourls_update_next_decimal( $int = '' ) {
 	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;
@@ -335,6 +346,12 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 	$newkeyword = yourls_sanitize_string($newkeyword);
 	$strip_url = stripslashes( $url );
 	$strip_title = stripslashes( $title );
+
+    if(!$url OR !$newkeyword) {
+        $return['status']  = 'fail';
+        $return['message'] = yourls__( 'Long URL or Short URL cannot be blank' );
+        return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title );
+    }
 
     $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
 
@@ -704,6 +721,14 @@ function yourls_get_user_agent() {
 /**
  * Redirect to another page
  *
+ * YOURLS redirection, either to internal or external URLs. If headers have not been sent, redirection
+ * is achieved with PHP's header(). If headers have been sent already and we're not in a command line
+ * client, redirection occurs with Javascript.
+ *
+ * @since 1.4
+ * @param string $location      URL to redirect to
+ * @param int    $code          HTTP status code to send
+ * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise
  */
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
@@ -713,10 +738,15 @@ function yourls_redirect( $location, $code = 301 ) {
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
 		header( "Location: $location" );
-	} else {
-		yourls_redirect_javascript( $location );
+        return 1;
 	}
-	die();
+
+	if( php_sapi_name() !== 'cli') {
+        yourls_redirect_javascript( $location );
+        return 2;
+	}
+
+	return 3;
 }
 
 /**
@@ -888,8 +918,8 @@ function yourls_log_redirect( $keyword ) {
     $binds = array(
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_string($keyword),
-        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe($_SERVER['HTTP_REFERER']) : 'direct',
-        'ua'       => yourls_get_user_agent(),
+        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe(substr($_SERVER['HTTP_REFERER'], 0, 200)) : 'direct',
+        'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
         'location' => yourls_geo_ip_to_countrycode($ip),
     );
@@ -918,6 +948,8 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 	$location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
 	if ( false !== $location )
 		return $location;
+
+    // At this point, $location == false
 
 	if ( $ip == '' )
 		$ip = yourls_get_IP();
@@ -950,6 +982,9 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 
         - or obviously \Exception for any other error (?)
         */
+    }
+
+    if(!$location) {
         $location = $default;
     }
 
@@ -1519,15 +1554,6 @@ function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
 }
 
 /**
- * Return salted string
- *
- */
-function yourls_salt( $string ) {
-	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
-}
-
-/**
  * Add a query var to a URL and return URL. Completely stolen from WP.
  *
  * Works with one of these parameter patterns:
@@ -1639,82 +1665,6 @@ function yourls_remove_query_arg( $key, $query = false ) {
 		return $query;
 	}
 	return yourls_add_query_arg( $key, false, $query );
-}
-
-/**
- * Return a time-dependent string for nonce creation
- *
- */
-function yourls_tick() {
-	return ceil( time() / YOURLS_NONCE_LIFE );
-}
-
-
-/**
- * Create a time limited, action limited and user limited token
- *
- */
-function yourls_create_nonce( $action, $user = false ) {
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
-	$tick = yourls_tick();
-	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
-	// Allow plugins to alter the nonce
-	return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
-}
-
-/**
- * Create a nonce field for inclusion into a form
- *
- */
-function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
-	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
-	if( $echo )
-		echo $field."\n";
-	return $field;
-}
-
-/**
- * Add a nonce to a URL. If URL omitted, adds nonce to current URL
- *
- */
-function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false ) {
-	$nonce = yourls_create_nonce( $action, $user );
-	return yourls_add_query_arg( $name, $nonce, $url );
-}
-
-/**
- * Check validity of a nonce (ie time span, user and action match).
- *
- * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
- * if $nonce is false or unspecified, it will use $_REQUEST['nonce']
- *
- */
-function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
-	// get user
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
-
-	// get current nonce value
-	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
-		$nonce = $_REQUEST['nonce'];
-
-	// Allow plugins to short-circuit the rest of the function
-	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
-	if ($valid) {
-		return true;
-	}
-
-	// what nonce should be
-	$valid = yourls_create_nonce( $action, $user );
-
-	if( $nonce == $valid ) {
-		return true;
-	} else {
-		if( $return )
-			die( $return );
-		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
-	}
 }
 
 /**
@@ -1954,12 +1904,12 @@ function yourls_is_mobile_device() {
  * Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
  *
  * With no parameter passed, this function will guess current page and consider
- * it is the current page requested.
+ * it is the requested page.
  * For testing purposes, parameters can be passed.
  *
  * @since 1.5
  * @param string $yourls_site   Optional, YOURLS installation URL (default to constant YOURLS_SITE)
- * @param string $uri           Optional, page requested (default to $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] eg 'sho.rt/yourls/abcd' )
+ * @param string $uri           Optional, page requested (default to $_SERVER['REQUEST_URI'] eg '/yourls/abcd' )
  * @return string               request relative to YOURLS base (eg 'abdc')
  */
 function yourls_get_request($yourls_site = false, $uri = false) {
@@ -1975,16 +1925,29 @@ function yourls_get_request($yourls_site = false, $uri = false) {
         $yourls_site = YOURLS_SITE;
     }
     if (false === $uri) {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $uri = $_SERVER['REQUEST_URI'];
     }
 
     // Even though the config sample states YOURLS_SITE should be set without trailing slash...
     $yourls_site = rtrim($yourls_site,'/');
 
-    // Ignore protocol & www. prefix
-	$root = str_replace( array( 'https://www.', 'http://www.', 'https://', 'http://'  ), '', $yourls_site );
-	// Case insensitive comparison of the YOURLS root with the requested URL, to match http://Sho.rt/blah, http://sho.rt/blah, http://www.Sho.rt/blah ...
-	$request = preg_replace( "!(?:www\.)?$root/!i", '', $uri, 1 );
+    // Now strip the YOURLS_SITE path part out of the requested URI, and get the request relative to YOURLS base
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // |       if we request       | and YOURLS is hosted on | YOURLS path part is | "request" is |
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // | http://sho.rt/abc         | http://sho.rt           | /                   | abc          |
+    // | https://SHO.rt/subdir/abc | https://shor.rt/subdir/ | /subdir/            | abc          |
+    // +---------------------------+-------------------------+---------------------+--------------+
+    // and so on. You can find various test cases in /tests/tests/utilities/get_request.php
+
+    // Take only the URL_PATH part of YOURLS_SITE (ie "https://sho.rt:1337/path/to/yourls" -> "/path/to/yourls")
+    $yourls_site = parse_url($yourls_site, PHP_URL_PATH) . '/';
+
+    // Strip path part from request if exists
+    $request = $uri;
+    if( substr($uri, 0, strlen($yourls_site)) == $yourls_site) {
+        $request = ltrim( substr($uri, strlen($yourls_site)), '/');
+    }
 
 	// Unless request looks like a full URL (ie request is a simple keyword) strip query string
 	if( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
@@ -1995,13 +1958,29 @@ function yourls_get_request($yourls_site = false, $uri = false) {
 }
 
 /**
- * Change protocol to match current scheme used (http or https)
+ * Change protocol of a URL to HTTPS if we are currently on HTTPS
  *
+ * This function is used to avoid insert 'http://' images or scripts in a page when it's served through HTTPS,
+ * to avoid "mixed content" errors.
+ * So:
+ *   - if you are on http://sho.rt/, 'http://something' and 'https://something' are left untouched.
+ *   - if you are on https:/sho.rt/, 'http://something' is changed to 'https://something'
+ *
+ * So, arguably, this function is poorly named. It should be something like yourls_match_current_protocol_if_we_re_on_https
+ *
+ * @since 1.5.1
+ * @param string $url        a URL
+ * @param string $normal     Optional, the standard scheme (defaults to 'http://')
+ * @param string $ssl        Optional, the SSL scheme (defaults to 'https://')
+ * @return string            the modified URL, if applicable
  */
 function yourls_match_current_protocol( $url, $normal = 'http://', $ssl = 'https://' ) {
-	if( yourls_is_ssl() )
-		$url = str_replace( $normal, $ssl, $url );
-	return yourls_apply_filter( 'match_current_protocol', $url );
+    // we're only doing something if we're currently serving through SSL and the input URL begins with 'http://' or 'https://'
+    if( yourls_is_ssl() && in_array( yourls_get_protocol($url), array('http://', 'https://') ) ) {
+        $url = str_replace( $normal, $ssl, $url );
+    }
+
+    return yourls_apply_filter( 'match_current_protocol', $url );
 }
 
 /**
@@ -2242,7 +2221,7 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
 	yourls_do_action( 'deprecated_function', $function, $replacement, $version );
 
 	// Allow plugin to filter the output error trigger
-	if ( YOURLS_DEBUG && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
+	if ( yourls_get_debug_mode() && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
 		if ( ! is_null( $replacement ) )
 			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
 		else
@@ -2347,6 +2326,7 @@ function yourls_return_empty_string() {
  */
 function yourls_debug_log( $msg ) {
 	global $ydb;
+    yourls_do_action('debug_log', $msg);
     $ydb->getProfiler()->log($msg);
 	return $msg;
 }
@@ -2369,7 +2349,7 @@ function yourls_get_debug_log() {
 }
 
 /**
- * Debug mode toggle
+ * Debug mode set
  *
  * @since 1.7.3
  * @param bool $bool  Debug on or off
@@ -2387,6 +2367,16 @@ function yourls_debug_mode($bool) {
     } else {
         error_reporting(E_ERROR | E_PARSE);
     }
+}
+
+/**
+ * Return YOURLS debug mode
+ *
+ * @since 1.7.7
+ * @return bool
+ */
+function yourls_get_debug_mode() {
+    return ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true );
 }
 
 /**
@@ -2453,4 +2443,3 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
-

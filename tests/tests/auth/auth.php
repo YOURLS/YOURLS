@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auth functions other than login
+ * Auth functions other than login and logout
  *
  * @group auth
  */
@@ -29,18 +29,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
 
     public static function tearDownAfterClass() {
         global $yourls_user_passwords;
-        $yourls_user_passwords = self::$yourls_user_passwords_copy;        
-    }
-
-    /**
-     * Check logout procedure
-     */
-    public function test_logout() {
-        $this->assertTrue( yourls_is_valid_user() );
-        $_GET['action'] = 'logout';
-        $this->assertNotTrue( yourls_is_valid_user() );
-        unset( $_GET['action'] );
-        $this->assertTrue( yourls_is_valid_user() );
+        $yourls_user_passwords = self::$yourls_user_passwords_copy;
     }
 
     /**
@@ -55,16 +44,16 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
      */
     public function test_has_no_cleartext() {
         global $yourls_user_passwords;
-        
+
         $copy = $yourls_user_passwords;
-        
+
         $yourls_user_passwords = array();
         $yourls_user_passwords['md5'] = $copy['md5'];
         $yourls_user_passwords['phpass'] = $copy['phpass'];
         $yourls_user_passwords['phpass2'] = $copy['phpass2'];
-        
+
         $this->assertFalse( yourls_has_cleartext_passwords() );
-        
+
         $yourls_user_passwords = $copy;
     }
 
@@ -92,7 +81,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
      * Provide strings to hash
      */
     public function strings_to_hash() {
-       
+
         return array(
             array( rand_str() ),
             array( 'lol .\+*?[^]$(){}=!<>|:-/' . "'" . '"' ),
@@ -129,13 +118,13 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
     public function test_valid_md5() {
         // Check if users have md5'd passwords
         $this->assertTrue(  yourls_has_md5_password( 'random_md5' ) );
-        
+
         // Check that md5 hashed passwords match the password
         $this->assertTrue( yourls_check_password_hash( 'random_md5', self::$random_password ) );
-        
+
         // Unknow user, existing password
         $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
-        
+
         // Known user, invalid password
         $this->assertFalse( yourls_check_password_hash( 'md5', rand_str() ) );
     }
@@ -147,10 +136,10 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         // Check that phppass hashed passwords match the password
         $this->assertTrue(  yourls_check_password_hash( 'random_phpass1', self::$random_password ) );
         $this->assertTrue(  yourls_check_password_hash( 'random_phpass2', self::$random_password ) );
-        
+
         // unknow user, existing valid password
         $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
-        
+
         // known users, invalid passwords
         $this->assertFalse( yourls_check_password_hash( 'phpass', rand_str() ) );
         $this->assertFalse( yourls_check_password_hash( 'phpass2', rand_str() ) );
@@ -173,16 +162,16 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         } else {
             $config_file = YOURLS_USERDIR . '/config-sample.php';
         }
-        
+
         // Encrypt file
         $this->assertTrue( yourls_hash_passwords_now( $config_file ) );
-        
+
         // Make sure encrypted file is still valid PHP with no syntax error
         if( !defined( 'YOURLS_PHP_BIN' ) ) {
             $this->markTestSkipped( 'No PHP binary defined -- cannot check file hashing' );
             return;
         }
-        
+
         exec( YOURLS_PHP_BIN . ' -l ' .  escapeshellarg( $config_file ), $output, $return );
         $this->assertEquals( 0, $return );
     }
@@ -201,16 +190,16 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         } else {
             $config_file = YOURLS_TESTDATA_DIR . '/auth/config-test-auth-hashed.php';
         }
-        
+
         // Encrypt file
         $this->assertTrue( yourls_hash_passwords_now( $config_file ) );
-        
+
         // Make sure encrypted file is still valid PHP with no syntax error
         if( !defined( 'YOURLS_PHP_BIN' ) ) {
             $this->markTestSkipped( 'No PHP binary defined -- cannot check file hashing' );
             return;
         }
-        
+
         exec( YOURLS_PHP_BIN . ' -l ' .  escapeshellarg( $config_file ), $output, $return );
         $this->assertEquals( 0, $return );
     }
