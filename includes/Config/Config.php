@@ -131,7 +131,7 @@ class Config {
 
         // URL of user directory
         if (!defined( 'YOURLS_USERURL' ))
-            define( 'YOURLS_USERURL', YOURLS_SITE.'/user' );
+            define( 'YOURLS_USERURL', trim(YOURLS_SITE, '/').'/user' );
 
         // physical path of asset directory
         if( !defined( 'YOURLS_ASSETDIR' ) )
@@ -139,7 +139,7 @@ class Config {
 
         // URL of asset directory
         if( !defined( 'YOURLS_ASSETURL' ) )
-            define( 'YOURLS_ASSETURL', YOURLS_SITE.'/assets' );
+            define( 'YOURLS_ASSETURL', trim(YOURLS_SITE, '/').'/assets' );
 
         // physical path of translations directory
         if (!defined( 'YOURLS_LANG_DIR' ))
