@@ -152,7 +152,7 @@ function yourls_send_through_proxy( $url ) {
 		return true;
 
 	// Self and loopback URLs are considered local (':' is parse_url() host on '::1')
-	$home = parse_url( YOURLS_SITE );
+	$home = parse_url( yourls_get_yourls_site() );
 	$local = array( 'localhost', '127.0.0.1', '127.1', '[::1]', ':', $home['host'] );
 
 	if( in_array( $check['host'], $local ) )
@@ -242,7 +242,7 @@ function yourls_http_load_library() {
  * @return string UA string
  */
 function yourls_http_user_agent() {
-	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.YOURLS_SITE.')' );
+	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.yourls_get_yourls_site().')' );
 }
 
 /**
@@ -287,11 +287,12 @@ function yourls_check_core_version() {
 	// The collection of stuff to report
 	$stuff = array(
 		// Globally uniquish site identifier
+        // This uses const YOURLS_SITE and not yourls_get_yourls_site() to prevent creating another id for an already known install
 		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),
 
 		// Install information
 		'failed_attempts'    => $checks->failed_attempts,
-		'yourls_site'        => defined( 'YOURLS_SITE' ) ? YOURLS_SITE : 'unknown',
+		'yourls_site'        => defined( 'YOURLS_SITE' ) ? yourls_get_yourls_site() : 'unknown',
 		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
 		'php_version'        => PHP_VERSION,
 		'mysql_version'      => $ydb->mysql_version(),

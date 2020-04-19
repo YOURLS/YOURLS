@@ -70,7 +70,7 @@ function yourls_is_iis() {
  *
  */
 function yourls_create_htaccess() {
-	$host = parse_url( YOURLS_SITE );
+	$host = parse_url( yourls_get_yourls_site() );
 	$path = ( isset( $host['path'] ) ? $host['path'] : '' );
 
 	if ( yourls_is_iis() ) {

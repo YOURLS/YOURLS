@@ -271,7 +271,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 				$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
 				$return['title']    = $title;
 				$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-				$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
+				$return['shorturl'] = yourls_get_yourls_site() .'/'. $keyword;
 			}
 
 		// Create random keyword
@@ -293,7 +293,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 						$return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $strip_url ) );
 						$return['title']    = $title;
 						$return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-						$return['shorturl'] = YOURLS_SITE .'/'. $keyword;
+						$return['shorturl'] = yourls_get_yourls_site() .'/'. $keyword;
 					} else {
 						// database error, couldnt store result
 						$return['status']   = 'fail';
@@ -317,7 +317,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 		$return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $strip_url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
 		$return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $strip_url ) );
 		$return['title']    = $url_exists->title;
-		$return['shorturl'] = YOURLS_SITE .'/'. $url_exists->keyword;
+		$return['shorturl'] = yourls_get_yourls_site() .'/'. $url_exists->keyword;
 	}
 
 	yourls_do_action( 'post_add_new_link', $url, $keyword, $title, $return );
@@ -377,7 +377,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
 			$update_url = $ydb->fetchAffected($sql, $binds);
 		if( $update_url ) {
-			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => YOURLS_SITE.'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
+			$return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => yourls_get_yourls_site().'/'.$newkeyword, 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
 			$return['status']  = 'success';
 			$return['message'] = yourls__( 'Link updated in database' );
 		} else {
@@ -620,7 +620,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 		foreach ( (array)$results as $res ) {
 			$return['links']['link_'.$i++] = array(
-				'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+				'shorturl' => yourls_get_yourls_site() .'/'. $res->keyword,
 				'url'      => $res->url,
 				'title'    => $res->title,
 				'timestamp'=> $res->timestamp,
@@ -661,7 +661,7 @@ function yourls_get_link_stats( $shorturl ) {
 			'statusCode' => 200,
 			'message'    => 'success',
 			'link'       => array(
-				'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+				'shorturl' => yourls_get_yourls_site() .'/'. $res->keyword,
 				'url'      => $res->url,
 				'title'    => $res->title,
 				'timestamp'=> $res->timestamp,
@@ -1077,7 +1077,7 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  */
 function yourls_geo_get_flag( $code ) {
 	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-		$img = yourls_match_current_protocol( YOURLS_SITE.'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
+		$img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
 	} else {
 		$img = false;
 	}
@@ -1672,7 +1672,7 @@ function yourls_remove_query_arg( $key, $query = false ) {
  *
  */
 function yourls_link( $keyword = '' ) {
-	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword );
+	$link = yourls_get_yourls_site() . '/' . yourls_sanitize_keyword( $keyword );
 	return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
@@ -1681,7 +1681,7 @@ function yourls_link( $keyword = '' ) {
  *
  */
 function yourls_statlink( $keyword = '' ) {
-	$link = YOURLS_SITE . '/' . yourls_sanitize_keyword( $keyword ) . '+';
+	$link = yourls_get_yourls_site() . '/' . yourls_sanitize_keyword( $keyword ) . '+';
 	if( yourls_is_ssl() )
         $link = yourls_set_url_scheme( $link, 'https' );
 	return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
@@ -1754,7 +1754,7 @@ function yourls_needs_ssl() {
  *
  */
 function yourls_admin_url( $page = '' ) {
-	$admin = YOURLS_SITE . '/admin/' . $page;
+	$admin = yourls_get_yourls_site() . '/admin/' . $page;
 	if( yourls_is_ssl() or yourls_needs_ssl() ) {
         $admin = yourls_set_url_scheme( $admin, 'https' );
     }
@@ -1767,7 +1767,7 @@ function yourls_admin_url( $page = '' ) {
  */
 function yourls_site_url( $echo = true, $url = '' ) {
 	$url = yourls_get_relative_url( $url );
-	$url = trim( YOURLS_SITE . '/' . $url, '/' );
+	$url = trim( yourls_get_yourls_site() . '/' . $url, '/' );
 
 	// Do not enforce (checking yourls_need_ssl() ) but check current usage so it won't force SSL on non-admin pages
 	if( yourls_is_ssl() ) {
@@ -1922,7 +1922,7 @@ function yourls_get_request($yourls_site = false, $uri = false) {
 
     // Default values
     if (false === $yourls_site) {
-        $yourls_site = YOURLS_SITE;
+        $yourls_site = yourls_get_yourls_site();
     }
     if (false === $uri) {
         $uri = $_SERVER['REQUEST_URI'];
@@ -2185,7 +2185,7 @@ function yourls_get_relative_url( $url, $strict = true ) {
 
 	// Remove protocols to make it easier
 	$noproto_url  = str_replace( 'https:', 'http:', $url );
-	$noproto_site = str_replace( 'https:', 'http:', YOURLS_SITE );
+	$noproto_site = str_replace( 'https:', 'http:', yourls_get_yourls_site() );
 
 	// Trim URL from YOURLS root URL : if no modification made, URL wasn't relative
 	$_url = str_replace( $noproto_site . '/', '', $noproto_url );
@@ -2442,4 +2442,17 @@ function yourls_tell_if_new_version() {
     $check = yourls_maybe_check_core_version();
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
+}
+
+/**
+ *  Get YOURLS_SITE value, trimmed and filtered
+ *
+ *  In addition of being filtered for plugins to hack this, this function is mostly here
+ *  to help people entering "sho.rt/" instead of "sho.rt" in their config
+ *
+ *  @since 1.7.7
+ *  @return string  YOURLS_SITE, trimmed and filtered
+ */
+function yourls_get_yourls_site() {
+    return yourls_apply_filter('get_yourls_site', trim(YOURLS_SITE, '/'));
 }
