@@ -107,7 +107,7 @@ yourls_html_menu();
 			if( isset( $plugin[ $value ] ) ) {
 				$data[ $field ] = $plugin[ $value ];
 			} else {
-				$data[ $field ] = '(no info)';
+				$data[ $field ] = yourls__('(no info)');
 			}
 			unset( $plugin[$value] );
 		}

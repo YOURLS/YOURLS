@@ -11,31 +11,31 @@ yourls_html_menu();
 	<main role="main" class="sub_wrap">
 
 	<h2><?php yourls_e( 'Bookmarklets' ); ?></h2>
-	
+
 		<p><?php yourls_e( 'YOURLS comes with handy <span>bookmarklets</span> for easier link shortening and sharing.' ); ?></p>
 
 		<h3><?php yourls_e( 'Standard or Instant, Simple or Custom' ); ?></h3>
-		
+
 		<ul>
 			<li><?php yourls_e( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ); ?></li>
-			
+
 			<li><?php yourls_e( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing.' ); ?></li>
-			
+
 			<li><?php yourls_e( 'The <span>Simple Bookmarklets</span> will generate a short URL with a random or sequential keyword.' ); ?></li>
-			
+
 			<li><?php yourls_e( 'The <span>Custom Keyword Bookmarklets</span> will prompt you for a custom keyword first.' ); ?></li>
 		</ul>
-		
+
 		<p><?php
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
-		
+
 		<h3><?php yourls_e( 'The Bookmarklets' ); ?></h3>
-        
+
         <?php $base_bookmarklet = yourls_admin_url( 'index.php' ); ?>
-		
+
 		<p><?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
-        
+
         <table class="tblSorter" cellpadding="0" cellspacing="1">
 			<thead>
 			<tr>
@@ -146,7 +146,7 @@ CUSTOM_STANDARD;
                 yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Custom shorten' ) );
                 ?>
                 </td>
-				
+
                 <td>
                 <?php $js_code = <<<CUSTOM_POPUP
                 // Custom Popup (prompt for a keyword + on-page popup)
@@ -174,22 +174,22 @@ CUSTOM_POPUP;
                 yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'Instant Custom Shorten' ) );
                 ?>
                 </td>
-                
+
 			</tr>
 			</tbody>
 		</table>
-        
+
 
 		<h3><?php yourls_e( 'Social Bookmarklets' ); ?></h3>
-		
-		<p><?php yourls_e( 'Create a short URL and share it on social networks, all in one click!' ); ?> 	
+
+		<p><?php yourls_e( 'Create a short URL and share it on social networks, all in one click!' ); ?>
 		<?php yourls_e( 'Click and drag links to your toolbar (or right-click and bookmark it)' ); ?></p>
 
 		<p><?php yourls_e( 'Shorten and share:' ); ?></p>
-        
+
         <p>
         <?php $js_code = <<<FACEBOOK
-        // Share on Facebook 
+        // Share on Facebook
         var d   = document,
             enc = encodeURIComponent,
             f   = '$base_bookmarklet',
@@ -212,7 +212,7 @@ CUSTOM_POPUP;
 FACEBOOK;
         yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Facebook' ) );
         ?>
-        
+
         <?php $js_code = <<<TWITTER
         // Share on Twitter
         var d = document,
@@ -243,7 +243,7 @@ FACEBOOK;
 TWITTER;
         yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Twitter' ) );
         ?>
-		
+
         <?php $js_code = <<<TUMBLR
         // Share on Tumlr
         var d = document,
@@ -275,15 +275,17 @@ TWITTER;
 TUMBLR;
         yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), yourls__( 'YOURLS &amp; Tumblr' ) );
         ?>
-        
+
 		<?php yourls_do_action( 'social_bookmarklet_buttons_after' ); ?>
-		
+
+        <p><?php yourls_e( '<strong>Note:</strong> depending on server settings, bookmarklets might fail on websites with <em>https</em>.'); ?></p>
+
 		</p>
 
 	<h2><?php yourls_e( 'Prefix-n-Shorten' ); ?></h2>
-		
-		<p><?php yourls_se( "When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add \"<span>%s</span>\" to the beginning of the current URL (right before its 'http://' part) and hit enter.", preg_replace('@https?://@', '', YOURLS_SITE) . '/' ); ?></p>
-		
+
+		<p><?php yourls_se( "When viewing a page, you can also prefix its full URL: just head to your browser's address bar, add \"<span>%s</span>\" to the beginning of the current URL (right before its 'http://' part) and hit enter.", preg_replace('@https?://@', '', yourls_get_yourls_site()) . '/' ); ?></p>
+
 		<p><?php
 		yourls_e( 'Note: this will probably not work if your web server is running on Windows' );
 		if( yourls_is_windows() )
@@ -294,7 +296,7 @@ TUMBLR;
 	<?php if( yourls_is_private() ) { ?>
 
 	<h2><?php yourls_e( 'Secure passwordless API call' ); ?></h2>
-	
+
 		<p><?php
 		yourls_e( 'YOURLS allows API calls the old fashioned way, using <tt>username</tt> and <tt>password</tt> parameters.' );
 		echo "\n";
@@ -305,30 +307,31 @@ TUMBLR;
         <?php yourls_e( "(It's a secret. Keep it secret) "); ?></p>
 
 		<p><?php yourls_e( 'This signature token can only be used with the API, not with the admin interface.' ); ?></p>
-		
+
 		<ul>
 			<li><h3><?php yourls_e( 'Usage of the signature token' ); ?></h3>
 			<p><?php yourls_e( 'Simply use parameter <tt>signature</tt> in your API requests. Example:' ); ?></p>
-			<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
+			<p><code><?php echo yourls_get_yourls_site(); ?>/yourls-api.php?signature=<?php echo yourls_auth_signature(); ?>&action=...</code></p>
 			</li>
-		
+
 			<li><h3><?php yourls_e( 'Usage of a time limited signature token' ); ?></h3>
 <pre><code>&lt;?php
 $timestamp = time();
 <tt>// <?php yourls_e( 'actual value:' ); ?> $time = <?php $time = time(); echo $time; ?></tt>
-$signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' ); 
+$signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 <tt>// <?php yourls_e( 'actual value:' ); ?> $signature = "<?php $sign = md5( $time. yourls_auth_signature() ); echo $sign; ?>"</tt>
-?> 
+?>
 </code></pre>
 		<p><?php yourls_e( 'Now use parameters <tt>signature</tt> and <tt>timestamp</tt> in your API requests. Example:' ); ?></p>
-		<p><code><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
+		<p><code><?php echo yourls_get_yourls_site(); ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
 		<p><?php yourls_e( 'Actual values:' ); ?><br/>
-		<tt><?php echo YOURLS_SITE; ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
+		<tt><?php echo yourls_get_yourls_site(); ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
 		<p><?php yourls_se( 'This URL would be valid for only %s seconds', YOURLS_NONCE_LIFE ); ?></p>
 		</li>
 	</ul>
-	
-	<p><?php yourls_se( 'See the <a href="%s">API documentation</a> for more', YOURLS_SITE . '/readme.html#API' ); ?></p>
+
+	<p><?php yourls_se( 'See the <a href="%s">Passwordless API</a> page on the wiki.', 'https://yourls.org/passwordlessapi' ); ?>
+	<?php yourls_se( 'See the <a href="%s">API documentation</a> for more', yourls_get_yourls_site() . '/readme.html#API' ); ?></p>
 
 	</main>
 
