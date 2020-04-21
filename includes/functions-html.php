@@ -935,9 +935,10 @@ function yourls_l10n_calendar_strings() {
 function yourls_new_core_version_notice() {
 
 	$checks = yourls_get_option( 'core_version_checks' );
+    $latest = isset($checks->last_result->latest) ? yourls_sanitize_version($checks->last_result->latest) : false;
 
-	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
-		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $checks->last_result->latest );
+	if( $latest AND version_compare( $latest, YOURLS_VERSION, '>' ) ) {
+		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
 }

@@ -336,7 +336,7 @@ function yourls_check_core_version() {
 	// Parse response
 	$json = json_decode( trim( $req->body ) );
 
-	if( isset( $json->latest ) && isset( $json->zipurl ) ) {
+	if( yourls_validate_core_version_response($json) ) {
 		// All went OK - mark this down
 		$checks->failed_attempts = 0;
 		$checks->last_result     = $json;
@@ -347,6 +347,30 @@ function yourls_check_core_version() {
 
 	// Request returned actual result, but not what we expected
 	return false;
+}
+
+/**
+ *  Make sure response from api.yourls.org is valid
+ *
+ *  we should get a json object with two following properties:
+ *    'latest' => a string representing a YOURLS version number, eg '1.2.3'
+ *    'zipurl' => a string for a zip package URL, from github, eg 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3'
+ *
+ *  @since 1.7.7
+ *  @param $json  JSON object to check
+ *  @return bool  true if seems legit, false otherwise
+ */
+function yourls_validate_core_version_response($json) {
+    return (
+        isset($json->latest)
+     && isset($json->zipurl)
+     && $json->latest === yourls_sanitize_version($json->latest)
+     && $json->zipurl === yourls_sanitize_url($json->zipurl)
+     && join('.',array_slice(explode('.',parse_url($json->zipurl, PHP_URL_HOST)), -2, 2)) === 'github.com'
+     // this last bit get the host ('api.github.com'), explodes on '.' (['api','github','com']) and keeps the last two elements
+     // to make sure domain is either github.com or one of its subdomain (api.github.com for instance)
+     // TODO: keep an eye on Github API to make sure it doesn't change some day to another domain (githubapi.com, ...)
+    );
 }
 
 /**

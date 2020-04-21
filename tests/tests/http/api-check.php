@@ -4,6 +4,7 @@
  * HTTP functions related to api.yourls.org
  *
  * @group http
+ * @group AYO
  * @since 0.1
  */
 class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
@@ -91,10 +92,6 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         $before = yourls_get_option( 'core_version_checks' );
         $check = yourls_check_core_version();
         $after = yourls_get_option( 'core_version_checks' );
-
-        if( $check === false ) {
-            $this->markTestSkipped( 'api.yourls.org unreachable or broken' );
-        }
 
         $this->assertNotSame( $before, $after );
         $this->assertTrue( isset( $check->latest ) );
@@ -280,7 +277,6 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
      * Check if we should poll api.yourls.org under various circumstances
      *
      * @dataProvider case_scenario
-     * @depends test_check_core_version
      * @since 0.1
      */
     public function test_api_check_in_various_scenario( $name, $checks, $expected ) {
@@ -290,6 +286,63 @@ class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
         yourls_update_option( 'core_version_checks', $checks );
 
         $this->assertSame( $expected, yourls_maybe_check_core_version() );
+    }
+
+    /**
+     *  Provide fake JSON responses from api.yourls.org and a boolean stating if they should be accepted or not
+     */
+    public function json_responses() {
+        $return = array();
+
+        // expected
+        $return[] = array(
+            (object)array(
+                'latest' => '1.2.3',
+                'zipurl' => 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3',
+            ),
+            true);
+
+        // incorrect version number
+        $return[] = array(
+            (object)array(
+                'latest' => '1.2.3-something',
+                'zipurl' => 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3',
+            ),
+            false);
+
+        // url not part of github.com
+        $return[] = array(
+            (object)array(
+                'latest' => '1.2.3',
+                'zipurl' => 'https://notgithub.com/repos/YOURLS/YOURLS/zipball/1.2.3',
+            ),
+            false);
+
+        // no version
+        $return[] = array(
+            (object)array(
+                'zipurl' => 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3',
+            ),
+            false);
+
+        // no URL
+        $return[] = array(
+            (object)array(
+                'latest' => '1.2.3',
+            ),
+            false);
+
+        return $return;
+    }
+
+    /**
+     * Validate various json responses from api.yourls.org and make sure they're legit
+     *
+     * @dataProvider json_responses
+     * @since 0.1
+     */
+    public function test_validate_api_json_response($json, $expected) {
+        $this->assertSame( $expected, yourls_validate_core_version_response($json) );
     }
 
 }
