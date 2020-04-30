@@ -10,6 +10,17 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Return favicon URL (either default or custom)
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_favicon( $echo = true ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_yourls_favicon_url' );
+	return yourls_get_yourls_favicon_url( $echo );
+}
+
+/**
  * Return array of stats for a given keyword
  *
  * @deprecated 1.7.10
