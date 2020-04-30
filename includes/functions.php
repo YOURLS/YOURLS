@@ -1416,16 +1416,3 @@ function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
     yourls_new_core_version_notice();
 }
-
-/**
- *  Get YOURLS_SITE value, trimmed and filtered
- *
- *  In addition of being filtered for plugins to hack this, this function is mostly here
- *  to help people entering "sho.rt/" instead of "sho.rt" in their config
- *
- *  @since 1.7.7
- *  @return string  YOURLS_SITE, trimmed and filtered
- */
-function yourls_get_yourls_site() {
-    return yourls_apply_filter('get_yourls_site', trim(YOURLS_SITE, '/'));
-}

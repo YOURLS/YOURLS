@@ -170,6 +170,19 @@ function yourls_site_url( $echo = true, $url = '' ) {
 }
 
 /**
+ *  Get YOURLS_SITE value, trimmed and filtered
+ *
+ *  In addition of being filtered for plugins to hack this, this function is mostly here
+ *  to help people entering "sho.rt/" instead of "sho.rt" in their config
+ *
+ *  @since 1.7.7
+ *  @return string  YOURLS_SITE, trimmed and filtered
+ */
+function yourls_get_yourls_site() {
+    return yourls_apply_filter('get_yourls_site', trim(YOURLS_SITE, '/'));
+}
+
+/**
  * Change protocol of a URL to HTTPS if we are currently on HTTPS
  *
  * This function is used to avoid insert 'http://' images or scripts in a page when it's served through HTTPS,
