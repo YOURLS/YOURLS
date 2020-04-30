@@ -167,6 +167,7 @@ class Init {
     public function include_core_functions() {
         require_once YOURLS_INC.'/version.php';
         require_once YOURLS_INC.'/functions.php';
+        require_once YOURLS_INC.'/functions-shorturls.php';
         require_once YOURLS_INC.'/functions-plugins.php';
         require_once YOURLS_INC.'/functions-formatting.php';
         require_once YOURLS_INC.'/functions-api.php';
