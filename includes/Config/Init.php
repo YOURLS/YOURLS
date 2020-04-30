@@ -181,11 +181,7 @@ class Init {
         require_once YOURLS_INC.'/functions-http.php';
         require_once YOURLS_INC.'/functions-infos.php';
         require_once YOURLS_INC.'/functions-deprecated.php';
-
-        // Load auth functions if needed
-        if (yourls_is_private() || $this->actions->include_auth_funcs === true) {
-            require_once YOURLS_INC.'/functions-auth.php';
-        }
+        require_once YOURLS_INC.'/functions-auth.php';
 
         // Load install & upgrade functions if needed
         if ($this->actions->include_install_upgrade_funcs === true) {

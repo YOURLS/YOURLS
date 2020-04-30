@@ -633,19 +633,6 @@ function yourls_is_private() {
 }
 
 /**
- * Show login form if required
- *
- */
-function yourls_maybe_require_auth() {
-	if( yourls_is_private() ) {
-		yourls_do_action( 'require_auth' );
-		require_once( YOURLS_INC.'/auth.php' );
-	} else {
-		yourls_do_action( 'require_no_auth' );
-	}
-}
-
-/**
  * Allow several short URLs for the same long URL ?
  *
  */
