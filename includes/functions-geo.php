@@ -145,11 +145,9 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  * @return string
  */
 function yourls_geo_get_flag( $code ) {
-    if ( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower( $code ).'.gif' ) ) {
-        $img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
+    if ( !file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower( $code ).'.gif' ) ) {
+        $code = '';
     }
-    else {
-        $img = false;
-    }
+    $img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.strtolower( $code ).'.gif' );
     return (string)yourls_apply_filter( 'geo_get_flag', $img, $code );
 }
