@@ -6,7 +6,7 @@
  * @group shorturls
  * @since 0.1
  */
- 
+
 class ShortURL_Tests extends PHPUnit_Framework_TestCase {
 
     public function test_reserved_keywords() {
@@ -15,7 +15,7 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $this->assertTrue( yourls_keyword_is_reserved( $reserved ) );
         $this->assertFalse( yourls_keyword_is_reserved( rand_str() ) );
     }
-    
+
     public function test_free_keywords() {
         global $yourls_reserved_URL;
         $reserved = $yourls_reserved_URL[ array_rand( $yourls_reserved_URL, 1 )  ];
@@ -25,16 +25,16 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
     }
 
     public function test_url_exists() {
-        $exists = yourls_url_exists( 'http://ozh.org/' );
+        $exists = yourls_long_url_exists( 'http://ozh.org/' );
         $this->assertEquals( 'ozh', $exists->keyword );
-        $this->assertNull( yourls_url_exists( rand_str() ) );
+        $this->assertNull( yourls_long_url_exists( rand_str() ) );
     }
 
     public function test_add_url() {
         $keyword = rand_str();
         $title   = rand_str();
         $url     = 'http://' . rand_str();
-        
+
         $newurl = yourls_add_new_link( $url, $keyword, $title );
         $this->assertEquals( 'success', $newurl['status'] );
 
@@ -45,11 +45,11 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $fail = yourls_add_new_link( 'http://' . rand_str(), $keyword, $title );
         $this->assertEquals( 'fail', $fail['status'] );
         $this->assertEquals( 'error:keyword', $fail['code'] );
-        
+
         $this->assertEquals( $title, yourls_get_keyword_title( $keyword ) );
         $this->assertEquals( $url, yourls_get_keyword_longurl( $keyword ) );
         $this->assertEquals( 0, yourls_get_keyword_clicks( $keyword ) );
-        
+
         return $keyword;
     }
 
@@ -60,13 +60,13 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $new_keyword = rand_str();
         $new_title   = rand_str();
         $new_url     = 'http://' . rand_str();
-        
+
         $edit = yourls_edit_link_title( $original_keyword, $new_title );
         $this->assertEquals( 1, $edit );
         // purge cache
         $original = yourls_get_keyword_infos( $original_keyword, false );
         $this->assertEquals( $new_title, yourls_get_keyword_title( $original_keyword ) );
-        
+
         return $original_keyword;
     }
     /**
@@ -77,7 +77,7 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $this->assertTrue( yourls_is_shorturl( $keyword ) );
         $this->assertTrue( yourls_is_shorturl( yourls_link( $keyword ) ) );
     }
-    
+
     /**
      * @depends test_add_url
      */
@@ -108,14 +108,14 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
 
         // purge cache
         $original = yourls_get_keyword_infos( $original_keyword, false );
-        
+
         $edit = yourls_edit_link( $original['url'], $original_keyword, $new_keyword, $new_title );
         $this->assertEquals( $edit['url']['title'], $new_title );
         $this->assertEquals( $edit['url']['keyword'], $new_keyword );
-        
+
         $edit = yourls_edit_link( $new_url, $new_keyword, $new_keyword, $new_title );
         $this->assertEquals( $edit['url']['url'], $new_url );
-        
+
         return $new_keyword;
     }
 
@@ -129,5 +129,5 @@ class ShortURL_Tests extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 1, $delete );
         $this->assertFalse( yourls_is_shorturl( $keyword ) );
     }
-    
+
 }

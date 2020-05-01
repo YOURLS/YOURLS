@@ -1,5 +1,23 @@
 <?php
 /**
+ * Function related to authentication functions and nonces
+ */
+
+
+/**
+ * Show login form if required
+ *
+ */
+function yourls_maybe_require_auth() {
+	if( yourls_is_private() ) {
+		yourls_do_action( 'require_auth' );
+		require_once( YOURLS_INC.'/auth.php' );
+	} else {
+		yourls_do_action( 'require_no_auth' );
+	}
+}
+
+/**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
  */

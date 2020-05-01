@@ -87,7 +87,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
-	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
+	<link rel="shortcut icon" href="<?php yourls_get_yourls_favicon_url(); ?>" />
 	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>

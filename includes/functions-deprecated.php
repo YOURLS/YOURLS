@@ -10,6 +10,40 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Return favicon URL (either default or custom)
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_favicon( $echo = true ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_yourls_favicon_url' );
+	return yourls_get_yourls_favicon_url( $echo );
+}
+
+/**
+ * Return array of stats for a given keyword
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_get_link_stats( $url ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_keyword_stats' );
+	return yourls_get_keyword_stats( $url );
+}
+
+/**
+ * Check if a long URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+ *
+ * @since 1.5.1
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_url_exists( $url ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_long_url_exists' );
+	return yourls_long_url_exists( $url );
+}
+
+/**
  * Return word or words if more than one
  *
  */
