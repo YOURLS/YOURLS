@@ -26,14 +26,8 @@ function yourls_debug_log( $msg ) {
  * @return array
  */
 function yourls_get_debug_log() {
-    $ydb = yourls_get_db();
-
-    // Check if we have a profiler registered (will not be the case if the DB hasn't been properly connected to)
-    if ( $ydb->getProfiler() ) {
-        return $ydb->getProfiler()->get_log();
-    }
-
-    return [];
+    $profiler = yourls_get_db()->getProfiler();
+    return $profiler instanceof \Aura\Sql\ProfilerInterface ? $profiler->get_log() : [];
 }
 
 /**
