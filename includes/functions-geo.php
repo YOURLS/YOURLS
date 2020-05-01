@@ -19,6 +19,11 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
         return $location;
     }
 
+    if ( yourls_apply_filter( 'geo_use_cloudflare', true )
+         && !empty( $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) && preg_match( '/^[A-Z]{2}$/', $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) ) {
+        return $_SERVER[ 'HTTP_CF_IPCOUNTRY' ];
+    }
+
     if ( empty( $ip ) ) {
         $ip = yourls_get_IP();
     }
