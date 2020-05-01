@@ -15,10 +15,10 @@
  * @return string The message itself
  */
 function yourls_debug_log( $msg ) {
-	global $ydb;
+    global $ydb;
     yourls_do_action('debug_log', $msg);
     $ydb->getProfiler()->log($msg);
-	return $msg;
+    return $msg;
 }
 
 /**
@@ -28,7 +28,7 @@ function yourls_debug_log( $msg ) {
  * @return array
  */
 function yourls_get_debug_log() {
-	global $ydb;
+    global $ydb;
 
     // Check if we have a profiler registered (will not be the case if the DB hasn't been properly connected to)
     if ($ydb->getProfiler()) {

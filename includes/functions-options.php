@@ -15,12 +15,12 @@
  * @return mixed Value set for the option.
  */
 function yourls_get_option( $option_name, $default = false ) {
-	// Allow plugins to short-circuit options
-	$pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
-	if ( false !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit options
+    $pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
+    if ( false !== $pre )
+        return $pre;
 
-	global $ydb;
+    global $ydb;
     $option = new \YOURLS\Database\Options($ydb);
     $value  = $option->get($option_name, $default);
 
@@ -38,21 +38,21 @@ function yourls_get_option( $option_name, $default = false ) {
  * @since 1.4
  */
 function yourls_get_all_options() {
-	// Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
-	$pre = yourls_apply_filter( 'shunt_all_options', false );
-	if ( false !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
+    $pre = yourls_apply_filter( 'shunt_all_options', false );
+    if ( false !== $pre )
+        return $pre;
 
-	global $ydb;
+    global $ydb;
     $options = new \YOURLS\Database\Options($ydb);
 
     if ($options->get_all_options() === false) {
-		// Zero option found but no unexpected error so far: YOURLS isn't installed
+        // Zero option found but no unexpected error so far: YOURLS isn't installed
         yourls_set_installed(false);
         return;
     }
 
-	yourls_set_installed(true);
+    yourls_set_installed(true);
 }
 
 /**
@@ -66,7 +66,7 @@ function yourls_get_all_options() {
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
-	global $ydb;
+    global $ydb;
 
     $option = new \YOURLS\Database\Options($ydb);
     $update = $option->update($option_name, $newvalue);
@@ -85,7 +85,7 @@ function yourls_update_option( $option_name, $newvalue ) {
  * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
-	global $ydb;
+    global $ydb;
 
     $option = new \YOURLS\Database\Options($ydb);
     $add    = $option->add($name, $value);
@@ -103,7 +103,7 @@ function yourls_add_option( $name, $value = '' ) {
  * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
-	global $ydb;
+    global $ydb;
 
     $option = new \YOURLS\Database\Options($ydb);
     $delete = $option->delete($name);
@@ -119,13 +119,13 @@ function yourls_delete_option( $name ) {
  * @return mixed A scalar data
  */
 function yourls_maybe_serialize( $data ) {
-	if ( is_array( $data ) || is_object( $data ) )
-		return serialize( $data );
+    if ( is_array( $data ) || is_object( $data ) )
+        return serialize( $data );
 
-	if ( yourls_is_serialized( $data, false ) )
-		return serialize( $data );
+    if ( yourls_is_serialized( $data, false ) )
+        return serialize( $data );
 
-	return $data;
+    return $data;
 }
 
 /**
@@ -136,9 +136,9 @@ function yourls_maybe_serialize( $data ) {
  * @return mixed Unserialized data can be any type.
  */
 function yourls_maybe_unserialize( $original ) {
-	if ( yourls_is_serialized( $original ) ) // don't attempt to unserialize data that wasn't serialized going in
-		return @unserialize( $original );
-	return $original;
+    if ( yourls_is_serialized( $original ) ) // don't attempt to unserialize data that wasn't serialized going in
+        return @unserialize( $original );
+    return $original;
 }
 
 /**
@@ -150,51 +150,51 @@ function yourls_maybe_unserialize( $original ) {
  * @return bool False if not serialized and true if it was.
  */
 function yourls_is_serialized( $data, $strict = true ) {
-	// if it isn't a string, it isn't serialized
-	if ( ! is_string( $data ) )
-		return false;
-	$data = trim( $data );
-	 if ( 'N;' == $data )
-		return true;
-	$length = strlen( $data );
-	if ( $length < 4 )
-		return false;
-	if ( ':' !== $data[1] )
-		return false;
-	if ( $strict ) {
-		$lastc = $data[ $length - 1 ];
-		if ( ';' !== $lastc && '}' !== $lastc )
-			return false;
-	} else {
-		$semicolon = strpos( $data, ';' );
-		$brace	 = strpos( $data, '}' );
-		// Either ; or } must exist.
-		if ( false === $semicolon && false === $brace )
-			return false;
-		// But neither must be in the first X characters.
-		if ( false !== $semicolon && $semicolon < 3 )
-			return false;
-		if ( false !== $brace && $brace < 4 )
-			return false;
-	}
-	$token = $data[0];
-	switch ( $token ) {
-		case 's' :
-			if ( $strict ) {
-				if ( '"' !== $data[ $length - 2 ] )
-					return false;
-			} elseif ( false === strpos( $data, '"' ) ) {
-				return false;
-			}
-			// or else fall through
-		case 'a' :
-		case 'O' :
-			return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
-		case 'b' :
-		case 'i' :
-		case 'd' :
-			$end = $strict ? '$' : '';
-			return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
-	}
-	return false;
+    // if it isn't a string, it isn't serialized
+    if ( ! is_string( $data ) )
+        return false;
+    $data = trim( $data );
+     if ( 'N;' == $data )
+        return true;
+    $length = strlen( $data );
+    if ( $length < 4 )
+        return false;
+    if ( ':' !== $data[1] )
+        return false;
+    if ( $strict ) {
+        $lastc = $data[ $length - 1 ];
+        if ( ';' !== $lastc && '}' !== $lastc )
+            return false;
+    } else {
+        $semicolon = strpos( $data, ';' );
+        $brace     = strpos( $data, '}' );
+        // Either ; or } must exist.
+        if ( false === $semicolon && false === $brace )
+            return false;
+        // But neither must be in the first X characters.
+        if ( false !== $semicolon && $semicolon < 3 )
+            return false;
+        if ( false !== $brace && $brace < 4 )
+            return false;
+    }
+    $token = $data[0];
+    switch ( $token ) {
+        case 's' :
+            if ( $strict ) {
+                if ( '"' !== $data[ $length - 2 ] )
+                    return false;
+            } elseif ( false === strpos( $data, '"' ) ) {
+                return false;
+            }
+            // or else fall through
+        case 'a' :
+        case 'O' :
+            return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+        case 'b' :
+        case 'i' :
+        case 'd' :
+            $end = $strict ? '$' : '';
+            return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
+    }
+    return false;
 }

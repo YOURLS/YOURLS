@@ -13,15 +13,15 @@
  * @return string 2 letter country code (eg 'US') or $default
  */
 function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
-	// Allow plugins to short-circuit the Geo IP API
-	$location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
-	if ( false !== $location )
-		return $location;
+    // Allow plugins to short-circuit the Geo IP API
+    $location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
+    if ( false !== $location )
+        return $location;
 
     // At this point, $location == false
 
-	if ( $ip == '' )
-		$ip = yourls_get_IP();
+    if ( $ip == '' )
+        $ip = yourls_get_IP();
 
     // Allow plugins to stick to YOURLS internals but provide another DB
     $db = yourls_apply_filter('geo_ip_path_to_db', YOURLS_INC.'/geo/GeoLite2-Country.mmdb');
@@ -70,10 +70,10 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
  * @return string Country long name (eg 'France') or an empty string if not found
  */
 function yourls_geo_countrycode_to_countryname( $code ) {
-	// Allow plugins to short-circuit the function
-	$country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
-	if ( false !== $country )
-		return $country;
+    // Allow plugins to short-circuit the function
+    $country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
+    if ( false !== $country )
+        return $country;
 
     // Weeeeeeeeeeee
     $countries = array(
@@ -145,11 +145,11 @@ function yourls_geo_countrycode_to_countryname( $code ) {
  *
  */
 function yourls_geo_get_flag( $code ) {
-	if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-		$img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
-	} else {
-		$img = false;
-	}
-	return yourls_apply_filter( 'geo_get_flag', $img, $code );
+    if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
+        $img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
+    } else {
+        $img = false;
+    }
+    return yourls_apply_filter( 'geo_get_flag', $img, $code );
 }
 

@@ -938,14 +938,6 @@ function yourls_fix_request_uri() {
 }
 
 /**
- * Shutdown function, runs just before PHP shuts down execution. Stolen from WP
- *
- */
-function yourls_shutdown() {
-	yourls_do_action( 'shutdown' );
-}
-
-/**
  * Check for maintenance mode. If yes, die. See yourls_maintenance_mode(). Stolen from WP.
  *
  */
@@ -1116,78 +1108,6 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
  */
 function yourls_return_if_not_empty_string( $val ) {
 	return( $val !== '' );
-}
-
-/**
- * Returns true.
- *
- * Useful for returning true to filters easily.
- *
- * @since 1.7.1
- * @return bool True.
- */
-function yourls_return_true() {
-    return true;
-}
-
-/**
- * Returns false.
- *
- * Useful for returning false to filters easily.
- *
- * @since 1.7.1
- * @return bool False.
- */
-function yourls_return_false() {
-    return false;
-}
-
-/**
- * Returns 0.
- *
- * Useful for returning 0 to filters easily.
- *
- * @since 1.7.1
- * @return int 0.
- */
-function yourls_return_zero() {
-    return 0;
-}
-
-/**
- * Returns an empty array.
- *
- * Useful for returning an empty array to filters easily.
- *
- * @since 1.7.1
- * @return array Empty array.
- */
-function yourls_return_empty_array() {
-    return array();
-}
-
-/**
- * Returns null.
- *
- * Useful for returning null to filters easily.
- *
- * @since 1.7.1
- * @return null Null value.
- */
-function yourls_return_null() {
-    return null;
-}
-
-/**
- * Returns an empty string.
- *
- * Useful for returning an empty string to filters easily.
- *
- * @since 1.7.1
- * @return string Empty string.
- */
-function yourls_return_empty_string() {
-    return '';
 }
 
 /**
