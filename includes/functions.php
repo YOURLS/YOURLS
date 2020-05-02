@@ -202,6 +202,20 @@ function yourls_get_user_agent() {
 }
 
 /**
+ * Returns the sanitized referrer submitted by the browser.
+ *
+ * @return string               HTTP Referrer or 'direct' if no refferer was provided
+ */
+function yourls_get_referrer() {
+    if ( !isset( $_SERVER['HTTP_REFERER'] ) )
+        return 'direct';
+
+    $referrer = yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] );
+
+    return yourls_apply_filter( 'get_referrer', substr( $referrer, 0, 200 ) );
+}
+
+/**
  * Redirect to another page
  *
  * YOURLS redirection, either to internal or external URLs. If headers have not been sent, redirection
@@ -401,7 +415,7 @@ function yourls_log_redirect( $keyword ) {
     $binds = array(
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_string($keyword),
-        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe(substr($_SERVER['HTTP_REFERER'], 0, 200)) : 'direct',
+        'referrer' => substr( yourls_get_referrer(), 0, 200 ),
         'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
         'location' => yourls_geo_ip_to_countrycode($ip),
