@@ -15,10 +15,9 @@ namespace GeoIp2\Record;
  * @property-read bool $isInEuropeanUnion This is true if the country is a
  * member state of the European Union. This attribute is returned by all
  * location services and databases.
- * @property-read string|null $isoCode The
- * {@link * http://en.wikipedia.org/wiki/ISO_3166-1 two-character ISO 3166-1 alpha
- * code} for the country. This attribute is returned by all location services
- * and databases.
+ * @property-read string|null $isoCode The two-character ISO 3166-1 alpha code
+ * for the country. See https://en.wikipedia.org/wiki/ISO_3166-1. This
+ * attribute is returned by all location services and databases.
  * @property-read string|null $name The name of the country based on the locales
  * list passed to the constructor. This attribute is returned by all location
  * services and databases.

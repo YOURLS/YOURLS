@@ -7,7 +7,7 @@ namespace GeoIp2\Model;
  *
  * The only difference between the City and Insights model classes is which
  * fields in each record may be populated. See
- * http://dev.maxmind.com/geoip/geoip2/web-services more details.
+ * https://dev.maxmind.com/geoip/geoip2/web-services for more details.
  *
  * @property-read \GeoIp2\Record\Continent $continent Continent data for the
  * requested IP address.

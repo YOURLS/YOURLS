@@ -27,11 +27,11 @@ namespace GeoIp2\Record;
  * from the Insights service.
  * @property-read int|null $metroCode The metro code of the location if the location
  * is in the US. MaxMind returns the same metro codes as the
- * {@link * https://developers.google.com/adwords/api/docs/appendix/cities-DMAregions
- * Google AdWords API}.
+ * Google AdWords API. See
+ * https://developers.google.com/adwords/api/docs/appendix/cities-DMAregions.
  * @property-read string|null $timeZone The time zone associated with location, as
- * specified by the {@link http://www.iana.org/time-zones IANA Time Zone
- * Database}, e.g., "America/New_York".
+ * specified by the IANA Time Zone Database, e.g., "America/New_York". See
+ * https://www.iana.org/time-zones.
  */
 class Location extends AbstractRecord
 {
