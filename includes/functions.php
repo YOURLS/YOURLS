@@ -198,7 +198,7 @@ function yourls_get_user_agent() {
 	$ua = strip_tags( html_entity_decode( $_SERVER['HTTP_USER_AGENT'] ));
 	$ua = preg_replace('![^0-9a-zA-Z\':., /{}\(\)\[\]\+@&\!\?;_\-=~\*\#]!', '', $ua );
 
-	return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 254 ) );
+	return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 255 ) );
 }
 
 /**
