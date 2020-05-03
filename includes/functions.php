@@ -207,10 +207,7 @@ function yourls_get_user_agent() {
  * @return string               HTTP Referrer or 'direct' if no refferer was provided
  */
 function yourls_get_referrer() {
-    if ( !isset( $_SERVER['HTTP_REFERER'] ) )
-        return 'direct';
-
-    $referrer = yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] );
+    $referrer = isset( $_SERVER['HTTP_REFERER'] ) ? yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) : 'direct';
 
     return yourls_apply_filter( 'get_referrer', substr( $referrer, 0, 200 ) );
 }
