@@ -192,13 +192,25 @@ function yourls_get_num_queries() {
  *
  */
 function yourls_get_user_agent() {
-	if ( !isset( $_SERVER['HTTP_USER_AGENT'] ) )
-		return '-';
+    $ua = '-';
 
-	$ua = strip_tags( html_entity_decode( $_SERVER['HTTP_USER_AGENT'] ));
-	$ua = preg_replace('![^0-9a-zA-Z\':., /{}\(\)\[\]\+@&\!\?;_\-=~\*\#]!', '', $ua );
+    if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+        $ua = strip_tags( html_entity_decode( $_SERVER['HTTP_USER_AGENT'] ));
+        $ua = preg_replace('![^0-9a-zA-Z\':., /{}\(\)\[\]\+@&\!\?;_\-=~\*\#]!', '', $ua );
+    }
 
-	return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 255 ) );
+    return yourls_apply_filter( 'get_user_agent', substr( $ua, 0, 255 ) );
+}
+
+/**
+ * Returns the sanitized referrer submitted by the browser.
+ *
+ * @return string               HTTP Referrer or 'direct' if no referrer was provided
+ */
+function yourls_get_referrer() {
+    $referrer = isset( $_SERVER['HTTP_REFERER'] ) ? yourls_sanitize_url_safe( $_SERVER['HTTP_REFERER'] ) : 'direct';
+
+    return yourls_apply_filter( 'get_referrer', substr( $referrer, 0, 200 ) );
 }
 
 /**
@@ -401,7 +413,7 @@ function yourls_log_redirect( $keyword ) {
     $binds = array(
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_string($keyword),
-        'referrer' => isset($_SERVER['HTTP_REFERER']) ? yourls_sanitize_url_safe(substr($_SERVER['HTTP_REFERER'], 0, 200)) : 'direct',
+        'referrer' => substr( yourls_get_referrer(), 0, 200 ),
         'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
         'location' => yourls_geo_ip_to_countrycode($ip),
