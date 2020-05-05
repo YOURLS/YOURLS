@@ -3,14 +3,14 @@
 ## Description ##
 
 This package provides an API for the GeoIP2
-[web services](http://dev.maxmind.com/geoip/geoip2/web-services) and
-[databases](http://dev.maxmind.com/geoip/geoip2/downloadable). The API also
+[web services](https://dev.maxmind.com/geoip/geoip2/web-services) and
+[databases](https://dev.maxmind.com/geoip/geoip2/downloadable). The API also
 works with the free
-[GeoLite2 databases](http://dev.maxmind.com/geoip/geoip2/geolite2/).
+[GeoLite2 databases](https://dev.maxmind.com/geoip/geoip2/geolite2/).
 
 ## Install via Composer ##
 
-We recommend installing this package with [Composer](http://getcomposer.org/).
+We recommend installing this package with [Composer](https://getcomposer.org/).
 
 ### Download Composer ###
 
@@ -46,18 +46,18 @@ require 'vendor/autoload.php';
 ## Install via Phar ##
 
 Although we strongly recommend using Composer, we also provide a
-[phar archive](http://php.net/manual/en/book.phar.php) containing most of the
+[phar archive](https://php.net/manual/en/book.phar.php) containing most of the
 dependencies for GeoIP2. Our latest phar archive is available on
 [our releases page](https://github.com/maxmind/GeoIP2-php/releases).
 
 ### Install Dependencies ###
 
 In order to use the phar archive, you must have the PHP
-[Phar extension](http://php.net/manual/en/book.phar.php) installed and
+[Phar extension](https://php.net/manual/en/book.phar.php) installed and
 enabled.
 
 If you will be making web service requests, you must have the PHP
-[cURL extension](http://php.net/manual/en/book.curl.php)
+[cURL extension](https://php.net/manual/en/book.curl.php)
 installed to use this archive. For Debian based distributions, this can
 typically be found in the the `php-curl` package. For other operating
 systems, please consult the relevant documentation. After installing the
@@ -140,6 +140,8 @@ print($record->postal->code . "\n"); // '55455'
 print($record->location->latitude . "\n"); // 44.9733
 print($record->location->longitude . "\n"); // -93.2323
 
+print($record->traits->network . "\n"); // '128.101.101.101/32'
+
 ```
 
 ### Anonymous IP Example ###
@@ -157,6 +159,7 @@ $record = $reader->anonymousIp('128.101.101.101');
 
 if ($record->isAnonymous) { print "anon\n"; }
 print($record->ipAddress . "\n"); // '128.101.101.101'
+print($record->network . "\n"); // '128.101.101.101/32'
 
 ```
 
@@ -175,6 +178,7 @@ $record = $reader->connectionType('128.101.101.101');
 
 print($record->connectionType . "\n"); // 'Corporate'
 print($record->ipAddress . "\n"); // '128.101.101.101'
+print($record->network . "\n"); // '128.101.101.101/32'
 
 ```
 
@@ -193,6 +197,7 @@ $record = $reader->domain('128.101.101.101');
 
 print($record->domain . "\n"); // 'umn.edu'
 print($record->ipAddress . "\n"); // '128.101.101.101'
+print($record->network . "\n"); // '128.101.101.101/32'
 
 ```
 
@@ -228,6 +233,8 @@ print($record->location->accuracyRadius . "\n"); // 50
 print($record->location->latitude . "\n"); // 44.9733
 print($record->location->longitude . "\n"); // -93.2323
 
+print($record->traits->network . "\n"); // '128.101.101.101/32'
+
 ```
 
 ### ISP Example ###
@@ -249,6 +256,7 @@ print($record->isp . "\n"); // 'University of Minnesota'
 print($record->organization . "\n"); // 'University of Minnesota'
 
 print($record->ipAddress . "\n"); // '128.101.101.101'
+print($record->network . "\n"); // '128.101.101.101/32'
 
 ```
 
@@ -299,6 +307,8 @@ print($record->postal->code . "\n"); // '55455'
 print($record->location->latitude . "\n"); // 44.9733
 print($record->location->longitude . "\n"); // -93.2323
 
+print($record->traits->network . "\n"); // '128.101.101.101/32'
+
 ```
 
 ## Values to use for Database or Array Keys ##
@@ -326,7 +336,7 @@ Because of these factors, it is possible for any end point to return a record
 where some or all of the attributes are unpopulated.
 
 See the
-[GeoIP2 Precision web service docs](http://dev.maxmind.com/geoip/geoip2/web-services)
+[GeoIP2 Precision web service docs](https://dev.maxmind.com/geoip/geoip2/web-services)
 for details on what data each end point may return.
 
 The only piece of data which is always returned is the `ipAddress`
@@ -334,7 +344,7 @@ attribute in the `GeoIp2\Record\Traits` record.
 
 ## Integration with GeoNames ##
 
-[GeoNames](http://www.geonames.org/) offers web services and downloadable
+[GeoNames](https://www.geonames.org/) offers web services and downloadable
 databases with data on geographical features around the world, including
 populated places. They offer both free and paid premium data. Each
 feature is unique identified by a `geonameId`, which is an integer.
@@ -351,10 +361,10 @@ the GeoNames premium data set.
 
 If the problem you find is that an IP address is incorrectly mapped,
 please
-[submit your correction to MaxMind](http://www.maxmind.com/en/correction).
+[submit your correction to MaxMind](https://www.maxmind.com/en/correction).
 
 If you find some other sort of mistake, like an incorrect spelling,
-please check the [GeoNames site](http://www.geonames.org/) first. Once
+please check the [GeoNames site](https://www.geonames.org/) first. Once
 you've searched for a place and found it on the GeoNames map view, there
 are a number of links you can use to correct data ("move", "edit",
 "alternate names", etc.). Once the correction is part of the GeoNames
@@ -363,7 +373,7 @@ releases.
 
 If you are a paying MaxMind customer and you're not sure where to submit
 a correction, please
-[contact MaxMind support](http://www.maxmind.com/en/support) for help.
+[contact MaxMind support](https://www.maxmind.com/en/support) for help.
 
 ## Other Support ##
 
@@ -372,12 +382,11 @@ Please report all issues with this code using the
 
 If you are having an issue with a MaxMind service that is not specific
 to the client API, please see
-[our support page](http://www.maxmind.com/en/support).
+[our support page](https://www.maxmind.com/en/support).
 
 ## Requirements  ##
 
-This library requires PHP 5.4 or greater. This library works and is tested
-with HHVM.
+This library requires PHP 5.6 or greater.
 
 This library also relies on the [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php).
 
@@ -391,11 +400,10 @@ https://github.com/maxmind/MaxMind-DB
 
 ## Versioning ##
 
-The GeoIP2 PHP API uses [Semantic Versioning](http://semver.org/).
+The GeoIP2 PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2013-2018 by MaxMind, Inc.
+This software is Copyright (c) 2013-2019 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
-

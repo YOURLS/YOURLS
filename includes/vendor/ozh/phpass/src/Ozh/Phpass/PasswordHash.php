@@ -10,7 +10,7 @@ namespace Ozh\Phpass;
  *
  * Modernized by Hautelook at https://github.com/hautelook/phpass
  *
- * Slightly repacked by Ozh to extend compatibility from PHP 5.3 to 7.1 in a single file
+ * Slightly repacked by Ozh to extend compatibility from PHP 5.3 to 7+ in a single file
  *
  * There's absolutely no warranty.
  *
@@ -69,6 +69,7 @@ class PasswordHash
     {
         $output = '';
         
+        // PHP 7+
         if (is_callable('random_bytes')) {
             return random_bytes($count);
         }
@@ -84,8 +85,7 @@ class PasswordHash
             for ($i = 0; $i < $count; $i += 16) {
                 $this->random_state =
                     md5(microtime() . $this->random_state);
-                $output .=
-                    pack('H*', md5($this->random_state));
+                $output .= md5($this->random_state, TRUE);
             }
             $output = substr($output, 0, $count);
         }
@@ -147,13 +147,13 @@ class PasswordHash
     public function crypt_private($password, $setting)
     {
         $output = '*0';
-        if (substr($setting, 0, 2) == $output) {
+        if (substr($setting, 0, 2) === $output) {
             $output = '*1';
         }
 
         $id = substr($setting, 0, 3);
         # We use "$P$", phpBB3 uses "$H$" for the same thing
-        if ($id != '$P$' && $id != '$H$') {
+        if ($id !== '$P$' && $id !== '$H$') {
             return $output;
         }
 
@@ -175,42 +175,13 @@ class PasswordHash
         // in PHP would result in much worse performance and
         // consequently in lower iteration counts and hashes that are
         // quicker to crack (by non-PHP code).
-        if (PHP_VERSION >= '5') {
-            $hash = md5($salt . $password, TRUE);
-            do {
-                $hash = md5($hash . $password, TRUE);
-            } while (--$count);
-        } else {
-            $hash = pack('H*', md5($salt . $password));
-            do {
-                $hash = pack('H*', md5($hash . $password));
-            } while (--$count);
-        }
+        $hash = md5($salt . $password, TRUE);
+        do {
+            $hash = md5($hash . $password, TRUE);
+        } while (--$count);
 
         $output = substr($setting, 0, 12);
         $output .= $this->encode64($hash, 16);
-
-        return $output;
-    }
-
-    /**
-     * @param  String $input
-     * @return String
-     */
-    public function gensalt_extended($input)
-    {
-        $count_log2 = min($this->iteration_count_log2 + 8, 24);
-        // This should be odd to not reveal weak DES keys, and the
-        // maximum valid value is (2**24 - 1) which is odd anyway.
-        $count = (1 << $count_log2) - 1;
-
-        $output = '_';
-        $output .= $this->itoa64[$count & 0x3f];
-        $output .= $this->itoa64[($count >> 6) & 0x3f];
-        $output .= $this->itoa64[($count >> 12) & 0x3f];
-        $output .= $this->itoa64[($count >> 18) & 0x3f];
-
-        $output .= $this->encode64($input, 3);
 
         return $output;
     }
@@ -276,17 +247,6 @@ class PasswordHash
             }
         }
 
-        if (CRYPT_EXT_DES == 1 && !$this->portable_hashes) {
-            if (strlen($random) < 3) {
-                $random = $this->get_random_bytes(3);
-            }
-            $hash =
-                crypt($password, $this->gensalt_extended($random));
-            if (strlen($hash) == 20) {
-                return $hash;
-            }
-        }
-
         if (strlen($random) < 6) {
             $random = $this->get_random_bytes(6);
         }
@@ -334,6 +294,7 @@ class PasswordHash
  * Source: https://github.com/bcit-ci/CodeIgniter/blob/3.1.4/system/core/compat/hash.php
  * For PHP < 5.6
  */
+// @codeCoverageIgnoreStart
 if ( ! function_exists('hash_equals'))
 {
 	/**
@@ -368,4 +329,5 @@ if ( ! function_exists('hash_equals'))
 		return ($diff === 0);
 	}
 }
+// @codeCoverageIgnoreEnd
 
