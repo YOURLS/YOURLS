@@ -37,7 +37,7 @@ class YDB extends ExtendedPdo {
      * @var array
      *
      */
-    protected $infos = array();
+    protected $infos = [];
 
     /**
      * Is YOURLS installed and ready to run?
@@ -49,19 +49,19 @@ class YDB extends ExtendedPdo {
      * Options
      * @var array
      */
-    protected $option = array();
+    protected $option = [];
 
     /**
      * Plugin admin pages informations
      * @var array
      */
-    protected $plugin_pages = array();
+    protected $plugin_pages = [];
 
     /**
      * Plugin informations
      * @var array
      */
-    protected $plugins = array();
+    protected $plugins = [];
 
     /**
      * Are we emulating prepare statements ?
@@ -303,7 +303,7 @@ class YDB extends ExtendedPdo {
      * @return array
      */
     public function get_plugin_pages() {
-        return $this->plugin_pages;
+        return is_array( $this->plugin_pages ) ? $this->plugin_pages : [];
     }
 
     /**
@@ -318,19 +318,19 @@ class YDB extends ExtendedPdo {
      * @param string   $title
      * @param callable $function
      */
-    public function add_plugin_page($slug, $title, $function) {
-        $this->plugin_pages[$slug] = array(
+    public function add_plugin_page( $slug, $title, $function ) {
+        $this->plugin_pages[ $slug ] = [
             'slug'     => $slug,
             'title'    => $title,
             'function' => $function,
-        );
+        ];
     }
 
     /**
      * @param string $slug
      */
-    public function remove_plugin_page($slug) {
-        unset($this->plugin_pages[$slug]);
+    public function remove_plugin_page( $slug ) {
+        unset( $this->plugin_pages[ $slug ] );
     }
 
 
