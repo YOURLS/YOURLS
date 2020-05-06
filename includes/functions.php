@@ -6,23 +6,24 @@
 
 /**
  * Make an optimized regexp pattern from a string of characters
- *
+ * @param $string
+ * @return string
  */
 function yourls_make_regexp_pattern( $string ) {
-	$pattern = preg_quote( $string, '@' ); // add @ as an escaped character because @ is used as the regexp delimiter in yourls-loader.php
-	// Simple benchmarks show that regexp with smarter sequences (0-9, a-z, A-Z...) are not faster or slower than 0123456789 etc...
-	return $pattern;
+    // Simple benchmarks show that regexp with smarter sequences (0-9, a-z, A-Z...) are not faster or slower than 0123456789 etc...
+    // add @ as an escaped character because @ is used as the regexp delimiter in yourls-loader.php
+    return preg_quote( $string, '@' );
 }
 
 /**
  * Function: Get client IP Address. Returns a DB safe string.
- *
+ * @return string
  */
 function yourls_get_IP() {
 	$ip = '';
 
 	// Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
-	$headers = array( 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' );
+	$headers = [ 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' ];
 	foreach( $headers as $header ) {
 		if ( !empty( $_SERVER[ $header ] ) ) {
 			$ip = $_SERVER[ $header ];
@@ -34,7 +35,7 @@ function yourls_get_IP() {
 	if ( strpos( $ip, ',' ) !== false )
 		$ip = substr( $ip, 0, strpos( $ip, ',' ) );
 
-	return yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
+	return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
 
 /**
@@ -44,7 +45,7 @@ function yourls_get_IP() {
  * @return int            id of next link
  */
 function yourls_get_next_decimal() {
-	return yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
+	return (int)yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
 }
 
 /**
@@ -69,17 +70,19 @@ function yourls_update_next_decimal( $int = '' ) {
 
 /**
  * Return XML output.
- *
+ * @param array $array
+ * @return string
  */
 function yourls_xml_encode( $array ) {
-	require_once( YOURLS_INC.'/functions-xml.php' );
-	$converter= new yourls_array2xml;
-	return $converter->array2xml( $array );
+    require_once( YOURLS_INC.'/functions-xml.php' );
+    return ( new yourls_array2xml() )->array2xml( $array );
 }
 
 /**
  * Update click count on a short URL. Return 0/1 for error/success.
- *
+ * @param string $keyword
+ * @param bool   $clicks
+ * @return mixed|string
  */
 function yourls_update_clicks( $keyword, $clicks = false ) {
 	// Allow plugins to short-circuit the whole function
@@ -91,9 +94,9 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 	$keyword = yourls_sanitize_string( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", array('clicks' => $clicks, 'keyword' => $keyword) );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
 	else
-		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", array('keyword' => $keyword) );
+		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", [ 'keyword' => $keyword ] );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -135,18 +138,18 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 		$table_url = YOURLS_DB_TABLE_URL;
 		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
-		$return = array();
+		$return = [];
 		$i = 1;
 
 		foreach ( (array)$results as $res ) {
-			$return['links']['link_'.$i++] = array(
+			$return['links']['link_'.$i++] = [
 				'shorturl' => yourls_get_yourls_site() .'/'. $res->keyword,
 				'url'      => $res->url,
 				'title'    => $res->title,
 				'timestamp'=> $res->timestamp,
 				'ip'       => $res->ip,
 				'clicks'   => $res->clicks,
-			);
+            ];
 		}
 	}
 
@@ -167,12 +170,12 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
  * @param  $where array  See comment above
  * @return array
  */
-function yourls_get_db_stats( $where = array('sql' => '', 'binds' => array()) ) {
+function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
 	$totals = $ydb->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
-	$return = array( 'total_links' => $totals->count, 'total_clicks' => $totals->sum );
+	$return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
 
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
 }
@@ -256,20 +259,20 @@ function yourls_redirect( $location, $code = 301 ) {
  * @param  string $keyword
  */
 function yourls_redirect_shorturl($url, $keyword) {
-    yourls_do_action('redirect_shorturl', $url, $keyword);
+    yourls_do_action( 'redirect_shorturl', $url, $keyword );
 
     // Update click count in main table
-    $update_clicks = yourls_update_clicks($keyword);
+    yourls_update_clicks( $keyword );
 
     // Update detailed log for stats
-    $log_redirect = yourls_log_redirect($keyword);
+    yourls_log_redirect( $keyword );
 
     // Tell (Google)bots not to index this short URL, see #2202
-    if( !headers_sent() ) {
-        header("X-Robots-Tag: noindex", true);
+    if ( !headers_sent() ) {
+        header( "X-Robots-Tag: noindex", true );
     }
 
-    yourls_redirect($url, 301);
+    yourls_redirect( $url, 301 );
 }
 
 /**
@@ -298,33 +301,38 @@ function yourls_status_header( $code = 200 ) {
 }
 
 /**
- * Redirect to another page using Javascript. Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
+ * Redirect to another page using Javascript.
+ * Set optional (bool)$dontwait to false to force manual redirection (make sure a message has been read by user)
  *
+ * @param string $location
+ * @param bool   $dontwait
  */
 function yourls_redirect_javascript( $location, $dontwait = true ) {
-	yourls_do_action( 'pre_redirect_javascript', $location, $dontwait );
-	$location = yourls_apply_filter( 'redirect_javascript', $location, $dontwait );
-	if( $dontwait ) {
-		$message = yourls_s( 'if you are not redirected after 10 seconds, please <a href="%s">click here</a>', $location );
-		echo <<<REDIR
+    yourls_do_action( 'pre_redirect_javascript', $location, $dontwait );
+    $location = yourls_apply_filter( 'redirect_javascript', $location, $dontwait );
+    if ( $dontwait ) {
+        $message = yourls_s( 'if you are not redirected after 10 seconds, please <a href="%s">click here</a>', $location );
+        echo <<<REDIR
 		<script type="text/javascript">
 		window.location="$location";
 		</script>
 		<small>($message)</small>
 REDIR;
-	} else {
-		echo '<p>' . yourls_s( 'Please <a href="%s">click here</a>', $location ) . '</p>';
-	}
-	yourls_do_action( 'post_redirect_javascript', $location );
+    }
+    else {
+        echo '<p>'.yourls_s( 'Please <a href="%s">click here</a>', $location ).'</p>';
+    }
+    yourls_do_action( 'post_redirect_javascript', $location );
 }
 
 /**
- * Return a HTTP status code
- *
+ * Return an HTTP status code
+ * @param int $code
+ * @return string
  */
 function yourls_get_HTTP_status( $code ) {
 	$code = intval( $code );
-	$headers_desc = array(
+	$headers_desc = [
 		100 => 'Continue',
 		101 => 'Switching Protocols',
 		102 => 'Processing',
@@ -380,12 +388,9 @@ function yourls_get_HTTP_status( $code ) {
 		506 => 'Variant Also Negotiates',
 		507 => 'Insufficient Storage',
 		510 => 'Not Extended'
-	);
+    ];
 
-	if ( isset( $headers_desc[$code] ) )
-		return $headers_desc[$code];
-	else
-		return '';
+    return isset( $headers_desc[ $code ] ) ? $headers_desc[ $code ] : '';
 }
 
 /**
@@ -407,19 +412,18 @@ function yourls_log_redirect( $keyword ) {
 	if ( !yourls_do_log_redirect() )
 		return true;
 
-	global $ydb;
 	$table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
-    $binds = array(
+    $binds = [
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_string($keyword),
         'referrer' => substr( yourls_get_referrer(), 0, 200 ),
         'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
         'location' => yourls_geo_ip_to_countrycode($ip),
-    );
+    ];
 
-    return $ydb->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+    return yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
 }
 
 /**
@@ -432,36 +436,40 @@ function yourls_do_log_redirect() {
 
 /**
  * Check if an upgrade is needed
- *
+ * @return bool
  */
 function yourls_upgrade_is_needed() {
-	// check YOURLS_DB_VERSION exist && match values stored in YOURLS_DB_TABLE_OPTIONS
-	list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
-	if( $currentsql < YOURLS_DB_VERSION )
-		return true;
+    // check YOURLS_DB_VERSION exist && match values stored in YOURLS_DB_TABLE_OPTIONS
+    list( $currentver, $currentsql ) = yourls_get_current_version_from_sql();
+    if ( $currentsql < YOURLS_DB_VERSION ) {
+        return true;
+    }
 
-	// Check if YOURLS_VERSION exist && match value stored in YOURLS_DB_TABLE_OPTIONS, update DB if required
-	if( $currentver < YOURLS_VERSION )
-		yourls_update_option( 'version', YOURLS_VERSION );
+    // Check if YOURLS_VERSION exist && match value stored in YOURLS_DB_TABLE_OPTIONS, update DB if required
+    if ( $currentver < YOURLS_VERSION ) {
+        yourls_update_option( 'version', YOURLS_VERSION );
+    }
 
-	return false;
+    return false;
 }
 
 /**
  * Get current version & db version as stored in the options DB. Prior to 1.4 there's no option table.
- *
+ * @return array
  */
 function yourls_get_current_version_from_sql() {
-	$currentver = yourls_get_option( 'version' );
-	$currentsql = yourls_get_option( 'db_version' );
+    $currentver = yourls_get_option( 'version' );
+    $currentsql = yourls_get_option( 'db_version' );
 
-	// Values if version is 1.3
-	if( !$currentver )
-		$currentver = '1.3';
-	if( !$currentsql )
-		$currentsql = '100';
+    // Values if version is 1.3
+    if ( !$currentver ) {
+        $currentver = '1.3';
+    }
+    if ( !$currentsql ) {
+        $currentsql = '100';
+    }
 
-	return array( $currentver, $currentsql);
+    return [ $currentver, $currentsql ];
 }
 
 /**
@@ -469,48 +477,47 @@ function yourls_get_current_version_from_sql() {
  *
  */
 function yourls_is_private() {
-	$private = false;
+    $private = false;
 
-	if ( defined('YOURLS_PRIVATE') && YOURLS_PRIVATE == true ) {
+    if ( defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ) {
 
-		// Allow overruling for particular pages:
+        $private = true;
 
-		// API
-		if( yourls_is_API() ) {
-			if( !defined('YOURLS_PRIVATE_API') || YOURLS_PRIVATE_API != false )
-				$private = true;
+        // Allow overruling for particular pages:
 
-		// Infos
-		} elseif( yourls_is_infos() ) {
-			if( !defined('YOURLS_PRIVATE_INFOS') || YOURLS_PRIVATE_INFOS !== false )
-				$private = true;
+        // API
+        if ( yourls_is_API() ) {
+            if ( !defined( 'YOURLS_PRIVATE_API' ) || YOURLS_PRIVATE_API ) {
+                $private = true;
+            }
+        }
+        elseif ( yourls_is_infos() ) {
+            if ( !defined( 'YOURLS_PRIVATE_INFOS' ) || YOURLS_PRIVATE_INFOS ) {
+                $private = true;
+            }
+            // Others
+        }
+    }
 
-		// Others
-		} else {
-			$private = true;
-		}
-
-	}
-
-	return yourls_apply_filter( 'is_private', $private );
+    return yourls_apply_filter( 'is_private', $private );
 }
 
 /**
  * Allow several short URLs for the same long URL ?
- *
+ * @return bool
  */
 function yourls_allow_duplicate_longurls() {
-	// special treatment if API to check for WordPress plugin requests
-	if( yourls_is_API() ) {
-		if ( isset($_REQUEST['source']) && $_REQUEST['source'] == 'plugin' )
-			return false;
-	}
-	return ( defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS == false );
+    // special treatment if API to check for WordPress plugin requests
+    if ( yourls_is_API() && isset( $_REQUEST[ 'source' ] ) && $_REQUEST[ 'source' ] == 'plugin' ) {
+            return false;
+    }
+    return defined( 'YOURLS_UNIQUE_URLS' ) && !YOURLS_UNIQUE_URLS;
 }
 
 /**
  * Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
- *
+ * @param string $ip
+ * @return bool|mixed|string
  */
 function yourls_check_IP_flood( $ip = '' ) {
 
@@ -549,10 +556,8 @@ function yourls_check_IP_flood( $ip = '' ) {
 
 	yourls_do_action( 'check_ip_flood', $ip );
 
-	global $ydb;
 	$table = YOURLS_DB_TABLE_URL;
-
-	$lasttime = $ydb->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", array('ip' => $ip) );
+	$lasttime = yourls_get_db()->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
 	if( $lasttime ) {
 		$now = date( 'U' );
 		$then = date( 'U', strtotime( $lasttime ) );
@@ -569,25 +574,22 @@ function yourls_check_IP_flood( $ip = '' ) {
 /**
  * Check if YOURLS is installing
  *
- * @return bool
  * @since 1.6
+ * @return bool
  */
 function yourls_is_installing() {
-	$installing = defined( 'YOURLS_INSTALLING' ) && YOURLS_INSTALLING == true;
-	return yourls_apply_filter( 'is_installing', $installing );
+	return (bool)yourls_apply_filter( 'is_installing', defined( 'YOURLS_INSTALLING' ) && YOURLS_INSTALLING );
 }
 
 /**
  * Check if YOURLS is upgrading
  *
- * @return bool
  * @since 1.6
+ * @return bool
  */
 function yourls_is_upgrading() {
-	$upgrading = defined( 'YOURLS_UPGRADING' ) && YOURLS_UPGRADING == true;
-	return yourls_apply_filter( 'is_upgrading', $upgrading );
+    return (bool)yourls_apply_filter( 'is_upgrading', defined( 'YOURLS_UPGRADING' ) && YOURLS_UPGRADING );
 }
-
 
 /**
  * Check if YOURLS is installed
@@ -596,102 +598,100 @@ function yourls_is_upgrading() {
  *
  * See inline comment for updating from 1.3 or prior.
  *
+ * @return bool
  */
 function yourls_is_installed() {
-	global $ydb;
-	return yourls_apply_filter( 'is_installed', $ydb->is_installed() );
+	return (bool)yourls_apply_filter( 'is_installed', yourls_get_db()->is_installed() );
 }
 
 /**
  * Set installed state
  *
  * @since  1.7.3
- * @param  bool $bool  whether YOURLS is installed or not
+ * @param bool $bool whether YOURLS is installed or not
  * @return void
  */
-function yourls_set_installed($bool) {
-    global $ydb;
-    $ydb->set_installed($bool);
+function yourls_set_installed( $bool ) {
+    yourls_get_db()->set_installed( $bool );
 }
 
 /**
  * Generate random string of (int)$length length and type $type (see function for details)
  *
+ * @param int    $length
+ * @param int    $type
+ * @param string $charlist
+ * @return mixed|string
  */
 function yourls_rnd_string ( $length = 5, $type = 0, $charlist = '' ) {
-	$str = '';
-	$length = intval( $length );
+    $length = intval( $length );
 
-	// define possible characters
-	switch ( $type ) {
+    // define possible characters
+    switch ( $type ) {
 
-		// custom char list, or comply to charset as defined in config
-		case '0':
-			$possible = $charlist ? $charlist : yourls_get_shorturl_charset() ;
-			break;
+        // no vowels to make no offending word, no 0/1/o/l to avoid confusion between letters & digits. Perfect for passwords.
+        case '1':
+            $possible = "23456789bcdfghjkmnpqrstvwxyz";
+            break;
 
-		// no vowels to make no offending word, no 0/1/o/l to avoid confusion between letters & digits. Perfect for passwords.
-		case '1':
-			$possible = "23456789bcdfghjkmnpqrstvwxyz";
-			break;
+        // Same, with lower + upper
+        case '2':
+            $possible = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ";
+            break;
 
-		// Same, with lower + upper
-		case '2':
-			$possible = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ";
-			break;
+        // all letters, lowercase
+        case '3':
+            $possible = "abcdefghijklmnopqrstuvwxyz";
+            break;
 
-		// all letters, lowercase
-		case '3':
-			$possible = "abcdefghijklmnopqrstuvwxyz";
-			break;
+        // all letters, lowercase + uppercase
+        case '4':
+            $possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            break;
 
-		// all letters, lowercase + uppercase
-		case '4':
-			$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			break;
+        // all digits & letters lowercase
+        case '5':
+            $possible = "0123456789abcdefghijklmnopqrstuvwxyz";
+            break;
 
-		// all digits & letters lowercase
-		case '5':
-			$possible = "0123456789abcdefghijklmnopqrstuvwxyz";
-			break;
+        // all digits & letters lowercase + uppercase
+        case '6':
+            $possible = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            break;
 
-		// all digits & letters lowercase + uppercase
-		case '6':
-			$possible = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			break;
-
-	}
+        // custom char list, or comply to charset as defined in config
+        default:
+        case '0':
+            $possible = $charlist ? $charlist : yourls_get_shorturl_charset();
+            break;
+    }
 
     $str = substr( str_shuffle( $possible ), 0, $length );
-
-	return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
+    return yourls_apply_filter( 'rnd_string', $str, $length, $type, $charlist );
 }
 
 /**
- * Check if we're in API mode. Returns bool
- *
+ * Check if we're in API mode.
+ * @return bool
  */
 function yourls_is_API() {
-    $return = defined( 'YOURLS_API' ) && YOURLS_API == true;
-    return yourls_apply_filter( 'is_API', $return );
+    return (bool)yourls_apply_filter( 'is_API', defined( 'YOURLS_API' ) && YOURLS_API );
 }
 
 /**
- * Check if we're in Ajax mode. Returns bool
- *
+ * Check if we're in Ajax mode.
+ * @return bool
  */
 function yourls_is_Ajax() {
-    $return = defined( 'YOURLS_AJAX' ) && YOURLS_AJAX == true;
-    return yourls_apply_filter( 'is_Ajax', $return );
+    return (bool)yourls_apply_filter( 'is_Ajax', defined( 'YOURLS_AJAX' ) && YOURLS_AJAX );
 }
 
 /**
- * Check if we're in GO mode (yourls-go.php). Returns bool
- *
+ * Check if we're in GO mode (yourls-go.php).
+ * @return bool
  */
 function yourls_is_GO() {
-    $return = defined( 'YOURLS_GO' ) && YOURLS_GO == true;
-    return yourls_apply_filter( 'is_GO', $return );
+    return (bool)yourls_apply_filter( 'is_GO', defined( 'YOURLS_GO' ) && YOURLS_GO );
 }
 
 /**
@@ -699,8 +699,7 @@ function yourls_is_GO() {
  *
  */
 function yourls_is_infos() {
-    $return = defined( 'YOURLS_INFOS' ) && YOURLS_INFOS == true;
-    return yourls_apply_filter( 'is_infos', $return );
+    return (bool)yourls_apply_filter( 'is_infos', defined( 'YOURLS_INFOS' ) && YOURLS_INFOS );
 }
 
 /**
@@ -708,8 +707,7 @@ function yourls_is_infos() {
  *
  */
 function yourls_is_admin() {
-    $return = defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN == true;
-    return yourls_apply_filter( 'is_admin', $return );
+    return (bool)yourls_apply_filter( 'is_admin', defined( 'YOURLS_ADMIN' ) && YOURLS_ADMIN );
 }
 
 /**
@@ -721,29 +719,31 @@ function yourls_is_windows() {
 }
 
 /**
- * Check if SSL is required. Returns bool.
- *
+ * Check if SSL is required.
+ * @return bool
  */
 function yourls_needs_ssl() {
-    $return = defined('YOURLS_ADMIN_SSL') && YOURLS_ADMIN_SSL == true;
-    return yourls_apply_filter( 'needs_ssl', $return );
+    return (bool)yourls_apply_filter( 'needs_ssl', defined( 'YOURLS_ADMIN_SSL' ) && YOURLS_ADMIN_SSL );
 }
 
 /**
- * Check if SSL is used, returns bool. Stolen from WP.
- *
+ * Check if SSL is used. Stolen from WP.
+ * @return bool
  */
 function yourls_is_ssl() {
-	$is_ssl = false;
-	if ( isset( $_SERVER['HTTPS'] ) ) {
-		if ( 'on' == strtolower( $_SERVER['HTTPS'] ) )
-			$is_ssl = true;
-		if ( '1' == $_SERVER['HTTPS'] )
-			$is_ssl = true;
-	} elseif ( isset( $_SERVER['SERVER_PORT'] ) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
-		$is_ssl = true;
-	}
-	return yourls_apply_filter( 'is_ssl', $is_ssl );
+    $is_ssl = false;
+    if ( isset( $_SERVER[ 'HTTPS' ] ) ) {
+        if ( 'on' == strtolower( $_SERVER[ 'HTTPS' ] ) ) {
+            $is_ssl = true;
+        }
+        if ( '1' == $_SERVER[ 'HTTPS' ] ) {
+            $is_ssl = true;
+        }
+    }
+    elseif ( isset( $_SERVER[ 'SERVER_PORT' ] ) && ( '443' == $_SERVER[ 'SERVER_PORT' ] ) ) {
+        $is_ssl = true;
+    }
+    return (bool)yourls_apply_filter( 'is_ssl', $is_ssl );
 }
 
 /**
@@ -757,96 +757,102 @@ function yourls_is_ssl() {
  * @return string Title (sanitized) or the URL if no title found
  */
 function yourls_get_remote_title( $url ) {
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_get_remote_title', false, $url );
-	if ( false !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_get_remote_title', false, $url );
+    if ( false !== $pre ) {
+        return $pre;
+    }
 
-	$url = yourls_sanitize_url( $url );
+    $url = yourls_sanitize_url( $url );
 
-	// Only deal with http(s)://
-	if( !in_array( yourls_get_protocol( $url ), array( 'http://', 'https://' ) ) )
-		return $url;
+    // Only deal with http(s)://
+    if ( !in_array( yourls_get_protocol( $url ), [ 'http://', 'https://' ] ) ) {
+        return $url;
+    }
 
-	$title = $charset = false;
+    $title = $charset = false;
 
     $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
 
-	$response = yourls_http_get( $url, array(), array(), array( 'max_bytes' => $max_bytes ) ); // can be a Request object or an error string
-	if( is_string( $response ) ) {
-		return $url;
-	}
+    $response = yourls_http_get( $url, [], [], [ 'max_bytes' => $max_bytes ] ); // can be a Request object or an error string
+    if ( is_string( $response ) ) {
+        return $url;
+    }
 
-	// Page content. No content? Return the URL
-	$content = $response->body;
-	if( !$content )
-		return $url;
+    // Page content. No content? Return the URL
+    $content = $response->body;
+    if ( !$content ) {
+        return $url;
+    }
 
-	// look for <title>. No title found? Return the URL
-	if ( preg_match('/<title>(.*?)<\/title>/is', $content, $found ) ) {
-		$title = $found[1];
-		unset( $found );
-	}
-	if( !$title )
-		return $url;
+    // look for <title>. No title found? Return the URL
+    if ( preg_match( '/<title>(.*?)<\/title>/is', $content, $found ) ) {
+        $title = $found[ 1 ];
+        unset( $found );
+    }
+    if ( !$title ) {
+        return $url;
+    }
 
-	// Now we have a title. We'll try to get proper utf8 from it.
+    // Now we have a title. We'll try to get proper utf8 from it.
 
-	// Get charset as (and if) defined by the HTML meta tag. We should match
-	// <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	// or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
-	if ( preg_match( '/<meta[^>]*charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $content, $found ) ) {
-		$charset = $found[1];
-		unset( $found );
-	} else {
-		// No charset found in HTML. Get charset as (and if) defined by the server response
-		$_charset = current( $response->headers->getValues( 'content-type' ) );
-		if( preg_match( '/charset=(\S+)/', $_charset, $found ) ) {
-			$charset = trim( $found[1], ';' );
-			unset( $found );
-		}
-	}
+    // Get charset as (and if) defined by the HTML meta tag. We should match
+    // <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    // or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
+    if ( preg_match( '/<meta[^>]*charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $content, $found ) ) {
+        $charset = $found[ 1 ];
+        unset( $found );
+    }
+    else {
+        // No charset found in HTML. Get charset as (and if) defined by the server response
+        $_charset = current( $response->headers->getValues( 'content-type' ) );
+        if ( preg_match( '/charset=(\S+)/', $_charset, $found ) ) {
+            $charset = trim( $found[ 1 ], ';' );
+            unset( $found );
+        }
+    }
 
-	// Conversion to utf-8 if what we have is not utf8 already
-	if( strtolower( $charset ) != 'utf-8' && function_exists( 'mb_convert_encoding' ) ) {
-		// We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
-		if( $charset ) {
-			$title = @mb_convert_encoding( $title, 'UTF-8', $charset );
-		} else {
-			$title = @mb_convert_encoding( $title, 'UTF-8' );
-		}
-	}
+    // Conversion to utf-8 if what we have is not utf8 already
+    if ( strtolower( $charset ) != 'utf-8' && function_exists( 'mb_convert_encoding' ) ) {
+        // We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
+        if ( $charset ) {
+            $title = @mb_convert_encoding( $title, 'UTF-8', $charset );
+        }
+        else {
+            $title = @mb_convert_encoding( $title, 'UTF-8' );
+        }
+    }
 
-	// Remove HTML entities
-	$title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
+    // Remove HTML entities
+    $title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
 
-	// Strip out evil things
-	$title = yourls_sanitize_title( $title, $url );
+    // Strip out evil things
+    $title = yourls_sanitize_title( $title, $url );
 
-	return yourls_apply_filter( 'get_remote_title', $title, $url );
+    return (string)yourls_apply_filter( 'get_remote_title', $title, $url );
 }
 
 /**
- * Quick UA check for mobile devices. Return boolean.
- *
+ * Quick UA check for mobile devices.
+ * @return bool
  */
 function yourls_is_mobile_device() {
 	// Strings searched
-	$mobiles = array(
+	$mobiles = [
 		'android', 'blackberry', 'blazer',
 		'compal', 'elaine', 'fennec', 'hiptop',
 		'iemobile', 'iphone', 'ipod', 'ipad',
 		'iris', 'kindle', 'opera mobi', 'opera mini',
 		'palm', 'phone', 'pocket', 'psp', 'symbian',
 		'treo', 'wap', 'windows ce', 'windows phone'
-	);
+    ];
 
 	// Current user-agent
 	$current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
 
 	// Check and return
 	$is_mobile = ( str_replace( $mobiles, '', $current ) != $current );
-	return yourls_apply_filter( 'is_mobile_device', $is_mobile );
+	return (bool)yourls_apply_filter( 'is_mobile_device', $is_mobile );
 }
 
 /**
@@ -862,23 +868,24 @@ function yourls_is_mobile_device() {
  * @return string               request relative to YOURLS base (eg 'abdc')
  */
 function yourls_get_request($yourls_site = false, $uri = false) {
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_get_request', false );
-	if ( false !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_get_request', false );
+    if ( false !== $pre ) {
+        return $pre;
+    }
 
-	yourls_do_action( 'pre_get_request', $yourls_site, $uri );
+    yourls_do_action( 'pre_get_request', $yourls_site, $uri );
 
     // Default values
-    if (false === $yourls_site) {
+    if ( false === $yourls_site ) {
         $yourls_site = yourls_get_yourls_site();
     }
-    if (false === $uri) {
-        $uri = $_SERVER['REQUEST_URI'];
+    if ( false === $uri ) {
+        $uri = $_SERVER[ 'REQUEST_URI' ];
     }
 
     // Even though the config sample states YOURLS_SITE should be set without trailing slash...
-    $yourls_site = rtrim($yourls_site,'/');
+    $yourls_site = rtrim( $yourls_site, '/' );
 
     // Now strip the YOURLS_SITE path part out of the requested URI, and get the request relative to YOURLS base
     // +---------------------------+-------------------------+---------------------+--------------+
@@ -890,20 +897,20 @@ function yourls_get_request($yourls_site = false, $uri = false) {
     // and so on. You can find various test cases in /tests/tests/utilities/get_request.php
 
     // Take only the URL_PATH part of YOURLS_SITE (ie "https://sho.rt:1337/path/to/yourls" -> "/path/to/yourls")
-    $yourls_site = parse_url($yourls_site, PHP_URL_PATH) . '/';
+    $yourls_site = parse_url( $yourls_site, PHP_URL_PATH ).'/';
 
     // Strip path part from request if exists
     $request = $uri;
-    if( substr($uri, 0, strlen($yourls_site)) == $yourls_site) {
-        $request = ltrim( substr($uri, strlen($yourls_site)), '/');
+    if ( substr( $uri, 0, strlen( $yourls_site ) ) == $yourls_site ) {
+        $request = ltrim( substr( $uri, strlen( $yourls_site ) ), '/' );
     }
 
-	// Unless request looks like a full URL (ie request is a simple keyword) strip query string
-	if( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
-		$request = current( explode( '?', $request ) );
-	}
+    // Unless request looks like a full URL (ie request is a simple keyword) strip query string
+    if ( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
+        $request = current( explode( '?', $request ) );
+    }
 
-	return yourls_apply_filter( 'get_request', $request );
+    return (string)yourls_apply_filter( 'get_request', $request );
 }
 
 /**
@@ -912,41 +919,45 @@ function yourls_get_request($yourls_site = false, $uri = false) {
  */
 function yourls_fix_request_uri() {
 
-	$default_server_values = array(
-		'SERVER_SOFTWARE' => '',
-		'REQUEST_URI' => '',
-	);
-	$_SERVER = array_merge( $default_server_values, $_SERVER );
+    $default_server_values = [
+        'SERVER_SOFTWARE' => '',
+        'REQUEST_URI'     => '',
+    ];
+    $_SERVER = array_merge( $default_server_values, $_SERVER );
 
-	// Fix for IIS when running with PHP ISAPI
-	if ( empty( $_SERVER['REQUEST_URI'] ) || ( php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE'] ) ) ) {
+    // Fix for IIS when running with PHP ISAPI
+    if ( empty( $_SERVER[ 'REQUEST_URI' ] ) || ( php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER[ 'SERVER_SOFTWARE' ] ) ) ) {
 
-		// IIS Mod-Rewrite
-		if ( isset( $_SERVER['HTTP_X_ORIGINAL_URL'] ) ) {
-			$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'];
-		}
-		// IIS Isapi_Rewrite
-		else if ( isset( $_SERVER['HTTP_X_REWRITE_URL'] ) ) {
-			$_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
-		} else {
-			// Use ORIG_PATH_INFO if there is no PATH_INFO
-			if ( !isset( $_SERVER['PATH_INFO'] ) && isset( $_SERVER['ORIG_PATH_INFO'] ) )
-				$_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+        // IIS Mod-Rewrite
+        if ( isset( $_SERVER[ 'HTTP_X_ORIGINAL_URL' ] ) ) {
+            $_SERVER[ 'REQUEST_URI' ] = $_SERVER[ 'HTTP_X_ORIGINAL_URL' ];
+        }
+        // IIS Isapi_Rewrite
+        elseif ( isset( $_SERVER[ 'HTTP_X_REWRITE_URL' ] ) ) {
+            $_SERVER[ 'REQUEST_URI' ] = $_SERVER[ 'HTTP_X_REWRITE_URL' ];
+        }
+        else {
+            // Use ORIG_PATH_INFO if there is no PATH_INFO
+            if ( !isset( $_SERVER[ 'PATH_INFO' ] ) && isset( $_SERVER[ 'ORIG_PATH_INFO' ] ) ) {
+                $_SERVER[ 'PATH_INFO' ] = $_SERVER[ 'ORIG_PATH_INFO' ];
+            }
 
-			// Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
-			if ( isset( $_SERVER['PATH_INFO'] ) ) {
-				if ( $_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME'] )
-					$_SERVER['REQUEST_URI'] = $_SERVER['PATH_INFO'];
-				else
-					$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
-			}
+            // Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
+            if ( isset( $_SERVER[ 'PATH_INFO' ] ) ) {
+                if ( $_SERVER[ 'PATH_INFO' ] == $_SERVER[ 'SCRIPT_NAME' ] ) {
+                    $_SERVER[ 'REQUEST_URI' ] = $_SERVER[ 'PATH_INFO' ];
+                }
+                else {
+                    $_SERVER[ 'REQUEST_URI' ] = $_SERVER[ 'SCRIPT_NAME' ].$_SERVER[ 'PATH_INFO' ];
+                }
+            }
 
-			// Append the query string if it exists and isn't null
-			if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-				$_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING'];
-			}
-		}
-	}
+            // Append the query string if it exists and isn't null
+            if ( !empty( $_SERVER[ 'QUERY_STRING' ] ) ) {
+                $_SERVER[ 'REQUEST_URI' ] .= '?'.$_SERVER[ 'QUERY_STRING' ];
+            }
+        }
+    }
 }
 
 /**
@@ -1009,16 +1020,15 @@ function yourls_current_admin_page() {
  *
  * @param string $url URL to be check
  * @param array $protocols Optional. Array of protocols, defaults to global $yourls_allowedprotocols
- * @return boolean true if protocol allowed, false otherwise
+ * @return bool true if protocol allowed, false otherwise
  */
-function yourls_is_allowed_protocol( $url, $protocols = array() ) {
-	if( ! $protocols ) {
-		global $yourls_allowedprotocols;
-		$protocols = $yourls_allowedprotocols;
-	}
+function yourls_is_allowed_protocol( $url, $protocols = [] ) {
+    if ( empty( $protocols ) ) {
+        global $yourls_allowedprotocols;
+        $protocols = $yourls_allowedprotocols;
+    }
 
-	$protocol = yourls_get_protocol( $url );
-	return yourls_apply_filter( 'is_allowed_protocol', in_array( $protocol, $protocols ), $url, $protocols );
+    return yourls_apply_filter( 'is_allowed_protocol', in_array( yourls_get_protocol( $url ), $protocols ), $url, $protocols );
 }
 
 /**
@@ -1037,7 +1047,6 @@ function yourls_is_allowed_protocol( $url, $protocols = array() ) {
  * @return string Protocol, with slash slash if applicable. Empty string if no protocol
  */
 function yourls_get_protocol( $url ) {
-	preg_match( '!^[a-zA-Z][a-zA-Z0-9\+\.-]+:(//)?!', $url, $matches );
 	/*
 	http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
 	The scheme name consists of a sequence of characters beginning with a letter and followed by any
@@ -1045,8 +1054,8 @@ function yourls_get_protocol( $url ) {
 	case-insensitive, the canonical form is lowercase and documents that specify schemes must do so
 	with lowercase letters. It is followed by a colon (":").
 	*/
-	$protocol = ( isset( $matches[0] ) ? $matches[0] : '' );
-	return yourls_apply_filter( 'get_protocol', $protocol, $url );
+    preg_match( '!^[a-zA-Z][a-zA-Z0-9+.-]+:(//)?!', $url, $matches );
+	return (string)yourls_apply_filter( 'get_protocol', isset( $matches[0] ) ? $matches[0] : '', $url );
 }
 
 /**
@@ -1061,18 +1070,18 @@ function yourls_get_protocol( $url ) {
  * @return string URL
  */
 function yourls_get_relative_url( $url, $strict = true ) {
-	$url = yourls_sanitize_url( $url );
+    $url = yourls_sanitize_url( $url );
 
-	// Remove protocols to make it easier
-	$noproto_url  = str_replace( 'https:', 'http:', $url );
-	$noproto_site = str_replace( 'https:', 'http:', yourls_get_yourls_site() );
+    // Remove protocols to make it easier
+    $noproto_url = str_replace( 'https:', 'http:', $url );
+    $noproto_site = str_replace( 'https:', 'http:', yourls_get_yourls_site() );
 
-	// Trim URL from YOURLS root URL : if no modification made, URL wasn't relative
-	$_url = str_replace( $noproto_site . '/', '', $noproto_url );
-	if( $_url == $noproto_url )
-		$_url = ( $strict ? '' : $url );
-
-	return yourls_apply_filter( 'get_relative_url', $_url, $url );
+    // Trim URL from YOURLS root URL : if no modification made, URL wasn't relative
+    $_url = str_replace( $noproto_site.'/', '', $noproto_url );
+    if ( $_url == $noproto_url ) {
+        $_url = ( $strict ? '' : $url );
+    }
+    return yourls_apply_filter( 'get_relative_url', $_url, $url );
 }
 
 /**
@@ -1119,7 +1128,7 @@ function yourls_deprecated_function( $function, $version, $replacement = null ) 
  * @return bool True if not an empty string
  */
 function yourls_return_if_not_empty_string( $val ) {
-	return( $val !== '' );
+    return ( $val !== '' );
 }
 
 /**
@@ -1143,34 +1152,39 @@ function yourls_return_if_not_empty_string( $val ) {
  * @since 1.7
  * @param string $url URL to be parsed
  * @param array $array Optional, array of key names to be used in returned array
- * @return mixed false if no protocol found, array of ('protocol' , 'slashes', 'rest') otherwise
+ * @return array|false false if no protocol found, array of ('protocol' , 'slashes', 'rest') otherwise
  */
-function yourls_get_protocol_slashes_and_rest( $url, $array = array( 'protocol', 'slashes', 'rest' ) ) {
-	$proto = yourls_get_protocol( $url );
+function yourls_get_protocol_slashes_and_rest( $url, $array = [ 'protocol', 'slashes', 'rest' ] ) {
+    $proto = yourls_get_protocol( $url );
 
-	if( !$proto or count( $array ) != 3 )
-		return false;
+    if ( !$proto or count( $array ) != 3 ) {
+        return false;
+    }
 
-	list( $null, $rest ) = explode( $proto, $url, 2 );
+    list( $null, $rest ) = explode( $proto, $url, 2 );
 
-	list( $proto, $slashes ) = explode( ':', $proto );
+    list( $proto, $slashes ) = explode( ':', $proto );
 
-	return array( $array[0] => $proto . ':', $array[1] => $slashes, $array[2] => $rest );
+    return [
+        $array[ 0 ] => $proto.':',
+        $array[ 1 ] => $slashes,
+        $array[ 2 ] => $rest
+    ];
 }
 
 /**
  * Set URL scheme (to HTTP or HTTPS)
  *
  * @since 1.7.1
- * @param string $url URL
+ * @param string $url    URL
  * @param string $scheme scheme, either 'http' or 'https'
  * @return string URL with chosen scheme
  */
 function yourls_set_url_scheme( $url, $scheme = false ) {
-    if( $scheme != 'http' && $scheme != 'https' ) {
-        return $url;
+    if ( in_array( $scheme, [ 'http', 'https' ] ) ) {
+        $url = preg_replace( '!^[a-zA-Z0-9+.-]+://!', $scheme.'://', $url );
     }
-    return preg_replace( '!^[a-zA-Z0-9\+\.-]+://!', $scheme . '://', $url );
+    return $url;
 }
 
 /**
@@ -1182,7 +1196,6 @@ function yourls_set_url_scheme( $url, $scheme = false ) {
  * @since 1.7.3
  */
 function yourls_tell_if_new_version() {
-    $check = yourls_maybe_check_core_version();
-    yourls_debug_log( 'Check for new version: ' . ($check ? 'yes' : 'no') );
+    yourls_debug_log( 'Check for new version: '.( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
     yourls_new_core_version_notice();
 }

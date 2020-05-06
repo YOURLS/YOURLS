@@ -51,7 +51,7 @@ if( preg_match( "@^([$pattern]+)\+(all)?/?$@", $request, $matches ) ) {
 // Prefix-n-Shorten sends to bookmarklet (doesn't work on Windows)
 if( preg_match( "@^[a-zA-Z]+://.+@", $request, $matches ) ) {
 	$url = yourls_sanitize_url( $matches[0] );
-	if( $parse = yourls_get_protocol_slashes_and_rest( $url, array( 'up', 'us', 'ur' ) ) ) {
+	if( $parse = yourls_get_protocol_slashes_and_rest( $url, [ 'up', 'us', 'ur' ] ) ) {
 		yourls_do_action( 'load_template_redirect_admin', $url );
 		$parse = array_map( 'rawurlencode', $parse );
 		// Redirect to /admin/index.php?up=<url protocol>&us=<url slashes>&ur=<url rest>

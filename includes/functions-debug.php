@@ -1,7 +1,6 @@
 <?php
 /*
  * Functions relative to debugging
- *
  */
 
 /**
@@ -15,9 +14,8 @@
  * @return string The message itself
  */
 function yourls_debug_log( $msg ) {
-    global $ydb;
-    yourls_do_action('debug_log', $msg);
-    $ydb->getProfiler()->log($msg);
+    yourls_do_action( 'debug_log', $msg );
+    yourls_get_db()->getProfiler()->log( $msg );
     return $msg;
 }
 
@@ -28,35 +26,23 @@ function yourls_debug_log( $msg ) {
  * @return array
  */
 function yourls_get_debug_log() {
-    global $ydb;
-
-    // Check if we have a profiler registered (will not be the case if the DB hasn't been properly connected to)
-    if ($ydb->getProfiler()) {
-        return $ydb->getProfiler()->get_log();
-    }
-
-    return array();
+    $profiler = yourls_get_db()->getProfiler();
+    return $profiler instanceof \Aura\Sql\ProfilerInterface ? $profiler->get_log() : [];
 }
 
 /**
  * Debug mode set
  *
  * @since 1.7.3
- * @param bool $bool  Debug on or off
+ * @param bool $bool Debug on or off
  */
-function yourls_debug_mode($bool) {
-    global $ydb;
-    $bool = (bool)$bool;
-
+function yourls_debug_mode( $bool ) {
     // log queries if true
-    $ydb->getProfiler()->setActive($bool);
+    yourls_get_db()->getProfiler()->setActive( (bool)$bool );
 
     // report notices if true
-    if ($bool === true) {
-        error_reporting(-1);
-    } else {
-        error_reporting(E_ERROR | E_PARSE);
-    }
+    $level = $bool ? -1 : ( E_ERROR | E_PARSE );
+    error_reporting( $level );
 }
 
 /**
@@ -66,5 +52,5 @@ function yourls_debug_mode($bool) {
  * @return bool
  */
 function yourls_get_debug_mode() {
-    return ( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true );
+    return defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG;
 }
