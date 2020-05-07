@@ -45,7 +45,7 @@ if ( yourls_get_protocol($keyword) ) {
 }
 
 // if request is an existing short URL keyword ('abc') or stat page ('abc+') or an existing page :
-if ( yourls_keyword_is_taken($keyword) ) {
+if ( yourls_keyword_is_taken($keyword) or yourls_is_page($keyword) ) {
 
     // we have a short URL or a page
     if( $keyword && !$stats ) {
