@@ -8,6 +8,8 @@ if( !isset( $keyword ) ) {
 	yourls_redirect( YOURLS_SITE, 301 );
 }
 
+$keyword = yourls_sanitize_keyword($keyword);
+
 // if we have a page, display and exit
 if( yourls_is_page($keyword) ) {
     yourls_page( $keyword );

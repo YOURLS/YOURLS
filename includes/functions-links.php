@@ -125,7 +125,8 @@ function yourls_remove_query_arg( $key, $query = false ) {
  *
  */
 function yourls_link( $keyword = '' ) {
-    $link = yourls_get_yourls_site() . '/' . $keyword;
+    $keyword = yourls_sanitize_keyword($keyword);
+    $link    = yourls_get_yourls_site() . '/' . $keyword;
     return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
@@ -136,9 +137,13 @@ function yourls_link( $keyword = '' ) {
  *
  */
 function yourls_statlink( $keyword = '' ) {
-    $link = yourls_get_yourls_site() . '/' . $keyword . '+';
-    if( yourls_is_ssl() )
+    $keyword = yourls_sanitize_keyword($keyword);
+    $link    = yourls_get_yourls_site() . '/' . $keyword . '+';
+
+    if( yourls_is_ssl() ) {
         $link = yourls_set_url_scheme( $link, 'https' );
+    }
+
     return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 

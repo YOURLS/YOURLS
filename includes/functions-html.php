@@ -484,6 +484,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
+    $keyword = yourls_sanitize_keyword($keyword);
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
@@ -519,6 +520,7 @@ RETURN;
  * @return string HTML of the edit row
  */
 function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
+    $keyword  = yourls_sanitize_keyword($keyword);
 	$id       = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$shorturl = yourls_link( $keyword );
 

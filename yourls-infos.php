@@ -10,8 +10,6 @@ if ( !isset( $keyword ) ) {
 	yourls_redirect( YOURLS_SITE, 302 );
 }
 
-die('ok stats');
-
 // Get basic infos for this shortened URL
 $keyword = yourls_sanitize_string( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );

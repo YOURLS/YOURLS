@@ -76,7 +76,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
             yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 
-            $keyword = yourls_sanitize_string( $keyword );
+            $keyword = yourls_sanitize_string( $keyword, true );
             $keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 
             if ( !yourls_keyword_is_free( $keyword ) ) {
@@ -305,7 +305,7 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
     $url = yourls_sanitize_url($url);
     $keyword = yourls_sanitize_string($keyword);
     $title = yourls_sanitize_title($title);
-    $newkeyword = yourls_sanitize_string($newkeyword);
+    $newkeyword = yourls_sanitize_string($newkeyword, true);
     $strip_url = stripslashes( $url );
     $strip_title = stripslashes( $title );
 
