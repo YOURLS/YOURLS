@@ -397,8 +397,8 @@ function yourls_keyword_is_free( $keyword  ) {
  *
  * @see https://github.com/YOURLS/YOURLS/wiki/Pages
  * @since 1.7.10
- * @param  TYPE $keyword Short URL $keyword
- * @return bool          true if is page, false otherwise
+ * @param  string $keyword  Short URL $keyword
+ * @return bool             true if is page, false otherwise
  */
 function yourls_is_page($keyword) {
     return yourls_apply_filter( 'is_page', file_exists( YOURLS_PAGEDIR . "/$keyword.php" ) );
@@ -424,7 +424,6 @@ function yourls_keyword_is_taken( $keyword, $use_cache = true ) {
 
     global $ydb;
     $taken = false;
-    $table = YOURLS_DB_TABLE_URL;
 
     // To check if a keyword is already associated with a short URL, we fetch all info matching that keyword. This
     // will save a query in case of a redirection in yourls-go.php because info will be cached
