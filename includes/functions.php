@@ -910,6 +910,8 @@ function yourls_get_request($yourls_site = false, $uri = false) {
         $request = current( explode( '?', $request ) );
     }
 
+    $request = yourls_sanitize_url( $request );
+
     return (string)yourls_apply_filter( 'get_request', $request );
 }
 

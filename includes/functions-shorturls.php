@@ -78,6 +78,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
             $keyword = yourls_sanitize_string( $keyword );
             $keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
+
             if ( !yourls_keyword_is_free( $keyword ) ) {
                 // This shorturl either reserved or taken already
                 $return['status']  = 'fail';
@@ -206,7 +207,7 @@ function yourls_keyword_is_reserved( $keyword ) {
     $reserved = false;
 
     if ( in_array( $keyword, $yourls_reserved_URL)
-        or file_exists( YOURLS_PAGEDIR ."/$keyword.php" )
+        or yourls_is_page($keyword)
         or is_dir( YOURLS_ABSPATH ."/$keyword" )
     )
         $reserved = true;
@@ -376,24 +377,45 @@ function yourls_edit_link_title( $keyword, $title ) {
     return $update;
 }
 
-
 /**
  * Check if keyword id is free (ie not already taken, and not reserved). Return bool.
  *
+ * @param  string $keyword    short URL keyword
+ * @return bool               true if keyword is taken (ie there is a short URL for it), false otherwise
  */
-function yourls_keyword_is_free( $keyword ) {
+function yourls_keyword_is_free( $keyword  ) {
     $free = true;
-    if ( yourls_keyword_is_reserved( $keyword ) or yourls_keyword_is_taken( $keyword ) )
+    if ( yourls_keyword_is_reserved( $keyword ) or yourls_keyword_is_taken( $keyword, false ) ) {
         $free = false;
+    }
 
     return yourls_apply_filter( 'keyword_is_free', $free, $keyword );
+}
+
+/**
+ * Check if a keyword matches a "page"
+ *
+ * @see https://github.com/YOURLS/YOURLS/wiki/Pages
+ * @since 1.7.10
+ * @param  TYPE $keyword Short URL $keyword
+ * @return bool          true if is page, false otherwise
+ */
+function yourls_is_page($keyword) {
+    return yourls_apply_filter( 'is_page', file_exists( YOURLS_PAGEDIR . "/$keyword.php" ) );
 }
 
 /**
  * Check if a keyword is taken (ie there is already a short URL with this id). Return bool.
  *
  */
-function yourls_keyword_is_taken( $keyword ) {
+/**
+ * Check if a keyword is taken (ie there is already a short URL with this id). Return bool.
+ *
+ * @param  string $keyword    short URL keyword
+ * @param  bool   $use_cache  optional, default true: do we want to use what is cached in memory, if any, or force a new SQL query
+ * @return bool               true if keyword is taken (ie there is a short URL for it), false otherwise
+ */
+function yourls_keyword_is_taken( $keyword, $use_cache = true ) {
 
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
@@ -401,13 +423,14 @@ function yourls_keyword_is_taken( $keyword ) {
         return $pre;
 
     global $ydb;
-    $keyword = yourls_sanitize_keyword($keyword);
     $taken = false;
     $table = YOURLS_DB_TABLE_URL;
 
-    $already_exists = $ydb->fetchValue("SELECT COUNT(`keyword`) FROM `$table` WHERE `keyword` = :keyword;", array('keyword' => $keyword));
-    if ( $already_exists )
+    // To check if a keyword is already associated with a short URL, we fetch all info matching that keyword. This
+    // will save a query in case of a redirection in yourls-go.php because info will be cached
+    if ( yourls_get_keyword_infos($keyword, $use_cache) ) {
         $taken = true;
+    }
 
     return yourls_apply_filter( 'keyword_is_taken', $taken, $keyword );
 }
