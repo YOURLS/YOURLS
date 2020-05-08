@@ -11,7 +11,7 @@ if ( !isset( $keyword ) ) {
 }
 
 // Get basic infos for this shortened URL
-$keyword = yourls_sanitize_string( $keyword );
+$keyword = yourls_sanitize_keyword( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );
 $clicks = yourls_get_keyword_clicks( $keyword );
 $timestamp = yourls_get_keyword_timestamp( $keyword );

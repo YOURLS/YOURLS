@@ -76,7 +76,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
             yourls_do_action( 'add_new_link_custom_keyword', $url, $keyword, $title );
 
-            $keyword = yourls_sanitize_string( $keyword, true );
+            $keyword = yourls_sanitize_keyword( $keyword, true );
             $keyword = yourls_apply_filter( 'custom_keyword', $keyword, $url, $title );
 
             if ( !yourls_keyword_is_free( $keyword ) ) {
@@ -188,7 +188,7 @@ function yourls_is_shorturl( $shorturl ) {
     }
 
     // Check if it's a valid && used keyword
-    if( $keyword && $keyword == yourls_sanitize_string( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
+    if( $keyword && $keyword == yourls_sanitize_keyword( $keyword ) && yourls_keyword_is_taken( $keyword ) ) {
         $is_short = true;
     }
 
@@ -228,7 +228,7 @@ function yourls_delete_link_by_keyword( $keyword ) {
     global $ydb;
 
     $table = YOURLS_DB_TABLE_URL;
-    $keyword = yourls_sanitize_string($keyword);
+    $keyword = yourls_sanitize_keyword($keyword);
     $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
     yourls_do_action( 'delete_link', $keyword, $delete );
     return $delete;
@@ -303,9 +303,9 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
 
     $table = YOURLS_DB_TABLE_URL;
     $url = yourls_sanitize_url($url);
-    $keyword = yourls_sanitize_string($keyword);
+    $keyword = yourls_sanitize_keyword($keyword);
     $title = yourls_sanitize_title($title);
-    $newkeyword = yourls_sanitize_string($newkeyword, true);
+    $newkeyword = yourls_sanitize_keyword($newkeyword, true);
     $strip_url = stripslashes( $url );
     $strip_title = stripslashes( $title );
 
@@ -448,7 +448,7 @@ function yourls_keyword_is_taken( $keyword, $use_cache = true ) {
  */
 function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
     global $ydb;
-    $keyword = yourls_sanitize_string( $keyword );
+    $keyword = yourls_sanitize_keyword( $keyword );
 
     yourls_do_action( 'pre_get_keyword', $keyword, $use_cache );
 
@@ -484,7 +484,7 @@ function yourls_get_keyword_info( $keyword, $field, $notfound = false ) {
     if ( false !== $pre )
         return $pre;
 
-    $keyword = yourls_sanitize_string( $keyword );
+    $keyword = yourls_sanitize_keyword( $keyword );
     $infos = yourls_get_keyword_infos( $keyword );
 
     $return = $notfound;

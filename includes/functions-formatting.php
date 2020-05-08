@@ -51,14 +51,6 @@ function yourls_string2htmlid( $string ) {
 }
 
 /**
- * The original function, now an alias. Deprecate it some day.
- *
- */
-function yourls_sanitize_string( $string, $restrict_to_shorturl_charset = false ) {
-	return yourls_sanitize_keyword( $string, $restrict_to_shorturl_charset );
-}
-
-/**
  * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is acceptable
  *
  * We we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
