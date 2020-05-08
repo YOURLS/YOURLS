@@ -133,7 +133,7 @@ function yourls_link( $keyword = '' ) {
 /**
  * Converts keyword into stat link (prepend with YOURLS base URL, append +)
  *
- * This function does not check for a valid keyword
+ * This function does not make sure the keyword matches an actual short URL
  *
  */
 function yourls_statlink( $keyword = '' ) {

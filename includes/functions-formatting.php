@@ -53,7 +53,7 @@ function yourls_string2htmlid( $string ) {
 /**
  * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is acceptable
  *
- * We we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
+ * If we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
  * character that doesn't belong to it will be removed.
  * But otherwise we must have a more conservative approach: we could be checking for a keyword that
  * was once valid but now the short URL charset. In such a case, we are treating the keyword for what
