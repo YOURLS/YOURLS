@@ -1,5 +1,23 @@
 <?php
 /**
+ * Function related to authentication functions and nonces
+ */
+
+
+/**
+ * Show login form if required
+ *
+ */
+function yourls_maybe_require_auth() {
+	if( yourls_is_private() ) {
+		yourls_do_action( 'require_auth' );
+		require_once( YOURLS_INC.'/auth.php' );
+	} else {
+		yourls_do_action( 'require_no_auth' );
+	}
+}
+
+/**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
  */
@@ -411,7 +429,7 @@ function yourls_store_cookie( $user = null ) {
 	}
 
     $path     = yourls_apply_filter( 'setcookie_path',     '/' );
-	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( YOURLS_SITE, PHP_URL_HOST ) );
+	$domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) );
 	$secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
 	$httponly = yourls_apply_filter( 'setcookie_httponly', true );
 
@@ -513,7 +531,7 @@ function yourls_get_nonce_life() {
  * @return string  unique cookie name for a given YOURLS site
  */
 function yourls_cookie_name() {
-    return yourls_apply_filter( 'cookie_name', 'yourls_' . yourls_salt( YOURLS_SITE ) );
+    return yourls_apply_filter( 'cookie_name', 'yourls_' . yourls_salt( yourls_get_yourls_site() ) );
 }
 
 /**

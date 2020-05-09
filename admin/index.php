@@ -351,7 +351,7 @@ $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;
 	foreach( $url_results as $url_result ) {
-		$keyword = yourls_sanitize_string( $url_result->keyword );
+		$keyword = yourls_sanitize_keyword($url_result->keyword);
 		$timestamp = strtotime( $url_result->timestamp );
 		$url = stripslashes( $url_result->url );
 		$ip = $url_result->ip;

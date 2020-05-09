@@ -16,9 +16,9 @@ namespace GeoIp2\Record;
  * This attribute is returned by all location databases and services besides
  * Country.
  * @property-read string|null $isoCode This is a string up to three characters long
- * contain the subdivision portion of the
- * {@link * http://en.wikipedia.org/wiki/ISO_3166-2 ISO 3166-2 code}. This attribute
- * is returned by all location databases and services except Country.
+ * contain the subdivision portion of the ISO 3166-2 code. See
+ * https://en.wikipedia.org/wiki/ISO_3166-2. This attribute is returned by all
+ * location databases and services except Country.
  * @property-read string|null $name The name of the subdivision based on the
  * locales list passed to the constructor. This attribute is returned by all
  * location databases and services besides Country.

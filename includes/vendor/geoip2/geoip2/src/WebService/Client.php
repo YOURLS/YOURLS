@@ -47,7 +47,7 @@ class Client implements ProviderInterface
     private $client;
     private static $basePath = '/geoip/v2.1';
 
-    const VERSION = 'v2.9.0';
+    const VERSION = 'v2.10.0';
 
     /**
      * Constructor.
@@ -74,7 +74,7 @@ class Client implements ProviderInterface
 
         // This is for backwards compatibility. Do not remove except for a
         // major version bump.
-        if (is_string($options)) {
+        if (\is_string($options)) {
             $options = ['host' => $options];
         }
 
@@ -111,7 +111,7 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
      *                                                    This could indicate a problem with the connection between
      *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code.
+     *                                                    returned an invalid document or 500 error code
      * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
      *                                                    class to the above exceptions. It will be thrown directly
      *                                                    if a 200 status code is returned but the body is invalid.
@@ -173,7 +173,7 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
      *                                                    This could indicate a problem with the connection between
      *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code.
+     *                                                    returned an invalid document or 500 error code
      * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
      *                                                    class to the above exceptions. It will be thrown directly
      *                                                    if a 200 status code is returned but the body is invalid.

@@ -134,7 +134,7 @@ class Format_General extends PHPUnit_Framework_TestCase {
            From: http://stackoverflow.com/a/12941133/36850
            Cool to know :)
 
-           We're testing it as used in yourls_sanitize_string()
+           We're testing it as used in yourls_sanitize_keyword()
            TODO: more random char strings to test?
         */
 

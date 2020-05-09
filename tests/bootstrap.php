@@ -23,6 +23,7 @@ require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
 define('YOURLS_TESTDATA_DIR', dirname( __FILE__ ) . '/data');
 define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
 define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
+define('YOURLS_PAGEDIR', YOURLS_TESTDATA_DIR.'/pages');
 $config = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
 $config->define_core_constants();
 
@@ -36,7 +37,6 @@ $init->check_if_upgrade_needed       = false;
 $init->load_plugins                  = false; // do not attempt to load (no DB yet to store data), but do send the 'plugins_loaded' action (some code depend on it)
 $init->get_all_options               = false;
 $init->check_new_version             = false;
-$init->include_auth_funcs            = true;
 $init->include_install_upgrade_funcs = true;
 new \YOURLS\Config\Init($init);
 
