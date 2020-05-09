@@ -91,7 +91,7 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 		return $pre;
 
 	global $ydb;
-	$keyword = yourls_sanitize_string( $keyword );
+	$keyword = yourls_sanitize_keyword( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
 		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
@@ -416,7 +416,7 @@ function yourls_log_redirect( $keyword ) {
     $ip = yourls_get_IP();
     $binds = [
         'now' => date( 'Y-m-d H:i:s' ),
-        'keyword'  => yourls_sanitize_string($keyword),
+        'keyword'  => yourls_sanitize_keyword($keyword),
         'referrer' => substr( yourls_get_referrer(), 0, 200 ),
         'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
@@ -909,6 +909,8 @@ function yourls_get_request($yourls_site = false, $uri = false) {
     if ( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
         $request = current( explode( '?', $request ) );
     }
+
+    $request = yourls_sanitize_url( $request );
 
     return (string)yourls_apply_filter( 'get_request', $request );
 }

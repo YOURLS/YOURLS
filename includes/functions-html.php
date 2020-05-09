@@ -484,12 +484,13 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
-	$keyword = yourls_sanitize_string( $keyword );
+    $keyword = yourls_sanitize_keyword($keyword);
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = yourls_esc_attr( rawurldecode( $url ) );
 	$safe_title = yourls_esc_attr( $title );
+	$safe_keyword = yourls_esc_attr( $keyword );
 
     // Make strings sprintf() safe: '%' -> '%%'
     $safe_url = str_replace( '%', '%%', $safe_url );
@@ -501,7 +502,7 @@ function yourls_table_edit_row( $keyword ) {
 
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 		$return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
@@ -519,7 +520,7 @@ RETURN;
  * @return string HTML of the edit row
  */
 function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
-	$keyword  = yourls_sanitize_string( $keyword );
+    $keyword  = yourls_sanitize_keyword($keyword);
 	$id       = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$shorturl = yourls_link( $keyword );
 
@@ -621,13 +622,8 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
 	$row = "<tr id=\"id-$id\">";
 	foreach( $cells as $cell_id => $elements ) {
-		$callback = new yourls_table_add_row_callback( $elements );
 		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace_callback( '/%([^%]+)?%/', array( $callback, 'callback' ), $elements['template'] );
-		// For the record, in PHP 5.3+ we don't need to introduce a class in order to pass additional parameters
-		// to the callback function. Instead, we would have used the 'use' keyword :
-		// $row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
-
+		$row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
 		$row .= '</td>';
 	}
 	$row .= "</tr>";
@@ -635,26 +631,6 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	return $row;
 }
-
-/**
- * Callback class for yourls_table_add_row
- *
- * See comment about PHP 5.3+ in yourls_table_add_row()
- *
- * @since 1.7
- */
-class yourls_table_add_row_callback {
-    private $elements;
-
-    function __construct($elements) {
-		$this->elements = $elements;
-	}
-
-    function callback( $matches ) {
-		return $this->elements[ $matches[1] ];
-    }
-}
-
 
 /**
  * Echo the main table head
@@ -870,12 +846,12 @@ HTML;
  *  @param $page      PHP file to display
  */
 function yourls_page( $page ) {
-	$include = YOURLS_PAGEDIR . "/$page.php";
-	if( !file_exists( $include ) ) {
+    if( !yourls_is_page($page)) {
 		yourls_die( yourls_s('Page "%1$s" not found', $page), yourls__('Not found'), 404 );
-	}
+    }
+
 	yourls_do_action( 'pre_page', $page );
-	include_once( $include );
+	include_once( YOURLS_PAGEDIR . "/$page.php" );
 	yourls_do_action( 'post_page', $page );
 }
 

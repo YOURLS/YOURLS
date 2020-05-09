@@ -121,20 +121,29 @@ function yourls_remove_query_arg( $key, $query = false ) {
 /**
  * Converts keyword into short link (prepend with YOURLS base URL)
  *
+ * This function does not check for a valid keyword
+ *
  */
 function yourls_link( $keyword = '' ) {
-    $link = yourls_get_yourls_site() . '/' . yourls_sanitize_keyword( $keyword );
+    $keyword = yourls_sanitize_keyword($keyword);
+    $link    = yourls_get_yourls_site() . '/' . $keyword;
     return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
 /**
  * Converts keyword into stat link (prepend with YOURLS base URL, append +)
  *
+ * This function does not make sure the keyword matches an actual short URL
+ *
  */
 function yourls_statlink( $keyword = '' ) {
-    $link = yourls_get_yourls_site() . '/' . yourls_sanitize_keyword( $keyword ) . '+';
-    if( yourls_is_ssl() )
+    $keyword = yourls_sanitize_keyword($keyword);
+    $link    = yourls_get_yourls_site() . '/' . $keyword . '+';
+
+    if( yourls_is_ssl() ) {
         $link = yourls_set_url_scheme( $link, 'https' );
+    }
+
     return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 

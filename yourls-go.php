@@ -2,36 +2,27 @@
 define( 'YOURLS_GO', true );
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
-// Variables should be defined in yourls-loader.php, if not try GET request (old behavior of yourls-go.php)
-if( !isset( $keyword ) && isset( $_GET['id'] ) )
-	$keyword = $_GET['id'];
-$keyword = yourls_sanitize_string( $keyword );
-
-// First possible exit:
-if ( !isset( $keyword ) ) {
+// Variables should be defined in yourls-loader.php
+if( !isset( $keyword ) ) {
 	yourls_do_action( 'redirect_no_keyword' );
 	yourls_redirect( YOURLS_SITE, 301 );
 }
 
-// Get URL From Database
-$url = yourls_get_keyword_longurl( $keyword );
+$keyword = yourls_sanitize_keyword($keyword);
 
-// URL found
-if( !empty( $url ) ) {
-    yourls_redirect_shorturl($url, $keyword);
-
-// URL not found. Either reserved, or page, or doesn't exist
-} else {
-
-	// Do we have a page?
-	if ( file_exists( YOURLS_PAGEDIR . "/$keyword.php" ) ) {
-		yourls_page( $keyword );
-
-	// Either reserved id, or no such id
-	} else {
-		yourls_do_action( 'redirect_keyword_not_found', $keyword );
-
-		yourls_redirect( YOURLS_SITE, 302 ); // no 404 to tell browser this might change, and also to not pollute logs
-	}
+// if we have a page, display and exit
+if( yourls_is_page($keyword) ) {
+    yourls_page( $keyword );
+    return;
 }
+
+// if we can get a long URL from the DB, redirect
+if( $url = yourls_get_keyword_longurl( $keyword ) ) {
+    yourls_redirect_shorturl($url, $keyword);
+    return;
+}
+
+// Either reserved keyword, or no such keyword
+yourls_do_action( 'redirect_keyword_not_found', $keyword );
+yourls_redirect( YOURLS_SITE, 302 ); // no 404 to tell browser this might change, and also to not pollute logs
 exit();

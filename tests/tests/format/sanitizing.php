@@ -17,12 +17,12 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
         $expected = "How Will I Laugh Tomorrow When I Can't Even Smile Today";
         $unsane   = "How <strong>Will</strong> I Laugh Tomorrow <em>When I Can't Even Smile Today</em>";
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
-        
+
         $expected = 'Twilight of the Thunder God';
         $unsane   = 'Twilight <bleh omg="wtf" >of</bleh> the <blah something>Thunder God';
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
     }
-    
+
     /**
      * Sanitize titles with fallback
      *
@@ -35,7 +35,7 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
         $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
     }
- 
+
     /**
      * Sanitize integers
      *
@@ -173,7 +173,7 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
     function test_sanitize_version( $version, $expected ) {
         $this->assertSame( $expected, yourls_sanitize_version( $version ) );
     }
-    
+
     /**
      * Some random keywords to sanitize
      */
@@ -187,14 +187,17 @@ class Format_Sanitize extends PHPUnit_Framework_TestCase {
     }
 
 	/**
-	 * Checking that string2htmlid is an alphanumeric string
+	 * Checking that keyword are correctly sanitized
 	 *
      * @dataProvider keywords_to_sanitize
 	 * @since 0.1
 	 */
-    public function test_sanitize_string( $string, $expected ) {
-        $this->assertSame( $expected, yourls_sanitize_string( $string ) );
-        $this->assertSame( $expected, yourls_sanitize_keyword( $string ) );
+    public function test_sanitize_keywords( $keyword, $expected ) {
+        // the "soft" way: assume keyword can be anything we have in a URL (here, should remain unchanged)
+        $this->assertSame( $keyword, yourls_sanitize_keyword( $keyword ) );
+
+        // the "hard" way: keyword must comply to acceptable short URL charset
+        $this->assertSame( $expected, yourls_sanitize_keyword( $keyword, true ) );
     }
 
 }
