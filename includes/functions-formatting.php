@@ -724,9 +724,9 @@ function yourls_make_bookmarklet( $code ) {
 }
 
 /**
- * Adapts an epoch timestamp to a time offset
+ * Return a timestamp, filtered for time offset and/or timezone
  *
- * @since tbd
+ * @since 1.7.10
  * @param  string $timestamp              an epoch timestamp
  * @return string $timestamp_timezoned	  a timestamp
  */
@@ -737,19 +737,15 @@ function yourls_get_timezoned_timestamp( $timestamp ) {
         return $pre;
     }
 
-    // TODO : have some tests to validate that $timestamp is something we can play with ?
-
     $offset = 0;
 
     // Comply to (deprecated) YOURLS_HOURS_OFFSET if defined
     if( defined('YOURLS_HOURS_OFFSET') && is_int(YOURLS_HOURS_OFFSET) ) {
         $offset = YOURLS_HOURS_OFFSET;
     }
-
-    // Allow plugin (particularly, core plugin Timezones) to modify this offset
     $offset = yourls_apply_filter( 'get_timezoned_offset', $offset );
 
     $timestamp_timezoned = $timestamp + ($offset * 3600);
 
-    return yourls_apply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $offset );
+    return yourls_apply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $timestamp, $offset );
 }
