@@ -345,7 +345,7 @@ yourls_html_menu();
 					$daysago = ' (' . sprintf( yourls_n( 'about 1 day ago', 'about %s days ago', $ago ), $ago ) . ')';
 				}
 				?>
-				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", yourls_get_timestamp( $timestamp ) ) ) . $daysago; ?></p>
+				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( yourls_get_datetime_format("F j, Y @ g:i a"), yourls_get_timestamp( $timestamp ) ) ) . $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
@@ -384,7 +384,7 @@ yourls_html_menu();
 				$best_time['month'] = date( "m", strtotime( $best['day'] ) );
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
-				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>.
+				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( yourls_get_datetime_format("F j, Y"), strtotime( $best['day'] ) ) ); ?>.
 				<a href="" class='details hide-if-no-js' id="more_clicks"><?php yourls_e( 'Click for more details' ); ?></a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php

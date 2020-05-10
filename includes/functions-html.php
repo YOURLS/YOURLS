@@ -601,7 +601,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 		'timestamp' => array(
 			'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
             'timestamp' => $timestamp,
-			'date'     => yourls_date_i18n( 'M d, Y H:i', yourls_get_timestamp( $timestamp )),
+			'date'     => yourls_date_i18n( yourls_get_datetime_format('M d, Y H:i'), yourls_get_timestamp( $timestamp )),
 		),
 		'ip' => array(
 			'template' => '%ip%',

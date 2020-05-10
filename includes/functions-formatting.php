@@ -745,13 +745,13 @@ function yourls_get_timestamp( $timestamp ) {
 }
 
 /**
- * Get time offset, either as defined in config, or by a plugin
+ * Get time offset, as defined in config, filtered
  *
  * @since 1.7.10
  * @return int       Time offset
  */
 function yourls_get_time_offset() {
-    $offset = defined('YOURLS_HOURS_OFFSET') ? (int)YOURLS_HOURS_OFFSET ) : 0;
+    $offset = defined('YOURLS_HOURS_OFFSET') ? (int)YOURLS_HOURS_OFFSET : 0;
     return yourls_apply_filter( 'get_time_offset', $offset );
 }
 
