@@ -724,7 +724,7 @@ function yourls_make_bookmarklet( $code ) {
 }
 
 /**
- * Return a timestamp, filtered for time offset and/or timezone
+ * Return a timestamp, plus or minus the time offset if defined
  *
  * @since 1.7.10
  * @param  string $timestamp              an epoch timestamp
