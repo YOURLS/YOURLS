@@ -599,8 +599,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
-			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', yourls_get_timezoned_timestamp( $timestamp )),
+			'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
+            'timestamp' => $timestamp,
+			'date'     => yourls_date_i18n( 'M d, Y H:i', yourls_get_timezoned_timestamp( $timestamp )),
 		),
 		'ip' => array(
 			'template' => '%ip%',
