@@ -730,22 +730,38 @@ function yourls_make_bookmarklet( $code ) {
  * @param  string $timestamp              an epoch timestamp
  * @return string $timestamp_timezoned	  a timestamp
  */
-function yourls_get_timezoned_timestamp( $timestamp ) {
+function yourls_get_timestamp( $timestamp ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_timezoned_timestamp', false, $timestamp );
+    $pre = yourls_apply_filter( 'shunt_get_timestamp', false, $timestamp );
     if ( false !== $pre ) {
         return $pre;
     }
 
-    $offset = 0;
-
-    // Comply to (deprecated) YOURLS_HOURS_OFFSET if defined
-    if( defined('YOURLS_HOURS_OFFSET') && is_int(YOURLS_HOURS_OFFSET) ) {
-        $offset = YOURLS_HOURS_OFFSET;
-    }
-    $offset = yourls_apply_filter( 'get_timezoned_offset', $offset );
+    $offset = yourls_get_time_offset();
 
     $timestamp_timezoned = $timestamp + ($offset * 3600);
 
-    return yourls_apply_filter( 'get_timezoned_timestamp', $timestamp_timezoned, $timestamp, $offset );
+    return yourls_apply_filter( 'get_timestamp', $timestamp_timezoned, $timestamp, $offset );
+}
+
+/**
+ * Get time offset, either as defined in config, or by a plugin
+ *
+ * @since 1.7.10
+ * @return int       Time offset
+ */
+function yourls_get_time_offset() {
+    $offset = defined('YOURLS_HOURS_OFFSET') ? (int)YOURLS_HOURS_OFFSET ) : 0;
+    return yourls_apply_filter( 'get_time_offset', $offset );
+}
+
+/**
+ * Return a date() format, filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_datetime_format( $format ) {
+    return yourls_apply_filter( 'get_datetime_format', (string)$format );
 }

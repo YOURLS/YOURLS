@@ -149,7 +149,7 @@ if( yourls_do_log_redirect() ) {
         unset($_lists);
 	}
 
-	$offset = yourls_get_offset();
+	$offset = yourls_get_time_offset();
 
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$sql = "SELECT
@@ -345,7 +345,7 @@ yourls_html_menu();
 					$daysago = ' (' . sprintf( yourls_n( 'about 1 day ago', 'about %s days ago', $ago ), $ago ) . ')';
 				}
 				?>
-				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", yourls_get_timezoned_timestamp( $timestamp ) ) ) . $daysago; ?></p>
+				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", yourls_get_timestamp( $timestamp ) ) ) . $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
