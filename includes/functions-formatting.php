@@ -727,8 +727,8 @@ function yourls_make_bookmarklet( $code ) {
  * Return a timestamp, plus or minus the time offset if defined
  *
  * @since 1.7.10
- * @param  string $timestamp              an epoch timestamp
- * @return string $timestamp_timezoned	  a timestamp
+ * @param  string $timestamp   an epoch timestamp
+ * @return string              a timestamp, plus or minus offset if defined
  */
 function yourls_get_timestamp( $timestamp ) {
     // Allow plugins to short-circuit the whole function
@@ -739,9 +739,9 @@ function yourls_get_timestamp( $timestamp ) {
 
     $offset = yourls_get_time_offset();
 
-    $timestamp_timezoned = $timestamp + ($offset * 3600);
+    $timestamp_offset = $timestamp + ($offset * 3600);
 
-    return yourls_apply_filter( 'get_timestamp', $timestamp_timezoned, $timestamp, $offset );
+    return yourls_apply_filter( 'get_timestamp', $timestamp_offset, $timestamp, $offset );
 }
 
 /**
