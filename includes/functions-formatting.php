@@ -731,14 +731,7 @@ function yourls_make_bookmarklet( $code ) {
  * @return string              a timestamp, plus or minus offset if defined
  */
 function yourls_get_timestamp( $timestamp ) {
-    // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_timestamp', false, $timestamp );
-    if ( false !== $pre ) {
-        return $pre;
-    }
-
     $offset = yourls_get_time_offset();
-
     $timestamp_offset = $timestamp + ($offset * 3600);
 
     return yourls_apply_filter( 'get_timestamp', $timestamp_offset, $timestamp, $offset );
