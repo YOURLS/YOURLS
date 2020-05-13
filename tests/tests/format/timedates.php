@@ -23,10 +23,28 @@ class Format_Test_Dates extends PHPUnit_Framework_TestCase {
     /**
      * Test yourls_get_datetime_format returns a string
      */
-    function test_get_time_format() {
+    function test_get_datetime_format() {
         $this->assertInternalType( "string", yourls_get_datetime_format('M d, Y H:i') );
         $this->assertInternalType( "string", yourls_get_datetime_format( 10 ) );
         $this->assertInternalType( "string", yourls_get_datetime_format(false) );
+    }
+
+    /**
+     * Test yourls_get_date_format returns a string
+     */
+    function test_get_date_format() {
+        $this->assertInternalType( "string", yourls_get_date_format('M d, Y') );
+        $this->assertInternalType( "string", yourls_get_date_format( 10 ) );
+        $this->assertInternalType( "string", yourls_get_date_format(false) );
+    }
+
+    /**
+     * Test yourls_get_time_format returns a string
+     */
+    function test_get_time_format() {
+        $this->assertInternalType( "string", yourls_get_time_format('H:i') );
+        $this->assertInternalType( "string", yourls_get_time_format( 10 ) );
+        $this->assertInternalType( "string", yourls_get_time_format(false) );
     }
 
     /**

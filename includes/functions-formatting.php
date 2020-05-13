@@ -749,7 +749,7 @@ function yourls_get_time_offset() {
 }
 
 /**
- * Return a date() format, filtered
+ * Return a date() format for a full date + time, filtered
  *
  * @since 1.7.10
  * @param  string $format  Date format string
@@ -758,3 +758,26 @@ function yourls_get_time_offset() {
 function yourls_get_datetime_format( $format ) {
     return yourls_apply_filter( 'get_datetime_format', (string)$format );
 }
+
+/**
+ * Return a date() format for date (no time), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_date_format( $format ) {
+    return yourls_apply_filter( 'get_date_format', (string)$format );
+}
+
+/**
+ * Return a date() format for a time (no date), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_time_format( $format ) {
+    return yourls_apply_filter( 'get_time_format', (string)$format );
+}
+
