@@ -13,21 +13,14 @@
 
 ## Quick Start
 
-To get started, check [yourls.org](https://yourls.org)!
-Learn more tweaks in the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
-
+* To get started, check [yourls.org](https://yourls.org)!
+* There are several additional information on the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
 
 ## Community news, tips and tricks
 
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
-* Subscribe to the [YOURLS User Newsletter](https://yourls.org/newsletter) (infrequent, low volume)
-
-
-## Keep track of development
-
-* Check [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
-* Check the [Road map](https://github.com/orgs/YOURLS/projects/1)
-
+* Keep track of development: "Star" and "Watch" this project, follow [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
+* We have a [forum](https://discourse.yourls.org/) to engage users and ask for help
 
 ## Contributing
 
