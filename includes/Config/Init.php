@@ -27,7 +27,7 @@ class Init {
             $this->include_core_functions();
         }
 
-        // Enforce UTC timezone to suppress PHP warnings -- correct date/time will be managed using the config time offset
+        // Enforce UTC timezone. Date/time can be adjusted with a plugin.
         if ($actions->default_timezone === true) {
             date_default_timezone_set( 'UTC' );
         }

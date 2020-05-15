@@ -149,12 +149,14 @@ if( yourls_do_log_redirect() ) {
         unset($_lists);
 	}
 
+	$offset = yourls_get_time_offset();
+
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$sql = "SELECT
-		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR), '%H %p') AS `time`,
+		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR), '%H %p') AS `time`,
 		COUNT(*) AS `count`
 	FROM `$table`
-	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . YOURLS_HOURS_OFFSET . " HOUR) - INTERVAL 1 DAY)
+	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
 	GROUP BY `time`;";
     $sql = yourls_apply_filter('stat_query_last24h', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
@@ -167,7 +169,7 @@ if( yourls_do_log_redirect() ) {
 
 	$now = intval( date('U') );
 	for ($i = 23; $i >= 0; $i--) {
-		$h = date('H A', ($now - ($i * 60 * 60) + (YOURLS_HOURS_OFFSET * 60 * 60)) );
+		$h = date('H A', ($now - ($i * 60 * 60) + ($offset * 60 * 60)) );
 		// If the $last_24h doesn't have all the hours, insert missing hours with value 0
 		$last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
 	}
@@ -335,14 +337,15 @@ yourls_html_menu();
 				<td valign="top">
 				<h3><?php yourls_e( 'Historical click count' ); ?></h3>
 				<?php
-				$ago = round( (date('U') - strtotime($timestamp)) / (24* 60 * 60 ) );
+				$timestamp = strtotime( $timestamp );
+				$ago = round( (date('U') - $timestamp) / (24* 60 * 60 ) );
 				if( $ago <= 1 ) {
 					$daysago = '';
 				} else {
 					$daysago = ' (' . sprintf( yourls_n( 'about 1 day ago', 'about %s days ago', $ago ), $ago ) . ')';
 				}
 				?>
-				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( "F j, Y @ g:i a", ( strtotime( $timestamp ) + YOURLS_HOURS_OFFSET * 3600 ) ) ) . $daysago; ?></p>
+				<p><?php echo /* //translators: eg Short URL created on March 23rd 1972 */ yourls_s( 'Short URL created on %s', yourls_date_i18n( yourls_get_datetime_format("F j, Y @ g:i a"), yourls_get_timestamp( $timestamp ) ) ) . $daysago; ?></p>
 				<div class="wrap_unfloat">
 					<ul class="no_bullet toggle_display stat_line" id="historical_clicks">
 					<?php
@@ -381,7 +384,7 @@ yourls_html_menu();
 				$best_time['month'] = date( "m", strtotime( $best['day'] ) );
 				$best_time['year']  = date( "Y", strtotime( $best['day'] ) );
 				?>
-				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( "F j, Y", strtotime( $best['day'] ) ) ); ?>.
+				<p><?php echo sprintf( /* //translators: eg. 43 hits on January 1, 1970 */ yourls_n( '<strong>%1$s</strong> hit on %2$s', '<strong>%1$s</strong> hits on %2$s', $best['max'] ), $best['max'],  yourls_date_i18n( yourls_get_date_format("F j, Y"), strtotime( $best['day'] ) ) ); ?>.
 				<a href="" class='details hide-if-no-js' id="more_clicks"><?php yourls_e( 'Click for more details' ); ?></a></p>
 				<ul id="details_clicks" style="display:none">
 					<?php

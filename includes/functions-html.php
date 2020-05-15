@@ -599,8 +599,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
-			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
+			'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
+            'timestamp' => $timestamp,
+			'date'     => yourls_date_i18n( yourls_get_datetime_format('M d, Y H:i'), yourls_get_timestamp( $timestamp )),
 		),
 		'ip' => array(
 			'template' => '%ip%',
@@ -1001,4 +1002,3 @@ function yourls_get_html_context() {
     global $ydb;
     $ydb->get_html_context();
 }
-

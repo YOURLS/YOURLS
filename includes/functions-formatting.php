@@ -722,3 +722,62 @@ function yourls_make_bookmarklet( $code ) {
     $book = new \Ozh\Bookmarkletgen\Bookmarkletgen;
     return $book->crunch( $code );
 }
+
+/**
+ * Return a timestamp, plus or minus the time offset if defined
+ *
+ * @since 1.7.10
+ * @param  string|int $timestamp  a timestamp
+ * @return int                    a timestamp, plus or minus offset if defined
+ */
+function yourls_get_timestamp( $timestamp ) {
+    $offset = yourls_get_time_offset();
+    $timestamp_offset = $timestamp + ($offset * 3600);
+
+    return yourls_apply_filter( 'get_timestamp', $timestamp_offset, $timestamp, $offset );
+}
+
+/**
+ * Get time offset, as defined in config, filtered
+ *
+ * @since 1.7.10
+ * @return int       Time offset
+ */
+function yourls_get_time_offset() {
+    $offset = defined('YOURLS_HOURS_OFFSET') ? (int)YOURLS_HOURS_OFFSET : 0;
+    return yourls_apply_filter( 'get_time_offset', $offset );
+}
+
+/**
+ * Return a date() format for a full date + time, filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_datetime_format( $format ) {
+    return yourls_apply_filter( 'get_datetime_format', (string)$format );
+}
+
+/**
+ * Return a date() format for date (no time), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_date_format( $format ) {
+    return yourls_apply_filter( 'get_date_format', (string)$format );
+}
+
+/**
+ * Return a date() format for a time (no date), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_time_format( $format ) {
+    return yourls_apply_filter( 'get_time_format', (string)$format );
+}
+
