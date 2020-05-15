@@ -727,8 +727,8 @@ function yourls_make_bookmarklet( $code ) {
  * Return a timestamp, plus or minus the time offset if defined
  *
  * @since 1.7.10
- * @param  string $timestamp   an epoch timestamp
- * @return string              a timestamp, plus or minus offset if defined
+ * @param  string|int $timestamp  a timestamp
+ * @return int                    a timestamp, plus or minus offset if defined
  */
 function yourls_get_timestamp( $timestamp ) {
     $offset = yourls_get_time_offset();

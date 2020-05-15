@@ -687,17 +687,14 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
  * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
  */
 function yourls_current_time( $type, $gmt = 0 ) {
-
 	switch ( $type ) {
 		case 'mysql':
 			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
 			break;
 		case 'timestamp':
 			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
-			break;
 	}
 }
-
 
 /**
  * Class that loads the calendar locale.
