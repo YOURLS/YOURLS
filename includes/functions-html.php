@@ -88,7 +88,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
 	<link rel="shortcut icon" href="<?php yourls_get_yourls_favicon_url(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/jquery-3.5.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -488,7 +488,7 @@ function yourls_table_edit_row( $keyword ) {
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
-	$safe_url = yourls_esc_attr( rawurldecode( $url ) );
+	$safe_url = yourls_esc_attr( $url );
 	$safe_title = yourls_esc_attr( $title );
 	$safe_keyword = yourls_esc_attr( $keyword );
 

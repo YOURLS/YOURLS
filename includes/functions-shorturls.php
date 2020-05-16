@@ -31,7 +31,6 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
     if ( false !== $pre )
         return $pre;
 
-    $url = yourls_encodeURI( $url );
     $url = yourls_sanitize_url( $url );
     if ( !$url || $url == 'http://' || $url == 'https://' ) {
         $return['status']    = 'fail';
