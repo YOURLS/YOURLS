@@ -10,6 +10,17 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * The original string sanitize function
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_sanitize_string( $string, $restrict_to_shorturl_charset = false ) {
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_sanitize_keyword' );
+    return yourls_sanitize_keyword( $string, $restrict_to_shorturl_charset );
+}
+
+/**
  * Return favicon URL (either default or custom)
  *
  * @deprecated 1.7.10

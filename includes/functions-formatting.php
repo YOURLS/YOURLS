@@ -51,23 +51,28 @@ function yourls_string2htmlid( $string ) {
 }
 
 /**
- * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is valid.
+ * Make sure a link keyword (ie "1fv" as in "http://sho.rt/1fv") is acceptable
  *
- */
-function yourls_sanitize_string( $string ) {
-	// make a regexp pattern with the shorturl charset, and remove everything but this
-	$pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
-	$valid = (string) substr( preg_replace( '![^'.$pattern.']!', '', $string ), 0, 199 );
-
-	return yourls_apply_filter( 'sanitize_string', $valid, $string );
-}
-
-/**
- * Alias function. I was always getting it wrong.
+ * If we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
+ * character that doesn't belong to it will be removed.
+ * But otherwise we must have a more conservative approach: we could be checking for a keyword that
+ * was once valid but now the short URL charset. In such a case, we are treating the keyword for what
+ * it is: just a part of a URL, hence sanitize it as a URL.
  *
+ * @param  string $keyword                        short URL keyword
+ * @param  bool   $restrict_to_shorturl_charset   Optional, default false. True if we want the keyword to comply to short URL charset
+ * @return string                                 The sanitized keyword
  */
-function yourls_sanitize_keyword( $keyword ) {
-	return yourls_sanitize_string( $keyword );
+function yourls_sanitize_keyword( $keyword, $restrict_to_shorturl_charset = false ) {
+    if( $restrict_to_shorturl_charset === true ) {
+        // make a regexp pattern with the shorturl charset, and remove everything but this
+        $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
+        $valid = (string) substr( preg_replace( '![^'.$pattern.']!', '', $keyword ), 0, 199 );
+    } else {
+        $valid = yourls_sanitize_url( $keyword );
+    }
+
+	return yourls_apply_filter( 'sanitize_string', $valid, $keyword, $restrict_to_shorturl_charset );
 }
 
 /**
@@ -717,3 +722,62 @@ function yourls_make_bookmarklet( $code ) {
     $book = new \Ozh\Bookmarkletgen\Bookmarkletgen;
     return $book->crunch( $code );
 }
+
+/**
+ * Return a timestamp, plus or minus the time offset if defined
+ *
+ * @since 1.7.10
+ * @param  string|int $timestamp  a timestamp
+ * @return int                    a timestamp, plus or minus offset if defined
+ */
+function yourls_get_timestamp( $timestamp ) {
+    $offset = yourls_get_time_offset();
+    $timestamp_offset = $timestamp + ($offset * 3600);
+
+    return yourls_apply_filter( 'get_timestamp', $timestamp_offset, $timestamp, $offset );
+}
+
+/**
+ * Get time offset, as defined in config, filtered
+ *
+ * @since 1.7.10
+ * @return int       Time offset
+ */
+function yourls_get_time_offset() {
+    $offset = defined('YOURLS_HOURS_OFFSET') ? (int)YOURLS_HOURS_OFFSET : 0;
+    return yourls_apply_filter( 'get_time_offset', $offset );
+}
+
+/**
+ * Return a date() format for a full date + time, filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_datetime_format( $format ) {
+    return yourls_apply_filter( 'get_datetime_format', (string)$format );
+}
+
+/**
+ * Return a date() format for date (no time), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_date_format( $format ) {
+    return yourls_apply_filter( 'get_date_format', (string)$format );
+}
+
+/**
+ * Return a date() format for a time (no date), filtered
+ *
+ * @since 1.7.10
+ * @param  string $format  Date format string
+ * @return string          Date format string
+ */
+function yourls_get_time_format( $format ) {
+    return yourls_apply_filter( 'get_time_format', (string)$format );
+}
+

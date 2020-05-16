@@ -132,6 +132,9 @@ td.url small a{
 body.desktop td.actions input,body.desktop  td.actions a {
 	visibility:hidden;
 }
+td.timestamp span.timestamp {
+    display:none;
+}
 td.actions input.disabled, td.actions input.loading {
 	visibility:visible;
 }

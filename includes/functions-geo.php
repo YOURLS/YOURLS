@@ -8,32 +8,38 @@
  * Converts an IP to a 2 letter country code, using GeoIP database if available in includes/geo/
  *
  * @since 1.4
- * @param string $ip IP or, if empty string, will be current user IP
- * @param string $defaut Default string to return if IP doesn't resolve to a country (malformed, private IP...)
+ * @param string $ip      IP or, if empty string, will be current user IP
+ * @param string $default Default string to return if IP doesn't resolve to a country (malformed, private IP...)
  * @return string 2 letter country code (eg 'US') or $default
  */
 function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
     // Allow plugins to short-circuit the Geo IP API
     $location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
-    if ( false !== $location )
+    if ( false !== $location ) {
         return $location;
+    }
 
-    // At this point, $location == false
+    if ( yourls_apply_filter( 'geo_use_cloudflare', true )
+         && !empty( $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) && preg_match( '/^[A-Z]{2}$/', $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) ) {
+        return $_SERVER[ 'HTTP_CF_IPCOUNTRY' ];
+    }
 
-    if ( $ip == '' )
+    if ( empty( $ip ) ) {
         $ip = yourls_get_IP();
+    }
 
     // Allow plugins to stick to YOURLS internals but provide another DB
-    $db = yourls_apply_filter('geo_ip_path_to_db', YOURLS_INC.'/geo/GeoLite2-Country.mmdb');
-    if (!is_readable($db)) {
+    $db = yourls_apply_filter( 'geo_ip_path_to_db', YOURLS_INC.'/geo/GeoLite2-Country.mmdb' );
+    if ( !is_readable( $db ) ) {
         return $default;
     }
 
-    $reader = new \GeoIp2\Database\Reader($db);
     try {
-        $record = $reader->country($ip);
+        $reader = new \GeoIp2\Database\Reader( $db );
+        $record = $reader->country( $ip );
         $location = $record->country->isoCode; // eg 'US'
-    } catch (\Exception $e) {
+    }
+    catch ( \Exception $e ) {
         /*
         Unused for now, Exception and $e->getMessage() can be one of :
 
@@ -53,17 +59,14 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
         */
     }
 
-    if(!$location) {
-        $location = $default;
-    }
-
-    return yourls_apply_filter( 'geo_ip_to_countrycode', $location, $ip, $default );
+    return yourls_apply_filter( 'geo_ip_to_countrycode', empty( $location ) ? $default : $location, $ip, $default );
 }
 
 /**
  * Converts a 2 letter country code to long name (ie AU -> Australia)
  *
- * This associative array is the one used by MaxMind internal functions, it may differ from other lists (eg "A1" does not universally stand for "Anon proxy")
+ * This associative array is the one used by MaxMind internal functions, it may differ from other lists (eg "A1" does
+ * not universally stand for "Anon proxy")
  *
  * @since 1.4
  * @param string $code 2 letter country code, eg 'FR'
@@ -72,11 +75,12 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
 function yourls_geo_countrycode_to_countryname( $code ) {
     // Allow plugins to short-circuit the function
     $country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
-    if ( false !== $country )
+    if ( false !== $country ) {
         return $country;
+    }
 
     // Weeeeeeeeeeee
-    $countries = array(
+    $countries = [
         'A1' => 'Anonymous Proxy', 'A2' => 'Satellite Provider', 'AD' => 'Andorra', 'AE' => 'United Arab Emirates', 'AF' => 'Afghanistan',
         'AG' => 'Antigua and Barbuda', 'AI' => 'Anguilla', 'AL' => 'Albania', 'AM' => 'Armenia', 'AO' => 'Angola',
         'AP' => 'Asia/Pacific Region', 'AQ' => 'Antarctica', 'AR' => 'Argentina', 'AS' => 'American Samoa', 'AT' => 'Austria',
@@ -128,28 +132,22 @@ function yourls_geo_countrycode_to_countryname( $code ) {
         'VA' => 'Holy See (Vatican City State)', 'VC' => 'Saint Vincent and the Grenadines', 'VE' => 'Venezuela', 'VG' => 'Virgin Islands, British', 'VI' => 'Virgin Islands, U.S.',
         'VN' => 'Vietnam', 'VU' => 'Vanuatu', 'WF' => 'Wallis and Futuna', 'WS' => 'Samoa', 'YE' => 'Yemen',
         'YT' => 'Mayotte', 'ZA' => 'South Africa', 'ZM' => 'Zambia', 'ZW' => 'Zimbabwe',
-    );
+    ];
 
-    $code = strtoupper($code);
-    if(array_key_exists($code, $countries)) {
-        $name = $countries[$code];
-    } else {
-        $name = '';
-    }
+    $code = strtoupper( $code );
 
-    return yourls_apply_filter( 'geo_countrycode_to_countryname', $name );
+    return yourls_apply_filter( 'geo_countrycode_to_countryname', isset( $countries[ $code ] ) ? $countries[ $code ] : '' );
 }
 
 /**
  * Return flag URL from 2 letter country code
- *
+ * @param string $code
+ * @return string
  */
 function yourls_geo_get_flag( $code ) {
-    if( file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower($code).'.gif' ) ) {
-        $img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.( strtolower( $code ) ).'.gif' );
-    } else {
-        $img = false;
+    if ( !file_exists( YOURLS_INC.'/geo/flags/flag_'.strtolower( $code ).'.gif' ) ) {
+        $code = '';
     }
-    return yourls_apply_filter( 'geo_get_flag', $img, $code );
+    $img = yourls_match_current_protocol( yourls_get_yourls_site().'/includes/geo/flags/flag_'.strtolower( $code ).'.gif' );
+    return (string)yourls_apply_filter( 'geo_get_flag', $img, $code );
 }
-

@@ -6,17 +6,19 @@
  * @since 1.0
  */
 function yourls_db_connect() {
-	global $ydb;
+    global $ydb;
 
-	if (   !defined( 'YOURLS_DB_USER' )
-		or !defined( 'YOURLS_DB_PASS' )
-		or !defined( 'YOURLS_DB_NAME' )
-		or !defined( 'YOURLS_DB_HOST' )
-	) yourls_die ( yourls__( 'Incorrect DB config, please refer to documentation' ), yourls__( 'Fatal error' ), 503 );
+    if ( !defined( 'YOURLS_DB_USER' )
+         or !defined( 'YOURLS_DB_PASS' )
+         or !defined( 'YOURLS_DB_NAME' )
+         or !defined( 'YOURLS_DB_HOST' )
+    ) {
+        yourls_die( yourls__( 'Incorrect DB config, please refer to documentation' ), yourls__( 'Fatal error' ), 503 );
+    }
 
     $dbhost = YOURLS_DB_HOST;
-    $user   = YOURLS_DB_USER;
-    $pass   = YOURLS_DB_PASS;
+    $user = YOURLS_DB_USER;
+    $pass = YOURLS_DB_PASS;
     $dbname = YOURLS_DB_NAME;
 
     // This action is deprecated
@@ -43,22 +45,30 @@ function yourls_db_connect() {
 
     /**
      * PDO driver options and attributes
-
+     *
      * The PDO constructor is something like:
      *   new PDO( string $dsn, string $username, string $password [, array $options ] )
      * The driver options are passed to the PDO constructor, eg array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
      * The attribute options are then set in a foreach($attr as $k=>$v){$db->setAttribute($k, $v)} loop
      */
-    $driver_options = yourls_apply_filter( 'db_connect_driver_option', array() ); // driver options as key-value pairs
-    $attributes     = yourls_apply_filter( 'db_connect_attributes',    array() ); // attributes as key-value pairs
+    $driver_options = yourls_apply_filter( 'db_connect_driver_option', [] ); // driver options as key-value pairs
+    $attributes = yourls_apply_filter( 'db_connect_attributes', [] ); // attributes as key-value pairs
 
     $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
     $ydb->init();
 
     // Past this point, we're connected
-    yourls_debug_log(sprintf('Connected to database %s on %s ', $dbname, $dbhost));
+    yourls_debug_log( sprintf( 'Connected to database %s on %s ', $dbname, $dbhost ) );
 
-    yourls_debug_mode(YOURLS_DEBUG);
+    yourls_debug_mode( YOURLS_DEBUG );
 
-	return $ydb;
+    return $ydb;
+}
+
+/**
+ * @return \YOURLS\Database\YDB
+ */
+function yourls_get_db() {
+    global $ydb;
+    return ( $ydb instanceof \YOURLS\Database\YDB ) ? $ydb : yourls_db_connect();
 }

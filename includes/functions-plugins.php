@@ -15,15 +15,19 @@
  * @since 1.5
  */
 
-if( !isset( $yourls_filters ) )
-    $yourls_filters = array();
-/* This global var will collect filters with the following structure:
+if ( !isset( $yourls_filters ) ) {
+    $yourls_filters = [];
+}
+/*
+ * This global var will collect filters with the following structure:
  * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args, filter or action)]']
  */
 
-if( !isset( $yourls_actions ) )
-    $yourls_actions = array();
-/* This global var will collect 'done' actions with the following structure:
+if ( !isset( $yourls_actions ) ) {
+    $yourls_actions = [];
+}
+/*
+ * This global var will collect 'done' actions with the following structure:
  * $yourls_actions['hook'] => number of time this action was done
  */
 
@@ -31,25 +35,29 @@ if( !isset( $yourls_actions ) )
  * Registers a filtering function
  *
  * Typical use:
- *		yourls_add_filter('some_hook', 'function_handler_for_hook');
+ *        yourls_add_filter('some_hook', 'function_handler_for_hook');
  *
- * @global array $yourls_filters Storage for all of the filters
- * @param string $hook the name of the YOURLS element to be filtered or YOURLS action to be triggered
- * @param callback $function_name the name of the function that is to be called.
- * @param integer $priority optional. Used to specify the order in which the functions associated with a particular action are executed (default=10, lower=earlier execution, and functions with the same priority are executed in the order in which they were added to the filter)
- * @param int $accepted_args optional. The number of arguments the function accept (default is the number provided).
- * @param string $type
+ * @param string   $hook           the name of the YOURLS element to be filtered or YOURLS action to be triggered
+ * @param callback $function_name  the name of the function that is to be called.
+ * @param int      $priority       optional. Used to specify the order in which the functions associated with a
+ *                                 particular action are executed (default=10, lower=earlier execution, and functions
+ *                                 with the same priority are executed in the order in which they were added to the
+ *                                 filter)
+ * @param int      $accepted_args  optional. The number of arguments the function accept (default is the number
+ *                                 provided).
+ * @param string   $type
+ * @global array   $yourls_filters Storage for all of the filters
  */
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
-	global $yourls_filters;
-	// At this point, we cannot check if the function exists, as it may well be defined later (which is OK)
-	$id = yourls_filter_unique_id( $hook, $function_name, $priority );
+    global $yourls_filters;
+    // At this point, we cannot check if the function exists, as it may well be defined later (which is OK)
+    $id = yourls_filter_unique_id( $hook, $function_name, $priority );
 
-	$yourls_filters[ $hook ][ $priority ][ $id ] = array(
-		'function'      => $function_name,
-		'accepted_args' => $accepted_args,
-		'type'          => $type,
-	);
+    $yourls_filters[ $hook ][ $priority ][ $id ] = [
+        'function'      => $function_name,
+        'accepted_args' => $accepted_args,
+        'type'          => $type,
+    ];
 }
 
 /**
@@ -66,10 +74,8 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * @param int $accepted_args optional. The number of arguments the function accept (default 1).
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
-	return yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
+	yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
 }
-
-
 
 /**
  * Build Unique ID for storage and retrieval.
@@ -83,30 +89,29 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  * @return string unique ID for usage as array key
  */
 function yourls_filter_unique_id( $hook, $function, $priority ) {
-	global $yourls_filters;
-
-	// If function then just skip all of the tests and not overwrite the following.
-	if ( is_string( $function ) ) {
-		return $function;
+    // If function then just skip all of the tests and not overwrite the following.
+    if ( is_string( $function ) ) {
+        return $function;
     }
 
-	if( is_object($function) ) {
-		// Closures are currently implemented as objects
-		$function = array( $function, '' );
-	} else {
-		$function = (array) $function;
-	}
+    if ( is_object( $function ) ) {
+        // Closures are currently implemented as objects
+        $function = [ $function, '' ];
+    }
+    else {
+        $function = (array)$function;
+    }
 
-	// Object Class Calling
-	if ( is_object( $function[0] ) ) {
-        return spl_object_hash( $function[0] ) . $function[1];
-	}
+    // Object Class Calling
+    if ( is_object( $function[ 0 ] ) ) {
+        return spl_object_hash( $function[ 0 ] ).$function[ 1 ];
+    }
 
     // Static Calling
-    if ( is_string( $function[0] ) ) {
-		return $function[0]. '::' .$function[1];
+    if ( is_string( $function[ 0 ] ) ) {
+        return $function[ 0 ].'::'.$function[ 1 ];
     }
-
+    // TODO: missing final return;
 }
 
 /**
@@ -130,36 +135,40 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
  * @return mixed
  */
 function yourls_apply_filter( $hook, $value = '' ) {
-	global $yourls_filters;
-	if ( !isset( $yourls_filters[ $hook ] ) )
-		return $value;
+    global $yourls_filters;
+    if ( !isset( $yourls_filters[ $hook ] ) ) {
+        return $value;
+    }
 
-	$args = func_get_args();
+    $args = func_get_args();
 
-	// Sort filters by priority
-	ksort( $yourls_filters[ $hook ] );
+    // Sort filters by priority
+    ksort( $yourls_filters[ $hook ] );
 
-	// Loops through each filter
-	reset( $yourls_filters[ $hook ] );
-	do {
-		foreach( (array) current( $yourls_filters[ $hook ] ) as $the_ ) {
-			if ( !is_null( $the_['function'] ) ){
-				$args[1] = $value;
-				$count = $the_['accepted_args'];
-				if ( is_null( $count ) ) {
-					$_value = call_user_func_array( $the_['function'], array_slice( $args, 1 ) );
-				} else {
-					$_value = call_user_func_array( $the_['function'], array_slice( $args, 1, (int) $count ) );
-				}
-			}
-			if( $the_['type'] == 'filter' )
-				$value = $_value;
-		}
+    // Loops through each filter
+    reset( $yourls_filters[ $hook ] );
+    do {
+        foreach ( (array)current( $yourls_filters[ $hook ] ) as $the_ ) {
+            if ( !is_null( $the_[ 'function' ] ) ) {
+                $args[ 1 ] = $value;
+                $count = $the_[ 'accepted_args' ];
+                if ( is_null( $count ) ) {
+                    $_value = call_user_func_array( $the_[ 'function' ], array_slice( $args, 1 ) );
+                }
+                else {
+                    $_value = call_user_func_array( $the_[ 'function' ], array_slice( $args, 1, (int)$count ) );
+                }
+            }
+            if ( $the_[ 'type' ] == 'filter' ) {
+                $value = $_value;
+            }
+        }
+    } while ( next( $yourls_filters[ $hook ] ) !== false );
 
-	} while ( next( $yourls_filters[ $hook ] ) !== false );
-
-	if( $the_['type'] == 'filter' )
-		return $value;
+    // TODO: Missing final return - Why not just return all the time? It's up receiving code to use or not.
+    if ( $the_[ 'type' ] == 'filter' ) {
+        return $value;
+    }
 }
 
 /**
@@ -169,39 +178,43 @@ function yourls_apply_filter( $hook, $value = '' ) {
  * @param mixed $arg action arguments
  */
 function yourls_do_action( $hook, $arg = '' ) {
-	global $yourls_actions;
+    global $yourls_actions;
 
-	// Keep track of actions that are "done"
-	if ( !isset( $yourls_actions ) )
-		$yourls_actions = array();
-	if ( !isset( $yourls_actions[ $hook ] ) ) {
-		$yourls_actions[ $hook ] = 1;
-    } else {
-		++$yourls_actions[ $hook ];
+    // Keep track of actions that are "done"
+    if ( !isset( $yourls_actions ) ) {
+        $yourls_actions = [];
+    }
+    if ( !isset( $yourls_actions[ $hook ] ) ) {
+        $yourls_actions[ $hook ] = 1;
+    }
+    else {
+        ++$yourls_actions[ $hook ];
     }
 
-	$args = array();
-	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) // array(&$this)
-		$args[] =& $arg[0];
-	else
-		$args[] = $arg;
-	for ( $a = 2; $a < func_num_args(); $a++ )
-		$args[] = func_get_arg( $a );
+    $args = [];
+    if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[ 0 ] ) && is_object( $arg[ 0 ] ) ) { // array(&$this)
+        $args[] =& $arg[ 0 ];
+    }
+    else {
+        $args[] = $arg;
+    }
 
-	yourls_apply_filter( $hook, $args );
+    for ( $a = 2 ; $a < func_num_args() ; $a++ ) {
+        $args[] = func_get_arg( $a );
+    }
+
+    yourls_apply_filter( $hook, $args );
 }
 
 /**
-* Retrieve the number times an action is fired.
-*
-* @param string $hook Name of the action hook.
-* @return int The number of times action hook <tt>$hook</tt> is fired
-*/
+ * Retrieve the number times an action is fired.
+ *
+ * @param string $hook Name of the action hook.
+ * @return int The number of times action hook <tt>$hook</tt> is fired
+ */
 function yourls_did_action( $hook ) {
-	global $yourls_actions;
-	if ( !isset( $yourls_actions ) || !isset( $yourls_actions[ $hook ] ) )
-		return 0;
-	return $yourls_actions[ $hook ];
+    global $yourls_actions;
+    return empty( $yourls_actions[ $hook ] ) ? 0 : $yourls_actions[ $hook ];
 }
 
 /**
@@ -218,34 +231,33 @@ function yourls_did_action( $hook ) {
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callback $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
- * @return boolean Whether the function was registered as a filter before it was removed.
+ * @return bool Whether the function was registered as a filter before it was removed.
  */
 function yourls_remove_filter( $hook, $function_to_remove, $priority = 10 ) {
-	global $yourls_filters;
+    global $yourls_filters;
 
-	$function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
+    $function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
 
-	$remove = isset( $yourls_filters[ $hook ][ $priority ][ $function_to_remove ] );
+    $remove = isset( $yourls_filters[ $hook ][ $priority ][ $function_to_remove ] );
 
-	if ( $remove === true ) {
-		unset ( $yourls_filters[$hook][$priority][$function_to_remove] );
-		if ( empty( $yourls_filters[$hook][$priority] ) )
-			unset( $yourls_filters[$hook] );
-	}
-	return $remove;
+    if ( $remove === true ) {
+        unset ( $yourls_filters[ $hook ][ $priority ][ $function_to_remove ] );
+        if ( empty( $yourls_filters[ $hook ][ $priority ] ) ) {
+            unset( $yourls_filters[ $hook ] );
+        }
+    }
+    return $remove;
 }
 
 /**
  * Removes a function from a specified action hook.
  *
  * @see yourls_remove_filter()
- *
- * @param string $hook The action hook to which the function to be removed is hooked.
- * @param callback $function_to_remove The name of the function which should be removed.
- * @param int $priority optional. The priority of the function (default: 10).
- * @return boolean Whether the function was registered as an action before it was removed.
+ * @param string   $hook               The action hook to which the function to be removed is hooked.
+ * @param callable $function_to_remove The name of the function which should be removed.
+ * @param int      $priority           optional. The priority of the function (default: 10).
+ * @return bool                        Whether the function was registered as an action before it was removed.
  */
-
 function yourls_remove_action( $hook, $function_to_remove, $priority = 10 ) {
     return yourls_remove_filter( $hook, $function_to_remove, $priority );
 }
@@ -253,14 +265,12 @@ function yourls_remove_action( $hook, $function_to_remove, $priority = 10 ) {
 /**
  * Removes all functions from a specified action hook.
  *
- * @see yourls_remove_all_filters()
+ * @see   yourls_remove_all_filters()
  * @since 1.7.1
- *
- * @param string $hook The action to remove hooks from
- * @param int $priority optional. The priority of the functions to remove
- * @return boolean true when it's finished
+ * @param string    $hook     The action to remove hooks from
+ * @param int|false $priority optional. The priority of the functions to remove
+ * @return bool true when it's finished
  */
-
 function yourls_remove_all_actions( $hook, $priority = false ) {
     return yourls_remove_all_filters( $hook, $priority );
 }
@@ -269,19 +279,18 @@ function yourls_remove_all_actions( $hook, $priority = false ) {
  * Removes all functions from a specified filter hook.
  *
  * @since 1.7.1
- *
- * @param string $hook The filter to remove hooks from
- * @param int $priority optional. The priority of the functions to remove
- * @return boolean true when it's finished
+ * @param string    $hook     The filter to remove hooks from
+ * @param int|false $priority optional. The priority of the functions to remove
+ * @return bool true when it's finished
  */
-
 function yourls_remove_all_filters( $hook, $priority = false ) {
     global $yourls_filters;
 
-    if( isset( $yourls_filters[ $hook ] ) ) {
-        if( $priority === false ) {
+    if ( isset( $yourls_filters[ $hook ] ) ) {
+        if ( $priority === false ) {
             unset( $yourls_filters[ $hook ] );
-        } else if ( isset( $yourls_filters[ $hook ][ $priority ] ) ) {
+        }
+        elseif ( isset( $yourls_filters[ $hook ][ $priority ] ) ) {
             unset( $yourls_filters[ $hook ][ $priority ] );
         }
     }
@@ -292,63 +301,65 @@ function yourls_remove_all_filters( $hook, $priority = false ) {
 /**
  * Check if any filter has been registered for a hook.
  *
- * @global array $yourls_filters storage for all of the filters
- * @param string $hook The name of the filter hook.
- * @param callback $function_to_check optional.  If specified, return the priority of that function on this hook or false if not attached.
- * @return int|boolean Optionally returns the priority on that hook for the specified function.
+ * @param string         $hook              The name of the filter hook.
+ * @param callable|false $function_to_check optional. If specified, return the priority of that function on this hook or false if not attached.
+ * @return int|bool Optionally returns the priority on that hook for the specified function.
+ * @global array         $yourls_filters    storage for all of the filters
  */
 function yourls_has_filter( $hook, $function_to_check = false ) {
-	global $yourls_filters;
+    global $yourls_filters;
 
-	$has = !empty( $yourls_filters[ $hook ] );
-	if ( false === $function_to_check || false == $has ) {
-		return $has;
-	}
+    $has = !empty( $yourls_filters[ $hook ] );
+    if ( false === $function_to_check || false === $has ) {
+        return $has;
+    }
 
-	if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) )
-		return false;
+    if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) ) {
+        return false;
+    }
 
-	foreach ( (array) array_keys( $yourls_filters[ $hook ] ) as $priority ) {
-		if ( isset( $yourls_filters[ $hook ][ $priority ][ $idx ] ) )
-			return $priority;
-	}
-	return false;
+    foreach ( array_keys( $yourls_filters[ $hook ] ) as $priority ) {
+        if ( isset( $yourls_filters[ $hook ][ $priority ][ $idx ] ) ) {
+            return $priority;
+        }
+    }
+    return false;
 }
 
+/**
+ * @param string         $hook
+ * @param callable|false $function_to_check
+ * @return bool|int
+ */
 function yourls_has_action( $hook, $function_to_check = false ) {
-	return yourls_has_filter( $hook, $function_to_check );
+    return yourls_has_filter( $hook, $function_to_check );
 }
 
 /**
  * Return number of active plugins
  *
- * @return integer Number of activated plugins
+ * @return int Number of activated plugins
  */
-function yourls_has_active_plugins( ) {
-	global $ydb;
-
-	return count( $ydb->get_plugins() );
+function yourls_has_active_plugins() {
+    return count( yourls_get_db()->get_plugins() );
 }
-
 
 /**
  * List plugins in /user/plugins
  *
  * @return array Array of [/plugindir/plugin.php]=>array('Name'=>'Ozh', 'Title'=>'Hello', )
  */
-function yourls_get_plugins( ) {
-	$plugins = (array) glob( YOURLS_PLUGINDIR .'/*/plugin.php');
+function yourls_get_plugins() {
+    $plugins = (array)glob( YOURLS_PLUGINDIR.'/*/plugin.php' );
 
-	if( !$plugins )
-		return array();
+    if ( is_array( $plugins ) ) {
+        foreach ( $plugins as $key => $plugin ) {
+            $plugins[ yourls_plugin_basename( $plugin ) ] = yourls_get_plugin_data( $plugin );
+            unset( $plugins[ $key ] );
+        }
+    }
 
-	foreach( $plugins as $key => $plugin ) {
-		$_plugin = yourls_plugin_basename( $plugin );
-		$plugins[ $_plugin ] = yourls_get_plugin_data( $plugin );
-		unset( $plugins[ $key ] );
-	}
-
-	return $plugins;
+    return empty( $plugins ) ? [] : $plugins;
 }
 
 /**
@@ -358,14 +369,9 @@ function yourls_get_plugins( ) {
  * @return bool
  */
 function yourls_is_active_plugin( $plugin ) {
-	if( !yourls_has_active_plugins( ) )
-		return false;
-
-	global $ydb;
-	$plugin = yourls_plugin_basename( $plugin );
-
-	return in_array( $plugin, $ydb->get_plugins() );
-
+    return yourls_has_active_plugins() > 0 ?
+        in_array( yourls_plugin_basename( $plugin ), yourls_get_db()->get_plugins() )
+        : false;
 }
 
 /**
@@ -375,29 +381,30 @@ function yourls_is_active_plugin( $plugin ) {
  * @return array Array of 'Field'=>'Value' from plugin comment header lines of the form "Field: Value"
  */
 function yourls_get_plugin_data( $file ) {
-	$fp = fopen( $file, 'r' ); // assuming $file is readable, since yourls_load_plugins() filters this
-	$data = fread( $fp, 8192 ); // get first 8kb
-	fclose( $fp );
+    $fp = fopen( $file, 'r' ); // assuming $file is readable, since yourls_load_plugins() filters this
+    $data = fread( $fp, 8192 ); // get first 8kb
+    fclose( $fp );
 
-	// Capture all the header within first comment block
-	if( !preg_match( '!.*?/\*(.*?)\*/!ms', $data, $matches ) )
-		return array();
+    // Capture all the header within first comment block
+    if ( !preg_match( '!.*?/\*(.*?)\*/!ms', $data, $matches ) )
+        return [];
 
-	// Capture each line with "Something: some text"
-	unset( $data );
-	$lines = preg_split( "[\n|\r]", $matches[1] );
-	unset( $matches );
+    // Capture each line with "Something: some text"
+    unset( $data );
+    $lines = preg_split( "[\n|\r]", $matches[ 1 ] );
+    unset( $matches );
 
-	$plugin_data = array();
-	foreach( $lines as $line ) {
-		if( !preg_match( '!(.*?):\s+(.*)!', $line, $matches ) )
-			continue;
+    $plugin_data = [];
+    foreach ( $lines as $line ) {
+        if ( !preg_match( '!(.*?):\s+(.*)!', $line, $matches ) ) {
+            continue;
+        }
 
-		list( $null, $field, $value ) = array_map( 'trim', $matches);
-		$plugin_data[ $field ] = $value;
-	}
+        list( $null, $field, $value ) = array_map( 'trim', $matches );
+        $plugin_data[ $field ] = $value;
+    }
 
-	return $plugin_data;
+    return $plugin_data;
 }
 
 /**
@@ -412,51 +419,49 @@ function yourls_get_plugin_data( $file ) {
  * @return array    Array('loaded' => bool, 'info' => string)
  */
 function yourls_load_plugins() {
-	// Don't load plugins when installing or updating
-	if( yourls_is_installing() OR yourls_is_upgrading() OR !yourls_is_installed() ) {
-		return array(
+    // Don't load plugins when installing or updating
+    if ( yourls_is_installing() OR yourls_is_upgrading() OR !yourls_is_installed() ) {
+        return [
             'loaded' => false,
-            'info' => 'install/upgrade'
-        );
+            'info'   => 'install/upgrade'
+        ];
     }
 
-	$active_plugins = yourls_get_option( 'active_plugins' );
-	if( false === $active_plugins OR $active_plugins === array() ) {
-		return array(
+    $active_plugins = (array)yourls_get_option( 'active_plugins' );
+    if ( empty( $active_plugins ) ) {
+        return [
             'loaded' => false,
-            'info' => 'no active plugin'
-        );
+            'info'   => 'no active plugin'
+        ];
     }
 
-	global $ydb;
-	$plugins = array();
-
-	foreach( (array)$active_plugins as $key=>$plugin ) {
-		if( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
-			include_once( YOURLS_PLUGINDIR.'/'.$plugin );
-			$plugins[] = $plugin;
-			unset( $active_plugins[$key] );
-		}
-	}
+    $plugins = [];
+    foreach ( $active_plugins as $key => $plugin ) {
+        if ( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
+            include_once( YOURLS_PLUGINDIR.'/'.$plugin );
+            $plugins[] = $plugin;
+            unset( $active_plugins[ $key ] );
+        }
+    }
 
     // Replace active plugin list with list of plugins we just activated
-    $ydb->set_plugins($plugins);
-    $info = count($plugins) . ' activated';
+    yourls_get_db()->set_plugins( $plugins );
+    $info = count( $plugins ).' activated';
 
-	// $active_plugins should be empty now, if not, a plugin could not be find: remove it
-	if( count( $active_plugins ) ) {
-		yourls_update_option( 'active_plugins', $plugins );
-		$message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', count( $active_plugins ) );
-		$missing = '<strong>'.join( '</strong>, <strong>', $active_plugins ).'</strong>';
-		yourls_add_notice( $message .' '. $missing );
+    // $active_plugins should be empty now, if not, a plugin could not be find: remove it
+    $missing_count = count( $active_plugins );
+    if ( $missing_count > 0 ) {
+        yourls_update_option( 'active_plugins', $plugins );
+        $message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', $missing_count );
+        $missing = '<strong>'.implode( '</strong>, <strong>', $active_plugins ).'</strong>';
+        yourls_add_notice( $message.' '.$missing );
+        $info .= ', '.$missing_count.' removed';
+    }
 
-		$info .= ', ' . count($active_plugins) . ' removed';
-	}
-
-    return array(
+    return [
         'loaded' => true,
-        'info' => $info
-    );
+        'info'   => $info
+    ];
 }
 
 /**
@@ -466,164 +471,153 @@ function yourls_load_plugins() {
  * @return bool
  */
 function yourls_validate_plugin_file( $file ) {
-	if (
-		false !== strpos( $file, '..' )
-		OR
-		false !== strpos( $file, './' )
-		OR
-		'plugin.php' !== substr( $file, -10 )	// a plugin must be named 'plugin.php'
-		OR
-		!is_readable( $file )
-	)
-		return false;
-
-	return true;
+    return false === strpos( $file, '..' )
+           && false === strpos( $file, './' )
+           && 'plugin.php' === substr( $file, -10 )
+           && is_readable( $file );
 }
 
 /**
  * Activate a plugin
  *
  * @param string $plugin Plugin filename (full or relative to plugins directory)
- * @return mixed string if error or true if success
+ * @return string|true  string if error or true if success
  */
 function yourls_activate_plugin( $plugin ) {
-	// validate file
-	$plugin = yourls_plugin_basename( $plugin );
-	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
-	if( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) )
-		return yourls__( 'Not a valid plugin file' );
+    // validate file
+    $plugin = yourls_plugin_basename( $plugin );
+    $plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
+    if ( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) ) {
+        return yourls__( 'Not a valid plugin file' );
+    }
 
-	// check not activated already
-	global $ydb;
-	if( yourls_has_active_plugins() && in_array( $plugin, $ydb->get_plugins() ) )
-		return yourls__( 'Plugin already activated' );
+    // check not activated already
+    $ydb = yourls_get_db();
+    if ( yourls_is_active_plugin( $plugin ) ) {
+        return yourls__( 'Plugin already activated' );
+    }
 
-	// attempt activation. TODO: uber cool fail proof sandbox like in WP.
-	ob_start();
-	include_once( YOURLS_PLUGINDIR.'/'.$plugin );
-	if ( ob_get_length() > 0 ) {
-		// there was some output: error
+    // attempt activation. TODO: uber cool fail proof sandbox like in WP.
+    ob_start();
+    include_once( $plugindir.'/'.$plugin );
+    if ( ob_get_length() > 0 ) {
+        // there was some output: error
         // @codeCoverageIgnoreStart
-		$output = ob_get_clean();
-		return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
+        $output = ob_get_clean();
+        return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
         // @codeCoverageIgnoreEnd
-	}
+    }
     ob_end_clean();
 
-	// so far, so good: update active plugin list
-	$ydb->add_plugin($plugin);
-	yourls_update_option( 'active_plugins', $ydb->get_plugins() );
-	yourls_do_action( 'activated_plugin', $plugin );
-	yourls_do_action( 'activated_' . $plugin );
+    // so far, so good: update active plugin list
+    $ydb->add_plugin( $plugin );
+    yourls_update_option( 'active_plugins', $ydb->get_plugins() );
+    yourls_do_action( 'activated_plugin', $plugin );
+    yourls_do_action( 'activated_'.$plugin );
 
-	return true;
+    return true;
 }
 
 /**
  * Deactivate a plugin
  *
  * @param string $plugin Plugin filename (full relative to plugins directory)
- * @return mixed string if error or true if success
+ * @return string|true  string if error or true if success
  */
 function yourls_deactivate_plugin( $plugin ) {
-	$plugin = yourls_plugin_basename( $plugin );
+    $plugin = yourls_plugin_basename( $plugin );
 
-	// Check plugin is active
-	if( !yourls_is_active_plugin( $plugin ) )
-		return yourls__( 'Plugin not active' );
+    // Check plugin is active
+    if ( !yourls_is_active_plugin( $plugin ) ) {
+        return yourls__( 'Plugin not active' );
+    }
 
-	// Deactivate the plugin
-	global $ydb;
+    // Deactivate the plugin
+    global $ydb;
     $plugins = $ydb->get_plugins();
-	$key = array_search( $plugin, $plugins );
-	if( $key !== false ) {
-		array_splice( $plugins, $key, 1 );
-	}
+    $key = array_search( $plugin, $plugins );
+    if ( $key !== false ) {
+        array_splice( $plugins, $key, 1 );
+    }
 
-    $ydb->set_plugins($plugins);
-	yourls_update_option( 'active_plugins', $plugins );
-	yourls_do_action( 'deactivated_plugin', $plugin );
-	yourls_do_action( 'deactivated_' . $plugin );
+    $ydb->set_plugins( $plugins );
+    yourls_update_option( 'active_plugins', $plugins );
+    yourls_do_action( 'deactivated_plugin', $plugin );
+    yourls_do_action( 'deactivated_'.$plugin );
 
-	return true;
+    return true;
 }
 
 /**
  * Return the path of a plugin file, relative to the plugins directory
+ * @param string $file
+ * @return string
  */
 function yourls_plugin_basename( $file ) {
-	$file = yourls_sanitize_filename( $file );
-	$plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
-	$file = str_replace( $plugindir, '', $file );
-	return trim( $file, '/' );
+	return trim( str_replace( yourls_sanitize_filename( YOURLS_PLUGINDIR ), '', yourls_sanitize_filename( $file ) ), '/' );
 }
 
 /**
  * Return the URL of the directory a plugin
+ * @param string $file
+ * @return string
  */
 function yourls_plugin_url( $file ) {
-	$url = YOURLS_PLUGINURL . '/' . yourls_plugin_basename( $file );
-	if( yourls_is_ssl() or yourls_needs_ssl() )
-		$url = str_replace( 'http://', 'https://', $url );
-	return yourls_apply_filter( 'plugin_url', $url, $file );
+    $url = YOURLS_PLUGINURL.'/'.yourls_plugin_basename( $file );
+    if ( yourls_is_ssl() or yourls_needs_ssl() ) {
+        $url = str_replace( 'http://', 'https://', $url );
+    }
+    return (string)yourls_apply_filter( 'plugin_url', $url, $file );
 }
 
 /**
  * Build list of links to plugin admin pages, if any
  *
- * @return void|array  Array of arrays of URL and anchor of plugin admin pages, or void if no plugin page
+ * @return array[]  Array of arrays of URL and anchor of plugin admin pages, or void if no plugin page
  */
 function yourls_list_plugin_admin_pages() {
-	global $ydb;
-
-    $pages = $ydb->get_plugin_pages();
-    if (!$pages) {
-        return;
+    $plugin_links = [];
+    foreach ( yourls_get_db()->get_plugin_pages() as $plugin => $page ) {
+        $plugin_links[ $plugin ] = [
+            'url'    => yourls_admin_url( 'plugins.php?page='.$page[ 'slug' ] ),
+            'anchor' => $page[ 'title' ],
+        ];
     }
-
-	$plugin_links = array();
-	foreach( (array)$pages as $plugin => $page ) {
-		$plugin_links[ $plugin ] = array(
-			'url'    => yourls_admin_url( 'plugins.php?page='.$page['slug'] ),
-			'anchor' => $page['title'],
-		);
-	}
-	return $plugin_links;
+    return $plugin_links;
 }
 
 /**
  * Register a plugin administration page
+ * @param string   $slug
+ * @param string   $title
+ * @param callable $function
  */
 function yourls_register_plugin_page( $slug, $title, $function ) {
-	global $ydb;
-
-	$ydb->add_plugin_page($slug, $title, $function);
+    yourls_get_db()->add_plugin_page( $slug, $title, $function );
 }
 
 /**
  * Handle plugin administration page
  *
+ * @param string $plugin_page
  */
 function yourls_plugin_admin_page( $plugin_page ) {
-	global $ydb;
+    // Check the plugin page is actually registered
+    $pages = yourls_get_db()->get_plugin_pages();
+    if ( !isset( $pages[ $plugin_page ] ) ) {
+        yourls_die( yourls__( 'This page does not exist. Maybe a plugin you thought was activated is inactive?' ), yourls__( 'Invalid link' ) );
+    }
 
-	// Check the plugin page is actually registered
-    $pages = $ydb->get_plugin_pages();
-	if( !isset( $pages[$plugin_page] ) ) {
-		yourls_die( yourls__( 'This page does not exist. Maybe a plugin you thought was activated is inactive?' ), yourls__( 'Invalid link' ) );
-	}
+    // Draw the page itself
+    yourls_do_action( 'load-'.$plugin_page );
+    yourls_html_head( 'plugin_page_'.$plugin_page, $pages[ $plugin_page ][ 'title' ] );
+    yourls_html_logo();
+    yourls_html_menu();
 
-	// Draw the page itself
-	yourls_do_action( 'load-' . $plugin_page);
-	yourls_html_head( 'plugin_page_' . $plugin_page, $pages[$plugin_page]['title'] );
-	yourls_html_logo();
-	yourls_html_menu();
+    call_user_func( $pages[ $plugin_page ][ 'function' ] );
 
-	call_user_func( $pages[$plugin_page]['function'] );
-
-	yourls_html_footer();
+    yourls_html_footer();
 }
-
 
 /**
  * Callback function: Sort plugins
@@ -636,19 +630,22 @@ function yourls_plugin_admin_page( $plugin_page ) {
  * @return int 0, 1 or -1, see uasort()
  */
 function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
-	$orderby = yourls_apply_filter( 'plugins_sort_callback', 'Plugin Name' );
-	$order   = yourls_apply_filter( 'plugins_sort_callback', 'ASC' );
+    $orderby = yourls_apply_filter( 'plugins_sort_callback', 'Plugin Name' );
+    $order = yourls_apply_filter( 'plugins_sort_callback', 'ASC' );
 
-	$a = isset( $plugin_a[ $orderby ] ) ? $plugin_a[ $orderby ] : '';
-	$b = isset( $plugin_b[ $orderby ] ) ? $plugin_b[ $orderby ] : '';
+    $a = isset( $plugin_a[ $orderby ] ) ? $plugin_a[ $orderby ] : '';
+    $b = isset( $plugin_b[ $orderby ] ) ? $plugin_b[ $orderby ] : '';
 
-	if ( $a == $b )
-		return 0;
+    if ( $a == $b ) {
+        return 0;
+    }
 
-	if ( 'DESC' == $order )
-		return ( $a < $b ) ? 1 : -1;
-	else
-		return ( $a < $b ) ? -1 : 1;
+    if ( 'DESC' == $order ) {
+        return ( $a < $b ) ? 1 : -1;
+    }
+    else {
+        return ( $a < $b ) ? -1 : 1;
+    }
 }
 
 /**
@@ -716,7 +713,7 @@ function yourls_return_zero() {
  * @return array Empty array.
  */
 function yourls_return_empty_array() {
-    return array();
+    return [];
 }
 
 /**
