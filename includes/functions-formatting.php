@@ -56,7 +56,7 @@ function yourls_string2htmlid( $string ) {
  * If we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
  * character that doesn't belong to it will be removed.
  * But otherwise we must have a more conservative approach: we could be checking for a keyword that
- * was once valid but now the short URL charset. In such a case, we are treating the keyword for what
+ * was once valid but now the short URL charset has changed. In such a case, we are treating the keyword for what
  * it is: just a part of a URL, hence sanitize it as a URL.
  *
  * @param  string $keyword                        short URL keyword
@@ -534,7 +534,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 
 
 /**
- * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889
+ * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889, 2691
  *
  * This function is trickier than what seems to be needed at first
  *
@@ -543,13 +543,13 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
  * The general rule is that the scheme ("stuff://" or "stuff:") is case insensitive and should be lowercase. But then, depending on the
  * scheme, parts of what follows the scheme may or may not be case sensitive.
  *
- * Second, simply using parse_url() and its opposite http_build_url() (see functions-compat.php) is a pretty unsafe process:
+ * Second, simply using parse_url() and its opposite http_build_url() is a pretty unsafe process:
  *  - parse_url() can easily trip up on malformed or weird URLs
  *  - exploding a URL with parse_url(), lowercasing some stuff, and glueing things back with http_build_url() does not handle well
  *    "stuff:"-like URI [1] and can result in URLs ending modified [2][3]. We don't want to *validate* URI, we just want to lowercase
  *    what is supposed to be lowercased.
  *
- * So, to be conservative, this functions:
+ * So, to be conservative, this function:
  *  - lowercases the scheme
  *  - does not lowercase anything else on "stuff:" URI
  *  - tries to lowercase only scheme and domain of "stuff://" URI
@@ -596,7 +596,8 @@ function yourls_lowercase_scheme_domain( $url ) {
     $lower = array();
     $lower['scheme'] = strtolower( $parts['scheme'] );
     if( isset( $parts['host'] ) ) {
-        $lower['host'] = strtolower( $parts['host'] );
+        // Use mb_strtolower otherwise IDN domains like طارق.net get wrongly converted
+        $lower['host'] = mb_strtolower( $parts['host'] );
     } else {
         $parts['host'] = '***';
     }
