@@ -599,12 +599,14 @@ function yourls_normalize_uri( $url ) {
     $lower = array();
     $lower['scheme'] = strtolower( $parts['scheme'] );
     if( isset( $parts['host'] ) ) {
+        // Convert domain to lowercase, with mb_ to preserve UTF8, and
+        $lower['host'] = mb_strtolower($parts['host']);
         /**
-         * Convert domain to lowercase, with mb_ to preserve UTF8, and
-         * convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
-         * are considered the same
+         * Convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
+         * are considered the same. Explicitely mention option and variant to avoid notice
+         * on PHP 7.2 and 7.3
          */
-        $lower['host'] = idn_to_utf8( mb_strtolower( $parts['host'] ) );
+         $lower['host'] = idn_to_utf8($lower['host'], IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
     }
 
     $url = http_build_url($url, $lower);
