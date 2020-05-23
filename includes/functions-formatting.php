@@ -495,7 +495,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	$original_url = $url;
 
 	// force scheme and domain to lowercase - see issues 591 and 1630
-    $url = yourls_lowercase_scheme_domain( $url );
+    $url = yourls_normalize_uri( $url );
 
 	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
@@ -534,7 +534,10 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 
 
 /**
- * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889, 2691
+ * Normalize a URI : lowercase scheme and domain, convert IDN to UTF8
+ *
+ * All in one example: 'HTTP://XN--mgbuq0c.Com/AbCd' -> 'http://طارق.com/AbCd'
+ * See issues 591, 1630, 1889, 2691
  *
  * This function is trickier than what seems to be needed at first
  *
@@ -562,7 +565,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
  * @param string $url URL
  * @return string URL with lowercase scheme and protocol
  */
-function yourls_lowercase_scheme_domain( $url ) {
+function yourls_normalize_uri( $url ) {
     $scheme = yourls_get_protocol( $url );
 
     if ('' == $scheme) {
@@ -596,10 +599,12 @@ function yourls_lowercase_scheme_domain( $url ) {
     $lower = array();
     $lower['scheme'] = strtolower( $parts['scheme'] );
     if( isset( $parts['host'] ) ) {
-        // Use mb_strtolower otherwise IDN domains like طارق.net get wrongly converted
-        $lower['host'] = mb_strtolower( $parts['host'] );
-    } else {
-        $parts['host'] = '***';
+        /**
+         * Convert domain to lowercase, with mb_ to preserve UTF8, and
+         * convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
+         * are considered the same
+         */
+        $lower['host'] = idn_to_utf8( mb_strtolower( $parts['host'] ) );
     }
 
     $url = http_build_url($url, $lower);
