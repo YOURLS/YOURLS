@@ -595,7 +595,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'long_url'      => yourls_esc_url( $url ),
 			'title_attr'    => yourls_esc_attr( $title ),
 			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
-			'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
+			'long_url_html' => yourls_esc_html( yourls_trim_long_string( urldecode( $url ) ) ),
 			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
