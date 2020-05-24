@@ -610,7 +610,7 @@ function yourls_date_i18n( $dateformatstring, $timestamp = false ) {
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 
 	if ( false === $timestamp ) {
-        $timestamp = yourls_current_time( 'timestamp' );
+        $timestamp = yourls_get_timestamp( time() );
 	}
 
 	// store original value for language with untypical grammars
@@ -645,31 +645,6 @@ function yourls_date_i18n( $dateformatstring, $timestamp = false ) {
 
 	// Allow plugins to redo this entirely for languages with untypical grammars
 	return yourls_apply_filter('date_i18n', $date, $req_format, $timestamp);
-}
-
-/**
- * Retrieve the current time based on specified type. Stolen from WP.
- *
- * The 'mysql' type will return the time in the format for MySQL DATETIME field.
- * The 'timestamp' type will return the current timestamp.
- *
- * If $gmt is set to either '1' or 'true', then both types will use GMT time.
- * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
- *
- * @since 1.6
- *
- * @param string $type Either 'mysql' or 'timestamp'.
- * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
- * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
- */
-function yourls_current_time( $type, $gmt = 0 ) {
-	switch ( $type ) {
-		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
-			break;
-		case 'timestamp':
-			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
-	}
 }
 
 /**

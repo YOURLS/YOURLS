@@ -10,6 +10,32 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Retrieve the current time based on specified type. Stolen from WP.
+ *
+ * The 'mysql' type will return the time in the format for MySQL DATETIME field.
+ * The 'timestamp' type will return the current timestamp.
+ *
+ * If $gmt is set to either '1' or 'true', then both types will use GMT time.
+ * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
+ *
+ * @since 1.6
+ * @deprecated 1.7.10
+ *
+ * @param string $type Either 'mysql' or 'timestamp'.
+ * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
+ * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
+ */
+function yourls_current_time( $type, $gmt = 0 ) {
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_timestamp' );
+	switch ( $type ) {
+		case 'mysql':
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
+		case 'timestamp':
+			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
+	}
+}
+
+/**
  * The original string sanitize function
  *
  * @deprecated 1.7.10
