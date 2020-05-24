@@ -472,7 +472,7 @@ function yourls_load_plugins() {
     $missing_count = count( $active_plugins );
     if ( $missing_count > 0 ) {
         yourls_update_option( 'active_plugins', $plugins );
-        $message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', $missing_count );
+        $message = yourls_n( 'Could not find and deactivate plugin :', 'Could not find and deactivate plugins :', $missing_count );
         $missing = '<strong>'.implode( '</strong>, <strong>', $active_plugins ).'</strong>';
         yourls_add_notice( $message.' '.$missing );
         $info .= ', '.$missing_count.' removed';
