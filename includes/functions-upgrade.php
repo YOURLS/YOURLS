@@ -50,10 +50,12 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 
 
 function yourls_upgrade_to_18() {
-    global $ydb;
+    $ydb = yourls_get_db();
     $error_msg = [];
 
     echo "<p>Updating DB. Please wait...</p>";
+
+    $ydb->beginTransaction();
 
     $queries = array(
         'database charset'  => sprintf('ALTER DATABASE %s CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;', YOURLS_DB_NAME),
@@ -72,7 +74,9 @@ function yourls_upgrade_to_18() {
         }
     }
 
-    if( $error_msg ) {
+    $result = $ydb->commit();
+
+    if( $error_msg or $result === false ) {
         echo "<p class='error'>Unable to update the DB.</p>";
         echo "<p>You will have to manually fix things, sorry for the inconvenience :(</p>";
         echo "<p>The errors were:
@@ -115,10 +119,9 @@ function yourls_upgrade_to_15( ) {
 	echo "<p>Enabling the plugin API. Please wait...</p>";
 
 	// Alter URL table to store titles
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$sql = "ALTER TABLE `$table_url` ADD `title` TEXT AFTER `url`;";
-	$ydb->perform( $sql );
+	yourls_get_db()->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 
 	// Update .htaccess
@@ -134,7 +137,7 @@ function yourls_upgrade_to_15( ) {
  */
 function yourls_upgrade_to_143( ) {
 	// Check if we have 'keyword' (borked install) or 'shorturl' (ok install)
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table_log = YOURLS_DB_TABLE_LOG;
 	$sql = "SHOW COLUMNS FROM `$table_log`";
 	$cols = $ydb->fetchObjects( $sql );
@@ -166,10 +169,9 @@ function yourls_upgrade_to_141( ) {
  *
  */
 function yourls_alter_url_table_to_141() {
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$alter = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 200 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
-	$ydb->perform( $alter );
+	yourls_get_db()->perform( $alter );
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
 }
 
@@ -222,11 +224,10 @@ function yourls_update_options_to_14() {
 	yourls_update_option( 'db_version', '200' );
 
 	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
-		global $ydb;
 		$table = YOURLS_DB_TABLE_NEXTDEC;
 		$next_id = $ydb->fetchValue("SELECT `next_id` FROM `$table`");
 		yourls_update_option( 'next_id', $next_id );
-		@$ydb->perform( "DROP TABLE `$table`" );
+		yourls_get_db()->perform( "DROP TABLE `$table`" );
 	} else {
 		yourls_update_option( 'next_id', 1 ); // In case someone mistakenly deleted the next_id constant or table too early
 	}
@@ -237,7 +238,7 @@ function yourls_update_options_to_14() {
  *
  */
 function yourls_create_tables_for_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 
 	$queries = array();
 
@@ -276,7 +277,7 @@ function yourls_create_tables_for_14() {
  *
  */
 function yourls_alter_url_table_to_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	$alters = array();
@@ -297,7 +298,7 @@ function yourls_alter_url_table_to_14() {
  *
  */
 function yourls_alter_url_table_to_14_part_two() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	$alters = array();
@@ -317,7 +318,7 @@ function yourls_alter_url_table_to_14_part_two() {
  *
  */
 function yourls_update_table_to_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	// Modify each link to reflect new structure
