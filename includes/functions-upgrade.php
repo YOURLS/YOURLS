@@ -225,7 +225,7 @@ function yourls_update_options_to_14() {
 
 	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
 		$table = YOURLS_DB_TABLE_NEXTDEC;
-		$next_id = $ydb->fetchValue("SELECT `next_id` FROM `$table`");
+		$next_id = yourls_get_db()->fetchValue("SELECT `next_id` FROM `$table`");
 		yourls_update_option( 'next_id', $next_id );
 		yourls_get_db()->perform( "DROP TABLE `$table`" );
 	} else {
@@ -337,14 +337,7 @@ function yourls_update_table_to_14() {
 		$keyword = $row->keyword;
 		$url = $row->url;
 		$newkeyword = yourls_int2string( $keyword );
-		$ydb->perform("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';");
-
-        /**
-         * @todo: As of 1.7.3+ when ezSQL is replaced, $ydb->result will no longer exist. This will fail and
-         *        should be replaced with a check for the number of affected rows. This said,
-         *        chances are no one still needs this. Leave it unfixed until someone complains.
-         */
-		if( $ydb->result === true ) {
+		if( true === $ydb->perform("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';") ) {
 			$queries++;
 		} else {
 			echo "<p>Huho... Could not update rown with url='$url', from keyword '$keyword' to keyword '$newkeyword'</p>"; // Find what went wrong :/
