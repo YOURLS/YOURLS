@@ -58,10 +58,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
-		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
-		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-		header( 'Pragma: no-cache' );
+        yourls_no_cache_headers();
 		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
@@ -918,23 +915,6 @@ function yourls_new_core_version_notice() {
 		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
-}
-
-/**
- * Send a filerable content type header
- *
- * @since 1.7
- * @param string $type content type ('text/html', 'application/json', ...)
- * @return bool whether header was sent
- */
-function yourls_content_type_header( $type ) {
-    yourls_do_action( 'content_type_header', $type );
-	if( !headers_sent() ) {
-		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
-		header( "Content-Type: $type; charset=$charset" );
-		return true;
-	}
-	return false;
 }
 
 /**
