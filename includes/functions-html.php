@@ -396,6 +396,9 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	if ( false !== $pre )
 		return $pre;
 
+    // Make sure IDN domains are in their UTF8 form
+    $shorturl = yourls_normalize_uri($shorturl);
+
 	$text   = ( $text ? '"'.$text.'" ' : '' );
 	$title  = ( $title ? "$title " : '' );
 	$share  = yourls_esc_textarea( $title.$text.$shorturl );

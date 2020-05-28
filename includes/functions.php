@@ -143,7 +143,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 		foreach ( (array)$results as $res ) {
 			$return['links']['link_'.$i++] = [
-				'shorturl' => yourls_get_yourls_site() .'/'. $res->keyword,
+				'shorturl' => yourls_link($res->keyword),
 				'url'      => $res->url,
 				'title'    => $res->title,
 				'timestamp'=> $res->timestamp,
