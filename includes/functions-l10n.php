@@ -600,41 +600,35 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
  *
  * @since 1.6
  *
- * @param string   $dateformatstring Format to display the date.
- * @param bool|int $unixtimestamp    Optional. Unix timestamp.
- * @param bool     $gmt              Optional, default is false. Whether to convert to GMT for time.
- * @return string The date, translated if locale specifies it.
+ * @param  string   $dateformatstring   Format to display the date.
+ * @param  bool|int $timestamp          Optional, Unix timestamp, default to current timestamp (with offset if applicable)
+ * @return string                       The date, translated if locale specifies it.
  */
-function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = false ) {
+function yourls_date_i18n( $dateformatstring, $timestamp = false ) {
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 
-	$i = $unixtimestamp;
-
-	if ( false === $i ) {
-		if ( ! $gmt )
-			$i = yourls_current_time( 'timestamp' );
-		else
-			$i = time();
-		// we should not let date() interfere with our
-		// specially computed timestamp
-		$gmt = true;
+	if ( false === $timestamp ) {
+        $timestamp = yourls_get_timestamp( time() );
 	}
 
 	// store original value for language with untypical grammars
-	// see http://core.trac.wordpress.org/ticket/9396
 	$req_format = $dateformatstring;
 
-	$datefunc = $gmt? 'gmdate' : 'date';
-
+	/**
+	 * Replace the date format characters with their translatation, if found
+	 * Example:
+	 *     'l d F Y' gets replaced with '\L\u\n\d\i d \M\a\i Y' in French
+	 * We deliberately don't deal with 'I', 'O', 'P', 'T', 'Z' and 'e' in date format (timezones)
+	 */
 	if ( ( !empty( $yourls_locale_formats->month ) ) && ( !empty( $yourls_locale_formats->weekday ) ) ) {
-		$datemonth            = $yourls_locale_formats->get_month( $datefunc( 'm', $i ) );
+		$datemonth            = $yourls_locale_formats->get_month( date( 'm', $timestamp ) );
 		$datemonth_abbrev     = $yourls_locale_formats->get_month_abbrev( $datemonth );
-		$dateweekday          = $yourls_locale_formats->get_weekday( $datefunc( 'w', $i ) );
+		$dateweekday          = $yourls_locale_formats->get_weekday( date( 'w', $timestamp ) );
 		$dateweekday_abbrev   = $yourls_locale_formats->get_weekday_abbrev( $dateweekday );
-		$datemeridiem         = $yourls_locale_formats->get_meridiem( $datefunc( 'a', $i ) );
-		$datemeridiem_capital = $yourls_locale_formats->get_meridiem( $datefunc( 'A', $i ) );
+		$datemeridiem         = $yourls_locale_formats->get_meridiem( date( 'a', $timestamp ) );
+		$datemeridiem_capital = $yourls_locale_formats->get_meridiem( date( 'A', $timestamp ) );
 
 		$dateformatstring = ' '.$dateformatstring;
 		$dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . yourls_backslashit( $dateweekday_abbrev ), $dateformatstring );
@@ -646,54 +640,11 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 
 		$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
 	}
-	$timezone_formats = array( 'P', 'I', 'O', 'T', 'Z', 'e' );
-	$timezone_formats_re = implode( '|', $timezone_formats );
-	if ( preg_match( "/$timezone_formats_re/", $dateformatstring ) ) {
 
-		// TODO: implement a timezone option
-		$timezone_string = yourls_get_option( 'timezone_string' );
-		if ( $timezone_string ) {
-			$timezone_object = timezone_open( $timezone_string );
-			$date_object = date_create( null, $timezone_object );
-			foreach( $timezone_formats as $timezone_format ) {
-				if ( false !== strpos( $dateformatstring, $timezone_format ) ) {
-					$formatted = date_format( $date_object, $timezone_format );
-					$dateformatstring = ' '.$dateformatstring;
-					$dateformatstring = preg_replace( "/([^\\\])$timezone_format/", "\\1" . yourls_backslashit( $formatted ), $dateformatstring );
-					$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
-				}
-			}
-		}
-	}
-	$j = @$datefunc( $dateformatstring, $i );
-	// allow plugins to redo this entirely for languages with untypical grammars
-	$j = yourls_apply_filter('date_i18n', $j, $req_format, $i, $gmt);
-	return $j;
-}
+	$date = date( $dateformatstring, $timestamp );
 
-/**
- * Retrieve the current time based on specified type. Stolen from WP.
- *
- * The 'mysql' type will return the time in the format for MySQL DATETIME field.
- * The 'timestamp' type will return the current timestamp.
- *
- * If $gmt is set to either '1' or 'true', then both types will use GMT time.
- * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
- *
- * @since 1.6
- *
- * @param string $type Either 'mysql' or 'timestamp'.
- * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
- * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
- */
-function yourls_current_time( $type, $gmt = 0 ) {
-	switch ( $type ) {
-		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
-			break;
-		case 'timestamp':
-			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
-	}
+	// Allow plugins to redo this entirely for languages with untypical grammars
+	return yourls_apply_filter('date_i18n', $date, $req_format, $timestamp);
 }
 
 /**

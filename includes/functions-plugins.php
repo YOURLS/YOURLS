@@ -377,6 +377,27 @@ function yourls_is_active_plugin( $plugin ) {
 /**
  * Parse a plugin header
  *
+ * The plugin header has the following form:
+ *      /*
+ *      Plugin Name: <plugin name>
+ *      Plugin URI: <plugin home page>
+ *      Description: <plugin description>
+ *      Version: <plugin version number>
+ *      Author: <author name>
+ *      Author URI: <author home page>
+ *      * /
+ *
+ * Or in the form of a phpdoc block
+ *      /**
+ *       * Plugin Name: <plugin name>
+ *       * Plugin URI: <plugin home page>
+ *       * Description: <plugin description>
+ *       * Version: <plugin version number>
+ *       * Author: <author name>
+ *       * Author URI: <author home page>
+ *       * /
+ *
+ * @since 1.5
  * @param string $file Physical path to plugin file
  * @return array Array of 'Field'=>'Value' from plugin comment header lines of the form "Field: Value"
  */
@@ -396,12 +417,11 @@ function yourls_get_plugin_data( $file ) {
 
     $plugin_data = [];
     foreach ( $lines as $line ) {
-        if ( !preg_match( '!(.*?):\s+(.*)!', $line, $matches ) ) {
+        if ( !preg_match( '!(\s*)?\*?(\s*)?(.*?):\s+(.*)!', $line, $matches ) ) {
             continue;
         }
 
-        list( $null, $field, $value ) = array_map( 'trim', $matches );
-        $plugin_data[ $field ] = $value;
+        $plugin_data[ trim($matches[3]) ] = trim($matches[4]);
     }
 
     return $plugin_data;
@@ -452,7 +472,7 @@ function yourls_load_plugins() {
     $missing_count = count( $active_plugins );
     if ( $missing_count > 0 ) {
         yourls_update_option( 'active_plugins', $plugins );
-        $message = yourls_n( 'Could not find and deactivated plugin :', 'Could not find and deactivated plugins :', $missing_count );
+        $message = yourls_n( 'Could not find and deactivate plugin :', 'Could not find and deactivate plugins :', $missing_count );
         $missing = '<strong>'.implode( '</strong>, <strong>', $active_plugins ).'</strong>';
         yourls_add_notice( $message.' '.$missing );
         $info .= ', '.$missing_count.' removed';
