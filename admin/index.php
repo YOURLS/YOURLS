@@ -176,7 +176,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	// If fails because keyword already exist, retry with no keyword
 	if ( isset( $return['status'] ) && $return['status'] == 'fail' && isset( $return['code'] ) && $return['code'] == 'error:keyword' ) {
 		$msg = $return['message'];
-		$return = yourls_add_new_link( $url, '', $ydb );
+		$return = yourls_add_new_link( $url, '' );
 		$return['message'] .= ' ('.$msg.')';
 	}
 
