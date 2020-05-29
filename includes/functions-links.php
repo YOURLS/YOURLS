@@ -119,11 +119,14 @@ function yourls_remove_query_arg( $key, $query = false ) {
 }
 
 /**
- * Converts keyword into short link (prepend with YOURLS base URL)
+ * Converts keyword into short link (prepend with YOURLS base URL) or stat link (sho.rt/abc+)
  *
  * This function does not check for a valid keyword.
  * The resulting link is normalized to allow for IDN translation to UTF8
  *
+ * @param  string $keyword  Short URL keyword
+ * @param  bool   $stats    Optional, true to return a stat link (eg sho.rt/abc+)
+ * @return string           Short URL, or keyword stat URL
  */
 function yourls_link( $keyword = '', $stats = false ) {
     $keyword = yourls_sanitize_keyword($keyword);
