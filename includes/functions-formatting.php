@@ -599,7 +599,7 @@ function yourls_normalize_uri( $url ) {
     $lower = array();
     $lower['scheme'] = strtolower( $parts['scheme'] );
     if( isset( $parts['host'] ) ) {
-        // Convert domain to lowercase, with mb_ to preserve UTF8, and
+        // Convert domain to lowercase, with mb_ to preserve UTF8
         $lower['host'] = mb_strtolower($parts['host']);
         /**
          * Convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
