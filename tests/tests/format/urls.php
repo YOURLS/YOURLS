@@ -5,6 +5,7 @@
  *
  * @group formatting
  * @group url
+ * @group idn
  * @since 0.1
  */
 class Format_URL extends PHPUnit_Framework_TestCase {
@@ -251,6 +252,46 @@ class Format_URL extends PHPUnit_Framework_TestCase {
     function test_matching_protocols_with_ssl( $url, $without_ssl, $with_ssl ) {
         yourls_add_filter('is_ssl', 'yourls_return_true');
         $this->assertEquals( $with_ssl, yourls_match_current_protocol($url) );
+    }
+
+    /**
+     * List of various valid URL with mixed scenarios of IDN
+     * Structure: array(URL, expected URL after yourls_sanitize_url (and especially yourls_normalize_uri(), which deals with IDN)
+     */
+    function list_of_idn_punycode_utf8_rtl() {
+        return array(
+            [ 'http://ua-test.link'                   , 'http://ua-test.link' ],                    // Ascii.new
+            [ 'http://ua-test.technology'             , 'http://ua-test.technology' ],              // Ascii.long
+            [ 'http://普试.top/'                      , 'http://普试.top/' ],                       // Idn.ascii
+            [ 'http://ua-test.世界'                   , 'http://ua-test.世界' ],                    // Ascii.idn
+            [ 'http://普试.世界/'                     , 'http://普试.世界/' ],                      // Idn.idn
+            [ 'http://普试。世界'                      , 'http://普试。世界' ],                      // Idn-open dot-idn
+            [ 'http://ua-test.xn--rhqv96g'            , 'http://ua-test.世界' ],                   // Ascii.punycode
+            [ 'http://xn--tkvo64f.top'                , 'http://普试.top' ],                       // Punycode.ascii
+            [ 'http://xn--tkvo64f.xn--rhqv96g'        , 'http://普试.世界'  ],                     // Punycode.punycode
+            [ 'http://اختبار-القبولالعالمي.top'        , 'http://اختبار-القبولالعالمي.top' ],       // RTL.ascii
+            [ 'http://اختبار-القبولالعالمي.شبكة'       , 'http://اختبار-القبولالعالمي.شبكة' ],      // RTL.RTL
+            [ 'http://ua-test.link/我的'              , 'http://ua-test.link/我的' ],             // Ascii.new/Unicode
+            [ 'http://ua-test.technology/我的'        , 'http://ua-test.technology/我的' ],       // Ascii.long/Unicode
+            [ 'http://普试.top/我的'                  , 'http://普试.top/我的' ],                  // Idn.ascii/Unicode
+            [ 'http://ua-test.世界/我的'              , 'http://ua-test.世界/我的' ],              // Ascii.idn/Unicode
+            [ 'http://普试.世界/我的'                 , 'http://普试.世界/我的' ],                 // Idn.idn/Unicode
+            [ 'http://普试。世界/我的'                 , 'http://普试。世界/我的' ],                 // Idn-opendot-idn/unicode
+            [ 'http://ختبار-القبولالعالمي.top/我的'    , 'http://ختبار-القبولالعالمي.top/我的' ],   // RTL.ascii/Unicode
+            [ 'http://اختبار-القبولالعالمي.شبكة/我的'  , 'http://اختبار-القبولالعالمي.شبكة/我的' ], // RTL.RTL/Unicode
+
+                                                      // Damn, due to these UTF8 chars not being fixed width, we cannot neatly
+                                                      // justify the code and comments. How disappointing.
+        );
+    }
+
+    /**
+     * Test various cases : domain name / TLD / path with ascii, punycode, utf8 and RTL
+     *
+     * @dataProvider list_of_idn_punycode_utf8_rtl
+     */
+    function test_various_idn_cases($url, $expected) {
+        $this->assertEquals( yourls_sanitize_url($url), $expected );
     }
 
 }
