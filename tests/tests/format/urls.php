@@ -265,7 +265,6 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             [ 'http://普试.top/'                      , 'http://普试.top/' ],                       // Idn.ascii
             [ 'http://ua-test.世界'                   , 'http://ua-test.世界' ],                    // Ascii.idn
             [ 'http://普试.世界/'                     , 'http://普试.世界/' ],                      // Idn.idn
-            [ 'http://普试。世界'                      , 'http://普试。世界' ],                      // Idn-open dot-idn
             [ 'http://ua-test.xn--rhqv96g'            , 'http://ua-test.世界' ],                   // Ascii.punycode
             [ 'http://xn--tkvo64f.top'                , 'http://普试.top' ],                       // Punycode.ascii
             [ 'http://xn--tkvo64f.xn--rhqv96g'        , 'http://普试.世界'  ],                     // Punycode.punycode
@@ -276,7 +275,6 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             [ 'http://普试.top/我的'                  , 'http://普试.top/我的' ],                  // Idn.ascii/Unicode
             [ 'http://ua-test.世界/我的'              , 'http://ua-test.世界/我的' ],              // Ascii.idn/Unicode
             [ 'http://普试.世界/我的'                 , 'http://普试.世界/我的' ],                 // Idn.idn/Unicode
-            [ 'http://普试。世界/我的'                 , 'http://普试。世界/我的' ],                 // Idn-opendot-idn/unicode
             [ 'http://ختبار-القبولالعالمي.top/我的'    , 'http://ختبار-القبولالعالمي.top/我的' ],   // RTL.ascii/Unicode
             [ 'http://اختبار-القبولالعالمي.شبكة/我的'  , 'http://اختبار-القبولالعالمي.شبكة/我的' ], // RTL.RTL/Unicode
 
