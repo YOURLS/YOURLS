@@ -3,7 +3,7 @@
 ####################################################################
 # This file is part of YOURLS
 #
-# Remove unneeded files for production
+# List (and remove) unneeded files for production
 #
 # Run this script when adding, updating or removing a 3rd party
 # library that goes in the `vendor` directory.
@@ -45,7 +45,7 @@ PRESERVE_IN_LIB=(
 ## VARS #############################################################
 
 # Default values.
-TESTRUN=false
+TESTRUN=true
 
 # Colors and fancyness
 RED='\033[0;31m'
@@ -63,15 +63,15 @@ SCRIPT=`basename ${BASH_SOURCE[0]}`
 # Print help
 rtfm () {
     echo -e "\nUsage: "
-    echo -e "   ${BOLD}${SCRIPT}${NORM} [-th] <directory to cleanup>"
+    echo -e "   ${BOLD}${SCRIPT}${NORM} [-dh] <directory to cleanup>"
     echo -e ""
     echo -e "Examples: "
-    echo -e "   ${BOLD}${SCRIPT}${NORM} [-th] ."
-    echo -e "   ${BOLD}${SCRIPT}${NORM} [-th] /some/path/to/clean"
+    echo -e "   ${BOLD}${SCRIPT}${NORM} [-dh] ."
+    echo -e "   ${BOLD}${SCRIPT}${NORM} [-dh] /some/path/to/clean"
     echo -e ""
     echo -e "Options:"
-    echo -e "  ${BOLD}-h${NORM}           Display this help message"
-    echo -e "  ${BOLD}-t${NORM}           Test mode to see what would be deleted without deleting"
+    echo -e "  ${BOLD}-h${NORM}           Display this ${BOLD}H${NORM}elp message"
+    echo -e "  ${BOLD}-d${NORM}           Actually ${BOLD}D${NORM}elete files flagged by this script"
     echo -e ""
     exit 1
 }
@@ -106,7 +106,7 @@ cleanup () {
         then
             echo -e "${GREEN}+${NORM} KEEP: $FILE"
         else
-            echo -e "${RED}-${NORM} del : $FILE"
+            echo -e "${RED}-${NORM} DEL : $FILE"
             maybe_delete "${CUR}${FILE}"
         fi
 
@@ -145,10 +145,10 @@ args_or_die () {
 args_or_die "$#"
 
 # Check options
-while getopts "th" opt; do
+while getopts "dh" opt; do
   case $opt in
-    t)
-      TESTRUN=true
+    d)
+      TESTRUN=false
       ;;
     h)
       rtfm
@@ -179,6 +179,7 @@ fi
 if [ "$TESTRUN" = true ]
 then
     echo -e "Test mode. ${RED}Nothing will be deleted${NORM}.\n"
+    echo -e "Use with ${RED}-d${NORM} if you are OK with the proposed changes (or clean up manually).\n"
 fi
 
 
@@ -217,5 +218,13 @@ do
     fi
 done
 
-echo -e "... all done $GREEN ;) $NORM\n"
+# Exit reminder
+if [ "$TESTRUN" = true ]
+then
+    echo -e "(${GREEN}Nothing has been deleted${NORM})\n"
+else
+    echo -e "... all done $GREEN ;) $NORM\n"
+fi
+
+
 
