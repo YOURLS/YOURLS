@@ -4,6 +4,7 @@
  * Links
  *
  * @group links
+ * @group idn
  */
 
 class YOURLS_Link_Tests extends PHPUnit_Framework_TestCase {
@@ -23,21 +24,21 @@ class YOURLS_Link_Tests extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Check yourls_link() give a link
+     * Check yourls_link() gives a link
      */
     public function test_yourls_link() {
         $this->assertEquals( yourls_link('bonjour'), YOURLS_SITE . '/bonjour' );
     }
 
     /**
-     * Check yourls_statlink() give a link
+     * Check yourls_statlink() gives a link
      */
     public function test_yourls_statlink() {
         $this->assertEquals( yourls_statlink('hello'), YOURLS_SITE . '/hello+' );
     }
 
     /**
-     * Check yourls_link() give an IDN utf8 link
+     * Check yourls_link() gives an IDN utf8 link
      */
     public function test_yourls_link_IDN() {
         yourls_add_filter( 'get_yourls_site', function() {return 'http://xn--hh-bjab.com';} );
