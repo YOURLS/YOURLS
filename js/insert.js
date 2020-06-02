@@ -127,6 +127,7 @@ function go_stats(link) {
 // Cancel edition of a link
 function edit_link_hide(id) {
 	$("#edit-" + id).fadeOut(200, function(){
+        $("#edit-" + id).remove();
 		end_disable('#actions-'+id+' .button');
 	});
 }
@@ -155,6 +156,7 @@ function edit_link_save(id) {
 				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#edit-" + id).fadeOut(200, function(){
+                    $("#edit-" + id).remove();
 					$('#main_table tbody').trigger("update");
 				});
 				$('#keyword_'+id).val( newkeyword );
