@@ -25,7 +25,7 @@ matrix:
   - php: 7.4
     env: PHPUNIT_VERSION=7.5.*
   - php: nightly
-    env: PHPUNIT_VERSION=7.5.*
+    env: PHPUNIT_VERSION=7.5.* PHPUNIT_FLAGS="--no-coverage --ignore-platform-reqs"
   fast_finish: true
   allow_failures:
   - php: nightly
