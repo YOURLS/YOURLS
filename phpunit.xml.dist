@@ -19,7 +19,7 @@
 		</exclude>
 	</groups>
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <whitelist>
             <directory suffix=".php">./includes</directory>
             <exclude>
                 <directory suffix=".php">./includes/vendors</directory>
