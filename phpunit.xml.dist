@@ -19,7 +19,7 @@
 		</exclude>
 	</groups>
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <whitelist>
             <directory suffix=".php">./includes</directory>
             <exclude>
                 <directory suffix=".php">./includes/vendors</directory>
@@ -43,7 +43,4 @@
 		<!-- API -->
 		<request name="format" value="simple"/>
 	</php>
-	<logging>
-		<log type="junit" target="build/logs/junit.xml" />
-	</logging>
 </phpunit>

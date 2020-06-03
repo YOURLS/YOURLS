@@ -17,6 +17,14 @@
 			<group>ajax</group>
 		</exclude>
 	</groups>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./includes</directory>
+            <exclude>
+                <directory suffix=".php">./includes/vendors</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 	<php>
 		<!-- Constants -->
 		<const name="PHPUNIT_TESTSUITE" value="true" />
@@ -33,7 +41,4 @@
 		<!-- API -->
 		<request name="format" value="simple"/>
 	</php>
-	<logging>
-		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
-	</logging>
 </phpunit>

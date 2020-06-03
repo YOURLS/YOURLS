@@ -47,13 +47,11 @@ yut_install_yourls();
 yourls_get_all_options();
 yourls_load_plugins();
 
-// PHPUnit 6 compatibility for previous versions
-if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {
-    class_alias( 'PHPUnit\Framework\Assert',        'PHPUnit_Framework_Assert' );
-    class_alias( 'PHPUnit\Framework\TestCase',      'PHPUnit_Framework_TestCase' );
-    class_alias( 'PHPUnit\Framework\Error\Error',   'PHPUnit_Framework_Error' );
-    class_alias( 'PHPUnit\Framework\Error\Notice',  'PHPUnit_Framework_Error_Notice' );
-    class_alias( 'PHPUnit\Framework\Error\Warning', 'PHPUnit_Framework_Error_Warning' );
+/**
+ * Compatibility with PHPUnit 6+
+ */
+if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
+	require_once dirname( __FILE__ ) . '/includes/phpunit6-compat.php';
 }
 
 // At this point, tests will start
