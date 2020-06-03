@@ -43,7 +43,4 @@
 		<!-- API -->
 		<request name="format" value="simple"/>
 	</php>
-	<logging>
-		<log type="junit" target="build/logs/junit.xml" />
-	</logging>
 </phpunit>
