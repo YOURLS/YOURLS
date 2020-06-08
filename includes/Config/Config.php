@@ -11,12 +11,14 @@ use YOURLS\Exceptions\ConfigException;
 class Config {
 
     /**
-     * @param string
+     * @var string
      */
     protected $root;
 
     /**
-     * @param mixed
+     * Config: either 'false' if no path to config.php provided, or a path to config file
+     *
+     * @var mixed
      */
     protected $config;
 
@@ -33,8 +35,8 @@ class Config {
      * Convert antislashes to slashes
      *
      * @since  1.7.3
-     * @param  string  $path
-     * @return string  path with \ converted to /
+     * @param  string $path  path to config file
+     * @return string        path with \ converted to /
      */
     public function fix_win32_path($path) {
         return str_replace('\\', '/', $path);
@@ -42,7 +44,7 @@ class Config {
 
     /**
      * @since  1.7.3
-     * @param  string  path to config file
+     * @param  string $path  path to config file
      * @return void
      */
     public function set_config($config) {
@@ -51,7 +53,7 @@ class Config {
 
     /**
      * @since  1.7.3
-     * @param  string  path to YOURLS root directory
+     * @param  string $root  path to YOURLS root directory
      * @return void
      */
     public function set_root($root) {
