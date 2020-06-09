@@ -24,9 +24,9 @@
 
 ## Contributing
 
-__Before opening any issue, please search for existing issues and read the [Issue Guidelines](https://github.com/YOURLS/YOURLS/wiki/Bug-Report).__
+Feature suggestion? Bug to report?
 
-Have a **new bug** to report? [Please open a new issue](https://github.com/YOURLS/YOURLS/issues/new?title=Issue+title+--+be+DESCRIPTIVE).
+__Before opening any issue, please search for existing [issues](https://github.com/YOURLS/YOURLS/issues) (open and closed) and read the [Contributing Guidelines](https://github.com/YOURLS/.github/blob/master/CONTRIBUTING.md).__
 
 
 ## Backers
