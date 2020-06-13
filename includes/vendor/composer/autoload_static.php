@@ -16,8 +16,13 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         array (
             'YOURLS\\' => 7,
         ),
+        'W' => 
+        array (
+            'Wikimedia\\Composer\\' => 19,
+        ),
         'S' => 
         array (
+            'Symfony\\Thanks\\' => 15,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
         ),
         'P' => 
@@ -48,6 +53,15 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'YOURLS\\' => 
         array (
             0 => __DIR__ . '/../../..' . '/includes',
+            1 => __DIR__ . '/..' . '/yourls/composer-installer/src',
+        ),
+        'Wikimedia\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src',
+        ),
+        'Symfony\\Thanks\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/thanks/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (

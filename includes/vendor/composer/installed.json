@@ -574,5 +574,142 @@
             "portable",
             "shim"
         ]
+    },
+    {
+        "name": "symfony/thanks",
+        "version": "v1.2.7",
+        "version_normalized": "1.2.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/thanks.git",
+            "reference": "8bba4410e183ee72ddec1dbd73cf43f4a536485b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/thanks/zipball/8bba4410e183ee72ddec1dbd73cf43f4a536485b",
+            "reference": "8bba4410e183ee72ddec1dbd73cf43f4a536485b",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0|^2.0",
+            "php": "^5.5.9|^7.0.0"
+        },
+        "time": "2020-05-30T11:13:50+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.2-dev"
+            },
+            "class": "Symfony\\Thanks\\Thanks"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Thanks\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            }
+        ],
+        "description": "Encourages sending ⭐ and 💵 to fellow PHP package maintainers (not limited to Symfony components)!"
+    },
+    {
+        "name": "wikimedia/composer-merge-plugin",
+        "version": "v1.4.1",
+        "version_normalized": "1.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "composer/composer": "~1.0.0",
+            "jakub-onderka/php-parallel-lint": "~0.8",
+            "phpunit/phpunit": "~4.8|~5.0",
+            "squizlabs/php_codesniffer": "~2.1.0"
+        },
+        "time": "2017-04-25T02:31:25+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            },
+            "class": "Wikimedia\\Composer\\MergePlugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Wikimedia\\Composer\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bryan Davis",
+                "email": "bd808@wikimedia.org"
+            }
+        ],
+        "description": "Composer plugin to merge multiple composer.json files"
+    },
+    {
+        "name": "yourls/composer-installer",
+        "version": "1.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/YOURLS/composer-installer.git",
+            "reference": "ae6d82dc646ecb191336e83a271e8133897328f9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/YOURLS/composer-installer/zipball/ae6d82dc646ecb191336e83a271e8133897328f9",
+            "reference": "ae6d82dc646ecb191336e83a271e8133897328f9",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=7.1"
+        },
+        "require-dev": {
+            "composer/composer": "^1.0",
+            "phpunit/phpunit": "^7.0"
+        },
+        "time": "2020-06-10T15:57:26+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "class": "YOURLS\\ComposerInstaller\\Plugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "YOURLS\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "YOURLS' custom Composer installer for YOURLS plugins",
+        "homepage": "https://github.com/yourls/composer-installer"
     }
 ]
