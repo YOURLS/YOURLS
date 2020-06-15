@@ -206,7 +206,7 @@ class GitHubClient
         ];
 
         if ($rfs instanceof HttpDownloader) {
-            $result = $rfs->get('https://api.github.com/graphql', $options);
+            $result = $rfs->get('https://api.github.com/graphql', $options)->getBody();
         } else {
             $result = $rfs->getContents('github.com', 'https://api.github.com/graphql', false, $options);
         }

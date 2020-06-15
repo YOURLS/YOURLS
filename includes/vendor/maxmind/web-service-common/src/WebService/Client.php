@@ -198,11 +198,11 @@ class Client
             $this->handle4xx($statusCode, $contentType, $responseBody, $service, $path);
         } elseif ($statusCode >= 500) {
             $this->handle5xx($statusCode, $service, $path);
-        } elseif ($statusCode !== 200) {
+        } elseif ($statusCode !== 200 && $statusCode !== 204) {
             $this->handleUnexpectedStatus($statusCode, $service, $path);
         }
 
-        return $this->handleSuccess($responseBody, $service);
+        return $this->handleSuccess($statusCode, $responseBody, $service);
     }
 
     /**
@@ -396,16 +396,32 @@ class Client
     }
 
     /**
-     * @param string $body    the successful request body
-     * @param string $service the service name
+     * @param int    $statusCode the HTTP status code
+     * @param string $body       the successful request body
+     * @param string $service    the service name
      *
-     * @throws WebServiceException if the request body cannot be decoded as
-     *                             JSON
+     * @throws WebServiceException if a response body is included but not
+     *                             expected, or is not expected but not
+     *                             included, or is expected and included
+     *                             but cannot be decoded as JSON
      *
      * @return array the decoded request body
      */
-    private function handleSuccess($body, $service)
+    private function handleSuccess($statusCode, $body, $service)
     {
+        // A 204 should have no response body
+        if ($statusCode === 204) {
+            if (\strlen($body) !== 0) {
+                throw new WebServiceException(
+                    "Received a 204 response for $service along with an " .
+                    "unexpected HTTP body: $body"
+                );
+            }
+
+            return null;
+        }
+
+        // A 200 should have a valid JSON body
         if (\strlen($body) === 0) {
             throw new WebServiceException(
                 "Received a 200 response for $service but did not " .

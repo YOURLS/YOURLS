@@ -26,9 +26,7 @@
         "aura/sql": "~2.",
         "jakeasmith/http_build_url": "1.0.1",
         "symfony/polyfill-mbstring": "1.15.0",
-        "wikimedia/composer-merge-plugin": "^1.4",
-        "yourls/composer-installer": "^1.0",
-        "symfony/thanks": "^1.2"
+        "yourls/composer-installer": "^1.1"
     },
     "config": {
         "vendor-dir": "includes/vendor"

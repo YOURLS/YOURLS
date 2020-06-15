@@ -1,4 +1,7 @@
 <?php
+/**
+ * YOURLS Composer Installer
+ */
 
 namespace YOURLS\ComposerInstaller;
 
@@ -8,9 +11,10 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
 
 /**
- * YOURLS Composer Installer
- * 
- * @package   YOURLS\ComposerInstaller\Installer
+ * Extension of Composer's LibraryInstaller that allows a custom function
+ * handle after update or install
+ *
+ * @package   YOURLS\ComposerInstaller
  * @author    Ozh <ozh@ozh.org>
  * @link      https://github.com/yourls/composer-installer/
  * @license   MIT

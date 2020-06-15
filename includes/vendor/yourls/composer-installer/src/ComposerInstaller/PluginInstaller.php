@@ -1,13 +1,17 @@
 <?php
+/**
+ * YOURLS Composer Installer
+ */
 
 namespace YOURLS\ComposerInstaller;
 
 use Composer\Package\PackageInterface;
 
 /**
- * YOURLS Composer Installer
- * 
- * @package   YOURLS\ComposerInstaller\PluginInstaller
+ * This class does the actual job of the plugin installer (check if package
+ * supports the installer and if so set its install path)
+ *
+ * @package   YOURLS\ComposerInstaller
  * @author    Ozh <ozh@ozh.org>
  * @link      https://github.com/yourls/composer-installer/
  * @license   MIT
@@ -24,7 +28,7 @@ class PluginInstaller extends Installer
     {
         return $packageType === 'yourls-plugin';
     }
-    
+
     /**
      * Returns the installation path of a package
      *
@@ -38,7 +42,7 @@ class PluginInstaller extends Installer
             return $this->fixWinPath(parent::getInstallPath($package));
         }
 
-        // get the extra configuration of the top-level package
+        // Get the extra configuration of the top-level package
         if ($rootPackage = $this->composer->getPackage()) {
             $extra = $rootPackage->getExtra();
         } else {
@@ -48,10 +52,10 @@ class PluginInstaller extends Installer
         // use base path from configuration if specified, otherwise use YOURLS default
         $basePath = $extra['yourls-plugin-path'] ?? 'user/plugins';
 
-        // Get plugin name from its package name 
+        // Get plugin name from its package name
         $prettyName = $package->getPrettyName();
         $pluginExtra = $package->getExtra();
-        
+
         if (strpos($prettyName, '/') !== false) {
             // use name after the slash
             $name = explode('/', $prettyName)[1];
@@ -81,7 +85,7 @@ class PluginInstaller extends Installer
 
     /**
      * Checks if the package has explicitly required this installer
-     * 
+     *
      * If not (package is not a YOURLS plugin, or plugin does not support this installer yet)
      * the installer will fall back to the behavior of the LibraryInstaller
      *
@@ -99,10 +103,10 @@ class PluginInstaller extends Installer
         // no required package is the installer
         return false;
     }
-    
+
     /**
-     * Fix path in Windows 
-     * 
+     * Fix path in Windows
+     *
      * @param  string $path  Path
      * @return string
      */
@@ -110,5 +114,5 @@ class PluginInstaller extends Installer
     {
         return str_replace('\\', '/', $path);
     }
-    
+
 }
