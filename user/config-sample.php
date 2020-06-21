@@ -16,14 +16,17 @@ define( 'YOURLS_DB_USER', 'your db user name' );
 /** MySQL database password */
 define( 'YOURLS_DB_PASS', 'your db password' );
 
-/** The name of the database for YOURLS */
+/** The name of the database for YOURLS
+ ** Use lower case letters [a-z], digits [0-9] and underscores [_] only */
 define( 'YOURLS_DB_NAME', 'yourls' );
 
 /** MySQL hostname.
  ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
 define( 'YOURLS_DB_HOST', 'localhost' );
 
-/** MySQL tables prefix */
+/** MySQL tables prefix
+ ** YOURLS will create tables using this prefix (eg `yourls_url`, `yourls_options`, ...)
+ ** Use lower case letters [a-z], digits [0-9] and underscores [_] only */
 define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*
