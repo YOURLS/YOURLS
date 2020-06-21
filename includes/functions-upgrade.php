@@ -28,7 +28,7 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 			yourls_upgrade_to_15();
 
 		if( $oldsql < 482 )
-			yourls_upgrade_482();
+			yourls_upgrade_482(); // that was somewhere 1.5 and 1.5.1 ...
 
 		if( $oldsql < 505 )
 			yourls_upgrade_to_18();
@@ -47,7 +47,6 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 }
 
 /************************** 1.6 -> 1.8 **************************/
-
 
 function yourls_upgrade_to_18() {
     $ydb = yourls_get_db();
