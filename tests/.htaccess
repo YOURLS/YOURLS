@@ -1,0 +1,3 @@
+# Block access to anything in this directory with a web browser,
+# for people who install YOURLS using git. See #2664 for info.
+Deny from all

@@ -27,7 +27,7 @@ class Init {
             $this->include_core_functions();
         }
 
-        // Enforce UTC timezone to suppress PHP warnings -- correct date/time will be managed using the config time offset
+        // Enforce UTC timezone. Date/time can be adjusted with a plugin.
         if ($actions->default_timezone === true) {
             date_default_timezone_set( 'UTC' );
         }
@@ -167,6 +167,11 @@ class Init {
     public function include_core_functions() {
         require_once YOURLS_INC.'/version.php';
         require_once YOURLS_INC.'/functions.php';
+        require_once YOURLS_INC.'/functions-geo.php';
+        require_once YOURLS_INC.'/functions-shorturls.php';
+        require_once YOURLS_INC.'/functions-debug.php';
+        require_once YOURLS_INC.'/functions-options.php';
+        require_once YOURLS_INC.'/functions-links.php';
         require_once YOURLS_INC.'/functions-plugins.php';
         require_once YOURLS_INC.'/functions-formatting.php';
         require_once YOURLS_INC.'/functions-api.php';
@@ -177,11 +182,7 @@ class Init {
         require_once YOURLS_INC.'/functions-http.php';
         require_once YOURLS_INC.'/functions-infos.php';
         require_once YOURLS_INC.'/functions-deprecated.php';
-
-        // Load auth functions if needed
-        if (yourls_is_private() || $this->actions->include_auth_funcs === true) {
-            require_once YOURLS_INC.'/functions-auth.php';
-        }
+        require_once YOURLS_INC.'/functions-auth.php';
 
         // Load install & upgrade functions if needed
         if ($this->actions->include_install_upgrade_funcs === true) {

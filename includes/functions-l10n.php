@@ -121,27 +121,27 @@ function yourls__( $text, $domain = 'default' ) {
  * @return string Translated text
  */
 function yourls_s( $pattern ) {
-	// Get pattern and pattern arguments 
+	// Get pattern and pattern arguments
 	$args = func_get_args();
 	// If yourls_s() called by yourls_se(), all arguments are wrapped in the same array key
 	if( count( $args ) == 1 && is_array( $args[0] ) ) {
 		$args = $args[0];
 	}
 	$pattern = $args[0];
-	
+
 	// get list of sprintf tokens (%s and such)
 	$num_of_tokens = substr_count( $pattern, '%' ) - 2 * substr_count( $pattern, '%%' );
-	
+
 	$domain = 'default';
 	// More arguments passed than needed for the sprintf? The last one will be the domain
 	if( $num_of_tokens < ( count( $args ) - 1 ) ) {
 		$domain = array_pop( $args );
 	}
-	
+
 	// Translate text
 	$args[0] = yourls__( $pattern, $domain );
-	
-	return call_user_func_array( 'sprintf', $args );	
+
+	return call_user_func_array( 'sprintf', $args );
 }
 
 /**
@@ -378,7 +378,7 @@ function yourls_nx($single, $plural, $number, $context, $domain = 'default') {
 function yourls_n_noop( $singular, $plural, $domain = null ) {
 	return array(
 		0 => $singular,
-		1 => $plural, 
+		1 => $plural,
 		'singular' => $singular,
 		'plural' => $plural,
 		'context' => null,
@@ -507,7 +507,7 @@ function yourls_unload_textdomain( $domain ) {
  */
 function yourls_load_default_textdomain() {
 	$yourls_locale = yourls_get_locale();
-    
+
     if( !empty( $yourls_locale ) )
         return yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
 }
@@ -563,13 +563,13 @@ function yourls_translate_user_role( $name ) {
  */
 function yourls_get_available_languages( $dir = null ) {
 	$languages = array();
-	
+
 	$dir = is_null( $dir) ? YOURLS_LANG_DIR : $dir;
-	
+
 	foreach( (array) glob( $dir . '/*.mo' ) as $lang_file ) {
 		$languages[] = basename( $lang_file, '.mo' );
 	}
-	
+
 	return yourls_apply_filter( 'get_available_languages', $languages );
 }
 
@@ -586,7 +586,7 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-		
+
 	$formatted = number_format( $number, abs( intval( $decimals ) ), $yourls_locale_formats->number_format['decimal_point'], $yourls_locale_formats->number_format['thousands_sep'] );
 	return yourls_apply_filter( 'number_format_i18n', $formatted );
 }
@@ -600,42 +600,36 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
  *
  * @since 1.6
  *
- * @param string   $dateformatstring Format to display the date.
- * @param bool|int $unixtimestamp    Optional. Unix timestamp.
- * @param bool     $gmt              Optional, default is false. Whether to convert to GMT for time.
- * @return string The date, translated if locale specifies it.
+ * @param  string   $dateformatstring   Format to display the date.
+ * @param  bool|int $timestamp          Optional, Unix timestamp, default to current timestamp (with offset if applicable)
+ * @return string                       The date, translated if locale specifies it.
  */
-function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = false ) {
+function yourls_date_i18n( $dateformatstring, $timestamp = false ) {
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
 
-	$i = $unixtimestamp;
-
-	if ( false === $i ) {
-		if ( ! $gmt )
-			$i = yourls_current_time( 'timestamp' );
-		else
-			$i = time();
-		// we should not let date() interfere with our
-		// specially computed timestamp
-		$gmt = true;
+	if ( false === $timestamp ) {
+        $timestamp = yourls_get_timestamp( time() );
 	}
 
 	// store original value for language with untypical grammars
-	// see http://core.trac.wordpress.org/ticket/9396
 	$req_format = $dateformatstring;
 
-	$datefunc = $gmt? 'gmdate' : 'date';
-
+	/**
+	 * Replace the date format characters with their translatation, if found
+	 * Example:
+	 *     'l d F Y' gets replaced with '\L\u\n\d\i d \M\a\i Y' in French
+	 * We deliberately don't deal with 'I', 'O', 'P', 'T', 'Z' and 'e' in date format (timezones)
+	 */
 	if ( ( !empty( $yourls_locale_formats->month ) ) && ( !empty( $yourls_locale_formats->weekday ) ) ) {
-		$datemonth            = $yourls_locale_formats->get_month( $datefunc( 'm', $i ) );
+		$datemonth            = $yourls_locale_formats->get_month( date( 'm', $timestamp ) );
 		$datemonth_abbrev     = $yourls_locale_formats->get_month_abbrev( $datemonth );
-		$dateweekday          = $yourls_locale_formats->get_weekday( $datefunc( 'w', $i ) );
+		$dateweekday          = $yourls_locale_formats->get_weekday( date( 'w', $timestamp ) );
 		$dateweekday_abbrev   = $yourls_locale_formats->get_weekday_abbrev( $dateweekday );
-		$datemeridiem         = $yourls_locale_formats->get_meridiem( $datefunc( 'a', $i ) );
-		$datemeridiem_capital = $yourls_locale_formats->get_meridiem( $datefunc( 'A', $i ) );
-		
+		$datemeridiem         = $yourls_locale_formats->get_meridiem( date( 'a', $timestamp ) );
+		$datemeridiem_capital = $yourls_locale_formats->get_meridiem( date( 'A', $timestamp ) );
+
 		$dateformatstring = ' '.$dateformatstring;
 		$dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . yourls_backslashit( $dateweekday_abbrev ), $dateformatstring );
 		$dateformatstring = preg_replace( "/([^\\\])F/", "\\1" . yourls_backslashit( $datemonth ), $dateformatstring );
@@ -646,57 +640,12 @@ function yourls_date_i18n( $dateformatstring, $unixtimestamp = false, $gmt = fal
 
 		$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
 	}
-	$timezone_formats = array( 'P', 'I', 'O', 'T', 'Z', 'e' );
-	$timezone_formats_re = implode( '|', $timezone_formats );
-	if ( preg_match( "/$timezone_formats_re/", $dateformatstring ) ) {
-	
-		// TODO: implement a timezone option
-		$timezone_string = yourls_get_option( 'timezone_string' );
-		if ( $timezone_string ) {
-			$timezone_object = timezone_open( $timezone_string );
-			$date_object = date_create( null, $timezone_object );
-			foreach( $timezone_formats as $timezone_format ) {
-				if ( false !== strpos( $dateformatstring, $timezone_format ) ) {
-					$formatted = date_format( $date_object, $timezone_format );
-					$dateformatstring = ' '.$dateformatstring;
-					$dateformatstring = preg_replace( "/([^\\\])$timezone_format/", "\\1" . yourls_backslashit( $formatted ), $dateformatstring );
-					$dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
-				}
-			}
-		}
-	}
-	$j = @$datefunc( $dateformatstring, $i );
-	// allow plugins to redo this entirely for languages with untypical grammars
-	$j = yourls_apply_filter('date_i18n', $j, $req_format, $i, $gmt);
-	return $j;
-}
 
-/**
- * Retrieve the current time based on specified type. Stolen from WP.
- *
- * The 'mysql' type will return the time in the format for MySQL DATETIME field.
- * The 'timestamp' type will return the current timestamp.
- *
- * If $gmt is set to either '1' or 'true', then both types will use GMT time.
- * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
- *
- * @since 1.6
- *
- * @param string $type Either 'mysql' or 'timestamp'.
- * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
- * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
- */
-function yourls_current_time( $type, $gmt = 0 ) {
-	switch ( $type ) {
-		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', time() + YOURLS_HOURS_OFFSET * 3600 );
-			break;
-		case 'timestamp':
-			return ( $gmt ) ? time() : time() + YOURLS_HOURS_OFFSET * 3600;
-			break;
-	}
-}
+	$date = date( $dateformatstring, $timestamp );
 
+	// Allow plugins to redo this entirely for languages with untypical grammars
+	return yourls_apply_filter('date_i18n', $date, $req_format, $timestamp);
+}
 
 /**
  * Class that loads the calendar locale.
@@ -955,7 +904,7 @@ class YOURLS_Locale_Formats {
 	 * @return string Translated full month name
 	 */
 	function get_month( $month_number ) {
-		return $this->month[ sprintf( '%02s', $month_number ) ];		
+		return $this->month[ sprintf( '%02s', $month_number ) ];
 	}
 
 	/**
@@ -1060,7 +1009,7 @@ function yourls_is_rtl() {
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-		
+
 	return $yourls_locale_formats->is_rtl();
 }
 
@@ -1078,10 +1027,10 @@ function yourls_l10n_weekday_abbrev( $weekday = '' ){
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-		
+
 	if( $weekday === '' )
 		return $yourls_locale_formats->weekday_abbrev;
-	
+
 	if( is_int( $weekday ) ) {
 		$day = $yourls_locale_formats->weekday[ $weekday ];
 		return $yourls_locale_formats->weekday_abbrev[ $day ];
@@ -1104,10 +1053,10 @@ function yourls_l10n_weekday_initial( $weekday = '' ){
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-		
+
 	if( $weekday === '' )
 		return $yourls_locale_formats->weekday_initial;
-	
+
 	if( is_int( $weekday ) ) {
 		$weekday = $yourls_locale_formats->weekday[ $weekday ];
 		return $yourls_locale_formats->weekday_initial[ $weekday ];
@@ -1130,10 +1079,10 @@ function yourls_l10n_month_abbrev( $month = '' ){
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-	
+
 	if( $month === '' )
 		return $yourls_locale_formats->month_abbrev;
-	
+
 	if( intval( $month ) > 0 ) {
         $month = sprintf('%02d', intval( $month ) );
 		$month = $yourls_locale_formats->month[ $month ];
@@ -1153,6 +1102,6 @@ function yourls_l10n_months(){
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();
-	
+
 	return $yourls_locale_formats->month;
 }

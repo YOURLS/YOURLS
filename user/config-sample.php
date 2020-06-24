@@ -16,14 +16,17 @@ define( 'YOURLS_DB_USER', 'your db user name' );
 /** MySQL database password */
 define( 'YOURLS_DB_PASS', 'your db password' );
 
-/** The name of the database for YOURLS */
+/** The name of the database for YOURLS
+ ** Use lower case letters [a-z], digits [0-9] and underscores [_] only */
 define( 'YOURLS_DB_NAME', 'yourls' );
 
 /** MySQL hostname.
  ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
 define( 'YOURLS_DB_HOST', 'localhost' );
 
-/** MySQL tables prefix */
+/** MySQL tables prefix
+ ** YOURLS will create tables using this prefix (eg `yourls_url`, `yourls_options`, ...)
+ ** Use lower case letters [a-z], digits [0-9] and underscores [_] only */
 define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*
@@ -34,14 +37,11 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
-/** Server timezone GMT offset */
-define( 'YOURLS_HOURS_OFFSET', 0 ); 
-
 /** YOURLS language
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
  ** See http://yourls.org/translations for more information */
-define( 'YOURLS_LANG', '' ); 
+define( 'YOURLS_LANG', '' );
 
 /** Allow multiple short URLs for a same long URL
  ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
@@ -68,7 +68,7 @@ $yourls_user_passwords = array(
 /** Debug mode to output some internal information
  ** Default is false for live site. Enable when coding or before submitting a new issue */
 define( 'YOURLS_DEBUG', false );
-	
+
 /*
  ** URL Shortening settings
  */
@@ -81,7 +81,7 @@ define( 'YOURLS_URL_CONVERT', 36 );
  * Stick to one setting. It's best not to change after you've started creating links.
  */
 
-/** 
+/**
 * Reserved keywords (so that generated URLs won't match them)
 * Define here negative, unwanted or potentially misleading keywords.
 */
@@ -92,4 +92,3 @@ $yourls_reserved_URL = array(
 /*
  ** Personal settings would go after here.
  */
-

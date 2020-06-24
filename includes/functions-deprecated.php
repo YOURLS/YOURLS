@@ -10,6 +10,77 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Retrieve the current time based on specified type. Stolen from WP.
+ *
+ * The 'mysql' type will return the time in the format for MySQL DATETIME field.
+ * The 'timestamp' type will return the current timestamp.
+ *
+ * If $gmt is set to either '1' or 'true', then both types will use GMT time.
+ * if $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
+ *
+ * @since 1.6
+ * @deprecated 1.7.10
+ *
+ * @param string $type Either 'mysql' or 'timestamp'.
+ * @param int|bool $gmt Optional. Whether to use GMT timezone. Default is false.
+ * @return int|string String if $type is 'gmt', int if $type is 'timestamp'.
+ */
+function yourls_current_time( $type, $gmt = 0 ) {
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_timestamp' );
+	switch ( $type ) {
+		case 'mysql':
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
+		case 'timestamp':
+			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
+	}
+}
+
+/**
+ * The original string sanitize function
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_sanitize_string( $string, $restrict_to_shorturl_charset = false ) {
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_sanitize_keyword' );
+    return yourls_sanitize_keyword( $string, $restrict_to_shorturl_charset );
+}
+
+/**
+ * Return favicon URL (either default or custom)
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_favicon( $echo = true ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_yourls_favicon_url' );
+	return yourls_get_yourls_favicon_url( $echo );
+}
+
+/**
+ * Return array of stats for a given keyword
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_get_link_stats( $url ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_keyword_stats' );
+	return yourls_get_keyword_stats( $url );
+}
+
+/**
+ * Check if a long URL already exists in the DB. Return NULL (doesn't exist) or an object with URL informations.
+ *
+ * @since 1.5.1
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_url_exists( $url ) {
+	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_long_url_exists' );
+	return yourls_long_url_exists( $url );
+}
+
+/**
  * Return word or words if more than one
  *
  */

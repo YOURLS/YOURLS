@@ -10,7 +10,7 @@ function yourls_html_logo() {
 	<header role="banner">
 	<h1>
 		<a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.png" alt="YOURLS" title="YOURLS" border="0" style="border: 0px;" /></a>
+		<img src="<?php yourls_site_url(); ?>/images/yourls-logo.svg" id="yourls-logo" alt="YOURLS" title="YOURLS" /></a>
 	</h1>
 	</header>
 	<?php
@@ -87,7 +87,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
-	<link rel="shortcut icon" href="<?php yourls_favicon(); ?>" />
+	<link rel="shortcut icon" href="<?php yourls_get_yourls_favicon_url(); ?>" />
 	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
@@ -142,9 +142,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  * @return void
  */
 function yourls_html_footer($can_query = true) {
-    if($can_query) {
+    if($can_query & yourls_get_debug_mode()) {
         $num_queries = yourls_get_num_queries();
-        $num_queries = sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
+        $num_queries = ' &ndash; '. sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
     } else {
         $num_queries = '';
     }
@@ -154,11 +154,11 @@ function yourls_html_footer($can_query = true) {
 	<footer id="footer" role="contentinfo"><p>
 		<?php
 		$footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
-		$footer .= ' &ndash; '.$num_queries;
+		$footer .= $num_queries;
 		echo yourls_apply_filter( 'html_footer_text', $footer );
 		?>
 	</p></footer>
-	<?php if( defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
+	<?php if( yourls_get_debug_mode() ) {
 		echo '<div style="text-align:left"><pre>';
 		echo join( "\n", yourls_get_debug_log() );
 		echo '</pre></div>';
@@ -185,10 +185,14 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 	<div id="new_url">
 		<div>
 			<form id="new_url_form" action="" method="get">
-				<div><strong><?php yourls_e( 'Enter the URL' ); ?></strong>:<input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" placeholder="https://" />
-				<?php yourls_e( 'Optional '); ?> : <strong><?php yourls_e('Custom short URL'); ?></strong>:<input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
-				<?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-				<input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" /></div>
+				<div>
+                    <label for="add-url"><strong><?php yourls_e( 'Enter the URL' ); ?></strong></label>:
+                    <input type="text" id="add-url" name="url" value="<?php echo $url; ?>" class="text" size="80" placeholder="https://" />
+                    <label for="add-keyword"><?php yourls_e( 'Optional '); ?> : <strong><?php yourls_e('Custom short URL'); ?></strong></label>:
+                    <input type="text" id="add-keyword" name="keyword" value="<?php echo $keyword; ?>" class="text" size="8" />
+                    <?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
+                    <input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" />
+                </div>
 			</form>
 			<div id="feedback" style="display:none"></div>
 		</div>
@@ -232,7 +236,7 @@ function yourls_html_tfooter( $params = array() ) {
 						<?php
 
 						// First search control: text to search
-						$_input = '<input type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
+						$_input = '<input aria-label="' .yourls__( 'Search for' ). '" type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
 						$_options = array(
                             'all'     => yourls__( 'All fields' ),
 							'keyword' => yourls__( 'Short URL' ),
@@ -240,7 +244,7 @@ function yourls_html_tfooter( $params = array() ) {
 							'title'   => yourls__( 'Title' ),
 							'ip'      => yourls__( 'IP' ),
 						);
-						$_select = yourls_html_select( 'search_in', $_options, $search_in );
+						$_select = yourls_html_select( 'search_in', $_options, $search_in, false, yourls__( 'Search in' ) );
 						/* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
 						yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
 						echo "&ndash;\n";
@@ -254,20 +258,21 @@ function yourls_html_tfooter( $params = array() ) {
 							'ip'           => yourls__( 'IP' ),
 							'clicks'       => yourls__( 'Clicks' ),
 						);
-						$_select = yourls_html_select( 'sort_by', $_options, $sort_by );
+						$_select = yourls_html_select( 'sort_by', $_options, $sort_by, false,  yourls__( 'Sort by' ) );
 						$sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
 						$_options = array(
 							'asc'  => yourls__( 'Ascending' ),
 							'desc' => yourls__( 'Descending' ),
 						);
-						$_select2 = yourls_html_select( 'sort_order', $_options, $sort_order );
+						$_select2 = yourls_html_select( 'sort_order', $_options, $sort_order, false,  yourls__( 'Sort order' ) );
 						/* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
 						yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
 						echo "&ndash;\n";
 
 						// Third search control: Show XX rows
 						/* //translators: "Show <text field> rows" */
-						yourls_se( 'Show %s rows',  '<input type="text" name="perpage" class="text" size="2" value="' . $perpage . '" />' );
+                        $_input = '<input aria-label="' .yourls__( 'Number of rows to show' ). '" type="text" name="perpage" class="text" size="2" value="' . $perpage . '" />';
+						yourls_se( 'Show %s rows',  $_input );
 						echo "<br/>\n";
 
 						// Fourth search control: Show links with more than XX clicks
@@ -275,8 +280,8 @@ function yourls_html_tfooter( $params = array() ) {
 							'more' => yourls__( 'more' ),
 							'less' => yourls__( 'less' ),
 						);
-						$_select = yourls_html_select( 'click_filter', $_options, $click_filter );
-						$_input  = '<input type="text" name="click_limit" class="text" size="4" value="' . $click_limit . '" /> ';
+						$_select = yourls_html_select( 'click_filter', $_options, $click_filter, false, yourls__( 'Show links with' ) );
+						$_input  = '<input aria-label="' .yourls__( 'Number of clicks' ). '" type="text" name="click_limit" class="text" size="4" value="' . $click_limit . '" /> ';
 						/* //translators: "Show links with <more/less> than <text field> clicks" */
 						yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
 						echo "<br/>\n";
@@ -287,10 +292,10 @@ function yourls_html_tfooter( $params = array() ) {
 							'after'   => yourls__('after'),
 							'between' => yourls__('between'),
 						);
-						$_select = yourls_html_select( 'date_filter', $_options, $date_filter );
-						$_input  = '<input type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
+						$_select = yourls_html_select( 'date_filter', $_options, $date_filter, false, yourls__('Show links created') );
+						$_input  = '<input aria-label="' .yourls__('Select a date') . '" type="text" name="date_first" id="date_first" class="text" size="12" value="' . $date_first . '" />';
 						$_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
-						$_input2 = '<input type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+						$_input2 = '<input aria-label="' .yourls__('Select an end date') . '" type="text" name="date_second" id="date_second" class="text" size="12" value="' . $date_second . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
 						/* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
 						yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
 						?>
@@ -354,18 +359,19 @@ function yourls_html_tfooter( $params = array() ) {
 }
 
 /**
- * Return a select box
+ * Return or display a select dropdown field
  *
  * @since 1.6
  *
- * @param string $name HTML 'name' (also use as the HTML 'id')
- * @param array $options array of 'value' => 'Text displayed'
- * @param string $selected optional 'value' from the $options array that will be highlighted
- * @param boolean $display false (default) to return, true to echo
+ * @param  string  $name      HTML 'name' (also use as the HTML 'id')
+ * @param  array   $options   array of 'value' => 'Text displayed'
+ * @param  string  $selected  optional 'value' from the $options array that will be highlighted
+ * @param  boolean $display   false (default) to return, true to echo
+ * @param  string  $label     ARIA label of the element
  * @return string HTML content of the select element
  */
-function yourls_html_select( $name, $options, $selected = '', $display = false ) {
-	$html = "<select name='$name' id='$name' size='1'>\n";
+function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '' ) {
+	$html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
 	foreach( $options as $value => $text ) {
 		$html .= "<option value='$value' ";
 		$html .= $selected == $value ? ' selected="selected"' : '';
@@ -396,7 +402,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	$text   = ( $text ? '"'.$text.'" ' : '' );
 	$title  = ( $title ? "$title " : '' );
 	$share  = yourls_esc_textarea( $title.$text.$shorturl );
-	$count  = 140 - strlen( $share );
+	$count  = 280 - strlen( $share );
 	$hidden = ( $hidden ? 'style="display:none;"' : '' );
 
 	// Allow plugins to filter all data
@@ -432,8 +438,8 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 				<textarea id="tweet_body"><?php echo $share; ?></textarea>
 			</div>
 			<p id="share_links"><?php yourls_e( 'Share with' ); ?>
-				<a id="share_tw" href="http://twitter.com/home?status=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
-				<a id="share_fb" href="http://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
+				<a id="share_tw" href="https://twitter.com/intent/tweet?text=<?php echo $_share; ?>" title="<?php yourls_e( 'Tweet this!' ); ?>" onclick="share('tw');return false">Twitter</a>
+				<a id="share_fb" href="https://www.facebook.com/share.php?u=<?php echo $_url; ?>" title="<?php yourls_e( 'Share on Facebook' ); ?>" onclick="share('fb');return false;">Facebook</a>
 				<?php
 				yourls_do_action( 'share_links', $longurl, $shorturl, $title, $text );
 				// Note: on the main admin page, there are no parameters passed to the sharebox when it's drawn.
@@ -478,12 +484,13 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  * @return string HTML of the edit row
  */
 function yourls_table_edit_row( $keyword ) {
-	$keyword = yourls_sanitize_string( $keyword );
+    $keyword = yourls_sanitize_keyword($keyword);
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = yourls_esc_attr( rawurldecode( $url ) );
 	$safe_title = yourls_esc_attr( $title );
+	$safe_keyword = yourls_esc_attr( $keyword );
 
     // Make strings sprintf() safe: '%' -> '%%'
     $safe_url = str_replace( '%', '%%', $safe_url );
@@ -495,7 +502,7 @@ function yourls_table_edit_row( $keyword ) {
 
 	if( $url ) {
 		$return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
 		$return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
 	} else {
@@ -513,7 +520,7 @@ RETURN;
  * @return string HTML of the edit row
  */
 function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
-	$keyword  = yourls_sanitize_string( $keyword );
+    $keyword  = yourls_sanitize_keyword($keyword);
 	$id       = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$shorturl = yourls_link( $keyword );
 
@@ -592,8 +599,9 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
-			'template' => '%date%',
-			'date'     => date( 'M d, Y H:i', $timestamp +( YOURLS_HOURS_OFFSET * 3600 ) ),
+			'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
+            'timestamp' => $timestamp,
+			'date'     => yourls_date_i18n( yourls_get_datetime_format('M d, Y H:i'), yourls_get_timestamp( $timestamp )),
 		),
 		'ip' => array(
 			'template' => '%ip%',
@@ -615,13 +623,8 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 	// Row cells: the HTML. Replace every %stuff% in 'template' with 'stuff' value.
 	$row = "<tr id=\"id-$id\">";
 	foreach( $cells as $cell_id => $elements ) {
-		$callback = new yourls_table_add_row_callback( $elements );
 		$row .= sprintf( '<td class="%s" id="%s">', $cell_id, $cell_id . '-' . $id );
-		$row .= preg_replace_callback( '/%([^%]+)?%/', array( $callback, 'callback' ), $elements['template'] );
-		// For the record, in PHP 5.3+ we don't need to introduce a class in order to pass additional parameters
-		// to the callback function. Instead, we would have used the 'use' keyword :
-		// $row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
-
+		$row .= preg_replace_callback( '/%([^%]+)?%/', function( $match ) use ( $elements ) { return $elements[ $match[1] ]; }, $elements['template'] );
 		$row .= '</td>';
 	}
 	$row .= "</tr>";
@@ -629,26 +632,6 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 
 	return $row;
 }
-
-/**
- * Callback class for yourls_table_add_row
- *
- * See comment about PHP 5.3+ in yourls_table_add_row()
- *
- * @since 1.7
- */
-class yourls_table_add_row_callback {
-    private $elements;
-
-    function __construct($elements) {
-		$this->elements = $elements;
-	}
-
-    function callback( $matches ) {
-		return $this->elements[ $matches[1] ];
-    }
-}
-
 
 /**
  * Echo the main table head
@@ -855,18 +838,22 @@ HTML;
 }
 
 /**
- * Display a page
+ *  Display a page
  *
+ *  Includes content of a PHP file from the YOURLS_PAGEDIR directory, as if it
+ *  were a standard short URL (ie http://sho.rt/$page)
+ *
+ *  @since 1.0
+ *  @param $page      PHP file to display
  */
 function yourls_page( $page ) {
-	$include = YOURLS_ABSPATH . "/pages/$page.php";
-	if( !file_exists( $include ) ) {
-		yourls_die( "Page '$page' not found", 'Not found', 404 );
-	}
+    if( !yourls_is_page($page)) {
+		yourls_die( yourls_s('Page "%1$s" not found', $page), yourls__('Not found'), 404 );
+    }
+
 	yourls_do_action( 'pre_page', $page );
-	include_once( $include );
+	include_once( YOURLS_PAGEDIR . "/$page.php" );
 	yourls_do_action( 'post_page', $page );
-	die();
 }
 
 /**
@@ -925,9 +912,10 @@ function yourls_l10n_calendar_strings() {
 function yourls_new_core_version_notice() {
 
 	$checks = yourls_get_option( 'core_version_checks' );
+    $latest = isset($checks->last_result->latest) ? yourls_sanitize_version($checks->last_result->latest) : false;
 
-	if( isset( $checks->last_result->latest ) AND version_compare( $checks->last_result->latest, YOURLS_VERSION, '>' ) ) {
-		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $checks->last_result->latest );
+	if( $latest AND version_compare( $latest, YOURLS_VERSION, '>' ) ) {
+		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
 }
@@ -1014,4 +1002,3 @@ function yourls_get_html_context() {
     global $ydb;
     $ydb->get_html_context();
 }
-

@@ -33,8 +33,9 @@ function yut_install_yourls() {
  */
 function yut_find_config() {
     $config_locations = array(
-        dirname(__DIR__). '/yourls-tests-config.php',         // manual, run locally
-        dirname(dirname(__DIR__)) . '/user/config.php',       // Travis, run from YOURLS/YOURLS
+        dirname(dirname(__DIR__)). '/yourls-tests-config.php',  // manual, run locally, config in YOURLS root
+        dirname(__DIR__). '/yourls-tests-config.php',           // manual, run locally, config in YOURLS/tests
+        dirname(dirname(__DIR__)) . '/user/config.php',         // Travis, run from YOURLS/YOURLS
     );
 
     foreach($config_locations as $config) {

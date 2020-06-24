@@ -22,6 +22,8 @@ require_once YOURLS_CONFIGFILE;
 require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
 define('YOURLS_TESTDATA_DIR', dirname( __FILE__ ) . '/data');
 define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
+define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
+define('YOURLS_PAGEDIR', YOURLS_TESTDATA_DIR.'/pages');
 $config = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
 $config->define_core_constants();
 
@@ -35,20 +37,21 @@ $init->check_if_upgrade_needed       = false;
 $init->load_plugins                  = false; // do not attempt to load (no DB yet to store data), but do send the 'plugins_loaded' action (some code depend on it)
 $init->get_all_options               = false;
 $init->check_new_version             = false;
-$init->include_auth_funcs            = true;
 $init->include_install_upgrade_funcs = true;
 new \YOURLS\Config\Init($init);
 
 // All set -- install
 yut_install_yourls();
 
-// PHPUnit 6 compatibility for previous versions
-if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {
-    class_alias( 'PHPUnit\Framework\Assert',        'PHPUnit_Framework_Assert' );
-    class_alias( 'PHPUnit\Framework\TestCase',      'PHPUnit_Framework_TestCase' );
-    class_alias( 'PHPUnit\Framework\Error\Error',   'PHPUnit_Framework_Error' );
-    class_alias( 'PHPUnit\Framework\Error\Notice',  'PHPUnit_Framework_Error_Notice' );
-    class_alias( 'PHPUnit\Framework\Error\Warning', 'PHPUnit_Framework_Error_Warning' );
+// All set -- instantiate the rest
+yourls_get_all_options();
+yourls_load_plugins();
+
+/**
+ * Compatibility with PHPUnit 6+
+ */
+if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
+	require_once dirname( __FILE__ ) . '/includes/phpunit6-compat.php';
 }
 
 // At this point, tests will start

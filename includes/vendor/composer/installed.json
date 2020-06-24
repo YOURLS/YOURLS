@@ -59,30 +59,30 @@
     },
     {
         "name": "composer/ca-bundle",
-        "version": "1.1.3",
-        "version_normalized": "1.1.3.0",
+        "version": "1.2.7",
+        "version_normalized": "1.2.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/composer/ca-bundle.git",
-            "reference": "8afa52cd417f4ec417b4bfe86b68106538a87660"
+            "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/ca-bundle/zipball/8afa52cd417f4ec417b4bfe86b68106538a87660",
-            "reference": "8afa52cd417f4ec417b4bfe86b68106538a87660",
+            "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
+            "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
             "shasum": ""
         },
         "require": {
             "ext-openssl": "*",
             "ext-pcre": "*",
-            "php": "^5.3.2 || ^7.0"
+            "php": "^5.3.2 || ^7.0 || ^8.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
+            "phpunit/phpunit": "^4.8.35 || ^5.7 || 6.5 - 8",
             "psr/log": "^1.0",
-            "symfony/process": "^2.5 || ^3.0 || ^4.0"
+            "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0"
         },
-        "time": "2018-10-18T06:09:13+00:00",
+        "time": "2020-04-08T08:27:21+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -117,30 +117,31 @@
     },
     {
         "name": "geoip2/geoip2",
-        "version": "v2.9.0",
-        "version_normalized": "2.9.0.0",
+        "version": "v2.10.0",
+        "version_normalized": "2.10.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/maxmind/GeoIP2-php.git",
-            "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77"
+            "reference": "419557cd21d9fe039721a83490701a58c8ce784a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/a807fbf65212eef5d8d2db1a1b31082b53633d77",
-            "reference": "a807fbf65212eef5d8d2db1a1b31082b53633d77",
+            "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/419557cd21d9fe039721a83490701a58c8ce784a",
+            "reference": "419557cd21d9fe039721a83490701a58c8ce784a",
             "shasum": ""
         },
         "require": {
-            "maxmind-db/reader": "~1.0",
-            "maxmind/web-service-common": "~0.5",
-            "php": ">=5.4"
+            "ext-json": "*",
+            "maxmind-db/reader": "~1.5",
+            "maxmind/web-service-common": "~0.6",
+            "php": ">=5.6"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "2.*",
-            "phpunit/phpunit": "4.*",
+            "phpunit/phpunit": "5.*",
             "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2018-04-10T15:32:59+00:00",
+        "time": "2019-12-12T18:48:39+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -156,7 +157,7 @@
             {
                 "name": "Gregory J. Oschwald",
                 "email": "goschwald@maxmind.com",
-                "homepage": "http://www.maxmind.com/"
+                "homepage": "https://www.maxmind.com/"
             }
         ],
         "description": "MaxMind GeoIP2 PHP API",
@@ -206,26 +207,30 @@
     },
     {
         "name": "maxmind-db/reader",
-        "version": "v1.4.1",
-        "version_normalized": "1.4.1.0",
+        "version": "v1.6.0",
+        "version_normalized": "1.6.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
-            "reference": "eb83d0ee1c1f9b8a340206302136bc81ee02ae74"
+            "reference": "febd4920bf17c1da84cef58e56a8227dfb37fbe4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/eb83d0ee1c1f9b8a340206302136bc81ee02ae74",
-            "reference": "eb83d0ee1c1f9b8a340206302136bc81ee02ae74",
+            "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/febd4920bf17c1da84cef58e56a8227dfb37fbe4",
+            "reference": "febd4920bf17c1da84cef58e56a8227dfb37fbe4",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.4"
+            "php": ">=5.6"
+        },
+        "conflict": {
+            "ext-maxminddb": "<1.6.0,>=2.0.0"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "2.*",
-            "phpunit/phpunit": "4.* || 5.*",
-            "satooshi/php-coveralls": "1.0.*",
+            "php-coveralls/php-coveralls": "^2.1",
+            "phpunit/phpcov": "^3.0",
+            "phpunit/phpunit": "5.*",
             "squizlabs/php_codesniffer": "3.*"
         },
         "suggest": {
@@ -233,7 +238,7 @@
             "ext-gmp": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
             "ext-maxminddb": "A C-based database decoder that provides significantly faster lookups"
         },
-        "time": "2019-01-04T19:55:56+00:00",
+        "time": "2019-12-19T22:59:03+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -249,7 +254,7 @@
             {
                 "name": "Gregory J. Oschwald",
                 "email": "goschwald@maxmind.com",
-                "homepage": "http://www.maxmind.com/"
+                "homepage": "https://www.maxmind.com/"
             }
         ],
         "description": "MaxMind DB Reader API",
@@ -264,31 +269,31 @@
     },
     {
         "name": "maxmind/web-service-common",
-        "version": "v0.5.0",
-        "version_normalized": "0.5.0.0",
+        "version": "v0.6.0",
+        "version_normalized": "0.6.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/maxmind/web-service-common-php.git",
-            "reference": "61a9836fa3bb1743ab89752bae5005d71e78c73b"
+            "reference": "40c928bb0194c45088b369a17f9baef9c3fc7460"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/61a9836fa3bb1743ab89752bae5005d71e78c73b",
-            "reference": "61a9836fa3bb1743ab89752bae5005d71e78c73b",
+            "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/40c928bb0194c45088b369a17f9baef9c3fc7460",
+            "reference": "40c928bb0194c45088b369a17f9baef9c3fc7460",
             "shasum": ""
         },
         "require": {
             "composer/ca-bundle": "^1.0.3",
             "ext-curl": "*",
             "ext-json": "*",
-            "php": ">=5.4"
+            "php": ">=5.6"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "2.*",
-            "phpunit/phpunit": "4.*",
+            "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5 || ^7.0",
             "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2018-02-12T22:31:54+00:00",
+        "time": "2019-12-12T15:56:05+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -355,23 +360,26 @@
     },
     {
         "name": "ozh/phpass",
-        "version": "1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "1.3.0",
+        "version_normalized": "1.3.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ozh/phpass.git",
-            "reference": "7d5b99ce3052faa84224cf680dc08c0a12ad396e"
+            "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ozh/phpass/zipball/7d5b99ce3052faa84224cf680dc08c0a12ad396e",
-            "reference": "7d5b99ce3052faa84224cf680dc08c0a12ad396e",
+            "url": "https://api.github.com/repos/ozh/phpass/zipball/44149d1ee06ccbda397f08f69d32c59802e4ce43",
+            "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.0"
+            "php": ">=5.6"
         },
-        "time": "2017-05-17T23:30:20+00:00",
+        "require-dev": {
+            "phpunit/phpunit": ">=4.0"
+        },
+        "time": "2020-03-29T10:39:31+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -508,17 +516,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
+        "version": "v1.15.0",
+        "version_normalized": "1.15.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
+            "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
+            "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
             "shasum": ""
         },
         "require": {
@@ -527,11 +535,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2018-09-21T13:07:52+00:00",
+        "time": "2020-03-09T19:04:49+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.9-dev"
+                "dev-master": "1.15-dev"
             }
         },
         "installation-source": "dist",

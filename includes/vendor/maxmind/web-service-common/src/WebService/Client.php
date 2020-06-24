@@ -100,8 +100,8 @@ class Client
      */
     public function post($service, $path, $input)
     {
-        $body = json_encode($input);
-        if ($body === false) {
+        $requestBody = json_encode($input);
+        if ($requestBody === false) {
             throw new InvalidInputException(
                 'Error encoding input as JSON: '
                 . $this->jsonErrorDescription()
@@ -113,12 +113,12 @@ class Client
             ['Content-Type: application/json']
         );
 
-        list($statusCode, $contentType, $body) = $request->post($body);
+        list($statusCode, $contentType, $responseBody) = $request->post($requestBody);
 
         return $this->handleResponse(
             $statusCode,
             $contentType,
-            $body,
+            $responseBody,
             $service,
             $path
         );
@@ -128,12 +128,12 @@ class Client
     {
         $request = $this->createRequest($path);
 
-        list($statusCode, $contentType, $body) = $request->get();
+        list($statusCode, $contentType, $responseBody) = $request->get();
 
         return $this->handleResponse(
             $statusCode,
             $contentType,
-            $body,
+            $responseBody,
             $service,
             $path
         );
@@ -170,11 +170,11 @@ class Client
     }
 
     /**
-     * @param int    $statusCode  the HTTP status code of the response
-     * @param string $contentType the Content-Type of the response
-     * @param string $body        the response body
-     * @param string $service     the name of the service
-     * @param string $path        the path used in the request
+     * @param int    $statusCode   the HTTP status code of the response
+     * @param string $contentType  the Content-Type of the response
+     * @param string $responseBody the response body
+     * @param string $service      the name of the service
+     * @param string $path         the path used in the request
      *
      * @throws AuthenticationException    when there is an issue authenticating the
      *                                    request
@@ -190,19 +190,19 @@ class Client
     private function handleResponse(
         $statusCode,
         $contentType,
-        $body,
+        $responseBody,
         $service,
         $path
     ) {
         if ($statusCode >= 400 && $statusCode <= 499) {
-            $this->handle4xx($statusCode, $contentType, $body, $service, $path);
+            $this->handle4xx($statusCode, $contentType, $responseBody, $service, $path);
         } elseif ($statusCode >= 500) {
             $this->handle5xx($statusCode, $service, $path);
         } elseif ($statusCode !== 200) {
             $this->handleUnexpectedStatus($statusCode, $service, $path);
         }
 
-        return $this->handleSuccess($body, $service);
+        return $this->handleSuccess($responseBody, $service);
     }
 
     /**
@@ -256,7 +256,7 @@ class Client
         $service,
         $path
     ) {
-        if (strlen($body) === 0) {
+        if (\strlen($body) === 0) {
             throw new HttpException(
                 "Received a $statusCode error for $service with no body",
                 $statusCode,
@@ -406,7 +406,7 @@ class Client
      */
     private function handleSuccess($body, $service)
     {
-        if (strlen($body) === 0) {
+        if (\strlen($body) === 0) {
             throw new WebServiceException(
                 "Received a 200 response for $service but did not " .
                 'receive a HTTP body.'
@@ -432,7 +432,7 @@ class Client
         // On OS X, when the SSL version is "SecureTransport", the system's
         // keychain will be used.
         if ($curlVersion['ssl_version'] === 'SecureTransport') {
-            return;
+            return null;
         }
         $cert = CaBundle::getSystemCaRootBundlePath();
 

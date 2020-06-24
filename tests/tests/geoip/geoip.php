@@ -39,13 +39,12 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
      * Check a few code return a string when getting their country flag
      */
     public function test_country_images() {
-        $this->assertInternalType('string', yourls_geo_get_flag('AU')); // something like http://yourls/includes/geo/flags/flag_au.gif
+        $this->assertInternalType('string', yourls_geo_get_flag('AU'));      // something like http://yourls/includes/geo/flags/flag_au.gif
         $this->assertInternalType('string', yourls_geo_get_flag('FR'));
-        $this->assertInternalType('string', yourls_geo_get_flag(''));   // something like http://yourls/includes/geo/flags/flag_.gif
-        $this->assertFalse(yourls_geo_get_flag('OMGLOL'));
+        $this->assertInternalType('string', yourls_geo_get_flag(''));        // something like http://yourls/includes/geo/flags/flag_.gif
+        $this->assertInternalType('string', yourls_geo_get_flag('OMGLOL'));  // fall back to default ''
     }
-    
-    
+
     /**
 	 * Data provider : array of arrays of ( 'ip', 'country code' ) in IPv4 notation
 	 */

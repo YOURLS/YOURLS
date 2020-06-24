@@ -24,12 +24,6 @@ class InitDefaults {
      * Whether to include auth function files
      * @var bool
      */
-    public $include_auth_funcs = false;             // by default do not load (let YOURLS decide depending on yourls_is_private() value)
-
-    /**
-     * Whether to include auth function files
-     * @var bool
-     */
     public $include_install_upgrade_funcs = false;  // by default do not load
 
     /**
