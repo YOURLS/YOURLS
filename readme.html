@@ -569,7 +569,7 @@ echo $data->longurl;</tt></pre>
 			<ul>
 				<li>Unless you plan on making it public and as popular as bit.ly, any shared hosting will be fine. Ozh runs all his YOURLS instance on <a href="https://yourls.org/dreamhost">Dreamhost</a> and it works just great.</li>
 				<li><a href="http://domai.nr/">Domainr</a> is a fun search tool that might inspire and help you</li>
-				<li>Aim for exotic top level domains (.in, .im, .li ...), they're often cheap and a lot are still available. <a href="http://yourls.org/gandi">Gandi</a> is a pretty comprehensive registrar, for instance.</li>
+				<li>Aim for exotic top-level domains (.in, .im, .li ...), they're often cheap and a lot are still available. <a href="http://yourls.org/gandi">Gandi</a> is a pretty comprehensive registrar, for instance.</li>
 			</ul>
 
 			<a class="anch" href="#FAQ;htaccess"><span>&#10148;</span><h3 id="htaccess">YOURLS needs its own .htaccess</h3></a>
@@ -595,7 +595,7 @@ echo $data->longurl;</tt></pre>
 			<ul>
 				<li>Out of the box, YOURLS updates traffic stats every time a short URL is requested. Period.</li>
                 <li>This said, some clients (like indexing bots, your internet browser) may skip requesting a short URL if they have the final destination known in cache.</li>
-                <li>Conversely, other stat tools may use different techniques to track hits (using javascript or not, using IP adress, filtering multiple requests by same client, etc...)</li>
+                <li>Conversely, other stat tools may use different techniques to track hits (using javascript or not, using IP address, filtering multiple requests by same client, etc...)</li>
 				<li>Bottom line: your mileage may vary with different tools, but there is no bug in YOURLS regarding that matter.</li>
 			</ul>
 
@@ -607,7 +607,7 @@ echo $data->longurl;</tt></pre>
 
 			<a class="anch" href="#FAQ;lowercase"><span>&#10148;</span><h3 id="lowercase">Uppercase letters in short URLs are eaten up, eg "<code>OmgOzh</code>" becomes "<code>mgzh</code>" !</h3></a>
 			<ul>
-				<li>Indeed. It's intented if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
+				<li>Indeed. It's intended if you selected Base 36 (see above). Letters that don't belong to the character set, eg <code>@#!</code> or <code>ABC</code>, are removed.</li>
 				<li>If you want to force lowercase, you'll need a <a href="https://yourls.org/awesome">plugin</a>.</li>
 			</ul>
 
