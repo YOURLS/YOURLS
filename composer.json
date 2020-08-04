@@ -25,7 +25,7 @@
         "geoip2/geoip2" : "2.10.0",
         "aura/sql": "~3.",
         "jakeasmith/http_build_url": "1.0.1",
-        "symfony/polyfill-mbstring": "1.18.0"
+        "symfony/polyfill-mbstring": "1.18.1"
     },
     "config": {
         "vendor-dir": "includes/vendor"
