@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5804d08f959ebcb05ff6c27eacf78c2",
+    "content-hash": "055210f55fd849db02b5bf2f4e1ea22f",
     "packages": [
         {
             "name": "aura/sql",
@@ -509,7 +509,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.18.1",
+            "version": "v1.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
