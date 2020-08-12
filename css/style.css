@@ -41,7 +41,7 @@ h1 a:hover{text-decoration:none;}
 h1 a:hover span{text-decoration:underline;color:#88c0eb}
 #yourls-logo {
     border:0px;
-    width:300px;
+    width:200px;
 }
 ul#admin_menu {
 	min-height:100px;
