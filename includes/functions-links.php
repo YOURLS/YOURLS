@@ -157,7 +157,8 @@ function yourls_admin_url( $page = '' ) {
     } else {
         $yourls_admin_dir = "admin";
     } 
-    $admin = yourls_get_yourls_site() . '/' . $yourls_admin_dir . '/' . $page;    if( yourls_is_ssl() or yourls_needs_ssl() ) {
+    $admin = yourls_get_yourls_site() . '/' . $yourls_admin_dir . '/' . $page;
+    if( yourls_is_ssl() or yourls_needs_ssl() ) {
         $admin = yourls_set_url_scheme( $admin, 'https' );
     }
     return yourls_apply_filter( 'admin_url', $admin, $page );
