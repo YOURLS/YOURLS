@@ -119,14 +119,26 @@ function yourls_remove_query_arg( $key, $query = false ) {
 }
 
 /**
- * Converts keyword into short link (prepend with YOURLS base URL)
+ * Converts keyword into short link (prepend with YOURLS base URL) or stat link (sho.rt/abc+)
  *
- * This function does not check for a valid keyword
+ * This function does not check for a valid keyword.
+ * The resulting link is normalized to allow for IDN translation to UTF8
  *
+ * @param  string $keyword  Short URL keyword
+ * @param  bool   $stats    Optional, true to return a stat link (eg sho.rt/abc+)
+ * @return string           Short URL, or keyword stat URL
  */
-function yourls_link( $keyword = '' ) {
+function yourls_link( $keyword = '', $stats = false ) {
     $keyword = yourls_sanitize_keyword($keyword);
-    $link    = yourls_get_yourls_site() . '/' . $keyword;
+    if( $stats  === true ) {
+        $keyword = $keyword . '+';
+    }
+    $link    = yourls_normalize_uri( yourls_get_yourls_site() . '/' . $keyword );
+
+    if( yourls_is_ssl() ) {
+        $link = yourls_set_url_scheme( $link, 'https' );
+    }
+
     return yourls_apply_filter( 'yourls_link', $link, $keyword );
 }
 
@@ -137,13 +149,7 @@ function yourls_link( $keyword = '' ) {
  *
  */
 function yourls_statlink( $keyword = '' ) {
-    $keyword = yourls_sanitize_keyword($keyword);
-    $link    = yourls_get_yourls_site() . '/' . $keyword . '+';
-
-    if( yourls_is_ssl() ) {
-        $link = yourls_set_url_scheme( $link, 'https' );
-    }
-
+    $link = yourls_link( $keyword, true );
     return yourls_apply_filter( 'yourls_statlink', $link, $keyword );
 }
 

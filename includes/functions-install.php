@@ -208,39 +208,39 @@ function yourls_create_sql_tables() {
 	// Create Table Query
 	$create_tables = array();
 	$create_tables[YOURLS_DB_TABLE_URL] =
-		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
-		'`keyword` varchar(200) BINARY NOT NULL,'.
-		'`url` text BINARY NOT NULL,'.
-		'`title` text CHARACTER SET utf8,'.
-		'`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'.
-		'`ip` VARCHAR(41) NOT NULL,'.
-		'`clicks` INT(10) UNSIGNED NOT NULL,'.
-		' PRIMARY KEY  (`keyword`),'.
-		' KEY `timestamp` (`timestamp`),'.
-		' KEY `ip` (`ip`)'.
-		');';
+        'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
+         '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT "",'.
+         '`url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,'.
+         '`title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
+         '`timestamp` timestamp NOT NULL DEFAULT current_timestamp(),'.
+         '`ip` varchar(41) COLLATE utf8mb4_unicode_ci NOT NULL,'.
+         '`clicks` int(10) unsigned NOT NULL,'.
+         'PRIMARY KEY (`keyword`),'.
+         'KEY `ip` (`ip`),'.
+         'KEY `timestamp` (`timestamp`)'.
+        ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
 	$create_tables[YOURLS_DB_TABLE_OPTIONS] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_OPTIONS.'` ('.
 		'`option_id` bigint(20) unsigned NOT NULL auto_increment,'.
-		'`option_name` varchar(64) NOT NULL default "",'.
-		'`option_value` longtext NOT NULL,'.
+		'`option_name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL default "",'.
+		'`option_value` longtext COLLATE utf8mb4_unicode_ci NOT NULL,'.
 		'PRIMARY KEY  (`option_id`,`option_name`),'.
 		'KEY `option_name` (`option_name`)'.
-		') AUTO_INCREMENT=1 ;';
+		') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
 	$create_tables[YOURLS_DB_TABLE_LOG] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
 		'`click_id` int(11) NOT NULL auto_increment,'.
 		'`click_time` datetime NOT NULL,'.
-		'`shorturl` varchar(200) BINARY NOT NULL,'.
+		'`shorturl` varchar(100) BINARY NOT NULL,'.
 		'`referrer` varchar(200) NOT NULL,'.
 		'`user_agent` varchar(255) NOT NULL,'.
 		'`ip_address` varchar(41) NOT NULL,'.
 		'`country_code` char(2) NOT NULL,'.
 		'PRIMARY KEY  (`click_id`),'.
 		'KEY `shorturl` (`shorturl`)'.
-		') AUTO_INCREMENT=1 ;';
+		') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
 
 	$create_table_count = 0;

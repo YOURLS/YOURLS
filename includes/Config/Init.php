@@ -85,14 +85,16 @@ class Init {
         // Check if need to redirect to install procedure
         if ($actions->redirect_to_install === true) {
             if (!yourls_is_installed() && !yourls_is_installing()) {
-                yourls_redirect( yourls_admin_url('install.php'), 302 );
+                yourls_no_cache_headers();
+                yourls_redirect( yourls_admin_url('install.php'), 307 );
             }
         }
 
         // Check if upgrade is needed (bypassed if upgrading or installing)
         if ($actions->check_if_upgrade_needed === true) {
             if (!yourls_is_upgrading() && !yourls_is_installing() && yourls_upgrade_is_needed()) {
-                yourls_redirect( yourls_admin_url('upgrade.php'), 302 );
+                yourls_no_cache_headers();
+                yourls_redirect( yourls_admin_url('upgrade.php'), 307 );
             }
         }
 

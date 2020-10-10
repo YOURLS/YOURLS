@@ -28,8 +28,8 @@ if ( !yourls_upgrade_is_needed() ) {
 
 	// From what are we upgrading?
 	if ( isset( $_GET['oldver'] ) && isset( $_GET['oldsql'] ) ) {
-		$oldver = yourls_sanitize_version( $_GET['oldver'] );
-		$oldsql = yourls_sanitize_version( $_GET['oldsql'] );
+		$oldver = (string)( $_GET['oldver'] );
+		$oldsql = (string)( $_GET['oldsql'] );
 	} else {
 		list( $oldver, $oldsql ) = yourls_get_current_version_from_sql();
 	}
@@ -79,7 +79,6 @@ if ( !yourls_upgrade_is_needed() ) {
 	}
 
 }
-
 
 ?>
 

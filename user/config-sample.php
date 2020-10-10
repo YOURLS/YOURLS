@@ -33,8 +33,10 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
  ** Site options
  */
 
-/** YOURLS installation URL -- all lowercase, no trailing slash at the end.
- ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa) */
+/** YOURLS installation URL
+ ** All lowercase, no trailing slash at the end.
+ ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa)
+ ** To use an IDN domain (eg http://héhé.com), write its ascii form here (eg http://xn--hh-bjab.com) */
 define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
 
 /** YOURLS language
@@ -53,7 +55,8 @@ define( 'YOURLS_UNIQUE_URLS', true );
  ** Read http://yourls.org/privatepublic for more details if you're unsure */
 define( 'YOURLS_PRIVATE', true );
 
-/** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated. Hint: copy from http://yourls.org/cookie **/
+/** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated
+ ** Hint: copy from http://yourls.org/cookie */
 define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
 /** Username(s) and password(s) allowed to access the site. Passwords either in plain text or as encrypted hashes
@@ -65,21 +68,14 @@ $yourls_user_passwords = array(
 	// You can have one or more 'login'=>'password' lines
 	);
 
+/** URL shortening method: 36 or 62
+ ** 36: generates all lowercase keywords (ie: 13jkm)
+ ** 62: generates mixed case keywords (ie: 13jKm or 13JKm) */
+define( 'YOURLS_URL_CONVERT', 36 );
+
 /** Debug mode to output some internal information
  ** Default is false for live site. Enable when coding or before submitting a new issue */
 define( 'YOURLS_DEBUG', false );
-
-/*
- ** URL Shortening settings
- */
-
-/** URL shortening method: 36 or 62 */
-define( 'YOURLS_URL_CONVERT', 36 );
-/*
- * 36: generates all lowercase keywords (ie: 13jkm)
- * 62: generates mixed case keywords (ie: 13jKm or 13JKm)
- * Stick to one setting. It's best not to change after you've started creating links.
- */
 
 /**
 * Reserved keywords (so that generated URLs won't match them)

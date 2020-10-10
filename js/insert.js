@@ -5,18 +5,18 @@ $(document).ready(function(){
 	});
 	add_link_reset();
 	$('#new_url_form').attr('action', 'javascript:add_link();');
-	
+
 	$('input.text').focus(function(){
 		$(this).select();
 	});
-	
+
 	// this one actually has little impact, the .hasClass('disabled') in each edit_link_display(), remove() etc... fires faster
 	$(document).on( 'click', 'a.button', function() {
 		if( $(this).hasClass('disabled') ) {
 			return false;
 		}
 	});
-	
+
 	// When Searching, explode search text in pieces -- see split_search_text_before_search()
 	$('#filter_form').submit( function(){
 		split_search_text_before_search();
@@ -127,6 +127,7 @@ function go_stats(link) {
 // Cancel edition of a link
 function edit_link_hide(id) {
 	$("#edit-" + id).fadeOut(200, function(){
+        $("#edit-" + id).remove();
 		end_disable('#actions-'+id+' .button');
 	});
 }
@@ -134,7 +135,7 @@ function edit_link_hide(id) {
 // Save edition of a link
 function edit_link_save(id) {
 	add_loading("#edit-close-" + id);
-	var newurl = encodeURI( $("#edit-url-" + id).val() );
+	var newurl = $("#edit-url-" + id).val();
 	var newkeyword = $("#edit-keyword-" + id).val();
 	var title = $("#edit-title-" + id).val();
 	var keyword = $('#old_keyword_'+id).val();
@@ -145,7 +146,7 @@ function edit_link_save(id) {
 		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
 		function(data){
 			if(data.status == 'success') {
-			
+
 				if( data.url.title != '' ) {
 					var display_link = '<a href="' + data.url.url + '" title="' + data.url.title + '">' + data.url.display_title + '</a><br/><small><a href="' + data.url.url + '">' + data.url.display_url + '</a></small>';
 				} else {
@@ -155,6 +156,7 @@ function edit_link_save(id) {
 				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
 				$("#edit-" + id).fadeOut(200, function(){
+                    $("#edit-" + id).remove();
 					$('#main_table tbody').trigger("update");
 				});
 				$('#keyword_'+id).val( newkeyword );
@@ -212,7 +214,7 @@ function toggle_share(id) {
 	var longurl = link.attr('href');
 	var title = link.attr('title');
 	var shorturl = $('#keyword-'+id+' a:first').attr('href');
-	
+
 	toggle_share_fill_boxes( longurl, shorturl, title );
 }
 

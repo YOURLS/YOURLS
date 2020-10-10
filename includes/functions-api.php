@@ -212,7 +212,7 @@ function yourls_api_expand( $shorturl ) {
 	if( $longurl ) {
 		$return = array(
 			'keyword'   => $keyword,
-			'shorturl'  => yourls_get_yourls_site() . "/$keyword",
+			'shorturl'  => yourls_link($keyword),
 			'longurl'   => $longurl,
             'title'     => yourls_get_keyword_title( $keyword ),
 			'simple'    => $longurl,
