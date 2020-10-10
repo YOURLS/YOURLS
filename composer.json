@@ -26,6 +26,7 @@
         "aura/sql": "~2.",
         "jakeasmith/http_build_url": "1.0.1",
         "symfony/polyfill-mbstring": "1.15.0",
+        "symfony/polyfill-intl-idn": "^1.17",
         "yourls/composer-installer": "^1.1"
     },
     "config": {

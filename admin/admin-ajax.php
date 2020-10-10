@@ -6,6 +6,7 @@ yourls_maybe_require_auth();
 
 // This file will output a JSON string
 yourls_content_type_header( 'application/json' );
+yourls_no_cache_headers();
 
 if( !isset( $_REQUEST['action'] ) )
 	die();
@@ -38,10 +39,10 @@ switch( $action ) {
 		echo json_encode(array('success'=>$query));
 		break;
 
-    // unused for the moment
-	// case 'logout':
-		// yourls_logout();
-		// break;
+	case 'logout':
+		// unused for the moment
+		yourls_logout();
+		break;
 
 	default:
 		yourls_do_action( 'yourls_ajax_'.$action );

@@ -7,8 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
 {
     public static $files = array (
-        'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -23,7 +25,9 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'S' => 
         array (
             'Symfony\\Thanks\\' => 15,
+            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
         ),
         'P' => 
         array (
@@ -63,9 +67,17 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         array (
             0 => __DIR__ . '/..' . '/symfony/thanks/src',
         ),
+        'Symfony\\Polyfill\\Php72\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
         'POMO\\' => 
         array (
