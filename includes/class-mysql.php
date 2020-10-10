@@ -30,7 +30,7 @@ function yourls_db_connect() {
         $dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
     }
 
-    $charset = yourls_apply_filter( 'db_connect_charset', 'utf8' );
+    $charset = yourls_apply_filter( 'db_connect_charset', 'utf8mb4' );
 
     /**
      * Data Source Name (dsn) used to connect the DB

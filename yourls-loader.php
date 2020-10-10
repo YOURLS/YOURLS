@@ -35,8 +35,6 @@ if ( yourls_get_protocol($keyword) ) {
 	$url = yourls_sanitize_url_safe($keyword);
 	$parse = yourls_get_protocol_slashes_and_rest( $url, [ 'up', 'us', 'ur' ] );
     yourls_do_action( 'load_template_redirect_admin', $url );
-    $parse = array_map( 'rawurlencode', $parse );
-
     yourls_do_action( 'pre_redirect_bookmarklet', $url );
 
     // Redirect to /admin/index.php?up=<url protocol>&us=<url slashes>&ur=<url rest>

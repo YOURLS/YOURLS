@@ -143,7 +143,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 
 		foreach ( (array)$results as $res ) {
 			$return['links']['link_'.$i++] = [
-				'shorturl' => yourls_get_yourls_site() .'/'. $res->keyword,
+				'shorturl' => yourls_link($res->keyword),
 				'url'      => $res->url,
 				'title'    => $res->title,
 				'timestamp'=> $res->timestamp,
@@ -273,6 +273,38 @@ function yourls_redirect_shorturl($url, $keyword) {
     }
 
     yourls_redirect( $url, 301 );
+}
+
+/**
+ * Send headers to explicitely tell browser not to cache content or redirection
+ *
+ * @since 1.7.10
+ * @return void
+ */
+function yourls_no_cache_headers() {
+    if( !headers_sent() ) {
+        header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
+        header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+        header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+        header( 'Pragma: no-cache' );
+    }
+}
+
+/**
+ * Send a filerable content type header
+ *
+ * @since 1.7
+ * @param string $type content type ('text/html', 'application/json', ...)
+ * @return bool whether header was sent
+ */
+function yourls_content_type_header( $type ) {
+    yourls_do_action( 'content_type_header', $type );
+	if( !headers_sent() ) {
+		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
+		header( "Content-Type: $type; charset=$charset" );
+		return true;
+	}
+	return false;
 }
 
 /**

@@ -58,10 +58,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
-		header( 'Expires: Thu, 23 Mar 1972 07:00:00 GMT' );
-		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-		header( 'Pragma: no-cache' );
+        yourls_no_cache_headers();
 		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
@@ -88,7 +85,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	<meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
 	<?php yourls_do_action('html_head_meta', $context); ?>
 	<link rel="shortcut icon" href="<?php yourls_get_yourls_favicon_url(); ?>" />
-	<script src="<?php yourls_site_url(); ?>/js/jquery-3.3.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+	<script src="<?php yourls_site_url(); ?>/js/jquery-3.5.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
 	<link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
@@ -399,6 +396,9 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 	if ( false !== $pre )
 		return $pre;
 
+    // Make sure IDN domains are in their UTF8 form
+    $shorturl = yourls_normalize_uri($shorturl);
+
 	$text   = ( $text ? '"'.$text.'" ' : '' );
 	$title  = ( $title ? "$title " : '' );
 	$share  = yourls_esc_textarea( $title.$text.$shorturl );
@@ -488,7 +488,7 @@ function yourls_table_edit_row( $keyword ) {
 	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
-	$safe_url = yourls_esc_attr( rawurldecode( $url ) );
+	$safe_url = yourls_esc_attr( $url );
 	$safe_title = yourls_esc_attr( $title );
 	$safe_keyword = yourls_esc_attr( $keyword );
 
@@ -595,7 +595,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'long_url'      => yourls_esc_url( $url ),
 			'title_attr'    => yourls_esc_attr( $title ),
 			'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
-			'long_url_html' => yourls_esc_html( yourls_trim_long_string( $url ) ),
+			'long_url_html' => yourls_esc_html( yourls_trim_long_string( urldecode( $url ) ) ),
 			'warning'       => $protocol_warning,
 		),
 		'timestamp' => array(
@@ -918,23 +918,6 @@ function yourls_new_core_version_notice() {
 		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
-}
-
-/**
- * Send a filerable content type header
- *
- * @since 1.7
- * @param string $type content type ('text/html', 'application/json', ...)
- * @return bool whether header was sent
- */
-function yourls_content_type_header( $type ) {
-    yourls_do_action( 'content_type_header', $type );
-	if( !headers_sent() ) {
-		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
-		header( "Content-Type: $type; charset=$charset" );
-		return true;
-	}
-	return false;
 }
 
 /**

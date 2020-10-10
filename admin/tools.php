@@ -19,7 +19,7 @@ yourls_html_menu();
 		<ul>
 			<li><?php yourls_e( 'The <span>Standard Bookmarklets</span> will take you to a page where you can easily edit or delete your brand new short URL.' ); ?></li>
 
-			<li><?php yourls_e( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing.' ); ?></li>
+			<li><?php yourls_e( 'The <span>Instant Bookmarklets</span> will pop the short URL without leaving the page you are viewing (depending on the page and server configuration, they may silently fail)' ); ?></li>
 
 			<li><?php yourls_e( 'The <span>Simple Bookmarklets</span> will generate a short URL with a random or sequential keyword.' ); ?></li>
 
@@ -29,6 +29,8 @@ yourls_html_menu();
 		<p><?php
 		yourls_e( "If you want to share a description along with the link you're shortening, simply <span>select text</span> on the page you're viewing before clicking on your bookmarklet link" );
 		?></p>
+
+        <p><?php yourls_e( '<strong>Important Note:</strong> bookmarklets <span>may fail</span> on websites with <em>https</em>, especially the "Instant" bookrmarklets. There is nothing you can do about this.'); ?></p>
 
 		<h3><?php yourls_e( 'The Bookmarklets' ); ?></h3>
 
@@ -277,8 +279,6 @@ TUMBLR;
         ?>
 
 		<?php yourls_do_action( 'social_bookmarklet_buttons_after' ); ?>
-
-        <p><?php yourls_e( '<strong>Note:</strong> depending on server settings, bookmarklets might fail on websites with <em>https</em>.'); ?></p>
 
 		</p>
 

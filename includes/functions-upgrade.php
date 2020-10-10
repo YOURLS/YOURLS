@@ -5,7 +5,10 @@
  *
  */
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
-	// special case for 1.3: the upgrade is a multi step procedure
+
+    yourls_maintenance_mode(true);
+
+    // special case for 1.3: the upgrade is a multi step procedure
 	if( $oldsql == 100 ) {
 		yourls_upgrade_to_14( $step );
 	}
@@ -25,7 +28,10 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 			yourls_upgrade_to_15();
 
 		if( $oldsql < 482 )
-			yourls_upgrade_482();
+			yourls_upgrade_482(); // that was somewhere 1.5 and 1.5.1 ...
+
+		if( $oldsql < 505 )
+			yourls_upgrade_to_18();
 
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
@@ -35,9 +41,56 @@ function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 		// Update options to reflect latest version
 		yourls_update_option( 'version', YOURLS_VERSION );
 		yourls_update_option( 'db_version', YOURLS_DB_VERSION );
+        yourls_maintenance_mode(false);
 		break;
 	}
 }
+
+/************************** 1.6 -> 1.8 **************************/
+
+function yourls_upgrade_to_18() {
+    $ydb = yourls_get_db();
+    $error_msg = [];
+
+    echo "<p>Updating DB. Please wait...</p>";
+
+    $ydb->beginTransaction();
+
+    $queries = array(
+        'database charset'  => sprintf('ALTER DATABASE %s CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;', YOURLS_DB_NAME),
+        'options charset'   => sprintf('ALTER TABLE %s CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', YOURLS_DB_TABLE_OPTIONS),
+        'short URL charset' => sprintf('ALTER TABLE %s CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', YOURLS_DB_TABLE_URL),
+        'short URL varchar' => sprintf("ALTER TABLE %s CHANGE `keyword` `keyword` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '';", YOURLS_DB_TABLE_URL),
+        'short URL type'    => sprintf("ALTER TABLE %s CHANGE `url` `url` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL;", YOURLS_DB_TABLE_URL),
+        'short URL type'    => sprintf("ALTER TABLE %s CHANGE `title` `title` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", YOURLS_DB_TABLE_URL),
+    );
+
+    foreach($queries as $what => $query) {
+        try {
+            $ydb->perform($query);
+        } catch (\Exception $e) {
+            $error_msg[] = $e ->getMessage();
+        }
+    }
+
+    $result = $ydb->commit();
+
+    if( $error_msg or $result === false ) {
+        echo "<p class='error'>Unable to update the DB.</p>";
+        echo "<p>You will have to manually fix things, sorry for the inconvenience :(</p>";
+        echo "<p>The errors were:
+        <pre>";
+        foreach( $error_msg as $error ) {
+            echo "$error\n";
+        }
+        echo "</pre>";
+        die();
+    }
+
+    echo "<p class='success'>OK!</p>";
+}
+
+/************************** 1.5 -> 1.6 **************************/
 
 /**
  * Upgrade r482
@@ -48,7 +101,7 @@ function yourls_upgrade_482() {
 	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
-	$ydb->query( $sql );
+	$ydb->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 }
 
@@ -65,10 +118,9 @@ function yourls_upgrade_to_15( ) {
 	echo "<p>Enabling the plugin API. Please wait...</p>";
 
 	// Alter URL table to store titles
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$sql = "ALTER TABLE `$table_url` ADD `title` TEXT AFTER `url`;";
-	$ydb->query( $sql );
+	yourls_get_db()->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 
 	// Update .htaccess
@@ -84,7 +136,7 @@ function yourls_upgrade_to_15( ) {
  */
 function yourls_upgrade_to_143( ) {
 	// Check if we have 'keyword' (borked install) or 'shorturl' (ok install)
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table_log = YOURLS_DB_TABLE_LOG;
 	$sql = "SHOW COLUMNS FROM `$table_log`";
 	$cols = $ydb->fetchObjects( $sql );
@@ -116,10 +168,9 @@ function yourls_upgrade_to_141( ) {
  *
  */
 function yourls_alter_url_table_to_141() {
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$alter = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 200 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
-	$ydb->query( $alter );
+	yourls_get_db()->perform( $alter );
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
 }
 
@@ -172,11 +223,10 @@ function yourls_update_options_to_14() {
 	yourls_update_option( 'db_version', '200' );
 
 	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
-		global $ydb;
 		$table = YOURLS_DB_TABLE_NEXTDEC;
-		$next_id = $ydb->fetchValue("SELECT `next_id` FROM `$table`");
+		$next_id = yourls_get_db()->fetchValue("SELECT `next_id` FROM `$table`");
 		yourls_update_option( 'next_id', $next_id );
-		@$ydb->query( "DROP TABLE `$table`" );
+		yourls_get_db()->perform( "DROP TABLE `$table`" );
 	} else {
 		yourls_update_option( 'next_id', 1 ); // In case someone mistakenly deleted the next_id constant or table too early
 	}
@@ -187,7 +237,7 @@ function yourls_update_options_to_14() {
  *
  */
 function yourls_create_tables_for_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 
 	$queries = array();
 
@@ -214,7 +264,7 @@ function yourls_create_tables_for_14() {
 		');';
 
 	foreach( $queries as $query ) {
-		$ydb->query( $query ); // There's no result to be returned to check if table was created (except making another query to check table existence, which we'll avoid)
+		$ydb->perform( $query ); // There's no result to be returned to check if table was created (except making another query to check table existence, which we'll avoid)
 	}
 
 	echo "<p>New tables created. Please wait...</p>";
@@ -226,7 +276,7 @@ function yourls_create_tables_for_14() {
  *
  */
 function yourls_alter_url_table_to_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	$alters = array();
@@ -236,7 +286,7 @@ function yourls_alter_url_table_to_14() {
 	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
 
 	foreach ( $alters as $query ) {
-		$ydb->query( $query );
+		$ydb->perform( $query );
 	}
 
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
@@ -247,7 +297,7 @@ function yourls_alter_url_table_to_14() {
  *
  */
 function yourls_alter_url_table_to_14_part_two() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	$alters = array();
@@ -256,7 +306,7 @@ function yourls_alter_url_table_to_14_part_two() {
 	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `timestamp` )";
 
 	foreach ( $alters as $query ) {
-		$ydb->query( $query );
+		$ydb->perform( $query );
 	}
 
 	echo "<p>New table index created</p>";
@@ -267,7 +317,7 @@ function yourls_alter_url_table_to_14_part_two() {
  *
  */
 function yourls_update_table_to_14() {
-	global $ydb;
+	$ydb = yourls_get_db();
 	$table = YOURLS_DB_TABLE_URL;
 
 	// Modify each link to reflect new structure
@@ -286,14 +336,7 @@ function yourls_update_table_to_14() {
 		$keyword = $row->keyword;
 		$url = $row->url;
 		$newkeyword = yourls_int2string( $keyword );
-		$ydb->query("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';");
-
-        /**
-         * @todo: As of 1.7.3+ when ezSQL is replaced, $ydb->result will no longer exist. This will fail and
-         *        should be replaced with a check for the number of affected rows. This said,
-         *        chances are no one still needs this. Leave it unfixed until someone complains.
-         */
-		if( $ydb->result === true ) {
+		if( true === $ydb->perform("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';") ) {
 			$queries++;
 		} else {
 			echo "<p>Huho... Could not update rown with url='$url', from keyword '$keyword' to keyword '$newkeyword'</p>"; // Find what went wrong :/

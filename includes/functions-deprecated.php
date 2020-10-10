@@ -36,6 +36,20 @@ function yourls_current_time( $type, $gmt = 0 ) {
 }
 
 /**
+ * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889
+ *
+ * Renamed to yourls_normalize_uri() in 1.7.10 because the function now does more than just
+ * lowercasing the scheme and domain.
+ *
+ * @deprecated 1.7.10
+ *
+ */
+function yourls_lowercase_scheme_domain( $url ) {
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_normalize_uri' );
+    return yourls_normalize_uri( $url );
+}
+
+/**
  * The original string sanitize function
  *
  * @deprecated 1.7.10
