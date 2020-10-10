@@ -564,7 +564,7 @@ function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $times
 			'onclick' => "remove_link('$id');return false;",
 		)
 	);
-	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions );
+	$actions = yourls_apply_filter( 'table_add_row_action_array', $actions, $keyword );
 
 	// Action link buttons: the HTML
 	$action_links = '';
