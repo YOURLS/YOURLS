@@ -56,7 +56,7 @@ function yourls_string2htmlid( $string ) {
  * If we are ADDING or EDITING a short URL, the keyword must comply to the short URL charset: every
  * character that doesn't belong to it will be removed.
  * But otherwise we must have a more conservative approach: we could be checking for a keyword that
- * was once valid but now the short URL charset. In such a case, we are treating the keyword for what
+ * was once valid but now the short URL charset has changed. In such a case, we are treating the keyword for what
  * it is: just a part of a URL, hence sanitize it as a URL.
  *
  * @param  string $keyword                        short URL keyword
@@ -495,7 +495,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 	$original_url = $url;
 
 	// force scheme and domain to lowercase - see issues 591 and 1630
-    $url = yourls_lowercase_scheme_domain( $url );
+    $url = yourls_normalize_uri( $url );
 
 	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
 	// Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
@@ -534,7 +534,10 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
 
 
 /**
- * Lowercase scheme and domain of an URI - see issues 591, 1630, 1889
+ * Normalize a URI : lowercase scheme and domain, convert IDN to UTF8
+ *
+ * All in one example: 'HTTP://XN--mgbuq0c.Com/AbCd' -> 'http://طارق.com/AbCd'
+ * See issues 591, 1630, 1889, 2691
  *
  * This function is trickier than what seems to be needed at first
  *
@@ -543,13 +546,13 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
  * The general rule is that the scheme ("stuff://" or "stuff:") is case insensitive and should be lowercase. But then, depending on the
  * scheme, parts of what follows the scheme may or may not be case sensitive.
  *
- * Second, simply using parse_url() and its opposite http_build_url() (see functions-compat.php) is a pretty unsafe process:
+ * Second, simply using parse_url() and its opposite http_build_url() is a pretty unsafe process:
  *  - parse_url() can easily trip up on malformed or weird URLs
  *  - exploding a URL with parse_url(), lowercasing some stuff, and glueing things back with http_build_url() does not handle well
  *    "stuff:"-like URI [1] and can result in URLs ending modified [2][3]. We don't want to *validate* URI, we just want to lowercase
  *    what is supposed to be lowercased.
  *
- * So, to be conservative, this functions:
+ * So, to be conservative, this function:
  *  - lowercases the scheme
  *  - does not lowercase anything else on "stuff:" URI
  *  - tries to lowercase only scheme and domain of "stuff://" URI
@@ -562,7 +565,7 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
  * @param string $url URL
  * @return string URL with lowercase scheme and protocol
  */
-function yourls_lowercase_scheme_domain( $url ) {
+function yourls_normalize_uri( $url ) {
     $scheme = yourls_get_protocol( $url );
 
     if ('' == $scheme) {
@@ -596,9 +599,14 @@ function yourls_lowercase_scheme_domain( $url ) {
     $lower = array();
     $lower['scheme'] = strtolower( $parts['scheme'] );
     if( isset( $parts['host'] ) ) {
-        $lower['host'] = strtolower( $parts['host'] );
-    } else {
-        $parts['host'] = '***';
+        // Convert domain to lowercase, with mb_ to preserve UTF8
+        $lower['host'] = mb_strtolower($parts['host']);
+        /**
+         * Convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
+         * are considered the same. Explicitely mention option and variant to avoid notice
+         * on PHP 7.2 and 7.3
+         */
+         $lower['host'] = idn_to_utf8($lower['host'], IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
     }
 
     $url = http_build_url($url, $lower);

@@ -5,6 +5,7 @@
  *
  * @group formatting
  * @group url
+ * @group idn
  * @since 0.1
  */
 class Format_URL extends PHPUnit_Framework_TestCase {
@@ -80,6 +81,9 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( '/absolute' ),
             array( '/Absolute/Path/' ),
             array( '/absolute/path/?omg#also' ),
+            array( 'http://académie-française.fr' ),
+            array( 'http://www.طارق.net/طارق?hello=%2B' ),
+            array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/' ), // this is طارق.net, encoded. I _think_ it qualifies as valid
         );
     }
 
@@ -170,7 +174,8 @@ class Format_URL extends PHPUnit_Framework_TestCase {
             array( 'http://Ozh:Password@example.com:1337#OMG'         , 'http://Ozh:Password@Example.COM:1337#OMG' ),
             array( 'http://User:PWd@example.com?User:PWd@Example.com' , 'http://User:PWd@Example.com?User:PWd@Example.com' ),
             array( 'mailto:Ozh@Ozh.org?omg'                           , 'MAILTO:Ozh@Ozh.org?omg' ),
-            array( 'OMg'                                              , 'OMg' ),
+            array( 'http://www.طارق.net/'                             , 'http://www.طارق.Net/' ),
+            array( 'http://académie-française.fr'                     , 'http://Académie-française.FR' ),
         );
     }
 
@@ -181,6 +186,29 @@ class Format_URL extends PHPUnit_Framework_TestCase {
      * @dataProvider list_of_mixed_case
 	 */
 	function test_url_with_protocol_case( $sanitized, $unsanitized ) {
+		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
+	}
+
+    /**
+     * List of URLs with IDN domain, and how YOURLS should sanitize them
+     */
+    function list_of_IDN() {
+        return array(
+            array( 'http://www.طارق.Net/Omgطارق'                  , 'http://www.طارق.net/Omgطارق' ),
+            array( 'http://xn--mgbuq0c.Net/Omgطارق'               , 'http://طارق.net/Omgطارق' ),
+            array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.Net/Omgطارق'  , 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/Omgطارق' ), // طارق.net, urlencoded
+            array( 'http://xn--p1ai.РФ'                           , 'http://рф.рф' ), // lowercasing where applicable: РФ -> рф
+            array( 'http://РФ.xn--p1ai/'                          , 'http://рф.рф/' ),
+            array( 'http://xn--p1ai.xn--p1ai'                     , 'http://рф.рф' ),
+        );
+    }
+
+	/**
+	 * Protocol and domain with mixed case
+	 *
+     * @dataProvider list_of_IDN
+	 */
+	function test_url_with_IDN( $unsanitized, $sanitized ) {
 		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
 	}
 
@@ -226,13 +254,42 @@ class Format_URL extends PHPUnit_Framework_TestCase {
         $this->assertEquals( $with_ssl, yourls_match_current_protocol($url) );
     }
 
-	/*
-	More stuff to test:
-	At some point, the following URLs should be equal, as this is correctly handled by YOURLS
-	- http://example.org/%D0%B1%D0%B0%D0%B1%D0%B0 and http://example.org/баба
-	- http://example.com/?foo%5Bbar%5D=baz and http://example.com/?foo[bar]=baz
-	- http://example.com/?baz=bar&#038;foo%5Bbar%5D=baz and http://example.com/?baz=bar&foo[bar]=baz
-	- ...
-	*/
+    /**
+     * List of various valid URL with mixed scenarios of IDN
+     * Structure: array(URL, expected URL after yourls_sanitize_url (and especially yourls_normalize_uri(), which deals with IDN)
+     */
+    function list_of_idn_punycode_utf8_rtl() {
+        return array(
+            [ 'http://ua-test.link'                   , 'http://ua-test.link' ],                    // Ascii.new
+            [ 'http://ua-test.technology'             , 'http://ua-test.technology' ],              // Ascii.long
+            [ 'http://普试.top/'                      , 'http://普试.top/' ],                       // Idn.ascii
+            [ 'http://ua-test.世界'                   , 'http://ua-test.世界' ],                    // Ascii.idn
+            [ 'http://普试.世界/'                     , 'http://普试.世界/' ],                      // Idn.idn
+            [ 'http://ua-test.xn--rhqv96g'            , 'http://ua-test.世界' ],                   // Ascii.punycode
+            [ 'http://xn--tkvo64f.top'                , 'http://普试.top' ],                       // Punycode.ascii
+            [ 'http://xn--tkvo64f.xn--rhqv96g'        , 'http://普试.世界'  ],                     // Punycode.punycode
+            [ 'http://اختبار-القبولالعالمي.top'        , 'http://اختبار-القبولالعالمي.top' ],       // RTL.ascii
+            [ 'http://اختبار-القبولالعالمي.شبكة'       , 'http://اختبار-القبولالعالمي.شبكة' ],      // RTL.RTL
+            [ 'http://ua-test.link/我的'              , 'http://ua-test.link/我的' ],             // Ascii.new/Unicode
+            [ 'http://ua-test.technology/我的'        , 'http://ua-test.technology/我的' ],       // Ascii.long/Unicode
+            [ 'http://普试.top/我的'                  , 'http://普试.top/我的' ],                  // Idn.ascii/Unicode
+            [ 'http://ua-test.世界/我的'              , 'http://ua-test.世界/我的' ],              // Ascii.idn/Unicode
+            [ 'http://普试.世界/我的'                 , 'http://普试.世界/我的' ],                 // Idn.idn/Unicode
+            [ 'http://ختبار-القبولالعالمي.top/我的'    , 'http://ختبار-القبولالعالمي.top/我的' ],   // RTL.ascii/Unicode
+            [ 'http://اختبار-القبولالعالمي.شبكة/我的'  , 'http://اختبار-القبولالعالمي.شبكة/我的' ], // RTL.RTL/Unicode
+
+                                                      // Damn, due to these UTF8 chars not being fixed width, we cannot neatly
+                                                      // justify the code and comments. How disappointing.
+        );
+    }
+
+    /**
+     * Test various cases : domain name / TLD / path with ascii, punycode, utf8 and RTL
+     *
+     * @dataProvider list_of_idn_punycode_utf8_rtl
+     */
+    function test_various_idn_cases($url, $expected) {
+        $this->assertEquals( yourls_sanitize_url($url), $expected );
+    }
 
 }
