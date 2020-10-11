@@ -12,8 +12,7 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
 	 * Reset active plugin list
 	 */
     public static function tearDownAfterClass() {
-        global $ydb;
-        $ydb->set_plugins( array() );
+        yourls_get_db()->set_plugins( array() );
     }
 
     /**
@@ -86,7 +85,7 @@ class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
     * @since 0.1
     */
     public function test_load_plugins( $plugin ) {
-        global $ydb;
+        $ydb = yourls_get_db();
 
         // at this point, we have a plugin activated
         $this->assertSame( $ydb->get_plugins(), array( $plugin ) );
