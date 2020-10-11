@@ -165,4 +165,26 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         $this->assertSame( 1, yourls_did_action( $action ) );
     }
 
+    /**
+    * Simulate a valid plugin admin page but with a drawing function that is not callable
+    *
+    * @expectedException Exception
+    * @since 0.1
+    */
+    public function test_plugin_admin_page_not_callable() {
+        $plugin = rand_str();
+        $title  = rand_str();
+        $action = rand_str();
+        $func   = rand_str();
+        yourls_register_plugin_page( $plugin, $title, $func );
+
+        $this->assertSame( 0, yourls_did_action( 'load-' . $plugin ) );
+
+        // intercept yourls_die() before it actually dies
+        yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
+
+        // This should trigger yourls_die()
+        yourls_plugin_admin_page( $plugin );
+    }
+
 }
