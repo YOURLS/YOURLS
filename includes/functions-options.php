@@ -17,11 +17,11 @@
 function yourls_get_option( $option_name, $default = false ) {
     // Allow plugins to short-circuit options
     $pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
-    if ( false !== $pre )
+    if ( false !== $pre ) {
         return $pre;
+    }
 
-    global $ydb;
-    $option = new \YOURLS\Database\Options($ydb);
+    $option = new \YOURLS\Database\Options(yourls_get_db());
     $value  = $option->get($option_name, $default);
 
     return yourls_apply_filter( 'get_option_'.$option_name, $value );
@@ -40,11 +40,11 @@ function yourls_get_option( $option_name, $default = false ) {
 function yourls_get_all_options() {
     // Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
     $pre = yourls_apply_filter( 'shunt_all_options', false );
-    if ( false !== $pre )
+    if ( false !== $pre ) {
         return $pre;
+    }
 
-    global $ydb;
-    $options = new \YOURLS\Database\Options($ydb);
+    $options = new \YOURLS\Database\Options(yourls_get_db());
 
     if ($options->get_all_options() === false) {
         // Zero option found but no unexpected error so far: YOURLS isn't installed
@@ -66,9 +66,7 @@ function yourls_get_all_options() {
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
-    global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
+    $option = new \YOURLS\Database\Options(yourls_get_db());
     $update = $option->update($option_name, $newvalue);
 
     return $update;
@@ -85,9 +83,7 @@ function yourls_update_option( $option_name, $newvalue ) {
  * @return bool False if option was not added and true otherwise.
  */
 function yourls_add_option( $name, $value = '' ) {
-    global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
+    $option = new \YOURLS\Database\Options(yourls_get_db());
     $add    = $option->add($name, $value);
 
     return $add;
@@ -103,9 +99,7 @@ function yourls_add_option( $name, $value = '' ) {
  * @return bool True, if option is successfully deleted. False on failure.
  */
 function yourls_delete_option( $name ) {
-    global $ydb;
-
-    $option = new \YOURLS\Database\Options($ydb);
+    $option = new \YOURLS\Database\Options(yourls_get_db());
     $delete = $option->delete($name);
 
     return $delete;

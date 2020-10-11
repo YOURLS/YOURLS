@@ -971,8 +971,7 @@ LINK;
  * @return void
  */
 function yourls_set_html_context($context) {
-    global $ydb;
-    $ydb->set_html_context($context);
+    yourls_get_db()->set_html_context($context);
 }
 
 /**
@@ -982,6 +981,5 @@ function yourls_set_html_context($context) {
  * @return string
  */
 function yourls_get_html_context() {
-    global $ydb;
-    $ydb->get_html_context();
+    yourls_get_db()->get_html_context();
 }

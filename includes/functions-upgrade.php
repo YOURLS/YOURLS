@@ -98,10 +98,9 @@ function yourls_upgrade_to_18() {
  */
 function yourls_upgrade_482() {
 	// Change URL title charset to UTF8
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
-	$ydb->perform( $sql );
+	yourls_get_db()->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 }
 
