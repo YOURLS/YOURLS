@@ -31,9 +31,7 @@ function yourls_get_database_version() {
 		return $pre;
     }
 
-	global $ydb;
-
-	return yourls_sanitize_version($ydb->mysql_version());
+	return yourls_sanitize_version(yourls_get_db()->mysql_version());
 }
 
 /**
@@ -201,7 +199,7 @@ function yourls_create_sql_tables() {
         return $pre;
     }
 
-	global $ydb;
+	$ydb = yourls_get_db();
 
 	$error_msg = array();
 	$success_msg = array();
