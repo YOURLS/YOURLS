@@ -6,10 +6,10 @@
 // Globalize some YOURLS variables because PHPUnit loads this inside a function
 // See https://github.com/sebastianbergmann/phpunit/issues/325
 // This has to be done before including any file
-global $ydb, $yourls_user_passwords, $yourls_reserved_URL,        // main object & config file
-       $yourls_filters, $yourls_actions,                          // used by plugin API
-       $yourls_locale, $yourls_l10n, $yourls_locale_formats,      // used by L10N API
-       $yourls_allowedentitynames, $yourls_allowedprotocols;      // used by KSES
+global $yourls_user_passwords, $yourls_reserved_URL,          // main object & config file
+       $yourls_filters, $yourls_actions,                      // used by plugin API
+       $yourls_locale, $yourls_l10n, $yourls_locale_formats,  // used by L10N API
+       $yourls_allowedentitynames, $yourls_allowedprotocols;  // used by KSES
 
 require_once dirname( __FILE__ ) . '/includes/utils.php';
 require_once dirname( __FILE__ ) . '/includes/install.php';
