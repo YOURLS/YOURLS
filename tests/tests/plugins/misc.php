@@ -18,8 +18,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
         yourls_remove_all_actions('pre_yourls_die');
 
         // unregister plugin pages
-        global $ydb;
-        $ydb->set_plugin_pages(array());
+        yourls_get_db()->set_plugin_pages(array());
     }
 
     /**
@@ -84,7 +83,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     * @since 0.1
     */
     public function test_register_plugin_page() {
-        global $ydb;
+        $ydb = yourls_get_db();
         $plugin = rand_str();
         $title = rand_str();
         $func = rand_str();
@@ -113,7 +112,6 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     * @since 0.1
     */
     public function test_list_plugin_page() {
-        global $ydb;
         $plugin = rand_str();
         $title = rand_str();
         $func = rand_str();
@@ -150,7 +148,6 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     * @since 0.1
     */
     public function test_plugin_admin_page() {
-        global $ydb;
         $plugin = rand_str();
         $title  = rand_str();
         $action = rand_str();

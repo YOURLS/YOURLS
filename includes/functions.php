@@ -90,13 +90,12 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 	if ( false !== $pre )
 		return $pre;
 
-	global $ydb;
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
+		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
 	else
-		$update = $ydb->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", [ 'keyword' => $keyword ] );
+		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", [ 'keyword' => $keyword ] );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -107,8 +106,6 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
  *
  */
 function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
-	global $ydb;
-
 	switch( $filter ) {
 		case 'bottom':
 			$sort_by    = '`clicks`';
@@ -136,7 +133,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
+		$results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
 		$return = [];
 		$i = 1;
@@ -171,10 +168,9 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
  * @return array
  */
 function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
-	global $ydb;
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = $ydb->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
+	$totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
 	$return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
 
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
@@ -185,9 +181,7 @@ function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
  *
  */
 function yourls_get_num_queries() {
-	global $ydb;
-
-	return yourls_apply_filter( 'get_num_queries', $ydb->get_num_queries() );
+	return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
 }
 
 /**

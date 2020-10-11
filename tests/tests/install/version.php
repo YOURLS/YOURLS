@@ -13,20 +13,18 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
      * Make a copy of $ydb
      */
     public function setUp() {
-        global $ydb;
-        $this->ydb_copy = $ydb;
+        $this->ydb_copy = yourls_get_db();
     }
 
     /**
      * Restore original $ydb
      */
     public function tearDown() {
-        global $ydb;
-        $ydb = $this->ydb_copy;
+        yourls_set_db($this->ydb_copy);
     }
-    
+
     /**
-     * Provide various real-life-ish versions and how they should be sanitized 
+     * Provide various real-life-ish versions and how they should be sanitized
      */
     public function versions() {
         return array(
@@ -45,9 +43,8 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
      * @dataProvider versions
      */
     public function test_mysql_version( $version, $sanitized ) {
-        global $ydb;
-        $ydb = new Mock_Version( $version );
-        
+        yourls_set_db( new Mock_Version( $version ) );
+
         $this->assertSame( $sanitized, yourls_get_database_version() );
         // As of writing YOURLS needs MySQL 5.0+, so the following test should pass
         $this->assertTrue( yourls_check_database_version() );
@@ -67,15 +64,15 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
  * Mock a $ydb instance to simply return a version number
  */
 class Mock_Version {
-    
+
     public $version;
-    
+
     public $captured_errors = array();
-    
+
     public function __construct( $version ) {
         $this->version = $version;
     }
-    
+
     public function mysql_version() {
         return $this->version;
     }

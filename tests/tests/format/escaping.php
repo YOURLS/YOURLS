@@ -8,18 +8,6 @@
  * @since 0.1
  */
 class Format_Esc extends PHPUnit_Framework_TestCase {
-    
-    protected $ydb_backup;
-    
-    protected function setUp() {
-        global $ydb;
-        $this->ydb_backup = $ydb;
-    }
-
-    protected function tearDown() {
-        global $ydb;
-        $ydb = $this->ydb_backup;
-    }
 
     /**
      * Attributes and how they should be escaped
@@ -51,28 +39,28 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
 	 *
 	 * @dataProvider html_attributes
 	 * @since 0.1
-	 */	
+	 */
 	function test_esc_attr( $attr, $escaped ) {
 		$this->assertSame( $escaped, yourls_esc_attr( $attr ) );
 	}
-    
+
     /**
 	 * Attribute escaping -- escaping twice shouldn't change
 	 *
 	 * @dataProvider html_attributes
 	 * @since 0.1
-	 */	
+	 */
 	function test_esc_attr_twice( $attr, $escaped ) {
 		$this->assertSame( $escaped, yourls_esc_attr( yourls_esc_attr( $attr ) ) );
 	}
-    
+
     /**
      * HTML string and how they should be escaped
      */
     function html_strings() {
         return array(
             // Simple string
-            array( 
+            array(
                 'The quick brown fox.',
                 'The quick brown fox.',
             ),
@@ -113,17 +101,17 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
             ),
         );
     }
-	
+
 	/**
 	 * HTML escaping
 	 *
      * @dataProvider html_strings
 	 * @since 0.1
-	 */	
+	 */
 	function test_esc_html( $html, $escaped ) {
 		$this->assertSame( $escaped, yourls_esc_html( $html ) );
 	}
-    
+
     /**
      * String to escape and what they should look like once escaped
      */
@@ -135,7 +123,7 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
            array( "NULL\0NULL", 'NULL\0NULL' ), // notice the quote change
         );
     }
-    
+
     /**
      * List of URLs and how they should be escaped
      */
@@ -159,7 +147,7 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
             ),
         );
     }
-    
+
     /**
      * Escape URLs for display
      *
@@ -190,7 +178,7 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
             ),
         );
     }
-    
+
     /**
      * Escape JS
      *
@@ -220,7 +208,7 @@ class Format_Esc extends PHPUnit_Framework_TestCase {
             ),
         );
     }
-    
+
     /**
      * Escape JS
      *

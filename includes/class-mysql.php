@@ -66,9 +66,48 @@ function yourls_db_connect() {
 }
 
 /**
+ * Helper function : return instance of the DB
+ *
+ * Instead of:
+ *     global $ydb;
+ *     $ydb->do_stuff()
+ * Prefer :
+ *     yourls_get_db()->do_stuff()
+ *
+ * @since  1.7.10
  * @return \YOURLS\Database\YDB
  */
 function yourls_get_db() {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_get_db', false );
+    if ( false !== $pre ) {
+        return $pre;
+    }
+
     global $ydb;
-    return ( $ydb instanceof \YOURLS\Database\YDB ) ? $ydb : yourls_db_connect();
+    $ydb = ( isset( $ydb ) ) ? $ydb : yourls_db_connect();
+    return yourls_apply_filter('get_db', $ydb);
+}
+
+/**
+ * Helper function : set instance of DB, or unset it
+ *
+ * Instead of:
+ *     global $ydb;
+ *     $ydb = stuff
+ * Prefer :
+ *     yourls_set_db( stuff )
+ * (This is mostly used in the test suite)
+ *
+ * @since 1.7.10
+ * @param  mixed $db    Either a \YOURLS\Database\YDB instance, or anything. If null, the function will unset $ydb
+ */
+function yourls_set_db($db) {
+    global $ydb;
+
+    if (is_null($db)) {
+        unset($ydb);
+    } else {
+        $ydb = $db;
+    }
 }

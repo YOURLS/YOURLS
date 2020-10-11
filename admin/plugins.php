@@ -18,7 +18,6 @@ if( isset( $_GET['action'] ) ) {
 	// Check plugin file is valid
 	if( isset( $_GET['plugin'] ) && yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$_GET['plugin'].'/plugin.php') ) {
 
-		global $ydb;
 		// Activate / Deactive
 		switch( $_GET['action'] ) {
 			case 'activate':

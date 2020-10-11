@@ -553,7 +553,7 @@ function yourls_deactivate_plugin( $plugin ) {
     }
 
     // Deactivate the plugin
-    global $ydb;
+    $ydb = yourls_get_db();
     $plugins = $ydb->get_plugins();
     $key = array_search( $plugin, $plugins );
     if ( $key !== false ) {

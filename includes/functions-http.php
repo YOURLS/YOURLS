@@ -262,7 +262,7 @@ function yourls_http_user_agent() {
  */
 function yourls_check_core_version() {
 
-	global $ydb, $yourls_user_passwords;
+	global $yourls_user_passwords;
 
 	$checks = yourls_get_option( 'core_version_checks' );
 
@@ -295,7 +295,7 @@ function yourls_check_core_version() {
 		'yourls_site'        => defined( 'YOURLS_SITE' ) ? yourls_get_yourls_site() : 'unknown',
 		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
 		'php_version'        => PHP_VERSION,
-		'mysql_version'      => $ydb->mysql_version(),
+		'mysql_version'      => yourls_get_db()->mysql_version(),
 		'locale'             => yourls_get_locale(),
 
 		// custom DB driver if any, and useful common PHP extensions

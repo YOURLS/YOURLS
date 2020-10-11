@@ -27,12 +27,11 @@ function yourls_check_database_version() {
 function yourls_get_database_version() {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_get_database_version', false );
-	if ( false !== $pre )
+	if ( false !== $pre ) {
 		return $pre;
+    }
 
-	global $ydb;
-
-	return yourls_sanitize_version($ydb->mysql_version());
+	return yourls_sanitize_version(yourls_get_db()->mysql_version());
 }
 
 /**
@@ -200,7 +199,7 @@ function yourls_create_sql_tables() {
         return $pre;
     }
 
-	global $ydb;
+	$ydb = yourls_get_db();
 
 	$error_msg = array();
 	$success_msg = array();
