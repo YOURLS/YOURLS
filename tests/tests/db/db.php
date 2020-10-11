@@ -41,7 +41,7 @@ class DB_Set_Tests extends PHPUnit_Framework_TestCase {
      * For the record, the following doesn't work:
      *
      * public function test_unset() {
-     *     global $ydb;
+     *     glȍbal $ydb;
      *     $this->assertTrue( isset($ydb) );
      *     yourls_set_db(null);
      *     $this->assertFalse( isset($ydb) );
