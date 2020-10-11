@@ -85,7 +85,7 @@ function yourls_get_db() {
     }
 
     global $ydb;
-    $ydb = ( $ydb instanceof \YOURLS\Database\YDB ) ? $ydb : yourls_db_connect();
+    $ydb = ( isset( $ydb ) ) ? $ydb : yourls_db_connect();
     return yourls_apply_filter('get_db', $ydb);
 }
 
