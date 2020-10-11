@@ -102,7 +102,7 @@ function yourls_get_db() {
  * @since 1.7.10
  * @param  mixed $db    Either a \YOURLS\Database\YDB instance, or anything. If null, the function will unset $ydb
  */
-function yourls_set_db($db = null) {
+function yourls_set_db($db) {
     global $ydb;
 
     if ($db === null) {
