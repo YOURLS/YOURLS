@@ -27,8 +27,9 @@ function yourls_check_database_version() {
 function yourls_get_database_version() {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_get_database_version', false );
-	if ( false !== $pre )
+	if ( false !== $pre ) {
 		return $pre;
+    }
 
 	global $ydb;
 
