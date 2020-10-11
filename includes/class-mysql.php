@@ -105,7 +105,7 @@ function yourls_get_db() {
 function yourls_set_db($db) {
     global $ydb;
 
-    if ($db === null) {
+    if (is_null($db)) {
         unset($ydb);
     } else {
         $ydb = $db;
