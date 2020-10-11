@@ -421,7 +421,7 @@ function yourls_get_plugin_data( $file ) {
             continue;
         }
 
-        $plugin_data[ trim($matches[3]) ] = trim($matches[4]);
+        $plugin_data[ trim($matches[3]) ] = yourls_esc_html(trim($matches[4]));
     }
 
     return $plugin_data;
