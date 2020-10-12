@@ -122,7 +122,10 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 		var ajaxurl  = '<?php echo yourls_admin_url( 'admin-ajax.php' ); ?>';
 	//]]>
 	</script>
-	<?php yourls_do_action( 'html_head', $context ); ?>
+	<?php
+    yourls_js_console_message();
+    yourls_do_action( 'html_head', $context );
+    ?>
 </head>
 <body class="<?php echo $context; ?> <?php echo $bodyclass; ?>">
 <div id="wrap">
@@ -982,4 +985,19 @@ function yourls_set_html_context($context) {
  */
 function yourls_get_html_context() {
     yourls_get_db()->get_html_context();
+}
+
+/**
+ * Display toggable message in the JS console
+ *
+ * Long description
+ *
+ * @since 1.7.10
+ */
+function yourls_js_console_message() {
+    // Allow plugins to abort the display
+    $pre = yourls_apply_filter( 'shunt_js_easter_egg', false );
+    if ( false === $pre ) {
+        echo "<script>console_message()</script>";
+    }
 }

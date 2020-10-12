@@ -29,7 +29,7 @@ function html_pulse( el, newtext ){
 
 // Update feedback message
 function feedback(msg, type, delay) {
-	closeme = ( type == 'fail' || type == 'error' ) ? true : false;		
+	closeme = ( type == 'fail' || type == 'error' ) ? true : false;
 	delay = delay || ( closeme == true ? 10000 : 3500 );
 	$.notifyBar({
 		html: '<span>'+msg+'</span>',
@@ -73,7 +73,7 @@ function trim_long_string( string, length) {
 	var newstring = string;
 	length = length || 60;
 	if ( newstring.length > length ) {
-		newstring = newstring.substr(0, (length - 5) ) + '[...]';	
+		newstring = newstring.substr(0, (length - 5) ) + '[...]';
 	}
 	return newstring;
 }
@@ -86,7 +86,7 @@ function get_var_from_query( url, varname, default_val ) {
 	if( default_val == undefined ) {
 		default_val = '';
 	}
-	
+
 	// Split the url on '?' and get only the params (which is element 1)
 	url = url.split('?')[1];
 	// Now split those params on '&' so we can get each one individually (Ex. param_var=param_value)
@@ -100,9 +100,9 @@ function get_var_from_query( url, varname, default_val ) {
 			return url[i].split('=')[1];
 		}
 	}
-	
+
 	// If we didn't find anything then we just return the default_val
-	return default_val;	
+	return default_val;
 }
 
 /**
@@ -165,4 +165,13 @@ function get_protocol_slashes_and_rest( url ) {
 	} else {
 		return { protocol: '', slashes: '', rest: url };;
 	}
+}
+
+// Console easter egg
+function console_message() {
+    var msg = 'This site uses YOURLS, a free and open source URL shortener. '
+            + 'See https://yourls.org/ for more information. \n'
+            + ' Using YOURLS at your job? How about contributing? Also, consider sponsoring the project!                   \n'
+            + ' See https://github.com/YOURLS/YOURLS                                                                       ';
+    console.log('%c '+msg,'background: #1F669C; color: #E3F3FF; font-family:monospace; font-size: 12px;');
 }
