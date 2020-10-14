@@ -64,7 +64,7 @@ function ozh_random_shorturl_settings_page() {
     $nonce = yourls_create_nonce( 'random_shorturl_settings' );
 
     // when $random_length is false set it to 5 and persist the value in the database
-    if ($random_length === false) {
+    if ( $random_length === false ) {
         $random_length = $_POST[ 'random_length' ] = 5;
         ozh_random_shorturl_settings_update();
     }
