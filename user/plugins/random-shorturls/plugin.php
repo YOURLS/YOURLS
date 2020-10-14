@@ -53,7 +53,7 @@ function ozh_random_shorturl_add_settings() {
 
 function ozh_random_shorturl_settings_page() {
     // Check if form was submitted
-    if ( isset( $_POST['random_length'] ) ) {
+    if( isset( $_POST['random_length'] ) ) {
         // If so, verify nonce
         yourls_verify_nonce( 'random_shorturl_settings' );
         // and process submission if nonce is valid
