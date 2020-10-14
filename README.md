@@ -98,5 +98,6 @@ Does your company use YOURLS? Ask your manager or marketing team if your company
 
 ## License
 
-Free software. Do whatever the hell you want with it.  
+Free software. Do whatever the hell you want with it. 
+Amazing project.
 YOURLS is released under the [MIT license](LICENSE).
