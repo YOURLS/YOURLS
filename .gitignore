@@ -47,3 +47,4 @@ Desktop.ini
 .DS_Store
 # NetBeans files
 /nbproject/
+.idea
