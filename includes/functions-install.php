@@ -39,7 +39,7 @@ function yourls_get_database_version() {
  *
  */
 function yourls_check_php_version() {
-    return version_compare( PHP_VERSION, '5.6.0', '>=' );
+    return version_compare( PHP_VERSION, '7.2.0', '>=' );
 }
 
 /**
