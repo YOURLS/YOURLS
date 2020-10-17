@@ -23,6 +23,7 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
+            'Spatie\\ArrayToXml\\' => 18,
         ),
         'P' => 
         array (
@@ -64,6 +65,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
+        ),
+        'Spatie\\ArrayToXml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spatie/array-to-xml/src',
         ),
         'POMO\\' => 
         array (

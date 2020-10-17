@@ -26,7 +26,8 @@
         "aura/sql": "~2.",
         "jakeasmith/http_build_url": "1.0.1",
         "symfony/polyfill-mbstring": "1.15.0",
-        "symfony/polyfill-intl-idn": "^1.17"
+        "symfony/polyfill-intl-idn": "^1.17",
+        "spatie/array-to-xml": "^2.14"
     },
     "config": {
         "vendor-dir": "includes/vendor"
