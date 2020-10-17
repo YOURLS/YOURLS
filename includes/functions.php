@@ -74,8 +74,7 @@ function yourls_update_next_decimal( $int = '' ) {
  * @return string
  */
 function yourls_xml_encode( $array ) {
-    require_once( YOURLS_INC.'/functions-xml.php' );
-    return ( new yourls_array2xml() )->array2xml( $array );
+    return (\Spatie\ArrayToXml\ArrayToXml::convert($array));
 }
 
 /**

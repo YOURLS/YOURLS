@@ -515,6 +515,58 @@
         ]
     },
     {
+        "name": "spatie/array-to-xml",
+        "version": "2.14.0",
+        "version_normalized": "2.14.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/spatie/array-to-xml.git",
+            "reference": "15b5229fe8c9c14954b21f2bac0cc003ffbc54a5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/15b5229fe8c9c14954b21f2bac0cc003ffbc54a5",
+            "reference": "15b5229fe8c9c14954b21f2bac0cc003ffbc54a5",
+            "shasum": ""
+        },
+        "require": {
+            "ext-dom": "*",
+            "php": "^7.2"
+        },
+        "require-dev": {
+            "mockery/mockery": "^1.0",
+            "phpunit/phpunit": "^8.0",
+            "spatie/phpunit-snapshot-assertions": "^2.0"
+        },
+        "time": "2020-09-14T19:07:17+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Spatie\\ArrayToXml\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Freek Van der Herten",
+                "email": "freek@spatie.be",
+                "homepage": "https://murze.be",
+                "role": "Developer"
+            }
+        ],
+        "description": "Convert an array to xml",
+        "homepage": "https://github.com/spatie/array-to-xml",
+        "keywords": [
+            "array",
+            "convert",
+            "xml"
+        ]
+    },
+    {
         "name": "symfony/polyfill-intl-idn",
         "version": "v1.17.0",
         "version_normalized": "1.17.0.0",
