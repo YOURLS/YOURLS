@@ -80,6 +80,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test incorrect config provided
      * @expectedException YOURLS\Exceptions\ConfigException
+     * @expectedExceptionMessageRegExp /User defined config not found at '[0-9a-z]+'/
 	 */
     public function test_incorrect_config() {
         $test = new \YOURLS\Config\Config(rand_str());
@@ -89,6 +90,7 @@ class Install_Tests extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test config not found
      * @expectedException YOURLS\Exceptions\ConfigException
+     * @expectedExceptionMessage Cannot find config.php. Please read the readme.html to learn how to install YOURLS
 	 */
     public function test_not_found_config() {
         $test = new \YOURLS\Config\Config();

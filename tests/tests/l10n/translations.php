@@ -7,7 +7,7 @@
  * @since 0.1
  */
 class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
-    
+
     public static function setUpBeforeClass() {
         yourls_load_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/test-fr_FR.mo' );
         yourls_load_textdomain( 'default', YOURLS_TESTDATA_DIR . '/pomo/fr_FR.mo' );
@@ -26,7 +26,7 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     public function test_translation() {
         $this->assertSame( 'Court (default)' , yourls__( 'Short' ) );
         $this->assertSame( 'Court (test)' ,    yourls__( 'Short', 'test' ) );
-    }    
+    }
 
     /**
      * Check a sample translation - echoed
@@ -36,7 +36,7 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     public function test_translation_echo() {
         $this->expectOutputString( 'Court (default)' );
         yourls_e( 'Short' );
-    }    
+    }
 
     /**
      * Check an unstranslated string
@@ -83,6 +83,7 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
      * Sprintf'ed with too few arguments - trigger sprintf "too few arguments" error
      *
      * @expectedException PHPUnit_Framework_Error
+     * @expectedExceptionMessage sprintf(): Too few arguments
      * @since 0.1
      */
     public function test_yourls_s_too_few() {
@@ -101,7 +102,7 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
 
         // Extra arguments with the last one not being a valid domain: string should be translated
         $this->assertSame( 'Hello Ozh you are nice', yourls_s( 'Hello %s you are %s', 'Ozh', 'nice', 'omg' ) );
-        
+
         // Extra arguments with the last one being a valid domain: string should be translated
         $this->assertSame( 'Bonjour Ozh tu es nice (test)', yourls_s( 'Hello %s you are %s', 'Ozh', 'nice', 'omg', 'test' ) );
     }
@@ -144,7 +145,7 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     public function test_yourls_n() {
         $this->assertSame( '1 truc (default)',   yourls_n( '1 item', '%s items', 1 ) );
         $this->assertSame( '%s trucs (default)', yourls_n( '1 item', '%s items', 2 ) );
-        
+
         $this->assertSame( '1 truc (test)',   yourls_n( '1 item', '%s items', 1, 'test' ) );
         $this->assertSame( '%s trucs (test)', yourls_n( '1 item', '%s items', 2, 'test' ) );
     }
