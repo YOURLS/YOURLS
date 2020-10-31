@@ -132,6 +132,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     * Simulate a non existent plugin admin page
     *
     * @expectedException Exception
+    * @expectedExceptionMessage I have died
     * @since 0.1
     */
     public function test_plugin_admin_page_fake() {
@@ -169,6 +170,7 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     * Simulate a valid plugin admin page but with a drawing function that is not callable
     *
     * @expectedException Exception
+    * @expectedExceptionMessage I have died
     * @since 0.1
     */
     public function test_plugin_admin_page_not_callable() {
