@@ -544,7 +544,7 @@ function yourls_kses_allowed_protocols() {
 		'irc://', 'ircs://', 'mumble://', 
 		'callto:', 'skype:', 'sip:',
 		'teamspeak://', 'tel:', 'ventrilo://', 'xfire:', 
-		'ymsgr:', 
+		'ymsgr:', 'tg://', 'whatsapp://'
 
 		// Misc
 		'steam:', 'steam://',
