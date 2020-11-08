@@ -36,7 +36,7 @@ function share(dest) {
 }
 
 function init_clipboard() {
-    var clipboard = new Clipboard('#copylink', {
+    var clipboard = new ClipboardJS('#copylink', {
         text: function (trigger) {
             return $(trigger).val();
         }
