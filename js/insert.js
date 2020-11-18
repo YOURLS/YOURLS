@@ -38,7 +38,7 @@ function add_link() {
 	add_loading("#add-button");
 	$.getJSON(
 		ajaxurl,
-		{action:'add', url: newurl, keyword: keyword, nonce: nonce},
+		{action:'add', url: btoa(newurl), keyword: keyword, nonce: nonce},
 		function(data){
 			if(data.status == 'success') {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
@@ -143,7 +143,7 @@ function edit_link_save(id) {
 	var www = $('#yourls-site').val();
 	$.getJSON(
 		ajaxurl,
-		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
+		{action:'edit_save', url: btoa(newurl), id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
 		function(data){
 			if(data.status == 'success') {
 
