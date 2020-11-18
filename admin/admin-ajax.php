@@ -17,7 +17,7 @@ switch( $action ) {
 
 	case 'add':
 		yourls_verify_nonce( 'add_url', $_REQUEST['nonce'], false, 'omg error' );
-		$return = yourls_add_new_link( $_REQUEST['url'], $_REQUEST['keyword'] );
+		$return = yourls_add_new_link( base64_decode($_REQUEST['url']), $_REQUEST['keyword'] );
 		echo json_encode($return);
 		break;
 
@@ -29,7 +29,7 @@ switch( $action ) {
 
 	case 'edit_save':
 		yourls_verify_nonce( 'edit-save_'.$_REQUEST['id'], $_REQUEST['nonce'], false, 'omg error' );
-		$return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'] );
+		$return = yourls_edit_link( base64_decode($_REQUEST['url']), $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'] );
 		echo json_encode($return);
 		break;
 
