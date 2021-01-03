@@ -519,8 +519,8 @@ RETURN;
  *
  * @return string HTML of the edit row
  */
-function yourls_table_add_row( $keyword, $url, $title = '', $ip, $clicks, $timestamp ) {
-    $keyword  = yourls_sanitize_keyword($keyword);
+function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp ) {
+	$keyword  = yourls_sanitize_keyword($keyword);
 	$id       = yourls_string2htmlid( $keyword ); // used as HTML #id
 	$shorturl = yourls_link( $keyword );
 
