@@ -476,7 +476,7 @@ class YDB extends ExtendedPdo {
         return $this->fetchValue($query);
     }
 
-    public function query($query) {
+    public function query($query, ...$fetch) {
         yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
         yourls_debug_log('LEGACY SQL: '.$query);
         return $this->fetchAffected($query);
