@@ -61,7 +61,7 @@ if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
-        $where['sql'] .= ' AND CONCAT_WS("",`keyword`,`url`,`title`,`ip`) LIKE (:search)';
+        $where['sql'] .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE (:search)";
         $where['binds']['search'] = $search;
         // Search across all fields. The resulting SQL will be something like:
         // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
