@@ -12,8 +12,6 @@ services:
 # https://phpunit.de/supported-versions.html
 matrix:
   include:
-  - php: 5.6
-    env: PHPUNIT_VERSION=5.7.*
   - php: 7.0
     env: PHPUNIT_VERSION=6.5.*
   - php: 7.1
