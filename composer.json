@@ -23,7 +23,7 @@
         "rmccue/requests" : "1.7",
         "pomo/pomo" : "1.4.1",
         "geoip2/geoip2" : "2.10.0",
-        "aura/sql": "~2.",
+        "aura/sql": "~3.",
         "jakeasmith/http_build_url": "1.0.1",
         "symfony/polyfill-mbstring": "1.15.0",
         "symfony/polyfill-intl-idn": "^1.17",
