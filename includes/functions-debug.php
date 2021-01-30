@@ -15,7 +15,9 @@
  */
 function yourls_debug_log( $msg ) {
     yourls_do_action( 'debug_log', $msg );
-    yourls_get_db()->getProfiler()->log( $msg );
+    // Get the DB object ($ydb), get its profiler (\Aura\Sql\Profiler\Profiler), its logger (\Aura\Sql\Profiler\MemoryLogger) and
+    // pass it a unused argument (loglevel) and the message
+    yourls_get_db()->getProfiler()->getLogger()->log( null, $msg );
     return $msg;
 }
 

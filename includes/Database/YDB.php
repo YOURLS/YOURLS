@@ -15,6 +15,7 @@ namespace YOURLS\Database;
 
 use YOURLS\Admin\Logger;
 use Aura\Sql\ExtendedPdo;
+use \Aura\Sql\Profiler\Profiler;
 use PDO;
 
 class YDB extends ExtendedPdo {
@@ -172,12 +173,11 @@ class YDB extends ExtendedPdo {
      * Start a Message Logger
      *
      * @since  1.7.3
-     * @see    \YOURLS\Admin\Logger
-     * @see    \Aura\Sql\Profiler
+     * @see    \Aura\Sql\Profiler\Profiler
      * @return void
      */
     public function start_profiler() {
-        $this->logger = new Logger($this);
+        $this->logger = new Profiler(null);
     }
 
     /**
@@ -347,7 +347,7 @@ class YDB extends ExtendedPdo {
     /**
      * Return SQL queries performed
      *
-     * Aura\Sql\Profiler logs every PDO command issued. But depending on PDO::ATTR_EMULATE_PREPARES, some are
+     * Aura\Sql\Profiler\Profiler logs every PDO command issued. But depending on PDO::ATTR_EMULATE_PREPARES, some are
      * actually sent to the mysql server or not :
      *  - if PDO::ATTR_EMULATE_PREPARES is true, prepare() statements are not sent to the server and are performed
      *    internally, so they are removed from the logger

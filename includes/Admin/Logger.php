@@ -26,6 +26,7 @@ class Logger extends \Aura\Sql\Profiler\Profiler {
 
     public function __construct(YDB $ydb) {
         $this->ydb = $ydb;
+
         /**
          * @todo Extend this to allow calling an external logger
          */
@@ -34,7 +35,7 @@ class Logger extends \Aura\Sql\Profiler\Profiler {
     /**
      * @param string $message
      */
-    public function log($message) {
+    public function log($level = '', $message, $context = []) {
         $this->debug_log[] = $message;
     }
 
