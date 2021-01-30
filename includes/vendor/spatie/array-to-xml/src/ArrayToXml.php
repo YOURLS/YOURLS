@@ -23,9 +23,14 @@ class ArrayToXml
         $replaceSpacesByUnderScoresInKeyNames = true,
         $xmlEncoding = null,
         $xmlVersion = '1.0',
-        $domProperties = []
+        $domProperties = [],
+        $xmlStandalone = null
     ) {
         $this->document = new DOMDocument($xmlVersion, $xmlEncoding);
+
+        if (! is_null($xmlStandalone)) {
+            $this->document->xmlStandalone = $xmlStandalone;
+        }
 
         if (! empty($domProperties)) {
             $this->setDomProperties($domProperties);
@@ -55,7 +60,8 @@ class ArrayToXml
         bool $replaceSpacesByUnderScoresInKeyNames = true,
         string $xmlEncoding = null,
         string $xmlVersion = '1.0',
-        array $domProperties = []
+        array $domProperties = [],
+        bool $xmlStandalone = null
     ) {
         $converter = new static(
             $array,
@@ -63,7 +69,8 @@ class ArrayToXml
             $replaceSpacesByUnderScoresInKeyNames,
             $xmlEncoding,
             $xmlVersion,
-            $domProperties
+            $domProperties,
+            $xmlStandalone
         );
 
         return $converter->toXml();
@@ -147,7 +154,7 @@ class ArrayToXml
                 } elseif ($key === '__numeric') {
                     $this->addNumericNode($element, $data);
                 } elseif (substr($key, 0, 9) === '__custom:') {
-                    $this->addNode($element, explode(':', $key)[1], $data);
+                    $this->addNode($element, str_replace('\:', ':', preg_split('/(?<!\\\):/', $key)[1]), $data);
                 } else {
                     $this->addNode($element, $key, $data);
                 }

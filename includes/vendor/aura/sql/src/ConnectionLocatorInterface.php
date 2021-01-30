@@ -3,7 +3,7 @@
  *
  * This file is part of Aura for PHP.
  *
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/MIT MIT
  *
  */
 namespace Aura\Sql;
@@ -26,7 +26,7 @@ interface ConnectionLocatorInterface
      * @return null
      *
      */
-    public function setDefault($callable);
+    public function setDefault(callable $callable);
 
     /**
      *
@@ -48,7 +48,7 @@ interface ConnectionLocatorInterface
      * @return null
      *
      */
-    public function setRead($name, $callable);
+    public function setRead($name, callable $callable);
 
     /**
      *
@@ -61,7 +61,7 @@ interface ConnectionLocatorInterface
      * @return ExtendedPdoInterface
      *
      */
-    public function getRead($name = null);
+    public function getRead($name = '');
 
     /**
      *
@@ -74,7 +74,7 @@ interface ConnectionLocatorInterface
      * @return null
      *
      */
-    public function setWrite($name, $callable);
+    public function setWrite($name, callable $callable);
 
     /**
      *
@@ -87,5 +87,5 @@ interface ConnectionLocatorInterface
      * @return ExtendedPdoInterface
      *
      */
-    public function getWrite($name = null);
+    public function getWrite($name = '');
 }
