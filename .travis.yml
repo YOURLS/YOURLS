@@ -12,8 +12,6 @@ services:
 # https://phpunit.de/supported-versions.html
 matrix:
   include:
-  - php: 5.6
-    env: PHPUNIT_VERSION=5.7.*
   - php: 7.0
     env: PHPUNIT_VERSION=6.5.*
   - php: 7.1
@@ -24,8 +22,10 @@ matrix:
     env: PHPUNIT_VERSION=7.5.*
   - php: 7.4
     env: PHPUNIT_VERSION=7.5.* TEST_COVERAGE=1 PHPUNIT_FLAGS='--coverage-clover clover.xml'
+  - php: 8.0
+    env: PHPUNIT_VERSION=8.5.*
   - php: nightly
-    env: PHPUNIT_VERSION=7.5.*
+    env: PHPUNIT_VERSION=9.5.*
   fast_finish: true
   allow_failures:
   - php: nightly
@@ -39,12 +39,13 @@ cache:
     - $HOME/.cache/composer/files
 
 install:
+  # Code coverage needs to be enabled in php.ini by setting 'xdebug.mode' to 'coverage'
+  - echo 'xdebug.mode = coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   # Speed up build time by disabling Xdebug unless actually needed.
   - if [ "$TEST_COVERAGE" != '1' ]; then phpenv config-rm xdebug.ini || echo 'No xdebug config.'; fi
-  - composer global require hirak/prestissimo --no-suggest --no-interaction
   # Update tests/composer.json to overwrite phpunit with specific version
-  - composer require "phpunit/phpunit:${PHPUNIT_VERSION}" -d ./tests --dev --no-update --no-interaction --no-suggest
-  - composer install -d ./tests --no-suggest --no-interaction
+  - composer require "phpunit/phpunit:${PHPUNIT_VERSION}" -d ./tests --dev --no-update --no-interaction
+  - composer install -d ./tests --no-interaction
 
 before_script:
   - mysql --version
