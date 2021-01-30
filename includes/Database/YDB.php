@@ -177,7 +177,7 @@ class YDB extends ExtendedPdo {
      * @return void
      */
     public function start_profiler() {
-        $this->profiler = new Logger($this);
+        $this->logger = new Logger($this);
     }
 
     /**
@@ -476,7 +476,7 @@ class YDB extends ExtendedPdo {
         return $this->fetchValue($query);
     }
 
-    public function query($query) {
+    public function query($query, ...$unused) {
         yourls_deprecated_function( '$ydb->'.__FUNCTION__, '1.7.3', 'PDO' );
         yourls_debug_log('LEGACY SQL: '.$query);
         return $this->fetchAffected($query);

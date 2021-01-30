@@ -3,10 +3,14 @@
  *
  * This file is part of Aura for PHP.
  *
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/MIT MIT
  *
  */
 namespace Aura\Sql;
+
+use Aura\Sql\Parser\ParserInterface;
+use Aura\Sql\Profiler\ProfilerInterface;
+use PDO;
 
 /**
  *
@@ -14,24 +18,22 @@ namespace Aura\Sql;
  *
  * @package Aura.Sql
  *
- * @method Iterator\AllIterator yieldAll(string $statment, array $values = array())     Yields rows from the database keyed on the first column of each row.
- * @method Iterator\AssocIterator yieldAssoc(string $statment, array $values = array())   Yields rows from the database keyed on the first column of each row.
- * @method Iterator\ColIterator yieldCol(string $statment, array $values = array())   Yields the first column of each row.
- * @method Iterator\ObjectsIterator yieldObjects(string $statment, array $values = array(), $class_name = 'stdClass', array $ctor_args = array())  Yields objects where the column values are mapped to object properties.
- * @method Iterator\PairsIterator yieldPairs(string $statment, array $values = array())   Yields key-value pairs (first column is the key, second column is the value).
  */
 interface ExtendedPdoInterface extends PdoInterface
 {
     /**
      *
-     * Connects to the database and sets PDO attributes.
-     *
-     * @return null
-     *
-     * @throws \PDOException if the connection fails.
+     * Connects to the database.
      *
      */
     public function connect();
+
+    /**
+     *
+     * Disconnects from the database.
+     *
+     */
+    public function disconnect();
 
     /**
      *
@@ -41,10 +43,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @return array
+     * @return int
      *
      */
-    public function fetchAffected($statement, array $values = array());
+    public function fetchAffected($statement, array $values = []);
 
     /**
      *
@@ -55,13 +57,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param callable $callable A callable to be applied to each of the rows
-     * to be returned.
-     *
      * @return array
      *
      */
-    public function fetchAll($statement, array $values = array(), $callable = null);
+    public function fetchAll($statement, array $values = []);
 
     /**
      *
@@ -76,13 +75,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param callable $callable A callable to be applied to each of the rows
-     * to be returned.
-     *
      * @return array
      *
      */
-    public function fetchAssoc($statement, array $values = array(), $callable = null);
+    public function fetchAssoc($statement, array $values = []);
 
     /**
      *
@@ -92,13 +88,31 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param callable $callable A callable to be applied to each of the rows
-     * to be returned.
+     * @return array
+     *
+     */
+    public function fetchCol($statement, array $values = []);
+
+    /**
+     *
+     * Fetches multiple from the database as an associative array.
+     * The first column will be the index
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @param int $style a fetch style defaults to PDO::FETCH_COLUMN for single
+     * values, use PDO::FETCH_NAMED when fetching a multiple columns
      *
      * @return array
      *
      */
-    public function fetchCol($statement, array $values = array(), $callable = null);
+    public function fetchGroup(
+        $statement,
+        array $values = [],
+        $style = PDO::FETCH_COLUMN
+    );
 
     /**
      *
@@ -115,18 +129,18 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param string $class_name The name of the class to create.
+     * @param string $class The name of the class to create.
      *
-     * @param array $ctor_args Arguments to pass to the object constructor.
+     * @param array $args Arguments to pass to the object constructor.
      *
-     * @return object|false
+     * @return object
      *
      */
     public function fetchObject(
         $statement,
-        array $values = array(),
-        $class_name = 'StdClass',
-        array $ctor_args = array()
+        array $values = [],
+        $class = 'stdClass',
+        array $args = []
     );
 
     /**
@@ -145,19 +159,19 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param string $class_name The name of the class to create from each
+     * @param string $class The name of the class to create from each
      * row.
      *
-     * @param array $ctor_args Arguments to pass to each object constructor.
+     * @param array $args Arguments to pass to each object constructor.
      *
      * @return array
      *
      */
     public function fetchObjects(
         $statement,
-        array $values = array(),
-        $class_name = 'StdClass',
-        array $ctor_args = array()
+        array $values = [],
+        $class = 'stdClass',
+        array $args = []
     );
 
     /**
@@ -168,10 +182,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @return array|false
+     * @return array
      *
      */
-    public function fetchOne($statement, array $values = array());
+    public function fetchOne($statement, array $values = []);
 
     /**
      *
@@ -182,13 +196,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @param callable $callable A callable to be applied to each of the rows
-     * to be returned.
-     *
      * @return array
      *
      */
-    public function fetchPairs($statement, array $values = array(), $callable = null);
+    public function fetchPairs($statement, array $values = []);
 
     /**
      *
@@ -201,30 +212,29 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return mixed
      *
      */
-    public function fetchValue($statement, array $values = array());
+    public function fetchValue($statement, array $values = []);
 
     /**
      *
-     * Returns the DSN for a lazy connection; if the underlying PDO instance
-     * was injected at construction time, this will be null.
+     * Returns the Parser instance.
      *
-     * @return string|null
+     * @return ParserInterface
      *
      */
-    public function getDsn();
+    public function getParser();
 
     /**
      *
-     * Returns the underlying PDO connection object.
+     * Return the inner PDO (if any)
      *
-     * @return PDO or Null if connection was manually disconnected
+     * @return \PDO
      *
      */
     public function getPdo();
 
     /**
      *
-     * Returns the profiler object.
+     * Returns the Profiler instance.
      *
      * @return ProfilerInterface
      *
@@ -233,12 +243,134 @@ interface ExtendedPdoInterface extends PdoInterface
 
     /**
      *
-     * Is the instance connected to a database?
+     * Quotes a multi-part (dotted) identifier name.
+     *
+     * @param string $name The multi-part identifier name.
+     *
+     * @return string The multi-part identifier name, quoted.
+     *
+     */
+    public function quoteName($name);
+
+    /**
+     *
+     * Quotes a single identifier name.
+     *
+     * @param string $name The identifier name.
+     *
+     * @return string The quoted identifier name.
+     *
+     */
+    public function quoteSingleName($name);
+
+    /**
+     *
+     * Is the PDO connection active?
      *
      * @return bool
      *
      */
     public function isConnected();
+
+    /**
+     *
+     * Sets the Parser instance.
+     *
+     * @param ParserInterface $parser The Parser instance.
+     *
+     */
+    public function setParser(ParserInterface $parser);
+
+    /**
+     *
+     * Sets the Profiler instance.
+     *
+     * @param ProfilerInterface $profiler The Profiler instance.
+     *
+     */
+    public function setProfiler(ProfilerInterface $profiler);
+
+    /**
+     *
+     * Yields rows from the database
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @return \Generator
+     *
+     */
+    public function yieldAll($statement, array $values = []);
+
+    /**
+     *
+     * Yields rows from the database keyed on the first column of each row.
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @return \Generator
+     *
+     */
+    public function yieldAssoc($statement, array $values = []);
+
+    /**
+     *
+     * Yields the first column of all rows
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @return \Generator
+     *
+     */
+    public function yieldCol($statement, array $values = []);
+
+    /**
+     *
+     * Yields objects where the column values are mapped to object properties.
+     *
+     * Warning: PDO "injects property-values BEFORE invoking the constructor -
+     * in other words, if your class initializes property-values to defaults
+     * in the constructor, you will be overwriting the values injected by
+     * fetchObject() !"
+     * <http://www.php.net/manual/en/pdostatement.fetchobject.php#111744>
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @param string $class The name of the class to create from each
+     * row.
+     *
+     * @param array $args Arguments to pass to each object constructor.
+     *
+     * @return \Generator
+     *
+     */
+    public function yieldObjects(
+        $statement,
+        array $values = [],
+        $class = 'stdClass',
+        array $args = []
+    );
+
+    /**
+     *
+     * Yields key-value pairs (first column is the key, second column is the
+     * value).
+     *
+     * @param string $statement The SQL statement to prepare and execute.
+     *
+     * @param array $values Values to bind to the query.
+     *
+     * @return \Generator
+     *
+     */
+    public function yieldPairs($statement, array $values = []);
 
     /**
      *
@@ -252,16 +384,29 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \PDOStatement
      *
      */
-    public function perform($statement, array $values = array());
+    public function perform($statement, array $values = []);
 
     /**
      *
-     * Sets the profiler object.
+     * Prepares an SQL statement with bound values.
      *
-     * @param ProfilerInterface $profiler
+     * This method only binds values that have placeholders in the
+     * statement, thereby avoiding errors from PDO regarding too many bound
+     * values. It also binds all sequential (question-mark) placeholders.
      *
-     * @return null
+     * If a placeholder value is an array, the array is converted to a string
+     * of comma-separated quoted values; e.g., for an `IN (...)` condition.
+     * The quoted string is replaced directly into the statement instead of
+     * using `PDOStatement::bindValue()` proper.
+     *
+     * @param string $statement The SQL statement to prepare for execution.
+     *
+     * @param array $values The values to bind to the statement, if any.
+     *
+     * @return \PDOStatement
+     *
+     * @see http://php.net/manual/en/pdo.prepare.php
      *
      */
-    public function setProfiler(ProfilerInterface $profiler);
+    public function prepareWithValues($statement, array $values = []);
 }

@@ -10,7 +10,7 @@ namespace YOURLS\Admin;
 
 use YOURLS\Database\YDB;
 
-class Logger extends \Aura\Sql\Profiler {
+class Logger extends \Aura\Sql\Profiler\Profiler {
 
     /**
      * the YDB instance
