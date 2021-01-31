@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '89fc7a83f33e29a057f4ae896dbc71355e16998d',
+    'reference' => '95e7895cf8245298632802620e07d4a5b0506bd8',
     'name' => 'yourls/yourls',
   ),
   'versions' => 
@@ -112,12 +112,12 @@
     ),
     'spatie/array-to-xml' => 
     array (
-      'pretty_version' => '2.16.0',
-      'version' => '2.16.0.0',
+      'pretty_version' => '2.15.0',
+      'version' => '2.15.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'db39308c5236b69b89cadc3f44f191704814eae2',
+      'reference' => '1795afad4e5a1f4b7af2e0e09802550eaa00a6f8',
     ),
     'symfony/polyfill-intl-idn' => 
     array (
@@ -162,7 +162,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '89fc7a83f33e29a057f4ae896dbc71355e16998d',
+      'reference' => '95e7895cf8245298632802620e07d4a5b0506bd8',
     ),
   ),
 );

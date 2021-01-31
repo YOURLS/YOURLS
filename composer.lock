@@ -606,26 +606,26 @@
         },
         {
             "name": "spatie/array-to-xml",
-            "version": "2.16.0",
+            "version": "2.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/array-to-xml.git",
-                "reference": "db39308c5236b69b89cadc3f44f191704814eae2"
+                "reference": "1795afad4e5a1f4b7af2e0e09802550eaa00a6f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/db39308c5236b69b89cadc3f44f191704814eae2",
-                "reference": "db39308c5236b69b89cadc3f44f191704814eae2",
+                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/1795afad4e5a1f4b7af2e0e09802550eaa00a6f8",
+                "reference": "1795afad4e5a1f4b7af2e0e09802550eaa00a6f8",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
-                "php": "^7.4|^8.0"
+                "php": "^7.2"
             },
             "require-dev": {
-                "mockery/mockery": "^1.2",
-                "phpunit/phpunit": "^9.0",
-                "spatie/phpunit-snapshot-assertions": "^4.2"
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^8.0",
+                "spatie/phpunit-snapshot-assertions": "^2.0"
             },
             "type": "library",
             "autoload": {
@@ -641,7 +641,7 @@
                 {
                     "name": "Freek Van der Herten",
                     "email": "freek@spatie.be",
-                    "homepage": "https://freek.dev",
+                    "homepage": "https://murze.be",
                     "role": "Developer"
                 }
             ],
@@ -654,19 +654,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/array-to-xml/issues",
-                "source": "https://github.com/spatie/array-to-xml/tree/2.16.0"
+                "source": "https://github.com/spatie/array-to-xml/tree/2.15.0"
             },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-11-18T22:03:17+00:00"
+            "time": "2020-10-29T18:11:03+00:00"
         },
         {
             "name": "symfony/polyfill-intl-idn",
