@@ -44,7 +44,7 @@ body {
 }
 
 #yourls-about a {
-	background:transparent url(../img/favicon.gif) center left no-repeat;
+	background:transparent url(../img/favicon.svg) center left no-repeat;
 	padding-left:20px;
 	color:inherit;
 	font-weight:bold;
@@ -58,7 +58,7 @@ body {
 #yourls-once {
 	display:block;
 	text-indent:-9999px;
-	background:transparent url(../img/close_button.gif) center center no-repeat;
+	background:transparent url(../img/close_button.svg) center center no-repeat;
 	width:20px;
 	height:20px;
 	float:left;
@@ -67,7 +67,7 @@ body {
 #yourls-always {
 	display:none;
 	text-indent:-9999px;
-	background:transparent url(../img/close_button_red.gif) center center no-repeat;
+	background:transparent url(../img/close_button_red.svg) center center no-repeat;
 	width:20px;
 	height:20px;
 	float:left;
