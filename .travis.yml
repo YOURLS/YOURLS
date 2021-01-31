@@ -50,7 +50,7 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS yourls_tests;'
   - cp tests/data/config/yourls-tests-config-travis.php user/config.php
 
-script: tests/vendor/bin/phpunit --configuration ./phpunit-travis.xml.dist $PHPUNIT_FLAGS
+script: composer run -d ./tests tests -- --configuration ../phpunit-travis.xml.dist $PHPUNIT_FLAGS
 
 after_script:
   - |
