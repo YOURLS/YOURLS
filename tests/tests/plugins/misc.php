@@ -134,7 +134,7 @@ class Plugin_Misc_Tests extends PHPUnit\Framework\TestCase {
     * @since 0.1
     */
     public function test_plugin_admin_page_fake() {
-        $this->expectException();
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('I have died');
 
         // intercept yourls_die() before it actually dies
@@ -173,7 +173,7 @@ class Plugin_Misc_Tests extends PHPUnit\Framework\TestCase {
     * @since 0.1
     */
     public function test_plugin_admin_page_not_callable() {
-        $this->expectException();
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('I have died');
 
         $plugin = rand_str();
