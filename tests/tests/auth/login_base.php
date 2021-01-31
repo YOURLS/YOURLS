@@ -4,7 +4,7 @@
  * This abstract class isn't supposed to be run as tests
  * See login_*.php files
  */
-abstract class Login_Base extends PHPUnit_Framework_TestCase {
+abstract class Login_Base extends PHPUnit\Framework\TestCase {
 
     protected $backup_request;
 

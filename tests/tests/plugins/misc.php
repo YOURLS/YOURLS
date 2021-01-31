@@ -9,7 +9,7 @@
  * @group plugins
  * @since 0.1
  */
-class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Misc_Tests extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         // remove filters and actions

@@ -6,7 +6,7 @@
  * @group l10n
  * @since 0.1
  */
-class Translation_General_Tests extends PHPUnit_Framework_TestCase {
+class Translation_General_Tests extends PHPUnit\Framework\TestCase {
 
     protected $locale_backup;
 

@@ -5,7 +5,7 @@
  *
  * @group db
  */
-class DB_Set_Tests extends PHPUnit_Framework_TestCase {
+class DB_Set_Tests extends PHPUnit\Framework\TestCase {
 
     protected $ydb_copy = null;
 

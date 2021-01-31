@@ -5,7 +5,7 @@
  *
  * @group install
  */
-class Install_Tests extends PHPUnit_Framework_TestCase {
+class Install_Tests extends PHPUnit\Framework\TestCase {
 
     /**
 	 * Check if YOURLS is declared installed

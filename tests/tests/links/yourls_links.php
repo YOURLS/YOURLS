@@ -7,7 +7,7 @@
  * @group idn
  */
 
-class YOURLS_Link_Tests extends PHPUnit_Framework_TestCase {
+class YOURLS_Link_Tests extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         yourls_remove_all_filters( 'get_yourls_site' );

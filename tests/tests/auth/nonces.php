@@ -6,7 +6,7 @@
  * @group nonces
  * @since 0.1
  */
-class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
+class Auth_Nonce_Tests extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         yourls_remove_all_actions('pre_yourls_die');

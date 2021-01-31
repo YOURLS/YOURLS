@@ -7,7 +7,7 @@
  * @group AYO
  * @since 0.1
  */
-class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
+class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         yourls_remove_all_filters( 'is_admin' );

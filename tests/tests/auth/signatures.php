@@ -6,7 +6,7 @@
  * @group signatures
  * @since 0.1
  */
-class Auth_Sig_Tests extends PHPUnit_Framework_TestCase {
+class Auth_Sig_Tests extends PHPUnit\Framework\TestCase {
 
     protected $backup_request;
 

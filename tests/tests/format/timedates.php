@@ -7,7 +7,7 @@
  * @group timedate
  * @since 0.1
  */
-class Format_Test_Dates extends PHPUnit_Framework_TestCase {
+class Format_Test_Dates extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         yourls_remove_all_filters( 'get_time_offset' );

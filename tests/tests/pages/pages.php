@@ -6,7 +6,7 @@
  * @group pages
  */
 
-class Pages_Tests extends PHPUnit_Framework_TestCase {
+class Pages_Tests extends PHPUnit\Framework\TestCase {
 
     public function test_page_is_reserved() {
         $this->assertTrue( yourls_keyword_is_reserved('examplepage') );

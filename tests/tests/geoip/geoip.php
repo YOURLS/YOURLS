@@ -6,7 +6,7 @@
  * @group geoip
  */
 
-class GeoIP_Tests extends PHPUnit_Framework_TestCase {
+class GeoIP_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Check that a few IPv4 resolve to the correct country code

@@ -5,7 +5,7 @@
  *
  * @group auth
  */
-class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
+class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
 
     protected static $random_password;
 

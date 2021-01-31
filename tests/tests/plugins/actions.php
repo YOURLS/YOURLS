@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Actions_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Check adding an action with a simple function name

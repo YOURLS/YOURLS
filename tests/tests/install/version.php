@@ -5,7 +5,7 @@
  *
  * @group install
  */
-class Install_Version_Tests extends PHPUnit_Framework_TestCase {
+class Install_Version_Tests extends PHPUnit\Framework\TestCase {
 
     protected $ydb_copy;
 

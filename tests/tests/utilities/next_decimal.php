@@ -6,7 +6,7 @@
  * @group utils
  */
 
-class NextDecimal_Tests extends PHPUnit_Framework_TestCase {
+class NextDecimal_Tests extends PHPUnit\Framework\TestCase {
 
     public function test_get_next_decimal() {
         $id = yourls_get_next_decimal();

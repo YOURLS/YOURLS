@@ -6,7 +6,7 @@
  * @group API
  * @since 0.1
  */
-class API_Output_Tests extends PHPUnit_Framework_TestCase {
+class API_Output_Tests extends PHPUnit\Framework\TestCase {
 
     protected $header_content;
 

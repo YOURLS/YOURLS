@@ -6,7 +6,7 @@
  * @group l10n
  * @since 0.1
  */
-class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
+class Translation_Translation_Tests extends PHPUnit\Framework\TestCase {
 
     public static function setUpBeforeClass(): void {
         yourls_load_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/test-fr_FR.mo' );

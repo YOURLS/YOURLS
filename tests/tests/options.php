@@ -6,7 +6,7 @@
  * @group options
  * @since 0.1
  */
-class Option_Tests extends PHPUnit_Framework_TestCase {
+class Option_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Basic tests

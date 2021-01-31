@@ -6,7 +6,7 @@
  * @group formatting
  * @since 0.1
  */
-class Format_KSES extends PHPUnit_Framework_TestCase {
+class Format_KSES extends PHPUnit\Framework\TestCase {
 
     protected $entitynames, $protocols;
 

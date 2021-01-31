@@ -7,7 +7,7 @@
  * @group cookies
  * @since 0.1
  */
-class Auth_Login_Cookie_Tests extends PHPUnit_Framework_TestCase {
+class Auth_Login_Cookie_Tests extends PHPUnit\Framework\TestCase {
 
     protected $cookie;
     protected $request;

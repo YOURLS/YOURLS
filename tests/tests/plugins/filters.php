@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-class Plugin_Filters_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Filters_Tests extends PHPUnit\Framework\TestCase {
 
     /**
      * this var will allow to share "$this" across multiple tests here
