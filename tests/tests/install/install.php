@@ -82,7 +82,7 @@ class Install_Tests extends PHPUnit\Framework\TestCase {
 	 */
     public function test_incorrect_config() {
         $this->expectException(YOURLS\Exceptions\ConfigException::class);
-        $this->expectExceptionMessageRegExp('/User defined config not found at \'[0-9a-z]+\'/');
+        $this->expectExceptionMessageMatches('/User defined config not found at \'[0-9a-z]+\'/');
 
         $test = new \YOURLS\Config\Config(rand_str());
         $test->find_config();
