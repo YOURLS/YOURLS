@@ -13,15 +13,15 @@ services:
 matrix:
   include:
   - php: 7.2
-    env: PHPUNIT_VERSION=7.5.* TEST_COVERAGE=1 PHPUNIT_FLAGS='--coverage-clover clover.xml'
+    env: PHPUNIT_VERSION=^8.0
   - php: 7.3
-    env: PHPUNIT_VERSION=7.5.* TEST_COVERAGE=1 PHPUNIT_FLAGS='--coverage-clover clover.xml'
+    env: PHPUNIT_VERSION=^8.0
   - php: 7.4
-    env: PHPUNIT_VERSION=7.5.* TEST_COVERAGE=1 PHPUNIT_FLAGS='--coverage-clover clover.xml'
+    env: PHPUNIT_VERSION=^8.0 TEST_COVERAGE=1 PHPUNIT_FLAGS='--coverage-clover clover.xml'
   - php: 8.0
-    env: PHPUNIT_VERSION=8.5.*
+    env: PHPUNIT_VERSION=^9.0
   - php: nightly
-    env: PHPUNIT_VERSION=9.5.*
+    env: PHPUNIT_VERSION=^9.0
   fast_finish: true
   allow_failures:
   - php: nightly
