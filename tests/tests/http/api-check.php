@@ -9,7 +9,7 @@
  */
 class HTTP_AYO_Tests extends PHPUnit_Framework_TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         yourls_remove_all_filters( 'is_admin' );
         yourls_remove_all_filters( 'shunt_yourls_http_request' );
     }

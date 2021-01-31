@@ -10,11 +10,11 @@ class Auth_Sig_Tests extends PHPUnit_Framework_TestCase {
 
     protected $backup_request;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->backup_request = $_REQUEST;
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $_REQUEST = $this->backup_request;
     }
 

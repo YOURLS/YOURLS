@@ -10,7 +10,7 @@
  */
 class Format_URL extends PHPUnit_Framework_TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         yourls_remove_filter( 'is_ssl', 'yourls_return_true' );
         yourls_remove_filter( 'is_ssl', 'yourls_return_false' );
     }

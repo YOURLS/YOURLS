@@ -8,7 +8,7 @@
  */
 class Translation_Domain_Tests extends PHPUnit_Framework_TestCase {
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         yourls_unload_textdomain( 'test' );
         yourls_unload_textdomain( 'default' );
     }

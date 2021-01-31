@@ -11,7 +11,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
 
     protected static $yourls_user_passwords_copy;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         global $yourls_user_passwords;
         self::$yourls_user_passwords_copy = $yourls_user_passwords;
 
@@ -27,7 +27,7 @@ class Auth_Func_Tests extends PHPUnit_Framework_TestCase {
         $yourls_user_passwords['random_phpass2'] = $phpassword_2;
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         global $yourls_user_passwords;
         $yourls_user_passwords = self::$yourls_user_passwords_copy;
     }

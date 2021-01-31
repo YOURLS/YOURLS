@@ -9,7 +9,7 @@
  */
 class Format_Test_Dates extends PHPUnit_Framework_TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         yourls_remove_all_filters( 'get_time_offset' );
     }
 

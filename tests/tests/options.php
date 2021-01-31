@@ -84,7 +84,7 @@ class Option_Tests extends PHPUnit_Framework_TestCase {
         $this->assertFalse( yourls_delete_option( $empty ) );
 	}
 
-	function setUp() {
+	function setUp(): void {
 		parent::setUp();
 		$this->slash_1 = 'String with 1 slash \\';
 		$this->slash_2 = 'String with 2 slashes \\\\';

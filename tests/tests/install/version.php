@@ -12,14 +12,14 @@ class Install_Version_Tests extends PHPUnit_Framework_TestCase {
     /**
      * Make a copy of $ydb
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->ydb_copy = yourls_get_db();
     }
 
     /**
      * Restore original $ydb
      */
-    public function tearDown() {
+    public function tearDown(): void {
         yourls_set_db($this->ydb_copy);
     }
 
