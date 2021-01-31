@@ -6,16 +6,16 @@
  * @group l10n
  * @since 0.1
  */
-class Translation_General_Tests extends PHPUnit_Framework_TestCase {
-    
+class Translation_General_Tests extends PHPUnit\Framework\TestCase {
+
     protected $locale_backup;
-    
-    protected function setUp() {
+
+    protected function setUp(): void {
         global $yourls_locale;
         $this->locale_backup = $yourls_locale;
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         global $yourls_locale;
         $yourls_locale = $this->locale_backup;
     }
@@ -48,11 +48,11 @@ class Translation_General_Tests extends PHPUnit_Framework_TestCase {
 
         $yourls_locale = rand_str();
         $this->assertSame( $yourls_locale , yourls_get_locale() );
-        
+
         $yourls_locale = false;
         $this->assertSame( '' , yourls_get_locale() );
     }
-    
+
     /**
      * Get available languages
      *

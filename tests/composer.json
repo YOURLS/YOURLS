@@ -1,5 +1,8 @@
 {
     "require": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "*"
+    },
+    "scripts": {
+        "tests": "phpunit"
     }
 }

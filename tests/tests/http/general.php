@@ -6,9 +6,9 @@
  * @group http
  * @since 0.1
  */
-class HTTP_Misc_Tests extends PHPUnit_Framework_TestCase {
-    
-    protected function tearDown() {
+class HTTP_Misc_Tests extends PHPUnit\Framework\TestCase {
+
+    protected function tearDown(): void {
         yourls_remove_filter( 'http_get_proxy', 'yourls_return_true' );
         yourls_remove_filter( 'http_get_proxy', 'yourls_return_false' );
     }

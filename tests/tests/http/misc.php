@@ -5,11 +5,11 @@
  *
  * @group http
  */
- 
-class Misc_HTTP_Tests extends PHPUnit_Framework_TestCase {
+
+class Misc_HTTP_Tests extends PHPUnit\Framework\TestCase {
 
     public function test_get_user_agent() {
-        $this->assertInternalType("string", yourls_get_user_agent());
+        $this->assertIsString(yourls_get_user_agent());
     }
 
     public function test_get_user_agent_empty() {

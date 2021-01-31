@@ -35,6 +35,7 @@ PRESERVE_IN_LIB=(
     'src'
     'library'
     'lib'
+    'Psr'
     'README.md'
     'readme.md'
 )

@@ -4,15 +4,15 @@
  * This abstract class isn't supposed to be run as tests
  * See login_*.php files
  */
-abstract class Login_Base extends PHPUnit_Framework_TestCase {
+abstract class Login_Base extends PHPUnit\Framework\TestCase {
 
     protected $backup_request;
-    
-    protected function setUp() {
+
+    protected function setUp(): void {
         $this->backup_request = $_REQUEST;
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $_REQUEST = $this->backup_request;
     }
 
@@ -25,14 +25,14 @@ abstract class Login_Base extends PHPUnit_Framework_TestCase {
         $pre_login    = yourls_did_action( 'pre_login' );
         $login        = yourls_did_action( 'login' );
         $login_failed = yourls_did_action( 'login_failed' );
-        
+
 		$this->assertTrue( yourls_is_valid_user() );
-        
+
 		$this->assertEquals( $pre_login + 1, yourls_did_action( 'pre_login' ) );
 		$this->assertEquals( $login + 1, yourls_did_action( 'login' ) );
 		$this->assertEquals( $login_failed, yourls_did_action( 'login_failed' ) );
 	}
-	
+
     /**
      * Check that auth is shuntable
      *
@@ -43,7 +43,7 @@ abstract class Login_Base extends PHPUnit_Framework_TestCase {
         $this->assertSame( array(), yourls_is_valid_user() );
         yourls_remove_filter( 'shunt_is_valid_user', 'yourls_return_empty_array' );
     }
-    
+
     /**
      * Check that auth returns false with no credential
      *
@@ -55,11 +55,11 @@ abstract class Login_Base extends PHPUnit_Framework_TestCase {
         $login_failed = yourls_did_action( 'login_failed' );
 
         $this->assertNotTrue( yourls_is_valid_user() );
-        
+
 		$this->assertEquals( $login, yourls_did_action( 'login' ) );
 		$this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
     }
-    
+
     /**
      * Check that auth returns false with empty credential
      *
@@ -75,7 +75,7 @@ abstract class Login_Base extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $login, yourls_did_action( 'login' ) );
 		$this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
     }
-    
+
     /**
      * Check that auth returns false with incorrect credentials
      *

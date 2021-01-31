@@ -11,9 +11,7 @@ This package provides a very simple class to convert an array to an xml string.
 
 ## Support us
 
-Learn how to create a package like this one, by watching our premium video course:
-
-[![Laravel Package training](https://spatie.be/github/package-training.jpg)](https://laravelpackage.training)
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/array-to-xml.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/array-to-xml)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
@@ -60,6 +58,7 @@ After running this piece of code `$result` will contain:
     </Bad_guy>
 </root>
 ```
+
 
 ### Setting the name of the root element
 
@@ -122,7 +121,6 @@ This code will result in:
 
 *Note, that the value of the `_value` field must be a string. [(More)](https://github.com/spatie/array-to-xml/issues/75#issuecomment-413726065)* 
 
-
 ### Using reserved characters
 
 It is also possible to wrap the value of a node into a CDATA section. This allows you to use reserved characters.
@@ -161,6 +159,25 @@ This code will result in:
 ```
 
 If your input contains something that cannot be parsed a `DOMException` will be thrown.
+
+
+### Customize the XML declaration
+
+You could specify specific values in for:
+ - encoding as the fourth argument (string)
+ - version as the fifth argument (string)
+ - standalone as sixth argument (boolean)
+
+```php
+$result = ArrayToXml::convert($array, [], true, 'UTF-8', '1.1', [], true);
+```
+
+This will result in:
+
+```xml
+<?xml version="1.1" encoding="UTF-8" standalone="yes"?>
+```
+
 
 ### Adding attributes to the root element
 

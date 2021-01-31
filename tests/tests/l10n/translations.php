@@ -6,14 +6,14 @@
  * @group l10n
  * @since 0.1
  */
-class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
+class Translation_Translation_Tests extends PHPUnit\Framework\TestCase {
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         yourls_load_textdomain( 'test', YOURLS_TESTDATA_DIR . '/pomo/test-fr_FR.mo' );
         yourls_load_textdomain( 'default', YOURLS_TESTDATA_DIR . '/pomo/fr_FR.mo' );
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         yourls_unload_textdomain( 'test' );
         yourls_unload_textdomain( 'default' );
     }
@@ -82,11 +82,16 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     /**
      * Sprintf'ed with too few arguments - trigger sprintf "too few arguments" error
      *
-     * @expectedException PHPUnit_Framework_Error
-     * @expectedExceptionMessage sprintf(): Too few arguments
      * @since 0.1
      */
     public function test_yourls_s_too_few() {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->expectException(ArgumentCountError::class);
+        } else {
+            $this->expectException(PHPUnit\Framework\Error\Error::class);
+        }
+        $this->expectExceptionMessageMatches('/arguments/');
+
         yourls_s( 'Hello %s you are %s', 'Ozh' );
     }
 

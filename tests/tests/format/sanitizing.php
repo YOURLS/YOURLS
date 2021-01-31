@@ -6,7 +6,7 @@
  * @group formatting
  * @since 0.1
  */
-class Format_Sanitize extends PHPUnit_Framework_TestCase {
+class Format_Sanitize extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize titles

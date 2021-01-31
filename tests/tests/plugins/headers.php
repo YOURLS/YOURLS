@@ -6,7 +6,7 @@
  * @group plugins
  * @since 0.1
  */
-class Plugin_Header_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Header_Tests extends PHPUnit\Framework\TestCase {
 
     /**
 	 * Regular header

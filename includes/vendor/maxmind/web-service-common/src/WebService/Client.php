@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MaxMind\WebService;
 
 use Composer\CaBundle\CaBundle;
@@ -47,9 +49,9 @@ class Client
      *                           username, and password, e.g., `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
-        $accountId,
-        $licenseKey,
-        $options = []
+        int $accountId,
+        string $licenseKey,
+        array $options = []
     ) {
         $this->accountId = $accountId;
         $this->licenseKey = $licenseKey;
@@ -96,9 +98,9 @@ class Client
      * @throws WebServiceException        when some other error occurs. This also
      *                                    serves as the base class for the above exceptions.
      *
-     * @return array The decoded content of a successful response
+     * @return array|null The decoded content of a successful response
      */
-    public function post($service, $path, $input)
+    public function post(string $service, string $path, array $input): ?array
     {
         $requestBody = json_encode($input);
         if ($requestBody === false) {
@@ -124,7 +126,7 @@ class Client
         );
     }
 
-    public function get($service, $path)
+    public function get(string $service, string $path): ?array
     {
         $request = $this->createRequest($path);
 
@@ -139,7 +141,7 @@ class Client
         );
     }
 
-    private function userAgent()
+    private function userAgent(): string
     {
         $curlVersion = curl_version();
 
@@ -147,7 +149,7 @@ class Client
            ' curl/' . $curlVersion['version'];
     }
 
-    private function createRequest($path, $headers = [])
+    private function createRequest(string $path, array $headers = []): \MaxMind\WebService\Http\Request
     {
         array_push(
             $headers,
@@ -170,11 +172,11 @@ class Client
     }
 
     /**
-     * @param int    $statusCode   the HTTP status code of the response
-     * @param string $contentType  the Content-Type of the response
-     * @param string $responseBody the response body
-     * @param string $service      the name of the service
-     * @param string $path         the path used in the request
+     * @param int         $statusCode   the HTTP status code of the response
+     * @param string|null $contentType  the Content-Type of the response
+     * @param string|null $responseBody the response body
+     * @param string      $service      the name of the service
+     * @param string      $path         the path used in the request
      *
      * @throws AuthenticationException    when there is an issue authenticating the
      *                                    request
@@ -185,30 +187,30 @@ class Client
      * @throws WebServiceException        when some other error occurs. This also
      *                                    serves as the base class for the above exceptions
      *
-     * @return array The decoded content of a successful response
+     * @return array|null The decoded content of a successful response
      */
     private function handleResponse(
-        $statusCode,
-        $contentType,
-        $responseBody,
-        $service,
-        $path
-    ) {
+        int $statusCode,
+        ?string $contentType,
+        ?string $responseBody,
+        string $service,
+        string $path
+    ): ?array {
         if ($statusCode >= 400 && $statusCode <= 499) {
             $this->handle4xx($statusCode, $contentType, $responseBody, $service, $path);
         } elseif ($statusCode >= 500) {
             $this->handle5xx($statusCode, $service, $path);
-        } elseif ($statusCode !== 200) {
+        } elseif ($statusCode !== 200 && $statusCode !== 204) {
             $this->handleUnexpectedStatus($statusCode, $service, $path);
         }
 
-        return $this->handleSuccess($responseBody, $service);
+        return $this->handleSuccess($statusCode, $responseBody, $service);
     }
 
     /**
      * @return string describing the JSON error
      */
-    private function jsonErrorDescription()
+    private function jsonErrorDescription(): string
     {
         $errno = json_last_error();
         switch ($errno) {
@@ -232,17 +234,17 @@ class Client
      *
      * @return string the constructed URL
      */
-    private function urlFor($path)
+    private function urlFor(string $path): string
     {
         return 'https://' . $this->host . $path;
     }
 
     /**
-     * @param int    $statusCode  the HTTP status code
-     * @param string $contentType the response content-type
-     * @param string $body        the response body
-     * @param string $service     the service name
-     * @param string $path        the path used in the request
+     * @param int         $statusCode  the HTTP status code
+     * @param string|null $contentType the response content-type
+     * @param string|null $body        the response body
+     * @param string      $service     the service name
+     * @param string      $path        the path used in the request
      *
      * @throws AuthenticationException
      * @throws HttpException
@@ -250,20 +252,20 @@ class Client
      * @throws InvalidRequestException
      */
     private function handle4xx(
-        $statusCode,
-        $contentType,
-        $body,
-        $service,
-        $path
-    ) {
-        if (\strlen($body) === 0) {
+        int $statusCode,
+        ?string $contentType,
+        ?string $body,
+        string $service,
+        string $path
+    ): void {
+        if ($body === null || $body === '') {
             throw new HttpException(
                 "Received a $statusCode error for $service with no body",
                 $statusCode,
                 $this->urlFor($path)
             );
         }
-        if (!strstr($contentType, 'json')) {
+        if ($contentType === null || !strstr($contentType, 'json')) {
             throw new HttpException(
                 "Received a $statusCode error for $service with " .
                 'the following body: ' . $body,
@@ -311,11 +313,11 @@ class Client
      * @throws InsufficientFundsException
      */
     private function handleWebServiceError(
-        $message,
-        $code,
-        $statusCode,
-        $path
-    ) {
+        string $message,
+        string $code,
+        int $statusCode,
+        string $path
+    ): void {
         switch ($code) {
             case 'IP_ADDRESS_NOT_FOUND':
             case 'IP_ADDRESS_RESERVED':
@@ -369,7 +371,7 @@ class Client
      *
      * @throws HttpException
      */
-    private function handle5xx($statusCode, $service, $path)
+    private function handle5xx(int $statusCode, string $service, string $path): void
     {
         throw new HttpException(
             "Received a server error ($statusCode) for $service",
@@ -385,7 +387,7 @@ class Client
      *
      * @throws HttpException
      */
-    private function handleUnexpectedStatus($statusCode, $service, $path)
+    private function handleUnexpectedStatus(int $statusCode, string $service, string $path): void
     {
         throw new HttpException(
             'Received an unexpected HTTP status ' .
@@ -396,17 +398,33 @@ class Client
     }
 
     /**
-     * @param string $body    the successful request body
-     * @param string $service the service name
+     * @param int         $statusCode the HTTP status code
+     * @param string|null $body       the successful request body
+     * @param string      $service    the service name
      *
-     * @throws WebServiceException if the request body cannot be decoded as
-     *                             JSON
+     * @throws WebServiceException if a response body is included but not
+     *                             expected, or is not expected but not
+     *                             included, or is expected and included
+     *                             but cannot be decoded as JSON
      *
-     * @return array the decoded request body
+     * @return array|null the decoded request body
      */
-    private function handleSuccess($body, $service)
+    private function handleSuccess(int $statusCode, ?string $body, string $service): ?array
     {
-        if (\strlen($body) === 0) {
+        // A 204 should have no response body
+        if ($statusCode === 204) {
+            if ($body !== null && $body !== '') {
+                throw new WebServiceException(
+                    "Received a 204 response for $service along with an " .
+                    "unexpected HTTP body: $body"
+                );
+            }
+
+            return null;
+        }
+
+        // A 200 should have a valid JSON body
+        if ($body === null || $body === '') {
             throw new WebServiceException(
                 "Received a 200 response for $service but did not " .
                 'receive a HTTP body.'

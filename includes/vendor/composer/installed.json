@@ -1,751 +1,988 @@
-[
-    {
-        "name": "aura/sql",
-        "version": "2.6.0",
-        "version_normalized": "2.6.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/auraphp/Aura.Sql.git",
-            "reference": "16206efbe5ba63603fe3b18ba54a4c5296cd5f3e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/16206efbe5ba63603fe3b18ba54a4c5296cd5f3e",
-            "reference": "16206efbe5ba63603fe3b18ba54a4c5296cd5f3e",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~5.7 || ~4.8"
-        },
-        "time": "2018-08-15T13:33:56+00:00",
-        "type": "library",
-        "extra": {
-            "aura": {
-                "type": "library"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Aura\\Sql\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-2-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Aura.Sql Contributors",
-                "homepage": "https://github.com/auraphp/Aura.Sql/contributors"
-            }
-        ],
-        "description": "A PDO extension that provides lazy connections, array quoting, identifier quoting, query profiling, value binding, and convenience methods for common fetch styles. Because it extends PDO, existing code that uses PDO can use this without any changes to the existing code.",
-        "homepage": "https://github.com/auraphp/Aura.Sql",
-        "keywords": [
-            "mysql",
-            "pdo",
-            "pgsql",
-            "postgres",
-            "postgresql",
-            "sql server",
-            "sqlite",
-            "sqlserver",
-            "sqlsrv"
-        ]
-    },
-    {
-        "name": "composer/ca-bundle",
-        "version": "1.2.7",
-        "version_normalized": "1.2.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/composer/ca-bundle.git",
-            "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
-            "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
-            "shasum": ""
-        },
-        "require": {
-            "ext-openssl": "*",
-            "ext-pcre": "*",
-            "php": "^5.3.2 || ^7.0 || ^8.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.8.35 || ^5.7 || 6.5 - 8",
-            "psr/log": "^1.0",
-            "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0"
-        },
-        "time": "2020-04-08T08:27:21+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Composer\\CaBundle\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jordi Boggiano",
-                "email": "j.boggiano@seld.be",
-                "homepage": "http://seld.be"
-            }
-        ],
-        "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
-        "keywords": [
-            "cabundle",
-            "cacert",
-            "certificate",
-            "ssl",
-            "tls"
-        ]
-    },
-    {
-        "name": "geoip2/geoip2",
-        "version": "v2.10.0",
-        "version_normalized": "2.10.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/maxmind/GeoIP2-php.git",
-            "reference": "419557cd21d9fe039721a83490701a58c8ce784a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/419557cd21d9fe039721a83490701a58c8ce784a",
-            "reference": "419557cd21d9fe039721a83490701a58c8ce784a",
-            "shasum": ""
-        },
-        "require": {
-            "ext-json": "*",
-            "maxmind-db/reader": "~1.5",
-            "maxmind/web-service-common": "~0.6",
-            "php": ">=5.6"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "2.*",
-            "phpunit/phpunit": "5.*",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "time": "2019-12-12T18:48:39+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "GeoIp2\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Gregory J. Oschwald",
-                "email": "goschwald@maxmind.com",
-                "homepage": "https://www.maxmind.com/"
-            }
-        ],
-        "description": "MaxMind GeoIP2 PHP API",
-        "homepage": "https://github.com/maxmind/GeoIP2-php",
-        "keywords": [
-            "IP",
-            "geoip",
-            "geoip2",
-            "geolocation",
-            "maxmind"
-        ]
-    },
-    {
-        "name": "jakeasmith/http_build_url",
-        "version": "1.0.1",
-        "version_normalized": "1.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/jakeasmith/http_build_url.git",
-            "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/jakeasmith/http_build_url/zipball/93c273e77cb1edead0cf8bcf8cd2003428e74e37",
-            "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37",
-            "shasum": ""
-        },
-        "time": "2017-05-01T15:36:40+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "src/http_build_url.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jake A. Smith",
-                "email": "theman@jakeasmith.com"
-            }
-        ],
-        "description": "Provides functionality for http_build_url() to environments without pecl_http."
-    },
-    {
-        "name": "maxmind-db/reader",
-        "version": "v1.6.0",
-        "version_normalized": "1.6.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
-            "reference": "febd4920bf17c1da84cef58e56a8227dfb37fbe4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/febd4920bf17c1da84cef58e56a8227dfb37fbe4",
-            "reference": "febd4920bf17c1da84cef58e56a8227dfb37fbe4",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.6"
-        },
-        "conflict": {
-            "ext-maxminddb": "<1.6.0,>=2.0.0"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "2.*",
-            "php-coveralls/php-coveralls": "^2.1",
-            "phpunit/phpcov": "^3.0",
-            "phpunit/phpunit": "5.*",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "suggest": {
-            "ext-bcmath": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
-            "ext-gmp": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
-            "ext-maxminddb": "A C-based database decoder that provides significantly faster lookups"
-        },
-        "time": "2019-12-19T22:59:03+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "MaxMind\\Db\\": "src/MaxMind/Db"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Gregory J. Oschwald",
-                "email": "goschwald@maxmind.com",
-                "homepage": "https://www.maxmind.com/"
-            }
-        ],
-        "description": "MaxMind DB Reader API",
-        "homepage": "https://github.com/maxmind/MaxMind-DB-Reader-php",
-        "keywords": [
-            "database",
-            "geoip",
-            "geoip2",
-            "geolocation",
-            "maxmind"
-        ]
-    },
-    {
-        "name": "maxmind/web-service-common",
-        "version": "v0.6.0",
-        "version_normalized": "0.6.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/maxmind/web-service-common-php.git",
-            "reference": "40c928bb0194c45088b369a17f9baef9c3fc7460"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/40c928bb0194c45088b369a17f9baef9c3fc7460",
-            "reference": "40c928bb0194c45088b369a17f9baef9c3fc7460",
-            "shasum": ""
-        },
-        "require": {
-            "composer/ca-bundle": "^1.0.3",
-            "ext-curl": "*",
-            "ext-json": "*",
-            "php": ">=5.6"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "2.*",
-            "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5 || ^7.0",
-            "squizlabs/php_codesniffer": "3.*"
-        },
-        "time": "2019-12-12T15:56:05+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "MaxMind\\Exception\\": "src/Exception",
-                "MaxMind\\WebService\\": "src/WebService"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Gregory Oschwald",
-                "email": "goschwald@maxmind.com"
-            }
-        ],
-        "description": "Internal MaxMind Web Service API",
-        "homepage": "https://github.com/maxmind/web-service-common-php"
-    },
-    {
-        "name": "ozh/bookmarkletgen",
-        "version": "1.2",
-        "version_normalized": "1.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ozh/bookmarkletgen.git",
-            "reference": "3319b53c493a1474a03d1cc4e087617652284c20"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ozh/bookmarkletgen/zipball/3319b53c493a1474a03d1cc4e087617652284c20",
-            "reference": "3319b53c493a1474a03d1cc4e087617652284c20",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3"
-        },
-        "time": "2017-05-18T12:46:21+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Ozh\\Bookmarkletgen\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Ozh",
-                "homepage": "http://ozh.org/"
-            }
-        ],
-        "description": "PHP class to convert JS into valid bookmarklet links",
-        "homepage": "https://github.com/ozh/bookmarkletgen",
-        "keywords": [
-            "bookmarklet",
-            "javascript"
-        ]
-    },
-    {
-        "name": "ozh/phpass",
-        "version": "1.3.0",
-        "version_normalized": "1.3.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ozh/phpass.git",
-            "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ozh/phpass/zipball/44149d1ee06ccbda397f08f69d32c59802e4ce43",
-            "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.6"
-        },
-        "require-dev": {
-            "phpunit/phpunit": ">=4.0"
-        },
-        "time": "2020-03-29T10:39:31+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Ozh\\Phpass\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Public Domain"
-        ],
-        "authors": [
-            {
-                "name": "Solar Designer",
-                "email": "solar@openwall.com",
-                "homepage": "http://openwall.com/phpass/"
-            }
-        ],
-        "description": "Portable PHP password hashing framework",
-        "homepage": "http://github.com/ozh/phpass/",
-        "keywords": [
-            "blowfish",
-            "crypt",
-            "password",
-            "security"
-        ]
-    },
-    {
-        "name": "pomo/pomo",
-        "version": "v1.4.1",
-        "version_normalized": "1.4.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/LeoColomb/pomo.git",
-            "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
-            "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": ">=4.0",
-            "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
-        },
-        "time": "2018-12-20T14:55:38+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "POMO\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "WordPress",
-                "homepage": "https://wordpress.org",
-                "role": "Author"
+{
+    "packages": [
+        {
+            "name": "aura/sql",
+            "version": "3.0.0",
+            "version_normalized": "3.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/auraphp/Aura.Sql.git",
+                "reference": "2be02d5dfd9fdee6df199de1a19572aa490bb744"
             },
-            {
-                "name": "Léo Colombaro",
-                "homepage": "https://colombaro.fr",
-                "role": "Maintainer"
-            }
-        ],
-        "description": "Gettext library to translate with I18n",
-        "homepage": "https://github.com/LeoColomb/pomo",
-        "keywords": [
-            "gettext",
-            "i18n",
-            "internationalization",
-            "localization",
-            "translation"
-        ]
-    },
-    {
-        "name": "rmccue/requests",
-        "version": "v1.7.0",
-        "version_normalized": "1.7.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/rmccue/Requests.git",
-            "reference": "87932f52ffad70504d93f04f15690cf16a089546"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/rmccue/Requests/zipball/87932f52ffad70504d93f04f15690cf16a089546",
-            "reference": "87932f52ffad70504d93f04f15690cf16a089546",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "require-dev": {
-            "requests/test-server": "dev-master"
-        },
-        "time": "2016-10-13T00:11:37+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Requests": "library/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "ISC"
-        ],
-        "authors": [
-            {
-                "name": "Ryan McCue",
-                "homepage": "http://ryanmccue.info"
-            }
-        ],
-        "description": "A HTTP library written in PHP, for human beings.",
-        "homepage": "http://github.com/rmccue/Requests",
-        "keywords": [
-            "curl",
-            "fsockopen",
-            "http",
-            "idna",
-            "ipv6",
-            "iri",
-            "sockets"
-        ]
-    },
-    {
-        "name": "spatie/array-to-xml",
-        "version": "2.14.0",
-        "version_normalized": "2.14.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/spatie/array-to-xml.git",
-            "reference": "15b5229fe8c9c14954b21f2bac0cc003ffbc54a5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/15b5229fe8c9c14954b21f2bac0cc003ffbc54a5",
-            "reference": "15b5229fe8c9c14954b21f2bac0cc003ffbc54a5",
-            "shasum": ""
-        },
-        "require": {
-            "ext-dom": "*",
-            "php": "^7.2"
-        },
-        "require-dev": {
-            "mockery/mockery": "^1.0",
-            "phpunit/phpunit": "^8.0",
-            "spatie/phpunit-snapshot-assertions": "^2.0"
-        },
-        "time": "2020-09-14T19:07:17+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Spatie\\ArrayToXml\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Freek Van der Herten",
-                "email": "freek@spatie.be",
-                "homepage": "https://murze.be",
-                "role": "Developer"
-            }
-        ],
-        "description": "Convert an array to xml",
-        "homepage": "https://github.com/spatie/array-to-xml",
-        "keywords": [
-            "array",
-            "convert",
-            "xml"
-        ]
-    },
-    {
-        "name": "symfony/polyfill-intl-idn",
-        "version": "v1.17.0",
-        "version_normalized": "1.17.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/polyfill-intl-idn.git",
-            "reference": "3bff59ea7047e925be6b7f2059d60af31bb46d6a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/3bff59ea7047e925be6b7f2059d60af31bb46d6a",
-            "reference": "3bff59ea7047e925be6b7f2059d60af31bb46d6a",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "symfony/polyfill-mbstring": "^1.3",
-            "symfony/polyfill-php72": "^1.10"
-        },
-        "suggest": {
-            "ext-intl": "For best performance"
-        },
-        "time": "2020-05-12T16:47:27+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.17-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Polyfill\\Intl\\Idn\\": ""
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/2be02d5dfd9fdee6df199de1a19572aa490bb744",
+                "reference": "2be02d5dfd9fdee6df199de1a19572aa490bb744",
+                "shasum": ""
             },
-            "files": [
-                "bootstrap.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Laurent Bassin",
-                "email": "laurent@bassin.info"
+            "require": {
+                "php": ">=5.6.0",
+                "psr/log": "^1.0"
             },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony polyfill for intl's idn_to_ascii and idn_to_utf8 functions",
-        "homepage": "https://symfony.com",
-        "keywords": [
-            "compatibility",
-            "idn",
-            "intl",
-            "polyfill",
-            "portable",
-            "shim"
-        ]
-    },
-    {
-        "name": "symfony/polyfill-mbstring",
-        "version": "v1.15.0",
-        "version_normalized": "1.15.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
-            "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "suggest": {
-            "ext-mbstring": "For best performance"
-        },
-        "time": "2020-03-09T19:04:49+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.15-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Polyfill\\Mbstring\\": ""
+            "require-dev": {
+                "pds/skeleton": "~1.0",
+                "phpunit/phpunit": "~5.0"
             },
-            "files": [
-                "bootstrap.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nicolas Grekas",
-                "email": "p@tchwork.com"
+            "time": "2018-06-11T12:57:42+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Aura\\Sql\\": "src/"
+                }
             },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony polyfill for the Mbstring extension",
-        "homepage": "https://symfony.com",
-        "keywords": [
-            "compatibility",
-            "mbstring",
-            "polyfill",
-            "portable",
-            "shim"
-        ]
-    },
-    {
-        "name": "symfony/polyfill-php72",
-        "version": "v1.17.0",
-        "version_normalized": "1.17.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/polyfill-php72.git",
-            "reference": "f048e612a3905f34931127360bdd2def19a5e582"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/f048e612a3905f34931127360bdd2def19a5e582",
-            "reference": "f048e612a3905f34931127360bdd2def19a5e582",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2020-05-12T16:47:27+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.17-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Polyfill\\Php72\\": ""
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aura.Sql Contributors",
+                    "homepage": "https://github.com/auraphp/Aura.Sql/contributors"
+                }
+            ],
+            "description": "A PDO extension that provides lazy connections, array quoting, query profiling, value binding, and convenience methods for common fetch styles. Because it extends PDO, existing code that uses PDO can use this without any changes to the existing code.",
+            "homepage": "https://github.com/auraphp/Aura.Sql",
+            "keywords": [
+                "mysql",
+                "pdo",
+                "pgsql",
+                "postgres",
+                "postgresql",
+                "sql server",
+                "sqlite",
+                "sqlserver",
+                "sqlsrv"
+            ],
+            "support": {
+                "issues": "https://github.com/auraphp/Aura.Sql/issues",
+                "source": "https://github.com/auraphp/Aura.Sql/tree/3.x"
             },
-            "files": [
-                "bootstrap.php"
-            ]
+            "install-path": "../aura/sql"
         },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nicolas Grekas",
-                "email": "p@tchwork.com"
+        {
+            "name": "composer/ca-bundle",
+            "version": "1.2.9",
+            "version_normalized": "1.2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/ca-bundle.git",
+                "reference": "78a0e288fdcebf92aa2318a8d3656168da6ac1a5"
             },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony polyfill backporting some PHP 7.2+ features to lower PHP versions",
-        "homepage": "https://symfony.com",
-        "keywords": [
-            "compatibility",
-            "polyfill",
-            "portable",
-            "shim"
-        ]
-    }
-]
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/78a0e288fdcebf92aa2318a8d3656168da6ac1a5",
+                "reference": "78a0e288fdcebf92aa2318a8d3656168da6ac1a5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "ext-pcre": "*",
+                "php": "^5.3.2 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.55",
+                "psr/log": "^1.0",
+                "symfony/phpunit-bridge": "^4.2 || ^5",
+                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0"
+            },
+            "time": "2021-01-12T12:10:35+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Composer\\CaBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
+            "keywords": [
+                "cabundle",
+                "cacert",
+                "certificate",
+                "ssl",
+                "tls"
+            ],
+            "support": {
+                "irc": "irc://irc.freenode.org/composer",
+                "issues": "https://github.com/composer/ca-bundle/issues",
+                "source": "https://github.com/composer/ca-bundle/tree/1.2.9"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "./ca-bundle"
+        },
+        {
+            "name": "geoip2/geoip2",
+            "version": "v2.10.0",
+            "version_normalized": "2.10.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maxmind/GeoIP2-php.git",
+                "reference": "419557cd21d9fe039721a83490701a58c8ce784a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/419557cd21d9fe039721a83490701a58c8ce784a",
+                "reference": "419557cd21d9fe039721a83490701a58c8ce784a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "maxmind-db/reader": "~1.5",
+                "maxmind/web-service-common": "~0.6",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "2.*",
+                "phpunit/phpunit": "5.*",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "time": "2019-12-12T18:48:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "GeoIp2\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Gregory J. Oschwald",
+                    "email": "goschwald@maxmind.com",
+                    "homepage": "https://www.maxmind.com/"
+                }
+            ],
+            "description": "MaxMind GeoIP2 PHP API",
+            "homepage": "https://github.com/maxmind/GeoIP2-php",
+            "keywords": [
+                "IP",
+                "geoip",
+                "geoip2",
+                "geolocation",
+                "maxmind"
+            ],
+            "install-path": "../geoip2/geoip2"
+        },
+        {
+            "name": "jakeasmith/http_build_url",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jakeasmith/http_build_url.git",
+                "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jakeasmith/http_build_url/zipball/93c273e77cb1edead0cf8bcf8cd2003428e74e37",
+                "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37",
+                "shasum": ""
+            },
+            "time": "2017-05-01T15:36:40+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/http_build_url.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jake A. Smith",
+                    "email": "theman@jakeasmith.com"
+                }
+            ],
+            "description": "Provides functionality for http_build_url() to environments without pecl_http.",
+            "install-path": "../jakeasmith/http_build_url"
+        },
+        {
+            "name": "maxmind-db/reader",
+            "version": "v1.9.0",
+            "version_normalized": "1.9.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
+                "reference": "9ee9ba9ee287b119e9f5a8e8dbfea0b49647cec4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/9ee9ba9ee287b119e9f5a8e8dbfea0b49647cec4",
+                "reference": "9ee9ba9ee287b119e9f5a8e8dbfea0b49647cec4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "conflict": {
+                "ext-maxminddb": "<1.9.0,>=2.0.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "*",
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpcov": ">=6.0.0",
+                "phpunit/phpunit": ">=8.0.0,<10.0.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "suggest": {
+                "ext-bcmath": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
+                "ext-gmp": "bcmath or gmp is required for decoding larger integers with the pure PHP decoder",
+                "ext-maxminddb": "A C-based database decoder that provides significantly faster lookups"
+            },
+            "time": "2021-01-07T21:15:29+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MaxMind\\Db\\": "src/MaxMind/Db"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Gregory J. Oschwald",
+                    "email": "goschwald@maxmind.com",
+                    "homepage": "https://www.maxmind.com/"
+                }
+            ],
+            "description": "MaxMind DB Reader API",
+            "homepage": "https://github.com/maxmind/MaxMind-DB-Reader-php",
+            "keywords": [
+                "database",
+                "geoip",
+                "geoip2",
+                "geolocation",
+                "maxmind"
+            ],
+            "support": {
+                "issues": "https://github.com/maxmind/MaxMind-DB-Reader-php/issues",
+                "source": "https://github.com/maxmind/MaxMind-DB-Reader-php/tree/v1.9.0"
+            },
+            "install-path": "../maxmind-db/reader"
+        },
+        {
+            "name": "maxmind/web-service-common",
+            "version": "v0.8.1",
+            "version_normalized": "0.8.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maxmind/web-service-common-php.git",
+                "reference": "32f274051c543fc865e5a84d3a2c703913641ea8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/maxmind/web-service-common-php/zipball/32f274051c543fc865e5a84d3a2c703913641ea8",
+                "reference": "32f274051c543fc865e5a84d3a2c703913641ea8",
+                "shasum": ""
+            },
+            "require": {
+                "composer/ca-bundle": "^1.0.3",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "2.*",
+                "phpunit/phpunit": "^8.0 || ^9.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "time": "2020-11-02T17:00:53+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MaxMind\\Exception\\": "src/Exception",
+                    "MaxMind\\WebService\\": "src/WebService"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Gregory Oschwald",
+                    "email": "goschwald@maxmind.com"
+                }
+            ],
+            "description": "Internal MaxMind Web Service API",
+            "homepage": "https://github.com/maxmind/web-service-common-php",
+            "support": {
+                "issues": "https://github.com/maxmind/web-service-common-php/issues",
+                "source": "https://github.com/maxmind/web-service-common-php/tree/v0.8.1"
+            },
+            "install-path": "../maxmind/web-service-common"
+        },
+        {
+            "name": "ozh/bookmarkletgen",
+            "version": "1.2",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ozh/bookmarkletgen.git",
+                "reference": "3319b53c493a1474a03d1cc4e087617652284c20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ozh/bookmarkletgen/zipball/3319b53c493a1474a03d1cc4e087617652284c20",
+                "reference": "3319b53c493a1474a03d1cc4e087617652284c20",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "time": "2017-05-18T12:46:21+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Ozh\\Bookmarkletgen\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ozh",
+                    "homepage": "http://ozh.org/"
+                }
+            ],
+            "description": "PHP class to convert JS into valid bookmarklet links",
+            "homepage": "https://github.com/ozh/bookmarkletgen",
+            "keywords": [
+                "bookmarklet",
+                "javascript"
+            ],
+            "install-path": "../ozh/bookmarkletgen"
+        },
+        {
+            "name": "ozh/phpass",
+            "version": "1.3.0",
+            "version_normalized": "1.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ozh/phpass.git",
+                "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ozh/phpass/zipball/44149d1ee06ccbda397f08f69d32c59802e4ce43",
+                "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.0"
+            },
+            "time": "2020-03-29T10:39:31+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Ozh\\Phpass\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Public Domain"
+            ],
+            "authors": [
+                {
+                    "name": "Solar Designer",
+                    "email": "solar@openwall.com",
+                    "homepage": "http://openwall.com/phpass/"
+                }
+            ],
+            "description": "Portable PHP password hashing framework",
+            "homepage": "http://github.com/ozh/phpass/",
+            "keywords": [
+                "blowfish",
+                "crypt",
+                "password",
+                "security"
+            ],
+            "install-path": "../ozh/phpass"
+        },
+        {
+            "name": "pomo/pomo",
+            "version": "v1.4.1",
+            "version_normalized": "1.4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LeoColomb/pomo.git",
+                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
+                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.0",
+                "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
+            },
+            "time": "2018-12-20T14:55:38+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "POMO\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "WordPress",
+                    "homepage": "https://wordpress.org",
+                    "role": "Author"
+                },
+                {
+                    "name": "Léo Colombaro",
+                    "homepage": "https://colombaro.fr",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Gettext library to translate with I18n",
+            "homepage": "https://github.com/LeoColomb/pomo",
+            "keywords": [
+                "gettext",
+                "i18n",
+                "internationalization",
+                "localization",
+                "translation"
+            ],
+            "install-path": "../pomo/pomo"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.1.3",
+            "version_normalized": "1.1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2020-03-23T09:12:05+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/1.1.3"
+            },
+            "install-path": "../psr/log"
+        },
+        {
+            "name": "rmccue/requests",
+            "version": "v1.7.0",
+            "version_normalized": "1.7.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmccue/Requests.git",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmccue/Requests/zipball/87932f52ffad70504d93f04f15690cf16a089546",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "requests/test-server": "dev-master"
+            },
+            "time": "2016-10-13T00:11:37+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Requests": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan McCue",
+                    "homepage": "http://ryanmccue.info"
+                }
+            ],
+            "description": "A HTTP library written in PHP, for human beings.",
+            "homepage": "http://github.com/rmccue/Requests",
+            "keywords": [
+                "curl",
+                "fsockopen",
+                "http",
+                "idna",
+                "ipv6",
+                "iri",
+                "sockets"
+            ],
+            "install-path": "../rmccue/requests"
+        },
+        {
+            "name": "spatie/array-to-xml",
+            "version": "2.15.0",
+            "version_normalized": "2.15.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/array-to-xml.git",
+                "reference": "1795afad4e5a1f4b7af2e0e09802550eaa00a6f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/1795afad4e5a1f4b7af2e0e09802550eaa00a6f8",
+                "reference": "1795afad4e5a1f4b7af2e0e09802550eaa00a6f8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^8.0",
+                "spatie/phpunit-snapshot-assertions": "^2.0"
+            },
+            "time": "2020-10-29T18:11:03+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\ArrayToXml\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://murze.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Convert an array to xml",
+            "homepage": "https://github.com/spatie/array-to-xml",
+            "keywords": [
+                "array",
+                "convert",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/array-to-xml/issues",
+                "source": "https://github.com/spatie/array-to-xml/tree/2.15.0"
+            },
+            "install-path": "../spatie/array-to-xml"
+        },
+        {
+            "name": "symfony/polyfill-intl-idn",
+            "version": "v1.22.0",
+            "version_normalized": "1.22.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-intl-idn.git",
+                "reference": "0eb8293dbbcd6ef6bf81404c9ce7d95bcdf34f44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/0eb8293dbbcd6ef6bf81404c9ce7d95bcdf34f44",
+                "reference": "0eb8293dbbcd6ef6bf81404c9ce7d95bcdf34f44",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "symfony/polyfill-intl-normalizer": "^1.10",
+                "symfony/polyfill-php72": "^1.10"
+            },
+            "suggest": {
+                "ext-intl": "For best performance"
+            },
+            "time": "2021-01-07T16:49:33+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.22-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Intl\\Idn\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Laurent Bassin",
+                    "email": "laurent@bassin.info"
+                },
+                {
+                    "name": "Trevor Rowbotham",
+                    "email": "trevor.rowbotham@pm.me"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for intl's idn_to_ascii and idn_to_utf8 functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "idn",
+                "intl",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.22.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/polyfill-intl-idn"
+        },
+        {
+            "name": "symfony/polyfill-intl-normalizer",
+            "version": "v1.22.0",
+            "version_normalized": "1.22.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
+                "reference": "6e971c891537eb617a00bb07a43d182a6915faba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/6e971c891537eb617a00bb07a43d182a6915faba",
+                "reference": "6e971c891537eb617a00bb07a43d182a6915faba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "suggest": {
+                "ext-intl": "For best performance"
+            },
+            "time": "2021-01-07T17:09:11+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.22-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for intl's Normalizer class and related functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "intl",
+                "normalizer",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.22.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/polyfill-intl-normalizer"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.15.0",
+            "version_normalized": "1.15.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
+                "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "time": "2020-03-09T19:04:49+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.15-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "install-path": "../symfony/polyfill-mbstring"
+        },
+        {
+            "name": "symfony/polyfill-php72",
+            "version": "v1.22.0",
+            "version_normalized": "1.22.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php72.git",
+                "reference": "cc6e6f9b39fe8075b3dabfbaf5b5f645ae1340c9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/cc6e6f9b39fe8075b3dabfbaf5b5f645ae1340c9",
+                "reference": "cc6e6f9b39fe8075b3dabfbaf5b5f645ae1340c9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "time": "2021-01-07T16:49:33+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.22-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php72\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.2+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php72/tree/v1.22.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/polyfill-php72"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

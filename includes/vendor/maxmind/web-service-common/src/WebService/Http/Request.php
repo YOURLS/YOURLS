@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MaxMind\WebService\Http;
 
 /**
@@ -9,21 +11,9 @@ namespace MaxMind\WebService\Http;
  */
 interface Request
 {
-    /**
-     * @param string $url
-     * @param array  $options
-     */
-    public function __construct($url, $options);
+    public function __construct(string $url, array $options);
 
-    /**
-     * @param string $body
-     *
-     * @return mixed
-     */
-    public function post($body);
+    public function post(string $body): array;
 
-    /**
-     * @return mixed
-     */
-    public function get();
+    public function get(): array;
 }

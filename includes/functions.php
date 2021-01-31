@@ -176,14 +176,6 @@ function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
 }
 
 /**
- * Get number of SQL queries performed
- *
- */
-function yourls_get_num_queries() {
-	return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
-}
-
-/**
  * Returns a sanitized a user agent string. Given what I found on http://www.user-agents.org/ it should be OK.
  *
  */

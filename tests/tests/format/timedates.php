@@ -7,9 +7,9 @@
  * @group timedate
  * @since 0.1
  */
-class Format_Test_Dates extends PHPUnit_Framework_TestCase {
+class Format_Test_Dates extends PHPUnit\Framework\TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         yourls_remove_all_filters( 'get_time_offset' );
     }
 
@@ -17,34 +17,34 @@ class Format_Test_Dates extends PHPUnit_Framework_TestCase {
      * Test yourls_get_timestamp returns an int
      */
     function test_get_time_offset() {
-        $this->assertInternalType( "int", yourls_get_time_offset() );
+        $this->assertIsInt( yourls_get_time_offset() );
     }
 
     /**
      * Test yourls_get_datetime_format returns a string
      */
     function test_get_datetime_format() {
-        $this->assertInternalType( "string", yourls_get_datetime_format('M d, Y H:i') );
-        $this->assertInternalType( "string", yourls_get_datetime_format( 10 ) );
-        $this->assertInternalType( "string", yourls_get_datetime_format(false) );
+        $this->assertIsString( yourls_get_datetime_format('M d, Y H:i') );
+        $this->assertIsString( yourls_get_datetime_format( 10 ) );
+        $this->assertIsString( yourls_get_datetime_format(false) );
     }
 
     /**
      * Test yourls_get_date_format returns a string
      */
     function test_get_date_format() {
-        $this->assertInternalType( "string", yourls_get_date_format('M d, Y') );
-        $this->assertInternalType( "string", yourls_get_date_format( 10 ) );
-        $this->assertInternalType( "string", yourls_get_date_format(false) );
+        $this->assertIsString( yourls_get_date_format('M d, Y') );
+        $this->assertIsString( yourls_get_date_format( 10 ) );
+        $this->assertIsString( yourls_get_date_format(false) );
     }
 
     /**
      * Test yourls_get_time_format returns a string
      */
     function test_get_time_format() {
-        $this->assertInternalType( "string", yourls_get_time_format('H:i') );
-        $this->assertInternalType( "string", yourls_get_time_format( 10 ) );
-        $this->assertInternalType( "string", yourls_get_time_format(false) );
+        $this->assertIsString( yourls_get_time_format('H:i') );
+        $this->assertIsString( yourls_get_time_format( 10 ) );
+        $this->assertIsString( yourls_get_time_format(false) );
     }
 
     /**

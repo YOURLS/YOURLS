@@ -6,7 +6,7 @@
  * @group geoip
  */
 
-class GeoIP_Tests extends PHPUnit_Framework_TestCase {
+class GeoIP_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Check that a few IPv4 resolve to the correct country code
@@ -16,7 +16,7 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	public function test_ip_to_countrycode_ipv4( $ip, $country ) {
 		$this->assertEquals( $country, yourls_geo_ip_to_countrycode( $ip, 'none' ) );
 	}
-	
+
 	/**
 	 * Check that a few IPv6 resolve to the correct country code
 	 *
@@ -25,7 +25,7 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	public function test_ip_to_countrycode_ipv6( $ip, $country ) {
 		$this->assertEquals( $country, yourls_geo_ip_to_countrycode( $ip, 'none' ) );
 	}
-	
+
 	/**
 	 * Check a few country code => country name pairs
 	 *
@@ -34,15 +34,15 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 	public function test_countrycode_to_countryname( $code, $country ) {
 		$this->assertEquals( $country, yourls_geo_countrycode_to_countryname( $code ) );
 	}
-	
+
     /**
      * Check a few code return a string when getting their country flag
      */
     public function test_country_images() {
-        $this->assertInternalType('string', yourls_geo_get_flag('AU'));      // something like http://yourls/includes/geo/flags/flag_au.gif
-        $this->assertInternalType('string', yourls_geo_get_flag('FR'));
-        $this->assertInternalType('string', yourls_geo_get_flag(''));        // something like http://yourls/includes/geo/flags/flag_.gif
-        $this->assertInternalType('string', yourls_geo_get_flag('OMGLOL'));  // fall back to default ''
+        $this->assertIsString(yourls_geo_get_flag('AU'));      // something like http://yourls/includes/geo/flags/flag_au.gif
+        $this->assertIsString(yourls_geo_get_flag('FR'));
+        $this->assertIsString(yourls_geo_get_flag(''));        // something like http://yourls/includes/geo/flags/flag_.gif
+        $this->assertIsString(yourls_geo_get_flag('OMGLOL'));  // fall back to default ''
     }
 
     /**
@@ -57,7 +57,7 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 			array( 'helloworld', 'none' ),
 		);
 	}
-	
+
 	/**
 	 * Data provider : array of arrays of ( 'ip', 'country code' ) in IPv6 notation
 	 */
@@ -70,7 +70,7 @@ class GeoIP_Tests extends PHPUnit_Framework_TestCase {
 			array( 'mynameisozh', 'none' ),
 		);
 	}
-	
+
 	/**
 	 * Data provider : array of arrays of ( 'country code', 'country name' )
 	 */
