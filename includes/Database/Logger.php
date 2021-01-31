@@ -41,8 +41,6 @@ class Logger extends AbstractLogger {
      *               (which is the default $logFormat from Aura\Sql\Profiler\Profiler), we're not using it)
      *    $context : array(
      *               'function' => string 'perform'
-     *               'start' => float 1612111585.9914
-     *               'finish' => float 1612111585.9939
      *               'duration' => float 0.0025360584259033
      *               'statement' => string 'SELECT `keyword`,`url` FROM `yourls_url` WHERE `url` LIKE (:url)'
      *               'values' => array('url' => '%rss%')

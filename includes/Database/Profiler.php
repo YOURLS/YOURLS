@@ -29,10 +29,7 @@ class Profiler extends \Aura\Sql\Profiler\Profiler {
             return;
         }
 
-        $finish = microtime(true);
-
-        $this->context['finish'] = $finish;
-        $this->context['duration'] = $finish - $this->context['start'];
+        $this->context['duration'] = microtime(true) - $this->context['start'];
         $this->context['statement'] = $statement;
         $this->context['values'] = (array)$values;
 
