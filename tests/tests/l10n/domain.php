@@ -29,8 +29,8 @@ class Translation_Domain_Tests extends PHPUnit\Framework\TestCase {
      * @since 0.1
      */
     public function test_custom_fake_domain() {
-        $this->expectException(PHPUnit\Framework\Error\Error::class);
-        $this->expectExceptionMessageMatches('/Cannot read file [0-9a-z]+\/[0-9a-z]+-fr_FR\.mo\. Make sure there is a language file installed. More info: http:\/\/yourls\.org\/translations/');
+        $this->expectError();
+        $this->expectErrorMessageMatches('/Cannot read file [0-9a-z]+\/[0-9a-z]+-fr_FR\.mo\. Make sure there is a language file installed. More info: http:\/\/yourls\.org\/translations/');
 
         yourls_load_custom_textdomain( rand_str(), rand_str() );
     }
