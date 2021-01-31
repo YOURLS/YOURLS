@@ -65,10 +65,11 @@ class Auth_Nonce_Tests extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test invalid nonce
-     * @expectedException Exception
-     * @expectedExceptionMessage I have died
 	 */
 	public function test_invalid_nonce() {
+        $this->expectException();
+        $this->expectExceptionMessage('I have died');
+
         // intercept yourls_die() before it actually dies
         yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
 

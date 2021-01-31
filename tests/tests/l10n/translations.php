@@ -82,11 +82,12 @@ class Translation_Translation_Tests extends PHPUnit_Framework_TestCase {
     /**
      * Sprintf'ed with too few arguments - trigger sprintf "too few arguments" error
      *
-     * @expectedException PHPUnit_Framework_Error
-     * @expectedExceptionMessage sprintf(): Too few arguments
      * @since 0.1
      */
     public function test_yourls_s_too_few() {
+        $this->expectException(PHPUnit\Framework\Error\Error::class);
+        $this->expectExceptionMessage('Too few arguments');
+
         yourls_s( 'Hello %s you are %s', 'Ozh' );
     }
 

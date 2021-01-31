@@ -17,7 +17,7 @@ class YOURLS_Link_Tests extends PHPUnit_Framework_TestCase {
      * Check yourls_get_yourls_site() returns a string
      */
     public function test_yourls_site() {
-        $this->assertInternalType("string", yourls_get_yourls_site());
+        $this->assertIsString(yourls_get_yourls_site());
 
         $scheme = yourls_get_protocol( yourls_get_yourls_site() );
         $this->assertContains( $scheme, array( 'http://', 'https://' ), "yourls_get_yourls_site() isn't http(s)://" );

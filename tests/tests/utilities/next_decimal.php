@@ -10,7 +10,7 @@ class NextDecimal_Tests extends PHPUnit_Framework_TestCase {
 
     public function test_get_next_decimal() {
         $id = yourls_get_next_decimal();
-        $this->assertInternalType("int", $id);
+        $this->assertIsInt($id);
     }
 
     public function test_update_next_decimal_no_arg() {
