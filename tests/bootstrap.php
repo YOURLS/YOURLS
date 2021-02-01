@@ -47,12 +47,5 @@ yut_install_yourls();
 yourls_get_all_options();
 yourls_load_plugins();
 
-/**
- * Compatibility with PHPUnit 6+
- */
-if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
-	require_once dirname( __FILE__ ) . '/includes/phpunit6-compat.php';
-}
-
 // At this point, tests will start
 echo "YOURLS installed, starting PHPUnit\n\n";

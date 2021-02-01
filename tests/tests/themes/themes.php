@@ -8,7 +8,7 @@
 
 if( function_exists( 'yourls_activate_theme' ) ) :
 
-class Themes_Tests extends PHPUnit_Framework_TestCase {
+class Themes_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Check that valid themes are found
@@ -37,7 +37,7 @@ class Themes_Tests extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $theme, yourls_get_active_theme() );
 		return $theme;
 	}
-	
+
 }
 
 endif;

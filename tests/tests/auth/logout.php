@@ -5,7 +5,7 @@
  *
  * @group auth
  */
-class Logout_Func_Tests extends PHPUnit_Framework_TestCase {
+class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
 
     /**
      * Check logout procedure

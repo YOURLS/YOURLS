@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Actions_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Check adding an action with a simple function name
@@ -422,11 +422,16 @@ class Plugin_Actions_Tests extends PHPUnit_Framework_TestCase {
     /**
      * Check that applied function must exist
      *
-     * @expectedException PHPUnit_Framework_Error
-     * @expectedExceptionMessageRegExp /call_user_func_array\(\) expects parameter 1 to be a valid callback, function '[0-9a-z]+' not found or invalid function name/
      * @since 0.1
      */
     public function test_function_must_exist_if_applied() {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->expectException(TypeError::class);
+        } else {
+            $this->expectException(PHPUnit\Framework\Error\Error::class);
+        }
+        $this->expectExceptionMessageMatches('/call_user_func_array\(\).* a valid callback, function (\'|")[0-9a-z]+(\'|") not found or invalid function name/');
+
         $hook = rand_str();
         yourls_add_action( $hook, rand_str() );
         // this will trigger an error, converted to an exception by PHPUnit

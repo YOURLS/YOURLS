@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MaxMind\WebService\Http;
 
 /**
@@ -18,25 +20,28 @@ class RequestFactory
      */
     private $ch;
 
-    public function __construct()
-    {
-        $this->ch = curl_init();
-    }
-
     public function __destruct()
     {
-        curl_close($this->ch);
+        if (!empty($this->ch)) {
+            curl_close($this->ch);
+        }
+    }
+
+    private function getCurlHandle()
+    {
+        if (empty($this->ch)) {
+            $this->ch = curl_init();
+        }
+
+        return $this->ch;
     }
 
     /**
-     * @param string $url
-     * @param array  $options
-     *
      * @return Request
      */
-    public function request($url, $options)
+    public function request(string $url, array $options)
     {
-        $options['curlHandle'] = $this->ch;
+        $options['curlHandle'] = $this->getCurlHandle();
 
         return new CurlRequest($url, $options);
     }

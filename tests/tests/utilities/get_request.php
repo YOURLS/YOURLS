@@ -6,7 +6,7 @@
  * @group utils
  */
 
-class GetRequest_Tests extends PHPUnit_Framework_TestCase {
+class GetRequest_Tests extends PHPUnit\Framework\TestCase {
 
     /**
      * Various scenario:

@@ -6,9 +6,9 @@
  * @group l10n
  * @since 0.1
  */
-class Translation_Format_Tests extends PHPUnit_Framework_TestCase {
-    
-    public function setUp() {
+class Translation_Format_Tests extends PHPUnit\Framework\TestCase {
+
+    public function setUp(): void {
         yourls_load_textdomain( 'default', YOURLS_TESTDATA_DIR . '/pomo/fr_FR.mo' );
         global $yourls_locale_formats;
         $yourls_locale_formats = new YOURLS_Locale_Formats();
@@ -23,12 +23,12 @@ class Translation_Format_Tests extends PHPUnit_Framework_TestCase {
          *
          * In YOURLS itself, no need to manually set things like this.
          *
-         * Also, this needs to be in setUp(), setUpBeforeClass() doesn't fix things. Again,
+         * Also, this needs to be in setUp(), setUpBeforeClass(): void doesn't fix things. Again,
          * no idea why and don't want to bother understanding.
          */
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         yourls_unload_textdomain( 'default' );
     }
 

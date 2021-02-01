@@ -6,12 +6,12 @@
  * @group http
  * @since 0.1
  */
-class HTTP_Proxy_Tests extends PHPUnit_Framework_TestCase {
-    
-    protected function tearDown() {
+class HTTP_Proxy_Tests extends PHPUnit\Framework\TestCase {
+
+    protected function tearDown(): void {
         yourls_remove_all_filters( 'http_get_proxy_bypass_host' );
     }
-    
+
     /**
      * List of hosts and wether they should go through proxy or not
      */
@@ -24,12 +24,12 @@ class HTTP_Proxy_Tests extends PHPUnit_Framework_TestCase {
             array( 'http://[::1]', false ),
             array( YOURLS_SITE, false ),
             array( 'http://' . rand_str() , true ),
-            
+
             array( 'http://bypass.me' , true ),    // these two will be added to the by-pass list
             array( 'http://skipthem.all' , true ),   // in the next test
         );
     }
-    
+
     /**
      * Check what URLs we should send through a proxy, if defined
      *
@@ -52,13 +52,13 @@ class HTTP_Proxy_Tests extends PHPUnit_Framework_TestCase {
             array( 'http://[::1]', false ),
             array( YOURLS_SITE, false ),
             array( 'http://' . rand_str() , true ),
-            
+
             array( 'http://bypass.me' , false ),
             array( 'http://bypass.me/some/thing' , false ),
             array( 'http://notbypass.me' , true ),
             array( 'http://bypass.menot' , true ),
             array( 'http://dont.bypass.me' , true ),
-            
+
             array( 'http://skipthem.all' , false ),
             array( 'http://notskipthem.all' , true ),
             array( 'http://skipthem.allnot' , true ),
@@ -66,7 +66,7 @@ class HTTP_Proxy_Tests extends PHPUnit_Framework_TestCase {
             array( 'http://yeah.really.skipthem.all/some/thing' , false ),
         );
     }
-    
+
     public function bypass_hosts_wildcard() {
         return 'bypass.me, *.skipthem.all';
     }

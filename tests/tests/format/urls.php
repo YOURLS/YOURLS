@@ -8,9 +8,9 @@
  * @group idn
  * @since 0.1
  */
-class Format_URL extends PHPUnit_Framework_TestCase {
+class Format_URL extends PHPUnit\Framework\TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         yourls_remove_filter( 'is_ssl', 'yourls_return_true' );
         yourls_remove_filter( 'is_ssl', 'yourls_return_false' );
     }

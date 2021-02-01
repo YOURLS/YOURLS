@@ -6,12 +6,12 @@
  * @group plugins
  * @since 0.1
  */
-class Plugin_Files_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Files_Tests extends PHPUnit\Framework\TestCase {
 
     /**
 	 * Reset active plugin list
 	 */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         yourls_get_db()->set_plugins( array() );
     }
 

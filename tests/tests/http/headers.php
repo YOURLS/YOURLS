@@ -5,22 +5,22 @@
  *
  * @group http
  */
-class HTTP_Headers_Tests extends PHPUnit_Framework_TestCase {
-    
+class HTTP_Headers_Tests extends PHPUnit\Framework\TestCase {
+
     public function todo_some_day_test_redirect() {
         // PHP headers are a bitch to test. TODO some day.
     }
-    
+
     /**
      * Test that we have some javascript redirection output
      */
     public function test_javascript_redirect() {
         $regexp = '!<script type="text/javascript">\s*window.location="http://somewhere";!m';
-        
+
         $this->expectOutputRegex($regexp);
         yourls_redirect_javascript('http://somewhere');
     }
-    
+
     public function status_codes() {
         return array(
             array(100, 'Continue'),
@@ -68,7 +68,7 @@ class HTTP_Headers_Tests extends PHPUnit_Framework_TestCase {
             array(423, 'Locked'),
             array(424, 'Failed Dependency'),
             array(426, 'Upgrade Required'),
-        
+
             array(500, 'Internal Server Error'),
             array(501, 'Not Implemented'),
             array(502, 'Bad Gateway'),

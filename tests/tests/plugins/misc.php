@@ -9,9 +9,9 @@
  * @group plugins
  * @since 0.1
  */
-class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
+class Plugin_Misc_Tests extends PHPUnit\Framework\TestCase {
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         // remove filters and actions
         yourls_remove_all_filters( 'is_ssl' );
         yourls_remove_all_filters( 'needs_ssl' );
@@ -131,11 +131,12 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     /**
     * Simulate a non existent plugin admin page
     *
-    * @expectedException Exception
-    * @expectedExceptionMessage I have died
     * @since 0.1
     */
     public function test_plugin_admin_page_fake() {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('I have died');
+
         // intercept yourls_die() before it actually dies
         yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
 
@@ -169,11 +170,12 @@ class Plugin_Misc_Tests extends PHPUnit_Framework_TestCase {
     /**
     * Simulate a valid plugin admin page but with a drawing function that is not callable
     *
-    * @expectedException Exception
-    * @expectedExceptionMessage I have died
     * @since 0.1
     */
     public function test_plugin_admin_page_not_callable() {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('I have died');
+
         $plugin = rand_str();
         $title  = rand_str();
         $action = rand_str();

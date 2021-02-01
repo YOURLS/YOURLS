@@ -7,10 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -22,11 +23,13 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         array (
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Spatie\\ArrayToXml\\' => 18,
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'POMO\\' => 5,
         ),
         'M' => 
@@ -62,6 +65,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
+        ),
         'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
@@ -69,6 +76,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'Spatie\\ArrayToXml\\' => 
         array (
             0 => __DIR__ . '/..' . '/spatie/array-to-xml/src',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'POMO\\' => 
         array (
@@ -121,12 +132,18 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59::$classMap;
 
         }, null, ClassLoader::class);
     }

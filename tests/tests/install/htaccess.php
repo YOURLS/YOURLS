@@ -5,21 +5,21 @@
  *
  * @group install
  */
-class Install_htaccess_Tests extends PHPUnit_Framework_TestCase {
+class Install_htaccess_Tests extends PHPUnit\Framework\TestCase {
 
     protected $server;
 
     /**
      * Make a copy of $_SERVER
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->server = $_SERVER;
     }
 
     /**
      * Restore original $_SERVER
      */
-    public function tearDown() {
+    public function tearDown(): void {
         $_SERVER = $this->server;
     }
 

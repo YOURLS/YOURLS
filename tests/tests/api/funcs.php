@@ -6,7 +6,7 @@
  * @group API
  * @since 0.1
  */
-class API_Func_Tests extends PHPUnit_Framework_TestCase {
+class API_Func_Tests extends PHPUnit\Framework\TestCase {
 
     public function api_actions() {
         return array(

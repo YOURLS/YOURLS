@@ -3,7 +3,7 @@
  *
  * This file is part of Aura for PHP.
  *
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/MIT MIT
  *
  */
 namespace Aura\Sql;
@@ -101,7 +101,7 @@ interface PdoInterface
      * @param string $name The name of the sequence to check; typically needed
      * only for PostgreSQL, where it takes the form of `<table>_<column>_seq`.
      *
-     * @return int
+     * @return string
      *
      * @see http://php.net/manual/en/pdo.lastinsertid.php
      *
@@ -130,21 +130,14 @@ interface PdoInterface
      *
      * @param string $statement The SQL statement to prepare and execute.
      *
-     * @param int $fetch_mode The `PDO::FETCH_*` type to set on the returned
-     * `PDOStatement::setFetchMode()`.
-     *
-     * @param mixed $fetch_arg1 The first additional argument to send to
-     * `PDOStatement::setFetchMode()`.
-     *
-     * @param mixed $fetch_arg2 The second additional argument to send to
-     * `PDOStatement::setFetchMode()`.
+     * @param mixed ...$fetch Optional fetch-related parameters.
      *
      * @return \PDOStatement
      *
      * @see http://php.net/manual/en/pdo.query.php
      *
      */
-    public function query($statement);
+    public function query($statement, ...$fetch);
 
     /**
      *
@@ -154,7 +147,7 @@ interface PdoInterface
      *
      * @param int $parameter_type A data type hint for the database driver.
      *
-     * @return mixed The quoted value.
+     * @return string The quoted value.
      *
      * @see http://php.net/manual/en/pdo.quote.php
      *
