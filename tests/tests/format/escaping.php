@@ -7,7 +7,7 @@
  * @group formatting
  * @since 0.1
  */
-class Format_Esc extends PHPUnit_Framework_TestCase {
+class Format_Esc extends PHPUnit\Framework\TestCase {
 
     /**
      * Attributes and how they should be escaped

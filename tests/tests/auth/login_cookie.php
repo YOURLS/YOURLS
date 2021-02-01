@@ -7,26 +7,26 @@
  * @group cookies
  * @since 0.1
  */
-class Auth_Login_Cookie_Tests extends PHPUnit_Framework_TestCase {
+class Auth_Login_Cookie_Tests extends PHPUnit\Framework\TestCase {
 
     protected $cookie;
     protected $request;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->cookie = $_COOKIE;
         $this->request = $_REQUEST;
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $_COOKIE = $this->cookie;
         $_REQUEST = $this->request;
     }
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_false' );
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         yourls_remove_filter( 'is_API', 'yourls_return_false' );
     }
 

@@ -7,7 +7,7 @@
  * @since 0.1
  */
 
-class ShortURL_Tests extends PHPUnit_Framework_TestCase {
+class ShortURL_Tests extends PHPUnit\Framework\TestCase {
 
     public function test_reserved_keywords() {
         global $yourls_reserved_URL;

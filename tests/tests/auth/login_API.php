@@ -11,11 +11,11 @@ require_once( 'login_base.php' );
  */
 class Auth_Login_API_Tests extends Login_Base {
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_true' );
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         yourls_remove_filter( 'is_API', 'yourls_return_true' );
     }
 

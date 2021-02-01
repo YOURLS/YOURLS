@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MaxMind\Db;
 
+use ArgumentCountError;
 use BadMethodCallException;
 use Exception;
 use InvalidArgumentException;
@@ -17,15 +20,42 @@ use UnexpectedValueException;
  */
 class Reader
 {
+    /**
+     * @var int
+     */
     private static $DATA_SECTION_SEPARATOR_SIZE = 16;
+    /**
+     * @var string
+     */
     private static $METADATA_START_MARKER = "\xAB\xCD\xEFMaxMind.com";
+    /**
+     * @var int
+     */
     private static $METADATA_START_MARKER_LENGTH = 14;
-    private static $METADATA_MAX_SIZE = 131072; // 128 * 1024 = 128KB
+    /**
+     * @var int
+     */
+    private static $METADATA_MAX_SIZE = 131072; // 128 * 1024 = 128KiB
 
+    /**
+     * @var Decoder
+     */
     private $decoder;
+    /**
+     * @var resource
+     */
     private $fileHandle;
+    /**
+     * @var int
+     */
     private $fileSize;
+    /**
+     * @var int
+     */
     private $ipV4Start;
+    /**
+     * @var Metadata
+     */
     private $metadata;
 
     /**
@@ -35,40 +65,38 @@ class Reader
      * @param string $database
      *                         the MaxMind DB file to use
      *
-     * @throws InvalidArgumentException                    for invalid database path or unknown arguments
-     * @throws \MaxMind\Db\Reader\InvalidDatabaseException
-     *                                                     if the database is invalid or there is an error reading
-     *                                                     from it
+     * @throws InvalidArgumentException for invalid database path or unknown arguments
+     * @throws InvalidDatabaseException
+     *                                  if the database is invalid or there is an error reading
+     *                                  from it
      */
-    public function __construct($database)
+    public function __construct(string $database)
     {
         if (\func_num_args() !== 1) {
-            throw new InvalidArgumentException(
-                'The constructor takes exactly one argument.'
+            throw new ArgumentCountError(
+                sprintf('%s() expects exactly 1 parameter, %d given', __METHOD__, \func_num_args())
             );
         }
 
-        if (!is_readable($database)) {
+        $fileHandle = @fopen($database, 'rb');
+        if ($fileHandle === false) {
             throw new InvalidArgumentException(
                 "The file \"$database\" does not exist or is not readable."
             );
         }
-        $this->fileHandle = @fopen($database, 'rb');
-        if ($this->fileHandle === false) {
-            throw new InvalidArgumentException(
-                "Error opening \"$database\"."
-            );
-        }
-        $this->fileSize = @filesize($database);
-        if ($this->fileSize === false) {
+        $this->fileHandle = $fileHandle;
+
+        $fileSize = @filesize($database);
+        if ($fileSize === false) {
             throw new UnexpectedValueException(
                 "Error determining the size of \"$database\"."
             );
         }
+        $this->fileSize = $fileSize;
 
         $start = $this->findMetadataStart($database);
         $metadataDecoder = new Decoder($this->fileHandle, $start);
-        list($metadataArray) = $metadataDecoder->decode($start);
+        [$metadataArray] = $metadataDecoder->decode($start);
         $this->metadata = new Metadata($metadataArray);
         $this->decoder = new Decoder(
             $this->fileHandle,
@@ -91,14 +119,14 @@ class Reader
      *
      * @return mixed the record for the IP address
      */
-    public function get($ipAddress)
+    public function get(string $ipAddress)
     {
         if (\func_num_args() !== 1) {
-            throw new InvalidArgumentException(
-                'Method takes exactly one argument.'
+            throw new ArgumentCountError(
+                sprintf('%s() expects exactly 1 parameter, %d given', __METHOD__, \func_num_args())
             );
         }
-        list($record) = $this->getWithPrefixLen($ipAddress);
+        [$record] = $this->getWithPrefixLen($ipAddress);
 
         return $record;
     }
@@ -118,11 +146,11 @@ class Reader
      * @return array an array where the first element is the record and the
      *               second the network prefix length for the record
      */
-    public function getWithPrefixLen($ipAddress)
+    public function getWithPrefixLen(string $ipAddress): array
     {
         if (\func_num_args() !== 1) {
-            throw new InvalidArgumentException(
-                'Method takes exactly one argument.'
+            throw new ArgumentCountError(
+                sprintf('%s() expects exactly 1 parameter, %d given', __METHOD__, \func_num_args())
             );
         }
 
@@ -132,13 +160,7 @@ class Reader
             );
         }
 
-        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-            throw new InvalidArgumentException(
-                "The value \"$ipAddress\" is not a valid IP address."
-            );
-        }
-
-        list($pointer, $prefixLen) = $this->findAddressInTree($ipAddress);
+        [$pointer, $prefixLen] = $this->findAddressInTree($ipAddress);
         if ($pointer === 0) {
             return [null, $prefixLen];
         }
@@ -146,9 +168,16 @@ class Reader
         return [$this->resolveDataPointer($pointer), $prefixLen];
     }
 
-    private function findAddressInTree($ipAddress)
+    private function findAddressInTree(string $ipAddress): array
     {
-        $rawAddress = unpack('C*', inet_pton($ipAddress));
+        $packedAddr = @inet_pton($ipAddress);
+        if ($packedAddr === false) {
+            throw new InvalidArgumentException(
+                "The value \"$ipAddress\" is not a valid IP address."
+            );
+        }
+
+        $rawAddress = unpack('C*', $packedAddr);
 
         $bitCount = \count($rawAddress) * 8;
 
@@ -186,10 +215,12 @@ class Reader
             // Record is a data pointer
             return [$node, $i];
         }
-        throw new InvalidDatabaseException('Something bad happened');
+        throw new InvalidDatabaseException(
+            'Invalid or corrupt database. Maximum search depth reached without finding a leaf node'
+        );
     }
 
-    private function ipV4StartNode()
+    private function ipV4StartNode(): int
     {
         // If we have an IPv4 database, the start node is the first node
         if ($this->metadata->ipVersion === 4) {
@@ -205,14 +236,14 @@ class Reader
         return $node;
     }
 
-    private function readNode($nodeNumber, $index)
+    private function readNode(int $nodeNumber, int $index): int
     {
         $baseOffset = $nodeNumber * $this->metadata->nodeByteSize;
 
         switch ($this->metadata->recordSize) {
             case 24:
                 $bytes = Util::read($this->fileHandle, $baseOffset + $index * 3, 3);
-                list(, $node) = unpack('N', "\x00" . $bytes);
+                [, $node] = unpack('N', "\x00" . $bytes);
 
                 return $node;
             case 28:
@@ -222,12 +253,12 @@ class Reader
                 } else {
                     $middle = 0x0F & \ord($bytes[0]);
                 }
-                list(, $node) = unpack('N', \chr($middle) . substr($bytes, $index, 3));
+                [, $node] = unpack('N', \chr($middle) . substr($bytes, $index, 3));
 
                 return $node;
             case 32:
                 $bytes = Util::read($this->fileHandle, $baseOffset + $index * 4, 4);
-                list(, $node) = unpack('N', $bytes);
+                [, $node] = unpack('N', $bytes);
 
                 return $node;
             default:
@@ -238,7 +269,10 @@ class Reader
         }
     }
 
-    private function resolveDataPointer($pointer)
+    /**
+     * @return mixed
+     */
+    private function resolveDataPointer(int $pointer)
     {
         $resolved = $pointer - $this->metadata->nodeCount
             + $this->metadata->searchTreeSize;
@@ -248,7 +282,7 @@ class Reader
             );
         }
 
-        list($data) = $this->decoder->decode($resolved);
+        [$data] = $this->decoder->decode($resolved);
 
         return $data;
     }
@@ -258,7 +292,7 @@ class Reader
      * are much faster algorithms (e.g., Boyer-Moore) for this if speed is ever
      * an issue, but I suspect it won't be.
      */
-    private function findMetadataStart($filename)
+    private function findMetadataStart(string $filename): int
     {
         $handle = $this->fileHandle;
         $fstat = fstat($handle);
@@ -290,11 +324,11 @@ class Reader
      *
      * @return Metadata object for the database
      */
-    public function metadata()
+    public function metadata(): Metadata
     {
         if (\func_num_args()) {
-            throw new InvalidArgumentException(
-                'Method takes no arguments.'
+            throw new ArgumentCountError(
+                sprintf('%s() expects exactly 0 parameters, %d given', __METHOD__, \func_num_args())
             );
         }
 
@@ -306,7 +340,7 @@ class Reader
             );
         }
 
-        return $this->metadata;
+        return clone $this->metadata;
     }
 
     /**
@@ -315,8 +349,14 @@ class Reader
      * @throws Exception
      *                   if an I/O error occurs
      */
-    public function close()
+    public function close(): void
     {
+        if (\func_num_args()) {
+            throw new ArgumentCountError(
+                sprintf('%s() expects exactly 0 parameters, %d given', __METHOD__, \func_num_args())
+            );
+        }
+
         if (!\is_resource($this->fileHandle)) {
             throw new BadMethodCallException(
                 'Attempt to close a closed MaxMind DB.'
