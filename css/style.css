@@ -176,16 +176,16 @@ td.actions .button.loading, #add-button.loading {
 	color:#cc7;
 }
 td.actions .button_share {
-	background:transparent url(../images/share.png) 2px center no-repeat;
+	background:transparent url(../images/share.svg) 2px center no-repeat;
 }
 td.actions .button_edit {
-	background:transparent url(../images/pencil.png) 2px center no-repeat;
+	background:transparent url(../images/pencil.svg) 2px center no-repeat;
 }
 td.actions .button_delete {
-	background:transparent url(../images/delete.png) 2px center no-repeat;
+	background:transparent url(../images/delete.svg) 2px center no-repeat;
 }
 td.actions .button_stats {
-	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
+	background:transparent url(../images/chart_bar.svg) 2px center no-repeat;
 }
 #main_table tfoot th, #main_table tfoot th div {
 	font-size:10px;
