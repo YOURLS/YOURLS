@@ -6,7 +6,6 @@
 
 # Exclude certain files or directories when generating an archive
 assets/less/    export-ignore
-.travis.yml     export-ignore
 /.git*          export-ignore
 /*.md           export-ignore
 tests/          export-ignore

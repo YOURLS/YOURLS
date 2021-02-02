@@ -37,7 +37,7 @@ $yourls_reserved_URL = array(
 );
 
 $yourls_user_passwords = array(
-	'yourls'  => 'travis-ci-test',
+	'yourls'  => 'secret-ci-test',
 	'clear'   => 'somepassword',
 	'md5'     => 'md5:12373:e52e4488f79a740bd341f229e3c163c8',                          // password: '3cd6944201fa7bbc5e0fe852e36b1096' with md5 and salt
 	'phpass'  => 'phpass:!2a!08!T1ptMlBSxu7g3odpbUXgd.9wbKvg8k7cJt.HbwSqUNrlLPudWnf/6', // password: '3cd6944201fa7bbc5e0fe852e36b1096' with PHPass

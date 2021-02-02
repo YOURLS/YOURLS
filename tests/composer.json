@@ -3,6 +3,6 @@
         "phpunit/phpunit": "*"
     },
     "scripts": {
-        "tests": "phpunit"
+        "test": "phpunit"
     }
 }
