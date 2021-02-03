@@ -8,10 +8,10 @@ define('YOURLS_ABSPATH', getenv('GITHUB_WORKSPACE'));
 define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
 
 /*** MySQL settings */
-define('YOURLS_DB_USER', 'root');
-define('YOURLS_DB_PASS', 'secret');
-define('YOURLS_DB_NAME', 'yourls_tests');
-define('YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT'));
+define( 'YOURLS_DB_USER', 'root' );
+define( 'YOURLS_DB_PASS', 'secret' );
+define( 'YOURLS_DB_NAME', 'yourls_tests' );
+define( 'YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT') );
 
 /*** Site options */
 define( 'YOURLS_PHP_BIN', 'php' );
