@@ -1,34 +1,17 @@
 <?php
 /**
- * YOURLS Config for Travis (https://travis-ci.org/YOURLS/YOURLS)
+ * YOURLS Config for CI
  */
-if (!defined('YOURLS_TESTS_CI') || YOURLS_TESTS_CI === false) {
-	define( 'YOURLS_TESTS_CI', true );
-}
-
-/*** Code base and URL of that code base */
-if( $path = getenv( 'TRAVIS_REPO_SLUG' ) ) {
-    switch( $path ) {
-        case 'YOURLS/YOURLS':
-            define( 'YOURLS_ABSPATH', '/home/travis/build/YOURLS/YOURLS' );
-            break;
-        case 'YOURLS/YOURLS-unit-tests':
-            define( 'YOURLS_ABSPATH', '/home/travis/build/YOURLS/YOURLS-unit-tests/YOURLS' );
-            break;
-        default:
-            die( sprintf( 'Wrong repo: "%s"', $path ) );
-    }
-} else {
-    die( 'Not in Travis' );
-}
+define('YOURLS_TESTS_CI', getenv('CI') || false);
+define('YOURLS_ABSPATH', getenv('GITHUB_WORKSPACE'));
 
 define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
 
 /*** MySQL settings */
 define( 'YOURLS_DB_USER', 'root' );
-define( 'YOURLS_DB_PASS', '' );
+define( 'YOURLS_DB_PASS', 'secret' );
 define( 'YOURLS_DB_NAME', 'yourls_tests' );
-define( 'YOURLS_DB_HOST', 'localhost' );
+define( 'YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT') );
 
 /*** Site options */
 define( 'YOURLS_PHP_BIN', 'php' );
@@ -52,7 +35,7 @@ $yourls_reserved_URL = array(
 );
 
 $yourls_user_passwords = array(
-	'yourls'  => 'travis-ci-test',
+	'yourls'  => 'secret-ci-test',
 	'clear'   => 'somepassword',
 	'md5'     => 'md5:12373:e52e4488f79a740bd341f229e3c163c8',                          // password: '3cd6944201fa7bbc5e0fe852e36b1096' with md5 and salt
 	'phpass'  => 'phpass:!2a!08!T1ptMlBSxu7g3odpbUXgd.9wbKvg8k7cJt.HbwSqUNrlLPudWnf/6', // password: '3cd6944201fa7bbc5e0fe852e36b1096' with PHPass

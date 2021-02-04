@@ -21,7 +21,7 @@ function rand_str( $len=32 ) {
  * @since 0.1
  */
 function yut_is_local() {
-	return defined( 'LOCAL_TESTSUITE' ) && LOCAL_TESTSUITE == true;
+	return ! defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false;
 }
 
 /**
