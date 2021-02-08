@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="chart_bar_add.svg"
+   id="svg6"
+   version="1.1"
+   width="24"
+   viewBox="0 0 24 24"
+   height="24">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg6"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="23.569387"
+     inkscape:cx="2.2441598"
+     inkscape:zoom="16"
+     showgrid="false"
+     id="namedview8"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <path
+     style="fill:#4393bb;fill-opacity:1"
+     id="path2"
+     d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+  <path
+     id="path4"
+     fill="none"
+     d="M0 0h24v24H0z" />
+  <circle
+     r="2.6246843"
+     cy="18.085155"
+     cx="14.813288"
+     id="path831"
+     style="fill:#ff00a5;stroke-width:3.77953;stroke-linecap:square;paint-order:markers fill stroke" />
+  <g
+     transform="translate(0.01867423,-0.02564251)"
+     style="font-style:normal;font-weight:normal;font-size:7.56178px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.756178"
+     id="text835"
+     aria-label="+">
+    <path
+       id="path837"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.56178px;font-family:Verdana;-inkscape-font-specification:'Verdana Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.756178"
+       d="m 17.268438,18.605563 h -1.967983 v 1.949521 h -1.011683 v -1.949521 h -1.967983 v -0.98953 h 1.967983 v -1.949521 h 1.011683 v 1.949521 h 1.967983 z" />
+  </g>
+</svg>

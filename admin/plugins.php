@@ -147,7 +147,7 @@ yourls_html_menu();
 	yourls_defaultorder = 0;
 	<?php if ($count_active) { ?>
 	$('#plugin_summary').append('<span id="toggle_plugins">filter</span>');
-	$('#toggle_plugins').css({'background':'transparent url("../images/filter.gif") top left no-repeat','display':'inline-block','text-indent':'-9999px','width':'16px','height':'16px','margin-left':'3px','cursor':'pointer'})
+	$('#toggle_plugins').css({'background':'transparent url("../images/filter.svg") top left no-repeat','display':'inline-block','text-indent':'-9999px','width':'16px','height':'16px','margin-left':'3px','cursor':'pointer'})
 		.attr('title', '<?php echo yourls_esc_attr__( 'Toggle active/inactive plugins' ); ?>')
 		.click(function(){
 			$('#main_table tr.inactive').toggle();
