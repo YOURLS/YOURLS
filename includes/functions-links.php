@@ -255,7 +255,7 @@ function yourls_get_yourls_favicon_url( $echo = true ) {
     if( $custom ) {
         $favicon = yourls_site_url( false, YOURLS_USERURL . '/' . $custom );
     } else {
-        $favicon = yourls_site_url( false ) . '/images/favicon.gif';
+        $favicon = yourls_site_url( false ) . '/images/favicon.svg';
     }
 
     $favicon = yourls_apply_filter('get_favicon_url', $favicon);

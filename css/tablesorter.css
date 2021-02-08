@@ -17,7 +17,7 @@ table.tblSorter tfoot tr th {
 	background-color: #E3F3FF;
 }
 table.tblSorter thead tr .tablesorter-header {
-	background-image: url('../images/bg.gif');
+	background-image: url('../images/bg.svg');
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
@@ -52,17 +52,20 @@ table.tblSorter tbody tr.alt-row:hover td  {
 	background-color:#F1FFF6;
 }
 table.tblSorter thead tr .tablesorter-headerDesc {
-	background-image: url('../images/desc.gif');
+	background-image: url('../images/desc.svg');
 	background-repeat: no-repeat;
 	background-position: center right;
 }
 table.tblSorter thead tr .tablesorter-headerAsc {
-	background-image: url('../images/asc.gif');
+	background-image: url('../images/asc.svg');
 	background-repeat: no-repeat;
 	background-position: center right;
 }
 table.tblSorter thead tr .tablesorter-headerAsc, table.tblSorter thead tr .tablesorter-headerDesc {
 	background-color: #91C7F2;
+}
+table.tblSorter thead  tr th span {
+    margin-right:10px;
 }
 table.tblSorter tfoot tr {
 	background-color: #BCD9E8;

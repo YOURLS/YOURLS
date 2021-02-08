@@ -176,16 +176,16 @@ td.actions .button.loading, #add-button.loading {
 	color:#cc7;
 }
 td.actions .button_share {
-	background:transparent url(../images/share.png) 2px center no-repeat;
+	background:transparent url(../images/share.svg) center no-repeat;
 }
 td.actions .button_edit {
-	background:transparent url(../images/pencil.png) 2px center no-repeat;
+	background:transparent url(../images/pencil.svg) center no-repeat;
 }
 td.actions .button_delete {
-	background:transparent url(../images/delete.png) 2px center no-repeat;
+	background:transparent url(../images/delete.svg) center no-repeat;
 }
 td.actions .button_stats {
-	background:transparent url(../images/chart_bar.png) 2px center no-repeat;
+	background:transparent url(../images/chart_bar.svg) center no-repeat;
 }
 #main_table tfoot th, #main_table tfoot th div {
 	font-size:10px;
@@ -221,13 +221,13 @@ td.actions .button_stats {
 	padding:0 0 5px 20px;
 }
 #login ul.error li {
-	background:transparent url(../images/cancel.png) top left no-repeat;
+	background:transparent url(../images/cancel.svg) top left no-repeat;
 }
 #login ul.warning li {
-	background:transparent url(../images/error.png) top left no-repeat;
+	background:transparent url(../images/error.svg) top left no-repeat;
 }
 #login ul.success li {
-	background:transparent url(../images/accept.png) top left no-repeat;
+	background:transparent url(../images/accept.svg) top left no-repeat;
 }
 .sub_wrap {
 	max-width:580px;
@@ -244,7 +244,8 @@ a.bookmarklet {
 	-webkit-border-radius:3px;
 	border-radius:3px;
 	padding:5px 5px 5px 20px;
-	background:#eef url(../images/favicon.gif) 2px center no-repeat;
+	background:#eef url(../images/favicon.svg) 2px center no-repeat;
+	padding-left:30px;
 	margin:3px;
 	display:inline-block;
 }
@@ -273,8 +274,8 @@ a.bookmarklet:hover {
 	border-bottom-right-radius:25px;
 }
 #footer p a {
-	background:#fff url(../images/favicon.gif) 2px center no-repeat;
-	padding-left:20px;
+	background:#fff url(../images/favicon.svg) 2px center no-repeat;
+	padding-left:30px;
 }
 
 .notice {
@@ -316,10 +317,10 @@ a.bookmarklet:hover {
   background-color:#fdd;
 }
 .jquery-notify-bar.error span,.jquery-notify-bar.fail span{
-	background:transparent url("../images/error.png") no-repeat left center;
+	background:transparent url("../images/error.svg") no-repeat left center;
 	padding-left:20px;
 }.jquery-notify-bar.success span{
-	background:transparent url("../images/accept.png") no-repeat left center;
+	background:transparent url("../images/accept.svg") no-repeat left center;
 	padding-left:20px;
 }
 .jquery-notify-bar.success {
