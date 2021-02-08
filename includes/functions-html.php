@@ -650,7 +650,7 @@ function yourls_table_head() {
 		'actions'  => yourls__( 'Actions' )
 	) );
 	foreach( $cells as $k => $v ) {
-		echo "<th id='main_table_head_$k'>$v</th>\n";
+		echo "<th id='main_table_head_$k'><span>$v</span></th>\n";
 	}
 
 	$end = "</tr></thead>\n";

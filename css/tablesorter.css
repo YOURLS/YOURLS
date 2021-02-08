@@ -64,6 +64,9 @@ table.tblSorter thead tr .tablesorter-headerAsc {
 table.tblSorter thead tr .tablesorter-headerAsc, table.tblSorter thead tr .tablesorter-headerDesc {
 	background-color: #91C7F2;
 }
+table.tblSorter thead  tr th span {
+    margin-right:10px;
+}
 table.tblSorter tfoot tr {
 	background-color: #BCD9E8;
 }
