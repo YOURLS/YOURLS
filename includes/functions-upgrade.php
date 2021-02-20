@@ -54,8 +54,6 @@ function yourls_upgrade_to_18() {
 
     echo "<p>Updating DB. Please wait...</p>";
 
-    $ydb->beginTransaction();
-
     $queries = array(
         'database charset'  => sprintf('ALTER DATABASE %s CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;', YOURLS_DB_NAME),
         'options charset'   => sprintf('ALTER TABLE %s CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', YOURLS_DB_TABLE_OPTIONS),
@@ -72,8 +70,6 @@ function yourls_upgrade_to_18() {
             $error_msg[] = $e ->getMessage();
         }
     }
-
-    $result = $ydb->commit();
 
     if( $error_msg or $result === false ) {
         echo "<p class='error'>Unable to update the DB.</p>";
