@@ -21,7 +21,7 @@ define( 'YOURLS_DB_PASS', 'your db password' );
 define( 'YOURLS_DB_NAME', 'yourls' );
 
 /** MySQL hostname.
- ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
+ ** If using a non standard port, specify it like 'hostname:port', e.g. 'localhost:9999' or '127.0.0.1:666' */
 define( 'YOURLS_DB_HOST', 'localhost' );
 
 /** MySQL tables prefix
@@ -62,11 +62,11 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 /** Username(s) and password(s) allowed to access the site. Passwords either in plain text or as encrypted hashes
  ** YOURLS will auto encrypt plain text passwords in this file
  ** Read http://yourls.org/userpassword for more information */
-$yourls_user_passwords = array(
+$yourls_user_passwords = [
 	'username' => 'password',
 	// 'username2' => 'password2',
 	// You can have one or more 'login'=>'password' lines
-	);
+];
 
 /** URL shortening method: 36 or 62
  ** 36: generates all lowercase keywords (ie: 13jkm)
@@ -81,9 +81,9 @@ define( 'YOURLS_DEBUG', false );
 * Reserved keywords (so that generated URLs won't match them)
 * Define here negative, unwanted or potentially misleading keywords.
 */
-$yourls_reserved_URL = array(
+$yourls_reserved_URL = [
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
-);
+];
 
 /*
  ** Personal settings would go after here.
