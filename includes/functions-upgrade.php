@@ -3,6 +3,10 @@
 /**
  * Upgrade YOURLS and DB schema
  *
+ * Note to devs : prefer update function names using the SQL version, eg yourls_update_to_506(),
+ * rather than using the YOURLS version number, eg yourls_update_to_18(). This is to allow having
+ * multiple SQL update during the dev cycle of the same Y0URLS version
+ *
  */
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 
