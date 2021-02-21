@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'b5cc5a0f92b1955064b7fa7949b23032fdf40319',
+    'reference' => 'a3dd5e500abdd264c01f4c8ff026108f093f9769',
     'name' => 'yourls/yourls',
   ),
   'versions' => 
@@ -186,7 +186,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'b5cc5a0f92b1955064b7fa7949b23032fdf40319',
+      'reference' => 'a3dd5e500abdd264c01f4c8ff026108f093f9769',
     ),
   ),
 );
