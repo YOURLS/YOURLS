@@ -35,11 +35,14 @@ function yourls_get_database_version() {
 }
 
 /**
- * Check if PHP > 5.6
+ * Check if PHP > 7.2
+ *
+ * As of 1.8 we advertise YOURLS as being 7.4+ but it should work on 7.2 (although untested)
+ * so we don't want to strictly enforce a limitation that may not be necessary.
  *
  */
 function yourls_check_php_version() {
-    return version_compare( PHP_VERSION, '5.6.0', '>=' );
+    return version_compare( PHP_VERSION, '7.2.0', '>=' );
 }
 
 /**
