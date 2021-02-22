@@ -4,6 +4,24 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.8
+---
+- fixed: support for PHP 8
+- removed : support for PHP prior to 7.2
+- improved: IDN domain, and UTF8 URLs and titles (aka Number One Issue Since Day One)
+- improved: timezone management
+- improved: YOURLS UI and logo, now in SVG
+- improved: several little things
+- fixed: several little bugs
+
+1.7.9
+---
+- improved: compatibility of YOURLS with proxies and reversed proxies
+- improved: accept timestamped signature in API requests with [arbitrary hash](https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI#use-other-hash-algorithms-than-md5)
+- improved: YOURLS pages are now located in `user/` and [documented](https://github.com/YOURLS/YOURLS/wiki/Pages)
+- improved: accessibility, with labels and aria tags in the main admin screen
+- fixed: various little things here and also there
+
 1.7.6
 ---
 - improved: due to popular demand, "Random Keywords" is now a core plugin bundled with YOURLS
