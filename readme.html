@@ -245,17 +245,14 @@
 
 			<a class="anch" href="#About;features"><span>&#10148;</span><h3 id="features">YOURLS Features</h3></a>
 			<ul>
-				<li><tt>Free</tt> and <tt>open-source</tt> software.</li>
-				<li><tt>Private</tt> (your links only) or <tt>Public</tt> (everybody can create short links, fine for an intranet)</li>
-				<li>Sequential or custom URL keywords</li>
-				<li>Handy <tt>bookmarklets</tt> to easily shorten and share links</li>
-				<li>Awesome <tt>stats</tt>: historical click reports, referrers tracking, visitors geo-location</li>
-				<li>Neat <tt>Ajaxed</tt> interface</li>
-				<li>Terrific <tt>Plugin</tt> architecture to easily implement new features</li>
-				<li>Cool developer <tt>API</tt></li>
-				<li>Full <tt>jsonp</tt> support</li>
-				<li>Friendly <tt>installer</tt></li>
-				<li><tt>Sample files</tt> to create your own public interface and more</li>
+				<li><tt>Free</tt> and <tt>open-source</tt> software,</li>
+				<li><tt>Private</tt> (your links only) or <tt>Public</tt> (everybody can create short links, fine for an intranet),</li>
+				<li>Terrific <tt>Plugin</tt> architecture and dozens of <tt>plugins</tt> to easily implement new features,</li>
+				<li>Handy <tt>bookmarklets</tt> to easily shorten and share links,</li>
+				<li>Awesome <tt>stats</tt>: historical click reports, referrers tracking, visitors geo-location,</li>
+				<li>Developer <tt>API</tt> to integrate YOURLS into other applications,</li>
+				<li>Friendly <tt>installer</tt>,</li>
+				<li><tt>Sample files</tt> to create your own public interface and more !</li>
 			</ul>
 
 			<a class="anch" href="#About;screenshots"><span>&#10148;</span><h3 id="screenshots">Screenshots</h3></a>
@@ -270,14 +267,13 @@
 
 			<a class="anch" href="#About;download"><span>&#10148;</span><h2 id="download">Download</h2></a>
 
-			<p><a href="https://yourls.org/download">Download YOURLS</a> from GitHub</p>
-			<p>You can follow YOURLS' development on the <a href="https://yourls.org/revisions">commit history</a> and get <a href="https://github.com/YOURLS/YOURLS/archive/master.zip">current development build</a></p>
+			<p><a href="https://yourls.org/download">Download YOURLS</a> from GitHub and see see the <a href="#Install" onclick="toggle(this);">Install</a> guide</p>
 
 			<a class="anch" href="#About;credits"><span>&#10148;</span><h2 id="credits">Credits</h2></a>
 
 			<p>YOURLS is made by <a href="https://github.com/YOURLS/YOURLS/graphs/contributors">awesome people</a>.</p>
 
-			<p>Keep up to date: read the official <a href="http://blog.yourls.org/">YOURLS Blog</a></p>
+			<p>Keep up to date: read the official <a href="http://blog.yourls.org/">YOURLS Blog</a>.</p>
 		</div>
 
 		<!-- Installation Instructions -->
@@ -293,7 +289,7 @@
 			</ol>
 			<a class="anch" href="#Install;auto"><span>&#10148;</span><h3 id="auto" class='first'>Install Guides</h3></a>
             <p>The <a href="https://yourls.org/wiki">wiki</a> is full of important information. Regarding installation, you'll find help for Apache, IIS and Nginx.</p>
-            <p>You will find numerous unofficial installation guides, in various languages on various platforms, on <a href="https://yourls.org/awesome">Awesome YOURLS</a>, a curated list of resources.</p>
+            <p>You will also find numerous unofficial installation guides on <a href="https://yourls.org/awesome">Awesome YOURLS</a>, a curated list of resources.</p>
 
 			<a class="anch" href="#Install;upgrade"><span>&#10148;</span><h2 id="upgrade">Upgrade</h2></a>
 			<ol>
@@ -331,10 +327,7 @@
 			<ul>
 				<li><code>YOURLS_SITE</code><br/>
 				Your (hopefully short) domain URL, no trailing slash, lowercase. If you pick the non-www version of your domain, don't use the www version in your browser (and vice-versa)<br/>
-				<em>Example:</em> <tt>define( 'YOURLS_SITE', 'http://ozh.in' );</tt></li>
-				<li><code>YOURLS_HOURS_OFFSET</code><br/>
-				Timezone GMT offset<br/>
-				<em>Example:</em> <tt>define( 'YOURLS_HOURS_OFFSET', '-5' );</tt></li>
+				<em>Example:</em> <tt>define( 'YOURLS_SITE', 'https://your-own-domain-here.com' );</tt></li>
 				<li><code>YOURLS_PRIVATE</code><br/>
 				Private means the admin area will be protected with login/pass as defined below. See <a href="https://yourls.org/privatepublic">Private or Public</a> for more.<br/>
 				<em>Example:</em> <tt>define( 'YOURLS_PRIVATE', true );</tt></li>
@@ -531,18 +524,15 @@ echo $data->longurl;</tt></pre>
 		<div id="FAQDiv" style="display: none;">
 			<a class="anch" href="#FAQ;theFAQ"><span>&#10148;</span><h2 id="theFAQ" class="first">FAQ</h2></a>
 
-			<a class="anch" href="#FAQ;requirement"><span>&#10148;</span><h3 id="requirement">Server requirements</h3></a>
+			<a class="anch" href="#FAQ;requirement"><span>&#10148;</span><h3 id="requirement">Server requirements and recommendations</h3></a>
 			<ol>
-				<li>A server with <strong>mod_rewrite</strong> enabled</li>
-				<li>At least <strong>PHP 7.4</strong></li>
-				<li>At least <strong>MYSQL 5</strong></li>
-				<li><em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a>, <a href="https://github.com/YOURLS/YOURLS/wiki/Web-Config-IIS">IIS</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
-			</ol>
-
-			<a class="anch" href="#FAQ;recommendation"><span>&#10148;</span><h3 id="recommendation">Server recommendations</h3></a>
-			<ul>
+				<li>We recommend <strong>PHP 7.4</strong> or above</li>
+				<li>You will need at least <strong>MYSQL 5</strong></li>
+				<li>A web server with <strong>mod_rewrite</strong> enabled<br/>
+				<em>Note</em>: YOURLS can also run on <a href="https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration">Nginx</a>, <a href="https://github.com/YOURLS/YOURLS/wiki/Web-Config-IIS">IIS</a> and <a href="https://github.com/lylebrown/YOURLS-Cherokee">Cherokee</a></li>
+                <li><strong>HTTPS</strong> support</li>
 				<li>PHP <a href="http://www.php.net/curl">CURL extension</a> installed if you plan on playing with the API</li>
-			</ul>
+			</ol>
 
 			<a class="anch" href="#FAQ;limitations"><span>&#10148;</span><h3 id="limitations">Limitations</h3></a>
 			<ul>
@@ -575,7 +565,8 @@ echo $data->longurl;</tt></pre>
 			<ul>
 				<li>Make sure <strong>mod_rewrite</strong> is enabled with your Apache server</li>
 				<li>Make sure your .htaccess file looks like <a href="https://yourls.org/htaccess">this one</a></li>
-				<li>Eventually, check your server Apache configuration allows use of .htaccess (<tt>AllowOverride All</tt> directive, ask your server admin)</li>
+				<li>Check that your server Apache configuration allows use of .htaccess (<tt>AllowOverride All</tt> directive, ask your server admin)</li>
+				<li>Eventually, refer to <a href="https://yourls.org/support">Troubleshooting first steps</a>.</li>
 			</ul>
 
 			<a class="anch" href="#FAQ;sequential"><span>&#10148;</span><h3 id="sequential">Random versus sequential short URLs</h3></a>
@@ -594,7 +585,7 @@ echo $data->longurl;</tt></pre>
 
 			<a class="anch" href="#FAQ;noindex"><span>&#10148;</span><h3 id="noindex">There is no index page at the root of the install</h3></a>
 			<ul>
-				<li>Indeed. It's intended. It's up to the user to make what they need. Some will redirect the root to a different place, some make a public interface for anyone to shorten links, some make a portfolio. You make it.</li>
+				<li>Indeed. It's intended. It's up to the user to make what they need. Some will redirect the root to a different place, some make a public interface for anyone to shorten links, some make a portfolio. You make it. See <a href="https://yourls.org/awesome">Awesome YOURLS</a> for inspiration!</li>
 				<li>If you want to make a public interface and run your own little bitly.com, there's a sample file provided as an example: <code>sample-public-front-page.txt</code>. This implies important issues to deal with: spam, performance and security. Read <a href="https://yourls.org/public">Public Shortening</a> for important information.</li>
 			</ul>
 
@@ -637,7 +628,7 @@ echo $data->longurl;</tt></pre>
 
 			<a class="anch" href="#More;frameworks"><span>&#10148;</span><h2 id="frameworks">YOURLS and other platforms or frameworks</h2></a>
 
-            <p>Contributors have made YOURLS work with various platforms, programming languages or tools : Laravel, Symfony, WordPress, Perl, Ruby, Android, iOS, you name it.</p>
+            <p>Contributors have made YOURLS work with various platforms, programming languages, applications or tools : Laravel, Symfony, WordPress, Perl, Ruby, Android, iOS, you name it.</p>
             <p>Head to <a href="https://yourls.org/awesome">Awesome YOURLS</a> and find the missing tool you didn't know you were needing.</p>
 
 
