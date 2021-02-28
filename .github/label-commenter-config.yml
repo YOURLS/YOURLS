@@ -1,0 +1,6 @@
+labels:
+  - name: missing template
+    labeled:
+      issue:
+        body: Please follow the issue templates. Helping you on an issue without context is not possible.
+        action: close
