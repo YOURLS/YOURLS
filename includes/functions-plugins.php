@@ -6,7 +6,7 @@
  * the filter is called.
  *
  * Any of the syntaxes explained in the PHP documentation for the
- * {@link http://us2.php.net/manual/en/language.pseudo-types.php#language.types.callback 'callback'}
+ * {@link https://www.php.net/manual/en/language.types.callable.php 'callback'}
  * type are valid.
  *
  * This API is heavily inspired by the one I implemented in Zenphoto 1.3, which was heavily inspired by the one used in WordPress.
@@ -15,21 +15,61 @@
  * @since 1.5
  */
 
+/**
+ * This global var will collect filters with the following structure:
+ * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args, filter or action)]']
+ *
+ * Real life example :
+ * print_r($yourls_filters) :
+ * Array
+ *  (
+ *      [plugins_loaded] => Array
+ *          (
+ *              [10] => Array
+ *                  (
+ *                      [yourls_kses_init] => Array
+ *                          (
+ *                              [function] => yourls_kses_init
+ *                              [accepted_args] => 1
+ *                              [type] => action
+ *                          )
+ *                      [yourls_tzp_config] => Array
+ *                          (
+ *                              [function] => yourls_tzp_config
+ *                              [accepted_args] => 1
+ *                              [type] => action
+ *                          )
+ *                  )
+ *          )
+ *      [admin_menu] => Array
+ *          (
+ *              [10] => Array
+ *                  (
+ *                      [ozh_show_db] => Array
+ *                          (
+ *                              [function] => ozh_show_db
+ *                              [accepted_args] =>
+ *                              [type] => filter
+ *                          )
+ *                  )
+ *          )
+ *  )
+ *
+ * @var array
+ */
 if ( !isset( $yourls_filters ) ) {
     $yourls_filters = [];
 }
-/*
- * This global var will collect filters with the following structure:
- * $yourls_filters['hook']['array of priorities']['serialized function names']['array of ['array (functions, accepted_args, filter or action)]']
- */
 
+/**
+ * This global var will collect 'done' actions with the following structure:
+ * $yourls_actions['hook'] => number of time this action was done
+ *
+ * @var array
+ */
 if ( !isset( $yourls_actions ) ) {
     $yourls_actions = [];
 }
-/*
- * This global var will collect 'done' actions with the following structure:
- * $yourls_actions['hook'] => number of time this action was done
- */
 
 /**
  * Registers a filtering function
@@ -37,6 +77,7 @@ if ( !isset( $yourls_actions ) ) {
  * Typical use:
  *        yourls_add_filter('some_hook', 'function_handler_for_hook');
  *
+ * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
  * @param string   $hook           the name of the YOURLS element to be filtered or YOURLS action to be triggered
  * @param callback $function_name  the name of the function that is to be called.
  * @param int      $priority       optional. Used to specify the order in which the functions associated with a
@@ -68,10 +109,16 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * one or more of its PHP functions are executed at these points, using the
  * Action API.
  *
- * @param string $hook The name of the action to which the $function_to_add is hooked.
- * @param callback $function_name The name of the function you wish to be called.
- * @param int $priority optional. Used to specify the order in which the functions associated with a particular action are executed (default: 10). Lower numbers correspond with earlier execution, and functions with the same priority are executed in the order in which they were added to the action.
- * @param int $accepted_args optional. The number of arguments the function accept (default 1).
+ * Typical use:
+ *        yourls_add_action('some_hook', 'function_handler_for_hook');
+ *
+ * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
+ * @param string   $hook           The name of the action to which the $function_to_add is hooked.
+ * @param callback $function_name  The name of the function you wish to be called.
+ * @param int      $priority       Optional. Used to specify the order in which the functions associated with a particular action
+ *                                 are executed (default: 10). Lower numbers correspond with earlier execution, and functions
+ *                                 with the same priority are executed in the order in which they were added to the action.
+ * @param int      $accepted_args  Optional. The number of arguments the function accept (default 1).
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
 	yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
@@ -81,12 +128,25 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  * Build Unique ID for storage and retrieval.
  *
  * Simply using a function name is not enough, as several functions can have the same name when they are enclosed in classes.
+ * Possible ways to attach a function to a hook (filter or action):
+ *   - strings:
+ *     yourls_add_filter('my_hook_test', 'my_callback_function');
+ *     yourls_add_filter('my_hook_test', 'My_Class::my_callback_function');
  *
- * @global array $yourls_filters storage for all of the filters
- * @param string $hook hook to which the function is attached
- * @param string|array $function used for creating unique id
- * @param int|bool $priority used in counting how many hooks were applied.  If === false and $function is an object reference, we return the unique id only if it already has one, false otherwise.
- * @return string unique ID for usage as array key
+ *   - arrays:
+ *     yourls_add_filter('my_hook_test', array('My_Class','my_callback_function'));
+ *     yourls_add_filter('my_hook_test', array($class_instance, 'my_callback_function'));
+ *
+ *   - objects:
+ *     yourls_add_filter('my_hook_test', $class_instance_with_invoke_method);
+ *     yourls_add_filter('my_hook_test', $my_callback_function);
+ *
+ * @link https://github.com/YOURLS/YOURLS/wiki/Advanced-Hook-Syntax
+ * @param  string       $hook            Hook to which the function is attached
+ * @param  string|array $function        Used for creating unique id
+ * @param  int|bool     $priority        Used in counting how many hooks were applied.  If === false and $function is an object reference,
+ *                                       we return the unique id only if it already has one, false otherwise.
+ * @return string  unique ID for usage as array key
  */
 function yourls_filter_unique_id( $hook, $function, $priority ) {
     // If function then just skip all of the tests and not overwrite the following.
@@ -95,7 +155,7 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
     }
 
     if ( is_object( $function ) ) {
-        // Closures are currently implemented as objects
+        // Closures are implemented as objects
         $function = [ $function, '' ];
     }
     else {
@@ -103,15 +163,20 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
     }
 
     // Object Class Calling
-    if ( is_object( $function[ 0 ] ) ) {
-        return spl_object_hash( $function[ 0 ] ).$function[ 1 ];
+    if ( is_object( $function[0] ) ) {
+        return spl_object_hash( $function[0] ).$function[1];
     }
 
     // Static Calling
-    if ( is_string( $function[ 0 ] ) ) {
-        return $function[ 0 ].'::'.$function[ 1 ];
+    if ( is_string( $function[0] ) ) {
+        return $function[0].'::'.$function[1];
     }
-    // TODO: missing final return;
+
+    /**
+     * There is no other possible case as of PHP 7.2-8.0 callables. Still, we're leaving the final
+     * `if` block (which could be remove to simply return $function[0].'::'.$function[1]) for readability
+     * and understanding the logic.
+     */
 }
 
 /**
@@ -136,11 +201,13 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
  */
 function yourls_apply_filter( $hook, $value = '' ) {
     global $yourls_filters;
+
+    $args = func_get_args();
+
+    // If we have no hook attached to that filter, just return unmodified $value
     if ( !isset( $yourls_filters[ $hook ] ) ) {
         return $value;
     }
-
-    $args = func_get_args();
 
     // Sort filters by priority
     ksort( $yourls_filters[ $hook ] );
@@ -165,15 +232,13 @@ function yourls_apply_filter( $hook, $value = '' ) {
         }
     } while ( next( $yourls_filters[ $hook ] ) !== false );
 
-    // TODO: Missing final return - Why not just return all the time? It's up receiving code to use or not.
-    if ( $the_[ 'type' ] == 'filter' ) {
-        return $value;
-    }
+    // Return the value - this will be actually used only for filters, not for actions (see `yourls_do_action()`)
+    return $value;
 }
 
 /**
  * Performs an action triggered by a YOURLS event.
-*
+ *
  * @param string $hook the name of the YOURLS action
  * @param mixed $arg action arguments
  */
@@ -253,6 +318,7 @@ function yourls_remove_filter( $hook, $function_to_remove, $priority = 10 ) {
  * Removes a function from a specified action hook.
  *
  * @see yourls_remove_filter()
+ * @since 1.7.1
  * @param string   $hook               The action hook to which the function to be removed is hooked.
  * @param callable $function_to_remove The name of the function which should be removed.
  * @param int      $priority           optional. The priority of the function (default: 10).
@@ -301,6 +367,7 @@ function yourls_remove_all_filters( $hook, $priority = false ) {
 /**
  * Check if any filter has been registered for a hook.
  *
+ * @since 1.5
  * @param string         $hook              The name of the filter hook.
  * @param callable|false $function_to_check optional. If specified, return the priority of that function on this hook or false if not attached.
  * @return int|bool Optionally returns the priority on that hook for the specified function.
@@ -327,6 +394,9 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
 }
 
 /**
+ * Check if any action has been registered for a hook.
+ *
+ * @since 1.5
  * @param string         $hook
  * @param callable|false $function_to_check
  * @return bool|int
@@ -487,6 +557,7 @@ function yourls_load_plugins() {
 /**
  * Check if a file is safe for inclusion (well, "safe", no guarantee)
  *
+ * @since 1.5
  * @param string $file Full pathname to a file
  * @return bool
  */
@@ -500,6 +571,7 @@ function yourls_validate_plugin_file( $file ) {
 /**
  * Activate a plugin
  *
+ * @since 1.5
  * @param string $plugin Plugin filename (full or relative to plugins directory)
  * @return string|true  string if error or true if success
  */
@@ -541,6 +613,7 @@ function yourls_activate_plugin( $plugin ) {
 /**
  * Deactivate a plugin
  *
+ * @since 1.5
  * @param string $plugin Plugin filename (full relative to plugins directory)
  * @return string|true  string if error or true if success
  */
@@ -570,6 +643,8 @@ function yourls_deactivate_plugin( $plugin ) {
 
 /**
  * Return the path of a plugin file, relative to the plugins directory
+ *
+ * @since 1.5
  * @param string $file
  * @return string
  */
@@ -579,6 +654,8 @@ function yourls_plugin_basename( $file ) {
 
 /**
  * Return the URL of the directory a plugin
+ *
+ * @since 1.5
  * @param string $file
  * @return string
  */
@@ -593,7 +670,8 @@ function yourls_plugin_url( $file ) {
 /**
  * Build list of links to plugin admin pages, if any
  *
- * @return array[]  Array of arrays of URL and anchor of plugin admin pages, or void if no plugin page
+ * @since 1.5
+ * @return array  Array of arrays of URL and anchor of plugin admin pages, or empty array if no plugin page
  */
 function yourls_list_plugin_admin_pages() {
     $plugin_links = [];
@@ -608,6 +686,8 @@ function yourls_list_plugin_admin_pages() {
 
 /**
  * Register a plugin administration page
+ *
+ * @since 1.5
  * @param string   $slug
  * @param string   $title
  * @param callable $function
@@ -619,6 +699,7 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
 /**
  * Handle plugin administration page
  *
+ * @since 1.5
  * @param string $plugin_page
  */
 function yourls_plugin_admin_page( $plugin_page ) {
@@ -651,6 +732,7 @@ function yourls_plugin_admin_page( $plugin_page ) {
  * @link http://php.net/uasort
  * @codeCoverageIgnore
  *
+ * @since 1.5
  * @param array $plugin_a
  * @param array $plugin_b
  * @return int 0, 1 or -1, see uasort()
@@ -688,7 +770,6 @@ function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
  *   // after YOURLS is completely executed
  *
  * @since 1.5.1
- * @return void
  */
 function yourls_shutdown() {
     yourls_do_action( 'shutdown' );
