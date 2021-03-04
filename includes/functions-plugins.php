@@ -174,7 +174,7 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
 
     /**
      * There is no other possible case as of PHP 7.2-8.0 callables. Still, we're leaving the final
-     * `if` block (which could be remove to simply return $function[0].'::'.$function[1]) for readability
+     * `if` block (which could be remove to simply `return $function[0].'::'.$function[1]`) for readability
      * and understanding the logic.
      */
 }
@@ -197,12 +197,18 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
  * @global array $yourls_filters storage for all of the filters
  * @param string $hook the name of the YOURLS element or action
  * @param mixed $value the value of the element before filtering
+ * @param bool $is_action true if the function is called by yourls_do_action()
  * @return mixed
  */
-function yourls_apply_filter( $hook, $value = '' ) {
+function yourls_apply_filter( $hook, $value = '', $is_action = false ) {
     global $yourls_filters;
 
     $args = func_get_args();
+
+    // Do 'all' filters first. We check if $is_action to avoid calling `yourls_call_all_hooks()` twice
+    if ( !$is_action && isset($yourls_filters['all']) ) {
+        yourls_call_all_hooks('filter', $hook, $args);
+    }
 
     // If we have no hook attached to that filter, just return unmodified $value
     if ( !isset( $yourls_filters[ $hook ] ) ) {
@@ -243,7 +249,7 @@ function yourls_apply_filter( $hook, $value = '' ) {
  * @param mixed $arg action arguments
  */
 function yourls_do_action( $hook, $arg = '' ) {
-    global $yourls_actions;
+    global $yourls_actions, $yourls_filters;
 
     // Keep track of actions that are "done"
     if ( !isset( $yourls_actions ) ) {
@@ -268,7 +274,12 @@ function yourls_do_action( $hook, $arg = '' ) {
         $args[] = func_get_arg( $a );
     }
 
-    yourls_apply_filter( $hook, $args );
+    // Do 'all' actions first
+    if ( isset($yourls_filters['all']) ) {
+        yourls_call_all_hooks('action', $hook, $args);
+    }
+
+    yourls_apply_filter( $hook, $args, true );
 }
 
 /**
@@ -280,6 +291,41 @@ function yourls_do_action( $hook, $arg = '' ) {
 function yourls_did_action( $hook ) {
     global $yourls_actions;
     return empty( $yourls_actions[ $hook ] ) ? 0 : $yourls_actions[ $hook ];
+}
+
+/**
+ * Execute the 'all' hook, with all of the arguments or parameters that were used for the hook
+ *
+ * Internal function used by yourls_do_action() and yourls_apply_filter() - not meant to be used from
+ * outside these functions.
+ * This is mostly a debugging function to understand the flow of events.
+ * See https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS to learn how to use the 'all' hook
+ *
+ * @link   https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS
+ * @since  1.8.1
+ * @param  string $type Either 'action' or 'filter'
+ * @param  string $hook The hook name, eg 'plugins_loaded'
+ * @param  mixed  $args Variable-length argument lists that were passed to the action or filter
+ */
+function yourls_call_all_hooks($type, $hook, ...$args) {
+    global $yourls_filters;
+
+    // Loops through each filter or action hooked with the 'all' hook
+    reset( $yourls_filters['all'] );
+    do {
+        foreach ( (array) current($yourls_filters['all']) as $the_ )
+            // Call the hooked function only if it's hooked to the current type of hook (eg 'filter' or 'action')
+            if ( $the_['type'] == $type && !is_null($the_['function']) ) {
+                call_user_func_array( $the_['function'], $args );
+                /**
+                 * Note that we don't return a value here, regardless of $type being an action (obviously) but also
+                 * a filter. Indeed it would not make sense to actually "filter" and return values when we're
+                 * feeding the same function every single hook in YOURLS, no matter their parameters.
+                 */
+            }
+
+    } while ( next($yourls_filters['all']) !== false );
+
 }
 
 /**
