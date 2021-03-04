@@ -523,8 +523,9 @@ function yourls_get_plugin_data( $file ) {
     fclose( $fp );
 
     // Capture all the header within first comment block
-    if ( !preg_match( '!.*?/\*(.*?)\*/!ms', $data, $matches ) )
+    if ( !preg_match( '!.*?/\*(.*?)\*/!ms', $data, $matches ) ) {
         return [];
+    }
 
     // Capture each line with "Something: some text"
     unset( $data );
@@ -815,6 +816,7 @@ function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
  *   // functions my_plugin_action_this() and my_plugin_action_that() will be triggered
  *   // after YOURLS is completely executed
  *
+ * @codeCoverageIgnore
  * @since 1.5.1
  */
 function yourls_shutdown() {

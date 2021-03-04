@@ -64,4 +64,11 @@ class Plugin_Header_Tests extends PHPUnit\Framework\TestCase {
         $this->assertEquals( [] , yourls_get_plugin_data( YOURLS_PLUGINDIR . '/headers/header_missing.php' ) );
     }
 
+    /**
+	 * Missing header - no comment at all
+	 */
+	public function test_missing_header_no_comment() {
+        $this->assertEquals( [] , yourls_get_plugin_data( YOURLS_PLUGINDIR . '/headers/header_nocomment.php' ) );
+    }
+
 }

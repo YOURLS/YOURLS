@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Helpers and misc related plugin functions
+ * Plugins URLs and pages functions
  *
  * This test class should revert everything before each test: be cautious not to introduce
  * tests with a "depends" annotation
@@ -9,7 +9,7 @@
  * @group plugins
  * @since 0.1
  */
-class Plugin_Misc_Tests extends PHPUnit\Framework\TestCase {
+class Plugin_Pages_Tests extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         // remove filters and actions
