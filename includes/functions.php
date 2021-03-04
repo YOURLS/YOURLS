@@ -504,13 +504,13 @@ function yourls_is_private() {
 
         // API
         if ( yourls_is_API() ) {
-            if ( !defined( 'YOURLS_PRIVATE_API' ) || YOURLS_PRIVATE_API ) {
-                $private = true;
+            if ( defined( 'YOURLS_PRIVATE_API' ) ) {
+                $private = YOURLS_PRIVATE_API;
             }
         }
         elseif ( yourls_is_infos() ) {
-            if ( !defined( 'YOURLS_PRIVATE_INFOS' ) || YOURLS_PRIVATE_INFOS ) {
-                $private = true;
+            if ( defined( 'YOURLS_PRIVATE_INFOS' ) ) {
+                $private = YOURLS_PRIVATE_INFOS;
             }
             // Others
         }
