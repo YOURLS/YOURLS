@@ -316,7 +316,7 @@ function yourls_call_all_hooks($type, $hook, ...$args) {
         foreach ( (array) current($yourls_filters['all']) as $the_ )
             // Call the hooked function only if it's hooked to the current type of hook (eg 'filter' or 'action')
             if ( $the_['type'] == $type && !is_null($the_['function']) ) {
-                call_user_func_array( $the_['function'], $args );
+                call_user_func_array( $the_['function'], array($type, $hook, $args) );
                 /**
                  * Note that we don't return a value here, regardless of $type being an action (obviously) but also
                  * a filter. Indeed it would not make sense to actually "filter" and return values when we're
