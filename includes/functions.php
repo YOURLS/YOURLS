@@ -494,26 +494,21 @@ function yourls_get_current_version_from_sql() {
  *
  */
 function yourls_is_private() {
-    $private = false;
+    $private = defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE;
 
-    if ( defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ) {
-
-        $private = true;
+    if ( $private ) {
 
         // Allow overruling for particular pages:
 
         // API
-        if ( yourls_is_API() ) {
-            if ( !defined( 'YOURLS_PRIVATE_API' ) || YOURLS_PRIVATE_API ) {
-                $private = true;
-            }
+        if ( yourls_is_API() && defined( 'YOURLS_PRIVATE_API' ) ) {
+            $private = YOURLS_PRIVATE_API;
         }
-        elseif ( yourls_is_infos() ) {
-            if ( !defined( 'YOURLS_PRIVATE_INFOS' ) || YOURLS_PRIVATE_INFOS ) {
-                $private = true;
-            }
-            // Others
+        // Stat pages
+        elseif ( yourls_is_infos() && defined( 'YOURLS_PRIVATE_INFOS' ) ) {
+            $private = YOURLS_PRIVATE_INFOS;
         }
+        // Others future cases ?
     }
 
     return yourls_apply_filter( 'is_private', $private );
