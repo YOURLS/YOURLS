@@ -4,6 +4,13 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.8.1
+---
+- fixed: upgrade procedure with MySQL 8 & table names containing dashes (#2844, #2846) 
+- fixed: function to make public some pages on private installs (#2859)
+- added: `all` hook to debug YOURLS and plugins (#2860)
+- improved: plugin inline documentation
+
 1.8
 ---
 - fixed: support for PHP 8
