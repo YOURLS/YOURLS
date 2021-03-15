@@ -92,9 +92,9 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
 	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
+		$update = yourls_get_db()->fetchAffected( "UPDATE $table SET clicks = :clicks WHERE keyword = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
 	else
-		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", [ 'keyword' => $keyword ] );
+		$update = yourls_get_db()->fetchAffected( "UPDATE $table SET clicks = clicks + 1 WHERE keyword = :keyword", [ 'keyword' => $keyword ] );
 
 	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
 	return $update;
@@ -107,11 +107,11 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
 function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	switch( $filter ) {
 		case 'bottom':
-			$sort_by    = '`clicks`';
+			$sort_by    = 'clicks';
 			$sort_order = 'asc';
 			break;
 		case 'last':
-			$sort_by    = '`timestamp`';
+			$sort_by    = 'timestamp';
 			$sort_order = 'desc';
 			break;
 		case 'rand':
@@ -121,7 +121,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 			break;
 		case 'top':
 		default:
-			$sort_by    = '`clicks`';
+			$sort_by    = 'clicks';
 			$sort_order = 'desc';
 			break;
 	}
@@ -132,7 +132,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
+		$results = yourls_get_db()->fetchObjects( "SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
 		$return = [];
 		$i = 1;
@@ -169,7 +169,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
 	$table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
+	$totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM $table_url WHERE 1=1 " . $where['sql'] , $where['binds'] );
 	$return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
 
 	return yourls_apply_filter( 'get_db_stats', $return, $where );
@@ -440,7 +440,7 @@ function yourls_log_redirect( $keyword ) {
         'location' => yourls_geo_ip_to_countrycode($ip),
     ];
 
-    return yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+    return yourls_get_db()->fetchAffected("INSERT INTO $table (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
 }
 
 /**
@@ -569,7 +569,7 @@ function yourls_check_IP_flood( $ip = '' ) {
 	yourls_do_action( 'check_ip_flood', $ip );
 
 	$table = YOURLS_DB_TABLE_URL;
-	$lasttime = yourls_get_db()->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
+	$lasttime = yourls_get_db()->fetchValue( "SELECT timestamp FROM $table WHERE ip = :ip ORDER BY timestamp DESC LIMIT 1", [ 'ip' => $ip ] );
 	if( $lasttime ) {
 		$now = date( 'U' );
 		$then = date( 'U', strtotime( $lasttime ) );

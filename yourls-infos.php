@@ -56,7 +56,7 @@ if( yourls_do_log_redirect() ) {
 
 
 	// *** Referrers ***
-    $sql = "SELECT `referrer`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `referrer`;";
+    $sql = "SELECT referrer, COUNT(*) AS count FROM $table WHERE shorturl $keyword_range GROUP BY referrer;";
     $sql = yourls_apply_filter('stat_query_referrer', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
 
@@ -91,7 +91,7 @@ if( yourls_do_log_redirect() ) {
 
 
 	// *** Countries ***
-	$sql = "SELECT `country_code`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `country_code`;";
+	$sql = "SELECT country_code, COUNT(*) AS count FROM $table WHERE shorturl $keyword_range GROUP BY country_code;";
     $sql = yourls_apply_filter('stat_query_country', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
 
@@ -108,13 +108,13 @@ if( yourls_do_log_redirect() ) {
 
 	// *** Dates : array of $dates[$year][$month][$day] = number of clicks ***
 	$sql = "SELECT
-		DATE_FORMAT(`click_time`, '%Y') AS `year`,
-		DATE_FORMAT(`click_time`, '%m') AS `month`,
-		DATE_FORMAT(`click_time`, '%d') AS `day`,
-		COUNT(*) AS `count`
-	FROM `$table`
-	WHERE `shorturl` $keyword_range
-	GROUP BY `year`, `month`, `day`;";
+		DATE_FORMAT(click_time, '%Y') AS year,
+		DATE_FORMAT(click_time, '%m') AS month,
+		DATE_FORMAT(click_time, '%d') AS day,
+		COUNT(*) AS count
+	FROM $table
+	WHERE shorturl $keyword_range
+	GROUP BY year, month, day;";
     $sql = yourls_apply_filter('stat_query_dates', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
 
@@ -153,11 +153,11 @@ if( yourls_do_log_redirect() ) {
 
 	// *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
 	$sql = "SELECT
-		DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR), '%H %p') AS `time`,
-		COUNT(*) AS `count`
-	FROM `$table`
-	WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
-	GROUP BY `time`;";
+		DATE_FORMAT(DATE_ADD(click_time, INTERVAL " . $offset . " HOUR), '%H %p') AS time,
+		COUNT(*) AS count
+	FROM $table
+	WHERE shorturl $keyword_range AND DATE_ADD(click_time, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
+	GROUP BY time;";
     $sql = yourls_apply_filter('stat_query_last24h', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
 
