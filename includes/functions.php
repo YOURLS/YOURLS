@@ -132,7 +132,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 	if ( $limit > 0 ) {
 
 		$table_url = YOURLS_DB_TABLE_URL;
-		$results = yourls_get_db()->fetchObjects( "SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
+		$results = yourls_get_db()->fetchObjects( "SELECT * FROM $table_url WHERE 1=1 ORDER BY $sort_by $sort_order " . yourls_get_db()->page($start, $limit) . ";" );
 
 		$return = [];
 		$i = 1;

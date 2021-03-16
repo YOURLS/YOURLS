@@ -6,14 +6,14 @@
  * @since 1.0
  */
 
-class DB_Mysql extends \YOURLS\Database\YDB {
+class DB_Pgsql extends \YOURLS\Database\YDB {
     public function __construct($dsn, $user, $pass, $driver_options, $attributes) {
         parent::__construct($dsn, $user, $pass, $driver_options, $attributes);
     }
 
-	 public function page($offset, $perpage) {
-	     return "LIMIT $offset, $perpage";
-	 }
+    public function page($offset, $perpage) {
+        return "OFFSET $offset LIMIT $perpage";
+    }
 
     /**
      * FIXME:
@@ -22,8 +22,8 @@ class DB_Mysql extends \YOURLS\Database\YDB {
      * @return FIXME
      */
     function yourls_create_database() {
-       return $this->perform('CREATE DATABASE ' . YOURLS_DB_NAME);
-	 }
+       return $this->perform('CREATE DATABASE ' . YOURLS_DB_NAME . ' TEMPLATE template0');
+    }
 
     /**
      * FIXME:
@@ -32,11 +32,11 @@ class DB_Mysql extends \YOURLS\Database\YDB {
      * @return FIXME
      */
     function show_tables_like($table) {
-       return $this->fetchAffected(sprintf("SHOW TABLES LIKE '%s'", $table));
-	 }
+       return $this->fetchAffected("SELECT table_name FROM information_schema.tables WHERE table_name LIKE '$table_name' AND table_catalog = '" . YOURLS_DB_NAME . "' AND table_schema = 'public' AND table_type = 'BASE TABLE'");
+    }
 
     /**
-     * Create MySQL tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
+     * Create Pgsql tables. Return array( 'success' => array of success strings, 'errors' => array of error strings )
      *
      * @since 1.3
      * @return array  An array like array( 'success' => array of success strings, 'errors' => array of error strings )
@@ -48,55 +48,63 @@ class DB_Mysql extends \YOURLS\Database\YDB {
        // Create Table Query
        $create_tables = array();
        $create_tables[YOURLS_DB_TABLE_URL] =
-            'CREATE TABLE IF NOT EXISTS '.YOURLS_DB_TABLE_URL.' ('.
-             'keyword varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT "",'.
-             'url text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,'.
-             'title text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
-             'timestamp timestamp NOT NULL DEFAULT current_timestamp(),'.
-             'ip varchar(41) COLLATE utf8mb4_unicode_ci NOT NULL,'.
-             'clicks int(10) unsigned NOT NULL,'.
-             'PRIMARY KEY (keyword),'.
-             'KEY ip (ip),'.
-             'KEY timestamp (timestamp)'.
-            ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;';
+            'CREATE TABLE '.YOURLS_DB_TABLE_URL.' ('.
+             '   keyword varchar(200) NOT NULL PRIMARY KEY,'.
+             '   url text NOT NULL,'.
+             '   title text,'.
+             '   timestamp timestamp NOT NULL DEFAULT NOW(),'.
+             '   ip varchar(41) NOT NULL,'.
+             '   clicks int NOT NULL'.
+             ');';
+       $create_tables['ndx1_' . YOURLS_DB_TABLE_URL.'_timestamp'] = 'CREATE INDEX '.YOURLS_DB_TABLE_URL.'_timestamp ON '.YOURLS_DB_TABLE_URL.'(timestamp);';
+       $create_tables['ndx2_' . YOURLS_DB_TABLE_URL.'_ip'] = 'CREATE INDEX '.YOURLS_DB_TABLE_URL.'_ip ON '.YOURLS_DB_TABLE_URL.'(ip);';
 
        $create_tables[YOURLS_DB_TABLE_OPTIONS] =
-          'CREATE TABLE IF NOT EXISTS '.YOURLS_DB_TABLE_OPTIONS.' ('.
-          'option_id bigint(20) unsigned NOT NULL auto_increment,'.
-          'option_name varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL default "",'.
-          'option_value longtext COLLATE utf8mb4_unicode_ci NOT NULL,'.
-          'PRIMARY KEY  (option_id,option_name),'.
-          'KEY option_name (option_name)'.
-          ') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
+            'CREATE TABLE '.YOURLS_DB_TABLE_OPTIONS.' ('.
+             '   option_id bigserial NOT NULL,'.
+             '   option_name varchar(64) NOT NULL DEFAULT \'\','.
+             '   option_value text NOT NULL,'.
+             '   PRIMARY KEY(option_id, option_name),'.
+             '   UNIQUE(option_name)'.
+             ');';
+       //NOTE: I put 'option_name' as a unique index; that breaks from default simple index. Should be ok for base yourls code, would/should anyone overload an option name?
 
        $create_tables[YOURLS_DB_TABLE_LOG] =
-          'CREATE TABLE IF NOT EXISTS '.YOURLS_DB_TABLE_LOG.' ('.
-          'click_id int(11) NOT NULL auto_increment,'.
-          'click_time datetime NOT NULL,'.
-          'shorturl varchar(100) BINARY NOT NULL,'.
-          'referrer varchar(200) NOT NULL,'.
-          'user_agent varchar(255) NOT NULL,'.
-          'ip_address varchar(41) NOT NULL,'.
-          'country_code char(2) NOT NULL,'.
-          'PRIMARY KEY  (click_id),'.
-          'KEY shorturl (shorturl)'.
-          ') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
+            'CREATE TABLE '.YOURLS_DB_TABLE_LOG.' ('.
+             '   click_id serial NOT NULL PRIMARY KEY,'.
+             '   click_time timestamp WITHOUT TIME ZONE NOT NULL,'.
+             '   shorturl varchar(200) NOT NULL,'.
+             '   referrer varchar(200) NOT NULL,'.
+             '   user_agent varchar(255) NOT NULL,'.
+             '   ip_address varchar(41) NOT NULL,'.
+             '   country_code char(2) NOT NULL'.
+             ');';
+       $create_tables['ndx1_' . YOURLS_DB_TABLE_LOG.'_shorturl'] = 'CREATE INDEX '.YOURLS_DB_TABLE_LOG.'_shorturl ON '.YOURLS_DB_TABLE_LOG.'(shorturl);';
 
-
-       $create_table_count = 0;
+       $create_obj_count = 0;
 
        yourls_debug_mode(true);
 
        // Create tables
        foreach ( $create_tables as $table_name => $table_query ) {
           $this->perform( $table_query );
-          $create_success = $this->fetchAffected( "SHOW TABLES LIKE '$table_name'" );
-          if( $create_success ) {
-             $create_table_count++;
-             $success_msg[] = yourls_s( "Table '%s' created.", $table_name );
-          } else {
-             $error_msg[] = yourls_s( "Error creating table '%s'.", $table_name );
+
+          if (0 === strncmp($table_name, 'ndx', 3)) {
+             $obj_type = 'index';
+             $create_success = $this->fetchAffected( "SELECT indexrelname FROM pg_stat_all_indexes WHERE schemaname = 'public' and indexrelname = '" . substr($table_name, 5) . "'" );
           }
+          else {
+             $obj_type = 'table';
+             $create_success = $this->fetchAffected( "SELECT table_name FROM information_schema.tables WHERE table_name LIKE '$table_name' AND table_catalog = '" . YOURLS_DB_NAME . "' AND table_schema = 'public' AND table_type = 'BASE TABLE'" );
+          }
+
+          if( $create_success ) {
+             $create_obj_count++;
+             $success_msg[] = yourls_s( "$obj_type '%s' created.", $table_name );
+          } else {
+             $error_msg[] = yourls_s( "Error creating $obj_type '%s'.", $table_name );
+          }
+
        }
 
        // Initializes the option table
@@ -108,7 +116,7 @@ class DB_Mysql extends \YOURLS\Database\YDB {
           $error_msg[] = yourls__( 'Could not insert sample short URLs' );
 
        // Check results of operations
-       if ( sizeof( $create_tables ) == $create_table_count ) {
+       if ( sizeof( $create_tables ) == $create_obj_count ) {
           $success_msg[] = yourls__( 'YOURLS tables successfully created.' );
        } else {
           $error_msg[] = yourls__( 'Error creating YOURLS tables.' );
@@ -145,17 +153,18 @@ function yourls_db_connect() {
         $dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
     }
 
+    // FIXME: remove?  "utf8mb4" is mysql specific.
     $charset = yourls_apply_filter( 'db_connect_charset', 'utf8mb4' );
 
     /**
      * Data Source Name (dsn) used to connect the DB
      *
      * DSN with PDO is something like:
-     * 'mysql:host=123.4.5.6;dbname=test_db;port=3306'
+     * 'pgsql:host=123.4.5.6;dbname=test_db;port=3306'
      * 'sqlite:/opt/databases/mydb.sq3'
      * 'pgsql:host=192.168.13.37;port=5432;dbname=omgwtf'
      */
-    $dsn = sprintf( 'mysql:host=%s;dbname=%s;charset=%s', $dbhost, $dbname, $charset );
+    $dsn = sprintf( 'pgsql:host=%s;dbname=%s', $dbhost, $dbname );
     $dsn = yourls_apply_filter( 'db_connect_custom_dsn', $dsn );
 
     /**
@@ -169,7 +178,7 @@ function yourls_db_connect() {
     $driver_options = yourls_apply_filter( 'db_connect_driver_option', [] ); // driver options as key-value pairs
     $attributes = yourls_apply_filter( 'db_connect_attributes', [] ); // attributes as key-value pairs
 
-    $ydb = new DB_Mysql( $dsn, $user, $pass, $driver_options, $attributes );
+    $ydb = new DB_Pgsql( $dsn, $user, $pass, $driver_options, $attributes );
     $ydb->init();
 
     // Past this point, we're connected
