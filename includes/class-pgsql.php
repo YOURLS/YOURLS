@@ -15,6 +15,26 @@ class DB_Pgsql extends \YOURLS\Database\YDB {
         return "OFFSET $offset LIMIT $perpage";
     }
 
+    public function dt_year($fld) {
+        return "date_part('year', $fld)";
+    }
+
+    public function dt_month($fld) {
+        return "date_part('month', $fld)";
+    }
+
+    public function dt_day($fld) {
+        return "date_part('day', $fld)";
+    }
+
+    public function dt_add($fld, $offset) {
+        return "$fld + INTERVAL '$offset' HOUR";
+    }
+
+    public function dt_hour($fld) {
+        return "to_char($fld, 'HH24 AM')";
+    }
+
     /**
      * FIXME:
      *

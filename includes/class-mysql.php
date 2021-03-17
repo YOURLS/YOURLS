@@ -15,6 +15,26 @@ class DB_Mysql extends \YOURLS\Database\YDB {
 	     return "LIMIT $offset, $perpage";
 	 }
 
+    public function dt_year($fld) {
+        return "DATE_FORMAT($fld, '%Y')";
+    }
+
+    public function dt_month($fld) {
+        return "DATE_FORMAT($fld, '%m')";
+    }
+
+    public function dt_day($fld) {
+        return "DATE_FORMAT($fld, '%d')";
+    }
+
+    public function dt_add($fld, $offset) {
+        return "DATE_ADD($fld, INTERVAL $offset HOUR)";
+    }
+
+    public function dt_hour($fld) {
+        return "DATE_FORMAT($fld, '%H %p')";
+    }
+
     /**
      * FIXME:
      *
