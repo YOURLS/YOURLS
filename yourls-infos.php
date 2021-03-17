@@ -156,7 +156,7 @@ if( yourls_do_log_redirect() ) {
 		" . $ydb->dt_hour($ydb->dt_add('click_time', $offset)) . " AS time,
 		COUNT(*) AS count
 	FROM $table
-	WHERE shorturl $keyword_range AND DATE_ADD(click_time, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
+	WHERE shorturl $keyword_range AND " . $ydb->dt_add('click_time', $offset) . " > " . $ydb->dt_add('CURRENT_TIMESTAMP', $offset - 24 /* minus one more day*/) . "
 	GROUP BY " . $ydb->dt_hour($ydb->dt_add('click_time', $offset)) . ";";
    $sql = yourls_apply_filter('stat_query_last24h', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
