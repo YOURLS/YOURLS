@@ -25,7 +25,7 @@ Install YOURLS:
 
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
 * Keep track of development: "Star" and "Watch" this project, follow [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
-* We have a [forum](https://discourse.yourls.org/) to engage users and ask for help
+* We have [community discussions](https://github.com/YOURLS/YOURLS/discussions) to engage users and ask for help
 
 ## Contributing
 
