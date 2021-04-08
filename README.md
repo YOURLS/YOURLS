@@ -24,8 +24,9 @@ Install YOURLS:
 ## Community news, tips and tricks
 
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
+* Check what the user community makes: plugins, tools, guides and more on [Awesome YOURLS](https://github.com/YOURLS/awesome-yourls)
+* Engage users and ask for help in our [community discussions](https://github.com/YOURLS/YOURLS/discussions)
 * Keep track of development: "Star" and "Watch" this project, follow [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
-* We have [community discussions](https://github.com/YOURLS/YOURLS/discussions) to engage users and ask for help
 
 ## Contributing
 
