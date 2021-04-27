@@ -14,31 +14,35 @@ $where           = array('sql' => '', 'binds' => array());
  *  - $where['binds'] will hold the (name => value) placeholder pairs: $where['binds']['value'] = $value;
  */
 
-// Default SQL behavior
+// SQL behavior (sorting, searching...)
 $view_params = new YOURLS\Views\AdminParams();
+/**
+ * This class gets all the parameters from the query string. It contains a lot of filters : if you need to modify
+ * something with a plugin, head to this file instead.
+ */
 
+// Pagination
 $page    = $view_params->get_page();
-$search  = $view_params->get_search();
 $perpage = $view_params->get_per_page(15);
 
 // Searching
-$search_in       = $view_params->get_search_in();
-$search_in_text  = $view_params->get_param_long_name($search_in);
+$search         = $view_params->get_search();
+$search_in      = $view_params->get_search_in();
+$search_in_text = $view_params->get_param_long_name($search_in);
 if( $search && $search_in && $search_in_text ) {
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
         $where['sql'] .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE (:search)";
-        $where['binds']['search'] = $search;
         // Search across all fields. The resulting SQL will be something like:
         // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
         // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
         // TODO: pay attention to this bit when the DB schema changes
     } else {
         $where['sql'] .= " AND `$search_in` LIKE (:search)";
-        $where['binds']['search'] = $search;
     }
+    $where['binds']['search'] = $search;
 }
 
 // Time span
@@ -72,11 +76,10 @@ switch( $date_filter ) {
         break;
 }
 
-
 // Sorting
-$sort_by         = $view_params->get_sort_by();
-$sort_order      = $view_params->get_sort_order();
-$sort_by_text =  $view_params->get_param_long_name($sort_by);
+$sort_by      = $view_params->get_sort_by();
+$sort_order   = $view_params->get_sort_order();
+$sort_by_text = $view_params->get_param_long_name($sort_by);
 
 // Click filtering
 $click_limit = $view_params->get_click_limit();
@@ -289,7 +292,7 @@ yourls_table_tbody_start();
 
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
-$url_results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
+$url_results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
 $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;
