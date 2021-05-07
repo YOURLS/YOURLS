@@ -10,6 +10,24 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Get search text from query string variables search_protocol, search_slashes and search
+ *
+ * Some servers don't like query strings containing "(ht|f)tp(s)://". A javascript bit
+ * explodes the search text into protocol, slashes and the rest (see JS function
+ * split_search_text_before_search()) and this function glues pieces back together
+ * See issue https://github.com/YOURLS/YOURLS/issues/1576
+ *
+ * @since 1.7
+ * @deprecated 1.8.2
+ * @return string Search string
+ */
+function yourls_get_search_text() {
+    yourls_deprecated_function( __FUNCTION__, '1.8.2', 'YOURLS\Views\AdminParams::get_search' );
+    $view_params = new YOURLS\Views\AdminParams();
+    return $view_params->get_search();
+}
+
+/**
  * Retrieve the current time based on specified type. Stolen from WP.
  *
  * The 'mysql' type will return the time in the format for MySQL DATETIME field.

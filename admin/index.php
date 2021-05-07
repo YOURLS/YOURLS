@@ -4,148 +4,94 @@ require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
 // Variables
-$table_url = YOURLS_DB_TABLE_URL;
+$table_url       = YOURLS_DB_TABLE_URL;
 $search_sentence = $search_text = $url = $keyword = '';
-/* $where will collect additional SQL arguments:
- * $where['sql'] will concatenate SQL clauses: $where['sql'] .= ' AND something = :value ';
- * $where['binds'] will hold the (name => value) placeholder pairs: $where['binds']['value'] = $value;
+$base_page       = yourls_admin_url('index.php');
+$where           = array('sql' => '', 'binds' => array());
+/**
+ * $where will collect additional SQL arguments:
+ *  - $where['sql'] will concatenate SQL clauses: $where['sql'] .= ' AND something = :value ';
+ *  - $where['binds'] will hold the (name => value) placeholder pairs: $where['binds']['value'] = $value;
  */
-$where = array('sql' => '', 'binds' => array());
-$date_filter = $date_first  = $date_second = '';
-$base_page   = yourls_admin_url( 'index.php' );
 
-// Default SQL behavior
-$search_in_text  = yourls__( 'URL' );
-$search_in       = 'all';
-$sort_by_text    = yourls__( 'Short URL' );
-$sort_by         = 'timestamp';
-$sort_order      = 'desc';
-$page            = ( isset( $_GET['page'] ) ? intval($_GET['page']) : 1 );
-$search          = yourls_get_search_text();
-$perpage         = ( isset( $_GET['perpage'] ) && intval( $_GET['perpage'] ) ? intval($_GET['perpage']) : yourls_apply_filter( 'admin_view_per_page', 15 ) );
-$click_limit     = ( isset( $_GET['click_limit'] ) && $_GET['click_limit'] !== '' ) ? intval( $_GET['click_limit'] ) : '' ;
-if ( $click_limit !== '' ) {
-	$click_filter   = ( isset( $_GET['click_filter'] ) && $_GET['click_filter'] == 'more' ? 'more' : 'less' ) ;
-	$click_moreless = ( $click_filter == 'more' ? '>' : '<' );
-	$where['sql']   = " AND clicks $click_moreless :click_limit";
-    $where['binds']['click_limit'] = $click_limit;
-} else {
-	$click_filter   = '';
-}
+// SQL behavior (sorting, searching...)
+$view_params = new YOURLS\Views\AdminParams();
+/**
+ * This class gets all the parameters from the query string. It contains a lot of filters : if you need to modify
+ * something with a plugin, head to this file instead.
+ */
+
+// Pagination
+$page    = $view_params->get_page();
+$perpage = $view_params->get_per_page(15);
 
 // Searching
-if( !empty( $search ) && !empty( $_GET['search_in'] ) ) {
-	switch( $_GET['search_in'] ) {
-		case 'all':
-			$search_in_text = yourls__( 'All fields' );
-			$search_in      = 'all';
-			break;
-		case 'keyword':
-			$search_in_text = yourls__( 'Short URL' );
-			$search_in      = 'keyword';
-			break;
-		case 'url':
-			$search_in_text = yourls__( 'URL' );
-			$search_in      = 'url';
-			break;
-		case 'title':
-			$search_in_text = yourls__( 'Title' );
-			$search_in      = 'title';
-			break;
-		case 'ip':
-			$search_in_text = yourls__( 'IP Address' );
-			$search_in      = 'ip';
-			break;
-	}
+$search         = $view_params->get_search();
+$search_in      = $view_params->get_search_in();
+$search_in_text = $view_params->get_param_long_name($search_in);
+if( $search && $search_in && $search_in_text ) {
 	$search_sentence = yourls_s( 'Searching for <strong>%1$s</strong> in <strong>%2$s</strong>.', yourls_esc_html( $search ), yourls_esc_html( $search_in_text ) );
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
         $where['sql'] .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE (:search)";
-        $where['binds']['search'] = $search;
         // Search across all fields. The resulting SQL will be something like:
         // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
         // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
         // TODO: pay attention to this bit when the DB schema changes
     } else {
         $where['sql'] .= " AND `$search_in` LIKE (:search)";
-        $where['binds']['search'] = $search;
     }
+    $where['binds']['search'] = $search;
 }
 
 // Time span
-if( !empty( $_GET['date_filter'] ) ) {
-	switch( $_GET['date_filter'] ) {
-		case 'before':
-			$date_filter = 'before';
-			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
-				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
-				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$where['sql'] .= ' AND `timestamp` < :date_first_sql';
-                $where['binds']['date_first_sql'] = $date_first_sql;
-			}
-			break;
-		case 'after':
-			$date_filter = 'after';
-			if( isset( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_first'] ) ) {
-				$date_first_sql = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$date_first     = yourls_sanitize_date( $_GET['date_first'] );
-				$where['sql'] .= ' AND `timestamp` > :date_first_sql';
-                $where['binds']['date_first_sql'] = $date_first_sql;
-			}
-			break;
-		case 'between':
-			$date_filter = 'between';
-			if( isset( $_GET['date_first'] ) && isset( $_GET['date_second'] ) && yourls_sanitize_date( $_GET['date_first'] ) && yourls_sanitize_date( $_GET['date_second'] ) ) {
-				$date_first_sql  = yourls_sanitize_date_for_sql( $_GET['date_first'] );
-				$date_second_sql = yourls_sanitize_date_for_sql( $_GET['date_second'] );
-				$date_first      = yourls_sanitize_date( $_GET['date_first'] );
-				$date_second     = yourls_sanitize_date( $_GET['date_second'] );
-				$where['sql'] .= ' AND `timestamp` BETWEEN :date_first_sql AND :date_second_sql';
-                $where['binds']['date_first_sql']  = $date_first_sql;
-                $where['binds']['date_second_sql'] = $date_second_sql;
-			}
-			break;
-	}
+$date_params = $view_params->get_date_params();
+$date_filter = $date_params['date_filter'];
+$date_first  = $date_params['date_first'];
+$date_second = $date_params['date_second'];
+switch( $date_filter ) {
+    case 'before':
+        if( $date_first ) {
+            $date_first_sql = yourls_sanitize_date_for_sql( $date_first );
+            $where['sql'] .= ' AND `timestamp` < :date_first_sql';
+            $where['binds']['date_first_sql'] = $date_first_sql;
+        }
+        break;
+    case 'after':
+        if( $date_first ) {
+            $date_first_sql = yourls_sanitize_date_for_sql( $date_first );
+            $where['sql'] .= ' AND `timestamp` > :date_first_sql';
+            $where['binds']['date_first_sql'] = $date_first_sql;
+        }
+        break;
+    case 'between':
+        if( $date_first && $date_second ) {
+            $date_first_sql  = yourls_sanitize_date_for_sql( $date_first );
+            $date_second_sql = yourls_sanitize_date_for_sql( $date_second );
+            $where['sql'] .= ' AND `timestamp` BETWEEN :date_first_sql AND :date_second_sql';
+            $where['binds']['date_first_sql']  = $date_first_sql;
+            $where['binds']['date_second_sql'] = $date_second_sql;
+        }
+        break;
 }
 
 // Sorting
-if( !empty( $_GET['sort_by'] ) || !empty( $_GET['sort_order'] ) ) {
-	switch( $_GET['sort_by'] ) {
-		case 'keyword':
-			$sort_by_text = yourls__( 'Short URL' );
-			$sort_by      = 'keyword';
-			break;
-		case 'url':
-			$sort_by_text = yourls__( 'URL' );
-			$sort_by      = 'url';
-			break;
-		case 'title':
-			$sort_by_text = yourls__( 'Title' );
-			$sort_by      = 'title';
-			break;
-		case 'timestamp':
-			$sort_by_text = yourls__( 'Date' );
-			$sort_by      = 'timestamp';
-			break;
-		case 'ip':
-			$sort_by_text = yourls__( 'IP Address' );
-			$sort_by      = 'ip';
-			break;
-		case 'clicks':
-			$sort_by_text = yourls__( 'Clicks' );
-			$sort_by      = 'clicks';
-			break;
-	}
-	switch( $_GET['sort_order'] ) {
-		case 'asc':
-			$sort_order      = 'asc';
-			break;
-		case 'desc':
-			$sort_order      = 'desc';
-			break;
-	}
+$sort_by      = $view_params->get_sort_by();
+$sort_order   = $view_params->get_sort_order();
+$sort_by_text = $view_params->get_param_long_name($sort_by);
+
+// Click filtering
+$click_limit = $view_params->get_click_limit();
+if ( $click_limit !== '' ) {
+    $click_filter   = $view_params->get_click_filter();
+    $click_moreless = ($click_filter == 'more' ? '>' : '<');
+    $where['sql']   .= " AND clicks $click_moreless :click_limit";
+    $where['binds']['click_limit'] = $click_limit;
+} else {
+    $click_filter   = '';
 }
+
 
 // Get URLs Count for current filter, total links in DB & total clicks
 list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
@@ -346,7 +292,7 @@ yourls_table_tbody_start();
 
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
-$url_results = $ydb->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
+$url_results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
 $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;
