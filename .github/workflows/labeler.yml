@@ -19,5 +19,5 @@ jobs:
           ref: master # Set your default branch
 
       - name: Label Commenter
-        uses: peaceiris/actions-label-commenter@v1
+        uses: peaceiris/actions-label-commenter@v1.9.1
  
