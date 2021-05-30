@@ -214,6 +214,13 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 		unset( $options['proxy'] );
 	}
 
+    // filter everything
+    $type    = yourls_apply_filter('http_request_type', $type);
+    $url     = yourls_apply_filter('http_request_url', $url);
+    $headers = yourls_apply_filter('http_request_headers', $headers);
+    $data    = yourls_apply_filter('http_request_data', $data);
+    $options = yourls_apply_filter('http_request_options', $options);
+
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
 	} catch( Requests_Exception $e ) {
