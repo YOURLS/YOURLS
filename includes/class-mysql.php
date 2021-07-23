@@ -51,7 +51,7 @@ function yourls_db_connect() {
      * The driver options are passed to the PDO constructor, eg array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
      * The attribute options are then set in a foreach($attr as $k=>$v){$db->setAttribute($k, $v)} loop
      */
-    $driver_options = yourls_apply_filter( 'db_connect_driver_option', [] ); // driver options as key-value pairs
+    $driver_options = yourls_apply_filter( 'db_connect_driver_option', [PDO::MYSQL_ATTR_SSL_CA => false,PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,] ); // driver options as key-value pairs
     $attributes = yourls_apply_filter( 'db_connect_attributes', [] ); // attributes as key-value pairs
 
     $ydb = new \YOURLS\Database\YDB( $dsn, $user, $pass, $driver_options, $attributes );
