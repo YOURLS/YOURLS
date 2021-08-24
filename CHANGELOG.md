@@ -4,6 +4,14 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.8.2
+---
+- fixed: Fix SVG logo for IE 11 (#2864)
+- fixed (again) : DB upgrade procedure (#2933)
+- added: more filters in admin pages (#2912), HTTP requests (#2951)
+- added: documentation for API action "version" (#2957)  
+- improved: minor security improvements - iframes clickjacking and login nonce (#3034)
+
 1.8.1
 ---
 - fixed: upgrade procedure with MySQL 8 & table names containing dashes (#2844, #2846) 
