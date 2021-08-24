@@ -29,6 +29,7 @@ class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
 
     /**
      * Check logout procedure - phase 2
+     * @depends test_logout_user_is_logged_in
      */
     public function test_logout_user_logs_out() {
         $_GET['action'] = 'logout';
@@ -38,6 +39,7 @@ class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
 
     /**
      * Check logout procedure - phase 3
+     * @depends test_logout_user_logs_out
      */
     public function test_logout_user_is_logged_in_back() {
         $valid = yourls_is_valid_user();
