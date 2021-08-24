@@ -10,10 +10,12 @@ abstract class Login_Base extends PHPUnit\Framework\TestCase {
 
     protected function setUp(): void {
         $this->backup_request = $_REQUEST;
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
     }
 
     protected function tearDown(): void {
         $_REQUEST = $this->backup_request;
+        yourls_remove_all_actions('pre_yourls_die');
     }
 
 	/**
@@ -86,10 +88,15 @@ abstract class Login_Base extends PHPUnit\Framework\TestCase {
         $login        = yourls_did_action( 'login' );
         $login_failed = yourls_did_action( 'login_failed' );
 
-        $this->assertNotTrue( yourls_is_valid_user() );
+        // with "normal" logins, we simulate the login forms and the presence of a nonce
+        if (get_class($this) == 'Auth_Login_Normal_Tests') {
+            $this->expectException(Exception::class);
+            $this->expectExceptionMessage('I have died');
+            // intercept yourls_die() before it actually dies
+            yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
+        }
 
-		$this->assertEquals( $login, yourls_did_action( 'login' ) );
-		$this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
+        $this->assertNotTrue( yourls_is_valid_user() );
     }
 
 }
