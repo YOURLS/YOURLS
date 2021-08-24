@@ -7,6 +7,7 @@ yourls_maybe_require_auth();
 // This file will output a JSON string
 yourls_content_type_header( 'application/json' );
 yourls_no_cache_headers();
+yourls_no_frame_header();
 
 if( !isset( $_REQUEST['action'] ) )
 	die();

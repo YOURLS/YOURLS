@@ -122,6 +122,12 @@ function yourls_is_valid_user() {
  */
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
+
+	// If login form (not API), check for nonce
+    if(!yourls_is_API()) {
+        yourls_verify_nonce('admin_login');
+    }
+
 	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
 		yourls_set_user( $_REQUEST['username'] );
 		return true;

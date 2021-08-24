@@ -59,6 +59,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
         yourls_no_cache_headers();
+        yourls_no_frame_header();
 		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
@@ -725,6 +726,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				yourls_do_action( 'login_form_bottom' );
 			?>
 			<p style="text-align: right;">
+			    <?php yourls_nonce_field('admin_login'); ?>
 				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 			</p>
 			<?php

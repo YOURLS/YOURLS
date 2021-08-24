@@ -276,7 +276,30 @@ function yourls_no_cache_headers() {
 }
 
 /**
- * Send a filerable content type header
+ * Send header to prevent display within a frame from another site (avoid clickjacking)
+ *
+ * This header makes it impossible for an external site to display YOURLS admin within a frame,
+ * which allows for clickjacking.
+ * See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+ * This said, the whole function is shuntable : legit uses of iframes should be still possible.
+ *
+ * @since 1.8.1
+ * @return void|mixed
+ */
+function yourls_no_frame_header() {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_no_frame_header', false );
+    if ( false !== $pre ) {
+        return $pre;
+    }
+
+    if( !headers_sent() ) {
+        header( 'X-Frame-Options: SAMEORIGIN' );
+    }
+}
+
+/**
+ * Send a filterable content type header
  *
  * @since 1.7
  * @param string $type content type ('text/html', 'application/json', ...)
