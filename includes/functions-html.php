@@ -726,6 +726,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				yourls_do_action( 'login_form_bottom' );
 			?>
 			<p style="text-align: right;">
+			    <?php yourls_nonce_field('admin_login'); ?>
 				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 			</p>
 			<?php
