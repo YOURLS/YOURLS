@@ -334,7 +334,13 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
             $update_url = $ydb->fetchAffected($sql, $binds);
         if( $update_url ) {
-            $return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => yourls_link($newkeyword), 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
+            $return['url']     = array( 'keyword'       => $newkeyword,
+                                        'shorturl'      => yourls_link($newkeyword),
+                                        'url'           => yourls_esc_url($url),
+                                        'display_url'   => yourls_esc_html(yourls_trim_long_string($strip_url)),
+                                        'title'         => yourls_esc_attr($strip_title),
+                                        'display_title' => yourls_esc_html(yourls_trim_long_string( $strip_title ))
+                                );
             $return['status']  = 'success';
             $return['message'] = yourls__( 'Link updated in database' );
         } else {
