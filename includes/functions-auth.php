@@ -636,3 +636,12 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
 	}
 }
+
+/**
+ * Check if YOURLS_USER comes from environment variables
+ *
+ */
+function yourls_check_user_from_env() {
+	if( getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD' && count($yourls_user_passwords) == 1) return true;
+	return false;
+}

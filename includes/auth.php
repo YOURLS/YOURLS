@@ -42,21 +42,24 @@ if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
 
 	// Encrypt passwords that are clear text
 	if ( !defined( 'YOURLS_NO_HASH_PASSWORD' ) && yourls_has_cleartext_passwords() ) {
-		$hash = yourls_hash_passwords_now( YOURLS_CONFIGFILE );
-		if ( $hash === true ) {
-			// Hashing succesful. Remove flag from DB if any.
-			if( yourls_get_option( 'defer_hashing_error' ) )
-				yourls_delete_option( 'defer_hashing_error' );
-		} else {
-			// It failed, display message for first time or if last time was a week ago
-			if ( time() > yourls_get_option( 'defer_hashing_error' ) or !yourls_get_option( 'defer_hashing_error' ) ) {
-				$message  = yourls_s( 'Could not auto-encrypt passwords. Error was: "%s".', $hash );
-				$message .= ' ';
-				$message .= yourls_s( '<a href="%s">Get help</a>.', 'http://yourls.org/userpassword' );
-				$message .= '</p><p>';
-				$message .= yourls_s( '<a href="%s">Click here</a> to dismiss this message for one week.', '?dismiss=hasherror' );
+		// Check if user is provided from environment variables, if true do not bother to encrypt passwords
+		if ( !yourls_check_user_from_env() ) {
+			$hash = yourls_hash_passwords_now( YOURLS_CONFIGFILE );
+			if ( $hash === true ) {
+				// Hashing succesful. Remove flag from DB if any.
+				if( yourls_get_option( 'defer_hashing_error' ) )
+					yourls_delete_option( 'defer_hashing_error' );
+			} else {
+				// It failed, display message for first time or if last time was a week ago
+				if ( time() > yourls_get_option( 'defer_hashing_error' ) or !yourls_get_option( 'defer_hashing_error' ) ) {
+					$message  = yourls_s( 'Could not auto-encrypt passwords. Error was: "%s".', $hash );
+					$message .= ' ';
+					$message .= yourls_s( '<a href="%s">Get help</a>.', 'http://yourls.org/userpassword' );
+					$message .= '</p><p>';
+					$message .= yourls_s( '<a href="%s">Click here</a> to dismiss this message for one week.', '?dismiss=hasherror' );
 
-				yourls_add_notice( $message );
+					yourls_add_notice( $message );
+				}
 			}
 		}
 	}
