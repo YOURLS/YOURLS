@@ -6,7 +6,7 @@ $auth = yourls_is_valid_user();
 
 if( $auth !== true ) {
 
-	// API mode, 
+	// API mode,
 	if ( yourls_is_API() ) {
 		$format = ( isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml' );
 		$callback = ( isset($_REQUEST['callback']) ? $_REQUEST['callback'] : '' );
@@ -21,7 +21,7 @@ if( $auth !== true ) {
 	} else {
 		yourls_login_screen( $auth );
 	}
-	
+
 	die();
 }
 
@@ -33,7 +33,7 @@ yourls_do_action( 'auth_successful' );
  *
  * TODO: Remove this once real user management is implemented
  */
- 
+
 // Did we just fail at encrypting passwords ?
 if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
 	yourls_update_option( 'defer_hashing_error', time() + 86400 * 7 ); // now + 1 week
@@ -55,7 +55,7 @@ if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
 				$message .= yourls_s( '<a href="%s">Get help</a>.', 'http://yourls.org/userpassword' );
 				$message .= '</p><p>';
 				$message .= yourls_s( '<a href="%s">Click here</a> to dismiss this message for one week.', '?dismiss=hasherror' );
-				
+
 				yourls_add_notice( $message );
 			}
 		}
