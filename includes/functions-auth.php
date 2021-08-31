@@ -642,6 +642,6 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
  *
  */
 function yourls_check_user_from_env() {
-	if( getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD' && count($yourls_user_passwords) == 1) return true;
+	if ( getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD') && count($yourls_user_passwords) == 1 ) return true;
 	return false;
 }
