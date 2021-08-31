@@ -40,6 +40,9 @@ class ShortURL_Tests extends PHPUnit\Framework\TestCase {
 
         $fail = yourls_add_new_link( $url, $keyword, $title );
         $this->assertEquals( 'fail', $fail['status'] );
+
+        $fail = yourls_add_new_link( $url, rand_str(), rand_str() );
+        $this->assertEquals( 'fail', $fail['status'] );
         $this->assertEquals( 'error:url', $fail['code'] );
 
         $fail = yourls_add_new_link( 'http://' . rand_str(), $keyword, $title );

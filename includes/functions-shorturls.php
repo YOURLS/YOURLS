@@ -301,8 +301,6 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
     $keyword = yourls_sanitize_keyword($keyword);
     $title = yourls_sanitize_title($title);
     $newkeyword = yourls_sanitize_keyword($newkeyword, true);
-    $strip_url = stripslashes( $url );
-    $strip_title = stripslashes( $title );
 
     if(!$url OR !$newkeyword) {
         $return['status']  = 'fail';
@@ -334,12 +332,18 @@ function yourls_edit_link( $url, $keyword, $newkeyword='', $title='' ) {
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
             $update_url = $ydb->fetchAffected($sql, $binds);
         if( $update_url ) {
-            $return['url']     = array( 'keyword' => $newkeyword, 'shorturl' => yourls_link($newkeyword), 'url' => $strip_url, 'display_url' => yourls_trim_long_string( $strip_url ), 'title' => $strip_title, 'display_title' => yourls_trim_long_string( $strip_title ) );
+            $return['url']     = array( 'keyword'       => $newkeyword,
+                                        'shorturl'      => yourls_link($newkeyword),
+                                        'url'           => yourls_esc_url($url),
+                                        'display_url'   => yourls_esc_html(yourls_trim_long_string($url)),
+                                        'title'         => yourls_esc_attr($title),
+                                        'display_title' => yourls_esc_html(yourls_trim_long_string( $title ))
+                                );
             $return['status']  = 'success';
             $return['message'] = yourls__( 'Link updated in database' );
         } else {
             $return['status']  = 'fail';
-            $return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_trim_long_string( $strip_url ), $keyword ) ;
+            $return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_esc_html(yourls_trim_long_string($url)), $keyword ) ;
         }
 
     // Nope
