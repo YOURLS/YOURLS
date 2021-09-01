@@ -213,6 +213,8 @@ function yourls_hash_passwords_now( $config_file ) {
 		yourls_debug_log( 'Failed writing to ' . $config_file );
 		return 'could not write file';
 	}
+
+    yourls_debug_log('Successfully encrypted passwords in ' . basename($config_file));
 	return true;
 }
 
@@ -635,4 +637,39 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
 			die( $return );
 		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
 	}
+}
+
+/**
+ * Check if YOURLS_USER comes from environment variables
+ *
+ * @since 1.8.2
+ * @return bool     true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
+ */
+function yourls_is_user_from_env() {
+	return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD'));
+
+}
+
+/**
+ * Check if we should hash passwords in the config file
+ *
+ * By default, passwords are hashed. They are not if
+ *    - there is no password in clear text in the config file (ie everything is already hashed)
+ *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://github.com/YOURLS/YOURLS/wiki/Username-Passwords#but-i-dont-want-to-encrypt-my-password-
+ *    - YOURLS_USER and YOURLS_PASSWORD are provided by the environment, not the config file
+ *
+ * @since 1.8.2
+ * @return bool
+ */
+function yourls_maybe_hash_passwords() {
+    $hash = true;
+
+    if ( !yourls_has_cleartext_passwords()
+         OR (defined('YOURLS_NO_HASH_PASSWORD') && YOURLS_NO_HASH_PASSWORD)
+         OR (yourls_is_user_from_env())
+    ) {
+        $hash = false;
+    }
+
+    return yourls_apply_filter('maybe_hash_password', $hash );
 }

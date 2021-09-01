@@ -26,7 +26,6 @@ define('YOURLS_URL_CONVERT',  62);
 define('YOURLS_DB_PREFIX',  'yourls_');
 define('YOURLS_FLOOD_DELAY_SECONDS',  0);
 define('YOURLS_FLOOD_IP_WHITELIST',  '');
-define('YOURLS_NO_HASH_PASSWORD',  true); // prevents rewriting config.php with encrypted passwords
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);
 
