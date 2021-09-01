@@ -213,6 +213,8 @@ function yourls_hash_passwords_now( $config_file ) {
 		yourls_debug_log( 'Failed writing to ' . $config_file );
 		return 'could not write file';
 	}
+
+    yourls_debug_log('Successfully encrypted passwords in ' . basename($config_file));
 	return true;
 }
 
