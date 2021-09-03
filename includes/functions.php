@@ -775,6 +775,11 @@ function yourls_is_ssl() {
             $is_ssl = true;
         }
     }
+    elseif ( isset( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) {
+        if ( 'https' == strtolower( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) {
+            $is_ssl = true;
+        }
+    }
     elseif ( isset( $_SERVER[ 'SERVER_PORT' ] ) && ( '443' == $_SERVER[ 'SERVER_PORT' ] ) ) {
         $is_ssl = true;
     }
