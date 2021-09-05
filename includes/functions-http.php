@@ -390,17 +390,19 @@ function yourls_validate_core_version_response($json) {
  * @return bool true if a check was needed and successfully performed, false otherwise
  */
 function yourls_maybe_check_core_version() {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter('shunt_maybe_check_core_version', null);
+    if (null !== $pre) {
+        return $pre;
+    }
 
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_maybe_check_core_version', null );
-	if ( null !== $pre )
-		return $pre;
+    if (yourls_skip_version_check()) {
+        return false;
+    }
 
-	if( defined( 'YOURLS_NO_VERSION_CHECK' ) && YOURLS_NO_VERSION_CHECK )
-		return false;
-
-	if( !yourls_is_admin() )
-		return false;
+    if (!yourls_is_admin()) {
+        return false;
+    }
 
 	$checks = yourls_get_option( 'core_version_checks' );
 
@@ -429,6 +431,16 @@ function yourls_maybe_check_core_version() {
 		return false;
 
 	return true;
+}
+
+/**
+ * Check if user setting for skipping version check is set
+ *
+ * @since 1.8.2
+ * @return bool
+ */
+function yourls_skip_version_check() {
+    return yourls_apply_filter('skip_version_check', defined('YOURLS_NO_VERSION_CHECK') && YOURLS_NO_VERSION_CHECK);
 }
 
 /**

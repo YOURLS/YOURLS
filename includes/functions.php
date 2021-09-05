@@ -546,7 +546,8 @@ function yourls_allow_duplicate_longurls() {
     if ( yourls_is_API() && isset( $_REQUEST[ 'source' ] ) && $_REQUEST[ 'source' ] == 'plugin' ) {
             return false;
     }
-    return defined( 'YOURLS_UNIQUE_URLS' ) && !YOURLS_UNIQUE_URLS;
+
+    return yourls_apply_filter('allow_duplicate_longurls', defined('YOURLS_UNIQUE_URLS') && !YOURLS_UNIQUE_URLS);
 }
 
 /**

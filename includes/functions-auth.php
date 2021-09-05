@@ -665,11 +665,21 @@ function yourls_maybe_hash_passwords() {
     $hash = true;
 
     if ( !yourls_has_cleartext_passwords()
-         OR (defined('YOURLS_NO_HASH_PASSWORD') && YOURLS_NO_HASH_PASSWORD)
+         OR (yourls_skip_password_hashing())
          OR (yourls_is_user_from_env())
     ) {
         $hash = false;
     }
 
     return yourls_apply_filter('maybe_hash_password', $hash );
+}
+
+/**
+ * Check if user setting for skipping password hashing is set
+ *
+ * @since 1.8.2
+ * @return bool
+ */
+function yourls_skip_password_hashing() {
+    return yourls_apply_filter('skip_password_hashing', defined('YOURLS_NO_HASH_PASSWORD') && YOURLS_NO_HASH_PASSWORD);
 }

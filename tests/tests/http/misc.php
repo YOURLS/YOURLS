@@ -21,4 +21,8 @@ class Misc_HTTP_Tests extends PHPUnit\Framework\TestCase {
         $_SERVER['HTTP_USER_AGENT'] = $copy;
     }
 
+    public function test_yourls_skip_version_check_is_bool() {
+        $this->assertIsBool(yourls_skip_version_check());
+    }
+
 }
