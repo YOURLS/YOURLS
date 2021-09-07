@@ -6,11 +6,14 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 
 1.8.2
 ---
-- fixed: Fix SVG logo for IE 11 (#2864)
+- fixed: display SVG logo for IE 11 (#2864)
 - fixed (again) : DB upgrade procedure (#2933)
-- added: more filters in admin pages (#2912), HTTP requests (#2951)
-- added: documentation for API action "version" (#2957)  
-- improved: minor security improvements - iframes clickjacking and login nonce (#3034)
+- fixed: cosmetic issue with Docker falsely warning about unencrypted password (#3040)
+- improved: minor security improvements - iframes clickjacking and login nonce (#3034), potential XSS (#3041)
+- improved: SSL support for proxies (#3044)
+- improved: inline documentation and unit tests
+- added: more filters in admin pages (#2912), HTTP requests (#2951), to deal with user defined consts (#3048)
+- added: documentation for API action "version" (#2957)
 
 1.8.1
 ---
