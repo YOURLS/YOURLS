@@ -25,6 +25,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.10.1
         with:
+          token: ${{ secrets.PAT }}
           commit-message: Bump YOURLS to ${{ steps.get_version.outputs.VERSION }}
           title: Bump YOURLS to ${{ steps.get_version.outputs.VERSION }}
           delete-branch: true
