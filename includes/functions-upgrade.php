@@ -10,6 +10,19 @@
  */
 function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
 
+    /**
+     *  Sanitize input. Two notes :
+     *  - they should already be sanitized in the caller, eg admin/upgrade.php
+     *    (but hey, let's make sure)
+     *  - some vars may not be used at the moment
+     *    (and this is ok, they are here in case a future upgrade procedure needs them)
+     */
+    $step   = intval($step);
+    $oldsql = intval($oldsql);
+    $newsql = intval($newsql);
+    $oldver = yourls_sanitize_version($oldver);
+    $newver = yourls_sanitize_version($newver);
+
     yourls_maintenance_mode(true);
 
     // special case for 1.3: the upgrade is a multi step procedure
