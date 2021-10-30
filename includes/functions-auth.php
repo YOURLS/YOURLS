@@ -99,6 +99,7 @@ function yourls_is_valid_user() {
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
 				yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
+				return;
 			}
 		}
 
@@ -125,7 +126,7 @@ function yourls_check_username_password() {
 
 	// If login form (not API), check for nonce
     if(!yourls_is_API()) {
-        yourls_verify_nonce('admin_login');
+        yourls_verify_nonce('admin_login', false, '-1');
     }
 
 	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
