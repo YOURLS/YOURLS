@@ -44,7 +44,8 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Set published version
-        run: sed -i "s/appVersion:.*/appVersion: \"${{ steps.get_version.outputs.VERSION }}\"/" charts/yourls/Chart.yaml
+        run: |
+          sed -i "s/appVersion:.*/appVersion: \"${{ steps.get_version.outputs.VERSION }}\"/" charts/yourls/Chart.yaml
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.10.1
