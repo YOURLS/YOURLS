@@ -1,6 +1,0 @@
-
-# BEGIN YOURLS
-This is a test
-Hello World
-1,2... 1,2...
-# END YOURLS

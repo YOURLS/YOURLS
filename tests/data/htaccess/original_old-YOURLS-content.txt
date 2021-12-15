@@ -1,5 +1,0 @@
-
-# BEGIN YOURLS
-OutDatedRule
-ThisShouldBeRemoved
-# END YOURLS

@@ -1,5 +1,0 @@
-<?php
-/**
- * Plugin Name
- * Description
- */
