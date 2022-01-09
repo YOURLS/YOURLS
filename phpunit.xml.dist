@@ -32,7 +32,6 @@
 		<!-- Login -->
 		<request name="username" value="yourls"/>
 		<request name="password" value="secret-ci-test"/>
-		<server name="REQUEST_URI" value="/"/>
 		<!-- Install -->
 		<server name="SERVER_SOFTWARE" value="TRAVIS APACHE"/>
 		<!-- Stats data -->
