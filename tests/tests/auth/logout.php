@@ -8,21 +8,23 @@
 class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
 
     protected $backup_get;
+    protected $backup_request;
 
     protected function setUp(): void {
-        $this->backup_get = $_GET;
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
+        $this->backup_get     = $_GET;
+        $this->backup_request = $_REQUEST;
     }
 
     protected function tearDown(): void {
         $_GET = $this->backup_get;
-        yourls_remove_all_actions('pre_yourls_die');
+        $_REQUEST = $this->backup_request;
     }
 
     /**
      * Check logout procedure - phase 1
      */
     public function test_logout_user_is_logged_in() {
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
         $valid = yourls_is_valid_user();
         $this->assertTrue($valid);
     }
@@ -42,6 +44,7 @@ class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
      * @depends test_logout_user_logs_out
      */
     public function test_logout_user_is_logged_in_back() {
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
         $valid = yourls_is_valid_user();
         $this->assertTrue( $valid );
     }
