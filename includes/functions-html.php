@@ -475,7 +475,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer(false);
 	}
-	die();
+	die(1);
 }
 
 /**
