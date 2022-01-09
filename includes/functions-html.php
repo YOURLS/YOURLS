@@ -475,7 +475,9 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer(false);
 	}
-	die();
+
+	// die with a value in case we're running tests, so PHPUnit doesn't exit with 0 as if success
+	die(1);
 }
 
 /**
