@@ -50,8 +50,8 @@ class GeoIP_Tests extends PHPUnit\Framework\TestCase {
 	 */
 	public function ipv4_samples() {
 		return array(
-			array( '2.3.4.5', 'FR' ),
-			array( '13.37.13.37', 'US' ),
+			array( '8.8.8.8', 'US' ),
+			array( '13.37.13.37', 'FR' ),
 			array( '79.79.79.79', 'GB' ),
 			array( '10.0.0.1', 'none' ),
 			array( 'helloworld', 'none' ),
