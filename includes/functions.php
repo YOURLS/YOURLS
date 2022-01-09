@@ -211,12 +211,13 @@ function yourls_get_referrer() {
  * @since 1.4
  * @param string $location      URL to redirect to
  * @param int    $code          HTTP status code to send
- * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise
+ * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise (CLI)
  */
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
 	$location = yourls_apply_filter( 'redirect_location', $location, $code );
 	$code     = yourls_apply_filter( 'redirect_code', $code, $location );
+
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
@@ -224,11 +225,13 @@ function yourls_redirect( $location, $code = 301 ) {
         return 1;
 	}
 
+	// Headers sent : redirect with JS if not in CLI
 	if( php_sapi_name() !== 'cli') {
         yourls_redirect_javascript( $location );
         return 2;
 	}
 
+	// We're in CLI
 	return 3;
 }
 
