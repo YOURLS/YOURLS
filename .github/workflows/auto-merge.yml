@@ -11,24 +11,4 @@ permissions:
 jobs:
   dependabot:
     name: Dependabot
-    runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    steps:
-      - name: Dependabot metadata
-        id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v1.1.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Approve a PR
-        if: steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --rebase "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: YOURLS/.github/.github/workflows/auto-merge.yml@main
