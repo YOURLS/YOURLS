@@ -2,11 +2,9 @@
 
 ## Description ##
 
-This package provides an API for the GeoIP2
-[web services](https://dev.maxmind.com/geoip/geoip2/web-services) and
-[databases](https://dev.maxmind.com/geoip/geoip2/downloadable). The API also
-works with the free
-[GeoLite2 databases](https://dev.maxmind.com/geoip/geoip2/geolite2/).
+This package provides an API for the GeoIP2 and GeoLite2
+[web services](https://dev.maxmind.com/geoip/docs/web-services?lang=en) and
+[databases](https://dev.maxmind.com/geoip/docs/databases?lang=en).
 
 ## Install via Composer ##
 
@@ -26,7 +24,7 @@ You should now have the file `composer.phar` in your project directory.
 
 Run in your project root:
 
-```
+```sh
 php composer.phar require geoip2/geoip2:~2.0
 ```
 
@@ -265,13 +263,33 @@ print($record->network . "\n"); // '128.101.101.101/32'
 ### Usage ###
 
 To use this API, you must create a new `\GeoIp2\WebService\Client`
-object with your `$accountId` and `$licenseKey`, then you call the method
-corresponding to a specific end point, passing it the IP address you want to
-look up.
+object with your `$accountId` and `$licenseKey`:
 
-If the request succeeds, the method call will return a model class for the end
-point you called. This model in turn contains multiple record classes, each of
-which represents part of the data returned by the web service.
+```php
+$client = new Client(42, 'abcdef123456');
+```
+
+You may also call the constructor with additional arguments. The third argument
+specifies the language preferences when using the `->name` method on the model
+classes that this client creates. The fourth argument is additional options
+such as `host` and `timeout`.
+
+For instance, to call the GeoLite2 web service instead of GeoIP2 Precision:
+
+```php
+$client = new Client(42, 'abcdef123456', ['en'], ['host' => 'geolite.info']);
+```
+
+After creating the client, you may now call the method corresponding to a
+specific endpoint with the IP address to look up, e.g.:
+
+```php
+$record = $client->city('128.101.101.101');
+```
+
+If the request succeeds, the method call will return a model class for the
+endpoint you called. This model in turn contains multiple record classes, each
+of which represents part of the data returned by the web service.
 
 If there is an error, a structured exception is thrown.
 
@@ -286,7 +304,8 @@ use GeoIp2\WebService\Client;
 
 // This creates a Client object that can be reused across requests.
 // Replace "42" with your account ID and "license_key" with your license
-// key.
+// key. Set the "host" to "geolite.info" in the fourth argument options
+// array to use the GeoLite2 web service instead of GeoIP2 Precision.
 $client = new Client(42, 'abcdef123456');
 
 // Replace "city" with the method corresponding to the web service that
@@ -336,7 +355,7 @@ Because of these factors, it is possible for any end point to return a record
 where some or all of the attributes are unpopulated.
 
 See the
-[GeoIP2 Precision web service docs](https://dev.maxmind.com/geoip/geoip2/web-services)
+[GeoIP2 Precision web service docs](https://dev.maxmind.com/geoip/docs/web-services?lang=en)
 for details on what data each end point may return.
 
 The only piece of data which is always returned is the `ipAddress`
@@ -386,7 +405,7 @@ to the client API, please see
 
 ## Requirements  ##
 
-This library requires PHP 5.6 or greater.
+This library requires PHP 7.2 or greater.
 
 This library also relies on the [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php).
 
@@ -404,6 +423,6 @@ The GeoIP2 PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2013-2019 by MaxMind, Inc.
+This software is Copyright (c) 2013-2020 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

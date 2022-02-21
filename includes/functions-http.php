@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Functions that relate to HTTP requests
  *
@@ -13,6 +14,8 @@
  *
  * @since 1.7
  */
+
+use WpOrg\Requests\Requests;
 
 /**
  * Perform a GET request, return response object or error string message
@@ -197,7 +200,7 @@ function yourls_send_through_proxy( $url ) {
  * @param array $headers Extra headers to send with the request
  * @param array $data Data to send either as a query string for GET requests, or in the body for POST requests
  * @param array $options Options for the request (see /includes/Requests/Requests.php:request())
- * @return object Requests_Response object
+ * @return object WpOrg\Requests\Response object
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
 
@@ -205,8 +208,6 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 	$pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
 	if ( null !== $pre )
 		return $pre;
-
-	yourls_http_load_library();
 
 	$options = array_merge( yourls_http_default_options(), $options );
 
@@ -223,23 +224,11 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
 
 	try {
 		$result = Requests::request( $url, $headers, $data, $type, $options );
-	} catch( Requests_Exception $e ) {
+	} catch( \WpOrg\Requests\Exception $e ) {
 		$result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
 	};
 
 	return $result;
-}
-
-/**
- * Include Requests library if need be
- *
- * This is to avoid include()-ing all the Requests files on every YOURLS instance
- * disregarding whether needed or not.
- *
- * @since 1.7
- */
-function yourls_http_load_library() {
-    Requests::register_autoloader();
 }
 
 /**

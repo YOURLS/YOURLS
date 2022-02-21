@@ -129,16 +129,16 @@ class Format_General extends PHPUnit\Framework\TestCase {
     function test_valid_regexp() {
         $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
 
-        /* To validate a RegExp just run it against null.
+        /* To validate a RegExp just run it against an empty string.
            If it returns explicit false (=== false), it's broken. Otherwise it's valid.
-           From: http://stackoverflow.com/a/12941133/36850
+           From: https://stackoverflow.com/a/12941133/36850
            Cool to know :)
 
            We're testing it as used in yourls_sanitize_keyword()
            TODO: more random char strings to test?
         */
 
-        $this->assertFalse( preg_match( '![^' . $pattern . ']!', null ) === false );
+        $this->assertFalse( preg_match( '![^' . $pattern . ']!', '' ) === false );
     }
 
     /**

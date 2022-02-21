@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
-    'Requests' => array($vendorDir . '/rmccue/requests/library'),
     'Ozh\\Phpass\\' => array($vendorDir . '/ozh/phpass/src'),
     'Ozh\\Bookmarkletgen\\' => array($vendorDir . '/ozh/bookmarkletgen/src'),
 );

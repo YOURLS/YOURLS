@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\Record;
 
 /**
@@ -15,6 +17,11 @@ namespace GeoIp2\Record;
  */
 class RepresentedCountry extends Country
 {
+    /**
+     * @ignore
+     *
+     * @var array<string>
+     */
     protected $validAttributes = [
         'confidence',
         'geonameId',
