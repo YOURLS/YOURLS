@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\Record;
 
 use GeoIp2\Util;
@@ -56,6 +58,9 @@ use GeoIp2\Util;
  * @property-read bool $isPublicProxy This is true if the IP address belongs to
  * a public proxy. This property is only available from GeoIP2 Precision
  * Insights.
+ * @property-read bool $isResidentialProxy This is true if the IP address is
+ * on a suspected anonymizing network and belongs to a residential ISP. This
+ * property is only available from GeoIP2 Precision Insights.
  * @property-read bool $isSatelliteProvider *Deprecated.* Due to the
  * increased coverage by mobile carriers, very few satellite providers now
  * serve multiple countries. As a result, the output does not provide
@@ -71,7 +76,15 @@ use GeoIp2\Util;
  * @property-read string|null $organization The name of the organization associated
  * with the IP address. This attribute is only available from the City and
  * Insights web services and the GeoIP2 Enterprise database.
- * @property-read float|null $staticIPScore An indicator of how static or
+ * @property-read string|null $mobileCountryCode The [mobile country code
+ * (MCC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
+ * the IP address and ISP. This property is available from the City and
+ * Insights web services and the GeoIP2 Enterprise database.
+ * @property-read string|null $mobileNetworkCode The [mobile network code
+ * (MNC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
+ * the IP address and ISP. This property is available from the City and
+ * Insights web services and the GeoIP2 Enterprise database.
+ * @property-read float|null $staticIpScore An indicator of how static or
  * dynamic an IP address is. This property is only available from GeoIP2
  * Precision Insights.
  * @property-read int|null $userCount The estimated number of users sharing
@@ -106,6 +119,8 @@ class Traits extends AbstractRecord
 {
     /**
      * @ignore
+     *
+     * @var array<string>
      */
     protected $validAttributes = [
         'autonomousSystemNumber',
@@ -120,8 +135,11 @@ class Traits extends AbstractRecord
         'isLegitimateProxy',
         'isp',
         'isPublicProxy',
+        'isResidentialProxy',
         'isSatelliteProvider',
         'isTorExitNode',
+        'mobileCountryCode',
+        'mobileNetworkCode',
         'network',
         'organization',
         'staticIpScore',
@@ -129,9 +147,9 @@ class Traits extends AbstractRecord
         'userType',
     ];
 
-    public function __construct($record)
+    public function __construct(?array $record)
     {
-        if (!isset($record['network']) && isset($record['ip_address']) && isset($record['prefix_len'])) {
+        if (!isset($record['network']) && isset($record['ip_address'], $record['prefix_len'])) {
             $record['network'] = Util::cidr($record['ip_address'], $record['prefix_len']);
         }
 

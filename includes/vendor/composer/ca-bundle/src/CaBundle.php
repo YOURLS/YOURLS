@@ -108,7 +108,7 @@ class CaBundle
                 return self::$caPath = $caBundle;
             }
 
-            if ($caBundle && self::caDirUsable($caBundle)) {
+            if ($caBundle && self::caDirUsable($caBundle, $logger)) {
                 return self::$caPath = $caBundle;
             }
         }
@@ -335,19 +335,97 @@ EOT;
 
     /**
      * @param  string|false $certFile
+     * @param  LoggerInterface|null $logger
      * @return bool
      */
     private static function caFileUsable($certFile, LoggerInterface $logger = null)
     {
-        return $certFile && @is_file($certFile) && @is_readable($certFile) && static::validateCaFile($certFile, $logger);
+        return $certFile
+            && static::isFile($certFile, $logger)
+            && static::isReadable($certFile, $logger)
+            && static::validateCaFile($certFile, $logger);
     }
 
     /**
      * @param  string|false $certDir
+     * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function caDirUsable($certDir)
+    private static function caDirUsable($certDir, LoggerInterface $logger = null)
     {
-        return $certDir && @is_dir($certDir) && @is_readable($certDir) && glob($certDir . '/*');
+        return $certDir
+            && static::isDir($certDir, $logger)
+            && static::isReadable($certDir, $logger)
+            && static::glob($certDir . '/*', $logger);
+    }
+
+    /**
+     * @param  string $certFile
+     * @param  LoggerInterface|null $logger
+     * @return bool
+     */
+    private static function isFile($certFile, LoggerInterface $logger = null)
+    {
+        $isFile = @is_file($certFile);
+        if (!$isFile && $logger) {
+            $logger->debug(sprintf('Checked CA file %s does not exist or it is not a file.', $certFile));
+        }
+
+        return $isFile;
+    }
+
+    /**
+     * @param  string $certDir
+     * @param  LoggerInterface|null $logger
+     * @return bool
+     */
+    private static function isDir($certDir, LoggerInterface $logger = null)
+    {
+        $isDir = @is_dir($certDir);
+        if (!$isDir && $logger) {
+            $logger->debug(sprintf('Checked directory %s does not exist or it is not a directory.', $certDir));
+        }
+
+        return $isDir;
+    }
+
+    /**
+     * @param  string $certFileOrDir
+     * @param  LoggerInterface|null $logger
+     * @return bool
+     */
+    private static function isReadable($certFileOrDir, LoggerInterface $logger = null)
+    {
+        $isReadable = @is_readable($certFileOrDir);
+        if (!$isReadable && $logger) {
+            $logger->debug(sprintf('Checked file or directory %s is not readable.', $certFileOrDir));
+        }
+
+        return $isReadable;
+    }
+
+    /**
+     * @param  string $pattern
+     * @param  LoggerInterface|null $logger
+     * @return bool
+     */
+    private static function glob($pattern, LoggerInterface $logger = null)
+    {
+        $certs = glob($pattern);
+        if ($certs === false) {
+            if ($logger) {
+                $logger->debug(sprintf("An error occurred while trying to find certificates for pattern: %s", $pattern));
+            }
+            return false;
+        }
+
+        if (count($certs) === 0) {
+            if ($logger) {
+                $logger->debug(sprintf("No CA files found for pattern: %s", $pattern));
+            }
+            return false;
+        }
+
+        return true;
     }
 }

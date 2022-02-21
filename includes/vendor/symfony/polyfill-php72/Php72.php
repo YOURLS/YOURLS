@@ -182,7 +182,7 @@ final class Php72
             $s = \chr(0xF0 | $code >> 18).\chr(0x80 | $code >> 12 & 0x3F).\chr(0x80 | $code >> 6 & 0x3F).\chr(0x80 | $code & 0x3F);
         }
 
-        if ('UTF-8' !== $encoding) {
+        if ('UTF-8' !== $encoding = $encoding ?? mb_internal_encoding()) {
             $s = mb_convert_encoding($s, $encoding, 'UTF-8');
         }
 

@@ -10,6 +10,7 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
+        '941748b3c8cae4466c827dfb5ca9602a' => __DIR__ . '/..' . '/rmccue/requests/library/Deprecated.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
@@ -18,6 +19,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'Y' => 
         array (
             'YOURLS\\' => 7,
+        ),
+        'W' => 
+        array (
+            'WpOrg\\Requests\\' => 15,
         ),
         'S' => 
         array (
@@ -56,6 +61,10 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
         'YOURLS\\' => 
         array (
             0 => __DIR__ . '/../../..' . '/includes',
+        ),
+        'WpOrg\\Requests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rmccue/requests/src',
         ),
         'Symfony\\Polyfill\\Php72\\' => 
         array (
@@ -112,13 +121,6 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
     );
 
     public static $prefixesPsr0 = array (
-        'R' => 
-        array (
-            'Requests' => 
-            array (
-                0 => __DIR__ . '/..' . '/rmccue/requests/library',
-            ),
-        ),
         'O' => 
         array (
             'Ozh\\Phpass\\' => 
@@ -135,6 +137,7 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'Requests' => __DIR__ . '/..' . '/rmccue/requests/library/Requests.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

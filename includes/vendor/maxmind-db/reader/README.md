@@ -112,9 +112,16 @@ you are using an autoloader, no changes to your code should be necessary.
 
 First install [libmaxminddb](https://github.com/maxmind/libmaxminddb) as
 described in its [README.md
-file](https://github.com/maxmind/libmaxminddb/blob/master/README.md#installing-from-a-tarball).
-After successfully installing libmaxmindb, run the following commands from the
-top-level directory of this distribution:
+file](https://github.com/maxmind/libmaxminddb/blob/main/README.md#installing-from-a-tarball).
+After successfully installing libmaxmindb, you may install the extension
+from [pecl](https://pecl.php.net/package/maxminddb):
+
+```
+pecl install maxminddb
+```
+
+Alternatively, you may install it from the source. To do so, run the following
+commands from the top-level directory of this distribution:
 
 ```
 cd ext

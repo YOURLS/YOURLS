@@ -16,21 +16,24 @@
         "source": "https://github.com/YOURLS/YOURLS"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "ext-pdo": "*",
-        "ozh/bookmarkletgen": "1.2",
-        "ozh/phpass": "1.3.0",
-        "rmccue/requests" : "1.8.0",
-        "pomo/pomo" : "1.4.1",
-        "geoip2/geoip2" : "2.10.0",
-        "aura/sql": "~3.",
-        "jakeasmith/http_build_url": "1.0.1",
-        "symfony/polyfill-mbstring": "1.15.0",
+        "ozh/bookmarkletgen": "^1.2",
+        "ozh/phpass": "^1.3",
+        "rmccue/requests" : "^2.0",
+        "pomo/pomo" : "^1.4",
+        "geoip2/geoip2" : "^2.10",
+        "aura/sql": "^3.0",
+        "jakeasmith/http_build_url": "^1.0",
+        "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
         "spatie/array-to-xml": "^2.14"
     },
     "config": {
-        "vendor-dir": "includes/vendor"
+        "vendor-dir": "includes/vendor",
+        "platform": {
+            "php": "7.4.0"
+        }
     },
     "autoload": {
         "psr-4": {

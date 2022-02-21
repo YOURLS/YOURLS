@@ -2,9 +2,7 @@
 
 [![Latest Version](https://img.shields.io/github/release/spatie/array-to-xml.svg?style=flat-square)](https://github.com/spatie/array-to-xml/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/spatie/array-to-xml/master.svg?style=flat-square)](https://travis-ci.org/spatie/array-to-xml)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/array-to-xml.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/array-to-xml)
-[![StyleCI](https://styleci.io/repos/32388747/shield?branch=master)](https://styleci.io/repos/32388747)
+![Tests](https://github.com/spatie/array-to-xml/workflows/Tests/badge.svg)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/array-to-xml.svg?style=flat-square)](https://packagist.org/packages/spatie/array-to-xml)
 
 This package provides a very simple class to convert an array to an xml string.
@@ -329,6 +327,44 @@ A custom key contains three, colon-separated parts: "__custom:[custom-tag]:[uniq
   - The string to be rendered as the XML tag.
 - [unique-string]
   - A unique string that avoids overwriting of duplicate keys in PHP arrays.
+
+a colon character can be included within the custom-tag portion by escaping it with a backslash:
+
+```php
+$array = [
+    '__custom:ns\\:custom-key:1' => [
+        'name' => 'Vladimir',
+        'nickname' => 'greeflas',
+    ],
+    '__custom:ns\\:custom-key:2' => [
+        'name' => 'Marina',
+        'nickname' => 'estacet',
+        'tags' => [
+            '__custom:ns\\:tag:1' => 'first-tag',
+            '__custom:ns\\:tag:2' => 'second-tag',
+        ]
+    ],
+];
+```
+This will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <ns:custom-key>
+        <name>Vladimir</name>
+        <nickname>greeflas</nickname>
+    </ns:custom-key>
+    <ns:custom-key>
+        <name>Marina</name>
+        <nickname>estacet</nickname>
+        <tags>
+            <ns:tag>first-tag</ns:tag>
+            <tns:ag>second-tag</tns:ag>
+        </tags>
+    </ns:custom-key>
+</root>
+```
 
 ### Setting DOMDocument properties
 
