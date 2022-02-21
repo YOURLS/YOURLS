@@ -305,9 +305,9 @@ function yourls_initialize_options() {
  * @return bool
  */
 function yourls_insert_sample_links() {
-	$link1 = yourls_add_new_link( 'http://blog.yourls.org/', 'yourlsblog', 'YOURLS\' Blog' );
-	$link2 = yourls_add_new_link( 'http://yourls.org/',      'yourls',     'YOURLS: Your Own URL Shortener' );
-	$link3 = yourls_add_new_link( 'http://ozh.org/',         'ozh',        'ozh.org' );
+	$link1 = yourls_add_new_link( 'https://blog.yourls.org/', 'yourlsblog', 'YOURLS\' Blog' );
+	$link2 = yourls_add_new_link( 'https://yourls.org/',      'yourls',     'YOURLS: Your Own URL Shortener' );
+	$link3 = yourls_add_new_link( 'https://ozh.org/',         'ozh',        'ozh.org' );
 	return ( bool ) (
 		  $link1['status'] == 'success'
 		& $link2['status'] == 'success'
