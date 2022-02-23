@@ -5,10 +5,9 @@
 *.php diff=php
 
 # Do not generate diff for vendored files
-/includes/vendor/* -diff
+/includes/vendor/** -diff
 
 # Exclude certain files or directories when generating an archive
-assets/less/    export-ignore
 /.git*          export-ignore
 /*.md           export-ignore
 tests/          export-ignore
