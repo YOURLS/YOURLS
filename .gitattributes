@@ -4,6 +4,9 @@
 # Generate pretty patches for PHP
 *.php diff=php
 
+# Do not generate diff for vendored files
+/includes/vendor/* -diff
+
 # Exclude certain files or directories when generating an archive
 assets/less/    export-ignore
 /.git*          export-ignore
