@@ -84,13 +84,21 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
                 $return['message'] = yourls_s( 'Short URL %s already exists in database or is reserved', $keyword );
             } else {
                 // all clear, store !
-                yourls_insert_link_in_db( $url, $keyword, $title );
-                $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
-                $return['status']   = 'success';
-                $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
-                $return['title']    = $title;
-                $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-                $return['shorturl'] = yourls_link($keyword);
+                try {
+                    yourls_insert_link_in_db( $url, $keyword, $title );
+                    $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => date('Y-m-d H:i:s'), 'ip' => $ip );
+                    $return['status']   = 'success';
+                    $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
+                    $return['title']    = $title;
+                    $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
+                    $return['shorturl'] = yourls_link($keyword);
+                } catch (Exception $e) {
+                    // Keyword supposed to be free but the INSERT caused an exception: most likely we're facing a concurrency problem
+                    $return['status']  = 'fail';
+                    $return['code']    = 'error:concurrency';
+                    $return['message'] = $e->getMessage();
+                    $return['errorCode'] = '503';
+                }
             }
 
         // Create random keyword
@@ -105,19 +113,28 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
                 $keyword = yourls_int2string( $id );
                 $keyword = yourls_apply_filter( 'random_keyword', $keyword, $url, $title );
                 if ( yourls_keyword_is_free($keyword) ) {
-                    if (yourls_insert_link_in_db( $url, $keyword, $title )){
-                        // everything ok, populate needed vars
-                        $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
-                        $return['status']   = 'success';
-                        $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
-                        $return['title']    = $title;
-                        $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
-                        $return['shorturl'] = yourls_link($keyword);
-                    } else {
-                        // database error, couldnt store result
-                        $return['status']   = 'fail';
-                        $return['code']     = 'error:db';
-                        $return['message']  = yourls_s( 'Error saving url to database' );
+                    try {
+                        $insert = yourls_insert_link_in_db( $url, $keyword, $title );
+                        if ($insert){
+                            // everything ok, populate needed vars
+                            $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
+                            $return['status']   = 'success';
+                            $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
+                            $return['title']    = $title;
+                            $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
+                            $return['shorturl'] = yourls_link($keyword);
+                        } else {
+                            // unknown database error, couldn't store result
+                            $return['status']   = 'fail';
+                            $return['code']     = 'error:db';
+                            $return['message']  = yourls_s( 'Error saving url to database' );
+                        }
+                    } catch (Exception $e) {
+                        // Keyword supposed to be free but the INSERT caused an exception: most likely we're facing a concurrency problem
+                        $return['status']  = 'fail';
+                        $return['code']    = 'error:concurrency';
+                        $return['message'] = $e->getMessage();
+                        $return['errorCode'] = '503';
                     }
                     $ok = true;
                 }
@@ -141,7 +158,12 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
 
     yourls_do_action( 'post_add_new_link', $url, $keyword, $title, $return );
 
-    $return['statusCode'] = 200; // regardless of result, this is still a valid request
+    if (isset($return['errorCode'])) {
+        $return['statusCode'] = $return['errorCode']; // there was a problem
+    } else {
+        $return['statusCode'] = 200; // regardless of result, this is still a valid request
+    }
+
     return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
 }
 
