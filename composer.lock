@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92135ab5ee4b8b25e604da09216bd7b7",
+    "content-hash": "0c97edf54011e45987134a05ae1f2971",
     "packages": [
         {
             "name": "aura/sql",
@@ -393,57 +393,6 @@
                 "source": "https://github.com/ozh/bookmarkletgen/tree/master"
             },
             "time": "2017-05-18T12:46:21+00:00"
-        },
-        {
-            "name": "ozh/phpass",
-            "version": "1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ozh/phpass.git",
-                "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ozh/phpass/zipball/44149d1ee06ccbda397f08f69d32c59802e4ce43",
-                "reference": "44149d1ee06ccbda397f08f69d32c59802e4ce43",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Ozh\\Phpass\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Public Domain"
-            ],
-            "authors": [
-                {
-                    "name": "Solar Designer",
-                    "email": "solar@openwall.com",
-                    "homepage": "http://openwall.com/phpass/"
-                }
-            ],
-            "description": "Portable PHP password hashing framework",
-            "homepage": "http://github.com/ozh/phpass/",
-            "keywords": [
-                "blowfish",
-                "crypt",
-                "password",
-                "security"
-            ],
-            "support": {
-                "issues": "https://github.com/ozh/phpass/issues",
-                "source": "https://github.com/ozh/phpass/tree/1.3.0"
-            },
-            "time": "2020-03-29T10:39:31+00:00"
         },
         {
             "name": "pomo/pomo",
@@ -1043,5 +992,5 @@
     "platform-overrides": {
         "php": "7.4.0"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.0.0"
 }

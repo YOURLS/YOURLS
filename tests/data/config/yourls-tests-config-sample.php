@@ -39,8 +39,10 @@ $yourls_user_passwords = array(
 	'yourls'  => 'secret-ci-test',
 	'clear'   => 'somepassword',
 	'md5'     => 'md5:12373:e52e4488f79a740bd341f229e3c163c8',                          // password: '3cd6944201fa7bbc5e0fe852e36b1096' with md5 and salt
-	'phpass'  => 'phpass:!2a!08!T1ptMlBSxu7g3odpbUXgd.9wbKvg8k7cJt.HbwSqUNrlLPudWnf/6', // password: '3cd6944201fa7bbc5e0fe852e36b1096' with PHPass
-	'phpass2' => 'phpass:$2a$08$gt2bnpfUyuCX3hrp0RPOieFR1RwBnLsMzpq/NvPXwCdV3LqI3RGYi', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' but without YOURLS internal char substitution
+    'phpass'  => 'phpass:!2a!08!T1ptMlBSxu7g3odpbUXgd.9wbKvg8k7cJt.HbwSqUNrlLPudWnf/6', // password: '3cd6944201fa7bbc5e0fe852e36b1096' with old PHPass library
+    'phpass2' => 'phpass:$2a$08$gt2bnpfUyuCX3hrp0RPOieFR1RwBnLsMzpq/NvPXwCdV3LqI3RGYi', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' with old PHPass lib but without YOURLS internal char substitution
+    'phpass3' => 'phpass:!2y!10!.FjK.vQR0JVivkMwckiiIesFUFhtMxX/f9pes.i/ccp/W0IuUSxPW', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' hashed with password_hash
+    'phpass4' => 'phpass:$2y$10$KPP/sv7pv0JL2GwcixNBfuXRPElC4KxQUgetqBfCboB.q30yKwKG6', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' hashed with password_hash but without YOURLS internal char substitution
     '1994'    => '@$*',
     'special' => 'lol .\+*?[^]$(){}=!<>|:-/',
     'quote1'  => '"ahah"',
