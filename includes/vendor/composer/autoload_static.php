@@ -123,10 +123,6 @@ class ComposerStaticInit2d6d15a8f6cc4bfbfd4a2943a6c4df59
     public static $prefixesPsr0 = array (
         'O' => 
         array (
-            'Ozh\\Phpass\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/ozh/phpass/src',
-            ),
             'Ozh\\Bookmarkletgen\\' => 
             array (
                 0 => __DIR__ . '/..' . '/ozh/bookmarkletgen/src',

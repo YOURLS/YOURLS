@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
-    'Ozh\\Phpass\\' => array($vendorDir . '/ozh/phpass/src'),
     'Ozh\\Bookmarkletgen\\' => array($vendorDir . '/ozh/bookmarkletgen/src'),
 );
