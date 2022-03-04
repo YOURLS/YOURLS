@@ -31,6 +31,8 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
     if ( false !== $pre )
         return $pre;
 
+    $return = array();
+
     $url = yourls_sanitize_url( $url );
     if ( !$url || $url == 'http://' || $url == 'https://' ) {
         $return['status']    = 'fail';
@@ -56,8 +58,6 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
     }
 
     yourls_do_action( 'pre_add_new_link', $url, $keyword, $title );
-
-    $return = array();
 
     // duplicates allowed or new URL => store it
     if( yourls_allow_duplicate_longurls() || !( $url_exists = yourls_long_url_exists( $url ) ) ) {
