@@ -53,7 +53,7 @@ function yourls_get_next_decimal() {
  *
  * Note: this function relies upon yourls_update_option(), which will return either true or false
  * depending if there has been an actual MySQL query updating the DB.
- * In other words, this function may return false yet this would not mean it has functionnaly failed
+ * In other words, this function may return false yet this would not mean it has functionally failed
  * In other words I'm not sure we really need this function to return something :face_with_eyes_looking_up:
  * See issue 2621 for more on this.
  *
