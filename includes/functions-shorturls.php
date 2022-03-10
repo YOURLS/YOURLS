@@ -5,7 +5,6 @@
  */
 
 
-
 /**
  * Add a new link in the DB, either with custom keyword, or find one
  *
@@ -561,7 +560,6 @@ function yourls_get_keyword_stats( $shorturl ) {
     $shorturl  = yourls_sanitize_keyword( $shorturl );
 
     $res = yourls_get_db()->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
-    $return = array();
 
     if( !$res ) {
         // non existent link
