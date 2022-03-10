@@ -77,5 +77,6 @@ jobs:
 
     - name: Upload Scrutinizer coverage
       uses: sudo-bot/action-scrutinizer@latest
+      if: matrix.coverage
       with:
         cli-args: "--format=php-clover clover.xml"
