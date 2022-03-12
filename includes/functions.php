@@ -86,18 +86,30 @@ function yourls_xml_encode( $array ) {
 function yourls_update_clicks( $keyword, $clicks = false ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
-	if ( false !== $pre )
-		return $pre;
+	if ( false !== $pre ) {
+        return $pre;
+    }
 
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
-	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
-	else
-		$update = yourls_get_db()->fetchAffected( "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword", [ 'keyword' => $keyword ] );
+	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 ) {
+        $update = "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword";
+        $values = [ 'clicks' => $clicks, 'keyword' => $keyword ];
+    } else {
+        $update = "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword";
+        $values = [ 'keyword' => $keyword ];
+    }
 
-	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
-	return $update;
+	// Try and update click count. An error probably means a concurrency problem : just skip the update
+    try {
+        $result = yourls_get_db()->fetchAffected($update, $values);
+    } catch (Exception $e) {
+	    $result = 0;
+    }
+
+	yourls_do_action( 'update_clicks', $keyword, $result, $clicks );
+
+	return $result;
 }
 
 /**
@@ -249,7 +261,7 @@ function yourls_redirect( $location, $code = 301 ) {
 function yourls_redirect_shorturl($url, $keyword) {
     yourls_do_action( 'redirect_shorturl', $url, $keyword );
 
-    // Update click count in main table
+    // Attempt to update click count in main table
     yourls_update_clicks( $keyword );
 
     // Update detailed log for stats
