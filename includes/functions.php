@@ -461,11 +461,13 @@ function yourls_get_HTTP_status( $code ) {
 function yourls_log_redirect( $keyword ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
-	if ( false !== $pre )
-		return $pre;
+	if ( false !== $pre ) {
+        return $pre;
+    }
 
-	if ( !yourls_do_log_redirect() )
-		return true;
+	if (!yourls_do_log_redirect()) {
+        return true;
+    }
 
 	$table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
@@ -478,7 +480,14 @@ function yourls_log_redirect( $keyword ) {
         'location' => yourls_geo_ip_to_countrycode($ip),
     ];
 
-    return yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+    // Try and log. An error probably means a concurrency problem : just skip the logging
+    try {
+        $result = yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds )
+    } catch (Exception $e) {
+        $result = 0;
+    }
+
+    return $result;
 }
 
 /**
