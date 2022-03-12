@@ -36,4 +36,9 @@ class ShortURL_Misc_Tests extends PHPUnit\Framework\TestCase {
         $this->assertEquals( 0, yourls_get_keyword_clicks( $rand ) );
     }
 
+    public function test_get_shorturl_charset() {
+        $this->assertIsString(yourls_get_shorturl_charset());
+        $this->assertNotEmpty(yourls_get_shorturl_charset());
+    }
+
 }
