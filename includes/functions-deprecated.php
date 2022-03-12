@@ -10,6 +10,16 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Return a unique(ish) hash for a string to be used as a valid HTML id
+ *
+ * @deprecated 1.8.3
+ */
+function yourls_string2htmlid( $string ) {
+    yourls_deprecated_function( __FUNCTION__, '1.8.3', 'yourls_unique_element_id' );
+    return yourls_apply_filter( 'string2htmlid', 'y'.abs( crc32( $string ) ) );
+}
+
+/**
  * Get search text from query string variables search_protocol, search_slashes and search
  *
  * Some servers don't like query strings containing "(ht|f)tp(s)://". A javascript bit
