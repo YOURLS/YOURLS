@@ -75,8 +75,3 @@ jobs:
       env:
         DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
-    - name: Upload Scrutinizer coverage
-      uses: sudo-bot/action-scrutinizer@latest
-      if: matrix.coverage
-      with:
-        cli-args: "--format=php-clover clover.xml"
