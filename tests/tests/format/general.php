@@ -99,26 +99,15 @@ class Format_General extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Some random keywords
-     */
-    public function some_random_keywords() {
-        return array(
-            array( '1' ),
-            array( 'a' ),
-            array( 'hello-world' ),
-            array( '1337ozhOZH' ),
-            array( '@#!?*' ),
-        );
-    }
-
-    /**
-     * Checking that string2htmlid is an alphanumeric string
+     * Checking that yourls_unique_element_id is a unique string
      *
-     * @dataProvider some_random_keywords
-     * @since 0.1
      */
-    public function test_string2htmlid( $string ) {
-        $this->assertTrue( ctype_alnum( yourls_string2htmlid( $string ) ) );
+    public function test_string2htmlid() {
+        $id1 = yourls_unique_element_id();
+        $id2 = yourls_unique_element_id();
+        $this->assertIsString($id1);
+        $this->assertIsString($id2);
+        $this->assertNotSame($id1, $id2);
     }
 
     /**
