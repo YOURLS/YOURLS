@@ -38,6 +38,7 @@ PRESERVE_IN_LIB=(
     'Psr'
     'README.md'
     'readme.md'
+    'certificates'
 )
 
 # Nothing to edit past this line !
