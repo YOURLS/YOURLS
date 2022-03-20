@@ -99,7 +99,7 @@ function yourls_is_valid_user() {
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
 			    // The return makes sure we exit this function before waiting for redirection.
-                // This fixes #3189 and honestly I'm not sure why.
+                // See #3189 and note in yourls_redirect()
 				return yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
 			}
 		}
