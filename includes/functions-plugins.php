@@ -636,17 +636,13 @@ function yourls_activate_plugin( $plugin ) {
         return yourls__( 'Plugin already activated' );
     }
 
-    // attempt activation. TODO: uber cool fail proof sandbox like in WP.
-    ob_start();
-    include_once( $plugindir.'/'.$plugin );
-    if ( ob_get_length() > 0 ) {
-        // there was some output: error
-        // @codeCoverageIgnoreStart
-        $output = ob_get_clean();
+    // attempt activation.
+    try {
+        include_once( $plugindir.'/'.$plugin );
+    } catch ( \Throwable $e ) {
+        $output = $e->getMessage();
         return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
-        // @codeCoverageIgnoreEnd
     }
-    ob_end_clean();
 
     // so far, so good: update active plugin list
     $ydb->add_plugin( $plugin );
