@@ -574,8 +574,8 @@ function yourls_load_plugins() {
 
     $plugins = [];
     foreach ( $active_plugins as $key => $plugin ) {
-        if ( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
-            include_once( YOURLS_PLUGINDIR.'/'.$plugin );
+        $file = YOURLS_PLUGINDIR . '/' . $plugin;
+        if ( yourls_is_a_plugin_file($file) && yourls_activate_plugin_sandbox( $file ) === true ) {
             $plugins[] = $plugin;
             unset( $active_plugins[ $key ] );
         }
@@ -585,7 +585,7 @@ function yourls_load_plugins() {
     yourls_get_db()->set_plugins( $plugins );
     $info = count( $plugins ).' activated';
 
-    // $active_plugins should be empty now, if not, a plugin could not be find: remove it
+    // $active_plugins should be empty now, if not, a plugin could not be found, or is erroneous : remove it
     $missing_count = count( $active_plugins );
     if ( $missing_count > 0 ) {
         yourls_update_option( 'active_plugins', $plugins );
@@ -602,13 +602,15 @@ function yourls_load_plugins() {
 }
 
 /**
- * Check if a file is safe for inclusion (well, "safe", no guarantee)
+ * Check if a file is a plugin file
+ *
+ * This doesn't check if the file is a valid PHP file, only that it's correctly named.
  *
  * @since 1.5
  * @param string $file Full pathname to a file
  * @return bool
  */
-function yourls_validate_plugin_file( $file ) {
+function yourls_is_a_plugin_file($file) {
     return false === strpos( $file, '..' )
            && false === strpos( $file, './' )
            && 'plugin.php' === substr( $file, -10 )
@@ -626,7 +628,7 @@ function yourls_activate_plugin( $plugin ) {
     // validate file
     $plugin = yourls_plugin_basename( $plugin );
     $plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
-    if ( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) ) {
+    if ( !yourls_is_a_plugin_file($plugindir . '/' . $plugin ) ) {
         return yourls__( 'Not a valid plugin file' );
     }
 
@@ -637,11 +639,9 @@ function yourls_activate_plugin( $plugin ) {
     }
 
     // attempt activation.
-    try {
-        include_once( $plugindir.'/'.$plugin );
-    } catch ( \Throwable $e ) {
-        $output = $e->getMessage();
-        return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
+    $attempt = yourls_activate_plugin_sandbox( $plugindir.'/'.$plugin );
+    if( $attempt !== true ) {
+        return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
     }
 
     // so far, so good: update active plugin list
@@ -651,6 +651,22 @@ function yourls_activate_plugin( $plugin ) {
     yourls_do_action( 'activated_'.$plugin );
 
     return true;
+}
+
+/**
+ * Plugin activation sandbox
+ *
+ * @since 1.8.3
+ * @param string $pluginfile Plugin filename (full path)
+ * @return string|true  string if error or true if success
+ */
+function yourls_activate_plugin_sandbox( $pluginfile ) {
+    try {
+        include_once $pluginfile;
+        return true;
+    } catch ( \Throwable $e ) {
+        return $e->getMessage();
+    }
 }
 
 /**
