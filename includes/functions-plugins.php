@@ -684,6 +684,16 @@ function yourls_deactivate_plugin( $plugin ) {
         return yourls__( 'Plugin not active' );
     }
 
+    // Check if we have an uninstall file - load if so
+    $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
+    if ( file_exists($uninst_file) ) {
+        define('YOURLS_UNINSTALL_PLUGIN', true);
+        $attempt = yourls_activate_plugin_sandbox( $uninst_file );
+        if( $attempt !== true ) {
+            return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
+        }
+    }
+
     // Deactivate the plugin
     $ydb = yourls_get_db();
     $plugins = $ydb->get_plugins();

@@ -76,9 +76,27 @@ class Plugin_Files_Tests extends PHPUnit\Framework\TestCase {
 	 */
 	public function test_plugin_activate() {
         $plugin = $this->pick_a_plugin();
+
+        // Make sure the plugin.php is NOT present in get_included_files()
+        // We sanitize the array to deal with different platforms (D:\hello\Windows vs /home/user/hello/Linux)
+        $this->assertFalse(in_array(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.$plugin),
+            array_map('yourls_sanitize_filename', get_included_files())));
+
+        // Activate the plugin
 		$this->assertTrue( yourls_activate_plugin( $plugin ) );
 		$this->assertGreaterThan( 0, yourls_has_active_plugins() );
 		$this->assertTrue( yourls_is_active_plugin( $plugin ) );
+
+		// Make sure the plugin.php is now present in get_included_files()
+        $included_files = array_map('yourls_sanitize_filename', get_included_files()) ;
+        $this->assertTrue(in_array(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.$plugin), $included_files));
+
+		// Make sure the plugin's uninstall.php is NOT present in get_included_files()
+        $this->assertFalse(in_array(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.dirname($plugin).'/uninstall.php'),$included_files));
+
+        // We should NOT have YOURLS_UNINSTALL_PLUGIN defined
+        $this->assertFalse(defined('YOURLS_UNINSTALL_PLUGIN'));
+
 		return $plugin;
 	}
 
@@ -89,6 +107,7 @@ class Plugin_Files_Tests extends PHPUnit\Framework\TestCase {
 	 */
 	public function test_plugin_activate_twice( $plugin ) {
 		$this->assertNotSame( true, yourls_activate_plugin( $plugin ) );
+		// Note: we assertNotSame() with true because the function either returns true or a string
     	return $plugin;
 	}
 
@@ -132,7 +151,22 @@ class Plugin_Files_Tests extends PHPUnit\Framework\TestCase {
 		$this->assertTrue( yourls_deactivate_plugin($plugin) );
 		$this->assertSame( 0, yourls_has_active_plugins() );
 		$this->assertFalse( yourls_is_active_plugin($plugin) );
+		return $plugin;
 	}
+
+    /**
+     * Check that deactivating a plugin correctly ran the uninstall script
+     *
+     * @depends test_plugin_deactivate
+     */
+    public function test_plugin_uninstall( $plugin ) {
+        // Make sure uninstall.php is NOW present in get_included_files()
+        $this->assertTrue( in_array( yourls_sanitize_filename(YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php'),
+        array_map('yourls_sanitize_filename', get_included_files())) );
+
+        // we should now have YOURLS_UNINSTALL_PLUGIN set to true
+        $this->assertTrue( defined('YOURLS_UNINSTALL_PLUGIN') && YOURLS_UNINSTALL_PLUGIN );
+    }
 
 	/**
 	 * Check that an missing plugin does not activate
