@@ -83,7 +83,7 @@ define( 'YOURLS_DEBUG', false );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = [
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
+	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick', 'asshole', 'bitch', 'bastard', 'damn', 'bollocks', 'bugger', 'bloody', 'hell', 'choad', 'crikey', 'rubbish', 'shag', 'wanker', 'piss', 'twat', 'root', 'suck',
 ];
 
 /*
