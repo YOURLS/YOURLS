@@ -87,6 +87,7 @@ class Init {
             if (!yourls_is_installed() && !yourls_is_installing()) {
                 yourls_no_cache_headers();
                 yourls_redirect( yourls_admin_url('install.php'), 307 );
+                exit();
             }
         }
 
@@ -95,6 +96,7 @@ class Init {
             if (!yourls_is_upgrading() && !yourls_is_installing() && yourls_upgrade_is_needed()) {
                 yourls_no_cache_headers();
                 yourls_redirect( yourls_admin_url('upgrade.php'), 307 );
+                exit();
             }
         }
 

@@ -11,4 +11,6 @@ class Misc_Auth_Tests extends PHPUnit\Framework\TestCase {
         $this->assertIsBool(yourls_skip_password_hashing());
     }
 
+
+
 }

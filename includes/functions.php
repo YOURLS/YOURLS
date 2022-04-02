@@ -220,6 +220,9 @@ function yourls_get_referrer() {
  * is achieved with PHP's header(). If headers have been sent already and we're not in a command line
  * client, redirection occurs with Javascript.
  *
+ * Note: yourls_redirect() does not exit automatically, and should almost always be followed by a call to exit()
+ * to prevent the script from continuing.
+ *
  * @since 1.4
  * @param string $location      URL to redirect to
  * @param int    $code          HTTP status code to send

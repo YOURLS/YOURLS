@@ -47,7 +47,6 @@ class Auth_Nonce_Tests extends PHPUnit\Framework\TestCase {
 	public function test_create_nonce_url() {
         $url = yourls_nonce_url( rand_str(), rand_str(), rand_str(), rand_str() );
         $this->assertTrue( is_string($url) );
-        // $this->assertIsString($url);
     }
 
 	/**
@@ -75,6 +74,25 @@ class Auth_Nonce_Tests extends PHPUnit\Framework\TestCase {
 
         // This should trigger yourls_die()
         $this->assertTrue(yourls_verify_nonce(rand_str(), rand_str(), rand_str()));
+    }
+
+    /**
+     * Check nonces are different for different actions & users
+     */
+    public function test_nonce_different_for_different_actions_and_users() {
+        $action1 = rand_str();
+        $action2 = rand_str();
+        $user1 = rand_str();
+        $user2 = rand_str();
+
+        $nonce_a1 = yourls_create_nonce($action1);
+        $nonce_a2 = yourls_create_nonce($action2);
+        $nonce_a1_u1 = yourls_create_nonce($action1, $user1);
+        $nonce_a1_u2 = yourls_create_nonce($action1, $user2);
+
+        $this->assertNotEquals($nonce_a1, $nonce_a2);
+        $this->assertNotEquals($nonce_a1_u1, $nonce_a1_u2);
+        $this->assertNotEquals($nonce_a1, $nonce_a1_u1);
     }
 
 }
