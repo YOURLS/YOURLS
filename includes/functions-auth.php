@@ -20,6 +20,7 @@ function yourls_maybe_require_auth() {
 /**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
+ * @return bool|string|mixed true if valid user, error message otherwise. Can also call yourls_die() or redirect to login page. Oh my.
  */
 function yourls_is_valid_user() {
 	// Allow plugins to short-circuit the whole function
@@ -445,6 +446,8 @@ function yourls_store_cookie( $user = null ) {
 	// Some browsers refuse to store localhost cookie
 	if ( $domain == 'localhost' )
 		$domain = '';
+
+	yourls_do_action( 'pre_setcookie', $user, $time, $path, $domain, $secure, $httponly );
 
     if ( !headers_sent( $filename, $linenum ) ) {
         yourls_setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, $path, $domain, $secure, $httponly );
