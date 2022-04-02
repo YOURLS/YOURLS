@@ -33,7 +33,7 @@ function yourls_is_valid_user() {
 	$unfiltered_valid = false;
 
 	// Logout request
-	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
+	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' && isset( $_GET['nonce'] ) ) {
         // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
         yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
