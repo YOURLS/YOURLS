@@ -40,11 +40,6 @@ switch( $action ) {
 		echo json_encode(array('success'=>$query));
 		break;
 
-	case 'logout':
-		// unused for the moment
-		yourls_logout();
-		break;
-
 	default:
 		yourls_do_action( 'yourls_ajax_'.$action );
 

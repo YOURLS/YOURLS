@@ -20,6 +20,7 @@ function yourls_maybe_require_auth() {
 /**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
+ * @return bool|string|mixed true if valid user, error message otherwise. Can also call yourls_die() or redirect to login page. Oh my.
  */
 function yourls_is_valid_user() {
 	// Allow plugins to short-circuit the whole function
@@ -32,7 +33,9 @@ function yourls_is_valid_user() {
 	$unfiltered_valid = false;
 
 	// Logout request
-	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
+	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' && isset( $_REQUEST['nonce'] ) ) {
+        // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
+        yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
 		return yourls__( 'Logged out successfully' );
@@ -444,6 +447,8 @@ function yourls_store_cookie( $user = null ) {
 	if ( $domain == 'localhost' )
 		$domain = '';
 
+	yourls_do_action( 'pre_setcookie', $user, $time, $path, $domain, $secure, $httponly );
+
     if ( !headers_sent( $filename, $linenum ) ) {
         yourls_setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, $path, $domain, $secure, $httponly );
 	} else {
@@ -576,7 +581,7 @@ function yourls_salt( $string ) {
  *
  */
 function yourls_create_nonce( $action, $user = false ) {
-	if( false == $user )
+	if( false === $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
 	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
@@ -612,24 +617,25 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
  *
  */
 function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
-	// get user
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	// Get user
+	if( false === $user ) {
+        $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+    }
 
-	// get current nonce value
-	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
-		$nonce = $_REQUEST['nonce'];
+	// Get nonce value from $_REQUEST if not specified
+	if( false === $nonce && isset( $_REQUEST['nonce'] ) ) {
+        $nonce = $_REQUEST['nonce'];
+    }
 
 	// Allow plugins to short-circuit the rest of the function
-	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
-	if ($valid) {
+	if (yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return ) === true) {
 		return true;
 	}
 
-	// what nonce should be
+	// What nonce should be
 	$valid = yourls_create_nonce( $action, $user );
 
-	if( $nonce == $valid ) {
+	if( $nonce === $valid ) {
 		return true;
 	} else {
 		if( $return )
