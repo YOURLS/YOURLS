@@ -51,9 +51,11 @@ class AdminParams
      */
     public function __construct()
     {
-        $this->possible_search_params = ['all', 'keyword', 'url', 'title', 'ip'];
-        $this->possible_sort_params   = ['keyword', 'url', 'title', 'ip', 'timestamp', 'clicks'];
-        $this->params_translations    = [
+        $this->possible_search_params = yourls_apply_filter('admin_params_possible_search',
+            ['all', 'keyword', 'url', 'title', 'ip']);
+        $this->possible_sort_params   = yourls_apply_filter('admin_params_possible_sort',
+            ['keyword', 'url', 'title', 'ip', 'timestamp', 'clicks']);
+        $this->params_translations    = yourls_apply_filter('admin_params_possible_translations',[
             'all'       => yourls__('All fields'),
             'keyword'   => yourls__('Short URL'),
             'url'       => yourls__('URL'),
@@ -61,8 +63,9 @@ class AdminParams
             'ip'        => yourls__('IP Address'),
             'timestamp' => yourls__('Date'),
             'clicks'    => yourls__('Clicks'),
-        ];
-        $this->possible_date_sorting  = ['before', 'after', 'between'];
+        ]);
+        $this->possible_date_sorting  = yourls_apply_filter('admin_params_possible_date_sort',
+            ['before', 'after', 'between']);
     }
 
     /**
