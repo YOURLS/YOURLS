@@ -33,6 +33,8 @@ function yourls_is_valid_user() {
 
 	// Logout request
 	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
+        // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
+        yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
 		return yourls__( 'Logged out successfully' );
@@ -576,7 +578,7 @@ function yourls_salt( $string ) {
  *
  */
 function yourls_create_nonce( $action, $user = false ) {
-	if( false == $user )
+	if( false === $user )
 		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
 	$tick = yourls_tick();
 	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
@@ -612,24 +614,25 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
  *
  */
 function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
-	// get user
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	// Get user
+	if( false === $user ) {
+        $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+    }
 
-	// get current nonce value
-	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
-		$nonce = $_REQUEST['nonce'];
+	// Get nonce value from $_REQUEST if not specified
+	if( false === $nonce && isset( $_REQUEST['nonce'] ) ) {
+        $nonce = $_REQUEST['nonce'];
+    }
 
 	// Allow plugins to short-circuit the rest of the function
-	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
-	if ($valid) {
+	if (yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return ) === true) {
 		return true;
 	}
 
-	// what nonce should be
+	// What nonce should be
 	$valid = yourls_create_nonce( $action, $user );
 
-	if( $nonce == $valid ) {
+	if( $nonce === $valid ) {
 		return true;
 	} else {
 		if( $return )

@@ -35,6 +35,7 @@ class Logout_Func_Tests extends PHPUnit\Framework\TestCase {
      */
     public function test_logout_user_logs_out() {
         $_GET['action'] = 'logout';
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_logout', 'logout');
         $invalid = yourls_is_valid_user();
         $this->assertNotTrue( $invalid );
     }
