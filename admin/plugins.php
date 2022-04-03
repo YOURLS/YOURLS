@@ -16,7 +16,7 @@ if( isset( $_GET['action'] ) ) {
 	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] );
 
 	// Check plugin file is valid
-	if( isset( $_GET['plugin'] ) && yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$_GET['plugin'].'/plugin.php') ) {
+	if(isset( $_GET['plugin'] ) && yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $_GET['plugin'] . '/plugin.php') ) {
 
 		// Activate / Deactive
 		switch( $_GET['action'] ) {
