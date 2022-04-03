@@ -369,6 +369,8 @@ function yourls_html_tfooter( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '' ) {
+    // Allow plugins to filter the options -- see #3262
+    $options = yourls_apply_filter( 'html_select_options', $options, $name, $selected, $display, $label );
 	$html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
 	foreach( $options as $value => $text ) {
 		$html .= "<option value='$value' ";

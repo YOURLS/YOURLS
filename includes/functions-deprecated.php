@@ -10,6 +10,16 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Check if a file is a plugin file
+ *
+ * @deprecated 1.8.3
+ */
+function yourls_validate_plugin_file( $file ) {
+    yourls_deprecated_function( __FUNCTION__, '1.8.3', 'yourls_is_a_plugin_file' );
+    return yourls_is_a_plugin_file($file);
+}
+
+/**
  * Return a unique(ish) hash for a string to be used as a valid HTML id
  *
  * @deprecated 1.8.3
