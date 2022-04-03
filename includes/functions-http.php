@@ -275,10 +275,8 @@ function yourls_check_core_version() {
 		$checks->version_checked = YOURLS_VERSION;
 	}
 
-	// Config file location ('u' for '/user' or 'i' for '/includes')
-	$conf_loc = str_replace( YOURLS_ABSPATH, '', YOURLS_CONFIGFILE );
-	$conf_loc = str_replace( '/config.php', '', $conf_loc );
-	$conf_loc = ( $conf_loc == '/user' ? 'u' : 'i' );
+	// Total number of links and clicks
+    list( $total_urls, $total_clicks ) = array_values(yourls_get_db_stats());
 
 	// The collection of stuff to report
 	$stuff = array(
@@ -302,21 +300,25 @@ function yourls_check_core_version() {
 		'ext_curl'           => extension_loaded( 'curl' )    ? 1 : 0,
 
 		// Config information
-		'num_users'          => count( $yourls_user_passwords ),
-		'config_location'    => $conf_loc,
 		'yourls_private'     => defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ? 1 : 0,
 		'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
 		'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
-		'num_active_plugins' => yourls_has_active_plugins(),
-		'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
+
+        // Usage information
+        'num_users'          => count( $yourls_user_passwords ),
+        'num_active_plugins' => yourls_has_active_plugins(),
+        'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
+        'num_links'          => $total_urls,
+        'num_clicks'         => $total_clicks,
 	);
 
 	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
 
 	// Send it in
-	$url = 'http://api.yourls.org/core/version/1.0/';
-    if( yourls_can_http_over_ssl() )
-        $url = yourls_set_url_scheme( $url, 'https' );
+	$url = 'http://api.yourls.org/core/version/1.1/';
+    if( yourls_can_http_over_ssl() ) {
+        $url = yourls_set_url_scheme($url, 'https');
+    }
 	$req = yourls_http_post( $url, array(), $stuff );
 
 	$checks->last_attempt = time();
@@ -326,6 +328,9 @@ function yourls_check_core_version() {
 	if( is_string( $req ) or !$req->success ) {
 		$checks->failed_attempts = $checks->failed_attempts + 1;
 		yourls_update_option( 'core_version_checks', $checks );
+		if( is_string($req) ) {
+            yourls_debug_log('Version check failed: ' . $req);
+        }
 		return false;
 	}
 
