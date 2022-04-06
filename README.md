@@ -34,6 +34,11 @@ Feature suggestion? Bug to report?
 
 __Before opening any issue, please search for existing [issues](https://github.com/YOURLS/YOURLS/issues) (open and closed) and read the [Contributing Guidelines](https://github.com/YOURLS/.github/blob/master/CONTRIBUTING.md).__
 
+## Contributers
+
+<a href="https://github.com/YOURLS/YOURLS/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=YOURLS/YOURLS" />
+</a>
 
 ## Backers
 
