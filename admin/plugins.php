@@ -13,7 +13,7 @@ if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
 if( isset( $_GET['action'] ) ) {
 
 	// Check nonce
-	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] );
+	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] ?? '');
 
 	// Check plugin file is valid
 	if(isset( $_GET['plugin'] ) && yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $_GET['plugin'] . '/plugin.php') ) {
