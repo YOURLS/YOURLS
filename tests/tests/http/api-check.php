@@ -15,7 +15,7 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Emulate succesfull HTTP request to api.yourls.org
+     * Emulate successful HTTP request to api.yourls.org
      */
     public function fake_http_request_success() {
         $return = (object) array();
