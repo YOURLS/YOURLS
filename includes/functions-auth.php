@@ -568,12 +568,31 @@ function yourls_tick() {
 }
 
 /**
- * Return salted string
+ * Return hashed string
  *
+ * This function is badly named, it's not a salt or a salted string : it's a cryptographic hash.
+ *
+ * @since 1.4.1
+ * @param string $string   string to salt
+ * @return string          hashed string
  */
 function yourls_salt( $string ) {
 	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
+	return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
+}
+
+/**
+ * Return an available hash_hmac() algorithm
+ *
+ * @since 1.8.3
+ * @return string  hash_hmac() algorithm
+ */
+function yourls_hmac_algo() {
+    $algo = yourls_apply_filter( 'hmac_algo', 'sha256' );
+    if( !in_array( $algo, hash_hmac_algos() ) ) {
+        $algo = 'sha256';
+    }
+    return $algo;
 }
 
 /**
@@ -581,8 +600,9 @@ function yourls_salt( $string ) {
  *
  */
 function yourls_create_nonce( $action, $user = false ) {
-	if( false === $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	if( false === $user ) {
+        $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+    }
 	$tick = yourls_tick();
 	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
 	// Allow plugins to alter the nonce

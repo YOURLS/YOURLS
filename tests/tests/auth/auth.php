@@ -122,7 +122,7 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
         // Check that md5 hashed passwords match the password
         $this->assertTrue( yourls_check_password_hash( 'random_md5', self::$random_password ) );
 
-        // Unknow user, existing password
+        // Unknown user, existing password
         $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
 
         // Known user, invalid password
@@ -133,11 +133,11 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
      * Check that valid login / phpass password is deemed valid
      */
     public function test_valid_phpass() {
-        // Check that phppass hashed passwords match the password
+        // Check that phpass hashed passwords match the password
         $this->assertTrue(  yourls_check_password_hash( 'random_phpass1', self::$random_password ) );
         $this->assertTrue(  yourls_check_password_hash( 'random_phpass2', self::$random_password ) );
 
-        // unknow user, existing valid password
+        // unknown user, existing valid password
         $this->assertFalse( yourls_check_password_hash( rand_str(), self::$random_password ) );
 
         // known users, invalid passwords
@@ -177,11 +177,50 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * Check that encrypting un-writable file returns expected error
+     */
+    public function test_hash_passwords_now_unwritable() {
+        // generate un-writable file
+        $file = YOURLS_TESTDATA_DIR . '/auth/unwritable.php';
+        touch( $file );
+
+        if(yourls_is_windows()) {
+            exec( 'attrib +r ' . escapeshellarg( $file ) );
+        } else {
+            chmod( $file, 0444 );
+        }
+
+        $this->assertSame('cannot write file', yourls_hash_passwords_now( $file ) );
+
+        // cleanup
+        if(yourls_is_windows()) {
+            exec( 'attrib -r ' . escapeshellarg( $file ) );
+        } else {
+            chmod( $file, 0644 );
+        }
+        unlink( $file );
+    }
+
+    /**
+     * Check that encrypting non-existent or unreadable file returns expected error
+     */
+    public function test_hash_passwords_now_non_existent() {
+        $this->assertSame('cannot read file', yourls_hash_passwords_now( rand_str() ) );
+    }
+
+    /**
+     * Check that encrypting empty file returns expected error
+     */
+    public function test_hash_passwords_now_empty() {
+        $this->assertSame('could not read file', yourls_hash_passwords_now( YOURLS_TESTDATA_DIR . '/auth/empty.php' ) );
+    }
+
+    /**
      * Check that in-file password encryption works as expected with different kinds of passwords
      *
      * This test checks that encrypting the config file, with different kinds of pwd, results in a valid
      * PHP file as expected. It doesn't test that the different kinds of password get correctly hashed
-     * and can be correctly decyphered. This task is covered in test_hash_and_check()
+     * and can be correctly deciphered. This task is covered in test_hash_and_check()
      */
     public function test_hash_passwords_special_chars_now() {
 
@@ -237,10 +276,12 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
     /**
      * Check that we don't hash passwords in config file if user explicitly doesn't want it
      *
-     * Actually we're not testing this :-(
+     * (Note that we're checking with the filter, it can also be enforced with a constant)
      */
-    public function zz_test_maybe_hash_passwords_YOURLS_NO_HASH_PASSWORD() {
-        // we're not testing anything because it currently relies on a defined constant
+    public function test_maybe_hash_passwords_YOURLS_NO_HASH_PASSWORD() {
+        yourls_add_filter('skip_password_hashing', 'yourls_return_true');
+        $this->assertFalse( yourls_maybe_hash_passwords() );
+        yourls_remove_filter('skip_password_hashing', 'yourls_return_true');
     }
 
     /**
@@ -255,7 +296,5 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
         putenv('YOURLS_USER');
         putenv('YOURLS_PASSWORD');
     }
-
-
 
 }
