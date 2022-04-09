@@ -276,10 +276,12 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
     /**
      * Check that we don't hash passwords in config file if user explicitly doesn't want it
      *
-     * Actually we're not testing this :-(
+     * (Note that we're checking with the filter, it can also be enforced with a constant)
      */
-    public function zz_test_maybe_hash_passwords_YOURLS_NO_HASH_PASSWORD() {
-        // we're not testing anything because it currently relies on a defined constant
+    public function test_maybe_hash_passwords_YOURLS_NO_HASH_PASSWORD() {
+        yourls_add_filter('skip_password_hashing', 'yourls_return_true');
+        $this->assertFalse( yourls_maybe_hash_passwords() );
+        yourls_remove_filter('skip_password_hashing', 'yourls_return_true');
     }
 
     /**
