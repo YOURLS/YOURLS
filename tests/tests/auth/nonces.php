@@ -34,11 +34,16 @@ class Auth_Nonce_Tests extends PHPUnit\Framework\TestCase {
     }
 
 	/**
-	 * Check nonce field creation
+	 * Check nonce field creation and output
 	 */
-	public function test_create_nonce_field() {
-        $field = yourls_nonce_field( rand_str(), rand_str(), rand_str(), false );
+	public function test_create_nonce_field_echo() {
+        $action = rand_str();
+        $name = rand_str();
+        $user = rand_str();
+        $field = yourls_nonce_field( $action, $name, $user, false );
         $this->assertTrue( is_string($field) );
+        $this->expectOutputString( $field . "\n" );
+        $field = yourls_nonce_field( $action, $name, $user, true );
     }
 
 	/**
