@@ -484,6 +484,37 @@ class Plugin_Actions_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * Check return values of yourls_has_action()
+     */
+    public function test_has_action_return_values() {
+        $hook = rand_str();
+
+        yourls_add_action( $hook, 'some_function' );
+        yourls_add_action( $hook, 'some_other_function', 1337 );
+
+        $this->assertTrue( yourls_has_action( $hook ) );
+        $this->assertSame( 10, yourls_has_action( $hook, 'some_function' ) );
+        $this->assertSame( 1337, yourls_has_action( $hook, 'some_other_function' ) );
+        $this->assertFalse( yourls_has_action( $hook, 'nope_not_this_function' ) );
+    }
+
+    /**
+     * Check that yourls_get_actions() returns expected values
+     */
+    public function test_get_actions() {
+        $hook = rand_str();
+
+        yourls_add_action( $hook, 'some_function' );
+        yourls_add_action( $hook, 'some_other_function', 1337 );
+
+        $actions = yourls_get_actions( $hook );
+        $this->assertTrue(isset($actions[10]['some_function']));
+        $this->assertTrue(isset($actions[1337]['some_other_function']));
+
+        $this->assertSame( [], yourls_get_actions( rand_str() ) );
+    }
+
+    /**
      * Dummy function -- just modifies the value of a global var
      */
     public function change_one_global() {

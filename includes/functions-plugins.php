@@ -411,6 +411,32 @@ function yourls_remove_all_filters( $hook, $priority = false ) {
 }
 
 /**
+ * Return filters for a specific hook.
+ *
+ * If hook has filters (or actions, see yourls_has_action()), this will return an array priorities => callbacks.
+ * See the structure of yourls_filters on top of this file for details.
+ *
+ * @since 1.8.3
+ * @param string $hook The hook to retrieve filters for
+ * @return array
+ */
+function yourls_get_filters($hook) {
+    global $yourls_filters;
+    return $yourls_filters[$hook] ?? array();
+}
+
+/**
+ * Return actions for a specific hook.
+ *
+ * @since 1.8.3
+ * @param string $hook The hook to retrieve actions for
+ * @return array
+ */
+function yourls_get_actions($hook) {
+    return yourls_get_filters($hook);
+}
+
+/**
  * Check if any filter has been registered for a hook.
  *
  * @since 1.5

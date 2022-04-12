@@ -376,6 +376,22 @@ class Plugin_Filters_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * Check that yourls_get_filters() returns expected values
+     */
+    public function test_get_filters() {
+        $hook = rand_str();
+
+        yourls_add_filter( $hook, 'some_function' );
+        yourls_add_filter( $hook, 'some_other_function', 1337 );
+
+        $filters = yourls_get_filters( $hook );
+        $this->assertTrue(isset($filters[10]['some_function']));
+        $this->assertTrue(isset($filters[1337]['some_other_function']));
+
+        $this->assertSame( [], yourls_get_filters( rand_str() ) );
+    }
+
+    /**
      * Check that applied function must exist
      *
      * @since 0.1
