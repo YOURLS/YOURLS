@@ -10,7 +10,7 @@ on:
   # And whenever this workflow is updated or a PR attempts to update the certificate files.
   pull_request:
     paths:
-      - '.github/workflows/update-certificates.yml.yml'
+      - '.github/workflows/update-certificates.yml'
       - 'includes/vendor/rmccue/requests/certificates/cacert.pem'
       - 'includes/vendor/rmccue/requests/certificates/cacert.pem.sha256'
   # And manually
