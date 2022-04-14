@@ -1,0 +1,80 @@
+name: Update certificates
+
+on:
+  # Run every Monday at 13:37
+  schedule:
+    - cron: '37 13 * * 1'
+  # Run on every push to `master`
+  push:
+    branches: [ master ]
+  # And whenever this workflow is updated or a PR attempts to update the certificate files.
+  pull_request:
+    paths:
+      - '.github/workflows/update-certificates.yml'
+      - 'includes/vendor/rmccue/requests/certificates/cacert.pem'
+      - 'includes/vendor/rmccue/requests/certificates/cacert.pem.sha256'
+  # And manually
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  certificate-check:
+    name: "Check for updated certificate bundle"
+    # Don't run the cron job on forks.
+    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Restore etags cache for certificate files
+        uses: actions/cache@v3
+        with:
+          path: includes/vendor/rmccue/requests/certificates/etag-*.txt
+          key: curl-etag-${{ hashFiles('certificates/cacert.pem') }}-${{ hashFiles('certificates/cacert.pem.sha256') }}
+          restore-keys: |
+            curl-etag-
+
+      - name: Get current certificate bundle if changed
+        working-directory: ./includes/vendor/rmccue/requests/certificates
+        run: curl --etag-compare etag-cert.txt --etag-save etag-cert.txt --remote-name https://curl.se/ca/cacert.pem
+
+      - name: Get current SHA256 checksum file for the bundle if changed
+        working-directory: ./includes/vendor/rmccue/requests/certificates
+        run: curl --etag-compare etag-sha.txt --etag-save etag-sha.txt --remote-name https://curl.se/ca/cacert.pem.sha256
+
+      - name: Verify the checksum of the downloaded bundle
+        working-directory: ./includes/vendor/rmccue/requests/certificates
+        run: sha256sum --check cacert.pem.sha256
+
+      - name: "Debug info: Show git status"
+        run: git status -vv --untracked=all
+
+      - name: "Get date"
+        id: get-date
+        run: echo "::set-output name=DATE::$(/bin/date -u "+%F")"
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          base: master
+          branch: auto-update-cacert
+          delete-branch: true
+          commit-message: "Update certificates"
+          title: "Update certificates"
+          body: |
+            Updated certificates, last verified on ${{ steps.get-date.outputs.DATE }}.
+
+            Source: https://curl.se/docs/caextract.html
+          labels: |
+            dependencies
+          reviewers: |
+            ozh
+            LeoColomb
+            dgw
