@@ -43,7 +43,7 @@ jobs:
           LOCAL_CTIME=$(stat -c %Y includes/geo/GeoLite2-Country.mmdb)
           echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
           echo "Local: $LOCAL_CTIME ($(date -d @$LOCAL_CTIME))"
-          [ $local_ctime -lt $remote_ctime ] && curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 --
+          [ $LOCAL_CTIME -lt $REMOTE_CTIME ] && curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 --
 
       - name: "Debug info: Show git status"
         run: git status -vv --untracked=all
