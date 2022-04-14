@@ -57,7 +57,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           base: master
-          branch: auto-update-cacert
+          branch: auto-update-geoip
           delete-branch: true
           commit-message: "Update GeoIP DB"
           title: "Update GeoIP DB"
@@ -67,4 +67,4 @@ jobs:
             Source: https://www.maxmind.com/en/account/login
           labels: |
             dependencies
-          team-reviewers: YOURLS/core
+          reviewers: ozh, leocolomb, dgw
