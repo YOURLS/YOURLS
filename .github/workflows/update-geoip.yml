@@ -55,6 +55,8 @@ jobs:
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.OZH_REPO_SCOPED_TOKEN}}
         with:
           base: master
           branch: auto-update-geoip
