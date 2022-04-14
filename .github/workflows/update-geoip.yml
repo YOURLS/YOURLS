@@ -55,8 +55,6 @@ jobs:
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.OZH_REPO_SCOPED_TOKEN}}
         with:
           base: master
           branch: auto-update-geoip
@@ -67,6 +65,7 @@ jobs:
             Updated GeoIP database, last verified on ${{ steps.get-date.outputs.DATE }}.
 
             Source: https://www.maxmind.com/en/account/login
+
+            @YOURLS/core please close and reopen this PR to trigger the unit tests and ensure the GeoIP tests pass.
           labels: |
             dependencies
-          reviewers: ozh, leocolomb, dgw
