@@ -38,7 +38,7 @@ jobs:
           MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
         run: |
           URL='https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$MAXMIND_API_KEY&suffix=tar.gz'
-          REMOTE_MODIFIED=$(curl --silent --head "$URL" | grep "last-modified" | sed 's/last-modified: //'
+          REMOTE_MODIFIED=$(curl --silent --head "$URL" | grep "last-modified" | sed 's/last-modified: //')
           REMOTE_CTIME=$(date -d "$REMOTE_MODIFIED" +%s)
           LOCAL_CTIME=$(stat -c %Y includes/geo/GeoLite2-Country.mmdb)
           echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
