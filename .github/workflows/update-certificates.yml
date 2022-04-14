@@ -73,6 +73,8 @@ jobs:
 
             Source: https://curl.se/docs/caextract.html
           labels: |
-            Type: dependencies
+            dependencies
           reviewers: |
-            @YOURLS/core
+            ozh
+            LeoColomb
+            dgw
