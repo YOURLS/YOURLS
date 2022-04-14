@@ -32,6 +32,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug info
+        run: |
+          ls -l includes/geo/
+          git ls-tree --abbrev=7 HEAD includes/geo/
+          git log -1 -- includes/geo/GeoLite2-Country.mmdb
+          git log -1 --format="%at" -- includes/geo/GeoLite2-Country.mmdb
+
       - name: Check if newer GeoIP DB
         env:
           MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
