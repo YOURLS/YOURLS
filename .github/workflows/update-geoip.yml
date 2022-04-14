@@ -32,13 +32,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Debug info
-        run: |
-          ls -l includes/geo/
-          git ls-tree --abbrev=7 HEAD includes/geo/
-          git log -1 -- includes/geo/GeoLite2-Country.mmdb
-          git log -1 --format="%at" -- includes/geo/GeoLite2-Country.mmdb
-
       - name: Check if newer GeoIP DB
         env:
           MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
@@ -46,7 +39,9 @@ jobs:
           URL="https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${MAXMIND_API_KEY}&suffix=tar.gz"
           REMOTE_MODIFIED=$(curl --silent --head "$URL" | grep "last-modified" | sed 's/last-modified: //')
           REMOTE_CTIME=$(date -d "$REMOTE_MODIFIED" +%s)
-          LOCAL_CTIME=$(git log -1 --format="%at" -- "includes/geo/GeoLite2-Country.mmdb")
+          LOCAL_MODIFIED=$(curl -sL https://api.github.com/repos/YOURLS/YOURLS/commits?path=includes/geo/GeoLite2-Country.mmdb | \
+            jq -r '.[0]["commit"]["author"]["date"]')
+          LOCAL_CTIME=$(date -d "$LOCAL_MODIFIED" +%s)
           echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
           echo "Local: $LOCAL_CTIME ($(date -d @$LOCAL_CTIME))"
           if [ $LOCAL_CTIME -lt $REMOTE_CTIME ] ; then curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 -- ; fi
