@@ -36,13 +36,13 @@ jobs:
         env:
           MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
         run: |
-          URL='https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$MAXMIND_API_KEY&suffix=tar.gz'
+          URL="https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${MAXMIND_API_KEY}&suffix=tar.gz"
           REMOTE_MODIFIED=$(curl --silent --head "$URL" | grep "last-modified" | sed 's/last-modified: //')
           REMOTE_CTIME=$(date -d "$REMOTE_MODIFIED" +%s)
           LOCAL_CTIME=$(git log -1 --format="%at" -- "includes/geo/GeoLite2-Country.mmdb")
           echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
           echo "Local: $LOCAL_CTIME ($(date -d @$LOCAL_CTIME))"
-          [ $LOCAL_CTIME -lt $REMOTE_CTIME ] && curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 --
+          if [ $LOCAL_CTIME -lt $REMOTE_CTIME ] ; then curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 -- ; fi
 
       - name: "Debug info: Show git status"
         run: git status -vv --untracked=all
