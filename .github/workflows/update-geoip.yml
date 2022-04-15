@@ -1,0 +1,71 @@
+name: Update GeoIP DB
+
+on:
+  # Run every Monday at 13:37
+  schedule:
+    - cron: '37 13 * * 1'
+  # Run on every push to `master`
+  push:
+    branches: [ master ]
+  # And whenever this workflow is updated or a PR attempts to update the GeoIP files.
+  pull_request:
+    paths:
+      - '.github/workflows/update-geoip.yml'
+      - 'includes/geo/*'
+  # And manually
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  certificate-check:
+    name: "Check for updated GeoIP DB"
+    # Don't run the cron job on forks.
+    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if newer GeoIP DB
+        env:
+          MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
+        run: |
+          URL="https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${MAXMIND_API_KEY}&suffix=tar.gz"
+          REMOTE_MODIFIED=$(curl --silent --head "$URL" | grep "last-modified" | sed 's/last-modified: //')
+          REMOTE_CTIME=$(date -d "$REMOTE_MODIFIED" +%s)
+          LOCAL_MODIFIED=$(curl -sL https://api.github.com/repos/YOURLS/YOURLS/commits?path=includes/geo/GeoLite2-Country.mmdb | \
+            jq -r '.[0]["commit"]["author"]["date"]')
+          LOCAL_CTIME=$(date -d "$LOCAL_MODIFIED" +%s)
+          echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
+          echo "Local: $LOCAL_CTIME ($(date -d @$LOCAL_CTIME))"
+          if [ $LOCAL_CTIME -lt $REMOTE_CTIME ] ; then curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 -- ; fi
+
+      - name: "Debug info: Show git status"
+        run: git status -vv --untracked=all
+
+      - name: "Get date"
+        id: get-date
+        run: echo "::set-output name=DATE::$(/bin/date -u "+%F")"
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          base: master
+          branch: auto-update-geoip
+          delete-branch: true
+          commit-message: "Update GeoIP DB"
+          title: "Update GeoIP DB"
+          body: |
+            Updated GeoIP database, last verified on ${{ steps.get-date.outputs.DATE }}.
+
+            Source: https://www.maxmind.com/en/account/login
+
+            @YOURLS/core please close and reopen this PR to trigger the unit tests and ensure the GeoIP tests pass.
+          labels: |
+            dependencies
