@@ -328,6 +328,7 @@ function yourls_check_core_version() {
 	if( is_string( $req ) or !$req->success ) {
 		$checks->failed_attempts = $checks->failed_attempts + 1;
 		yourls_update_option( 'core_version_checks', $checks );
+        yourls_ut_var_dump( $checks );
 		if( is_string($req) ) {
             yourls_debug_log('Version check failed: ' . $req);
         }
@@ -353,9 +354,11 @@ function yourls_check_core_version() {
 /**
  *  Make sure response from api.yourls.org is valid
  *
- *  we should get a json object with two following properties:
+ *  1) we should get a json object with two following properties:
  *    'latest' => a string representing a YOURLS version number, eg '1.2.3'
  *    'zipurl' => a string for a zip package URL, from github, eg 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3'
+ *  2) 'latest' and version extracted from 'zipurl' should match
+ *  3) the object should not contain any other key
  *
  *  @since 1.7.7
  *  @param $json  JSON object to check
@@ -365,12 +368,45 @@ function yourls_validate_core_version_response($json) {
     return (
         isset($json->latest)
      && isset($json->zipurl)
+     && yourls_validate_core_version_response_keys($json)
      && $json->latest === yourls_sanitize_version($json->latest)
      && $json->zipurl === yourls_sanitize_url($json->zipurl)
+     && $json->latest === yourls_get_version_from_zipball_url($json->zipurl)
      && join('.',array_slice(explode('.',parse_url($json->zipurl, PHP_URL_HOST)), -2, 2)) === 'github.com'
      // this last bit get the host ('api.github.com'), explodes on '.' (['api','github','com']) and keeps the last two elements
      // to make sure domain is either github.com or one of its subdomain (api.github.com for instance)
      // TODO: keep an eye on Github API to make sure it doesn't change some day to another domain (githubapi.com, ...)
+    );
+}
+
+/**
+ * Get version number from Github zipball URL (last part of URL, really)
+ * @since 1.8.3
+ * @param string $zipurl eg 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3'
+ * @return string
+ */
+function yourls_get_version_from_zipball_url($zipurl) {
+    $version = '';
+    $parts = explode('/', parse_url(yourls_sanitize_url($zipurl), PHP_URL_PATH));
+    // expect at least 1 slash in path, return last part
+    if( count($parts) > 1 ) {
+        $version = end($parts);
+    }
+    return $version;
+}
+
+/**
+ * Check if object has only expected keys 'latest' and 'zipurl'
+ * @since 1.8.3
+ * @param object $json
+ * @return bool
+ */
+function yourls_validate_core_version_response_keys($json) {
+    $keys = array('latest', 'zipurl');
+    return (
+        count(array_diff(array_keys((array)$json), $keys)) === 0
+        && isset($json->latest)
+        && isset($json->zipurl)
     );
 }
 
@@ -457,4 +493,3 @@ function yourls_can_http_over_ssl() {
 
     return ( $ssl_curl OR $ssl_socket );
 }
-

@@ -1267,5 +1267,5 @@ function yourls_set_url_scheme( $url, $scheme = false ) {
  */
 function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: '.( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
-    yourls_new_core_version_notice();
+    yourls_new_core_version_notice(YOURLS_VERSION);
 }

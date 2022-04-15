@@ -48,4 +48,17 @@ yourls_get_all_options();
 yourls_load_plugins();
 
 // At this point, tests will start
+
+// Simplify yourls_die() when running unit tests
+yourls_add_action( 'pre_yourls_die', function($params) {
+    printf("\n\nCalling yourls_die(). %s : %s (%s)\n\n", $params[1], $params[0], $params[2]);
+    echo "Last 10 Backtrace:\n";
+    $trace = debug_backtrace();
+    foreach( array_slice($trace, 0, 10) as $t ) {
+        printf("** %s:%d %s() with args\n%s\n", $t['file'], $t['line'], $t['function'], var_export($t['args'], true));
+    }
+
+    die(1);
+} );
+
 echo "YOURLS installed, starting PHPUnit\n\n";
