@@ -328,7 +328,6 @@ function yourls_check_core_version() {
 	if( is_string( $req ) or !$req->success ) {
 		$checks->failed_attempts = $checks->failed_attempts + 1;
 		yourls_update_option( 'core_version_checks', $checks );
-        yourls_ut_var_dump( $checks );
 		if( is_string($req) ) {
             yourls_debug_log('Version check failed: ' . $req);
         }
@@ -366,16 +365,11 @@ function yourls_check_core_version() {
  */
 function yourls_validate_core_version_response($json) {
     return (
-        isset($json->latest)
-     && isset($json->zipurl)
-     && yourls_validate_core_version_response_keys($json)
+        yourls_validate_core_version_response_keys($json)
      && $json->latest === yourls_sanitize_version($json->latest)
      && $json->zipurl === yourls_sanitize_url($json->zipurl)
      && $json->latest === yourls_get_version_from_zipball_url($json->zipurl)
-     && join('.',array_slice(explode('.',parse_url($json->zipurl, PHP_URL_HOST)), -2, 2)) === 'github.com'
-     // this last bit get the host ('api.github.com'), explodes on '.' (['api','github','com']) and keeps the last two elements
-     // to make sure domain is either github.com or one of its subdomain (api.github.com for instance)
-     // TODO: keep an eye on Github API to make sure it doesn't change some day to another domain (githubapi.com, ...)
+     && yourls_is_valid_github_repo_url($json->zipurl)
     );
 }
 
@@ -396,7 +390,22 @@ function yourls_get_version_from_zipball_url($zipurl) {
 }
 
 /**
- * Check if object has only expected keys 'latest' and 'zipurl'
+ * Check if URL is from YOURLS/YOURLS repo on github
+ */
+function yourls_is_valid_github_repo_url($url) {
+    $url = yourls_sanitize_url($url);
+    return (
+        join('.',array_slice(explode('.',parse_url($url, PHP_URL_HOST)), -2, 2)) === 'github.com'
+            // explodes on '.' (['api','github','com']) and keeps the last two elements
+            // to make sure domain is either github.com or one of its subdomain (api.github.com for instance)
+            // TODO: keep an eye on Github API to make sure it doesn't change some day to another domain (githubapi.com, ...)
+        && substr( parse_url($url, PHP_URL_PATH), 0, 21 ) === '/repos/YOURLS/YOURLS/'
+            // make sure path starts with '/repos/YOURLS/YOURLS/'
+    );
+}
+
+/**
+ * Check if object has only expected keys 'latest' and 'zipurl' containing strings
  * @since 1.8.3
  * @param object $json
  * @return bool
@@ -407,6 +416,8 @@ function yourls_validate_core_version_response_keys($json) {
         count(array_diff(array_keys((array)$json), $keys)) === 0
         && isset($json->latest)
         && isset($json->zipurl)
+        && is_string($json->latest)
+        && is_string($json->zipurl)
     );
 }
 

@@ -14,7 +14,6 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
     protected function setUp(): void {
         global $yourls_actions;
         $this->actions = $yourls_actions;
-        $this->core_version_checks = yourls_get_option( 'core_version_checks' );
     }
 
     protected function tearDown(): void {
@@ -22,7 +21,7 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
         yourls_remove_all_filters( 'shunt_yourls_http_request' );
         global $yourls_actions;
         $yourls_actions = $this->actions;
-        yourls_update_option( 'core_version_checks', $this->core_version_checks );
+        yourls_delete_option('core_version_checks');
     }
 
     /**
@@ -50,15 +49,14 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
      * Emulate HTTP request to api.yourls.org with a server error
      */
     public function fake_http_request_server_error() {
-        $return = (object) array();
+        $return = new stdClass;
         $return->body = 'Error 500';
         $return->success = false;
-
         return $return;
     }
 
     /**
-     * Check that version checking returns false if host is unreachable, and that failed attemps counter increments
+     * Check that version checking returns false if host is unreachable, and that failed attempts counter increments
      */
     public function test_api_failed_request() {
         yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_failure') );
@@ -66,7 +64,7 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Check that version checking returns false if host errors, and that failed attemps counter increments
+     * Check that version checking returns false if host errors, and that failed attempts counter increments
      */
     public function test_api_failed_request_server_error() {
         yourls_add_filter('shunt_yourls_http_request', array($this,'fake_http_request_server_error') );
@@ -87,7 +85,6 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
         $this->assertFalse( yourls_check_core_version() );
 
         $checks = yourls_get_option( 'core_version_checks' );
-        yourls_ut_var_dump( $checks );
         $after_check = $checks->failed_attempts;
 
         $this->assertEquals( $after_check, $before_check + 1 );
@@ -136,7 +133,7 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Provider of various test cases
+     * Provider of various test cases for test_api_check_in_various_scenario()
      */
     public function case_scenario() {
 
@@ -327,10 +324,17 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
             ),
             false);
 
-        $return['url not part of github.com'] = array(
+        $return['not github.com'] = array(
             (object)array(
                 'latest' => '1.2.3',
                 'zipurl' => 'https://notgithub.com/repos/YOURLS/YOURLS/zipball/1.2.3',
+            ),
+            false);
+
+        $return['not YOURLS/YOURLS'] = array(
+            (object)array(
+                'latest' => '1.2.3',
+                'zipurl' => 'https://api.github.com/repos/Y0URL5/YOURLS/zipball/1.2.3',
             ),
             false);
 
@@ -370,20 +374,43 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Provide various scenarios for version reported by api.yourls.org / current version
+     * Provide fake and true github repo URLs
+     */
+    public function fake_and_true_github_repo_urls() {
+        $return = array();
+        $return['true']       = ['https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3', true];
+        $return['not github'] = ['https://api.g1thub.com/repos/YOURLS/YOURLS/zipball/1.2.3', false];
+        $return['not YOURLS'] = ['https://api.github.com/repos/Y0URL5/YOURLS/zipball/1.2.3', false];
+        $return['not URL']    = ['nope', false];
+
+        return $return;
+    }
+
+    /**
+     * Test yourls_is_valid_github_repo_url()
+     *
+     * @dataProvider fake_and_true_github_repo_urls
+     */
+    public function test_is_valid_github_repo_url($url, $expected) {
+        $this->assertSame( yourls_is_valid_github_repo_url($url), $expected );
+    }
+
+    /**
+     * Provide various scenarios for version reported by api.yourls.org / current version to check if notice is shown
      */
     public function new_version_scenarios() {
         $return = array();
 
         //            AYO       current      notice
-        $return[] = ['1.2.3',  '1.2.2',      true];  // new version - display notice
-/*        $return[] = ['1.3',    '1.2.2',      true];  // new version - display notice
-        $return[] = ['1.3',    '1.22',       true];  // older version - don't display version
-        $return[] = ['1.8.22', '1.8.3',      true];  // new version - display notice
-        $return[] = ['1.2.3',  '1.2.3-beta', true];  // new version - display notice
-        $return[] = ['1.2.2',  '1.2.2',      false]; // same version - don't display notice
-        $return[] = ['1.2.2',  '1.2.3',      false]; // older version - don't display version
-        $return[] = ['99.9.9',  false,       false]; // newer version compared to actual current YOURLS version - display notice*/
+        $return[] = ['1.2.3',  '1.2.2',      1];  // new version - display notice
+        $return[] = ['1.3',    '1.2.2',      1];  // new version - display notice
+        $return[] = ['1.8.22', '1.8.3',      1];  // new version - display notice
+        $return[] = ['1.2.3',  '1.2.3-beta', 1];  // new version - display notice
+        $return[] = ['1.3',    '1.22',       0];  // older version - don't display version
+        $return[] = ['1.2.2',  '1.2.2',      0];  // same version - don't display notice
+        $return[] = ['1.2.2',  '1.2.3',      0];  // older version - don't display version
+        $return[] = ['99.9.9',  false,       1];  // newer version compared to actual current YOURLS version - display notice
+        $return[] = ['0.1.1',   false,       0];  // older version compared to actual current YOURLS version - don't display notice
 
         return $return;
     }
@@ -447,6 +474,7 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
         $return['zipurl & other key'] = [['zipurl' => 'ok', 'other' => 'oops'], false];
         $return['nothing'] = [[], false];
         $return['extra key'] = [['latest' => 'ok', 'zipurl' => 'ok', 'extra' => 'oops'], false];
+        $return['not strings'] = [['latest' => [], 'zipurl' => 'ok'], false];
 
         return $return;
     }
@@ -457,6 +485,36 @@ class HTTP_AYO_Tests extends PHPUnit\Framework\TestCase {
      */
     function test_yourls_validate_core_version_response_keys($json, $expected) {
         $this->assertSame(yourls_validate_core_version_response_keys((object)$json), $expected);
+    }
+
+    /**
+     * Return all possible api.yourls.org/core/version URL
+     */
+    function get_api_yourls_core() {
+        return [
+            ['https://api.yourls.org/core/version/1.1/'],
+            ['http://api.yourls.org/core/version/1.0/'],
+        ];
+    }
+
+    /**
+     * Make sure https://api.yourls.org/core/version/1.[0/1]/ returns a valid JSON response
+     *
+     * This test may fail is the server is unreachable or the API is down.
+     * TODO: make this test evolve as the API evolves
+     *
+     * @dataProvider get_api_yourls_core
+     */
+    function test_yourls_get_core_version_json($url) {
+        $req = yourls_http_get($url);
+
+        if ($req->status_code != 200) {
+            $this->markTestSkipped("Unable to reach $url - test skipped");
+        }
+
+        $json = json_decode(trim($req->body));
+        $this->assertTrue(is_object($json));
+        $this->assertTrue(yourls_validate_core_version_response($json));
     }
 
 }
