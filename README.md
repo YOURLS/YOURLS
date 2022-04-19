@@ -19,7 +19,7 @@ Get YOURLS :
 
 Install YOURLS:
 * Read [yourls.org](https://yourls.org) for starters
-* There are important additional information on the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
+* The complete documentation is on [docs.yourls.org](https://docs.yourls.org) and contains everything from beginners to experts.
 
 ## Community news, tips and tricks
 

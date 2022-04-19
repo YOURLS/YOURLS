@@ -409,7 +409,7 @@ function yourls_keyword_is_free( $keyword  ) {
 /**
  * Check if a keyword matches a "page"
  *
- * @see https://github.com/YOURLS/YOURLS/wiki/Pages
+ * @see https://docs.yourls.org/guide/extend/pages.html
  * @since 1.7.10
  * @param  string $keyword  Short URL $keyword
  * @return bool             true if is page, false otherwise

@@ -680,7 +680,7 @@ function yourls_is_user_from_env() {
  *
  * By default, passwords are hashed. They are not if
  *    - there is no password in clear text in the config file (ie everything is already hashed)
- *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://github.com/YOURLS/YOURLS/wiki/Username-Passwords#but-i-dont-want-to-encrypt-my-password-
+ *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://docs.yourls.org/guide/essentials/credentials.html#i-don-t-want-to-encrypt-my-password
  *    - YOURLS_USER and YOURLS_PASSWORD are provided by the environment, not the config file
  *
  * @since 1.8.2

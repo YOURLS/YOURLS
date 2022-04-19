@@ -35,8 +35,8 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 1.7.9
 ---
 - improved: compatibility of YOURLS with proxies and reversed proxies
-- improved: accept timestamped signature in API requests with [arbitrary hash](https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI#use-other-hash-algorithms-than-md5)
-- improved: YOURLS pages are now located in `user/` and [documented](https://github.com/YOURLS/YOURLS/wiki/Pages)
+- improved: accept timestamped signature in API requests with [arbitrary hash](https://docs.yourls.org/guide/advanced/passwordless-api.html#use-other-hash-algorithms-than-md5)
+- improved: YOURLS pages are now located in `user/` and [documented](https://docs.yourls.org/guide/extend/pages.html)
 - improved: accessibility, with labels and aria tags in the main admin screen
 - fixed: various little things here and also there
 
@@ -76,7 +76,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 1.7.1
 ---
 - added: compatibility with PHP 7
-- added: allow hooks with closures (see [Advanced Hook Syntax](https://github.com/YOURLS/YOURLS/wiki/Advanced-Hook-Syntax))
+- added: allow hooks with closures (see [Advanced Hook Syntax](https://docs.yourls.org/development/hooks.html))
 - improved: you can now search across all fields at once in the admin interface
 - improved: bookmarklets are now human readable in the PHP source, and minified on the fly
 - improved, still not perfect: support for URLs and page titles with encoded chars

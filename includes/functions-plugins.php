@@ -77,7 +77,7 @@ if ( !isset( $yourls_actions ) ) {
  * Typical use:
  *        yourls_add_filter('some_hook', 'function_handler_for_hook');
  *
- * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
+ * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           the name of the YOURLS element to be filtered or YOURLS action to be triggered
  * @param callback $function_name  the name of the function that is to be called.
  * @param int      $priority       optional. Used to specify the order in which the functions associated with a
@@ -112,7 +112,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * Typical use:
  *        yourls_add_action('some_hook', 'function_handler_for_hook');
  *
- * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
+ * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           The name of the action to which the $function_to_add is hooked.
  * @param callback $function_name  The name of the function you wish to be called.
  * @param int      $priority       Optional. Used to specify the order in which the functions associated with a particular action
@@ -141,7 +141,7 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  *     yourls_add_filter('my_hook_test', $class_instance_with_invoke_method);
  *     yourls_add_filter('my_hook_test', $my_callback_function);
  *
- * @link https://github.com/YOURLS/YOURLS/wiki/Advanced-Hook-Syntax
+ * @link https://docs.yourls.org/development/hooks.html
  * @param  string       $hook            Hook to which the function is attached
  * @param  string|array $function        Used for creating unique id
  * @param  int|bool     $priority        Used in counting how many hooks were applied.  If === false and $function is an object reference,
@@ -299,9 +299,9 @@ function yourls_did_action( $hook ) {
  * Internal function used by yourls_do_action() and yourls_apply_filter() - not meant to be used from
  * outside these functions.
  * This is mostly a debugging function to understand the flow of events.
- * See https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS to learn how to use the 'all' hook
+ * See https://docs.yourls.org/development/debugging.html to learn how to use the 'all' hook
  *
- * @link   https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS
+ * @link   https://docs.yourls.org/development/debugging.html
  * @since  1.8.1
  * @param  string $type Either 'action' or 'filter'
  * @param  string $hook The hook name, eg 'plugins_loaded'
