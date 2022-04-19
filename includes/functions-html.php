@@ -918,13 +918,16 @@ function yourls_l10n_calendar_strings() {
  * Display a notice if there is a newer version of YOURLS available
  *
  * @since 1.7
+ * @param string $compare_with Optional, YOURLS version to compare to
  */
-function yourls_new_core_version_notice() {
+function yourls_new_core_version_notice($compare_with = false) {
+    $compare_with = $compare_with ?: YOURLS_VERSION;
 
 	$checks = yourls_get_option( 'core_version_checks' );
     $latest = isset($checks->last_result->latest) ? yourls_sanitize_version($checks->last_result->latest) : false;
 
-	if( $latest AND version_compare( $latest, YOURLS_VERSION, '>' ) ) {
+	if( $latest AND version_compare( $latest, $compare_with, '>' ) ) {
+        yourls_do_action('new_core_version_notice', $latest);
 		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
@@ -986,4 +989,3 @@ function yourls_html_favicon() {
 
     printf( '<link rel="shortcut icon" href="%s" />', yourls_get_yourls_favicon_url(false) );
 }
-
