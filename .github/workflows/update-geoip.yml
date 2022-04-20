@@ -32,8 +32,8 @@ jobs:
         uses: tibdex/github-app-token@v1
         id: generate-token
         with:
-          app_id: ${{ secrets.TRIGGERTRIGGER_APP_ID }}
-          private_key: ${{ secrets.TRIGGERTRIGGER_PRIVATE_KEY }}
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Check if newer GeoIP DB
         env:
@@ -68,6 +68,5 @@ jobs:
             Updated GeoIP database, last verified on ${{ steps.get-date.outputs.DATE }}.
 
             Source: https://www.maxmind.com/en/account/login
-
           labels: |
             dependencies
