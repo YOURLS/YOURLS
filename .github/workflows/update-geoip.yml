@@ -5,14 +5,6 @@ on:
   schedule:
     - cron: '37 13 * * 1'
   # Run on every push to `master`
-  push:
-    branches: [ master ]
-  # And whenever this workflow is updated or a PR attempts to update the GeoIP files.
-  pull_request:
-    paths:
-      - '.github/workflows/update-geoip.yml'
-      - 'includes/geo/*'
-  # And manually
   workflow_dispatch:
 
 # Cancels all previous workflow runs for the same branch that have not yet completed.
