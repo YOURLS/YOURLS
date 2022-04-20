@@ -24,10 +24,12 @@ concurrency:
 jobs:
   certificate-check:
     name: "Check for updated GeoIP DB"
+
     # Don't run the cron job on forks.
-    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
-    # Don't run on a branch created by the workflow.
-    if: ${{ github.ref != 'refs/heads/auto-update-geoip' }}
+    # Don't run on a branch that was created by the workflow
+    if: |
+      ${{ github.event_name == 'schedule' && github.repository != 'YOURLS/YOURLS' }} &&
+      ${{ github.ref != 'refs/heads/auto-update-geoip' }}
 
     runs-on: ubuntu-latest
     steps:
