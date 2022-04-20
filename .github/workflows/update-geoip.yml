@@ -32,6 +32,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Generate token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.TRIGGERTRIGGER_APP_ID }}
+          private_key: ${{ secrets.TRIGGERTRIGGER_PRIVATE_KEY }}
+
       - name: Check if newer GeoIP DB
         env:
           MAXMIND_API_KEY: ${{ secrets.MAXMIND_API_KEY }}
@@ -56,6 +63,7 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           base: master
           branch: auto-update-geoip
           commit-message: "Update GeoIP DB"
@@ -65,6 +73,5 @@ jobs:
 
             Source: https://www.maxmind.com/en/account/login
 
-            @YOURLS/core please close and reopen this PR to trigger the unit tests and ensure the GeoIP tests pass.
           labels: |
             dependencies
