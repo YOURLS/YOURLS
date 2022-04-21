@@ -12,7 +12,6 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 - improved: minor security fixes - sanitize step name during upgrade (#3055),
     nonce on the logout link (#3264), salt cookie with newer hash (#3278)
 - improved: Remove ozh/phpass library and use native PHP password_* functions (#3232)
-- improved: third party binaries will now be automatically updated in the repository
 - added: more hooks in the admin view & search (#3265)
 - fixed: incorrect notice when "prefix and shorten" while not logged in (#3189)
 - fixed: UI sometimes not responsive after editing a URL (#3244)
