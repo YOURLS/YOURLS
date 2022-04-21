@@ -7,7 +7,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 1.8.3
 ---
 - improved: the API plugin -- more plugin functions (#3281), a sandbox and a plugin uninstall procedure (#3282)
-- improved: inline documentation, [online documentation](https://doc.yourls.org/) and unit tests
+- improved: inline documentation, [online documentation](https://docs.yourls.org/) and unit tests
 - improved: concurrency during mass shortening (#3233)
 - improved: minor security fixes - sanitize step name during upgrade (#3055),
     nonce on the logout link (#3264), salt cookie with newer hash (#3278)
