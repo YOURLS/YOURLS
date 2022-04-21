@@ -4,7 +4,7 @@ on:
   # Run every Monday at 13:37
   schedule:
     - cron: '37 13 * * 1'
-  # Run on every push to `master`
+  # Run manually
   workflow_dispatch:
 
 # Cancels all previous workflow runs for the same branch that have not yet completed.
@@ -14,14 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  certificate-check:
+  update-geoip:
     name: "Check for updated GeoIP DB"
-
-    # Don't run the cron job on forks.
-    # Don't run on a branch that was created by the workflow
-    if: |
-      ${{ github.event_name == 'schedule' && github.repository != 'YOURLS/YOURLS' }} &&
-      ${{ github.ref != 'refs/heads/auto-update-geoip' }}
 
     runs-on: ubuntu-latest
     steps:
