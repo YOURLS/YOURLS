@@ -4,9 +4,10 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
-1.8.3
+1.9
 ---
-- improved: the API plugin -- more plugin functions (#3281), a sandbox and a plugin uninstall procedure (#3282)
+- removed : support for PHP prior to 7.4
+- improved: the API plugin with more plugin functions (#3281), a sandbox and a plugin uninstall procedure (#3282)
 - improved: inline documentation, [online documentation](https://docs.yourls.org/) and unit tests
 - improved: concurrency during mass shortening (#3233)
 - improved: minor security fixes - sanitize step name during upgrade (#3055),
