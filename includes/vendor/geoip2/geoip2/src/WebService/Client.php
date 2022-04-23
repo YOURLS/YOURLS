@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\WebService;
 
 use GeoIp2\Exception\AddressNotFoundException;
@@ -8,6 +10,9 @@ use GeoIp2\Exception\GeoIp2Exception;
 use GeoIp2\Exception\HttpException;
 use GeoIp2\Exception\InvalidRequestException;
 use GeoIp2\Exception\OutOfQueriesException;
+use GeoIp2\Model\City;
+use GeoIp2\Model\Country;
+use GeoIp2\Model\Insights;
 use GeoIp2\ProviderInterface;
 use MaxMind\WebService\Client as WsClient;
 
@@ -43,11 +48,20 @@ use MaxMind\WebService\Client as WsClient;
  */
 class Client implements ProviderInterface
 {
+    /**
+     * @var array<string>
+     */
     private $locales;
+    /**
+     * @var WsClient
+     */
     private $client;
+    /**
+     * @var string
+     */
     private static $basePath = '/geoip/v2.1';
 
-    const VERSION = 'v2.10.0';
+    public const VERSION = 'v2.12.2';
 
     /**
      * Constructor.
@@ -57,7 +71,9 @@ class Client implements ProviderInterface
      * @param array  $locales    list of locale codes to use in name property
      *                           from most preferred to least preferred
      * @param array  $options    array of options. Valid options include:
-     *                           * `host` - The host to use when querying the web service.
+     *                           * `host` - The host to use when querying the web service. To
+     *                           query the GeoLite2 web service instead of GeoIP2 Precision,
+     *                           set the host to `geolite.info`.
      *                           * `timeout` - Timeout in seconds.
      *                           * `connectTimeout` - Initial connection timeout in seconds.
      *                           * `proxy` - The HTTP proxy to use. May include a schema, port,
@@ -65,15 +81,16 @@ class Client implements ProviderInterface
      *                           `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
-        $accountId,
-        $licenseKey,
-        $locales = ['en'],
-        $options = []
+        int $accountId,
+        string $licenseKey,
+        array $locales = ['en'],
+        array $options = []
     ) {
         $this->locales = $locales;
 
         // This is for backwards compatibility. Do not remove except for a
         // major version bump.
+        // @phpstan-ignore-next-line
         if (\is_string($options)) {
             $options = ['host' => $options];
         }
@@ -87,13 +104,13 @@ class Client implements ProviderInterface
         $this->client = new WsClient($accountId, $licenseKey, $options);
     }
 
-    private function userAgent()
+    private function userAgent(): string
     {
         return 'GeoIP2-API/' . self::VERSION;
     }
 
     /**
-     * This method calls the GeoIP2 Precision: City service.
+     * This method calls the City service.
      *
      * @param string $ipAddress IPv4 or IPv6 address as a string. If no
      *                          address is provided, the address that the web service is called
@@ -108,23 +125,22 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
      *                                                    invalid for some other reason.  This may indicate an issue
      *                                                    with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
-     *                                                    This could indicate a problem with the connection between
-     *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code
-     * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
-     *                                                    class to the above exceptions. It will be thrown directly
-     *                                                    if a 200 status code is returned but the body is invalid.
-     *
-     * @return \GeoIp2\Model\City
+     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error code or message was returned.
+     *                                           This could indicate a problem with the connection between
+     *                                           your server and the web service or that the web service
+     *                                           returned an invalid document or 500 error code
+     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
+     *                                           class to the above exceptions. It will be thrown directly
+     *                                           if a 200 status code is returned but the body is invalid.
      */
-    public function city($ipAddress = 'me')
+    public function city(string $ipAddress = 'me'): City
     {
+        // @phpstan-ignore-next-line
         return $this->responseFor('city', 'City', $ipAddress);
     }
 
     /**
-     * This method calls the GeoIP2 Precision: Country service.
+     * This method calls the Country service.
      *
      * @param string $ipAddress IPv4 or IPv6 address as a string. If no
      *                          address is provided, the address that the web service is called
@@ -138,24 +154,23 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
      *                                                    invalid for some other reason.  This may indicate an
      *                                                    issue with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error
-     *                                                    code or message was returned. This could indicate a problem
-     *                                                    with the connection between your server and the web service
-     *                                                    or that the web service returned an invalid document or 500
-     *                                                    error code.
-     * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent class to the above exceptions. It
-     *                                                    will be thrown directly if a 200 status code is returned but
-     *                                                    the body is invalid.
-     *
-     * @return \GeoIp2\Model\Country
+     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error
+     *                                           code or message was returned. This could indicate a problem
+     *                                           with the connection between your server and the web service
+     *                                           or that the web service returned an invalid document or 500
+     *                                           error code.
+     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent class to the above exceptions. It
+     *                                           will be thrown directly if a 200 status code is returned but
+     *                                           the body is invalid.
      */
-    public function country($ipAddress = 'me')
+    public function country(string $ipAddress = 'me'): Country
     {
         return $this->responseFor('country', 'Country', $ipAddress);
     }
 
     /**
-     * This method calls the GeoIP2 Precision: Insights service.
+     * This method calls the Insights service. Insights is only supported by GeoIP2
+     * Precision. The GeoLite2 web service does not support it.
      *
      * @param string $ipAddress IPv4 or IPv6 address as a string. If no
      *                          address is provided, the address that the web service is called
@@ -170,22 +185,21 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
      *                                                    invalid for some other reason.  This may indicate an
      *                                                    issue with this API. Please report the error to MaxMind.
-     * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
-     *                                                    This could indicate a problem with the connection between
-     *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code
-     * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
-     *                                                    class to the above exceptions. It will be thrown directly
-     *                                                    if a 200 status code is returned but the body is invalid.
-     *
-     * @return \GeoIp2\Model\Insights
+     * @throws \GeoIp2\Exception\HttpException   if an unexpected HTTP error code or message was returned.
+     *                                           This could indicate a problem with the connection between
+     *                                           your server and the web service or that the web service
+     *                                           returned an invalid document or 500 error code
+     * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
+     *                                           class to the above exceptions. It will be thrown directly
+     *                                           if a 200 status code is returned but the body is invalid.
      */
-    public function insights($ipAddress = 'me')
+    public function insights(string $ipAddress = 'me'): Insights
     {
+        // @phpstan-ignore-next-line
         return $this->responseFor('insights', 'Insights', $ipAddress);
     }
 
-    private function responseFor($endpoint, $class, $ipAddress)
+    private function responseFor(string $endpoint, string $class, string $ipAddress): Country
     {
         $path = implode('/', [self::$basePath, $endpoint, $ipAddress]);
 

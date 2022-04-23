@@ -31,6 +31,7 @@ includes/**/tests/
 build/
 coverage/
 phpunit.xml
+.phpunit.result.cache
 tests/yourls-tests-config.php
 tests/vendor/
 tests/data/auth/config-test-auth-hashed.php

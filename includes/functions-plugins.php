@@ -77,7 +77,7 @@ if ( !isset( $yourls_actions ) ) {
  * Typical use:
  *        yourls_add_filter('some_hook', 'function_handler_for_hook');
  *
- * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
+ * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           the name of the YOURLS element to be filtered or YOURLS action to be triggered
  * @param callback $function_name  the name of the function that is to be called.
  * @param int      $priority       optional. Used to specify the order in which the functions associated with a
@@ -112,7 +112,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * Typical use:
  *        yourls_add_action('some_hook', 'function_handler_for_hook');
  *
- * @link  https://github.com/YOURLS/YOURLS/wiki/How-to-make-Plugins
+ * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           The name of the action to which the $function_to_add is hooked.
  * @param callback $function_name  The name of the function you wish to be called.
  * @param int      $priority       Optional. Used to specify the order in which the functions associated with a particular action
@@ -141,7 +141,7 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  *     yourls_add_filter('my_hook_test', $class_instance_with_invoke_method);
  *     yourls_add_filter('my_hook_test', $my_callback_function);
  *
- * @link https://github.com/YOURLS/YOURLS/wiki/Advanced-Hook-Syntax
+ * @link https://docs.yourls.org/development/hooks.html
  * @param  string       $hook            Hook to which the function is attached
  * @param  string|array $function        Used for creating unique id
  * @param  int|bool     $priority        Used in counting how many hooks were applied.  If === false and $function is an object reference,
@@ -299,9 +299,9 @@ function yourls_did_action( $hook ) {
  * Internal function used by yourls_do_action() and yourls_apply_filter() - not meant to be used from
  * outside these functions.
  * This is mostly a debugging function to understand the flow of events.
- * See https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS to learn how to use the 'all' hook
+ * See https://docs.yourls.org/development/debugging.html to learn how to use the 'all' hook
  *
- * @link   https://github.com/YOURLS/YOURLS/wiki/Debugging-YOURLS
+ * @link   https://docs.yourls.org/development/debugging.html
  * @since  1.8.1
  * @param  string $type Either 'action' or 'filter'
  * @param  string $hook The hook name, eg 'plugins_loaded'
@@ -408,6 +408,32 @@ function yourls_remove_all_filters( $hook, $priority = false ) {
     }
 
     return true;
+}
+
+/**
+ * Return filters for a specific hook.
+ *
+ * If hook has filters (or actions, see yourls_has_action()), this will return an array priorities => callbacks.
+ * See the structure of yourls_filters on top of this file for details.
+ *
+ * @since 1.8.3
+ * @param string $hook The hook to retrieve filters for
+ * @return array
+ */
+function yourls_get_filters($hook) {
+    global $yourls_filters;
+    return $yourls_filters[$hook] ?? array();
+}
+
+/**
+ * Return actions for a specific hook.
+ *
+ * @since 1.8.3
+ * @param string $hook The hook to retrieve actions for
+ * @return array
+ */
+function yourls_get_actions($hook) {
+    return yourls_get_filters($hook);
 }
 
 /**
@@ -574,8 +600,8 @@ function yourls_load_plugins() {
 
     $plugins = [];
     foreach ( $active_plugins as $key => $plugin ) {
-        if ( yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$plugin ) ) {
-            include_once( YOURLS_PLUGINDIR.'/'.$plugin );
+        $file = YOURLS_PLUGINDIR . '/' . $plugin;
+        if ( yourls_is_a_plugin_file($file) && yourls_activate_plugin_sandbox( $file ) === true ) {
             $plugins[] = $plugin;
             unset( $active_plugins[ $key ] );
         }
@@ -585,7 +611,7 @@ function yourls_load_plugins() {
     yourls_get_db()->set_plugins( $plugins );
     $info = count( $plugins ).' activated';
 
-    // $active_plugins should be empty now, if not, a plugin could not be find: remove it
+    // $active_plugins should be empty now, if not, a plugin could not be found, or is erroneous : remove it
     $missing_count = count( $active_plugins );
     if ( $missing_count > 0 ) {
         yourls_update_option( 'active_plugins', $plugins );
@@ -602,13 +628,15 @@ function yourls_load_plugins() {
 }
 
 /**
- * Check if a file is safe for inclusion (well, "safe", no guarantee)
+ * Check if a file is a plugin file
+ *
+ * This doesn't check if the file is a valid PHP file, only that it's correctly named.
  *
  * @since 1.5
  * @param string $file Full pathname to a file
  * @return bool
  */
-function yourls_validate_plugin_file( $file ) {
+function yourls_is_a_plugin_file($file) {
     return false === strpos( $file, '..' )
            && false === strpos( $file, './' )
            && 'plugin.php' === substr( $file, -10 )
@@ -626,7 +654,7 @@ function yourls_activate_plugin( $plugin ) {
     // validate file
     $plugin = yourls_plugin_basename( $plugin );
     $plugindir = yourls_sanitize_filename( YOURLS_PLUGINDIR );
-    if ( !yourls_validate_plugin_file( $plugindir.'/'.$plugin ) ) {
+    if ( !yourls_is_a_plugin_file($plugindir . '/' . $plugin ) ) {
         return yourls__( 'Not a valid plugin file' );
     }
 
@@ -636,17 +664,11 @@ function yourls_activate_plugin( $plugin ) {
         return yourls__( 'Plugin already activated' );
     }
 
-    // attempt activation. TODO: uber cool fail proof sandbox like in WP.
-    ob_start();
-    include_once( $plugindir.'/'.$plugin );
-    if ( ob_get_length() > 0 ) {
-        // there was some output: error
-        // @codeCoverageIgnoreStart
-        $output = ob_get_clean();
-        return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $output );
-        // @codeCoverageIgnoreEnd
+    // attempt activation.
+    $attempt = yourls_activate_plugin_sandbox( $plugindir.'/'.$plugin );
+    if( $attempt !== true ) {
+        return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
     }
-    ob_end_clean();
 
     // so far, so good: update active plugin list
     $ydb->add_plugin( $plugin );
@@ -655,6 +677,22 @@ function yourls_activate_plugin( $plugin ) {
     yourls_do_action( 'activated_'.$plugin );
 
     return true;
+}
+
+/**
+ * Plugin activation sandbox
+ *
+ * @since 1.8.3
+ * @param string $pluginfile Plugin filename (full path)
+ * @return string|true  string if error or true if success
+ */
+function yourls_activate_plugin_sandbox( $pluginfile ) {
+    try {
+        include_once $pluginfile;
+        return true;
+    } catch ( \Throwable $e ) {
+        return $e->getMessage();
+    }
 }
 
 /**
@@ -670,6 +708,16 @@ function yourls_deactivate_plugin( $plugin ) {
     // Check plugin is active
     if ( !yourls_is_active_plugin( $plugin ) ) {
         return yourls__( 'Plugin not active' );
+    }
+
+    // Check if we have an uninstall file - load if so
+    $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
+    if ( file_exists($uninst_file) ) {
+        define('YOURLS_UNINSTALL_PLUGIN', true);
+        $attempt = yourls_activate_plugin_sandbox( $uninst_file );
+        if( $attempt !== true ) {
+            return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
+        }
     }
 
     // Deactivate the plugin

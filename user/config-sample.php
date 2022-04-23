@@ -68,9 +68,10 @@ $yourls_user_passwords = [
 	// You can have one or more 'login'=>'password' lines
 ];
 
-/** URL shortening method: 36 or 62
+/** URL shortening method: either 36 or 62
  ** 36: generates all lowercase keywords (ie: 13jkm)
- ** 62: generates mixed case keywords (ie: 13jKm or 13JKm) */
+ ** 62: generates mixed case keywords (ie: 13jKm or 13JKm) 
+ ** For more information, see https://yourls.org/urlconvert */
 define( 'YOURLS_URL_CONVERT', 36 );
 
 /** Debug mode to output some internal information

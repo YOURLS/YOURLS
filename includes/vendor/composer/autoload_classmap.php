@@ -8,4 +8,5 @@ $baseDir = dirname(dirname($vendorDir));
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Normalizer' => $vendorDir . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+    'Requests' => $vendorDir . '/rmccue/requests/library/Requests.php',
 );

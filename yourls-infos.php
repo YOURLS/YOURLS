@@ -8,6 +8,7 @@ yourls_maybe_require_auth();
 if ( !isset( $keyword ) ) {
 	yourls_do_action( 'infos_no_keyword' );
 	yourls_redirect( YOURLS_SITE, 302 );
+	exit;
 }
 
 // Get basic infos for this shortened URL
@@ -26,6 +27,7 @@ if( $title == '' ) {
 if ( $longurl === false ) {
 	yourls_do_action( 'infos_keyword_not_found' );
 	yourls_redirect( YOURLS_SITE, 302 );
+    exit;
 }
 
 yourls_do_action( 'pre_yourls_infos', $keyword );

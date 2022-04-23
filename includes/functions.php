@@ -53,7 +53,7 @@ function yourls_get_next_decimal() {
  *
  * Note: this function relies upon yourls_update_option(), which will return either true or false
  * depending if there has been an actual MySQL query updating the DB.
- * In other words, this function may return false yet this would not mean it has functionnaly failed
+ * In other words, this function may return false yet this would not mean it has functionally failed
  * In other words I'm not sure we really need this function to return something :face_with_eyes_looking_up:
  * See issue 2621 for more on this.
  *
@@ -86,18 +86,30 @@ function yourls_xml_encode( $array ) {
 function yourls_update_clicks( $keyword, $clicks = false ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
-	if ( false !== $pre )
-		return $pre;
+	if ( false !== $pre ) {
+        return $pre;
+    }
 
 	$keyword = yourls_sanitize_keyword( $keyword );
 	$table = YOURLS_DB_TABLE_URL;
-	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 )
-		$update = yourls_get_db()->fetchAffected( "UPDATE $table SET clicks = :clicks WHERE keyword = :keyword", [ 'clicks' => $clicks, 'keyword' => $keyword ] );
-	else
-		$update = yourls_get_db()->fetchAffected( "UPDATE $table SET clicks = clicks + 1 WHERE keyword = :keyword", [ 'keyword' => $keyword ] );
+	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 ) {
+        $update = "UPDATE $table SET clicks = :clicks WHERE keyword = :keyword";
+        $values = [ 'clicks' => $clicks, 'keyword' => $keyword ];
+    } else {
+        $update = "UPDATE $table SET clicks = clicks + 1 WHERE keyword = :keyword";
+        $values = [ 'keyword' => $keyword ];
+    }
 
-	yourls_do_action( 'update_clicks', $keyword, $update, $clicks );
-	return $update;
+	// Try and update click count. An error probably means a concurrency problem : just skip the update
+    try {
+        $result = yourls_get_db()->fetchAffected($update, $values);
+    } catch (Exception $e) {
+	    $result = 0;
+    }
+
+	yourls_do_action( 'update_clicks', $keyword, $result, $clicks );
+
+	return $result;
 }
 
 /**
@@ -208,15 +220,19 @@ function yourls_get_referrer() {
  * is achieved with PHP's header(). If headers have been sent already and we're not in a command line
  * client, redirection occurs with Javascript.
  *
+ * Note: yourls_redirect() does not exit automatically, and should almost always be followed by a call to exit()
+ * to prevent the script from continuing.
+ *
  * @since 1.4
  * @param string $location      URL to redirect to
  * @param int    $code          HTTP status code to send
- * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise
+ * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise (CLI)
  */
 function yourls_redirect( $location, $code = 301 ) {
 	yourls_do_action( 'pre_redirect', $location, $code );
 	$location = yourls_apply_filter( 'redirect_location', $location, $code );
 	$code     = yourls_apply_filter( 'redirect_code', $code, $location );
+
 	// Redirect, either properly if possible, or via Javascript otherwise
 	if( !headers_sent() ) {
 		yourls_status_header( $code );
@@ -224,11 +240,13 @@ function yourls_redirect( $location, $code = 301 ) {
         return 1;
 	}
 
+	// Headers sent : redirect with JS if not in CLI
 	if( php_sapi_name() !== 'cli') {
         yourls_redirect_javascript( $location );
         return 2;
 	}
 
+	// We're in CLI
 	return 3;
 }
 
@@ -246,7 +264,7 @@ function yourls_redirect( $location, $code = 301 ) {
 function yourls_redirect_shorturl($url, $keyword) {
     yourls_do_action( 'redirect_shorturl', $url, $keyword );
 
-    // Update click count in main table
+    // Attempt to update click count in main table
     yourls_update_clicks( $keyword );
 
     // Update detailed log for stats
@@ -276,7 +294,30 @@ function yourls_no_cache_headers() {
 }
 
 /**
- * Send a filerable content type header
+ * Send header to prevent display within a frame from another site (avoid clickjacking)
+ *
+ * This header makes it impossible for an external site to display YOURLS admin within a frame,
+ * which allows for clickjacking.
+ * See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+ * This said, the whole function is shuntable : legit uses of iframes should be still possible.
+ *
+ * @since 1.8.1
+ * @return void|mixed
+ */
+function yourls_no_frame_header() {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_no_frame_header', false );
+    if ( false !== $pre ) {
+        return $pre;
+    }
+
+    if( !headers_sent() ) {
+        header( 'X-Frame-Options: SAMEORIGIN' );
+    }
+}
+
+/**
+ * Send a filterable content type header
  *
  * @since 1.7
  * @param string $type content type ('text/html', 'application/json', ...)
@@ -423,11 +464,13 @@ function yourls_get_HTTP_status( $code ) {
 function yourls_log_redirect( $keyword ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
-	if ( false !== $pre )
-		return $pre;
+	if ( false !== $pre ) {
+        return $pre;
+    }
 
-	if ( !yourls_do_log_redirect() )
-		return true;
+	if (!yourls_do_log_redirect()) {
+        return true;
+    }
 
 	$table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
@@ -440,7 +483,14 @@ function yourls_log_redirect( $keyword ) {
         'location' => yourls_geo_ip_to_countrycode($ip),
     ];
 
-    return yourls_get_db()->fetchAffected("INSERT INTO $table (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+    // Try and log. An error probably means a concurrency problem : just skip the logging
+    try {
+        $result = yourls_get_db()->fetchAffected("INSERT INTO $table (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+    } catch (Exception $e) {
+        $result = 0;
+    }
+
+    return $result;
 }
 
 /**
@@ -523,7 +573,8 @@ function yourls_allow_duplicate_longurls() {
     if ( yourls_is_API() && isset( $_REQUEST[ 'source' ] ) && $_REQUEST[ 'source' ] == 'plugin' ) {
             return false;
     }
-    return defined( 'YOURLS_UNIQUE_URLS' ) && !YOURLS_UNIQUE_URLS;
+
+    return yourls_apply_filter('allow_duplicate_longurls', defined('YOURLS_UNIQUE_URLS') && !YOURLS_UNIQUE_URLS);
 }
 
 /**
@@ -749,6 +800,11 @@ function yourls_is_ssl() {
             $is_ssl = true;
         }
         if ( '1' == $_SERVER[ 'HTTPS' ] ) {
+            $is_ssl = true;
+        }
+    }
+    elseif ( isset( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) {
+        if ( 'https' == strtolower( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) {
             $is_ssl = true;
         }
     }
@@ -1211,5 +1267,5 @@ function yourls_set_url_scheme( $url, $scheme = false ) {
  */
 function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: '.( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
-    yourls_new_core_version_notice();
+    yourls_new_core_version_notice(YOURLS_VERSION);
 }

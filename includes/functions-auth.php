@@ -20,6 +20,7 @@ function yourls_maybe_require_auth() {
 /**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
+ * @return bool|string|mixed true if valid user, error message otherwise. Can also call yourls_die() or redirect to login page. Oh my.
  */
 function yourls_is_valid_user() {
 	// Allow plugins to short-circuit the whole function
@@ -32,7 +33,9 @@ function yourls_is_valid_user() {
 	$unfiltered_valid = false;
 
 	// Logout request
-	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ) {
+	if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' && isset( $_REQUEST['nonce'] ) ) {
+        // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
+        yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
 		yourls_store_cookie( null );
 		return yourls__( 'Logged out successfully' );
@@ -98,7 +101,9 @@ function yourls_is_valid_user() {
 
 			// Login form : redirect to requested URL to avoid re-submitting the login form on page reload
 			if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-				yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
+			    // The return makes sure we exit this function before waiting for redirection.
+                // See #3189 and note in yourls_redirect()
+				return yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
 			}
 		}
 
@@ -122,6 +127,12 @@ function yourls_is_valid_user() {
  */
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
+
+	// If login form (not API), check for nonce
+    if(!yourls_is_API()) {
+        yourls_verify_nonce('admin_login');
+    }
+
 	if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
 		yourls_set_user( $_REQUEST['username'] );
 		return true;
@@ -140,7 +151,7 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 		return false;
 
 	if ( yourls_has_phpass_password( $user ) ) {
-		// Stored password is hashed with phpass
+		// Stored password is hashed
 		list( , $hash ) = explode( ':', $yourls_user_passwords[ $user ] );
 		$hash = str_replace( '!', '$', $hash );
 		return ( yourls_phpass_check( $submitted_password, $hash ) );
@@ -155,11 +166,11 @@ function yourls_check_password_hash( $user, $submitted_password ) {
 }
 
 /**
- * Overwrite plaintext passwords in config file with phpassed versions.
+ * Overwrite plaintext passwords in config file with hashed versions.
  *
  * @since 1.7
  * @param string $config_file Full path to file
- * @return true if overwrite was successful, an error message otherwise
+ * @return true|string  if overwrite was successful, an error message otherwise
  */
 function yourls_hash_passwords_now( $config_file ) {
 	if( !is_readable( $config_file ) )
@@ -168,6 +179,7 @@ function yourls_hash_passwords_now( $config_file ) {
 	if( !is_writable( $config_file ) )
 		return 'cannot write file';
 
+    $yourls_user_passwords = [];
 	// Include file to read value of $yourls_user_passwords
 	// Temporary suppress error reporting to avoid notices about redeclared constants
 	$errlevel = error_reporting();
@@ -207,52 +219,49 @@ function yourls_hash_passwords_now( $config_file ) {
 		yourls_debug_log( 'Failed writing to ' . $config_file );
 		return 'could not write file';
 	}
+
+    yourls_debug_log('Successfully encrypted passwords in ' . basename($config_file));
 	return true;
 }
 
 /**
- * Hash a password using phpass
+ * Create a password hash
  *
  * @since 1.7
  * @param string $password password to hash
  * @return string hashed password
  */
 function yourls_phpass_hash( $password ) {
-	$hasher = yourls_phpass_instance();
-	return $hasher->HashPassword( $password );
+    /**
+     * Filter for hashing algorithm. See https://www.php.net/manual/en/function.password-hash.php
+     * Hashing algos are available if PHP was compiled with it.
+     * PASSWORD_BCRYPT is always available.
+     */
+    $algo    = yourls_apply_filter('hash_algo', PASSWORD_BCRYPT);
+
+    /**
+     * Filter for hashing options. See https://www.php.net/manual/en/function.password-hash.php
+     * A typical option for PASSWORD_BCRYPT would be ['cost' => <int in range 4-31> ]
+     * We're leaving the options at default values, which means a cost of 10 for PASSWORD_BCRYPT.
+     *
+     * If willing to modify this, be warned about the computing time, as there is a 2^n factor.
+     * See https://gist.github.com/ozh/65a75392b7cb254131cc55afd28de99b for examples.
+     */
+    $options = yourls_apply_filter('hash_options', [] );
+
+    return password_hash($password, $algo, $options);
 }
 
 /**
- * Check a clear password against a phpass hash
+ * Verify that a password matches a hash
  *
  * @since 1.7
  * @param string $password clear (eg submitted in a form) password
- * @param string $hash hash supposedly generated by phpass
- * @return bool true if the hash matches the password once hashed by phpass, false otherwise
+ * @param string $hash hash
+ * @return bool true if the hash matches the password, false otherwise
  */
 function yourls_phpass_check( $password, $hash ) {
-	$hasher = yourls_phpass_instance();
-	return $hasher->CheckPassword( $password, $hash );
-}
-
-/**
- * Helper function: create new instance or return existing instance of phpass class
- *
- * @since 1.7
- * @param int $iteration iteration count - 8 is default in phpass
- * @param bool $portable flag to force portable (cross platform and system independant) hashes - false to use whatever the system can do best
- * @return object a PasswordHash instance
- */
-function yourls_phpass_instance( $iteration = 8, $portable = false ) {
-	$iteration = yourls_apply_filter( 'phpass_new_instance_iteration', $iteration );
-	$portable  = yourls_apply_filter( 'phpass_new_instance_portable', $portable );
-
-	static $instance = false;
-	if( $instance == false ) {
-		$instance = new \Ozh\Phpass\PasswordHash( $iteration, $portable );
-	}
-
-	return $instance;
+	return password_verify($password, $hash);
 }
 
 
@@ -273,7 +282,7 @@ function yourls_has_cleartext_passwords() {
 }
 
 /**
- * Check if a user has a hashed password
+ * Check if a user has a md5 hashed password
  *
  * Check if a user password is 'md5:[38 chars]'.
  * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
@@ -291,14 +300,15 @@ function yourls_has_md5_password( $user ) {
 }
 
 /**
- * Check if a user's password is hashed with PHPASS.
+ * Check if a user's password is hashed with password_hash
  *
  * Check if a user password is 'phpass:[lots of chars]'.
+ * (For historical reason we're using 'phpass' as an identifier.)
  * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
  *
  * @since 1.7
  * @param string $user user login
- * @return bool true if password hashed with PHPASS, otherwise false
+ * @return bool true if password hashed with password_hash, otherwise false
  */
 function yourls_has_phpass_password( $user ) {
 	global $yourls_user_passwords;
@@ -437,6 +447,8 @@ function yourls_store_cookie( $user = null ) {
 	if ( $domain == 'localhost' )
 		$domain = '';
 
+	yourls_do_action( 'pre_setcookie', $user, $time, $path, $domain, $secure, $httponly );
+
     if ( !headers_sent( $filename, $linenum ) ) {
         yourls_setcookie( yourls_cookie_name(), yourls_cookie_value( $user ), $time, $path, $domain, $secure, $httponly );
 	} else {
@@ -556,12 +568,31 @@ function yourls_tick() {
 }
 
 /**
- * Return salted string
+ * Return hashed string
  *
+ * This function is badly named, it's not a salt or a salted string : it's a cryptographic hash.
+ *
+ * @since 1.4.1
+ * @param string $string   string to salt
+ * @return string          hashed string
  */
 function yourls_salt( $string ) {
 	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
-	return yourls_apply_filter( 'yourls_salt', md5 ($string . $salt), $string );
+	return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
+}
+
+/**
+ * Return an available hash_hmac() algorithm
+ *
+ * @since 1.8.3
+ * @return string  hash_hmac() algorithm
+ */
+function yourls_hmac_algo() {
+    $algo = yourls_apply_filter( 'hmac_algo', 'sha256' );
+    if( !in_array( $algo, hash_hmac_algos() ) ) {
+        $algo = 'sha256';
+    }
+    return $algo;
 }
 
 /**
@@ -569,8 +600,9 @@ function yourls_salt( $string ) {
  *
  */
 function yourls_create_nonce( $action, $user = false ) {
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	if( false === $user ) {
+        $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+    }
 	$tick = yourls_tick();
 	$nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
 	// Allow plugins to alter the nonce
@@ -605,28 +637,74 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
  *
  */
 function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
-	// get user
-	if( false == $user )
-		$user = defined( 'YOURLS_USER' ) ? YOURLS_USER : '-1';
+	// Get user
+	if( false === $user ) {
+        $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
+    }
 
-	// get current nonce value
-	if( false == $nonce && isset( $_REQUEST['nonce'] ) )
-		$nonce = $_REQUEST['nonce'];
+	// Get nonce value from $_REQUEST if not specified
+	if( false === $nonce && isset( $_REQUEST['nonce'] ) ) {
+        $nonce = $_REQUEST['nonce'];
+    }
 
 	// Allow plugins to short-circuit the rest of the function
-	$valid = yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return );
-	if ($valid) {
+	if (yourls_apply_filter( 'verify_nonce', false, $action, $nonce, $user, $return ) === true) {
 		return true;
 	}
 
-	// what nonce should be
+	// What nonce should be
 	$valid = yourls_create_nonce( $action, $user );
 
-	if( $nonce == $valid ) {
+	if( $nonce === $valid ) {
 		return true;
 	} else {
 		if( $return )
 			die( $return );
 		yourls_die( yourls__( 'Unauthorized action or expired link' ), yourls__( 'Error' ), 403 );
 	}
+}
+
+/**
+ * Check if YOURLS_USER comes from environment variables
+ *
+ * @since 1.8.2
+ * @return bool     true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
+ */
+function yourls_is_user_from_env() {
+	return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD'));
+
+}
+
+/**
+ * Check if we should hash passwords in the config file
+ *
+ * By default, passwords are hashed. They are not if
+ *    - there is no password in clear text in the config file (ie everything is already hashed)
+ *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://docs.yourls.org/guide/essentials/credentials.html#i-don-t-want-to-encrypt-my-password
+ *    - YOURLS_USER and YOURLS_PASSWORD are provided by the environment, not the config file
+ *
+ * @since 1.8.2
+ * @return bool
+ */
+function yourls_maybe_hash_passwords() {
+    $hash = true;
+
+    if ( !yourls_has_cleartext_passwords()
+         OR (yourls_skip_password_hashing())
+         OR (yourls_is_user_from_env())
+    ) {
+        $hash = false;
+    }
+
+    return yourls_apply_filter('maybe_hash_password', $hash );
+}
+
+/**
+ * Check if user setting for skipping password hashing is set
+ *
+ * @since 1.8.2
+ * @return bool
+ */
+function yourls_skip_password_hashing() {
+    return yourls_apply_filter('skip_password_hashing', defined('YOURLS_NO_HASH_PASSWORD') && YOURLS_NO_HASH_PASSWORD);
 }

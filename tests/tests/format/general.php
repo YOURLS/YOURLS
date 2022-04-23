@@ -99,26 +99,15 @@ class Format_General extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Some random keywords
-     */
-    public function some_random_keywords() {
-        return array(
-            array( '1' ),
-            array( 'a' ),
-            array( 'hello-world' ),
-            array( '1337ozhOZH' ),
-            array( '@#!?*' ),
-        );
-    }
-
-    /**
-     * Checking that string2htmlid is an alphanumeric string
+     * Checking that yourls_unique_element_id is a unique string
      *
-     * @dataProvider some_random_keywords
-     * @since 0.1
      */
-    public function test_string2htmlid( $string ) {
-        $this->assertTrue( ctype_alnum( yourls_string2htmlid( $string ) ) );
+    public function test_string2htmlid() {
+        $id1 = yourls_unique_element_id();
+        $id2 = yourls_unique_element_id();
+        $this->assertIsString($id1);
+        $this->assertIsString($id2);
+        $this->assertNotSame($id1, $id2);
     }
 
     /**
@@ -129,16 +118,16 @@ class Format_General extends PHPUnit\Framework\TestCase {
     function test_valid_regexp() {
         $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
 
-        /* To validate a RegExp just run it against null.
+        /* To validate a RegExp just run it against an empty string.
            If it returns explicit false (=== false), it's broken. Otherwise it's valid.
-           From: http://stackoverflow.com/a/12941133/36850
+           From: https://stackoverflow.com/a/12941133/36850
            Cool to know :)
 
            We're testing it as used in yourls_sanitize_keyword()
            TODO: more random char strings to test?
         */
 
-        $this->assertFalse( preg_match( '![^' . $pattern . ']!', null ) === false );
+        $this->assertFalse( preg_match( '![^' . $pattern . ']!', '' ) === false );
     }
 
     /**

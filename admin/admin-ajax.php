@@ -7,6 +7,7 @@ yourls_maybe_require_auth();
 // This file will output a JSON string
 yourls_content_type_header( 'application/json' );
 yourls_no_cache_headers();
+yourls_no_frame_header();
 
 if( !isset( $_REQUEST['action'] ) )
 	die();
@@ -37,11 +38,6 @@ switch( $action ) {
 		yourls_verify_nonce( 'delete-link_'.$_REQUEST['id'], $_REQUEST['nonce'], false, 'omg error' );
 		$query = yourls_delete_link_by_keyword( $_REQUEST['keyword'] );
 		echo json_encode(array('success'=>$query));
-		break;
-
-	case 'logout':
-		// unused for the moment
-		yourls_logout();
 		break;
 
 	default:

@@ -19,13 +19,14 @@ Get YOURLS :
 
 Install YOURLS:
 * Read [yourls.org](https://yourls.org) for starters
-* There are important additional information on the [Wiki documentation](https://github.com/YOURLS/YOURLS/wiki/).
+* The complete documentation is on [docs.yourls.org](https://docs.yourls.org) and contains everything from beginners to experts.
 
 ## Community news, tips and tricks
 
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
+* Check what the user community makes: plugins, tools, guides and more on [Awesome YOURLS](https://github.com/YOURLS/awesome-yourls)
+* Engage users and ask for help in our [community discussions](https://github.com/YOURLS/YOURLS/discussions)
 * Keep track of development: "Star" and "Watch" this project, follow [commit messages](https://github.com/YOURLS/YOURLS/commits/master)
-* We have a [forum](https://discourse.yourls.org/) to engage users and ask for help
 
 ## Contributing
 

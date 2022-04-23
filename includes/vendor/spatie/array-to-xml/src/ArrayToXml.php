@@ -154,7 +154,7 @@ class ArrayToXml
                 } elseif ($key === '__numeric') {
                     $this->addNumericNode($element, $data);
                 } elseif (substr($key, 0, 9) === '__custom:') {
-                    $this->addNode($element, explode(':', $key)[1], $data);
+                    $this->addNode($element, str_replace('\:', ':', preg_split('/(?<!\\\):/', $key)[1]), $data);
                 } else {
                     $this->addNode($element, $key, $data);
                 }

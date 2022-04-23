@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\Record;
 
 /**
@@ -23,6 +25,8 @@ class Continent extends AbstractPlaceRecord
 {
     /**
      * @ignore
+     *
+     * @var array<string>
      */
     protected $validAttributes = [
         'code',

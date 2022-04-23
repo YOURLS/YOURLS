@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\Model;
 
 use GeoIp2\Util;
@@ -20,17 +22,27 @@ use GeoIp2\Util;
  */
 class Asn extends AbstractModel
 {
+    /**
+     * @var int|null
+     */
     protected $autonomousSystemNumber;
+    /**
+     * @var string|null
+     */
     protected $autonomousSystemOrganization;
+    /**
+     * @var string
+     */
     protected $ipAddress;
+    /**
+     * @var string
+     */
     protected $network;
 
     /**
      * @ignore
-     *
-     * @param mixed $raw
      */
-    public function __construct($raw)
+    public function __construct(array $raw)
     {
         parent::__construct($raw);
         $this->autonomousSystemNumber = $this->get('autonomous_system_number');

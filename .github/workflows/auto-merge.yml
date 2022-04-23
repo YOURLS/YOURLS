@@ -1,0 +1,14 @@
+# https://docs.github.com/actions
+
+name: Auto-merge
+
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  dependabot:
+    name: Dependabot
+    uses: YOURLS/.github/.github/workflows/auto-merge.yml@main

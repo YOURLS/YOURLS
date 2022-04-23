@@ -59,6 +59,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 	// Force no cache for all admin pages
 	if( yourls_is_admin() && !headers_sent() ) {
         yourls_no_cache_headers();
+        yourls_no_frame_header();
 		yourls_content_type_header( yourls_apply_filter( 'html_head_content-type', 'text/html' ) );
 		yourls_do_action( 'admin_headers', $context, $title );
 	}
@@ -368,6 +369,8 @@ function yourls_html_tfooter( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '' ) {
+    // Allow plugins to filter the options -- see #3262
+    $options = yourls_apply_filter( 'html_select_options', $options, $name, $selected, $display, $label );
 	$html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
 	foreach( $options as $value => $text ) {
 		$html .= "<option value='$value' ";
@@ -474,7 +477,9 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
 	if( !yourls_did_action( 'html_footer' ) ) {
 		yourls_html_footer(false);
 	}
-	die();
+
+	// die with a value in case we're running tests, so PHPUnit doesn't exit with 0 as if success
+	die(1);
 }
 
 /**
@@ -485,7 +490,7 @@ function yourls_die( $message = '', $title = '', $header_code = 200 ) {
  */
 function yourls_table_edit_row( $keyword ) {
     $keyword = yourls_sanitize_keyword($keyword);
-	$id = yourls_string2htmlid( $keyword ); // used as HTML #id
+	$id = yourls_unique_element_id();
 	$url = yourls_get_keyword_longurl( $keyword );
 	$title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
 	$safe_url = yourls_esc_attr( $url );
@@ -521,7 +526,7 @@ RETURN;
  */
 function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp ) {
 	$keyword  = yourls_sanitize_keyword($keyword);
-	$id       = yourls_string2htmlid( $keyword ); // used as HTML #id
+	$id       = yourls_unique_element_id();
 	$shorturl = yourls_link( $keyword );
 
 	$statlink = yourls_statlink( $keyword );
@@ -725,6 +730,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				yourls_do_action( 'login_form_bottom' );
 			?>
 			<p style="text-align: right;">
+			    <?php yourls_nonce_field('admin_login'); ?>
 				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 			</p>
 			<?php
@@ -746,7 +752,11 @@ function yourls_html_menu() {
 
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
-		$logout_link = yourls_apply_filter( 'logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' (<a href="' . yourls_admin_url( 'index.php' ) . '?action=logout" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
+	    // Create a logout link with a nonce associated to fake user 'logout' : the user is not yet defined
+	    // when the logout check is done -- see yourls_is_valid_user()
+	    $logout_url = yourls_nonce_url( 'admin_logout',
+		yourls_add_query_arg(['action' => 'logout'], yourls_admin_url('index.php')), 'nonce', 'logout');
+		$logout_link = yourls_apply_filter('logout_link', sprintf( yourls__('Hello <strong>%s</strong>'), YOURLS_USER ) . ' (<a href="' . $logout_url . '" title="' . yourls_esc_attr__( 'Logout' ) . '">' . yourls__( 'Logout' ) . '</a>)' );
 	} else {
 		$logout_link = yourls_apply_filter( 'logout_link', '' );
 	}
@@ -908,39 +918,19 @@ function yourls_l10n_calendar_strings() {
  * Display a notice if there is a newer version of YOURLS available
  *
  * @since 1.7
+ * @param string $compare_with Optional, YOURLS version to compare to
  */
-function yourls_new_core_version_notice() {
+function yourls_new_core_version_notice($compare_with = false) {
+    $compare_with = $compare_with ?: YOURLS_VERSION;
 
 	$checks = yourls_get_option( 'core_version_checks' );
     $latest = isset($checks->last_result->latest) ? yourls_sanitize_version($checks->last_result->latest) : false;
 
-	if( $latest AND version_compare( $latest, YOURLS_VERSION, '>' ) ) {
+	if( $latest AND version_compare( $latest, $compare_with, '>' ) ) {
+        yourls_do_action('new_core_version_notice', $latest);
 		$msg = yourls_s( '<a href="%s">YOURLS version %s</a> is available. Please update!', 'http://yourls.org/download', $latest );
 		yourls_add_notice( $msg );
 	}
-}
-
-/**
- * Get search text from query string variables search_protocol, search_slashes and search
- *
- * Some servers don't like query strings containing "(ht|f)tp(s)://". A javascript bit
- * explodes the search text into protocol, slashes and the rest (see JS function
- * split_search_text_before_search()) and this function glues pieces back together
- * See issue https://github.com/YOURLS/YOURLS/issues/1576
- *
- * @since 1.7
- * @return string Search string
- */
-function yourls_get_search_text() {
-	$search = '';
-	if( isset( $_GET['search_protocol'] ) )
-		$search .= $_GET['search_protocol'];
-	if( isset( $_GET['search_slashes'] ) )
-		$search .= $_GET['search_slashes'];
-	if( isset( $_GET['search'] ) )
-		$search .= $_GET['search'];
-
-	return htmlspecialchars( trim( $search ) );
 }
 
 /**
@@ -999,4 +989,3 @@ function yourls_html_favicon() {
 
     printf( '<link rel="shortcut icon" href="%s" />', yourls_get_yourls_favicon_url(false) );
 }
-

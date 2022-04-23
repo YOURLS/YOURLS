@@ -1,23 +1,23 @@
 GeoIP package for YOURLS
 ========================
 
-What the hell?
---------------
+YOURLS includes GeoLite2 data created by MaxMind, available from [maxmind.com](https://www.maxmind.com)
+For more information on the the DB file (`GeoLite2-Country.mmdb`), see [Geolite2](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en).
 
-The DB file from this package (GeoLite2-Country.mmdb) is provided free by
-MaxMind. Accuracy is 99.5% so don't sweat it if you get unrealistic results.
+Flag files from this package come from various sources.
 
-If unsure, you can always get the latest version of the GeoIP2 database
-from the following URL: http://dev.maxmind.com/geoip/geoip2/geolite2/
-(look for a link pointing to a file named "GeoLite2-Country.tar.gz")
 
-Flag files from this package come from various sources. Feel free to copy and
-redistribute them just as I'm doing :)
+IP to country Database 
+----------------------
+
+YOURLS people update the DB here from time to time. To manually update the DB, register an account on maxmind.com and replace `GeoLite2-Country.mmdb` here with a newer version.
 
 
 Copyright and License
 ---------------------
 
-Database and Contents Copyright (c) 2017 MaxMind, Inc. This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+Database and Contents Copyright (c) 2021 MaxMind, Inc.
 
-This database incorporates GeoNames [http://www.geonames.org] geographical data, which is made available under the Creative Commons Attribution 3.0 License. To view a copy of this license, visit http://www.creativecommons.org/licenses/by/3.0/us/.
+Use of this MaxMind product is governed by MaxMind's GeoLite2 End User License Agreement, which can be viewed at https://www.maxmind.com/en/geolite2/eula.
+
+This database incorporates GeoNames [https://www.geonames.org] geographical data, which is made available under the Creative Commons Attribution 4.0 License. To view a copy of this license, visit https://creativecommons.org/licenses/by/4.0/.

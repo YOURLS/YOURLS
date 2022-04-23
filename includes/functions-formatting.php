@@ -43,11 +43,16 @@ function yourls_string2int( $string, $chars = null ) {
 }
 
 /**
- * Return a unique(ish) hash for a string to be used as a valid HTML id
+ * Return a unique string to be used as a valid HTML id
+ *
+ * @since   1.8.3
+ * @param  string $prefix   Optional prefix
+ * @return string           The unique string
  *
  */
-function yourls_string2htmlid( $string ) {
-	return yourls_apply_filter( 'string2htmlid', 'y'.abs( crc32( $string ) ) );
+function yourls_unique_element_id($prefix = 'yid') {
+    static $id_counter = 0;
+	return yourls_apply_filter( 'unique_element_id', $prefix . (string)++$id_counter );
 }
 
 /**

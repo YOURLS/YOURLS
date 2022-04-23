@@ -13,25 +13,27 @@ if( isset( $_GET['page'] ) && !empty( $_GET['page'] ) ) {
 if( isset( $_GET['action'] ) ) {
 
 	// Check nonce
-	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] );
+	yourls_verify_nonce( 'manage_plugins', $_REQUEST['nonce'] ?? '');
 
 	// Check plugin file is valid
-	if( isset( $_GET['plugin'] ) && yourls_validate_plugin_file( YOURLS_PLUGINDIR.'/'.$_GET['plugin'].'/plugin.php') ) {
+	if(isset( $_GET['plugin'] ) && yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $_GET['plugin'] . '/plugin.php') ) {
 
 		// Activate / Deactive
 		switch( $_GET['action'] ) {
 			case 'activate':
 				$result = yourls_activate_plugin( $_GET['plugin'].'/plugin.php' );
-				if( $result === true )
-					yourls_redirect( yourls_admin_url( 'plugins.php?success=activated' ), 302 );
-
+				if( $result === true ) {
+                    yourls_redirect(yourls_admin_url('plugins.php?success=activated'), 302);
+                    exit();
+                }
 				break;
 
 			case 'deactivate':
 				$result = yourls_deactivate_plugin( $_GET['plugin'].'/plugin.php' );
-				if( $result === true )
-					yourls_redirect( yourls_admin_url( 'plugins.php?success=deactivated' ), 302 );
-
+				if( $result === true ) {
+                    yourls_redirect(yourls_admin_url('plugins.php?success=deactivated'), 302);
+                    exit();
+                }
 				break;
 
 			default:
