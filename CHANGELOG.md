@@ -4,6 +4,19 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.9
+---
+- removed : support for PHP prior to 7.4
+- improved: the API plugin with more plugin functions (#3281), a sandbox and a plugin uninstall procedure (#3282)
+- improved: inline documentation, [online documentation](https://docs.yourls.org/) and unit tests
+- improved: concurrency during mass shortening (#3233)
+- improved: minor security fixes - sanitize step name during upgrade (#3055),
+    nonce on the logout link (#3264), salt cookie with newer hash (#3278)
+- improved: Remove ozh/phpass library and use native PHP password_* functions (#3232)
+- added: more hooks in the admin view & search (#3265)
+- fixed: incorrect notice when "prefix and shorten" while not logged in (#3189)
+- fixed: UI sometimes not responsive after editing a URL (#3244)
+
 1.8.2
 ---
 - fixed: display SVG logo for IE 11 (#2864)
