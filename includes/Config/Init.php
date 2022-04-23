@@ -150,8 +150,8 @@ class Init {
             require_once YOURLS_USERDIR.'/db.php';
         } else {
             require_once YOURLS_INC.'/class-mysql.php';
-            yourls_db_connect();
         }
+        yourls_db_connect();
     }
 
     /**
