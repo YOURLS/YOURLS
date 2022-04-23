@@ -80,7 +80,8 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
         $return['status']   = 'fail';
         $return['code']     = 'error:url';
         $return['url']      = array( 'keyword' => $url_exists->keyword, 'url' => $url, 'title' => $url_exists->title, 'date' => $url_exists->timestamp, 'ip' => $url_exists->ip, 'clicks' => $url_exists->clicks );
-        $return['message']  = /* //translators: eg "http://someurl/ already exists" */ yourls_s( '%s already exists in database', yourls_trim_long_string( $url ) );
+        $return['message']  = /* //translators: eg "http://someurl/ already exists (short URL: sho.rt/abc)" */ yourls_s('%s already exists in database (short URL: %s)',
+            yourls_trim_long_string($url), preg_replace('!https?://!', '',  yourls_get_yourls_site()) . '/'. $url_exists->keyword );
         $return['title']    = $url_exists->title;
         $return['shorturl'] = yourls_link($url_exists->keyword);
 
