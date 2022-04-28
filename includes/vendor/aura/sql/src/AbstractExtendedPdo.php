@@ -125,6 +125,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @see http://php.net/manual/en/pdo.begintransaction.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function beginTransaction()
     {
         $this->connect();
@@ -143,6 +144,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @see http://php.net/manual/en/pdo.commit.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function commit()
     {
         $this->connect();
@@ -174,9 +176,10 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * Gets the most recent error code.
      *
-     * @return mixed
+     * @return string
      *
      */
+    #[\ReturnTypeWillChange]
     public function errorCode()
     {
         $this->connect();
@@ -190,6 +193,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @return array
      *
      */
+    #[\ReturnTypeWillChange]
     public function errorInfo()
     {
         $this->connect();
@@ -202,11 +206,12 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @param string $statement The SQL statement to prepare and execute.
      *
-     * @return int The number of affected rows.
+     * @return int|false The number of affected rows.
      *
      * @see http://php.net/manual/en/pdo.exec.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function exec($statement)
     {
         $this->connect();
@@ -338,7 +343,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @param array $args Arguments to pass to the object constructor.
      *
-     * @return object
+     * @return object|false
      *
      */
     public function fetchObject(
@@ -493,6 +498,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @see http://php.net/manual/en/pdo.intransaction.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function inTransaction()
     {
         $this->connect();
@@ -521,11 +527,12 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @param string $name The name of the sequence to check; typically needed
      * only for PostgreSQL, where it takes the form of `<table>_<column>_seq`.
      *
-     * @return string
+     * @return string|false
      *
      * @see http://php.net/manual/en/pdo.lastinsertid.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function lastInsertId($name = null)
     {
         $this->connect();
@@ -569,11 +576,12 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @param array $options Set these attributes on the returned
      * PDOStatement.
      *
-     * @return PDOStatement
+     * @return PDOStatement|false
      *
      * @see http://php.net/manual/en/pdo.prepare.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function prepare($statement, $options = [])
     {
         $this->connect();
@@ -598,7 +606,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @param array $values The values to bind to the statement, if any.
      *
-     * @return PDOStatement
+     * @return PDOStatement|false
      *
      * @see http://php.net/manual/en/pdo.prepare.php
      *
@@ -637,11 +645,12 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @param mixed ...$fetch Optional fetch-related parameters.
      *
-     * @return PDOStatement
+     * @return PDOStatement|false
      *
      * @see http://php.net/manual/en/pdo.query.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function query($statement, ...$fetch)
     {
         $this->connect();
@@ -662,18 +671,19 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      *
      * @param int $type A data type hint for the database driver.
      *
-     * @return string The quoted value.
+     * @return string|false The quoted value.
      *
      * @see http://php.net/manual/en/pdo.quote.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function quote($value, $type = self::PARAM_STR)
     {
         $this->connect();
 
         // non-array quoting
         if (! is_array($value)) {
-            return $this->pdo->quote($value, $type);
+            return $this->pdo->quote((string) $value, $type);
         }
 
         // quote array values, not keys, then combine with commas
@@ -737,6 +747,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @see http://php.net/manual/en/pdo.rollback.php
      *
      */
+    #[\ReturnTypeWillChange]
     public function rollBack()
     {
         $this->connect();
@@ -987,6 +998,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @param int $attribute
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function getAttribute($attribute)
     {
         $this->connect();
@@ -1001,6 +1013,7 @@ abstract class AbstractExtendedPdo extends PDO implements ExtendedPdoInterface
      * @param mixed $value
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function setAttribute($attribute, $value)
     {
         $this->connect();

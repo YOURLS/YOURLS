@@ -182,7 +182,7 @@ abstract class AbstractParser implements ParserInterface
         foreach ($subs as $i => $sub) {
             $char = substr($sub, 0, 1);
             if ($char == '?') {
-                $str .= $this->prepareNumberedPlaceholder($sub);
+                $str .= $this->prepareNumberedPlaceholder();
             } elseif ($char == ':') {
                 $str .= $this->prepareNamedPlaceholder($sub);
             } else {
@@ -196,13 +196,11 @@ abstract class AbstractParser implements ParserInterface
      *
      * Bind or quote a numbered placeholder in a query subpart.
      *
-     * @param string $sub The query subpart.
-     *
      * @return string The prepared query subpart.
      *
      * @throws MissingParameter
      */
-    protected function prepareNumberedPlaceholder($sub)
+    protected function prepareNumberedPlaceholder()
     {
         $this->num ++;
         if (array_key_exists($this->num, $this->values) === false) {
