@@ -11,6 +11,8 @@ class HttpException extends WebServiceException
 {
     /**
      * The URI queried.
+     *
+     * @var string
      */
     private $uri;
 
