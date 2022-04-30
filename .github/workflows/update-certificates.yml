@@ -4,15 +4,6 @@ on:
   # Run every Monday at 13:37
   schedule:
     - cron: '37 13 * * 1'
-  # Run on every push to `master`
-  push:
-    branches: [ master ]
-  # And whenever this workflow is updated or a PR attempts to update the certificate files.
-  pull_request:
-    paths:
-      - '.github/workflows/update-certificates.yml'
-      - 'includes/vendor/rmccue/requests/certificates/cacert.pem'
-      - 'includes/vendor/rmccue/requests/certificates/cacert.pem.sha256'
   # And manually
   workflow_dispatch:
 
@@ -33,21 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore etags cache for certificate files
-        uses: actions/cache@v3
-        with:
-          path: includes/vendor/rmccue/requests/certificates/etag-*.txt
-          key: curl-etag-${{ hashFiles('certificates/cacert.pem') }}-${{ hashFiles('certificates/cacert.pem.sha256') }}
-          restore-keys: |
-            curl-etag-
-
-      - name: Get current certificate bundle if changed
+      - name: Get current certificate bundle
         working-directory: ./includes/vendor/rmccue/requests/certificates
-        run: curl --etag-compare etag-cert.txt --etag-save etag-cert.txt --remote-name https://curl.se/ca/cacert.pem
-
-      - name: Get current SHA256 checksum file for the bundle if changed
-        working-directory: ./includes/vendor/rmccue/requests/certificates
-        run: curl --etag-compare etag-sha.txt --etag-save etag-sha.txt --remote-name https://curl.se/ca/cacert.pem.sha256
+        run: |
+          curl --remote-name https://curl.se/ca/cacert.pem
+          curl --remote-name https://curl.se/ca/cacert.pem.sha256
 
       - name: Verify the checksum of the downloaded bundle
         working-directory: ./includes/vendor/rmccue/requests/certificates
