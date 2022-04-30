@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: includes/vendor/rmccue/requests/certificates/etag-*.txt
-          key: curl-etag-${{ hashFiles('certificates/cacert.pem') }}-${{ hashFiles('certificates/cacert.pem.sha256') }}
+          key: curl-etag-${{ hashFiles('includes/vendor/rmccue/requests/certificates/cacert.pem') }}-${{ hashFiles('includes/vendor/rmccue/requests/certificates/cacert.pem.sha256') }}
           restore-keys: |
             curl-etag-
 
