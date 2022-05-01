@@ -14,8 +14,8 @@ function yourls_int2string( $num, $chars = null ) {
 	$string = '';
 	$len = strlen( $chars );
 	while( $num >= $len ) {
-		$mod = bcmod( $num, $len );
-		$num = bcdiv( $num, $len );
+		$mod = bcmod( (string)$num, (string)$len );
+		$num = bcdiv( (string)$num, (string)$len );
 		$string = $chars[ $mod ] . $string;
 	}
 	$string = $chars[ intval( $num ) ] . $string;
@@ -36,7 +36,7 @@ function yourls_string2int( $string, $chars = null ) {
 	$inputlen = strlen( $string );
 	for ($i = 0; $i < $inputlen; $i++) {
 		$index = strpos( $chars, $string[$i] );
-		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
+		$integer = bcadd( (string)$integer, bcmul( (string)$index, bcpow( (string)$baselen, (string)$i ) ) );
 	}
 
 	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
