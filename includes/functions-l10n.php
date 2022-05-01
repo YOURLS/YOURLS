@@ -116,7 +116,7 @@ function yourls__( $text, $domain = 'default' ) {
  * @see sprintf()
  * @since 1.6
  *
- * @param string ...$pattern Text to translate, then $arg1: optional sprintf tokens, and $arg2: translation domain
+ * @param mixed ...$pattern Text to translate, then $arg1: optional sprintf tokens, and $arg2: translation domain
  * @return string Translated text
  */
 function yourls_s( $pattern ) {
@@ -848,7 +848,7 @@ class YOURLS_Locale_Formats {
 	 * @since 1.6
 	 * @access public
 	 *
-	 * @param int $weekday_number 0 for Sunday through 6 Saturday
+	 * @param int|string $weekday_number 0 for Sunday through 6 Saturday
 	 * @return string Full translated weekday
 	 */
 	function get_weekday( $weekday_number ) {

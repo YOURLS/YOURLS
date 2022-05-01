@@ -169,7 +169,7 @@ function yourls_filter_unique_id($function) {
 }
 
 /**
- * Performs a filtering operation on a YOURLS element or event.
+ * Performs a filtering operation on a value or an event.
  *
  * Typical use:
  *
@@ -181,12 +181,12 @@ function yourls_filter_unique_id($function) {
  *		yourls_apply_filter( 'yourls_event' );
  *      (see yourls_do_action() )
  *
- * Returns an element which may have been filtered by a filter.
+ * Returns a value which may have been modified by a filter.
  *
  * @global array $yourls_filters storage for all of the filters
  * @param string $hook the name of the YOURLS element or action
  * @param mixed $value the value of the element before filtering
- * @param bool $is_action true if the function is called by yourls_do_action()
+ * @param true|mixed $is_action true if the function is called by yourls_do_action() - otherwise may be the second parameter of an arbitrary number of parameters
  * @return mixed
  */
 function yourls_apply_filter( $hook, $value = '', $is_action = false ) {
