@@ -37,7 +37,7 @@ function yourls_is_valid_user() {
         // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
         yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
-		yourls_store_cookie( null );
+		yourls_store_cookie( '' );
 		return yourls__( 'Logged out successfully' );
 	}
 
@@ -438,9 +438,9 @@ function yourls_check_timestamp( $time ) {
 /**
  * Store new cookie. No $user will delete the cookie.
  *
- * @param mixed $user  String, user login, or null to delete cookie
+ * @param string $user  User login, or empty string to delete cookie
  */
-function yourls_store_cookie( $user = null ) {
+function yourls_store_cookie( $user = '' ) {
 
     // No user will delete the cookie with a cookie time from the past
 	if( !$user ) {
@@ -565,7 +565,7 @@ function yourls_cookie_name() {
  * @return string          cookie value
  */
 function yourls_cookie_value( $user ) {
-	return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ), $user );
+	return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ?? '' ), $user );
 }
 
 /**
