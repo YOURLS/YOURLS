@@ -30,4 +30,17 @@ class Plugin_Helpers_Tests extends PHPUnit\Framework\TestCase {
         $this->assertSame( $value, call_user_func($func) );
     }
 
+    /**
+     * Test return values of yourls_filter_unique_id()
+     */
+    function test_yourls_filter_unique_id() {
+        $func_name = rand_str();
+
+        $this->assertSame( $func_name, yourls_filter_unique_id($func_name) );
+        $this->assertIsString( yourls_filter_unique_id( function(){return rand_str();} ) ); // unpredictable string
+        $this->assertSame('SomeClass::SomeMethod', yourls_filter_unique_id( 'SomeClass::SomeMethod' ));
+        $this->assertSame('SomeClass::SomeMethod', yourls_filter_unique_id(  array( 'SomeClass', 'SomeMethod' ) ));
+        $this->assertIsString( yourls_filter_unique_id(  array( $this, 'test_check_timestamp' ) ));  // unpredictable string
+    }
+
 }

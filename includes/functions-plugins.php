@@ -92,7 +92,7 @@ if ( !isset( $yourls_actions ) ) {
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
     global $yourls_filters;
     // At this point, we cannot check if the function exists, as it may well be defined later (which is OK)
-    $id = yourls_filter_unique_id( $hook, $function_name, $priority );
+    $id = yourls_filter_unique_id($function_name);
 
     $yourls_filters[ $hook ][ $priority ][ $id ] = [
         'function'      => $function_name,
@@ -142,14 +142,11 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  *     yourls_add_filter('my_hook_test', $my_callback_function);
  *
  * @link https://docs.yourls.org/development/hooks.html
- * @param  string       $hook            Hook to which the function is attached
- * @param  string|array $function        Used for creating unique id
- * @param  int|bool     $priority        Used in counting how many hooks were applied.  If === false and $function is an object reference,
- *                                       we return the unique id only if it already has one, false otherwise.
+ * @param  string|array|object $function  The callable used in a filter or action.
  * @return string  unique ID for usage as array key
  */
-function yourls_filter_unique_id( $hook, $function, $priority ) {
-    // If function then just skip all of the tests and not overwrite the following.
+function yourls_filter_unique_id($function) {
+    // If given a string (function name)
     if ( is_string( $function ) ) {
         return $function;
     }
@@ -167,16 +164,8 @@ function yourls_filter_unique_id( $hook, $function, $priority ) {
         return spl_object_hash( $function[0] ).$function[1];
     }
 
-    // Static Calling
-    if ( is_string( $function[0] ) ) {
-        return $function[0].'::'.$function[1];
-    }
-
-    /**
-     * There is no other possible case as of PHP 7.2-8.0 callables. Still, we're leaving the final
-     * `if` block (which could be remove to simply `return $function[0].'::'.$function[1]`) for readability
-     * and understanding the logic.
-     */
+    // Last case, static Calling : $function[0] is a string (Class Name) and $function[1] is a string (Method Name)
+    return $function[0].'::'.$function[1];
 }
 
 /**
@@ -347,7 +336,7 @@ function yourls_call_all_hooks($type, $hook, ...$args) {
 function yourls_remove_filter( $hook, $function_to_remove, $priority = 10 ) {
     global $yourls_filters;
 
-    $function_to_remove = yourls_filter_unique_id( $hook, $function_to_remove, $priority );
+    $function_to_remove = yourls_filter_unique_id($function_to_remove);
 
     $remove = isset( $yourls_filters[ $hook ][ $priority ][ $function_to_remove ] );
 
@@ -453,7 +442,7 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
         return $has;
     }
 
-    if ( !$idx = yourls_filter_unique_id( $hook, $function_to_check, false ) ) {
+    if ( !$idx = yourls_filter_unique_id($function_to_check) ) {
         return false;
     }
 
