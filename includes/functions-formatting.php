@@ -654,29 +654,6 @@ function yourls_esc_textarea( $text ) {
 	return yourls_apply_filter( 'esc_textarea', $safe_text, $text );
 }
 
-
-/**
-* PHP emulation of JS's encodeURI
-*
-* @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
-* @param $url
-* @return string
-*/
-function yourls_encodeURI( $url ) {
-	// Decode URL all the way
-	$result = yourls_rawurldecode_while_encoded( $url );
-	// Encode once
-	$result = strtr( rawurlencode( $result ), array (
-        '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
-		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
-		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
-    ) );
-	// @TODO:
-	// Known limit: this will most likely break IDN URLs such as http://www.académie-française.fr/
-	// To fully support IDN URLs, advocate use of a plugin.
-	return yourls_apply_filter( 'encodeURI', $result, $url );
-}
-
 /**
  * Adds backslashes before letters and before a number at the start of a string. Stolen from WP.
  *
@@ -793,4 +770,3 @@ function yourls_get_date_format( $format ) {
 function yourls_get_time_format( $format ) {
     return yourls_apply_filter( 'get_time_format', (string)$format );
 }
-

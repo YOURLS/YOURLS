@@ -155,7 +155,7 @@ class AdminParams
      *
      * @since 1.8.2
      *
-     * @return mixed
+     * @return string
      */
     public function get_sort_by(): string
     {

@@ -9,7 +9,7 @@ namespace YOURLS\Config;
 class Init {
 
     /**
-     * @param InitDefaults
+     * @var InitDefaults
      */
     protected $actions;
 

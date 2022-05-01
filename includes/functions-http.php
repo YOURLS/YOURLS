@@ -360,8 +360,8 @@ function yourls_check_core_version() {
  *  3) the object should not contain any other key
  *
  *  @since 1.7.7
- *  @param $json  JSON object to check
- *  @return bool  true if seems legit, false otherwise
+ *  @param object $json  JSON object to check
+ *  @return bool   true if seems legit, false otherwise
  */
 function yourls_validate_core_version_response($json) {
     return (
@@ -381,7 +381,7 @@ function yourls_validate_core_version_response($json) {
  */
 function yourls_get_version_from_zipball_url($zipurl) {
     $version = '';
-    $parts = explode('/', parse_url(yourls_sanitize_url($zipurl), PHP_URL_PATH));
+    $parts = explode('/', parse_url(yourls_sanitize_url($zipurl), PHP_URL_PATH) ?? '');
     // expect at least 1 slash in path, return last part
     if( count($parts) > 1 ) {
         $version = end($parts);
@@ -395,7 +395,7 @@ function yourls_get_version_from_zipball_url($zipurl) {
 function yourls_is_valid_github_repo_url($url) {
     $url = yourls_sanitize_url($url);
     return (
-        join('.',array_slice(explode('.',parse_url($url, PHP_URL_HOST)), -2, 2)) === 'github.com'
+        join('.',array_slice(explode('.', parse_url($url, PHP_URL_HOST) ?? ''), -2, 2)) === 'github.com'
             // explodes on '.' (['api','github','com']) and keeps the last two elements
             // to make sure domain is either github.com or one of its subdomain (api.github.com for instance)
             // TODO: keep an eye on Github API to make sure it doesn't change some day to another domain (githubapi.com, ...)

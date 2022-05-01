@@ -116,8 +116,7 @@ function yourls__( $text, $domain = 'default' ) {
  * @see sprintf()
  * @since 1.6
  *
- * @param string $pattern Text to translate
- * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
+ * @param string ...$pattern Text to translate, then $arg1: optional sprintf tokens, and $arg2: translation domain
  * @return string Translated text
  */
 function yourls_s( $pattern ) {
@@ -158,9 +157,8 @@ function yourls_s( $pattern ) {
  * @see sprintf()
  * @since 1.6
  *
- * @param string $pattern Text to translate
- * @param string $arg1, $arg2... Optional: sprintf tokens, and translation domain
- * @return string Translated text
+ * @param string ...$pattern Text to translate, then optional sprintf tokens, and optional translation domain
+ * @return void Translated text
  */
 function yourls_se( $pattern ) {
 	echo yourls_s( func_get_args() );
@@ -269,7 +267,7 @@ function yourls_x( $text, $context, $domain = 'default' ) {
  * @param string $text Text to translate
  * @param string $context Context information for the translators
  * @param string $domain Optional. Domain to retrieve the translated text
- * @return string Translated context string
+ * @return void Echoes translated context string
  */
 function yourls_xe( $text, $context, $domain = 'default' ) {
 	echo yourls_x( $text, $context, $domain );

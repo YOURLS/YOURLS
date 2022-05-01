@@ -55,7 +55,7 @@
  *          )
  *  )
  *
- * @var array
+ * @var array $yourls_filters
  */
 if ( !isset( $yourls_filters ) ) {
     $yourls_filters = [];
@@ -65,7 +65,7 @@ if ( !isset( $yourls_filters ) ) {
  * This global var will collect 'done' actions with the following structure:
  * $yourls_actions['hook'] => number of time this action was done
  *
- * @var array
+ * @var array $yourls_actions
  */
 if ( !isset( $yourls_actions ) ) {
     $yourls_actions = [];
@@ -79,7 +79,7 @@ if ( !isset( $yourls_actions ) ) {
  *
  * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           the name of the YOURLS element to be filtered or YOURLS action to be triggered
- * @param callback $function_name  the name of the function that is to be called.
+ * @param callable $function_name  the name of the function that is to be called.
  * @param int      $priority       optional. Used to specify the order in which the functions associated with a
  *                                 particular action are executed (default=10, lower=earlier execution, and functions
  *                                 with the same priority are executed in the order in which they were added to the
@@ -114,7 +114,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  *
  * @link  https://docs.yourls.org/development/plugins.html
  * @param string   $hook           The name of the action to which the $function_to_add is hooked.
- * @param callback $function_name  The name of the function you wish to be called.
+ * @param callable $function_name  The name of the function you wish to be called.
  * @param int      $priority       Optional. Used to specify the order in which the functions associated with a particular action
  *                                 are executed (default: 10). Lower numbers correspond with earlier execution, and functions
  *                                 with the same priority are executed in the order in which they were added to the action.
@@ -340,7 +340,7 @@ function yourls_call_all_hooks($type, $hook, ...$args) {
  *
  * @global array $yourls_filters storage for all of the filters
  * @param string $hook The filter hook to which the function to be removed is hooked.
- * @param callback $function_to_remove The name of the function which should be removed.
+ * @param callable $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
  * @return bool Whether the function was registered as a filter before it was removed.
  */
