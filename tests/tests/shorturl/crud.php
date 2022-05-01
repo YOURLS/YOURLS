@@ -68,10 +68,17 @@ class ShortURL_CRUD_Tests extends PHPUnit\Framework\TestCase {
         $cache = yourls_get_keyword_infos( $keyword, false );
         $this->assertEquals( 0, yourls_get_keyword_clicks( $keyword ) );
 
+        // Increment by 1
         $this->assertEquals( 1, yourls_update_clicks( $keyword ) );
         // purge cache
         yourls_get_keyword_infos( $keyword, false );
         $this->assertEquals( 1, yourls_get_keyword_clicks( $keyword ) );
+
+        // Increment by specified number
+        $this->assertEquals( 1, yourls_update_clicks( $keyword, 10 ) );
+        // purge cache
+        yourls_get_keyword_infos( $keyword, false );
+        $this->assertEquals( 10, yourls_get_keyword_clicks( $keyword ) );
     }
 
     /**

@@ -211,6 +211,7 @@ function yourls_apply_filter( $hook, $value = '', $is_action = false ) {
     reset( $yourls_filters[ $hook ] );
     do {
         foreach ( (array)current( $yourls_filters[ $hook ] ) as $the_ ) {
+            $_value = '';
             if ( !is_null($the_[ 'function' ]) ) {
                 $args[ 1 ] = $value;
                 $count = $the_[ 'accepted_args' ];

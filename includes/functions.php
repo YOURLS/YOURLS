@@ -80,8 +80,9 @@ function yourls_xml_encode( $array ) {
 
 /**
  * Update click count on a short URL. Return 0/1 for error/success.
- * @param string $keyword
- * @param bool   $clicks
+ *
+ * @param string     $keyword
+ * @param false|int  $clicks
  * @return mixed|string
  */
 function yourls_update_clicks( $keyword, $clicks = false ) {

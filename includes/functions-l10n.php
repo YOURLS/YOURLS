@@ -32,7 +32,7 @@ use POMO\Translations\NOOPTranslations;
  * @uses yourls_apply_filter() Calls 'get_locale' hook on locale value.
  * @uses $yourls_locale Gets the locale stored in the global.
  *
- * @return string The locale of the blog or from the 'get_locale' hook.
+ * @return string The locale of the YOURLS instance
  */
 function yourls_get_locale() {
 	global $yourls_locale;
@@ -508,6 +508,8 @@ function yourls_load_default_textdomain() {
 
     if( !empty( $yourls_locale ) )
         return yourls_load_textdomain( 'default', YOURLS_LANG_DIR . "/$yourls_locale.mo" );
+
+    return false;
 }
 
 /**
@@ -603,6 +605,9 @@ function yourls_number_format_i18n( $number, $decimals = 0 ) {
  * @return string                       The date, translated if locale specifies it.
  */
 function yourls_date_i18n( $dateformatstring, $timestamp = false ) {
+    /**
+     * @var YOURLS_Locale_Formats $yourls_locale_formats
+     */
 	global $yourls_locale_formats;
 	if( !isset( $yourls_locale_formats ) )
 		$yourls_locale_formats = new YOURLS_Locale_Formats();

@@ -417,6 +417,8 @@ function yourls_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 	$others = array( '&lt;'   => '<', '&#060;'  => '<', '&gt;'   => '>', '&#062;'  => '>', '&amp;'  => '&', '&#038;'  => '&', '&#x26;' => '&' );
 	$others_preg = array( '/&#0*60;/'  => '&#060;', '/&#0*62;/'  => '&#062;', '/&#0*38;/'  => '&#038;', '/&#x0*26;/i' => '&#x26;' );
 
+    $translation = $translation_preg = [];
+
 	if ( $quote_style === ENT_QUOTES ) {
 		$translation = array_merge( $single, $double, $others );
 		$translation_preg = array_merge( $single_preg, $double_preg, $others_preg );

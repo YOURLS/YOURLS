@@ -445,4 +445,3 @@ function yourls_clean_htaccess_for_14() {
 
 	return $result;
 }
-
