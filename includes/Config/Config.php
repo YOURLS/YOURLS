@@ -11,12 +11,12 @@ use YOURLS\Exceptions\ConfigException;
 class Config {
 
     /**
-     * @param string
+     * @var string
      */
     protected $root;
 
     /**
-     * @param mixed
+     * @var mixed
      */
     protected $config;
 
@@ -42,7 +42,7 @@ class Config {
 
     /**
      * @since  1.7.3
-     * @param  string  path to config file
+     * @param  string $config   path to config file
      * @return void
      */
     public function set_config($config) {
@@ -51,7 +51,7 @@ class Config {
 
     /**
      * @since  1.7.3
-     * @param  string  path to YOURLS root directory
+     * @param  string $root   path to YOURLS root directory
      * @return void
      */
     public function set_root($root) {

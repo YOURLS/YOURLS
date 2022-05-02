@@ -6,7 +6,8 @@
 
 /**
  * Make an optimized regexp pattern from a string of characters
- * @param $string
+ *
+ * @param string $string
  * @return string
  */
 function yourls_make_regexp_pattern( $string ) {
@@ -52,17 +53,17 @@ function yourls_get_next_decimal() {
  * Update id for next link with no custom keyword
  *
  * Note: this function relies upon yourls_update_option(), which will return either true or false
- * depending if there has been an actual MySQL query updating the DB.
+ * depending upon if there has been an actual MySQL query updating the DB.
  * In other words, this function may return false yet this would not mean it has functionally failed
- * In other words I'm not sure we really need this function to return something :face_with_eyes_looking_up:
+ * In other words I'm not sure if we really need this function to return something :face_with_eyes_looking_up:
  * See issue 2621 for more on this.
  *
  * @since 1.0
- * @param integer $int     id for next link
+ * @param integer $int id for next link
  * @return bool            true or false depending on if there has been an actual MySQL query. See note above.
  */
-function yourls_update_next_decimal( $int = '' ) {
-	$int = ( $int == '' ) ? yourls_get_next_decimal() + 1 : (int)$int ;
+function yourls_update_next_decimal( $int = 0 ) {
+	$int = ( $int == 0 ) ? yourls_get_next_decimal() + 1 : (int)$int ;
 	$update = yourls_update_option( 'next_id', $int );
 	yourls_do_action( 'update_next_decimal', $int, $update );
 	return $update;
@@ -74,13 +75,14 @@ function yourls_update_next_decimal( $int = '' ) {
  * @return string
  */
 function yourls_xml_encode( $array ) {
-    return (\Spatie\ArrayToXml\ArrayToXml::convert($array));
+    return (\Spatie\ArrayToXml\ArrayToXml::convert($array, '', true, 'UTF-8'));
 }
 
 /**
  * Update click count on a short URL. Return 0/1 for error/success.
- * @param string $keyword
- * @param bool   $clicks
+ *
+ * @param string     $keyword
+ * @param false|int  $clicks
  * @return mixed|string
  */
 function yourls_update_clicks( $keyword, $clicks = false ) {
@@ -175,7 +177,7 @@ function yourls_get_stats( $filter = 'top', $limit = 10, $start = 0 ) {
  *   $where['sql'] will concatenate SQL clauses: $where['sql'] = ' AND something = :value AND otherthing < :othervalue';
  *   $where['binds'] will hold the (name => value) placeholder pairs: $where['binds'] = array('value' => $value, 'othervalue' => $value2)
  *
- * @param  $where array  See comment above
+ * @param  array $where See comment above
  * @return array
  */
 function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
@@ -935,7 +937,7 @@ function yourls_is_mobile_device() {
  * @param string $uri           Optional, page requested (default to $_SERVER['REQUEST_URI'] eg '/yourls/abcd' )
  * @return string               request relative to YOURLS base (eg 'abdc')
  */
-function yourls_get_request($yourls_site = false, $uri = false) {
+function yourls_get_request($yourls_site = '', $uri = '') {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_get_request', false );
     if ( false !== $pre ) {
@@ -945,10 +947,10 @@ function yourls_get_request($yourls_site = false, $uri = false) {
     yourls_do_action( 'pre_get_request', $yourls_site, $uri );
 
     // Default values
-    if ( false === $yourls_site ) {
+    if ( '' === $yourls_site ) {
         $yourls_site = yourls_get_yourls_site();
     }
-    if ( false === $uri ) {
+    if ( '' === $uri ) {
         $uri = $_SERVER[ 'REQUEST_URI' ];
     }
 
@@ -1250,7 +1252,7 @@ function yourls_get_protocol_slashes_and_rest( $url, $array = [ 'protocol', 'sla
  * @param string $scheme scheme, either 'http' or 'https'
  * @return string URL with chosen scheme
  */
-function yourls_set_url_scheme( $url, $scheme = false ) {
+function yourls_set_url_scheme( $url, $scheme = '' ) {
     if ( in_array( $scheme, [ 'http', 'https' ] ) ) {
         $url = preg_replace( '!^[a-zA-Z0-9+.-]+://!', $scheme.'://', $url );
     }

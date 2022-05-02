@@ -10,6 +10,30 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * PHP emulation of JS's encodeURI
+ *
+ * @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
+ * @deprecated 1.9.1
+ * @param string $url
+ * @return string
+ */
+function yourls_encodeURI($url) {
+    yourls_deprecated_function( __FUNCTION__, '1.9.1', 'no replacement needed' );
+    // Decode URL all the way
+    $result = yourls_rawurldecode_while_encoded( $url );
+    // Encode once
+    $result = strtr( rawurlencode( $result ), array (
+        '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
+        '%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
+        '%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
+    ) );
+    // @TODO:
+    // Known limit: this will most likely break IDN URLs such as http://www.académie-française.fr/
+    // To fully support IDN URLs, advocate use of a plugin.
+    return yourls_apply_filter( 'encodeURI', $result, $url );
+}
+
+/**
  * Check if a file is a plugin file
  *
  * @deprecated 1.8.3

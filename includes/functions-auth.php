@@ -37,7 +37,7 @@ function yourls_is_valid_user() {
         // The logout nonce is associated to fake user 'logout' since at this point we don't know the real user
         yourls_verify_nonce('admin_logout', $_REQUEST['nonce'], 'logout');
 		yourls_do_action( 'logout' );
-		yourls_store_cookie( null );
+		yourls_store_cookie( '' );
 		return yourls__( 'Logged out successfully' );
 	}
 
@@ -173,11 +173,15 @@ function yourls_check_password_hash( $user, $submitted_password ) {
  * @return true|string  if overwrite was successful, an error message otherwise
  */
 function yourls_hash_passwords_now( $config_file ) {
-	if( !is_readable( $config_file ) )
-		return 'cannot read file'; // not sure that can actually happen...
+	if( !is_readable( $config_file ) ) {
+        yourls_debug_log( 'Cannot hash passwords: cannot read file ' . $config_file );
+        return 'cannot read file'; // not sure that can actually happen...
+    }
 
-	if( !is_writable( $config_file ) )
+	if( !is_writable( $config_file ) ) {
+        yourls_debug_log( 'Cannot hash passwords: cannot write file ' . $config_file );
 		return 'cannot write file';
+    }
 
     $yourls_user_passwords = [];
 	// Include file to read value of $yourls_user_passwords
@@ -188,11 +192,16 @@ function yourls_hash_passwords_now( $config_file ) {
 	error_reporting( $errlevel );
 
 	$configdata = file_get_contents( $config_file );
-	if( $configdata == false )
-		return 'could not read file';
+
+    if( $configdata == false ) {
+        yourls_debug_log('Cannot hash passwords: file_get_contents() false with ' . $config_file);
+        return 'could not read file';
+    }
 
 	$to_hash = 0; // keep track of number of passwords that need hashing
 	foreach ( $yourls_user_passwords as $user => $password ) {
+        // avoid "deprecated" warning when password is null -- see test case in tests/data/auth/preg_replace_problem.php
+        $password ??= '';
 		if ( !yourls_has_phpass_password( $user ) && !yourls_has_md5_password( $user ) ) {
 			$to_hash++;
 			$hash = yourls_phpass_hash( $password );
@@ -211,8 +220,10 @@ function yourls_hash_passwords_now( $config_file ) {
 		}
 	}
 
-	if( $to_hash == 0 )
-		return 0; // There was no password to encrypt
+	if( $to_hash == 0 ) {
+        yourls_debug_log('Cannot hash passwords: no password found in ' . $config_file);
+        return 'no password found';
+    }
 
 	$success = file_put_contents( $config_file, $configdata );
 	if ( $success === FALSE ) {
@@ -427,9 +438,9 @@ function yourls_check_timestamp( $time ) {
 /**
  * Store new cookie. No $user will delete the cookie.
  *
- * @param mixed $user  String, user login, or null to delete cookie
+ * @param string $user  User login, or empty string to delete cookie
  */
-function yourls_store_cookie( $user = null ) {
+function yourls_store_cookie( $user = '' ) {
 
     // No user will delete the cookie with a cookie time from the past
 	if( !$user ) {
@@ -554,7 +565,7 @@ function yourls_cookie_name() {
  * @return string          cookie value
  */
 function yourls_cookie_value( $user ) {
-	return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ), $user );
+	return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ?? '' ), $user );
 }
 
 /**

@@ -47,7 +47,7 @@ class Logger extends AbstractLogger {
      *               )
      * See finish() in Aura\Sql\Profiler\Profiler
      *
-     * @return null
+     * @return void
      */
     public function log($level, $message, array $context = []) {
         // if it's an internal SQL query, format the message, otherwise store a string

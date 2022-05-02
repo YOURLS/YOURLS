@@ -34,6 +34,7 @@ class Format_Sanitize extends PHPUnit\Framework\TestCase {
         $unsane   = '<tag></tag><omg>';
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
         $this->assertSame( $fallback, yourls_sanitize_title( $unsane, $fallback ) );
+        $this->assertSame( $fallback, yourls_sanitize_title( '', $fallback ) );
     }
 
     /**

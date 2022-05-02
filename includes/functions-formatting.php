@@ -14,8 +14,8 @@ function yourls_int2string( $num, $chars = null ) {
 	$string = '';
 	$len = strlen( $chars );
 	while( $num >= $len ) {
-		$mod = bcmod( $num, $len );
-		$num = bcdiv( $num, $len );
+		$mod = bcmod( (string)$num, (string)$len );
+		$num = bcdiv( (string)$num, (string)$len );
 		$string = $chars[ $mod ] . $string;
 	}
 	$string = $chars[ intval( $num ) ] . $string;
@@ -36,7 +36,7 @@ function yourls_string2int( $string, $chars = null ) {
 	$inputlen = strlen( $string );
 	for ($i = 0; $i < $inputlen; $i++) {
 		$index = strpos( $chars, $string[$i] );
-		$integer = bcadd( $integer, bcmul( $index, bcpow( $baselen, $i ) ) );
+		$integer = bcadd( (string)$integer, bcmul( (string)$index, bcpow( (string)$baselen, (string)$i ) ) );
 	}
 
 	return yourls_apply_filter( 'string2int', $integer, $string, $chars );
@@ -417,6 +417,8 @@ function yourls_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 	$others = array( '&lt;'   => '<', '&#060;'  => '<', '&gt;'   => '>', '&#062;'  => '>', '&amp;'  => '&', '&#038;'  => '&', '&#x26;' => '&' );
 	$others_preg = array( '/&#0*60;/'  => '&#060;', '/&#0*62;/'  => '&#062;', '/&#0*38;/'  => '&#038;', '/&#x0*26;/i' => '&#x26;' );
 
+    $translation = $translation_preg = [];
+
 	if ( $quote_style === ENT_QUOTES ) {
 		$translation = array_merge( $single, $double, $others );
 		$translation_preg = array_merge( $single_preg, $double_preg, $others_preg );
@@ -654,29 +656,6 @@ function yourls_esc_textarea( $text ) {
 	return yourls_apply_filter( 'esc_textarea', $safe_text, $text );
 }
 
-
-/**
-* PHP emulation of JS's encodeURI
-*
-* @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
-* @param $url
-* @return string
-*/
-function yourls_encodeURI( $url ) {
-	// Decode URL all the way
-	$result = yourls_rawurldecode_while_encoded( $url );
-	// Encode once
-	$result = strtr( rawurlencode( $result ), array (
-        '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':', '%40' => '@',
-		'%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$', '%21' => '!', '%2A' => '*',
-		'%27' => '\'', '%28' => '(', '%29' => ')', '%23' => '#',
-    ) );
-	// @TODO:
-	// Known limit: this will most likely break IDN URLs such as http://www.académie-française.fr/
-	// To fully support IDN URLs, advocate use of a plugin.
-	return yourls_apply_filter( 'encodeURI', $result, $url );
-}
-
 /**
  * Adds backslashes before letters and before a number at the start of a string. Stolen from WP.
  *
@@ -793,4 +772,3 @@ function yourls_get_date_format( $format ) {
 function yourls_get_time_format( $format ) {
     return yourls_apply_filter( 'get_time_format', (string)$format );
 }
-

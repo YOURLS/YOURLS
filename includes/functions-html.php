@@ -205,7 +205,7 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * The $param array is defined in /admin/index.php, check the yourls_html_tfooter() call
  *
  * @param array $params Array of all required parameters
- * @return string Result
+ * @return void
  */
 function yourls_html_tfooter( $params = array() ) {
     // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
@@ -614,7 +614,7 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp 
 		),
 		'clicks' => array(
 			'template' => '%clicks%',
-			'clicks'   => yourls_number_format_i18n( $clicks, 0, '', '' ),
+			'clicks'   => yourls_number_format_i18n( $clicks, 0 ),
 		),
 		'actions' => array(
 			'template' => '%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/>',
@@ -854,7 +854,7 @@ HTML;
  *  were a standard short URL (ie http://sho.rt/$page)
  *
  *  @since 1.0
- *  @param $page      PHP file to display
+ *  @param string $page      PHP file to display
  */
 function yourls_page( $page ) {
     if( !yourls_is_page($page)) {
@@ -920,7 +920,7 @@ function yourls_l10n_calendar_strings() {
  * @since 1.7
  * @param string $compare_with Optional, YOURLS version to compare to
  */
-function yourls_new_core_version_notice($compare_with = false) {
+function yourls_new_core_version_notice($compare_with = null) {
     $compare_with = $compare_with ?: YOURLS_VERSION;
 
 	$checks = yourls_get_option( 'core_version_checks' );
@@ -971,7 +971,7 @@ function yourls_set_html_context($context) {
  * @return string
  */
 function yourls_get_html_context() {
-    yourls_get_db()->get_html_context();
+    return yourls_get_db()->get_html_context();
 }
 
 /**

@@ -216,6 +216,20 @@ class Auth_Func_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * Check that encrypting file with no passwords returns expected error
+     */
+    public function test_hash_passwords_now_no_pwd() {
+        $this->assertSame('no password found', yourls_hash_passwords_now( YOURLS_TESTDATA_DIR . '/auth/nopassword.php' ) );
+    }
+
+    /**
+     * Check that encrypting file with incorrect content returns expected error
+     */
+    public function test_hash_passwords_now_bad_content() {
+        $this->assertSame('preg_replace problem', yourls_hash_passwords_now( YOURLS_TESTDATA_DIR . '/auth/preg_replace_problem.php' ) );
+    }
+
+    /**
      * Check that in-file password encryption works as expected with different kinds of passwords
      *
      * This test checks that encrypting the config file, with different kinds of pwd, results in a valid

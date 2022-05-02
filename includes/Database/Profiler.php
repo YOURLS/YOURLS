@@ -21,7 +21,7 @@ class Profiler extends \Aura\Sql\Profiler\Profiler {
      *
      * @param string $statement The statement being profiled, if any.
      * @param array $values The values bound to the statement, if any.
-     * @return null
+     * @return void
      */
     public function finish($statement = null, array $values = [])
     {
