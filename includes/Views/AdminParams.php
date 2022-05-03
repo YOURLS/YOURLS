@@ -51,11 +51,12 @@ class AdminParams
      */
     public function __construct()
     {
-        $this->possible_search_params = yourls_apply_filter('admin_params_possible_search',
+        // Cast return values of yourls_apply_filter() to array in case a hook would incorrectly return something else
+        $this->possible_search_params = (array)yourls_apply_filter('admin_params_possible_search',
             ['all', 'keyword', 'url', 'title', 'ip']);
-        $this->possible_sort_params   = yourls_apply_filter('admin_params_possible_sort',
+        $this->possible_sort_params   = (array)yourls_apply_filter('admin_params_possible_sort',
             ['keyword', 'url', 'title', 'ip', 'timestamp', 'clicks']);
-        $this->params_translations    = yourls_apply_filter('admin_params_possible_translations',[
+        $this->params_translations    = (array)yourls_apply_filter('admin_params_possible_translations',[
             'all'       => yourls__('All fields'),
             'keyword'   => yourls__('Short URL'),
             'url'       => yourls__('URL'),
@@ -64,7 +65,7 @@ class AdminParams
             'timestamp' => yourls__('Date'),
             'clicks'    => yourls__('Clicks'),
         ]);
-        $this->possible_date_sorting  = yourls_apply_filter('admin_params_possible_date_sort',
+        $this->possible_date_sorting  = (array)yourls_apply_filter('admin_params_possible_date_sort',
             ['before', 'after', 'between']);
     }
 
