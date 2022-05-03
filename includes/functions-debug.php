@@ -34,6 +34,7 @@ function yourls_get_debug_log() {
 /**
  * Get number of SQL queries performed
  *
+ * @return int
  */
 function yourls_get_num_queries() {
 	return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
@@ -44,6 +45,7 @@ function yourls_get_num_queries() {
  *
  * @since 1.7.3
  * @param bool $bool Debug on or off
+ * @return void
  */
 function yourls_debug_mode( $bool ) {
     // log queries if true

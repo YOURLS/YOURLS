@@ -163,8 +163,12 @@ function yourls_api_output( $mode, $output, $send_headers = true, $echo = true )
 /**
  * Return array for API stat requests
  *
+ * @param string $filter  either "top", "bottom" , "rand" or "last"
+ * @param int    $limit   maximum number of links to return
+ * @param int    $start   offset
+ * @return array
  */
-function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
+function yourls_api_stats($filter = 'top', $limit = 10, $start = 0 ) {
 	$return = yourls_get_stats( $filter, $limit, $start );
 	$return['simple']  = 'Need either XML or JSON format for stats';
 	$return['message'] = 'success';
@@ -174,6 +178,7 @@ function yourls_api_stats( $filter = 'top', $limit = 10, $start = 0 ) {
 /**
  * Return array for counts of shorturls and clicks
  *
+ * @return array
  */
 function yourls_api_db_stats() {
 	$return = array(
@@ -189,6 +194,8 @@ function yourls_api_db_stats() {
 /**
  * Return array for API stat requests
  *
+ * @param string $shorturl  Short URL to check
+ * @return array
  */
 function yourls_api_url_stats( $shorturl ) {
 	$keyword = str_replace( yourls_get_yourls_site() . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'
@@ -202,6 +209,8 @@ function yourls_api_url_stats( $shorturl ) {
 /**
  * Expand short url to long url
  *
+ * @param string $shorturl  Short URL to expand
+ * @return array
  */
 function yourls_api_expand( $shorturl ) {
 	$keyword = str_replace( yourls_get_yourls_site() . '/' , '', $shorturl ); // accept either 'http://ozh.in/abc' or 'abc'

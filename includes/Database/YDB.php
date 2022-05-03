@@ -192,6 +192,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $context
+     * @return void
      */
     public function set_html_context($context) {
         $this->context = $context;
@@ -209,6 +210,7 @@ class YDB extends ExtendedPdo {
     /**
      * @param string $name
      * @param mixed  $value
+     * @return void
      */
     public function set_option($name, $value) {
         $this->option[$name] = $value;
@@ -232,6 +234,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $name
+     * @return void
      */
     public function delete_option($name) {
         unset($this->option[$name]);
@@ -243,6 +246,7 @@ class YDB extends ExtendedPdo {
     /**
      * @param string $keyword
      * @param mixed  $infos
+     * @return void
      */
     public function set_infos($keyword, $infos) {
         $this->infos[$keyword] = $infos;
@@ -266,6 +270,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $keyword
+     * @return void
      */
     public function delete_infos($keyword) {
         unset($this->infos[$keyword]);
@@ -287,6 +292,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param array $plugins
+     * @return void
      */
     public function set_plugins(array $plugins) {
         $this->plugins = $plugins;
@@ -294,6 +300,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $plugin  plugin filename
+     * @return void
      */
     public function add_plugin($plugin) {
         $this->plugins[] = $plugin;
@@ -301,6 +308,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $plugin  plugin filename
+     * @return void
      */
     public function remove_plugin($plugin) {
         unset($this->plugins[$plugin]);
@@ -318,6 +326,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param array $pages
+     * @return void
      */
     public function set_plugin_pages(array $pages) {
         $this->plugin_pages = $pages;
@@ -327,6 +336,7 @@ class YDB extends ExtendedPdo {
      * @param string   $slug
      * @param string   $title
      * @param callable $function
+     * @return void
      */
     public function add_plugin_page( $slug, $title, $function ) {
         $this->plugin_pages[ $slug ] = [
@@ -338,6 +348,7 @@ class YDB extends ExtendedPdo {
 
     /**
      * @param string $slug
+     * @return void
      */
     public function remove_plugin_page( $slug ) {
         unset( $this->plugin_pages[ $slug ] );

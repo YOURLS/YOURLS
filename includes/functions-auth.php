@@ -7,6 +7,7 @@
 /**
  * Show login form if required
  *
+ * @return void
  */
 function yourls_maybe_require_auth() {
 	if( yourls_is_private() ) {
@@ -124,6 +125,7 @@ function yourls_is_valid_user() {
 /**
  * Check auth against list of login=>pwd. Sets user if applicable, returns bool
  *
+ * @return bool  true if login/pwd pair is valid (and sets user if applicable), false otherwise
  */
 function yourls_check_username_password() {
 	global $yourls_user_passwords;
@@ -143,8 +145,11 @@ function yourls_check_username_password() {
 /**
  * Check a submitted password sent in plain text against stored password which can be a salted hash
  *
+ * @param string $user
+ * @param string $submitted_password
+ * @return bool
  */
-function yourls_check_password_hash( $user, $submitted_password ) {
+function yourls_check_password_hash($user, $submitted_password ) {
 	global $yourls_user_passwords;
 
 	if( !isset( $yourls_user_passwords[ $user ] ) )
@@ -331,6 +336,7 @@ function yourls_has_phpass_password( $user ) {
 /**
  * Check auth against encrypted COOKIE data. Sets user if applicable, returns bool
  *
+ * @return bool true if authenticated, false otherwise
  */
 function yourls_check_auth_cookie() {
 	global $yourls_user_passwords;
@@ -417,6 +423,8 @@ function yourls_check_signature() {
 /**
  * Generate secret signature hash
  *
+ * @param false|string $username  Username to generate signature for, or false to use current user
+ * @return string                 Signature
  */
 function yourls_auth_signature( $username = false ) {
 	if( !$username && defined('YOURLS_USER') ) {
@@ -428,6 +436,8 @@ function yourls_auth_signature( $username = false ) {
 /**
  * Check if timestamp is not too old
  *
+ * @param int $time  Timestamp to check
+ * @return bool      True if timestamp is valid
  */
 function yourls_check_timestamp( $time ) {
 	$now = time();
@@ -439,6 +449,7 @@ function yourls_check_timestamp( $time ) {
  * Store new cookie. No $user will delete the cookie.
  *
  * @param string $user  User login, or empty string to delete cookie
+ * @return void
  */
 function yourls_store_cookie( $user = '' ) {
 
@@ -474,7 +485,6 @@ function yourls_store_cookie( $user = '' ) {
  *
  * @see https://github.com/GoogleChromeLabs/samesite-examples/blob/master/php.md
  * @see https://stackoverflow.com/a/59654832/36850
- * @see https://3v4l.org/uKEtH for compat tests
  * @see https://www.php.net/manual/en/function.setcookie.php
  *
  * @since  1.7.7
@@ -490,24 +500,21 @@ function yourls_store_cookie( $user = '' ) {
 function yourls_setcookie($name, $value, $expire, $path, $domain, $secure, $httponly) {
     $samesite = yourls_apply_filter('setcookie_samesite', 'Lax' );
 
-    if (PHP_VERSION_ID < 70300) {
-        return(setcookie($name, $value, $expire, "$path; samesite=$samesite", $domain, $secure, $httponly));
-    }
-    else {
-        return(setcookie($name, $value, array(
-            'expires'  => $expire,
-            'path'     => $path,
-            'domain'   => $domain,
-            'samesite' => $samesite,
-            'secure'   => $secure,
-            'httponly' => $httponly,
-        )));
-    }
+    return(setcookie($name, $value, array(
+        'expires'  => $expire,
+        'path'     => $path,
+        'domain'   => $domain,
+        'samesite' => $samesite,
+        'secure'   => $secure,
+        'httponly' => $httponly,
+    )));
 }
 
 /**
  * Set user name
  *
+ * @param string $user  Username
+ * @return void
  */
 function yourls_set_user( $user ) {
 	if( !defined( 'YOURLS_USER' ) )
@@ -573,6 +580,7 @@ function yourls_cookie_value( $user ) {
  *
  * Actually, this returns a float: ceil rounds up a value but is of type float, see https://www.php.net/ceil
  *
+ * @return float
  */
 function yourls_tick() {
 	return ceil( time() / yourls_get_nonce_life() );
@@ -609,8 +617,11 @@ function yourls_hmac_algo() {
 /**
  * Create a time limited, action limited and user limited token
  *
+ * @param string $action      Action to create nonce for
+ * @param false|string $user  Optional user string, false for current user
+ * @return string             Nonce token
  */
-function yourls_create_nonce( $action, $user = false ) {
+function yourls_create_nonce($action, $user = false ) {
 	if( false === $user ) {
         $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
     }
@@ -621,10 +632,15 @@ function yourls_create_nonce( $action, $user = false ) {
 }
 
 /**
- * Create a nonce field for inclusion into a form
+ * Echoes or returns a nonce field for inclusion into a form
  *
+ * @param string $action      Action to create nonce for
+ * @param string $name        Optional name of nonce field -- defaults to 'nonce'
+ * @param false|string $user  Optional user string, false if unspecified
+ * @param bool $echo          True to echo, false to return nonce field
+ * @return string             Nonce field
  */
-function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = true ) {
+function yourls_nonce_field($action, $name = 'nonce', $user = false, $echo = true ) {
 	$field = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.yourls_create_nonce( $action, $user ).'" />';
 	if( $echo )
 		echo $field."\n";
@@ -634,8 +650,13 @@ function yourls_nonce_field( $action, $name = 'nonce', $user = false, $echo = tr
 /**
  * Add a nonce to a URL. If URL omitted, adds nonce to current URL
  *
+ * @param string $action      Action to create nonce for
+ * @param string $url         Optional URL to add nonce to -- defaults to current URL
+ * @param string $name        Optional name of nonce field -- defaults to 'nonce'
+ * @param false|string $user  Optional user string, false if unspecified
+ * @return string             URL with nonce added
  */
-function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false ) {
+function yourls_nonce_url($action, $url = false, $name = 'nonce', $user = false ) {
 	$nonce = yourls_create_nonce( $action, $user );
 	return yourls_add_query_arg( $name, $nonce, $url );
 }
@@ -643,11 +664,16 @@ function yourls_nonce_url( $action, $url = false, $name = 'nonce', $user = false
 /**
  * Check validity of a nonce (ie time span, user and action match).
  *
- * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined)
- * if $nonce is false or unspecified, it will use $_REQUEST['nonce']
+ * Returns true if valid, dies otherwise (yourls_die() or die($return) if defined).
+ * If $nonce is false or unspecified, it will use $_REQUEST['nonce']
  *
+ * @param string $action
+ * @param false|string $nonce  Optional, string: nonce value, or false to use $_REQUEST['nonce']
+ * @param false|string $user   Optional, string user, false for current user
+ * @param string $return       Optional, string: message to die with if nonce is invalid
+ * @return bool|void           True if valid, dies otherwise
  */
-function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = '' ) {
+function yourls_verify_nonce($action, $nonce = false, $user = false, $return = '' ) {
 	// Get user
 	if( false === $user ) {
         $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
@@ -679,7 +705,7 @@ function yourls_verify_nonce( $action, $nonce = false, $user = false, $return = 
  * Check if YOURLS_USER comes from environment variables
  *
  * @since 1.8.2
- * @return bool     true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
+ * @return bool  true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
  */
 function yourls_is_user_from_env() {
 	return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD'));
