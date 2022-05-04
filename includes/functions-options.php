@@ -36,6 +36,7 @@ function yourls_get_option( $option_name, $default = false ) {
  * a check for DB server reachability has been performed
  *
  * @since 1.4
+ * @return void
  */
 function yourls_get_all_options() {
     // Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)

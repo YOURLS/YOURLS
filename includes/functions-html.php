@@ -3,6 +3,7 @@
 /**
  * Display <h1> header and logo
  *
+ * @return void
  */
 function yourls_html_logo() {
 	yourls_do_action( 'pre_html_logo' );
@@ -22,6 +23,7 @@ function yourls_html_logo() {
  *
  * @param string $context Context of the page (stats, index, infos, ...)
  * @param string $title HTML title of the page
+ * @return void
  */
 function yourls_html_head( $context = 'index', $title = '' ) {
 
@@ -172,6 +174,7 @@ function yourls_html_footer($can_query = true) {
  *
  * @param string $url URL to prefill the input with
  * @param string $keyword Keyword to prefill the input with
+ * @return void
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
     $pre = yourls_apply_filter( 'shunt_html_addnew', false, $url, $keyword );
@@ -384,9 +387,18 @@ function yourls_html_select( $name, $options, $selected = '', $display = false, 
 	return $html;
 }
 
+
 /**
  * Display the Quick Share box
  *
+ * @param string $longurl          Long URL
+ * @param string $shorturl         Short URL
+ * @param string $title            Title
+ * @param string $text             Text to display
+ * @param string $shortlink_title  Optional replacement for 'Your short link'
+ * @param string $share_title      Optional replacement for 'Quick Share'
+ * @param bool   $hidden           Optional. Hide the box by default (with css "display:none")
+ * @return void
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
 	if ( $shortlink_title == '' )
@@ -460,6 +472,7 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 /**
  * Die die die
  *
+ * @return void
  */
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
     yourls_do_action( 'pre_yourls_die', $message, $title, $header_code );
@@ -522,7 +535,13 @@ RETURN;
 /**
  * Return an "Add" row for the main table
  *
- * @return string HTML of the edit row
+ * @param string $keyword     Keyword (short URL)
+ * @param string $url         URL (long URL)
+ * @param string $title       Title
+ * @param string $ip          IP
+ * @param string|int $clicks  Number of clicks
+ * @param string $timestamp   Timestamp
+ * @return string             HTML of the row
  */
 function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp ) {
 	$keyword  = yourls_sanitize_keyword($keyword);
@@ -641,6 +660,7 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp 
 /**
  * Echo the main table head
  *
+ * @return void
  */
 function yourls_table_head() {
 	$start = '<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1"><thead><tr>'."\n";
@@ -665,6 +685,7 @@ function yourls_table_head() {
 /**
  * Echo the tbody start tag
  *
+ * @return void
  */
 function yourls_table_tbody_start() {
 	echo yourls_apply_filter( 'table_tbody_start', '<tbody>' );
@@ -673,6 +694,7 @@ function yourls_table_tbody_start() {
 /**
  * Echo the tbody end tag
  *
+ * @return void
  */
 function yourls_table_tbody_end() {
 	echo yourls_apply_filter( 'table_tbody_end', '</tbody>' );
@@ -681,27 +703,36 @@ function yourls_table_tbody_end() {
 /**
  * Echo the table start tag
  *
+ * @return void
  */
 function yourls_table_end() {
 	echo yourls_apply_filter( 'table_end', '</table></main>' );
 }
 
+
+
 /**
  * Echo HTML tag for a link
  *
- */
-function yourls_html_link( $href, $title = '', $element = '' ) {
-	if( !$title )
-		$title = $href;
+ * @param string $href     URL to link to
+ * @param string $anchor   Anchor text
+ * @param string $element  Element id
+ * @return void
+*/
+function yourls_html_link( $href, $anchor = '', $element = '' ) {
+	if( !$anchor )
+		$anchor = $href;
 	if( $element )
 		$element = sprintf( 'id="%s"', yourls_esc_attr( $element ) );
-	$link = sprintf( '<a href="%s" %s>%s</a>', yourls_esc_url( $href ), $element, yourls_esc_html( $title ) );
+	$link = sprintf( '<a href="%s" %s>%s</a>', yourls_esc_url( $href ), $element, yourls_esc_html( $anchor ) );
 	echo yourls_apply_filter( 'html_link', $link );
 }
 
 /**
  * Display the login screen. Nothing past this point.
  *
+ * @param string $error_msg  Optional error message to display
+ * @return void
  */
 function yourls_login_screen( $error_msg = '' ) {
 	yourls_html_head( 'login' );
@@ -744,12 +775,13 @@ function yourls_login_screen( $error_msg = '' ) {
 	die();
 }
 
+
 /**
  * Display the admin menu
  *
+ * @return void
  */
 function yourls_html_menu() {
-
 	// Build menu links
 	if( defined( 'YOURLS_USER' ) ) {
 	    // Create a logout link with a nonce associated to fake user 'logout' : the user is not yet defined
@@ -838,6 +870,9 @@ function yourls_add_notice( $message, $style = 'notice' ) {
 /**
  * Return a formatted notice
  *
+ * @param string $message  Message to display
+ * @param string $style    CSS class to use for the notice
+ * @return string          HTML of the notice
  */
 function yourls_notice_box( $message, $style = 'notice' ) {
 	return <<<HTML
@@ -848,13 +883,14 @@ HTML;
 }
 
 /**
- *  Display a page
+ * Display a page
  *
- *  Includes content of a PHP file from the YOURLS_PAGEDIR directory, as if it
- *  were a standard short URL (ie http://sho.rt/$page)
+ * Includes content of a PHP file from the YOURLS_PAGEDIR directory, as if it
+ * were a standard short URL (ie http://sho.rt/$page)
  *
- *  @since 1.0
- *  @param string $page      PHP file to display
+ * @since 1.0
+ * @param string $page  PHP file to display
+ * @return void
  */
 function yourls_page( $page ) {
     if( !yourls_is_page($page)) {
@@ -873,6 +909,7 @@ function yourls_page( $page ) {
  * information for the page. Stolen from WP.
  *
  * @since 1.6
+ * @return void
  */
 function yourls_html_language_attributes() {
 	$attributes = array();
@@ -899,6 +936,7 @@ function yourls_html_language_attributes() {
  * Output translated strings used by the Javascript calendar
  *
  * @since 1.6
+ * @return void
  */
 function yourls_l10n_calendar_strings() {
 	echo "\n<script>\n";
@@ -919,6 +957,7 @@ function yourls_l10n_calendar_strings() {
  *
  * @since 1.7
  * @param string $compare_with Optional, YOURLS version to compare to
+ * @return void
  */
 function yourls_new_core_version_notice($compare_with = null) {
     $compare_with = $compare_with ?: YOURLS_VERSION;

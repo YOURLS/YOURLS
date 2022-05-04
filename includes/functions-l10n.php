@@ -205,6 +205,7 @@ function yourls_esc_html__( $text, $domain = 'default' ) {
  *
  * @param string $text Text to translate
  * @param string $domain Optional. Domain to retrieve the translated text
+ * @return void
  */
 function yourls_e( $text, $domain = 'default' ) {
 	echo yourls_translate( $text, $domain );
@@ -219,6 +220,7 @@ function yourls_e( $text, $domain = 'default' ) {
  *
  * @param string $text Text to translate
  * @param string $domain Optional. Domain to retrieve the translated text
+ * @return void
  */
 function yourls_esc_attr_e( $text, $domain = 'default' ) {
 	echo yourls_esc_attr( yourls_translate( $text, $domain ) );
@@ -233,6 +235,7 @@ function yourls_esc_attr_e( $text, $domain = 'default' ) {
  *
  * @param string $text Text to translate
  * @param string $domain Optional. Domain to retrieve the translated text
+ * @return void
  */
 function yourls_esc_html_e( $text, $domain = 'default' ) {
 	echo yourls_esc_html( yourls_translate( $text, $domain ) );
@@ -345,6 +348,12 @@ function yourls_n( $single, $plural, $number, $domain = 'default' ) {
  * @see yourls_n()
  * @see yourls_x()
  *
+ * @param string $single   The text that will be used if $number is 1
+ * @param string $plural   The text that will be used if $number is not 1
+ * @param int $number      The number to compare against to use either $single or $plural
+ * @param string $context  Context information for the translators
+ * @param string $domain   Optional. The domain identifier the text should be retrieved in
+ * @return string          Either $single or $plural translated text
  */
 function yourls_nx($single, $plural, $number, $context, $domain = 'default') {
 	$translations = yourls_get_translations_for_domain( $domain );
@@ -389,6 +398,12 @@ function yourls_n_noop( $singular, $plural, $domain = null ) {
  *
  * @since 1.6
  * @see yourls_n_noop()
+ *
+ * @param string $singular Single form to be i18ned
+ * @param string $plural   Plural form to be i18ned
+ * @param string $context  Context information for the translators
+ * @param string $domain   Optional. The domain identifier the text will be retrieved in
+ * @return array           array($singular, $plural)
  */
 function yourls_nx_noop( $singular, $plural, $context, $domain = null ) {
 	return array(
@@ -548,6 +563,8 @@ function yourls_is_textdomain_loaded( $domain ) {
  * file and this function properly translates them back.
  *
  * @since 1.6
+ * @param string $name The role name
+ * @return string Translated role name
  */
 function yourls_translate_user_role( $name ) {
 	return yourls_translate_with_context( $name, 'User role' );

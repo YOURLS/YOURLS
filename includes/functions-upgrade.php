@@ -7,8 +7,14 @@
  * rather than using the YOURLS version number, eg yourls_update_to_18(). This is to allow having
  * multiple SQL update during the dev cycle of the same Y0URLS version
  *
+ * @param string|int $step
+ * @param string $oldver
+ * @param string $newver
+ * @param string|int $oldsql
+ * @param string|int $newsql
+ * @return void
  */
-function yourls_upgrade( $step, $oldver, $newver, $oldsql, $newsql ) {
+function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
 
     /**
      *  Sanitize input. Two notes :

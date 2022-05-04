@@ -39,17 +39,17 @@
  * - $yourls_allowedentitynames is used internally in KSES functions to sanitize HTML entities
  * - $yourls_allowedprotocols is used in various parts of YOURLS, not just in KSES, albeit being defined here
  * Two globals are not defined and unused at this moment: $yourls_allowedtags_all and $yourls_allowedtags
- * The code for these vars is here and ready for any future use 
+ * The code for these vars is here and ready for any future use
  */
 
 // Populate after plugins have loaded to allow user defined values
 yourls_add_action( 'plugins_loaded', 'yourls_kses_init' );
- 
+
 /**
  * Init KSES globals if not already defined (by a plugin)
  *
  * @since 1.6
- *
+ * @return void
  */
 function yourls_kses_init() {
 	global $yourls_allowedentitynames, $yourls_allowedprotocols;
@@ -57,13 +57,13 @@ function yourls_kses_init() {
 	if( ! $yourls_allowedentitynames ) {
 		$yourls_allowedentitynames = yourls_apply_filter( 'kses_allowed_entities', yourls_kses_allowed_entities() );
 	}
-	
+
 	if( ! $yourls_allowedprotocols ) {
 		$yourls_allowedprotocols   = yourls_apply_filter( 'kses_allowed_protocols', yourls_kses_allowed_protocols() );
-	}	
+	}
 
 	/** See NOTE ABOUT GLOBALS **
-	
+
 	if( ! $yourls_allowedtags_all ) {
 		$yourls_allowedtags_all = yourls_kses_allowed_tags_all();
 		$yourls_allowedtags_all = array_map( '_yourls_add_global_attributes', $yourls_allowedtags_all );
@@ -72,7 +72,7 @@ function yourls_kses_init() {
 		// User defined: let's sanitize
 		$yourls_allowedtags_all = yourls_kses_array_lc( $yourls_allowedtags_all );
 	}
-	
+
 	if( ! $yourls_allowedtags ) {
 		$yourls_allowedtags = yourls_kses_allowed_tags();
 		$yourls_allowedtags = array_map( '_yourls_add_global_attributes', $yourls_allowedtags );
@@ -84,7 +84,7 @@ function yourls_kses_init() {
 
 	/**/
 }
- 
+
 /**
  * Kses global for all allowable HTML tags.
  *
@@ -411,7 +411,7 @@ function yourls_kses_allowed_tags_all() {
 		'var' => array(),
 	);
 }
- 
+
 /**
  * Kses global for default allowable HTML tags. TODO: trim down to necessary only.
  *
@@ -522,39 +522,39 @@ function yourls_kses_allowed_protocols() {
 		'feed:', 'feed://',
 		'mailto:',
 		'news:', 'nntp://',
-		
+
 		// Old school bearded geek
 		'gopher://', 'telnet://', 'finger://',
 		'nntp://', 'worldwind://',
-		
+
 		// Dev
 		'ssh://', 'svn://', 'svn+ssh://', 'git://', 'cvs://',
 		'apt:',
 		'market://', // Google Play
 		'view-source:',
-		
+
 		// P2P
 		'ed2k://', 'magnet:', 'udp://',
-		
+
 		// Streaming stuff
 		'mms://', 'lastfm://', 'spotify:', 'rtsp://',
 
 		// Text & voice
 		'aim:', 'facetime://', 'gtalk:', 'xmpp:',
-		'irc://', 'ircs://', 'mumble://', 
+		'irc://', 'ircs://', 'mumble://',
 		'callto:', 'skype:', 'sip:',
-		'teamspeak://', 'tel:', 'ventrilo://', 'xfire:', 
+		'teamspeak://', 'tel:', 'ventrilo://', 'xfire:',
 		'ymsgr:', 'tg://', 'whatsapp://',
 
 		// Misc
 		'steam:', 'steam://',
 		'bitcoin:',
 		'ldap://', 'ldaps://',
-		
+
 		// Purposedly removed for security
 		/*
 		'about:', 'chrome://', 'chrome-extension://',
-		'javascript:', 
+		'javascript:',
 		'data:',
 		*/
 	);
