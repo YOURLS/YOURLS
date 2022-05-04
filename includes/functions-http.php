@@ -24,6 +24,10 @@ use WpOrg\Requests\Requests;
  *
  * @since 1.7
  * @see yourls_http_request
+ * @param string $url     URL to request
+ * @param array $headers  HTTP headers to send
+ * @param array $data     GET data
+ * @param array $options  Options to pass to Requests
  * @return mixed Response object, or error string
  */
 function yourls_http_get( $url, $headers = array(), $data = array(), $options = array() ) {
@@ -35,6 +39,10 @@ function yourls_http_get( $url, $headers = array(), $data = array(), $options = 
  *
  * @since 1.7
  * @see yourls_http_request
+ * @param string $url     URL to request
+ * @param array $headers  HTTP headers to send
+ * @param array $data     GET data
+ * @param array $options  Options to pass to Requests
  * @return mixed String (page body) or null if error
  */
 function yourls_http_get_body( $url, $headers = array(), $data = array(), $options = array() ) {
@@ -49,6 +57,10 @@ function yourls_http_get_body( $url, $headers = array(), $data = array(), $optio
  *
  * @since 1.7
  * @see yourls_http_request
+ * @param string $url     URL to request
+ * @param array $headers  HTTP headers to send
+ * @param array $data     POST data
+ * @param array $options  Options to pass to Requests
  * @return mixed Response object, or error string
  */
 function yourls_http_post( $url, $headers = array(), $data = array(), $options = array() ) {
@@ -62,6 +74,10 @@ function yourls_http_post( $url, $headers = array(), $data = array(), $options =
  *
  * @since 1.7
  * @see yourls_http_request
+ * @param string $url     URL to request
+ * @param array $headers  HTTP headers to send
+ * @param array $data     POST data
+ * @param array $options  Options to pass to Requests
  * @return mixed String (page body) or null if error
  */
 function yourls_http_post_body( $url, $headers = array(), $data = array(), $options = array() ) {
@@ -375,6 +391,7 @@ function yourls_validate_core_version_response($json) {
 
 /**
  * Get version number from Github zipball URL (last part of URL, really)
+ *
  * @since 1.8.3
  * @param string $zipurl eg 'https://api.github.com/repos/YOURLS/YOURLS/zipball/1.2.3'
  * @return string
@@ -391,6 +408,10 @@ function yourls_get_version_from_zipball_url($zipurl) {
 
 /**
  * Check if URL is from YOURLS/YOURLS repo on github
+ *
+ * @since 1.8.3
+ * @param string $url  URL to check
+ * @return bool
  */
 function yourls_is_valid_github_repo_url($url) {
     $url = yourls_sanitize_url($url);
@@ -406,6 +427,7 @@ function yourls_is_valid_github_repo_url($url) {
 
 /**
  * Check if object has only expected keys 'latest' and 'zipurl' containing strings
+ *
  * @since 1.8.3
  * @param object $json
  * @return bool
