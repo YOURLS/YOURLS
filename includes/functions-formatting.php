@@ -7,8 +7,11 @@
 /**
  * Convert an integer (1337) to a string (3jk).
  *
+ * @param int $num       Number to convert
+ * @param string $chars  Characters to use for conversion
+ * @return string        Converted number
  */
-function yourls_int2string( $num, $chars = null ) {
+function yourls_int2string($num, $chars = null) {
 	if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
 	$string = '';
@@ -26,8 +29,11 @@ function yourls_int2string( $num, $chars = null ) {
 /**
  * Convert a string (3jk) to an integer (1337)
  *
+ * @param string $string  String to convert
+ * @param string $chars   Characters to use for conversion
+ * @return string         Number (as a string)
  */
-function yourls_string2int( $string, $chars = null ) {
+function yourls_string2int($string, $chars = null) {
 	if( $chars == null )
 		$chars = yourls_get_shorturl_charset();
 	$integer = 0;
@@ -48,7 +54,6 @@ function yourls_string2int( $string, $chars = null ) {
  * @since   1.8.3
  * @param  string $prefix   Optional prefix
  * @return string           The unique string
- *
  */
 function yourls_unique_element_id($prefix = 'yid') {
     static $id_counter = 0;
@@ -139,8 +144,11 @@ function yourls_sanitize_url_safe( $unsafe_url, $protocols = array() ) {
  *
  * Stolen from WP's _deep_replace
  *
+ * @param string|array $search   Needle, or array of needles.
+ * @param string       $subject  Haystack.
+ * @return string                The string with the replaced values.
  */
-function yourls_deep_replace( $search, $subject ){
+function yourls_deep_replace($search, $subject ){
 	$found = true;
 	while($found) {
 		$found = false;
@@ -158,24 +166,31 @@ function yourls_deep_replace( $search, $subject ){
 /**
  * Make sure an integer is a valid integer (PHP's intval() limits to too small numbers)
  *
+ * @param int $int  Integer to check
+ * @return string   Integer as a string
  */
-function yourls_sanitize_int( $int ) {
+function yourls_sanitize_int($int ) {
 	return ( substr( preg_replace( '/[^0-9]/', '', strval( $int ) ), 0, 20 ) );
 }
 
 /**
  * Sanitize an IP address
+ * No check on validity, just return a sanitized string
  *
+ * @param string $ip  IP address
+ * @return string     IP address
  */
-function yourls_sanitize_ip( $ip ) {
+function yourls_sanitize_ip($ip ) {
 	return preg_replace( '/[^0-9a-fA-F:., ]/', '', $ip );
 }
 
 /**
  * Make sure a date is m(m)/d(d)/yyyy, return false otherwise
  *
+ * @param string $date  Date to check
+ * @return false|mixed  Date in format m(m)/d(d)/yyyy or false if invalid
  */
-function yourls_sanitize_date( $date ) {
+function yourls_sanitize_date($date ) {
 	if( !preg_match( '!^\d{1,2}/\d{1,2}/\d{4}$!' , $date ) ) {
 		return false;
 	}
@@ -185,18 +200,24 @@ function yourls_sanitize_date( $date ) {
 /**
  * Sanitize a date for SQL search. Return false if malformed input.
  *
+ * @param string $date   Date
+ * @return false|string  String in Y-m-d format for SQL search or false if malformed input
  */
-function yourls_sanitize_date_for_sql( $date ) {
+function yourls_sanitize_date_for_sql($date) {
 	if( !yourls_sanitize_date( $date ) )
 		return false;
 	return date( 'Y-m-d', strtotime( $date ) );
 }
 
 /**
- * Return trimmed string
+ * Return trimmed string, optionally append '[...]' if string is too long
  *
+ * @param string $string  String to trim
+ * @param int $length     Maximum length of string
+ * @param string $append  String to append if trimmed
+ * @return string         Trimmed string
  */
-function yourls_trim_long_string( $string, $length = 60, $append = '[...]' ) {
+function yourls_trim_long_string($string, $length = 60, $append = '[...]') {
 	$newstring = $string;
     if ( mb_strlen( $newstring ) > $length ) {
         $newstring = mb_substr( $newstring, 0, $length - mb_strlen( $append ), 'UTF-8' ) . $append;
@@ -225,8 +246,10 @@ function yourls_sanitize_version( $version ) {
 /**
  * Sanitize a filename (no Win32 stuff)
  *
+ * @param string $file  File name
+ * @return string|null  Sanitized file name (or null if it's just backslashes, ok...)
  */
-function yourls_sanitize_filename( $file ) {
+function yourls_sanitize_filename($file) {
 	$file = str_replace( '\\', '/', $file ); // sanitize for Win32 installs
 	$file = preg_replace( '|/+|' ,'/', $file ); // remove any duplicate slash
 	return $file;
@@ -235,8 +258,10 @@ function yourls_sanitize_filename( $file ) {
 /**
  * Check if a string seems to be UTF-8. Stolen from WP.
  *
+ * @param string $str  String to check
+ * @return bool        Whether string seems valid UTF-8
  */
-function yourls_seems_utf8( $str ) {
+function yourls_seems_utf8($str) {
 	$length = strlen( $str );
 	for ( $i=0; $i < $length; $i++ ) {
 		$c = ord( $str[ $i ] );
@@ -660,13 +685,12 @@ function yourls_esc_textarea( $text ) {
  * Adds backslashes before letters and before a number at the start of a string. Stolen from WP.
  *
  * @since 1.6
- *
  * @param string $string Value to which backslashes will be added.
  * @return string String with backslashes inserted.
  */
 function yourls_backslashit($string) {
-    $string = preg_replace('/^([0-9])/', '\\\\\\\\\1', $string);
-    $string = preg_replace('/([a-z])/i', '\\\\\1', $string);
+    $string = preg_replace('/^([0-9])/', '\\\\\\\\\1', (string)$string);
+    $string = preg_replace('/([a-z])/i', '\\\\\1', (string)$string);
     return $string;
 }
 
@@ -724,7 +748,7 @@ function yourls_make_bookmarklet( $code ) {
  */
 function yourls_get_timestamp( $timestamp ) {
     $offset = yourls_get_time_offset();
-    $timestamp_offset = $timestamp + ($offset * 3600);
+    $timestamp_offset = (int)$timestamp + ($offset * 3600);
 
     return yourls_apply_filter( 'get_timestamp', $timestamp_offset, $timestamp, $offset );
 }

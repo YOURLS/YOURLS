@@ -93,6 +93,8 @@ function yourls_add_query_arg() {
 /**
  * Navigates through an array and encodes the values to be used in a URL. Stolen from WP, used in yourls_add_query_arg()
  *
+ * @param array|string $value The array or string to be encoded.
+ * @return array|string
  */
 function yourls_urlencode_deep( $value ) {
     $value = is_array( $value ) ? array_map( 'yourls_urlencode_deep', $value ) : urlencode( $value );
@@ -147,6 +149,8 @@ function yourls_link( $keyword = '', $stats = false ) {
  *
  * This function does not make sure the keyword matches an actual short URL
  *
+ * @param  string $keyword  Short URL keyword
+ * @return string           Short URL stat link
  */
 function yourls_statlink( $keyword = '' ) {
     $link = yourls_link( $keyword, true );
@@ -156,6 +160,8 @@ function yourls_statlink( $keyword = '' ) {
 /**
  * Return admin link, with SSL preference if applicable.
  *
+ * @param string $page  Page name, eg "index.php"
+ * @return string
  */
 function yourls_admin_url( $page = '' ) {
     $admin = yourls_get_yourls_site() . '/admin/' . $page;
@@ -168,8 +174,11 @@ function yourls_admin_url( $page = '' ) {
 /**
  * Return YOURLS_SITE or URL under YOURLS setup, with SSL preference
  *
+ * @param bool $echo  Echo if true, or return if false
+ * @param $url
+ * @return string
  */
-function yourls_site_url( $echo = true, $url = '' ) {
+function yourls_site_url($echo = true, $url = '' ) {
     $url = yourls_get_relative_url( $url );
     $url = trim( yourls_get_yourls_site() . '/' . $url, '/' );
 

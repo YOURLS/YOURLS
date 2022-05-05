@@ -4,6 +4,7 @@
  * Connect to DB
  *
  * @since 1.0
+ * @return \YOURLS\Database\YDB
  */
 function yourls_db_connect() {
     global $ydb;

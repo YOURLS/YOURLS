@@ -88,6 +88,7 @@ if ( !isset( $yourls_actions ) ) {
  *                                 provided).
  * @param string   $type
  * @global array   $yourls_filters Storage for all of the filters
+ * @return void
  */
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
     global $yourls_filters;
@@ -119,6 +120,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  *                                 are executed (default: 10). Lower numbers correspond with earlier execution, and functions
  *                                 with the same priority are executed in the order in which they were added to the action.
  * @param int      $accepted_args  Optional. The number of arguments the function accept (default 1).
+ * @return void
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
 	yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
@@ -237,6 +239,7 @@ function yourls_apply_filter( $hook, $value = '', $is_action = false ) {
  *
  * @param string $hook the name of the YOURLS action
  * @param mixed $arg action arguments
+ * @return void
  */
 function yourls_do_action( $hook, $arg = '' ) {
     global $yourls_actions, $yourls_filters;
@@ -296,6 +299,7 @@ function yourls_did_action( $hook ) {
  * @param  string $type Either 'action' or 'filter'
  * @param  string $hook The hook name, eg 'plugins_loaded'
  * @param  mixed  $args Variable-length argument lists that were passed to the action or filter
+ * @return void
  */
 function yourls_call_all_hooks($type, $hook, ...$args) {
     global $yourls_filters;
@@ -425,15 +429,14 @@ function yourls_get_filters($hook) {
 function yourls_get_actions($hook) {
     return yourls_get_filters($hook);
 }
-
 /**
  * Check if any filter has been registered for a hook.
  *
  * @since 1.5
+ * @global array         $yourls_filters    storage for all of the filters
  * @param string         $hook              The name of the filter hook.
  * @param callable|false $function_to_check optional. If specified, return the priority of that function on this hook or false if not attached.
  * @return int|bool Optionally returns the priority on that hook for the specified function.
- * @global array         $yourls_filters    storage for all of the filters
  */
 function yourls_has_filter( $hook, $function_to_check = false ) {
     global $yourls_filters;
@@ -454,6 +457,7 @@ function yourls_has_filter( $hook, $function_to_check = false ) {
     }
     return false;
 }
+
 
 /**
  * Check if any action has been registered for a hook.
@@ -776,6 +780,7 @@ function yourls_list_plugin_admin_pages() {
  * @param string   $slug
  * @param string   $title
  * @param callable $function
+ * @return void
  */
 function yourls_register_plugin_page( $slug, $title, $function ) {
     yourls_get_db()->add_plugin_page( $slug, $title, $function );
@@ -786,6 +791,7 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
  *
  * @since 1.5
  * @param string $plugin_page
+ * @return void
  */
 function yourls_plugin_admin_page( $plugin_page ) {
     // Check the plugin page is actually registered
@@ -856,6 +862,7 @@ function yourls_plugins_sort_callback( $plugin_a, $plugin_b ) {
  *
  * @codeCoverageIgnore
  * @since 1.5.1
+ * @return void
  */
 function yourls_shutdown() {
     yourls_do_action( 'shutdown' );

@@ -13,6 +13,7 @@ function yourls_check_PDO() {
 /**
  * Check if server has MySQL 5.0+
  *
+ * @return bool
  */
 function yourls_check_database_version() {
     return ( version_compare( '5.0', yourls_get_database_version() ) <= 0 );
@@ -40,6 +41,7 @@ function yourls_get_database_version() {
  * As of 1.8 we advertise YOURLS as being 7.4+ but it should work on 7.2 (although untested)
  * so we don't want to strictly enforce a limitation that may not be necessary.
  *
+ * @return bool
  */
 function yourls_check_php_version() {
     return version_compare( PHP_VERSION, '7.2.0', '>=' );
@@ -48,6 +50,7 @@ function yourls_check_php_version() {
 /**
  * Check if server is an Apache
  *
+ * @return bool
  */
 function yourls_is_apache() {
 	if( !array_key_exists( 'SERVER_SOFTWARE', $_SERVER ) )
@@ -61,6 +64,7 @@ function yourls_is_apache() {
 /**
  * Check if server is running IIS
  *
+ * @return bool
  */
 function yourls_is_iis() {
 	return ( array_key_exists( 'SERVER_SOFTWARE', $_SERVER ) ? ( strpos( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false ) : false );
@@ -70,6 +74,7 @@ function yourls_is_iis() {
 /**
  * Create .htaccess or web.config. Returns boolean
  *
+ * @return bool
  */
 function yourls_create_htaccess() {
 	$host = parse_url( yourls_get_yourls_site() );
@@ -319,6 +324,8 @@ function yourls_insert_sample_links() {
 /**
  * Toggle maintenance mode. Inspired from WP. Returns true for success, false otherwise
  *
+ * @param bool $maintenance  True to enable, false to disable
+ * @return bool              True on success, false on failure
  */
 function yourls_maintenance_mode( $maintenance = true ) {
 
@@ -342,4 +349,3 @@ function yourls_maintenance_mode( $maintenance = true ) {
 		return @unlink($file);
 	}
 }
-

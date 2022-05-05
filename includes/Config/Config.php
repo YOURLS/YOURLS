@@ -16,15 +16,15 @@ class Config {
     protected $root;
 
     /**
-     * @var mixed
+     * @var string
      */
     protected $config;
 
     /**
      * @since  1.7.3
-     * @param  mixed $config   Optional user defined config path
+     * @param  string $config   Optional user defined config path
      */
-    public function __construct($config = false) {
+    public function __construct($config = '') {
         $this->set_root( $this->fix_win32_path( dirname( dirname( __DIR__ ) ) ) );
         $this->set_config($config);
     }
