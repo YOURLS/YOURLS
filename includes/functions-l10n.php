@@ -763,6 +763,7 @@ class YOURLS_Locale_Formats {
 	 *
 	 * @since 1.6
 	 * @access private
+     * @return void
 	 */
 	function init() {
 		// The Weekdays
@@ -965,6 +966,7 @@ class YOURLS_Locale_Formats {
 	 * @access private
 	 *
 	 * @since 1.6
+     * @return void
 	 */
 	function register_globals() {
 		$GLOBALS['weekday']         = $this->weekday;
