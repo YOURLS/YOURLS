@@ -174,8 +174,8 @@ function yourls_admin_url( $page = '' ) {
 /**
  * Return YOURLS_SITE or URL under YOURLS setup, with SSL preference
  *
- * @param bool $echo  Echo if true, or return if false
- * @param $url
+ * @param bool $echo   Echo if true, or return if false
+ * @param string $url
  * @return string
  */
 function yourls_site_url($echo = true, $url = '' ) {

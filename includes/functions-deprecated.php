@@ -5,9 +5,36 @@
  *
  * Note to devs: when deprecating a function, move it here. Then check all the places
  * in core that might be using it, including core plugins.
+ *
+ * Usage :  yourls_deprecated_function( 'function_name', 'version', 'replacement' );
+ * Output:  "{function_name} is deprecated since version {version}! Use {replacement} instead."
+ *
+ * Usage :  yourls_deprecated_function( 'function_name', 'version' );
+ * Output:  "{function_name} is deprecated since version {version} with no alternative available."
+ *
+ * @see yourls_deprecated_function()
  */
 
 // @codeCoverageIgnoreStart
+
+/**
+ * Return current admin page, or null if not an admin page. Was not used anywhere.
+ *
+ * @return mixed string if admin page, null if not an admin page
+ * @since 1.6
+ * @deprecated 1.9.1
+ */
+function yourls_current_admin_page() {
+    yourls_deprecated_function( __FUNCTION__, '1.9.1' );
+    if( yourls_is_admin() ) {
+        $current = substr( yourls_get_request(), 6 );
+        if( $current === false )
+            $current = 'index.php'; // if current page is http://sho.rt/admin/ instead of http://sho.rt/admin/index.php
+
+        return $current;
+    }
+    return null;
+}
 
 /**
  * PHP emulation of JS's encodeURI
@@ -18,7 +45,7 @@
  * @return string
  */
 function yourls_encodeURI($url) {
-    yourls_deprecated_function( __FUNCTION__, '1.9.1', 'no replacement needed' );
+    yourls_deprecated_function( __FUNCTION__, '1.9.1', '' );
     // Decode URL all the way
     $result = yourls_rawurldecode_while_encoded( $url );
     // Encode once

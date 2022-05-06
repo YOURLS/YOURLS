@@ -313,7 +313,7 @@ function yourls_html_tfooter( $params = array() ) {
 
 			<?php
 			// Remove empty keys from the $params array so it doesn't clutter the pagination links
-			$params = array_filter( $params, 'yourls_return_if_not_empty_string' ); // remove empty keys
+			$params = array_filter( $params, function($val){ return $val !== '';} ); // remove keys with empty values
 
 			if( isset( $search_text ) ) {
 				$params['search'] = $search_text;
@@ -472,6 +472,10 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
 /**
  * Die die die
  *
+ * @see https://www.youtube.com/watch?v=zSiKETBjARk
+ * @param string $message
+ * @param string $title
+ * @param int $header_code
  * @return void
  */
 function yourls_die( $message = '', $title = '', $header_code = 200 ) {
@@ -860,6 +864,9 @@ function yourls_html_menu() {
 /**
  * Wrapper function to display admin notices
  *
+ * @param string $message Message to display
+ * @param string $style    Message style (default: 'notice')
+ * @return void
  */
 function yourls_add_notice( $message, $style = 'notice' ) {
 	// Escape single quotes in $message to avoid breaking the anonymous function
