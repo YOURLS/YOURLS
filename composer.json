@@ -17,7 +17,10 @@
     },
     "require": {
         "php": ">=7.4",
+        "ext-filter": "*",
+        "ext-hash": "*",
         "ext-pdo": "*",
+        "ext-zlib": "*",
         "ozh/bookmarkletgen": "^1.2",
         "rmccue/requests" : "^2.0",
         "pomo/pomo" : "^1.4",
@@ -27,6 +30,9 @@
         "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
         "spatie/array-to-xml": "^2.14"
+    },
+    "require-dev": {
+        "ext-ctype": "*"
     },
     "config": {
         "vendor-dir": "includes/vendor",
@@ -40,7 +46,11 @@
         }
     },
     "suggest": {
+        "ext-iconv": "For safer input handling",
+        "ext-json": "For faster API performance",
         "ext-mbstring": "For best performance",
+        "ext-openssl": "To fetch titles from HTTPS sites",
+        "ext-posix": "May be needed on certain PHP versions",
         "ext-curl": "Required for API usage"
     },
     "scripts": {
