@@ -17,7 +17,12 @@
     },
     "require": {
         "php": ">=7.4",
+        "ext-dom": "*",
+        "ext-filter": "*",
+        "ext-hash": "*",
+        "ext-pcre": "*",
         "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "ozh/bookmarkletgen": "^1.2",
         "rmccue/requests" : "^2.0",
         "pomo/pomo" : "^1.4",
@@ -27,6 +32,9 @@
         "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
         "spatie/array-to-xml": "^2.14"
+    },
+    "require-dev": {
+        "ext-ctype": "*"
     },
     "config": {
         "vendor-dir": "includes/vendor",
@@ -40,8 +48,15 @@
         }
     },
     "suggest": {
+        "ext-bcmath": "May be needed to read GeoIP database (or ext-gmp)",
+        "ext-curl": "Required for API usage",
+        "ext-gmp": "May be needed to read GeoIP database (or ext-bcmath)",
+        "ext-iconv": "For safer input handling",
+        "ext-json": "For faster API performance",
         "ext-mbstring": "For best performance",
-        "ext-curl": "Required for API usage"
+        "ext-openssl": "To fetch titles from HTTPS sites",
+        "ext-posix": "May be needed on certain PHP versions",
+        "ext-zlib": "For best performance"
     },
     "scripts": {
         "post-update-cmd": "bash ./includes/vendor/build-script/yourls-build.sh ./includes/vendor"
