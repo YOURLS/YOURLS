@@ -6,9 +6,9 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 
 1.9.1
 ---
-- fixed: error `Undefined constant "intval"` when upgrading (https://github.com/YOURLS/YOURLS/pull/3332)
-- fixed: warnings on PHP 8.1 (https://github.com/YOURLS/YOURLS/pull/3317)
-- added: required/suggested PHP extensions in composer.json (https://github.com/YOURLS/YOURLS/pull/3339)
+- fixed: error `Undefined constant "intval"` when upgrading (#3332)
+- fixed: warnings on PHP 8.1 (#3317)
+- added: required/suggested PHP extensions in composer.json (#3339)
 
 1.9
 ---
