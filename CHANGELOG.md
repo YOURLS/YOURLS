@@ -4,6 +4,12 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.9.1
+---
+- fixed: error `Undefined constant "intval"` when upgrading (https://github.com/YOURLS/YOURLS/pull/3332)
+- fixed: warnings on PHP 8.1 (https://github.com/YOURLS/YOURLS/pull/3317)
+- added: required/suggested PHP extensions in composer.json (https://github.com/YOURLS/YOURLS/pull/3339)
+
 1.9
 ---
 - removed : support for PHP prior to 7.4
