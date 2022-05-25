@@ -555,11 +555,11 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp 
 	$statlink = yourls_statlink( $keyword );
 
 	$delete_link = yourls_nonce_url( 'delete-link_'.$id,
-		yourls_add_query_arg( array( 'id' => $id, 'action' => 'delete', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
+		yourls_add_query_arg( array( 'elid' => $id, 'action' => 'delete', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
 	);
 
 	$edit_link = yourls_nonce_url( 'edit-link_'.$id,
-		yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
+		yourls_add_query_arg( array( 'elid' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
 	);
 
 	// Action link buttons: the array

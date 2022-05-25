@@ -78,7 +78,7 @@ function edit_link_display(id) {
 	var nonce = get_var_from_query( $('#edit-button-'+id).attr('href'), 'nonce' );
 	$.getJSON(
 		ajaxurl,
-		{ action: "edit_display", keyword: keyword, nonce: nonce, id: id },
+		{ action: "edit_display", keyword: keyword, nonce: nonce, elid: id },
 		function(data){
 			$("#id-" + id).after( data.html );
 			$("#edit-url-"+ id).focus();
@@ -99,7 +99,7 @@ function remove_link(id) {
 	var nonce = get_var_from_query( $('#delete-button-'+id).attr('href'), 'nonce' );
 	$.getJSON(
 		ajaxurl,
-		{ action: "delete", keyword: keyword, nonce: nonce, id: id },
+		{ action: "delete", keyword: keyword, nonce: nonce, elid: id },
 		function(data){
 			if (data.success == 1) {
 				$("#id-" + id).fadeOut(function(){
@@ -143,7 +143,7 @@ function edit_link_save(id) {
 	var www = $('#yourls-site').val();
 	$.getJSON(
 		ajaxurl,
-		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
+		{action:'edit_save', url: newurl, elid: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
 		function(data){
 			if(data.status == 'success') {
 
