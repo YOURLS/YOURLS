@@ -2,8 +2,6 @@
 define( 'YOURLS_ADMIN', true );
 define( 'YOURLS_UPGRADING', true );
 require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
-require_once( YOURLS_INC.'/functions-upgrade.php' );
-require_once( YOURLS_INC.'/functions-install.php' );
 yourls_maybe_require_auth();
 
 yourls_html_head( 'upgrade', yourls__( 'Upgrade YOURLS' ) );

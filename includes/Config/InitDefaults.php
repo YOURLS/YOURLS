@@ -21,12 +21,6 @@ class InitDefaults {
     public $include_core_funcs = true;
 
     /**
-     * Whether to include auth function files
-     * @var bool
-     */
-    public $include_install_upgrade_funcs = false;  // by default do not load
-
-    /**
      * Whether to set default time zone
      * @var bool
      */
