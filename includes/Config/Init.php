@@ -187,12 +187,8 @@ class Init {
         require_once YOURLS_INC.'/functions-infos.php';
         require_once YOURLS_INC.'/functions-deprecated.php';
         require_once YOURLS_INC.'/functions-auth.php';
-
-        // Load install & upgrade functions if needed
-        if ($this->actions->include_install_upgrade_funcs === true) {
-            require_once YOURLS_INC.'/functions-upgrade.php';
-            require_once YOURLS_INC.'/functions-install.php';
-        }
+        require_once YOURLS_INC.'/functions-upgrade.php';
+        require_once YOURLS_INC.'/functions-install.php';
     }
 
 }

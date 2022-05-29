@@ -37,7 +37,6 @@ $init->check_if_upgrade_needed       = false;
 $init->load_plugins                  = false; // do not attempt to load (no DB yet to store data), but do send the 'plugins_loaded' action (some code depend on it)
 $init->get_all_options               = false;
 $init->check_new_version             = false;
-$init->include_install_upgrade_funcs = true;
 new \YOURLS\Config\Init($init);
 
 // All set -- install
