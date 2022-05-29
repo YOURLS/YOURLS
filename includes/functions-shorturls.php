@@ -168,11 +168,6 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
  * @return string    Acceptable charset for short URLS keywords
  */
 function yourls_get_shorturl_charset() {
-    static $charset = null;
-    if ( $charset !== null ) {
-        return $charset;
-    }
-
     if ( defined( 'YOURLS_URL_CONVERT' ) && in_array( YOURLS_URL_CONVERT, [ 62, 64 ] ) ) {
         $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
