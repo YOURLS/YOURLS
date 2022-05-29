@@ -8,7 +8,10 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 ---
 - fixed: error `Undefined constant "intval"` when upgrading (#3332)
 - fixed: warnings on PHP 8.1 (#3317)
+- fixed: incorrect HTTP status header with the API when shortening a duplicate (#3355)
+- fixed: no hyphen in random keywords (#3353)
 - added: required/suggested PHP extensions in composer.json (#3339)
+- updated: third party libs and binaries
 
 1.9
 ---
