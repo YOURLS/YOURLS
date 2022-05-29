@@ -2,7 +2,6 @@
 define( 'YOURLS_ADMIN', true );
 define( 'YOURLS_INSTALLING', true );
 require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
-require_once( YOURLS_INC.'/functions-install.php' );
 
 $error   = array();
 $warning = array();

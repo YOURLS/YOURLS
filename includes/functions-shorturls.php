@@ -84,6 +84,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
             yourls_trim_long_string($url), preg_replace('!https?://!', '',  yourls_get_yourls_site()) . '/'. $url_exists->keyword );
         $return['title']    = $url_exists->title;
         $return['shorturl'] = yourls_link($url_exists->keyword);
+        $return['errorCode'] = $return['statusCode'] = '400'; // 400 Bad Request
 
         return yourls_apply_filter( 'add_new_link_already_stored_filter', $return, $url, $keyword, $title );
     }
@@ -168,11 +169,6 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
  * @return string    Acceptable charset for short URLS keywords
  */
 function yourls_get_shorturl_charset() {
-    static $charset = null;
-    if ( $charset !== null ) {
-        return $charset;
-    }
-
     if ( defined( 'YOURLS_URL_CONVERT' ) && in_array( YOURLS_URL_CONVERT, [ 62, 64 ] ) ) {
         $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }

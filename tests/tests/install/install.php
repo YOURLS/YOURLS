@@ -108,7 +108,6 @@ class Install_Tests extends PHPUnit\Framework\TestCase {
 
         $expected = array (
             'include_core_funcs' => true,
-            'include_install_upgrade_funcs' => false,
             'default_timezone' => true,
             'load_default_textdomain' => true,
             'check_maintenance_mode' => true,

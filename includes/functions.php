@@ -461,7 +461,7 @@ function yourls_get_HTTP_status( $code ) {
 		510 => 'Not Extended'
     ];
 
-    return isset( $headers_desc[ $code ] ) ? $headers_desc[ $code ] : '';
+    return $headers_desc[$code] ?? '';
 }
 
 /**
