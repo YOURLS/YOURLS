@@ -43,7 +43,7 @@ define( 'YOURLS_SITE', 'http://happyxh.com' );
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
  ** See http://yourls.org/translations for more information */
-define( 'YOURLS_LANG', '' );
+define( 'YOURLS_LANG', 'zh_CN' );
 
 /** Allow multiple short URLs for a same long URL
  ** Set to true to have only one pair of shortURL/longURL (default YOURLS behavior)
@@ -63,8 +63,7 @@ define( 'YOURLS_COOKIEKEY', 'x1pq7BmrL3fg5Jq1W-zrkBc%LxxLIrU2BPgUQgs' );
  ** YOURLS will auto encrypt plain text passwords in this file
  ** Read http://yourls.org/userpassword for more information */
 $yourls_user_passwords = [
-	'Victor' => 'Xiao931209',
-	'kanju' => 'nxf',
+	'yourls' => 'xiao931209',
 	// You can have one or more 'login'=>'password' lines
 ];
 
