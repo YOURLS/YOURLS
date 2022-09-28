@@ -6,6 +6,7 @@
 *.config
 *.conf
 [Rr]obots.txt
+.maintenance
 
 # Ignore everything in user/
 user/*
