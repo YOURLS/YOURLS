@@ -52,12 +52,16 @@ function yourls_string2int($string, $chars = null) {
  * Return a unique string to be used as a valid HTML id
  *
  * @since   1.8.3
- * @param  string $prefix   Optional prefix
- * @return string           The unique string
+ * @param  string $prefix      Optional prefix
+ * @param  int    $initial_val The initial counter value (defaults to one)
+ * @return string              The unique string
  */
-function yourls_unique_element_id($prefix = 'yid') {
-    static $id_counter = 0;
-	return yourls_apply_filter( 'unique_element_id', $prefix . (string)++$id_counter );
+function yourls_unique_element_id($prefix = 'yid', $initial_val = 1) {
+    static $id_counter = 1;
+	if ($initial_val > 1) {
+		$id_counter = (int) $initial_val;
+	}
+	return yourls_apply_filter( 'unique_element_id', $prefix . (string) $id_counter++ );
 }
 
 /**

@@ -26,9 +26,10 @@
  * @param  string $url      URL to shorten
  * @param  string $keyword  optional "keyword"
  * @param  string $title    option title
+ * @param  int    $row_id   used to form unique IDs in the generated HTML
  * @return array            array with error/success state and short URL information
  */
-function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
+function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
     if ( false !== $pre ) {
@@ -140,7 +141,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '' ) {
             $return['status']   = 'success';
             $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
             $return['title']    = $title;
-            $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time() );
+            $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time(), $row_id );
             $return['shorturl'] = yourls_link($keyword);
             $return['statusCode'] = 200; // 200 OK
         } else {

@@ -35,10 +35,11 @@ function add_link() {
 		return;
 	}
 	var keyword = $("#add-keyword").val();
+	var nextid = parseInt($('#main_table tbody tr[id^="id-"]').length) + 1;
 	add_loading("#add-button");
 	$.getJSON(
 		ajaxurl,
-		{action:'add', url: newurl, keyword: keyword, nonce: nonce},
+		{action:'add', url: newurl, keyword: keyword, nonce: nonce, rowid: nextid},
 		function(data){
 			if(data.status == 'success') {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
