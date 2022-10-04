@@ -227,7 +227,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 		$display_on_page = ( $offset + 1 );
 	}
 
-	// Determining Total Amount Of Pages
+	// Determine Total Amount Of Pages
 	$total_pages = ceil( $total_items / $perpage );
 }
 
