@@ -105,9 +105,13 @@ class Format_General extends PHPUnit\Framework\TestCase {
     public function test_string2htmlid() {
         $id1 = yourls_unique_element_id();
         $id2 = yourls_unique_element_id();
+        $id3 = yourls_unique_element_id('foo', 10);
+        $id4 = yourls_unique_element_id();
         $this->assertIsString($id1);
         $this->assertIsString($id2);
         $this->assertNotSame($id1, $id2);
+        $this->assertEquals('foo10', $id3, 'ID is built using the specified prefix and counter value.');
+        $this->assertStringEndsWith('11', $id4, 'ID counter continues to increment from the last value.');
     }
 
     /**
