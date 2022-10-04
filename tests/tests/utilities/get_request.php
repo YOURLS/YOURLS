@@ -92,7 +92,7 @@ class GetRequest_Tests extends PHPUnit\Framework\TestCase {
             array('behemoth', 'http://sho.rt/behemoth', '/behemoth/behemoth?behemoth'),
 
 
-            // "Prefix and shorten" scenariis (query strings which should be preserved)
+            // "Prefix and shorten" scenarios (query strings which should be preserved)
             array('http://longurl', 'http://sho.rt', '/http://longurl'),
             array('http://longurl', 'https://sho.rt/yourls', '/yourls/http://longurl'),
             array('http://longurl?https://sho.rt/yourls', 'https://sho.rt/yourls', '/yourls/http://longurl?https://sho.rt/yourls'),

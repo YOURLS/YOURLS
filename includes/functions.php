@@ -290,7 +290,7 @@ function yourls_redirect_shorturl($url, $keyword) {
 }
 
 /**
- * Send headers to explicitely tell browser not to cache content or redirection
+ * Send headers to explicitly tell browser not to cache content or redirection
  *
  * @since 1.7.10
  * @return void

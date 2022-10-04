@@ -98,7 +98,7 @@ STANDARD_SIMPLE;
                     if (r.short_url) {
                         prompt(r.message, r.short_url);
                     } else {
-                        alert('An error occured: ' + r.message);
+                        alert('An error occurred: ' + r.message);
                     }
                 };
                 sc.src = '$base_bookmarklet' + p + '&jsonp=yourls';
@@ -166,7 +166,7 @@ CUSTOM_STANDARD;
                         if (r.short_url) {
                             prompt(r.message, r.short_url);
                         } else {
-                            alert('An error occured: ' + r.message);
+                            alert('An error occurred: ' + r.message);
                         }
                     };
                     sc.src = '$base_bookmarklet' + p + '&k=' + k + '&jsonp=yourls';
@@ -247,7 +247,7 @@ TWITTER;
         ?>
 
         <?php $js_code = <<<TUMBLR
-        // Share on Tumlr
+        // Share on Tumblr
         var d = document,
             w = window,
             enc = encodeURIComponent,

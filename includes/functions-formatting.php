@@ -639,7 +639,7 @@ function yourls_normalize_uri( $url ) {
         $lower['host'] = mb_strtolower($parts['host']);
         /**
          * Convert IDN domains to their UTF8 form so that طارق.net and xn--mgbuq0c.net
-         * are considered the same. Explicitely mention option and variant to avoid notice
+         * are considered the same. Explicitly mention option and variant to avoid notice
          * on PHP 7.2 and 7.3
          */
          $lower['host'] = idn_to_utf8($lower['host'], IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
