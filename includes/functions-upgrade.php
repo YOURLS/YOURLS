@@ -406,7 +406,7 @@ function yourls_update_table_to_14() {
 	if( $count != $queries ) {
 		$success = false;
 		$num = $count - $queries;
-		echo "<p>$num error(s) occured while updating the URL table :(</p>";
+		echo "<p>$num error(s) occurred while updating the URL table :(</p>";
 	}
 
 	if ( $count == $chunk ) {

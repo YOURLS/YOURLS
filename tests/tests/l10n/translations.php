@@ -39,7 +39,7 @@ class Translation_Translation_Tests extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Check an unstranslated string
+     * Check an untranslated string
      *
      * @since 0.1
      */

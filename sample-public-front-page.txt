@@ -3,7 +3,7 @@
 /*
  * This is an example file for a public interface and a bookmarklet. It
  * is provided so you can build from it and customize to suit your needs.
- * It's not really part of the project. Don't submit feature requests 
+ * It's not really part of the project. Don't submit feature requests
  * about this file. It's _your_ job to make it what you need it to be :)
  *
  * Rename to .php
@@ -27,19 +27,19 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 
 	// Create short URL, receive array $return with various information
 	$return  = yourls_add_new_link( $url, $keyword, $title );
-	
+
 	$shorturl = isset( $return['shorturl'] ) ? $return['shorturl'] : '';
 	$message  = isset( $return['message'] ) ? $return['message'] : '';
 	$title    = isset( $return['title'] ) ? $return['title'] : '';
 	$status   = isset( $return['status'] ) ? $return['status'] : '';
-	
+
 	// Stop here if bookmarklet with a JSON callback function ("instant" bookmarklets)
 	if( isset( $_GET['jsonp'] ) && $_GET['jsonp'] == 'yourls' ) {
 		$short = $return['shorturl'] ? $return['shorturl'] : '';
 		$message = "Short URL (Ctrl+C to copy)";
 		header('Content-type: application/json');
 		echo yourls_apply_filter( 'bookmarklet_jsonp', "yourls_callback({'short_url':'$short','message':'$message'});" );
-		
+
 		die();
 	}
 }
@@ -60,11 +60,11 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 	if( isset( $message ) ) {
 		echo "<h2>$message</h2>";
 	}
-	
+
 	if( $status == 'success' ) {
 		// Include the Copy box and the Quick Share box
 		yourls_share_box( $url, $shorturl, $title, $text );
-		
+
 		// Initialize clipboard -- requires js/share.js and js/clipboard.min.js to be properly loaded in the <head>
 		echo "<script>init_clipboard();</script>\n";
 	}
@@ -73,7 +73,7 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 } else {
 
 		$site = YOURLS_SITE;
-		
+
 		// Display the form
 		echo <<<HTML
 		<h2>Enter a new URL to shorten</h2>
@@ -82,7 +82,7 @@ if ( isset( $_REQUEST['url'] ) && $_REQUEST['url'] != 'http://' ) {
 		<p><label>Optional custom short URL: $site/<input type="text" class="text" name="keyword" /></label></p>
 		<p><label>Optional title: <input type="text" class="text" name="title" /></label></p>
 		<p><input type="submit" class="button primary" value="Shorten" /></p>
-		</form>	
+		</form>
 HTML;
 
 }
@@ -99,9 +99,9 @@ HTML;
 
 <a href="javascript:(function()%7Bvar%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:enc(s)),f='<?php echo $page; ?>',l=d.location,k=prompt(%22Custom%20URL%22),k2=(k?'&keyword='+k:%22%22),p='?url='+enc(l.href)+'&title='+enc(d.title)+'&text='+s2+k2,u=f+p;if(k!=null)%7Btry%7Bthrow('ozhismygod');%7Dcatch(z)%7Ba=function()%7Bif(!w.open(u))l.href=u;%7D;if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();%7Dvoid(0)%7D%7D)()" class="bookmarklet">Custom</a>
 
-<a href="javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();" class="bookmarklet">Popup</a>
+<a href="javascript:(function()%7Bvar%20d=document,s=d.createElement('script');window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occurred:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&jsonp=yourls';void(d.body.appendChild(s));%7D)();" class="bookmarklet">Popup</a>
 
-<a href="javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occured:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&keyword='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();" class="bookmarklet">Custom Popup</a>
+<a href="javascript:(function()%7Bvar%20d=document,k=prompt('Custom%20URL'),s=d.createElement('script');if(k!=null){window.yourls_callback=function(r)%7Bif(r.short_url)%7Bprompt(r.message,r.short_url);%7Delse%7Balert('An%20error%20occurred:%20'+r.message);%7D%7D;s.src='<?php echo $page; ?>?url='+encodeURIComponent(d.location.href)+'&keyword='+k+'&jsonp=yourls';void(d.body.appendChild(s));%7D%7D)();" class="bookmarklet">Custom Popup</a>
 
 </p>
 
@@ -112,4 +112,4 @@ HTML;
 <?php
 
 // Display page footer
-yourls_html_footer();	
+yourls_html_footer();
