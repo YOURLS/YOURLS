@@ -545,11 +545,12 @@ RETURN;
  * @param string $ip          IP
  * @param string|int $clicks  Number of clicks
  * @param string $timestamp   Timestamp
+ * @param int    $row_id      Numeric value used to form row IDs, defaults to one
  * @return string             HTML of the row
  */
-function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp ) {
+function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, $row_id = 1 ) {
 	$keyword  = yourls_sanitize_keyword($keyword);
-	$id       = yourls_unique_element_id();
+	$id       = yourls_unique_element_id('yid', $row_id);
 	$shorturl = yourls_link( $keyword );
 
 	$statlink = yourls_statlink( $keyword );

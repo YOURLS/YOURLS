@@ -44,7 +44,7 @@ if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
 	if ( yourls_maybe_hash_passwords() ) {
         $hash = yourls_hash_passwords_now( YOURLS_CONFIGFILE );
         if ( $hash === true ) {
-            // Hashing succesful. Remove flag from DB if any.
+            // Hashing successful. Remove flag from DB if any.
             if( yourls_get_option( 'defer_hashing_error' ) )
                 yourls_delete_option( 'defer_hashing_error' );
         } else {
