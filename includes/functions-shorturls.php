@@ -242,7 +242,7 @@ function yourls_delete_link_by_keyword( $keyword ) {
 
     $table = YOURLS_DB_TABLE_URL;
     $keyword = yourls_sanitize_keyword($keyword);
-    $delete = yourls_get_db()->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    $delete = yourls_get_db()->fetchAffected("DELETE FROM $table WHERE keyword = :keyword", array('keyword' => $keyword));
     yourls_do_action( 'delete_link', $keyword, $delete );
     return $delete;
 }
@@ -270,7 +270,7 @@ function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
         'timestamp' => $timestamp,
         'ip'        => $ip,
     );
-    $insert = yourls_get_db()->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+    $insert = yourls_get_db()->fetchAffected("INSERT INTO $table (keyword, url, title, timestamp, ip, clicks) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
 
     yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 
@@ -295,7 +295,7 @@ function yourls_long_url_exists( $url ) {
 
     $table = YOURLS_DB_TABLE_URL;
     $url   = yourls_sanitize_url($url);
-    $url_exists = yourls_get_db()->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
+    $url_exists = yourls_get_db()->fetchObject("SELECT * FROM $table WHERE url = :url", array('url'=>$url));
 
     if ($url_exists === false) {
         $url_exists = NULL;
@@ -333,11 +333,11 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
         return yourls_apply_filter( 'edit_link', $return, $url, $keyword, $newkeyword, $title );
     }
 
-    $old_url = $ydb->fetchValue("SELECT `url` FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    $old_url = $ydb->fetchValue("SELECT url FROM $table WHERE keyword = :keyword", array('keyword' => $keyword));
 
     // Check if new URL is not here already
     if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-        $new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
+        $new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM $table WHERE url = :url;", array('url' => $url)));
     } else {
         $new_url_already_there = false;
     }
@@ -353,7 +353,7 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
 
     // All clear, update
     if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $sql   = "UPDATE $table SET url = :url, keyword = :newkeyword, title = :title WHERE keyword = :keyword";
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
             $update_url = $ydb->fetchAffected($sql, $binds);
         if( $update_url ) {
@@ -398,7 +398,7 @@ function yourls_edit_link_title( $keyword, $title ) {
     $title = yourls_sanitize_title( $title );
 
     $table = YOURLS_DB_TABLE_URL;
-    $update = yourls_get_db()->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
+    $update = yourls_get_db()->fetchAffected("UPDATE $table SET title = :title WHERE keyword = :keyword;", array('title' => $title, 'keyword' => $keyword));
 
     return $update;
 }
@@ -483,7 +483,7 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
     yourls_do_action( 'get_keyword_not_cached', $keyword );
 
     $table = YOURLS_DB_TABLE_URL;
-    $infos = $ydb->fetchObject("SELECT * FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    $infos = $ydb->fetchObject("SELECT * FROM $table WHERE keyword = :keyword", array('keyword' => $keyword));
 
     if( $infos ) {
         $infos = (array)$infos;
@@ -590,7 +590,7 @@ function yourls_get_keyword_stats( $shorturl ) {
     $table_url = YOURLS_DB_TABLE_URL;
     $shorturl  = yourls_sanitize_keyword( $shorturl );
 
-    $res = yourls_get_db()->fetchObject("SELECT * FROM `$table_url` WHERE `keyword` = :keyword", array('keyword' => $shorturl));
+    $res = yourls_get_db()->fetchObject("SELECT * FROM $table_url WHERE keyword = :keyword", array('keyword' => $shorturl));
 
     if( !$res ) {
         // non existent link
@@ -627,10 +627,10 @@ function yourls_get_keyword_stats( $shorturl ) {
 function yourls_get_longurl_keywords( $longurl, $order = 'ASC' ) {
     $longurl = yourls_sanitize_url($longurl);
     $table   = YOURLS_DB_TABLE_URL;
-    $sql     = "SELECT `keyword` FROM `$table` WHERE `url` = :url";
+    $sql     = "SELECT keyword FROM $table WHERE url = :url";
 
     if (in_array($order, array('ASC','DESC'))) {
-        $sql .= " ORDER BY `keyword` ".$order;
+        $sql .= " ORDER BY keyword ".$order;
     }
 
     return yourls_apply_filter( 'get_longurl_keywords', yourls_get_db()->fetchCol($sql, array('url'=>$longurl)), $longurl );

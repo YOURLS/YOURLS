@@ -52,7 +52,7 @@ class Options {
 
             // We could not fetch value from the table. Let's check if the option table exists
             try {
-                $check = $this->ydb->fetchAffected(sprintf("SHOW TABLES LIKE '%s'", $table));
+                $check = $this->ydb->show_tables_like($table);
                 // Table doesn't exist
                 if ($check ==0) {
                     return false;

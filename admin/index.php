@@ -34,13 +34,15 @@ if( $search && $search_in && $search_in_text ) {
 	$search_text     = $search;
 	$search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
-        $where['sql'] .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE (:search)";
+        $where['sql'] .= ' AND (keyword || url || title || ip) LIKE (:search)';
+        $where['binds']['search'] = $search;
         // Search across all fields. The resulting SQL will be something like:
-        // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
+        // SELECT * FROM yourls_url WHERE CONCAT_WS('',keyword,url,title,ip) LIKE ("%ozh%")
         // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
         // TODO: pay attention to this bit when the DB schema changes
     } else {
-        $where['sql'] .= " AND `$search_in` LIKE (:search)";
+        $where['sql'] .= " AND $search_in LIKE (:search)";
+        $where['binds']['search'] = $search;
     }
     $where['binds']['search'] = $search;
 }
@@ -54,14 +56,14 @@ switch( $date_filter ) {
     case 'before':
         if( $date_first ) {
             $date_first_sql = yourls_sanitize_date_for_sql( $date_first );
-            $where['sql'] .= ' AND `timestamp` < :date_first_sql';
+            $where['sql'] .= ' AND timestamp < :date_first_sql';
             $where['binds']['date_first_sql'] = $date_first_sql;
         }
         break;
     case 'after':
         if( $date_first ) {
             $date_first_sql = yourls_sanitize_date_for_sql( $date_first );
-            $where['sql'] .= ' AND `timestamp` > :date_first_sql';
+            $where['sql'] .= ' AND timestamp > :date_first_sql';
             $where['binds']['date_first_sql'] = $date_first_sql;
         }
         break;
@@ -69,7 +71,7 @@ switch( $date_filter ) {
         if( $date_first && $date_second ) {
             $date_first_sql  = yourls_sanitize_date_for_sql( $date_first );
             $date_second_sql = yourls_sanitize_date_for_sql( $date_second );
-            $where['sql'] .= ' AND `timestamp` BETWEEN :date_first_sql AND :date_second_sql';
+            $where['sql'] .= ' AND timestamp BETWEEN :date_first_sql AND :date_second_sql';
             $where['binds']['date_first_sql']  = $date_first_sql;
             $where['binds']['date_second_sql'] = $date_second_sql;
         }
@@ -138,7 +140,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 	// Now use the URL that has been sanitized and returned by yourls_add_new_link()
 	$url = $return['url']['url'];
-	$where['sql'] .= ' AND `url` LIKE :url ';
+	$where['sql'] .= ' AND url LIKE :url ';
     $where['binds']['url'] = $url;
 
 	$page   = $total_pages = $perpage = 1;
@@ -292,7 +294,7 @@ yourls_table_tbody_start();
 
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
-$url_results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ${where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
+$url_results = yourls_get_db()->fetchObjects( "SELECT * FROM $table_url WHERE 1=1 ${where['sql']} ORDER BY $sort_by $sort_order " . $ydb->page($offset, $perpage) . ";", $where['binds'] );
 $found_rows = false;
 if( $url_results ) {
 	$found_rows = true;

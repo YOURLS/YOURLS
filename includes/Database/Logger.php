@@ -42,7 +42,7 @@ class Logger extends AbstractLogger {
      *    $context : array(
      *               'function' => string 'perform'
      *               'duration' => float 0.0025360584259033
-     *               'statement' => string 'SELECT `keyword`,`url` FROM `yourls_url` WHERE `url` LIKE (:url)'
+     *               'statement' => string 'SELECT keyword,url FROM yourls_url WHERE url LIKE (:url)'
      *               'values' => array('url' => '%rss%')
      *               )
      * See finish() in Aura\Sql\Profiler\Profiler

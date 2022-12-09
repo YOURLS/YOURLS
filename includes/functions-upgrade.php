@@ -157,7 +157,7 @@ function yourls_upgrade_to_506() {
 function yourls_upgrade_482() {
 	// Change URL title charset to UTF8
 	$table_url = YOURLS_DB_TABLE_URL;
-	$sql = "ALTER TABLE `$table_url` CHANGE `title` `title` TEXT CHARACTER SET utf8;";
+	$sql = "ALTER TABLE $table_url CHANGE title title TEXT CHARACTER SET utf8;";
 	yourls_get_db()->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 }
@@ -176,7 +176,7 @@ function yourls_upgrade_to_15( ) {
 
 	// Alter URL table to store titles
 	$table_url = YOURLS_DB_TABLE_URL;
-	$sql = "ALTER TABLE `$table_url` ADD `title` TEXT AFTER `url`;";
+	$sql = "ALTER TABLE $table_url ADD title TEXT AFTER url;";
 	yourls_get_db()->perform( $sql );
 	echo "<p>Updating table structure. Please wait...</p>";
 
@@ -195,10 +195,10 @@ function yourls_upgrade_to_143( ) {
 	// Check if we have 'keyword' (borked install) or 'shorturl' (ok install)
 	$ydb = yourls_get_db();
 	$table_log = YOURLS_DB_TABLE_LOG;
-	$sql = "SHOW COLUMNS FROM `$table_log`";
+	$sql = "SHOW COLUMNS FROM $table_log";
 	$cols = $ydb->fetchObjects( $sql );
 	if ( $cols[2]->Field == 'keyword' ) {
-		$sql = "ALTER TABLE `$table_log` CHANGE `keyword` `shorturl` VARCHAR( 200 ) BINARY;";
+		$sql = "ALTER TABLE $table_log CHANGE keyword shorturl VARCHAR( 200 ) BINARY;";
 		$ydb->query( $sql );
 	}
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
@@ -226,7 +226,7 @@ function yourls_upgrade_to_141( ) {
  */
 function yourls_alter_url_table_to_141() {
 	$table_url = YOURLS_DB_TABLE_URL;
-	$alter = "ALTER TABLE `$table_url` CHANGE `keyword` `keyword` VARCHAR( 200 ) BINARY, CHANGE `url` `url` TEXT BINARY ";
+	$alter = "ALTER TABLE $table_url CHANGE keyword keyword VARCHAR( 200 ) BINARY, CHANGE url url TEXT BINARY ";
 	yourls_get_db()->perform( $alter );
 	echo "<p>Structure of existing tables updated. Please wait...</p>";
 }
@@ -281,9 +281,9 @@ function yourls_update_options_to_14() {
 
 	if( defined('YOURLS_DB_TABLE_NEXTDEC') ) {
 		$table = YOURLS_DB_TABLE_NEXTDEC;
-		$next_id = yourls_get_db()->fetchValue("SELECT `next_id` FROM `$table`");
+		$next_id = yourls_get_db()->fetchValue("SELECT next_id FROM $table");
 		yourls_update_option( 'next_id', $next_id );
-		yourls_get_db()->perform( "DROP TABLE `$table`" );
+		yourls_get_db()->perform( "DROP TABLE $table" );
 	} else {
 		yourls_update_option( 'next_id', 1 ); // In case someone mistakenly deleted the next_id constant or table too early
 	}
@@ -299,25 +299,25 @@ function yourls_create_tables_for_14() {
 	$queries = array();
 
 	$queries[YOURLS_DB_TABLE_OPTIONS] =
-		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_OPTIONS.'` ('.
-		'`option_id` int(11) unsigned NOT NULL auto_increment,'.
-		'`option_name` varchar(64) NOT NULL default "",'.
-		'`option_value` longtext NOT NULL,'.
-		'PRIMARY KEY (`option_id`,`option_name`),'.
-		'KEY `option_name` (`option_name`)'.
+		'CREATE TABLE IF NOT EXISTS '.YOURLS_DB_TABLE_OPTIONS.' ('.
+		'option_id int(11) unsigned NOT NULL auto_increment,'.
+		'option_name varchar(64) NOT NULL default "",'.
+		'option_value longtext NOT NULL,'.
+		'PRIMARY KEY (option_id,option_name),'.
+		'KEY option_name (option_name)'.
 		');';
 
 	$queries[YOURLS_DB_TABLE_LOG] =
-		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_LOG.'` ('.
-		'`click_id` int(11) NOT NULL auto_increment,'.
-		'`click_time` datetime NOT NULL,'.
-		'`shorturl` varchar(200) NOT NULL,'.
-		'`referrer` varchar(200) NOT NULL,'.
-		'`user_agent` varchar(255) NOT NULL,'.
-		'`ip_address` varchar(41) NOT NULL,'.
-		'`country_code` char(2) NOT NULL,'.
-		'PRIMARY KEY (`click_id`),'.
-		'KEY `shorturl` (`shorturl`)'.
+		'CREATE TABLE IF NOT EXISTS '.YOURLS_DB_TABLE_LOG.' ('.
+		'click_id int(11) NOT NULL auto_increment,'.
+		'click_time datetime NOT NULL,'.
+		'shorturl varchar(200) NOT NULL,'.
+		'referrer varchar(200) NOT NULL,'.
+		'user_agent varchar(255) NOT NULL,'.
+		'ip_address varchar(41) NOT NULL,'.
+		'country_code char(2) NOT NULL,'.
+		'PRIMARY KEY (click_id),'.
+		'KEY shorturl (shorturl)'.
 		');';
 
 	foreach( $queries as $query ) {
@@ -338,9 +338,9 @@ function yourls_alter_url_table_to_14() {
 
 	$alters = array();
 	$results = array();
-	$alters[] = "ALTER TABLE `$table` CHANGE `id` `keyword` VARCHAR( 200 ) NOT NULL";
-	$alters[] = "ALTER TABLE `$table` CHANGE `url` `url` TEXT NOT NULL";
-	$alters[] = "ALTER TABLE `$table` DROP PRIMARY KEY";
+	$alters[] = "ALTER TABLE $table CHANGE id keyword VARCHAR( 200 ) NOT NULL";
+	$alters[] = "ALTER TABLE $table CHANGE url url TEXT NOT NULL";
+	$alters[] = "ALTER TABLE $table DROP PRIMARY KEY";
 
 	foreach ( $alters as $query ) {
 		$ydb->perform( $query );
@@ -358,9 +358,9 @@ function yourls_alter_url_table_to_14_part_two() {
 	$table = YOURLS_DB_TABLE_URL;
 
 	$alters = array();
-	$alters[] = "ALTER TABLE `$table` ADD PRIMARY KEY ( `keyword` )";
-	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `ip` )";
-	$alters[] = "ALTER TABLE `$table` ADD INDEX ( `timestamp` )";
+	$alters[] = "ALTER TABLE $table ADD PRIMARY KEY ( keyword )";
+	$alters[] = "ALTER TABLE $table ADD INDEX ( ip )";
+	$alters[] = "ALTER TABLE $table ADD INDEX ( timestamp )";
 
 	foreach ( $alters as $query ) {
 		$ydb->perform( $query );
@@ -383,7 +383,7 @@ function yourls_update_table_to_14() {
 	$total = yourls_get_db_stats();
 	$total = $total['total_links'];
 
-	$sql = "SELECT `keyword`,`url` FROM `$table` WHERE 1=1 ORDER BY `url` ASC LIMIT $from, $chunk ;";
+	$sql = "SELECT keyword,url FROM $table WHERE 1=1 ORDER BY url ASC " . $ydb->page($from, $chunk) . ";";
 
 	$rows = $ydb->fetchObjects($sql);
 
@@ -393,7 +393,7 @@ function yourls_update_table_to_14() {
 		$keyword = $row->keyword;
 		$url = $row->url;
 		$newkeyword = yourls_int2string( $keyword );
-		if( true === $ydb->perform("UPDATE `$table` SET `keyword` = '$newkeyword' WHERE `url` = '$url';") ) {
+		if( true === $ydb->perform("UPDATE $table SET keyword = '$newkeyword' WHERE url = '$url';") ) {
 			$queries++;
 		} else {
 			echo "<p>Huho... Could not update rown with url='$url', from keyword '$keyword' to keyword '$newkeyword'</p>"; // Find what went wrong :/
