@@ -6,6 +6,7 @@
  * @group options
  * @since 0.1
  */
+#[AllowDynamicProperties]
 class Option_Tests extends PHPUnit\Framework\TestCase {
 
 	/**
