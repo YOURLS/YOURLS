@@ -1072,7 +1072,7 @@ function yourls_check_maintenance_mode() {
     }
 
 	global $maintenance_start;
-	include_once( $file );
+	yourls_activate_file_sandbox( $file );
 	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
 	if ( ( time() - $maintenance_start ) >= 600 ) {
         return;
@@ -1080,7 +1080,7 @@ function yourls_check_maintenance_mode() {
 
 	// Use any /user/maintenance.php file
 	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
-		include_once( YOURLS_USERDIR.'/maintenance.php' );
+		yourls_activate_file_sandbox( YOURLS_USERDIR.'/maintenance.php' );
 		die();
 	}
 
@@ -1270,4 +1270,20 @@ function yourls_set_url_scheme( $url, $scheme = '' ) {
 function yourls_tell_if_new_version() {
     yourls_debug_log( 'Check for new version: '.( yourls_maybe_check_core_version() ? 'yes' : 'no' ) );
     yourls_new_core_version_notice(YOURLS_VERSION);
+}
+
+/**
+ * File activation sandbox
+ *
+ * @since TODO
+ * @param string $file filename (full path)
+ * @return string|true  string if error or true if success
+ */
+function yourls_activate_file_sandbox( $file ) {
+    try {
+        include_once $file;
+        return true;
+    } catch ( \Throwable $e ) {
+        return $e->getMessage();
+    }
 }

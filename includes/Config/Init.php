@@ -147,7 +147,7 @@ class Init {
     public function include_db_files() {
         // Allow drop-in replacement for the DB engine
         if (file_exists(YOURLS_USERDIR.'/db.php')) {
-            require_once YOURLS_USERDIR.'/db.php';
+            yourls_activate_file_sandbox( YOURLS_USERDIR.'/db.php' );
         } else {
             require_once YOURLS_INC.'/class-mysql.php';
             yourls_db_connect();
@@ -160,7 +160,7 @@ class Init {
      */
     public function include_cache_files() {
         if (file_exists(YOURLS_USERDIR.'/cache.php')) {
-            require_once YOURLS_USERDIR.'/cache.php';
+            yourls_activate_file_sandbox( YOURLS_USERDIR.'/cache.php' );
         }
     }
 

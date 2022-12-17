@@ -595,7 +595,7 @@ function yourls_load_plugins() {
     $plugins = [];
     foreach ( $active_plugins as $key => $plugin ) {
         $file = YOURLS_PLUGINDIR . '/' . $plugin;
-        if ( yourls_is_a_plugin_file($file) && yourls_activate_plugin_sandbox( $file ) === true ) {
+        if ( yourls_is_a_plugin_file($file) && yourls_activate_file_sandbox( $file ) === true ) {
             $plugins[] = $plugin;
             unset( $active_plugins[ $key ] );
         }
@@ -659,7 +659,7 @@ function yourls_activate_plugin( $plugin ) {
     }
 
     // attempt activation.
-    $attempt = yourls_activate_plugin_sandbox( $plugindir.'/'.$plugin );
+    $attempt = yourls_activate_file_sandbox( $plugindir.'/'.$plugin );
     if( $attempt !== true ) {
         return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
     }
@@ -671,22 +671,6 @@ function yourls_activate_plugin( $plugin ) {
     yourls_do_action( 'activated_'.$plugin );
 
     return true;
-}
-
-/**
- * Plugin activation sandbox
- *
- * @since 1.8.3
- * @param string $pluginfile Plugin filename (full path)
- * @return string|true  string if error or true if success
- */
-function yourls_activate_plugin_sandbox( $pluginfile ) {
-    try {
-        include_once $pluginfile;
-        return true;
-    } catch ( \Throwable $e ) {
-        return $e->getMessage();
-    }
 }
 
 /**
@@ -708,7 +692,7 @@ function yourls_deactivate_plugin( $plugin ) {
     $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
     if ( file_exists($uninst_file) ) {
         define('YOURLS_UNINSTALL_PLUGIN', true);
-        $attempt = yourls_activate_plugin_sandbox( $uninst_file );
+        $attempt = yourls_activate_file_sandbox( $uninst_file );
         if( $attempt !== true ) {
             return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
         }

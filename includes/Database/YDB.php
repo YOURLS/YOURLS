@@ -158,7 +158,7 @@ class YDB extends ExtendedPdo {
     public function dead_or_error(\Exception $exception) {
         // Use any /user/db_error.php file
         if( file_exists( YOURLS_USERDIR . '/db_error.php' ) ) {
-            include_once( YOURLS_USERDIR . '/db_error.php' );
+            yourls_activate_file_sandbox( YOURLS_USERDIR . '/db_error.php' );
             die();
         }
 
