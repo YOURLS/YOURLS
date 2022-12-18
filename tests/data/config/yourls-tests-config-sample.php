@@ -1,6 +1,6 @@
 <?php
 /**
- * YOURLS Config for local unit tests. Copy this file to yourls-test-config.php
+ * YOURLS Config for local unit tests. Copy this file to yourls-tests-config.php
  */
 
 /*** YOURLS code base you want to test */
