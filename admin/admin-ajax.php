@@ -24,7 +24,7 @@ switch( $action ) {
 
 	case 'edit_display':
 		yourls_verify_nonce( 'edit-link_'.$_REQUEST['id'], $_REQUEST['nonce'], false, 'omg error' );
-		$row = yourls_table_edit_row ( $_REQUEST['keyword'] );
+		$row = yourls_table_edit_row ( $_REQUEST['keyword'], $_REQUEST['id'] );
 		echo json_encode( array('html' => $row) );
 		break;
 
