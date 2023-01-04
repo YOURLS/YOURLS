@@ -597,6 +597,11 @@ function yourls_tick() {
  */
 function yourls_salt( $string ) {
 	$salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+
+	if (defined('YOURLS_SALT_FUNCTION') and in_array(YOURLS_SALT_FUNCTION, hash_algos())) {
+		return yourls_apply_filter('yourls_salt', (YOURLS_SALT_FUNCTION)($string . $salt), $string);
+	}
+
 	return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
 }
 
