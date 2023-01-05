@@ -1285,7 +1285,7 @@ function yourls_tell_if_new_version() {
  *
  * @since TODO
  * @param string $file filename (full path)
- * @return string|bool  string if error, true if success, false if no file exists
+ * @return string|bool  string if error, true if success
  */
 function yourls_activate_file_sandbox( $file ) {
     try {
