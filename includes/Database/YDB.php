@@ -157,15 +157,24 @@ class YDB extends ExtendedPdo {
      */
     public function dead_or_error(\Exception $exception) {
         // Use any /user/db_error.php file
-        if( file_exists( YOURLS_USERDIR . '/db_error.php' ) ) {
-            yourls_activate_file_sandbox( YOURLS_USERDIR . '/db_error.php' );
+        $file = YOURLS_USERDIR . '/db_error.php';
+        $attempt = yourls_activate_file_sandbox( $file );
+
+        // Check if we have an error to display
+        if ( is_string( $attempt ) ) {
+            $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $file, $attempt );
+            yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
             die();
         }
 
-        $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
-        $message .= '<br/>' . get_class($exception) .': ' . $exception->getMessage();
+        if ( $attempt !== true ) {
+            $message  = yourls__( 'Incorrect DB config, or could not connect to DB' );
+            $message .= '<br/>' . get_class($exception) .': ' . $exception->getMessage();
 
-        yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+            yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+            die();
+        }
+
         die();
     }
 

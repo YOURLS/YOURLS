@@ -1065,30 +1065,38 @@ function yourls_fix_request_uri() {
  * @return void
  */
 function yourls_check_maintenance_mode() {
-	$file = YOURLS_ABSPATH . '/.maintenance' ;
+	$dot_file = YOURLS_ABSPATH . '/.maintenance' ;
 
-    if ( !file_exists( $file ) || yourls_is_upgrading() || yourls_is_installing() ) {
+    if ( !file_exists( $dot_file ) || yourls_is_upgrading() || yourls_is_installing() ) {
         return;
     }
 
 	global $maintenance_start;
-	yourls_activate_file_sandbox( $file );
+	yourls_activate_file_sandbox( $dot_file );
 	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
 	if ( ( time() - $maintenance_start ) >= 600 ) {
         return;
     }
 
 	// Use any /user/maintenance.php file
-	if( file_exists( YOURLS_USERDIR.'/maintenance.php' ) ) {
-		yourls_activate_file_sandbox( YOURLS_USERDIR.'/maintenance.php' );
-		die();
-	}
+    $file = YOURLS_USERDIR . '/maintenance.php';
+    $attempt = yourls_activate_file_sandbox( $file );
 
-    // Or use the default messages
-	$title   = yourls__( 'Service temporarily unavailable' );
-	$message = yourls__( 'Our service is currently undergoing scheduled maintenance.' ) . "</p>\n<p>" .
-	yourls__( 'Things should not last very long, thank you for your patience and please excuse the inconvenience' );
-	yourls_die( $message, $title , 503 );
+    // Check if we have an error to display
+    if ( is_string( $attempt ) ) {
+        $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $file, $attempt );
+        yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+    }
+
+    if ( $attempt !== true ) {
+        // Or use the default messages
+        $title = yourls__('Service temporarily unavailable');
+        $message = yourls__('Our service is currently undergoing scheduled maintenance.') . "</p>\n<p>" .
+            yourls__('Things should not last very long, thank you for your patience and please excuse the inconvenience');
+        yourls_die( $message, $title, 503 );
+    }
+
+    die();
 }
 
 /**
@@ -1277,12 +1285,14 @@ function yourls_tell_if_new_version() {
  *
  * @since TODO
  * @param string $file filename (full path)
- * @return string|true  string if error or true if success
+ * @return string|bool  string if error, true if success, false if no file exists
  */
 function yourls_activate_file_sandbox( $file ) {
     try {
-        include_once $file;
-        return true;
+        if (is_readable( $file )) {
+            include_once $file;
+            return true;
+        }
     } catch ( \Throwable $e ) {
         return $e->getMessage();
     }

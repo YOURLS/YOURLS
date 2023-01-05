@@ -690,12 +690,16 @@ function yourls_deactivate_plugin( $plugin ) {
 
     // Check if we have an uninstall file - load if so
     $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
-    if ( file_exists($uninst_file) ) {
+    $attempt = yourls_activate_file_sandbox( $uninst_file );
+
+    // Check if we have an error to display
+    if ( is_string( $attempt ) ) {
+        $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $uninst_file, $attempt );
+        return( $message );
+    }
+
+    if ( $attempt === true ) {
         define('YOURLS_UNINSTALL_PLUGIN', true);
-        $attempt = yourls_activate_file_sandbox( $uninst_file );
-        if( $attempt !== true ) {
-            return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
-        }
     }
 
     // Deactivate the plugin
