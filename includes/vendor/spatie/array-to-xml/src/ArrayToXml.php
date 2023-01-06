@@ -26,7 +26,7 @@ class ArrayToXml
         $domProperties = [],
         $xmlStandalone = null
     ) {
-        $this->document = new DOMDocument($xmlVersion, $xmlEncoding);
+        $this->document = new DOMDocument($xmlVersion, $xmlEncoding ?? '');
 
         if (! is_null($xmlStandalone)) {
             $this->document->xmlStandalone = $xmlStandalone;
@@ -38,7 +38,7 @@ class ArrayToXml
 
         $this->replaceSpacesByUnderScoresInKeyNames = $replaceSpacesByUnderScoresInKeyNames;
 
-        if ($this->isArrayAllKeySequential($array) && ! empty($array)) {
+        if (! empty($array) && $this->isArrayAllKeySequential($array)) {
             throw new DOMException('Invalid Character Error');
         }
 
@@ -78,11 +78,9 @@ class ArrayToXml
 
     public function toXml(): string
     {
-        if ($this->addXmlDeclaration === false) {
-            return $this->document->saveXml($this->document->documentElement);
-        }
-
-        return $this->document->saveXML();
+        return $this->addXmlDeclaration
+            ? $this->document->saveXML()
+            : $this->document->saveXml($this->document->documentElement);
     }
 
     public function toDom(): DOMDocument
@@ -94,7 +92,7 @@ class ArrayToXml
     {
         foreach ($domProperties as $key => $value) {
             if (! property_exists($this->document, $key)) {
-                throw new Exception($key.' is not a valid property of DOMDocument');
+                throw new Exception("{$key} is not a valid property of DOMDocument");
             }
         }
     }
@@ -125,12 +123,25 @@ class ArrayToXml
         return $this;
     }
 
+    public function addProcessingInstruction($target, $data)
+    {
+        $elements = $this->document->getElementsByTagName('*');
+
+        $rootElement = $elements->count() > 0 ? $elements->item(0) : null;
+
+        $processingInstruction = $this->document->createProcessingInstruction($target, $data);
+
+        $this->document->insertBefore($processingInstruction, $rootElement);
+
+        return $this;
+    }
+
     private function convertElement(DOMElement $element, $value)
     {
         $sequential = $this->isArrayAllKeySequential($value);
 
         if (! is_array($value)) {
-            $value = htmlspecialchars($value);
+            $value = htmlspecialchars($value ?? '');
 
             $value = $this->removeControlCharacters($value);
 
@@ -205,7 +216,7 @@ class ArrayToXml
             return;
         }
 
-        $child = new DOMElement($element->tagName);
+        $child = $this->document->createElement($element->tagName);
         $child->nodeValue = htmlspecialchars($value);
         $element->parentNode->appendChild($child);
     }
@@ -230,7 +241,7 @@ class ArrayToXml
     protected function addAttributes(DOMElement $element, array $data)
     {
         foreach ($data as $attrKey => $attrVal) {
-            $element->setAttribute($attrKey, $attrVal);
+            $element->setAttribute($attrKey, $attrVal ?? '');
         }
     }
 

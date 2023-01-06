@@ -57,7 +57,6 @@ abstract class AbstractPlaceRecord extends AbstractRecord
     private function firstSetNameLocale(): ?string
     {
         foreach ($this->locales as $locale) {
-            // @phpstan-ignore-next-line
             if (isset($this->names[$locale])) {
                 return $locale;
             }

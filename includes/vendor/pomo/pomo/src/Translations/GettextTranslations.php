@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the POMO package.
  *
@@ -12,12 +13,23 @@ use POMO\Parser\PluralForms;
 
 /**
  * Class for a set of entries for translation and their associated headers.
- *
- * @property mixed $_nplurals
- * @property callable $_gettext_select_plural_form
  */
 class GettextTranslations extends Translations implements TranslationsInterface
 {
+    /**
+     * Number of plural forms.
+     *
+     * @var int
+     */
+    public $_nplurals;
+
+    /**
+     * Callback to retrieve the plural form.
+     *
+     * @var callable
+     */
+    public $_gettext_select_plural_form;
+
     /**
      * The gettext implementation of select_plural_form.
      *
@@ -30,8 +42,10 @@ class GettextTranslations extends Translations implements TranslationsInterface
      */
     public function gettext_select_plural_form($count)
     {
-        if (!isset($this->_gettext_select_plural_form)
-            || is_null($this->_gettext_select_plural_form)) {
+        if (
+            !isset($this->_gettext_select_plural_form)
+            || is_null($this->_gettext_select_plural_form)
+        ) {
             list($nplurals, $expression) = $this->nplurals_and_expression_from_header($this->get_header('Plural-Forms'));
             $this->_nplurals = $nplurals;
             $this->_gettext_select_plural_form = $this->make_plural_form_function($nplurals, $expression);
@@ -103,7 +117,7 @@ class GettextTranslations extends Translations implements TranslationsInterface
                     $res .= ') : (';
                     break;
                 case ';':
-                    $res .= str_repeat(')', $depth).';';
+                    $res .= str_repeat(')', $depth) . ';';
                     $depth = 0;
                     break;
                 default:
