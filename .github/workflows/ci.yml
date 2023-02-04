@@ -14,10 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         php: ['8.0', '8.1', '8.2']
-        phpunit: ['latest']
+        phpunit: ['9']
         include:
         - php: '7.4'
-          phpunit: '8.5.13'
+          phpunit: '8'
           coverage: xdebug
           flags: '--coverage-clover clover.xml'
 
