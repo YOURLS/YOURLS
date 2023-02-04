@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: PHP
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
 
     strategy:
