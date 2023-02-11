@@ -35,30 +35,37 @@ class AnonymousIp extends AbstractModel
      * @var bool
      */
     protected $isAnonymous;
+
     /**
      * @var bool
      */
     protected $isAnonymousVpn;
+
     /**
      * @var bool
      */
     protected $isHostingProvider;
+
     /**
      * @var bool
      */
     protected $isPublicProxy;
+
     /**
      * @var bool
      */
     protected $isResidentialProxy;
+
     /**
      * @var bool
      */
     protected $isTorExitNode;
+
     /**
      * @var string
      */
     protected $ipAddress;
+
     /**
      * @var string
      */

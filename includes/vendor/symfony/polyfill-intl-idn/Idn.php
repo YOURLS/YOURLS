@@ -723,7 +723,7 @@ final class Idn
 
                         $qMinusT = $q - $t;
                         $baseMinusT = self::BASE - $t;
-                        $output .= self::encodeDigit($t + ($qMinusT) % ($baseMinusT), false);
+                        $output .= self::encodeDigit($t + $qMinusT % $baseMinusT, false);
                         ++$out;
                         $q = intdiv($qMinusT, $baseMinusT);
                     }

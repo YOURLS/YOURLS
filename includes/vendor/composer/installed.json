@@ -62,17 +62,17 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.3.1",
-            "version_normalized": "1.3.1.0",
+            "version": "1.3.4",
+            "version_normalized": "1.3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "4c679186f2aca4ab6a0f1b0b9cf9252decb44d0b"
+                "reference": "69098eca243998b53eed7a48d82dedd28b447cd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/4c679186f2aca4ab6a0f1b0b9cf9252decb44d0b",
-                "reference": "4c679186f2aca4ab6a0f1b0b9cf9252decb44d0b",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/69098eca243998b53eed7a48d82dedd28b447cd5",
+                "reference": "69098eca243998b53eed7a48d82dedd28b447cd5",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
                 "symfony/phpunit-bridge": "^4.2 || ^5",
                 "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
-            "time": "2021-10-28T20:44:15+00:00",
+            "time": "2022-10-12T12:08:29+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -121,7 +121,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.1"
+                "source": "https://github.com/composer/ca-bundle/tree/1.3.4"
             },
             "funding": [
                 {
@@ -141,17 +141,17 @@
         },
         {
             "name": "geoip2/geoip2",
-            "version": "v2.12.2",
-            "version_normalized": "2.12.2.0",
+            "version": "v2.13.0",
+            "version_normalized": "2.13.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/maxmind/GeoIP2-php.git",
-                "reference": "83adb44ac4b9553d36b579a14673ed124583082f"
+                "url": "git@github.com:maxmind/GeoIP2-php.git",
+                "reference": "6a41d8fbd6b90052bc34dff3b4252d0f88067b23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/83adb44ac4b9553d36b579a14673ed124583082f",
-                "reference": "83adb44ac4b9553d36b579a14673ed124583082f",
+                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/6a41d8fbd6b90052bc34dff3b4252d0f88067b23",
+                "reference": "6a41d8fbd6b90052bc34dff3b4252d0f88067b23",
                 "shasum": ""
             },
             "require": {
@@ -166,7 +166,7 @@
                 "phpunit/phpunit": "^8.0 || ^9.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
-            "time": "2021-11-30T18:15:25+00:00",
+            "time": "2022-08-05T20:32:58+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -194,10 +194,6 @@
                 "geolocation",
                 "maxmind"
             ],
-            "support": {
-                "issues": "https://github.com/maxmind/GeoIP2-php/issues",
-                "source": "https://github.com/maxmind/GeoIP2-php/tree/v2.12.2"
-            },
             "install-path": "../geoip2/geoip2"
         },
         {
@@ -360,23 +356,23 @@
         },
         {
             "name": "ozh/bookmarkletgen",
-            "version": "1.2",
-            "version_normalized": "1.2.0.0",
+            "version": "1.2.2",
+            "version_normalized": "1.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozh/bookmarkletgen.git",
-                "reference": "3319b53c493a1474a03d1cc4e087617652284c20"
+                "reference": "65fffa64bb11f70470d398d7baf6d9bb84411cfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozh/bookmarkletgen/zipball/3319b53c493a1474a03d1cc4e087617652284c20",
-                "reference": "3319b53c493a1474a03d1cc4e087617652284c20",
+                "url": "https://api.github.com/repos/ozh/bookmarkletgen/zipball/65fffa64bb11f70470d398d7baf6d9bb84411cfc",
+                "reference": "65fffa64bb11f70470d398d7baf6d9bb84411cfc",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3"
+                "php": ">=7.2"
             },
-            "time": "2017-05-18T12:46:21+00:00",
+            "time": "2022-05-04T13:05:16+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -400,31 +396,35 @@
                 "bookmarklet",
                 "javascript"
             ],
+            "support": {
+                "issues": "https://github.com/ozh/bookmarkletgen/issues",
+                "source": "https://github.com/ozh/bookmarkletgen/tree/1.2.2"
+            },
             "install-path": "../ozh/bookmarkletgen"
         },
         {
             "name": "pomo/pomo",
-            "version": "v1.4.1",
-            "version_normalized": "1.4.1.0",
+            "version": "v1.5.0",
+            "version_normalized": "1.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LeoColomb/pomo.git",
-                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542"
+                "reference": "b1e53a997850496369634d574fa6b508091fc353"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
-                "reference": "1594bd1f90c89a45ffc3da2ee6d5d582bfac7542",
+                "url": "https://api.github.com/repos/LeoColomb/pomo/zipball/b1e53a997850496369634d574fa6b508091fc353",
+                "reference": "b1e53a997850496369634d574fa6b508091fc353",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": ">=4.0",
-                "squizlabs/php_codesniffer": "^3.0 || ^2.9.1"
+                "phpunit/phpunit": "^4.0 || ^7.0",
+                "squizlabs/php_codesniffer": "^3.0"
             },
-            "time": "2018-12-20T14:55:38+00:00",
+            "time": "2023-01-06T01:05:43+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -448,7 +448,7 @@
                     "role": "Maintainer"
                 }
             ],
-            "description": "Gettext library to translate with I18n",
+            "description": "Gettext library to translate with i18n",
             "homepage": "https://github.com/LeoColomb/pomo",
             "keywords": [
                 "gettext",
@@ -456,6 +456,20 @@
                 "internationalization",
                 "localization",
                 "translation"
+            ],
+            "support": {
+                "issues": "https://github.com/LeoColomb/pomo/issues",
+                "source": "https://github.com/LeoColomb/pomo/tree/v1.5.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/LeoColomb",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/LeoColomb",
+                    "type": "patreon"
+                }
             ],
             "install-path": "../pomo/pomo"
         },
@@ -514,17 +528,17 @@
         },
         {
             "name": "rmccue/requests",
-            "version": "2.0.2",
-            "version_normalized": "2.0.2.0",
+            "version": "v2.0.5",
+            "version_normalized": "2.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress/Requests.git",
-                "reference": "b01ce7c91657d604f298751686d7f5eec87b9493"
+                "reference": "b717f1d2f4ef7992ec0c127747ed8b7e170c2f49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress/Requests/zipball/b01ce7c91657d604f298751686d7f5eec87b9493",
-                "reference": "b01ce7c91657d604f298751686d7f5eec87b9493",
+                "url": "https://api.github.com/repos/WordPress/Requests/zipball/b717f1d2f4ef7992ec0c127747ed8b7e170c2f49",
+                "reference": "b717f1d2f4ef7992ec0c127747ed8b7e170c2f49",
                 "shasum": ""
             },
             "require": {
@@ -542,7 +556,7 @@
                 "wp-coding-standards/wpcs": "^2.0",
                 "yoast/phpunit-polyfills": "^1.0.0"
             },
-            "time": "2022-03-28T15:37:07+00:00",
+            "time": "2022-10-11T08:15:28+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -598,17 +612,17 @@
         },
         {
             "name": "spatie/array-to-xml",
-            "version": "2.16.0",
-            "version_normalized": "2.16.0.0",
+            "version": "2.17.1",
+            "version_normalized": "2.17.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/array-to-xml.git",
-                "reference": "db39308c5236b69b89cadc3f44f191704814eae2"
+                "reference": "5cbec9c6ab17e320c58a259f0cebe88bde4a7c46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/db39308c5236b69b89cadc3f44f191704814eae2",
-                "reference": "db39308c5236b69b89cadc3f44f191704814eae2",
+                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/5cbec9c6ab17e320c58a259f0cebe88bde4a7c46",
+                "reference": "5cbec9c6ab17e320c58a259f0cebe88bde4a7c46",
                 "shasum": ""
             },
             "require": {
@@ -617,10 +631,11 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.2",
+                "pestphp/pest": "^1.21",
                 "phpunit/phpunit": "^9.0",
-                "spatie/phpunit-snapshot-assertions": "^4.2"
+                "spatie/pest-plugin-snapshots": "^1.1"
             },
-            "time": "2020-11-18T22:03:17+00:00",
+            "time": "2022-12-26T08:22:07+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -648,8 +663,7 @@
                 "xml"
             ],
             "support": {
-                "issues": "https://github.com/spatie/array-to-xml/issues",
-                "source": "https://github.com/spatie/array-to-xml/tree/2.16.0"
+                "source": "https://github.com/spatie/array-to-xml/tree/2.17.1"
             },
             "funding": [
                 {
@@ -665,17 +679,17 @@
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.25.0",
-            "version_normalized": "1.25.0.0",
+            "version": "v1.27.0",
+            "version_normalized": "1.27.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "749045c69efb97c70d25d7463abba812e91f3a44"
+                "reference": "639084e360537a19f9ee352433b84ce831f3d2da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/749045c69efb97c70d25d7463abba812e91f3a44",
-                "reference": "749045c69efb97c70d25d7463abba812e91f3a44",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/639084e360537a19f9ee352433b84ce831f3d2da",
+                "reference": "639084e360537a19f9ee352433b84ce831f3d2da",
                 "shasum": ""
             },
             "require": {
@@ -686,11 +700,11 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "time": "2021-09-14T14:02:44+00:00",
+            "time": "2022-11-03T14:55:06+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.23-dev"
+                    "dev-main": "1.27-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -735,7 +749,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.25.0"
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.27.0"
             },
             "funding": [
                 {
@@ -755,17 +769,17 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.25.0",
-            "version_normalized": "1.25.0.0",
+            "version": "v1.27.0",
+            "version_normalized": "1.27.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "8590a5f561694770bdcd3f9b5c69dde6945028e8"
+                "reference": "19bd1e4fcd5b91116f14d8533c57831ed00571b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/8590a5f561694770bdcd3f9b5c69dde6945028e8",
-                "reference": "8590a5f561694770bdcd3f9b5c69dde6945028e8",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/19bd1e4fcd5b91116f14d8533c57831ed00571b6",
+                "reference": "19bd1e4fcd5b91116f14d8533c57831ed00571b6",
                 "shasum": ""
             },
             "require": {
@@ -774,11 +788,11 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "time": "2021-02-19T12:13:01+00:00",
+            "time": "2022-11-03T14:55:06+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.23-dev"
+                    "dev-main": "1.27-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -822,7 +836,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.25.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.27.0"
             },
             "funding": [
                 {
@@ -842,17 +856,17 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.25.0",
-            "version_normalized": "1.25.0.0",
+            "version": "v1.27.0",
+            "version_normalized": "1.27.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825"
+                "reference": "8ad114f6b39e2c98a8b0e3bd907732c207c2b534"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/0abb51d2f102e00a4eefcf46ba7fec406d245825",
-                "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/8ad114f6b39e2c98a8b0e3bd907732c207c2b534",
+                "reference": "8ad114f6b39e2c98a8b0e3bd907732c207c2b534",
                 "shasum": ""
             },
             "require": {
@@ -864,11 +878,11 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2021-11-30T18:21:41+00:00",
+            "time": "2022-11-03T14:55:06+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.23-dev"
+                    "dev-main": "1.27-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -908,7 +922,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.25.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.27.0"
             },
             "funding": [
                 {
@@ -928,27 +942,27 @@
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.25.0",
-            "version_normalized": "1.25.0.0",
+            "version": "v1.27.0",
+            "version_normalized": "1.27.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
-                "reference": "9a142215a36a3888e30d0a9eeea9766764e96976"
+                "reference": "869329b1e9894268a8a61dabb69153029b7a8c97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/9a142215a36a3888e30d0a9eeea9766764e96976",
-                "reference": "9a142215a36a3888e30d0a9eeea9766764e96976",
+                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/869329b1e9894268a8a61dabb69153029b7a8c97",
+                "reference": "869329b1e9894268a8a61dabb69153029b7a8c97",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
             },
-            "time": "2021-05-27T09:17:38+00:00",
+            "time": "2022-11-03T14:55:06+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.23-dev"
+                    "dev-main": "1.27-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -987,7 +1001,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php72/tree/v1.25.0"
+                "source": "https://github.com/symfony/polyfill-php72/tree/v1.27.0"
             },
             "funding": [
                 {

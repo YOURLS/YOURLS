@@ -6,6 +6,14 @@ namespace GeoIp2\Database;
 
 use GeoIp2\Exception\AddressNotFoundException;
 use GeoIp2\Model\AbstractModel;
+use GeoIp2\Model\AnonymousIp;
+use GeoIp2\Model\Asn;
+use GeoIp2\Model\City;
+use GeoIp2\Model\ConnectionType;
+use GeoIp2\Model\Country;
+use GeoIp2\Model\Domain;
+use GeoIp2\Model\Enterprise;
+use GeoIp2\Model\Isp;
 use GeoIp2\ProviderInterface;
 use MaxMind\Db\Reader as DbReader;
 use MaxMind\Db\Reader\InvalidDatabaseException;
@@ -40,10 +48,12 @@ class Reader implements ProviderInterface
      * @var DbReader
      */
     private $dbReader;
+
     /**
      * @var string
      */
     private $dbType;
+
     /**
      * @var array<string>
      */
@@ -78,10 +88,10 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function city(string $ipAddress): \GeoIp2\Model\City
+    public function city(string $ipAddress): City
     {
         // @phpstan-ignore-next-line
-        return $this->modelFor('City', 'City', $ipAddress);
+        return $this->modelFor(City::class, 'City', $ipAddress);
     }
 
     /**
@@ -94,10 +104,10 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function country(string $ipAddress): \GeoIp2\Model\Country
+    public function country(string $ipAddress): Country
     {
         // @phpstan-ignore-next-line
-        return $this->modelFor('Country', 'Country', $ipAddress);
+        return $this->modelFor(Country::class, 'Country', $ipAddress);
     }
 
     /**
@@ -110,11 +120,11 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function anonymousIp(string $ipAddress): \GeoIp2\Model\AnonymousIp
+    public function anonymousIp(string $ipAddress): AnonymousIp
     {
         // @phpstan-ignore-next-line
         return $this->flatModelFor(
-            'AnonymousIp',
+            AnonymousIp::class,
             'GeoIP2-Anonymous-IP',
             $ipAddress
         );
@@ -130,11 +140,11 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function asn(string $ipAddress): \GeoIp2\Model\Asn
+    public function asn(string $ipAddress): Asn
     {
         // @phpstan-ignore-next-line
         return $this->flatModelFor(
-            'Asn',
+            Asn::class,
             'GeoLite2-ASN',
             $ipAddress
         );
@@ -150,11 +160,11 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function connectionType(string $ipAddress): \GeoIp2\Model\ConnectionType
+    public function connectionType(string $ipAddress): ConnectionType
     {
         // @phpstan-ignore-next-line
         return $this->flatModelFor(
-            'ConnectionType',
+            ConnectionType::class,
             'GeoIP2-Connection-Type',
             $ipAddress
         );
@@ -170,11 +180,11 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function domain(string $ipAddress): \GeoIp2\Model\Domain
+    public function domain(string $ipAddress): Domain
     {
         // @phpstan-ignore-next-line
         return $this->flatModelFor(
-            'Domain',
+            Domain::class,
             'GeoIP2-Domain',
             $ipAddress
         );
@@ -190,10 +200,10 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function enterprise(string $ipAddress): \GeoIp2\Model\Enterprise
+    public function enterprise(string $ipAddress): Enterprise
     {
         // @phpstan-ignore-next-line
-        return $this->modelFor('Enterprise', 'Enterprise', $ipAddress);
+        return $this->modelFor(Enterprise::class, 'Enterprise', $ipAddress);
     }
 
     /**
@@ -206,11 +216,11 @@ class Reader implements ProviderInterface
      * @throws \MaxMind\Db\Reader\InvalidDatabaseException if the database
      *                                                     is corrupt or invalid
      */
-    public function isp(string $ipAddress): \GeoIp2\Model\Isp
+    public function isp(string $ipAddress): Isp
     {
         // @phpstan-ignore-next-line
         return $this->flatModelFor(
-            'Isp',
+            Isp::class,
             'GeoIP2-ISP',
             $ipAddress
         );
@@ -223,8 +233,6 @@ class Reader implements ProviderInterface
         $record['traits']['ip_address'] = $ipAddress;
         $record['traits']['prefix_len'] = $prefixLen;
 
-        $class = 'GeoIp2\\Model\\' . $class;
-
         return new $class($record, $this->locales);
     }
 
@@ -234,7 +242,6 @@ class Reader implements ProviderInterface
 
         $record['ip_address'] = $ipAddress;
         $record['prefix_len'] = $prefixLen;
-        $class = 'GeoIp2\\Model\\' . $class;
 
         return new $class($record);
     }
@@ -242,7 +249,7 @@ class Reader implements ProviderInterface
     private function getRecord(string $class, string $type, string $ipAddress): array
     {
         if (strpos($this->dbType, $type) === false) {
-            $method = lcfirst($class);
+            $method = lcfirst((new \ReflectionClass($class))->getShortName());
 
             throw new \BadMethodCallException(
                 "The $method method cannot be used to open a {$this->dbType} database"

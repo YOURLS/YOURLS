@@ -83,7 +83,7 @@ final class Php72
             'SunOS' => 'Solaris',
         ];
 
-        return isset($map[\PHP_OS]) ? $map[\PHP_OS] : 'Unknown';
+        return $map[\PHP_OS] ?? 'Unknown';
     }
 
     public static function spl_object_id($object)
@@ -96,7 +96,7 @@ final class Php72
         }
 
         // On 32-bit systems, PHP_INT_SIZE is 4,
-        return self::$hashMask ^ hexdec(substr($hash, 16 - (\PHP_INT_SIZE * 2 - 1), (\PHP_INT_SIZE * 2 - 1)));
+        return self::$hashMask ^ hexdec(substr($hash, 16 - (\PHP_INT_SIZE * 2 - 1), \PHP_INT_SIZE * 2 - 1));
     }
 
     public static function sapi_windows_vt100_support($stream, $enable = null)
@@ -167,7 +167,7 @@ final class Php72
             self::$hashMask = (int) substr(ob_get_clean(), 17);
         }
 
-        self::$hashMask ^= hexdec(substr(spl_object_hash($obj), 16 - (\PHP_INT_SIZE * 2 - 1), (\PHP_INT_SIZE * 2 - 1)));
+        self::$hashMask ^= hexdec(substr(spl_object_hash($obj), 16 - (\PHP_INT_SIZE * 2 - 1), \PHP_INT_SIZE * 2 - 1));
     }
 
     public static function mb_chr($code, $encoding = null)
