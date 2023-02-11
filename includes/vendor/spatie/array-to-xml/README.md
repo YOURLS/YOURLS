@@ -1,3 +1,6 @@
+
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
+
 # Convert an array to xml
 
 [![Latest Version](https://img.shields.io/github/release/spatie/array-to-xml.svg?style=flat-square)](https://github.com/spatie/array-to-xml/releases)
@@ -360,7 +363,7 @@ This will result in:
         <nickname>estacet</nickname>
         <tags>
             <ns:tag>first-tag</ns:tag>
-            <tns:ag>second-tag</tns:ag>
+            <ns:tag>second-tag</ns:tag>
         </tags>
     </ns:custom-key>
 </root>
@@ -477,23 +480,43 @@ This will result in:
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"><soap:Header/><soap:Body><soap:key>soap:value</soap:key></soap:Body></soap:Envelope>
 ```
 
+### Adding processing instructions
+
+Call `$arrayToXml->addProcessingInstruction($target, $data)` method on ArrayToXml object to prepend a processing instruction before the root element.
+
+Example:
+
+```php
+$arrayToXml = new ArrayToXml($array);
+$arrayToXml->addProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="base.xsl"');
+$result = $arrayToXml->toXml();
+```
+
+This will result in:
+
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="base.xsl"?>
+<root><Good_guy><name>Luke Skywalker</name><weapon>Lightsaber</weapon></Good_guy><Bad_guy><name>Sauron</name><weapon>Evil Eye</weapon></Bad_guy></root>
+```
+
 ## Testing
 
 ```bash
 vendor/bin/phpunit
 ```
 
-### Changelog
+## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
 
-## Security
+## Security Vulnerabilities
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Postcardware
 

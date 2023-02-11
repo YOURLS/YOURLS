@@ -39,7 +39,7 @@ jobs:
 
       - name: "Get date"
         id: get-date
-        run: echo "::set-output name=DATE::$(/bin/date -u "+%F")"
+        run: echo "DATE=$(/bin/date -u "+%F")" >> $GITHUB_OUTPUT
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4

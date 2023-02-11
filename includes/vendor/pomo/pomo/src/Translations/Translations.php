@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the POMO package.
  *
@@ -11,6 +12,7 @@ namespace POMO\Translations;
 /**
  * Class for a set of entries for translation and their associated headers.
  */
+#[AllowDynamicProperties]
 class Translations implements TranslationsInterface
 {
     public $entries = array();
@@ -114,9 +116,11 @@ class Translations implements TranslationsInterface
         $translated = $this->translate_entry($entry);
         $index = $this->select_plural_form($count);
         $total_plural_forms = $this->get_plural_forms_count();
-        if ($translated && 0 <= $index && $index < $total_plural_forms &&
+        if (
+            $translated && 0 <= $index && $index < $total_plural_forms &&
                 is_array($translated->translations) &&
-                isset($translated->translations[$index])) {
+                isset($translated->translations[$index])
+        ) {
             return $translated->translations[$index];
         } else {
             return 1 == $count ? $singular : $plural;
