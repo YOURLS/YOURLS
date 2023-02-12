@@ -906,7 +906,10 @@ function yourls_page( $page ) {
     }
 
 	yourls_do_action( 'pre_page', $page );
-	include_once( YOURLS_PAGEDIR . "/$page.php" );
+    $load = yourls_include_file_sandbox(YOURLS_PAGEDIR . "/$page.php");
+	if (is_string($load)) {
+        yourls_die( $load, yourls__('Not found'), 404 );
+	}
 	yourls_do_action( 'post_page', $page );
 }
 

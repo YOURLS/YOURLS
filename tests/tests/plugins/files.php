@@ -193,7 +193,7 @@ class Plugin_Files_Tests extends PHPUnit\Framework\TestCase {
      * @dataProvider get_invalid_code_plugins
      */
     public function test_invalid_plugin_does_not_activate($plugin) {
-        $this->assertNotTrue( yourls_activate_plugin_sandbox( $plugin ) );
+        $this->assertNotTrue( yourls_include_file_sandbox( $plugin ) );
         $this->assertNotTrue( yourls_activate_plugin( $plugin ) );
         $this->assertNotTrue( yourls_is_active_plugin( $plugin ) );
     }
