@@ -1072,7 +1072,7 @@ function yourls_check_maintenance_mode() {
     }
 
 	global $maintenance_start;
-	yourls_activate_file_sandbox( $dot_file );
+	yourls_include_file_sandbox( $dot_file );
 	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
 	if ( ( time() - $maintenance_start ) >= 600 ) {
         return;
@@ -1080,7 +1080,7 @@ function yourls_check_maintenance_mode() {
 
 	// Use any /user/maintenance.php file
     $file = YOURLS_USERDIR . '/maintenance.php';
-    $attempt = yourls_activate_file_sandbox( $file );
+    $attempt = yourls_include_file_sandbox( $file );
 
     // Check if we have an error to display
     if ( is_string( $attempt ) ) {
@@ -1281,13 +1281,15 @@ function yourls_tell_if_new_version() {
 }
 
 /**
- * File activation sandbox
+ * File include sandbox
  *
- * @since TODO
+ * Attempt to include a PHP file, fail with an error message if the file isn't valid PHP code
+ *
+ * @since 1.9.2
  * @param string $file filename (full path)
  * @return string|bool  string if error, true if success
  */
-function yourls_activate_file_sandbox( $file ) {
+function yourls_include_file_sandbox($file) {
     try {
         if (is_readable( $file )) {
             include_once $file;

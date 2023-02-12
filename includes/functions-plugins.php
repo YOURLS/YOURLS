@@ -595,7 +595,7 @@ function yourls_load_plugins() {
     $plugins = [];
     foreach ( $active_plugins as $key => $plugin ) {
         $file = YOURLS_PLUGINDIR . '/' . $plugin;
-        if ( yourls_is_a_plugin_file($file) && yourls_activate_file_sandbox( $file ) === true ) {
+        if ( yourls_is_a_plugin_file($file) && yourls_include_file_sandbox( $file ) === true ) {
             $plugins[] = $plugin;
             unset( $active_plugins[ $key ] );
         }
@@ -659,7 +659,7 @@ function yourls_activate_plugin( $plugin ) {
     }
 
     // attempt activation.
-    $attempt = yourls_activate_file_sandbox( $plugindir.'/'.$plugin );
+    $attempt = yourls_include_file_sandbox( $plugindir.'/'.$plugin );
     if( $attempt !== true ) {
         return yourls_s( 'Plugin generated unexpected output. Error was: <br/><pre>%s</pre>', $attempt );
     }
@@ -690,7 +690,7 @@ function yourls_deactivate_plugin( $plugin ) {
 
     // Check if we have an uninstall file - load if so
     $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
-    $attempt = yourls_activate_file_sandbox( $uninst_file );
+    $attempt = yourls_include_file_sandbox( $uninst_file );
 
     // Check if we have an error to display
     if ( is_string( $attempt ) ) {

@@ -906,7 +906,7 @@ function yourls_page( $page ) {
     }
 
 	yourls_do_action( 'pre_page', $page );
-	yourls_activate_file_sandbox( YOURLS_PAGEDIR . "/$page.php" );
+	yourls_include_file_sandbox( YOURLS_PAGEDIR . "/$page.php" );
 	yourls_do_action( 'post_page', $page );
 }
 

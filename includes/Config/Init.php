@@ -147,7 +147,7 @@ class Init {
     public function include_db_files() {
         // Attempt to open drop-in replacement for the DB engine else default to core engine
         $file = YOURLS_USERDIR . '/db.php';
-        $attempt = yourls_activate_file_sandbox( $file );
+        $attempt = yourls_include_file_sandbox( $file );
 
         // Check if we have an error to display
         if ( is_string( $attempt ) ) {
@@ -168,7 +168,7 @@ class Init {
      */
     public function include_cache_files() {
         $file = YOURLS_USERDIR . '/cache.php';
-        $attempt = yourls_activate_file_sandbox( $file );
+        $attempt = yourls_include_file_sandbox( $file );
 
         // Check if we have an error to display
         if ( is_string( $attempt ) ) {
