@@ -147,12 +147,13 @@ class Init {
     public function include_db_files() {
         // Attempt to open drop-in replacement for the DB engine else default to core engine
         $file = YOURLS_USERDIR . '/db.php';
-        $attempt = yourls_include_file_sandbox( $file );
-
-        // Check if we have an error to display
-        if ( is_string( $attempt ) ) {
-            $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $file, $attempt );
-            yourls_add_notice( $message );
+        $attempt = false;
+        if(file_exists($file)) {
+            $attempt = yourls_include_file_sandbox( $file );
+            // Check if we have an error to display
+            if ( is_string( $attempt ) ) {
+                yourls_add_notice( $attempt );
+            }
         }
 
         // Fallback to core DB engine
@@ -168,12 +169,13 @@ class Init {
      */
     public function include_cache_files() {
         $file = YOURLS_USERDIR . '/cache.php';
-        $attempt = yourls_include_file_sandbox( $file );
-
-        // Check if we have an error to display
-        if ( is_string( $attempt ) ) {
-            $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $file, $attempt );
-            yourls_add_notice( $message );
+        $attempt = false;
+        if(file_exists($file)) {
+            $attempt = yourls_include_file_sandbox($file);
+            // Check if we have an error to display
+            if (is_string($attempt)) {
+                yourls_add_notice($attempt);
+            }
         }
     }
 

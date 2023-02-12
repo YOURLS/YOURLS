@@ -10,9 +10,9 @@
 class FileLoader_Test extends PHPUnit\Framework\TestCase {
 
     /**
-     * Load empty file
+     * Load valid file = true
      */
-    public function test_load_file() {
+    public function test_load_file_exists() {
         $file = YOURLS_TESTDATA_DIR . "/" . rand_str() . ".php";
         if( touch("$file") ) {
             $this->assertTrue( yourls_include_file_sandbox( $file ) );
@@ -20,6 +20,13 @@ class FileLoader_Test extends PHPUnit\Framework\TestCase {
         } else {
             $this->markTestSkipped( "Cannot create test '$file");
         }
+    }
+
+    /**
+     * Load missing file = string
+     */
+    public function test_load_file_exists() {
+        $this->assertIsString( yourls_include_file_sandbox( YOURLS_TESTDATA_DIR . "/" . rand_str() . ".php" ) );
     }
 
     /**

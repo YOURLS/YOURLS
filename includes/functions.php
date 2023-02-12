@@ -1080,23 +1080,17 @@ function yourls_check_maintenance_mode() {
 
 	// Use any /user/maintenance.php file
     $file = YOURLS_USERDIR . '/maintenance.php';
-    $attempt = yourls_include_file_sandbox( $file );
-
-    // Check if we have an error to display
-    if ( is_string( $attempt ) ) {
-        $message = yourls_s( 'Loading %s generated unexpected output. Error was: <br/><pre>%s</pre>', $file, $attempt );
-        yourls_die( yourls__( $message ), yourls__( 'Fatal error' ), 503 );
+    if(file_exists($file)) {
+        if(yourls_include_file_sandbox( $file ) == true) {
+            die();
+        }
     }
 
-    if ( $attempt !== true ) {
-        // Or use the default messages
-        $title = yourls__('Service temporarily unavailable');
-        $message = yourls__('Our service is currently undergoing scheduled maintenance.') . "</p>\n<p>" .
-            yourls__('Things should not last very long, thank you for your patience and please excuse the inconvenience');
-        yourls_die( $message, $title, 503 );
-    }
-
-    die();
+    // Or use the default messages
+    $title = yourls__('Service temporarily unavailable');
+    $message = yourls__('Our service is currently undergoing scheduled maintenance.') . "</p>\n<p>" .
+        yourls__('Things should not last very long, thank you for your patience and please excuse the inconvenience');
+    yourls_die( $message, $title, 503 );
 }
 
 /**
@@ -1283,7 +1277,8 @@ function yourls_tell_if_new_version() {
 /**
  * File include sandbox
  *
- * Attempt to include a PHP file, fail with an error message if the file isn't valid PHP code
+ * Attempt to include a PHP file, fail with an error message if the file isn't valid PHP code.
+ * This function does not check first if the file exists : depending on use case, you may check first.
  *
  * @since 1.9.2
  * @param string $file filename (full path)
@@ -1293,9 +1288,11 @@ function yourls_include_file_sandbox($file) {
     try {
         if (is_readable( $file )) {
             include_once $file;
+            yourls_debug_log("loaded $file");
             return true;
         }
     } catch ( \Throwable $e ) {
-        return $e->getMessage();
+        yourls_debug_log("could not load $file");
+        return sprintf("%s (%s : %s)", $e->getMessage() , $e->getFile() , $e->getLine() );
     }
 }

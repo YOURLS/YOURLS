@@ -7,7 +7,7 @@
  * Add a message to the debug log
  *
  * When in debug mode ( YOURLS_DEBUG == true ) the debug log is echoed in yourls_html_footer()
- * Log messages are appended to $ydb->debug_log array, which is instanciated within class ezSQLcore_YOURLS
+ * Log messages are appended to $ydb->debug_log array, which is instanciated within class Database\YDB
  *
  * @since 1.7
  * @param string $msg Message to add to the debug log
@@ -17,7 +17,10 @@ function yourls_debug_log( $msg ) {
     yourls_do_action( 'debug_log', $msg );
     // Get the DB object ($ydb), get its profiler (\Aura\Sql\Profiler\Profiler), its logger (\Aura\Sql\Profiler\MemoryLogger) and
     // pass it a unused argument (loglevel) and the message
-    yourls_get_db()->getProfiler()->getLogger()->log( 'debug', $msg);
+    // Check if function exists to allow usage of the function in very early stages
+    if(function_exists('yourls_debug_log')) {
+        yourls_get_db()->getProfiler()->getLogger()->log( 'debug', $msg);
+    }
     return $msg;
 }
 
