@@ -264,8 +264,7 @@ function yourls_redirect( $location, $code = 301 ) {
  * Redirect to an existing short URL
  *
  * Redirect client to an existing short URL (no check performed) and execute misc tasks: update
- * clicks for short URL, update logs, and send a nocache header to prevent bots indexing short
- * URLS (see #2202)
+ * clicks for short URL, update logs, and send an X-Robots-Tag header to control indexing of a page.
  *
  * @since  1.7.3
  * @param  string $url
@@ -281,13 +280,33 @@ function yourls_redirect_shorturl($url, $keyword) {
     // Update detailed log for stats
     yourls_log_redirect( $keyword );
 
-    // Tell (Google)bots not to index this short URL, see #2202
-    if ( !headers_sent() ) {
-        header( "X-Robots-Tag: noindex", true );
-    }
+    // Send an X-Robots-Tag header
+    yourls_robots_tag_header();
 
     yourls_redirect( $url, 301 );
 }
+
+/**
+ * Send an X-Robots-Tag header. See #3486
+ *
+ * @since 1.9.2
+ * @return void
+ */
+function yourls_robots_tag_header() {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_robots_tag_header', false );
+    if ( false !== $pre ) {
+        return $pre;
+    }
+
+    // By default, we're sending a 'noindex' header
+    $tag = yourls_apply_filter( 'robots_tag_header', 'noindex' );
+    $replace = yourls_apply_filter( 'robots_tag_header_replace', true );
+    if ( !headers_sent() ) {
+        header( "X-Robots-Tag: $tag", $replace );
+    }
+}
+
 
 /**
  * Send headers to explicitly tell browser not to cache content or redirection
