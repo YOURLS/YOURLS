@@ -25,7 +25,7 @@ class FileLoader_Test extends PHPUnit\Framework\TestCase {
     /**
      * Load missing file = string
      */
-    public function test_load_file_exists() {
+    public function test_load_file_not_exists() {
         $this->assertIsString( yourls_include_file_sandbox( YOURLS_TESTDATA_DIR . "/" . rand_str() . ".php" ) );
     }
 
