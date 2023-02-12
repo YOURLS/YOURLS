@@ -1014,6 +1014,10 @@ function yourls_get_request($yourls_site = '', $uri = '') {
 /**
  * Fix $_SERVER['REQUEST_URI'] variable for various setups. Stolen from WP.
  *
+ * We also strip $_COOKIE from $_REQUEST to allow our lazy using $_REQUEST without 3rd party cookie interfering.
+ * See #3383 for explanation.
+ *
+ * @since 1.5.1
  * @return void
  */
 function yourls_fix_request_uri() {
@@ -1023,6 +1027,9 @@ function yourls_fix_request_uri() {
         'REQUEST_URI'     => '',
     ];
     $_SERVER = array_merge( $default_server_values, $_SERVER );
+
+    // Make $_REQUEST with only $_GET and $_POST, not $_COOKIE. See #3383.
+    $_REQUEST = array_merge( $_GET, $_POST );
 
     // Fix for IIS when running with PHP ISAPI
     if ( empty( $_SERVER[ 'REQUEST_URI' ] ) || ( php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER[ 'SERVER_SOFTWARE' ] ) ) ) {
