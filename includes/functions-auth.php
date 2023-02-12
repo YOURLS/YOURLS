@@ -213,7 +213,7 @@ function yourls_hash_passwords_now( $config_file ) {
 			// PHP would interpret $ as a variable, so replace it in storage.
 			$hash = str_replace( '$', '!', $hash );
 			$quotes = "'" . '"';
-			$pattern = "/[$quotes]{$user}[$quotes]\s*=>\s*[$quotes]" . preg_quote( $password, '/' ) . "[$quotes]/";
+			$pattern = "/[$quotes]" . preg_quote( $user, '/' ) . "[$quotes]\s*=>\s*[$quotes]" . preg_quote( $password, '/' ) . "[$quotes]/";
 			$replace = "'$user' => 'phpass:$hash' /* Password encrypted by YOURLS */ ";
 			$count = 0;
 			$configdata = preg_replace( $pattern, $replace, $configdata, -1, $count );

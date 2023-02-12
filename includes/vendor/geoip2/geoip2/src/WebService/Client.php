@@ -17,9 +17,9 @@ use GeoIp2\ProviderInterface;
 use MaxMind\WebService\Client as WsClient;
 
 /**
- * This class provides a client API for all the GeoIP2 Precision web services.
- * The services are Country, City, and Insights. Each service returns a
- * different set of data about an IP address, with Country returning the
+ * This class provides a client API for all the GeoIP2 web services.
+ * The services are Country, City Plus, and Insights. Each service returns
+ * a different set of data about an IP address, with Country returning the
  * least data and Insights the most.
  *
  * Each web service is represented by a different model class, and these model
@@ -52,16 +52,18 @@ class Client implements ProviderInterface
      * @var array<string>
      */
     private $locales;
+
     /**
      * @var WsClient
      */
     private $client;
+
     /**
      * @var string
      */
     private static $basePath = '/geoip/v2.1';
 
-    public const VERSION = 'v2.12.2';
+    public const VERSION = 'v2.13.0';
 
     /**
      * Constructor.
@@ -71,9 +73,10 @@ class Client implements ProviderInterface
      * @param array  $locales    list of locale codes to use in name property
      *                           from most preferred to least preferred
      * @param array  $options    array of options. Valid options include:
-     *                           * `host` - The host to use when querying the web service. To
-     *                           query the GeoLite2 web service instead of GeoIP2 Precision,
-     *                           set the host to `geolite.info`.
+     *                           * `host` - The host to use when querying the web
+     *                           service. To query the GeoLite2 web service
+     *                           instead of the GeoIP2 web service, set the
+     *                           host to `geolite.info`.
      *                           * `timeout` - Timeout in seconds.
      *                           * `connectTimeout` - Initial connection timeout in seconds.
      *                           * `proxy` - The HTTP proxy to use. May include a schema, port,
@@ -110,7 +113,7 @@ class Client implements ProviderInterface
     }
 
     /**
-     * This method calls the City service.
+     * This method calls the City Plus service.
      *
      * @param string $ipAddress IPv4 or IPv6 address as a string. If no
      *                          address is provided, the address that the web service is called
@@ -136,7 +139,7 @@ class Client implements ProviderInterface
     public function city(string $ipAddress = 'me'): City
     {
         // @phpstan-ignore-next-line
-        return $this->responseFor('city', 'City', $ipAddress);
+        return $this->responseFor('city', City::class, $ipAddress);
     }
 
     /**
@@ -165,12 +168,12 @@ class Client implements ProviderInterface
      */
     public function country(string $ipAddress = 'me'): Country
     {
-        return $this->responseFor('country', 'Country', $ipAddress);
+        return $this->responseFor('country', Country::class, $ipAddress);
     }
 
     /**
-     * This method calls the Insights service. Insights is only supported by GeoIP2
-     * Precision. The GeoLite2 web service does not support it.
+     * This method calls the Insights service. Insights is only supported by
+     * the GeoIP2 web service. The GeoLite2 web service does not support it.
      *
      * @param string $ipAddress IPv4 or IPv6 address as a string. If no
      *                          address is provided, the address that the web service is called
@@ -196,7 +199,7 @@ class Client implements ProviderInterface
     public function insights(string $ipAddress = 'me'): Insights
     {
         // @phpstan-ignore-next-line
-        return $this->responseFor('insights', 'Insights', $ipAddress);
+        return $this->responseFor('insights', Insights::class, $ipAddress);
     }
 
     private function responseFor(string $endpoint, string $class, string $ipAddress): Country
@@ -204,7 +207,8 @@ class Client implements ProviderInterface
         $path = implode('/', [self::$basePath, $endpoint, $ipAddress]);
 
         try {
-            $body = $this->client->get('GeoIP2 ' . $class, $path);
+            $service = (new \ReflectionClass($class))->getShortName();
+            $body = $this->client->get('GeoIP2 ' . $service, $path);
         } catch (\MaxMind\Exception\IpAddressNotFoundException $ex) {
             throw new AddressNotFoundException(
                 $ex->getMessage(),
@@ -245,8 +249,6 @@ class Client implements ProviderInterface
                 $ex
             );
         }
-
-        $class = 'GeoIp2\\Model\\' . $class;
 
         return new $class($body, $this->locales);
     }

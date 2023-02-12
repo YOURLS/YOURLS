@@ -18,6 +18,19 @@
 // @codeCoverageIgnoreStart
 
 /**
+ * Plugin activation sandbox
+ *
+ * @since 1.8.3
+ * @deprecated 1.9.2
+ * @param string $pluginfile Plugin filename (full path)
+ * @return string|true  string if error or true if success
+ */
+function yourls_activate_plugin_sandbox( $pluginfile ) {
+    yourls_deprecated_function( __FUNCTION__, '1.9.1', 'yourls_include_file_sandbox');
+    return yourls_include_file_sandbox($pluginfile);
+}
+
+/**
  * Return current admin page, or null if not an admin page. Was not used anywhere.
  *
  * @return mixed string if admin page, null if not an admin page

@@ -7,17 +7,17 @@ on:
 
 jobs:
   test:
-    name: PHP
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         php: ['8.0', '8.1', '8.2']
-        phpunit: ['latest']
+        phpunit: ['9']
         include:
         - php: '7.4'
-          phpunit: '8.5.13'
+          phpunit: '8'
           coverage: xdebug
           flags: '--coverage-clover clover.xml'
 
@@ -36,7 +36,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Use PHP ${{ matrix.php }}
-      uses: shivammathur/setup-php@2.23.0
+      uses: shivammathur/setup-php@2.24.0
       with:
         php-version: ${{ matrix.php }}
         extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
