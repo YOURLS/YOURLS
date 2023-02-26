@@ -110,10 +110,10 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 	// No sanitization needed here: everything happens in yourls_add_new_link()
 	if( isset( $_GET['u'] ) ) {
 		// Old school bookmarklet: ?u=<url>
-		$url = urldecode( $_GET['u'] );
+		$url = $_GET['u'];
 	} else {
 		// New style bookmarklet: ?up=<url protocol>&us=<url slashes>&ur=<url rest>
-		$url = urldecode( $_GET['up'] . $_GET['us'] . $_GET['ur'] );
+		$url = $_GET['up'] . $_GET['us'] . $_GET['ur'];
 	}
 	$keyword = ( isset( $_GET['k'] ) ? ( $_GET['k'] ) : '' );
 	$title   = ( isset( $_GET['t'] ) ? ( $_GET['t'] ) : '' );
