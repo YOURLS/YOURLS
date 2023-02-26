@@ -57,7 +57,7 @@ class Init {
             $this->include_db_files();
         }
 
-        // Allow early inclusion of a cache layer
+        // Allow early and unconditional inclusion of custom code
         if ($actions->include_cache === true) {
             $this->include_cache_files();
         }
@@ -164,6 +164,10 @@ class Init {
     }
 
     /**
+     * Include custom extension file.
+     *
+     * "Cache" stands for "Custom Additional Code for Hazardous Extensions".
+     *
      * @since  1.7.3
      * @return void
      */
