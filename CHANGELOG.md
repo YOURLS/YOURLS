@@ -4,6 +4,17 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.9.2
+---
+- added: Support PHP 8.2 (#3474)
+- improved: Googlebot indexing now filterable for plugins, for your SEO needs (#3517)
+- improved: Use safe sandbox for all included files (#3478)
+- fixed: bookmarklets with URL containing special chars (#3527)
+- fixed: unwanted cookies could interfere with YOURLS (#3516)
+- fixed: cosmetic bugs in the admin interface (#3485, #3431, #3518)
+- fixed: support usernames containing brackets (#3365)
+- updated: third party libs and binaries
+
 1.9.1
 ---
 - fixed: error `Undefined constant "intval"` when upgrading (#3332)
