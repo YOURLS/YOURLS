@@ -5,7 +5,7 @@
  *
  * Note to devs : prefer update function names using the SQL version, eg yourls_update_to_506(),
  * rather than using the YOURLS version number, eg yourls_update_to_18(). This is to allow having
- * multiple SQL update during the dev cycle of the same Y0URLS version
+ * multiple SQL update during the dev cycle of the same YOURLS version
  *
  * @param string|int $step
  * @param string $oldver
