@@ -9,7 +9,7 @@
  *    MAJOR.MINOR.PATCH-SOMETHING (1.8.1-donotuse)
  *
  */
-define( 'YOURLS_VERSION', '1.9.2' );
+define( 'YOURLS_VERSION', '1.9.3-dev' );
 
 /**
  * YOURLS DB version. Increments when changes are made to the DB schema, to trigger a DB update
