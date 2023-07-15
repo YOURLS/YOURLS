@@ -222,7 +222,7 @@ class AdminParams
     public function get_click_limit()
     {
         // @hook Default link click threshold (unset)
-        return (isset($_GET['click_limit']) && intval($_GET['click_limit']) >= 0) ?
+        return (!empty($_GET['click_limit']) && intval($_GET['click_limit']) >= 0) ?
             intval($_GET['click_limit']) : yourls_apply_filter('admin_view_click_limit', '');
     }
 
