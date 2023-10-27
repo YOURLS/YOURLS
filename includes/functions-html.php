@@ -757,11 +757,11 @@ function yourls_login_screen( $error_msg = '' ) {
 				?>
 				<p>
 					<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
-					<input type="text" id="username" name="username" size="30" class="text" autocomplete="username" />
+					<input type="text" id="username" name="username" class="text" autocomplete="username" />
 				</p>
 				<p>
 					<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
-					<input type="password" id="password" name="password" size="30" class="text" />
+					<input type="password" id="password" name="password" class="text" />
 				</p>
 				<?php
 					yourls_do_action( 'login_form_bottom' );
