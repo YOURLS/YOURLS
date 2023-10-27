@@ -757,7 +757,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				?>
 				<p>
 					<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
-					<input type="text" id="username" name="username" size="30" class="text" />
+					<input type="text" id="username" name="username" size="30" class="text" autocomplete="username" />
 				</p>
 				<p>
 					<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
@@ -768,7 +768,7 @@ function yourls_login_screen( $error_msg = '' ) {
 				?>
 				<p style="text-align: right;">
 					<?php yourls_nonce_field('admin_login'); ?>
-					<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
+					<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" autocomplete="current-password" />
 				</p>
 				<?php
 					yourls_do_action( 'login_form_end' );
