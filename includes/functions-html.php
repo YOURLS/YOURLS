@@ -51,8 +51,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 			$tablesorter = true;
 			break;
 
-		case 'install':
 		case 'login':
+			$_title_page = 'Login';
+			break;
+
+		case 'install':
 		case 'new':
 		case 'upgrade':
 			break;
@@ -75,6 +78,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	// Page title
 	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . yourls_link();
+	$_title = $_title_page ? $_title_page . ' &mdash; ' . $_title : $_title;
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 
