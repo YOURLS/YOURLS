@@ -755,13 +755,13 @@ function yourls_login_screen( $error_msg = '' ) {
 			<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
 				<?php
 					if( !empty( $error_msg ) ) {
-						echo '<p class="error">'.$error_msg.'</p>';
+						echo '<p id="error-message" class="error">'.$error_msg.'</p>';
 					}
 					yourls_do_action( 'login_form_top' );
 				?>
 				<p>
 					<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
-					<input type="text" id="username" name="username" class="text" autocomplete="username" />
+					<input type="text" id="username" aria-describedby="error-message" name="username" class="text" autocomplete="username" />
 				</p>
 				<p>
 					<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
