@@ -68,6 +68,9 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             }
         }
 
+        if ($oldsql < 507)
+            yourls_upgrade_to_507();
+
 		yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
 		break;
@@ -79,6 +82,40 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
         yourls_maintenance_mode(false);
 		break;
 	}
+}
+
+
+function yourls_upgrade_to_507() {
+    $ydb = yourls_get_db();
+	$table_log = YOURLS_DB_TABLE_LOG;
+    echo "<p>Updating DB. Please wait...</p>";
+
+    $queries = array(
+        'add new ref column'      => sprintf('ALTER TABLE `%s` ADD `ref_param` varchar(100);', $table_log),
+        'index for performance'   => sprintf('ALTER TABLE `%s` ADD KEY `shorturl__ref_param` (`shorturl`, `ref_param`);', $table_log),
+    );
+
+    foreach($queries as $what => $query) {
+        try {
+            $ydb->perform($query);
+        } catch (\Exception $e) {
+            $error_msg[] = $e->getMessage();
+        }
+    }
+
+    if( $error_msg ) {
+        echo "<p class='error'>Unable to update the DB.</p>";
+        echo "<p>You will have to manually fix things, sorry for the inconvenience :(</p>";
+        echo "<p>The errors were:
+        <pre>";
+        foreach( $error_msg as $error ) {
+            echo "$error\n";
+        }
+        echo "</pre>";
+        die();
+    }
+
+    echo "<p class='success'>OK!</p>";
 }
 
 /************************** 1.6 -> 1.8 **************************/

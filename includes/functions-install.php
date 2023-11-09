@@ -245,8 +245,10 @@ function yourls_create_sql_tables() {
 		'`user_agent` varchar(255) NOT NULL,'.
 		'`ip_address` varchar(41) NOT NULL,'.
 		'`country_code` char(2) NOT NULL,'.
+        '`ref_param` varchar(100)'.
 		'PRIMARY KEY  (`click_id`),'.
 		'KEY `shorturl` (`shorturl`)'.
+        'KEY `shorturl__ref_param` (`shorturl`, `ref_param`)'.
 		') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
 
