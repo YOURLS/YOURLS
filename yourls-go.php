@@ -18,7 +18,7 @@ if( yourls_is_page($keyword) ) {
 
 // if we can get a long URL from the DB, redirect
 if( $url = yourls_get_keyword_longurl( $keyword ) ) {
-    yourls_redirect_shorturl($url, $keyword);
+    yourls_redirect_shorturl($url, $keyword, $ref_param);
     return;
 }
 

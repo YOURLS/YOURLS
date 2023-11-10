@@ -20,6 +20,7 @@ require_once __DIR__ . '/includes/load-yourls.php';
 // Get request in YOURLS base (eg in 'http://sho.rt/yourls/abcd' get 'abdc')
 // At this point, $request is NOT sanitized.
 $request = yourls_get_request();
+$ref_param = yourls_get_ref_param();
 
 // Now load required template and exit
 yourls_do_action( 'pre_load_template', $request );

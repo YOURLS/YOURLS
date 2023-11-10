@@ -41,6 +41,37 @@ function yourls_get_IP() {
 }
 
 /**
+ * Get the ref url parameter. Returns a DB safe string if it exists.
+ *
+ * @return null|string
+ */
+function yourls_get_ref_param($uri = '') {
+    $ref_param = null;
+     if ( '' === $uri ) {
+         $uri = $_SERVER[ 'REQUEST_URI' ];
+     }
+
+    $parts = explode( '?', $uri );
+    $query = next( $parts );
+    if (!$query)
+        return;
+
+    $params = explode('&', strtolower($query));
+    for($i = 0; $i < count($params); $i++) {
+        $param = explode('=', $params[$i]);
+        if ($param[0] === 'ref' && isset($param[1])) {
+            $ref_param = $param[1];
+            break;
+        }
+    }
+
+    if (!$ref_param)
+        return;
+
+	return (string)yourls_apply_filter( 'get_ref_param', yourls_sanitize_url( $ref_param ) );
+}
+
+/**
  * Get next id a new link will have if no custom keyword provided
  *
  * @since 1.0
@@ -271,14 +302,14 @@ function yourls_redirect( $location, $code = 301 ) {
  * @param  string $keyword
  * @return void
  */
-function yourls_redirect_shorturl($url, $keyword) {
+function yourls_redirect_shorturl($url, $keyword, $ref_param) {
     yourls_do_action( 'redirect_shorturl', $url, $keyword );
 
     // Attempt to update click count in main table
     yourls_update_clicks( $keyword );
 
     // Update detailed log for stats
-    yourls_log_redirect( $keyword );
+    yourls_log_redirect( $keyword, $ref_param );
 
     // Send an X-Robots-Tag header
     yourls_robots_tag_header();
@@ -493,7 +524,7 @@ function yourls_get_HTTP_status( $code ) {
  * @param string $keyword short URL keyword
  * @return mixed Result of the INSERT query (1 on success)
  */
-function yourls_log_redirect( $keyword ) {
+function yourls_log_redirect( $keyword, $ref_param ) {
 	// Allow plugins to short-circuit the whole function
 	$pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
 	if ( false !== $pre ) {
@@ -513,11 +544,12 @@ function yourls_log_redirect( $keyword ) {
         'ua'       => substr(yourls_get_user_agent(), 0, 255),
         'ip'       => $ip,
         'location' => yourls_geo_ip_to_countrycode($ip),
+        'ref_param' => $ref_param,
     ];
 
     // Try and log. An error probably means a concurrency problem : just skip the logging
     try {
-        $result = yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+        $result = yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code, ref_param) VALUES (:now, :keyword, :referrer, :ua, :ip, :location, :ref_param)", $binds );
     } catch (Exception $e) {
         $result = 0;
     }
