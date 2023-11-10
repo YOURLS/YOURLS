@@ -45,7 +45,7 @@ if( yourls_do_log_redirect() ) {
 	$list_of_years = array();
 	$last_24h = array();
 	$ref_params = array();
-    $no_ref_param = 0;
+	$no_ref_param = 0;
 
 	if( yourls_allow_duplicate_longurls() )
 		$keyword_list = yourls_get_longurl_keywords( $longurl );
@@ -57,6 +57,7 @@ if( yourls_do_log_redirect() ) {
 		$keyword_range = '= :keyword';
         $keyword_binds = array('keyword' => $keyword);
 	}
+
 
 	// *** Referrers ***
     $sql = "SELECT `referrer`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `referrer`;";

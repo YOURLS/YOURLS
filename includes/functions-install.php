@@ -248,7 +248,7 @@ function yourls_create_sql_tables() {
 		'`ref_param` varchar(100)'.
 		'PRIMARY KEY  (`click_id`),'.
 		'KEY `shorturl` (`shorturl`)'.
-		'KEY `shorturl__ref_param` (`shorturl`, `ref_param`)'.
+		'KEY `ref_param` (`ref_param`)'.
 		') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
 
