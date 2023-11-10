@@ -44,6 +44,8 @@ if( yourls_do_log_redirect() ) {
 	$list_of_months = array();
 	$list_of_years = array();
 	$last_24h = array();
+	$ref_params = array();
+    $no_ref_param = 0;
 
 	if( yourls_allow_duplicate_longurls() )
 		$keyword_list = yourls_get_longurl_keywords( $longurl );
@@ -55,7 +57,6 @@ if( yourls_do_log_redirect() ) {
 		$keyword_range = '= :keyword';
         $keyword_binds = array('keyword' => $keyword);
 	}
-
 
 	// *** Referrers ***
     $sql = "SELECT `referrer`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `referrer`;";
@@ -91,6 +92,25 @@ if( yourls_do_log_redirect() ) {
 	}
 	arsort($referrer_sort);
 
+	// *** Referral parameters ***
+	$sql = "SELECT `ref_param`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `ref_param`;";
+	$sql = yourls_apply_filter('stat_query_ref_param', $sql);
+	$rows = $ydb->fetchObjects($sql, $keyword_binds);
+
+	foreach( (array)$rows as $row ) {
+		if (!$row->ref_param) {
+			$no_ref_param += $row->count;
+			continue;
+		}
+
+		$ref_param = $row->ref_param;
+		if( !array_key_exists( $ref_param, $ref_params ) ) {
+			$ref_params[$ref_param] = $row->count;
+		} else {
+			$ref_params[$ref_param] += $row->count;
+		}
+	}
+	arsort( $ref_params );
 
 	// *** Countries ***
 	$sql = "SELECT `country_code`, COUNT(*) AS `count` FROM `$table` WHERE `shorturl` $keyword_range GROUP BY `country_code`;";
@@ -117,7 +137,7 @@ if( yourls_do_log_redirect() ) {
 	FROM `$table`
 	WHERE `shorturl` $keyword_range
 	GROUP BY `year`, `month`, `day`;";
-    $sql = yourls_apply_filter('stat_query_dates', $sql);
+	$sql = yourls_apply_filter('stat_query_dates', $sql);
 	$rows = $ydb->fetchObjects($sql, $keyword_binds);
 
 	// Loop through all results and fill blanks
@@ -190,6 +210,7 @@ if( yourls_do_log_redirect() ) {
 	$list_of_years  = yourls_apply_filter( 'pre_yourls_info_list_of_years', $list_of_years );
 	$last_24h       = yourls_apply_filter( 'pre_yourls_info_last_24h', $last_24h );
 	$countries      = yourls_apply_filter( 'pre_yourls_info_countries', $countries );
+	$ref_params     = yourls_apply_filter( 'pre_yourls_info_ref_params', $ref_params );
 
 	// I can haz debug data
 	/**
@@ -204,6 +225,7 @@ if( yourls_do_log_redirect() ) {
 	echo "list_of_years: "; print_r( $list_of_years );
 	echo "last_24h: "; print_r( $last_24h );
 	echo "countries: "; print_r( $countries );
+	echo "ref_params: "; print_r( $ref_params );
 	die();
 	**/
 
@@ -243,6 +265,7 @@ yourls_html_menu();
 		<li class="selected"><a href="#stat_tab_stats"><h2><?php yourls_e( 'Traffic statistics'); ?></h2></a></li>
 		<li><a href="#stat_tab_location"><h2><?php yourls_e( 'Traffic location'); ?></h2></a></li>
 		<li><a href="#stat_tab_sources"><h2><?php yourls_e( 'Traffic sources'); ?></h2></a></li>
+		<li><a href="#stat_tab_referral_parameter"><h2><?php yourls_e( 'Ref params'); ?></h2></a></li>
 		<?php } ?>
 		<li><a href="#stat_tab_share"><h2><?php yourls_e( 'Share'); ?></h2></a></li>
 	</ul>
@@ -537,6 +560,50 @@ yourls_html_menu();
 
 		<?php } else {
 			echo '<p>' . yourls__( 'No referrer data.' ) . '</p>';
+		} ?>
+
+	</div>
+
+
+	<div id="stat_tab_referral_parameter" class="tab">
+		<h2><?php yourls_e( 'Referral Parameters' ); ?></h2>
+
+		<?php yourls_do_action( 'pre_yourls_info_referral_parameter', $keyword ); ?>
+
+		<?php if ( $ref_params ) { ?>
+
+			<table border="0" cellspacing="2">
+			<tr>
+				<td valign="top">
+					<h3><?php yourls_e( 'Shares with ref params' ); ?></h3>
+					<?php
+					if ( count($ref_params) > 1 )
+					yourls_stats_pie( $ref_params, 5, '440x220', 'stat_tab_referral_parameter_ref' );
+					?>
+					<h3><?php yourls_e( 'Ref Params' ); ?></h3>
+					<ul class="no_bullet">
+						<?php
+						$i = 0;
+						foreach( $ref_params as $ref_param => $count ) {
+							$i++;
+							echo "<li class='ref_params_list'>" . yourls_rawurldecode_while_encoded($ref_param) . ": <strong>$count</strong></li>\n";
+							unset( $ref_params[$ref_param] );
+						}
+						// Any params left? Group in "various"
+						if ( $ref_params ) {
+							echo "<li id='ref_params_various'>" . yourls__( 'Various:' ) . " <strong>" . count( $ref_params ) . "</strong></li>\n";
+						}
+                        echo "<li id='ref_params_none'>" . yourls__( 'None:' ) . " <strong>" . $no_ref_param . "</strong></li>\n";
+						?>
+					</ul>
+				</td>
+			</tr>
+			</table>
+
+		<?php yourls_do_action( 'post_yourls_info_referral_parameter', $keyword ); ?>
+
+		<?php } else {
+			echo '<p>' . yourls__( 'No referrer parameter data.' ) . '</p>';
 		} ?>
 
 	</div>
