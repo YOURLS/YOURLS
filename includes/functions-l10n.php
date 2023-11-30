@@ -35,18 +35,22 @@ use POMO\Translations\NOOPTranslations;
  * @return string The locale of the YOURLS instance
  */
 function yourls_get_locale() {
-	global $yourls_locale;
-
-	if ( !isset( $yourls_locale ) ) {
-		// YOURLS_LANG is defined in config.
-		if ( defined( 'YOURLS_LANG' ) )
-			$yourls_locale = YOURLS_LANG;
-	}
-
-    if ( !$yourls_locale )
-        $yourls_locale = '';
-
-	return yourls_apply_filter( 'get_locale', $yourls_locale );
+    global $yourls_locale;
+    if ( ! isset( $yourls_locale ) ) {
+        // YOURLS_LANG is defined in config.
+        if ( defined( 'YOURLS_LANG' ) ) {
+            $langFilePath = YOURLS_ABSPATH . '/user/languages/' . YOURLS_LANG . '.mo';
+            if (file_exists($langFilePath) && is_readable($langFilePath) && (!is_link($langFilePath) || (is_readable(readlink($langFilePath)) && filesize($langFilePath) > 60))) {                
+                // TODO: Here, logic for checking the ".mo" language file needs to be inserted.
+                $yourls_locale = is_link( $langFilePath ) ? pathinfo( readlink( $langFilePath ) )[ 'filename' ] : YOURLS_LANG;
+            }
+        }
+    }
+    if ( ! $yourls_locale ) {
+        $yourls_locale = 'en_US';
+        // It doesn't seem to make any difference if you set it to null or en_US, does it?
+    }
+    return yourls_apply_filter( 'get_locale', $yourls_locale );
 }
 
 /**
