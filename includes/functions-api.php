@@ -183,7 +183,7 @@ function yourls_api_stats($filter = 'top', $limit = 10, $start = 0 ) {
 function yourls_api_db_stats() {
 	$return = array(
 		'db-stats'   => yourls_get_db_stats(),
-		'statusCode' => 200,
+		'statusCode' => '200',
 		'simple'     => 'Need either XML or JSON format for stats',
 		'message'    => 'success',
 	);
@@ -226,14 +226,14 @@ function yourls_api_expand( $shorturl ) {
             'title'     => yourls_get_keyword_title( $keyword ),
 			'simple'    => $longurl,
 			'message'   => 'success',
-			'statusCode' => 200,
+			'statusCode' => '200',
 		);
 	} else {
 		$return = array(
 			'keyword'   => $keyword,
 			'simple'    => 'not found',
 			'message'   => 'Error: short URL not found',
-			'errorCode' => 404,
+			'errorCode' => '404',
 		);
 	}
 

@@ -172,7 +172,7 @@ function yourls_get_stats($filter = 'top', $limit = 10, $start = 0) {
 
 	$return['stats'] = yourls_get_db_stats();
 
-	$return['statusCode'] = 200;
+	$return['statusCode'] = '200';
 
 	return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
 }

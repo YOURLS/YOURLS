@@ -157,7 +157,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 				// Deal with the case when redirection failed:
 				$return['status']    = 'error';
-				$return['errorCode'] = 400;
+				$return['errorCode'] = '400';
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Twitter' );
 				break;
 
@@ -168,7 +168,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 				// Deal with the case when redirection failed:
 				$return['status']    = 'error';
-				$return['errorCode'] = 400;
+				$return['errorCode'] = '400';
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Facebook' );
 				break;
 
@@ -179,7 +179,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 				// Deal with the case when redirection failed:
 				$return['status']    = 'error';
-				$return['errorCode'] = 400;
+				$return['errorCode'] = '400';
 				$return['message']   = yourls_s( 'Short URL created, but could not redirect to %s !', 'Tumblr' );
 				break;
 
@@ -189,7 +189,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
 
 				// Still here? That was an unknown 'share' method, then.
 				$return['status']    = 'error';
-				$return['errorCode'] = 400;
+				$return['errorCode'] = '400';
 				$return['message']   = yourls__( 'Unknown "Share" bookmarklet' );
 				break;
 		}

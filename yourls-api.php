@@ -35,7 +35,7 @@ foreach( (array) $api_actions as $_action => $_callback ) {
 $return = yourls_apply_filter( 'api_action_' . $action, false );
 if ( false === $return ) {
 	$return = array(
-		'errorCode' => 400,
+		'errorCode' => '400',
 		'message'   => 'Unknown or missing "action" parameter',
 		'simple'    => 'Unknown or missing "action" parameter',
 	);

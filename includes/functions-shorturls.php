@@ -143,7 +143,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
             $return['title']    = $title;
             $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time(), $row_id );
             $return['shorturl'] = yourls_link($keyword);
-            $return['statusCode'] = 200; // 200 OK
+            $return['statusCode'] = '200'; // 200 OK
         } else {
             // unknown database error, couldn't store result
             $return['status']   = 'fail';
@@ -595,12 +595,12 @@ function yourls_get_keyword_stats( $shorturl ) {
     if( !$res ) {
         // non existent link
         $return = array(
-            'statusCode' => 404,
+            'statusCode' => '404',
             'message'    => 'Error: short URL not found',
         );
     } else {
         $return = array(
-            'statusCode' => 200,
+            'statusCode' => '200',
             'message'    => 'success',
             'link'       => array(
                 'shorturl' => yourls_link($res->keyword),
