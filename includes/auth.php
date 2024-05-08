@@ -13,7 +13,7 @@ if( $auth !== true ) {
 		yourls_api_output( $format, array(
 			'simple' => $auth,
 			'message' => $auth,
-			'errorCode' => 403,
+			'errorCode' => '403',
 			'callback' => $callback,
 		) );
 
