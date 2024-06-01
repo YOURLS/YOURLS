@@ -81,6 +81,7 @@ define( 'YOURLS_DEBUG', false );
 /**
 * Reserved keywords (so that generated URLs won't match them)
 * Define here negative, unwanted or potentially misleading keywords.
+* Note: This is required, but the array can be empty.
 */
 $yourls_reserved_URL = [
 	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
