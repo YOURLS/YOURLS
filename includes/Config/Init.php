@@ -32,11 +32,6 @@ class Init {
             date_default_timezone_set( 'UTC' );
         }
 
-        // Load locale
-        if ($actions->load_default_textdomain === true) {
-            yourls_load_default_textdomain();
-        }
-
         // Check if we are in maintenance mode - if yes, it will die here.
         if ($actions->check_maintenance_mode === true) {
             yourls_check_maintenance_mode();
@@ -108,6 +103,11 @@ class Init {
         // Trigger plugin loaded action
         if ($actions->plugins_loaded_action === true) {
             yourls_do_action( 'plugins_loaded' );
+        }
+
+        // Load locale
+        if ($actions->load_default_textdomain === true) {
+            yourls_load_default_textdomain();
         }
 
         // Is there a new version of YOURLS ?
