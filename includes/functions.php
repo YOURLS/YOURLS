@@ -1025,6 +1025,7 @@ function yourls_get_request($yourls_site = '', $uri = '') {
         $request = current( explode( '?', $request ) );
     }
 
+    $request = ltrim( $request, '/' );
     $request = yourls_sanitize_url( $request );
 
     return (string)yourls_apply_filter( 'get_request', $request );
