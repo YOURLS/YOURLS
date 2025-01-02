@@ -203,7 +203,7 @@ td.actions .button_stats {
 	background:#efe;
 }
 #login {
-	width: 300px;
+	max-width: 300px;
 	margin: 200px auto 0px auto;
 }
 #login p{
