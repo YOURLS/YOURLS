@@ -216,7 +216,7 @@ function yourls_create_sql_tables() {
 	$create_tables = array();
 	$create_tables[YOURLS_DB_TABLE_URL] =
         'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
-         '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT "",'.
+         '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT \'\','.
          '`url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,'.
          '`title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
          '`timestamp` timestamp NOT NULL DEFAULT current_timestamp(),'.
@@ -230,7 +230,7 @@ function yourls_create_sql_tables() {
 	$create_tables[YOURLS_DB_TABLE_OPTIONS] =
 		'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_OPTIONS.'` ('.
 		'`option_id` bigint(20) unsigned NOT NULL auto_increment,'.
-		'`option_name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL default "",'.
+		'`option_name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL default \'\','.
 		'`option_value` longtext COLLATE utf8mb4_unicode_ci NOT NULL,'.
 		'PRIMARY KEY  (`option_id`,`option_name`),'.
 		'KEY `option_name` (`option_name`)'.
