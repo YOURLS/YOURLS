@@ -29,7 +29,7 @@ abstract class AbstractParser implements ParserInterface
      * @var array
      *
      */
-    protected $split = [
+    protected array $split = [
         // single-quoted string
         "'(?:[^'\\\\]|\\\\'?)*'",
         // double-quoted string
@@ -43,7 +43,7 @@ abstract class AbstractParser implements ParserInterface
      * @var string
      *
      */
-    protected $skip = '/^(\'|\"|\:[^a-zA-Z_])/um';
+    protected string $skip = '/^(\'|\"|\:[^a-zA-Z_])/um';
 
     /**
      *
@@ -52,7 +52,7 @@ abstract class AbstractParser implements ParserInterface
      * @var int
      *
      */
-    protected $num = 0;
+    protected int $num = 0;
 
     /**
      *
@@ -61,7 +61,7 @@ abstract class AbstractParser implements ParserInterface
      * @var array
      *
      */
-    protected $count = [
+    protected array $count = [
         '__' => null,
     ];
 
@@ -72,7 +72,7 @@ abstract class AbstractParser implements ParserInterface
      * @var array
      *
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      *
@@ -81,7 +81,7 @@ abstract class AbstractParser implements ParserInterface
      * @var array
      *
      */
-    protected $final_values = [];
+    protected array $final_values = [];
 
     /**
      *
@@ -95,7 +95,7 @@ abstract class AbstractParser implements ParserInterface
      * element 1 is the rebuilt array of values.
      *
      */
-    public function rebuild($statement, array $values = [])
+    public function rebuild(string $statement, array $values = []): array
     {
         // match standard PDO execute() behavior of zero-indexed arrays
         if (array_key_exists(0, $values)) {
@@ -116,7 +116,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string The rebuilt statement.
      *
      */
-    protected function rebuildStatement($statement)
+    protected function rebuildStatement(string $statement): string
     {
         $parts = $this->getParts($statement);
         return $this->rebuildParts($parts);
@@ -131,7 +131,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string The rebuilt statement.
      *
      */
-    protected function rebuildParts(array $parts)
+    protected function rebuildParts(array $parts): string
     {
         $statement = '';
         foreach ($parts as $part) {
@@ -149,7 +149,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string The rebuilt statement.
      *
      */
-    protected function rebuildPart($part)
+    protected function rebuildPart(string $part): string
     {
         if (preg_match($this->skip, $part)) {
             return $part;
@@ -176,7 +176,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string The prepared subparts.
      *
      */
-    protected function prepareValuePlaceholders(array $subs)
+    protected function prepareValuePlaceholders(array $subs): string
     {
         $str = '';
         foreach ($subs as $i => $sub) {
@@ -230,7 +230,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string The prepared query subpart.
      *
      */
-    protected function prepareNamedPlaceholder($sub)
+    protected function prepareNamedPlaceholder(string $sub): string
     {
         $orig = substr($sub, 1);
         if (array_key_exists($orig, $this->values) === false) {
@@ -260,7 +260,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string
      *
      */
-    protected function getPlaceholderName($orig)
+    protected function getPlaceholderName(string $orig): string
     {
         if (! isset($this->count[$orig])) {
             $this->count[$orig] = 0;
@@ -283,7 +283,7 @@ abstract class AbstractParser implements ParserInterface
      * @return string
      *
      */
-    protected function expandNamedPlaceholder($prefix, array $values)
+    protected function expandNamedPlaceholder(string $prefix, array $values): string
     {
         $i = 0;
         $expanded = [];
@@ -305,7 +305,7 @@ abstract class AbstractParser implements ParserInterface
      * @return array
      *
      */
-    protected function getParts($statement)
+    protected function getParts(string $statement): array
     {
         $split = implode('|', $this->split);
         return preg_split(

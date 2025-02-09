@@ -4,29 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b65f2d0608ea42bf57901047d69e5bb",
+    "content-hash": "843f01377173b9bcb9dc5583c2874283",
     "packages": [
         {
             "name": "aura/sql",
-            "version": "3.1.0",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Sql.git",
-                "reference": "88d8b8ed1bcfd588a649fdc7e7ac89ec047abbca"
+                "reference": "8e2bb362e8953198df3682c9122e8b9edab5ff20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/88d8b8ed1bcfd588a649fdc7e7ac89ec047abbca",
-                "reference": "88d8b8ed1bcfd588a649fdc7e7ac89ec047abbca",
+                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/8e2bb362e8953198df3682c9122e8b9edab5ff20",
+                "reference": "8e2bb362e8953198df3682c9122e8b9edab5ff20",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0",
-                "psr/log": "^1.0 || ^2.0"
+                "ext-pdo": "*",
+                "php": "^8.4",
+                "psr/log": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
                 "pds/skeleton": "~1.0",
-                "yoast/phpunit-polyfills": "~1.0"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
@@ -59,9 +60,9 @@
             ],
             "support": {
                 "issues": "https://github.com/auraphp/Aura.Sql/issues",
-                "source": "https://github.com/auraphp/Aura.Sql/tree/3.1.0"
+                "source": "https://github.com/auraphp/Aura.Sql/tree/6.0.0"
             },
-            "time": "2022-04-28T05:11:23+00:00"
+            "time": "2025-01-22T06:43:21+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -988,7 +989,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -1003,8 +1004,5 @@
     "platform-dev": {
         "ext-ctype": "*"
     },
-    "platform-overrides": {
-        "php": "7.4.0"
-    },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
