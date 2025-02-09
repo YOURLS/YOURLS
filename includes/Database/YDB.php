@@ -78,8 +78,8 @@ class YDB extends ExtendedPdo {
      * @param array  $options     Driver-specific options
      * @param array  $attributes  Attributes to set after a connection
      */
-    public function __construct($dsn, $user, $pass, $options, $attributes) {
-        parent::__construct($dsn, $user, $pass, $options, $attributes);
+    public function __construct($dsn, $user, $pass, $options) {
+        parent::__construct($dsn, $user, $pass, $options);
     }
 
     /**
