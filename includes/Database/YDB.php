@@ -140,7 +140,8 @@ class YDB extends ExtendedPdo {
      */
     public function connect_to_DB() {
         try {
-            $this->connect();
+            list($dsn, $_user, $_pwd, $_opt, $_queries) = $this->args;
+            $this->connect($dsn);
         } catch ( \Exception $e ) {
             $this->dead_or_error($e);
         }
