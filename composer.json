@@ -16,7 +16,7 @@
         "source": "https://github.com/YOURLS/YOURLS"
     },
     "require": {
-        "php": ">=7.4",
+        "php": "^8.4",
         "ext-dom": "*",
         "ext-filter": "*",
         "ext-hash": "*",
@@ -37,7 +37,10 @@
         "ext-ctype": "*"
     },
     "config": {
-        "vendor-dir": "includes/vendor"
+        "vendor-dir": "includes/vendor",
+        "platform": {
+            "php": "8.4"
+        }
     },
     "autoload": {
         "psr-4": {
