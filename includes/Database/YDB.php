@@ -78,8 +78,8 @@ class YDB extends ExtendedPdo {
      * @param array  $options     Driver-specific options
      * @param array  $attributes  Attributes to set after a connection
      */
-    public function __construct($dsn, $user, $pass, $options, $attributes) {
-        parent::__construct($dsn, $user, $pass, $options, $attributes);
+    public function __construct($dsn, $user, $pass, $options) {
+        parent::__construct($dsn, $user, $pass, $options);
     }
 
     /**
@@ -140,7 +140,8 @@ class YDB extends ExtendedPdo {
      */
     public function connect_to_DB() {
         try {
-            $this->connect();
+            list($dsn, $_user, $_pwd, $_opt, $_queries) = $this->args;
+            $this->connect($dsn);
         } catch ( \Exception $e ) {
             $this->dead_or_error($e);
         }

@@ -23,10 +23,9 @@ interface ConnectionLocatorInterface
      *
      * @param callable $callable The registry entry.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setDefault(callable $callable);
+    public function setDefault(callable $callable): void;
 
     /**
      *
@@ -35,7 +34,7 @@ interface ConnectionLocatorInterface
      * @return ExtendedPdoInterface
      *
      */
-    public function getDefault();
+    public function getDefault(): ExtendedPdoInterface;
 
     /**
      *
@@ -45,10 +44,9 @@ interface ConnectionLocatorInterface
      *
      * @param callable $callable The registry entry.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setRead($name, callable $callable);
+    public function setRead(string $name, callable $callable): void;
 
     /**
      *
@@ -61,7 +59,7 @@ interface ConnectionLocatorInterface
      * @return ExtendedPdoInterface
      *
      */
-    public function getRead($name = '');
+    public function getRead(string $name = ''): ExtendedPdoInterface;
 
     /**
      *
@@ -71,10 +69,9 @@ interface ConnectionLocatorInterface
      *
      * @param callable $callable The registry entry.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setWrite($name, callable $callable);
+    public function setWrite(string $name, callable $callable): void;
 
     /**
      *
@@ -87,5 +84,5 @@ interface ConnectionLocatorInterface
      * @return ExtendedPdoInterface
      *
      */
-    public function getWrite($name = '');
+    public function getWrite(string $name = ''): ExtendedPdoInterface;
 }

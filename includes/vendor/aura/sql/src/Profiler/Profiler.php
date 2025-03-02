@@ -28,7 +28,7 @@ class Profiler implements ProfilerInterface
      * @var array
      *
      */
-    protected $context = [];
+    protected array $context = [];
 
     /**
      *
@@ -37,7 +37,7 @@ class Profiler implements ProfilerInterface
      * @var LoggerInterface
      *
      */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
      *
@@ -48,7 +48,7 @@ class Profiler implements ProfilerInterface
      * @see setActive()
      *
      */
-    protected $active = false;
+    protected bool $active = false;
 
     /**
      *
@@ -59,7 +59,7 @@ class Profiler implements ProfilerInterface
      * @see setLogLevel()
      *
      */
-    protected $logLevel = LogLevel::DEBUG;
+    protected string $logLevel = LogLevel::DEBUG;
 
     /**
      *
@@ -70,21 +70,17 @@ class Profiler implements ProfilerInterface
      * @see setLogFormat()
      *
      */
-    protected $logFormat = "{function} ({duration} seconds): {statement} {backtrace}";
+    protected string $logFormat = "{function} ({duration} seconds): {statement} {backtrace}";
 
     /**
      *
      * Constructor.
      *
-     * @param LoggerInterface $logger Record profiles through this interface.
-     *
+     * @param \Psr\Log\LoggerInterface|null $logger Record profiles through this interface.
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(?LoggerInterface $logger = null)
     {
-        if ($logger === null) {
-            $logger = new MemoryLogger();
-        }
-        $this->logger = $logger;
+        $this->logger = $logger ?? new MemoryLogger();
     }
 
     /**
@@ -94,9 +90,9 @@ class Profiler implements ProfilerInterface
      * @param bool $active
      *
      */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
-        $this->active = (bool) $active;
+        $this->active = $active;
     }
 
     /**
@@ -106,7 +102,7 @@ class Profiler implements ProfilerInterface
      * @return bool
      *
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->active;
     }
@@ -118,7 +114,7 @@ class Profiler implements ProfilerInterface
      * @return \Psr\Log\LoggerInterface
      *
      */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
@@ -130,7 +126,7 @@ class Profiler implements ProfilerInterface
      * @return string
      *
      */
-    public function getLogLevel()
+    public function getLogLevel(): string
     {
         return $this->logLevel;
     }
@@ -141,10 +137,9 @@ class Profiler implements ProfilerInterface
      *
      * @param string $logLevel A PSR LogLevel constant.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setLogLevel($logLevel)
+    public function setLogLevel(string $logLevel): void
     {
         $this->logLevel = $logLevel;
     }
@@ -156,7 +151,7 @@ class Profiler implements ProfilerInterface
      * @return string
      *
      */
-    public function getLogFormat()
+    public function getLogFormat(): string
     {
         return $this->logFormat;
     }
@@ -167,10 +162,9 @@ class Profiler implements ProfilerInterface
      *
      * @param string $logFormat
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setLogFormat($logFormat)
+    public function setLogFormat(string $logFormat): void
     {
         $this->logFormat = $logFormat;
     }
@@ -181,10 +175,9 @@ class Profiler implements ProfilerInterface
      *
      * @param string $function The function starting the profile entry.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function start($function)
+    public function start(string $function): void
     {
         if (! $this->active) {
             return;
@@ -200,14 +193,13 @@ class Profiler implements ProfilerInterface
      *
      * Finishes and logs a profile entry.
      *
-     * @param string $statement The statement being profiled, if any.
+     * @param string|null $statement The statement being profiled, if any.
      *
      * @param array $values The values bound to the statement, if any.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function finish($statement = null, array $values = [])
+    public function finish(?string $statement = null, array $values = []): void
     {
         if (! $this->active) {
             return;
