@@ -2,29 +2,29 @@
     "packages": [
         {
             "name": "aura/sql",
-            "version": "5.0.3",
-            "version_normalized": "5.0.3.0",
+            "version": "6.0.0",
+            "version_normalized": "6.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Sql.git",
-                "reference": "fd7a6dd1c9d2a1da5754c50f287f8be8a27db0e7"
+                "reference": "8e2bb362e8953198df3682c9122e8b9edab5ff20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/fd7a6dd1c9d2a1da5754c50f287f8be8a27db0e7",
-                "reference": "fd7a6dd1c9d2a1da5754c50f287f8be8a27db0e7",
+                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/8e2bb362e8953198df3682c9122e8b9edab5ff20",
+                "reference": "8e2bb362e8953198df3682c9122e8b9edab5ff20",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
-                "php": ">=8.1",
+                "php": "^8.4",
                 "psr/log": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
                 "pds/skeleton": "~1.0",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2025-01-22T06:39:17+00:00",
+            "time": "2025-01-22T06:43:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -57,7 +57,7 @@
             ],
             "support": {
                 "issues": "https://github.com/auraphp/Aura.Sql/issues",
-                "source": "https://github.com/auraphp/Aura.Sql/tree/5.0.3"
+                "source": "https://github.com/auraphp/Aura.Sql/tree/6.0.0"
             },
             "install-path": "../aura/sql"
         },
@@ -146,7 +146,7 @@
             "version_normalized": "2.13.0.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:maxmind/GeoIP2-php.git",
+                "url": "https://github.com/maxmind/GeoIP2-php.git",
                 "reference": "6a41d8fbd6b90052bc34dff3b4252d0f88067b23"
             },
             "dist": {
@@ -195,6 +195,10 @@
                 "geolocation",
                 "maxmind"
             ],
+            "support": {
+                "issues": "https://github.com/maxmind/GeoIP2-php/issues",
+                "source": "https://github.com/maxmind/GeoIP2-php/tree/v2.13.0"
+            },
             "install-path": "../geoip2/geoip2"
         },
         {
@@ -231,6 +235,10 @@
                 }
             ],
             "description": "Provides functionality for http_build_url() to environments without pecl_http.",
+            "support": {
+                "issues": "https://github.com/jakeasmith/http_build_url/issues",
+                "source": "https://github.com/jakeasmith/http_build_url"
+            },
             "install-path": "../jakeasmith/http_build_url"
         },
         {

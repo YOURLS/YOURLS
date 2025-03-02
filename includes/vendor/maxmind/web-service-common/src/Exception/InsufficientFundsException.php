@@ -7,6 +7,5 @@ namespace MaxMind\Exception;
 /**
  * Thrown when the account is out of credits.
  */
-class InsufficientFundsException extends InvalidRequestException
-{
-}
+// phpcs:disable
+class InsufficientFundsException extends InvalidRequestException {}

@@ -21,6 +21,9 @@ use PDO;
  */
 class ExtendedPdo extends AbstractExtendedPdo
 {
+    public const CONNECT_IMMEDIATELY = 'auraSqlImmediate';
+    public const DRIVER_SPECIFIC     = 'auraSqlDriverSpecific';
+
     /**
      *
      * Constructor arguments for instantiating the PDO connection.
@@ -29,6 +32,14 @@ class ExtendedPdo extends AbstractExtendedPdo
      *
      */
     protected array $args = [];
+
+    /**
+     *
+     * Flag for how to construct the PDO object
+     *
+     * @var bool
+     */
+    protected bool $driverSpecific = false;
 
     /**
      *
@@ -64,6 +75,12 @@ class ExtendedPdo extends AbstractExtendedPdo
             $options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         }
 
+        // check option for driver specific construct and set flag for lazy loading later
+        if (isset($options[static::DRIVER_SPECIFIC])) {
+            $this->driverSpecific = (bool)$options[static::DRIVER_SPECIFIC];
+            unset($options[static::DRIVER_SPECIFIC]);
+        }
+
         // retain the arguments for later
         $this->args = [
             $dsn,
@@ -83,15 +100,28 @@ class ExtendedPdo extends AbstractExtendedPdo
 
         // set quotes for identifier names
         $this->setQuoteName($parts[0]);
+
+        // create a connection immediately
+        if (isset($options[static::CONNECT_IMMEDIATELY])) {
+            $connectImmediately = (bool)$options[static::CONNECT_IMMEDIATELY];
+            unset($options[static::CONNECT_IMMEDIATELY]);
+            if ($connectImmediately) {
+                $this->lazyConnect();
+            }
+        }
     }
 
     public static function connect(
         string $dsn,
         ?string $username = null,
         ?string $password = null,
-        ?array $options = []
+        ?array $options = null,
+        array $queries = [],
+        ?ProfilerInterface $profiler = null
     ): static {
-        return new static($dsn, $username, $password, $options);
+        $options                          ??= [];
+        $options[static::DRIVER_SPECIFIC] = true;
+        return new static($dsn, $username, $password, $options, $queries, $profiler);
     }
 
     /**
@@ -109,6 +139,11 @@ class ExtendedPdo extends AbstractExtendedPdo
         // connect
         $this->profiler->start(__FUNCTION__);
         list($dsn, $username, $password, $options, $queries) = $this->args;
+        if ($this->driverSpecific && version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            $this->pdo = PDO::connect($dsn, $username, $password, $options);
+        } else {
+            $this->pdo = new PDO($dsn, $username, $password, $options);
+        }
         $this->pdo = new PDO($dsn, $username, $password, $options);
         $this->profiler->finish();
 

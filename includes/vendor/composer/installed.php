@@ -3,7 +3,7 @@
         'name' => 'yourls/yourls',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '444ce1744bd8b83807d3e07ef1b84bdd50a7a1d8',
+        'reference' => '2af3c2bc8b959cb3c543d06bbfc80512c87eed22',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'aura/sql' => array(
-            'pretty_version' => '5.0.3',
-            'version' => '5.0.3.0',
-            'reference' => 'fd7a6dd1c9d2a1da5754c50f287f8be8a27db0e7',
+            'pretty_version' => '6.0.0',
+            'version' => '6.0.0.0',
+            'reference' => '8e2bb362e8953198df3682c9122e8b9edab5ff20',
             'type' => 'library',
             'install_path' => __DIR__ . '/../aura/sql',
             'aliases' => array(),
@@ -139,7 +139,7 @@
         'yourls/yourls' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '444ce1744bd8b83807d3e07ef1b84bdd50a7a1d8',
+            'reference' => '2af3c2bc8b959cb3c543d06bbfc80512c87eed22',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../../',
             'aliases' => array(),
