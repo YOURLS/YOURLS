@@ -14,7 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         php: ['8.1', '8.2', '8.3', '8.4']
-        phpunit: ['9']
+        include:
+          - php: '8.1'
+            coverage: xdebug
+            flags: '--coverage-clover clover.xml'
 
     services:
       mysql:
@@ -37,7 +40,7 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
         extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
-        tools: phpunit:${{ matrix.phpunit }}
+        tools: phpunit
         coverage: ${{ matrix.coverage }}
 
     # - name: Validate composer.json and composer.lock
@@ -71,4 +74,3 @@ jobs:
       run: phpunit --configuration phpunit.xml.dist ${{ matrix.flags }}
       env:
         DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-
