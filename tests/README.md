@@ -1,23 +1,26 @@
-Unit Tests for [YOURLS](https://github.com/YOURLS/YOURLS/)
-=================
+# Unit Tests for [YOURLS](https://github.com/YOURLS/YOURLS/)
 
+## About
 
-About
------
+This is the unit test suite for YOURLS: a collection of hundreds of tests to make sure that whenever something in YOURLS is added, changed or removed, everything still works under all the supported PHP versions.
 
-This is the unit test suite for YOURLS : a collection of hundreds of tests to make sure that whenever something in YOURLS is added, changed or removed, everything still works under all the supported PHP versions.
+## Getting Started
 
-Tests
------------
 If you want to run tests locally:
 
-0. Install PHPUnit
-1. Create an empty MySQL database and user. **Do not use an exisiting database** or you will lose data, guaranteed.  
-3. Copy `<YOURLS_ROOT>tests/data/config/yourls-tests-config-sample.php` to `<YOURLS_ROOT>/tests/yourls-tests-config.php` and edit it to match your setup.  
+0. Install PHPUnit.
+   ```bash
+   composer -d tests/ install
+   ```
+1. Create an empty MySQL database and user. **Do not use an exisiting database** or you will lose data, guaranteed.
+3. Copy `<YOURLS_ROOT>tests/data/config/yourls-tests-config-sample.php` to `<YOURLS_ROOT>/tests/yourls-tests-config.php` and edit it to match your setup.
+   ```bash
+   cp tests/data/config/yourls-tests-config-sample.php tests/yourls-tests-config.php
+   ```
 4. In YOURLS root directory, you can now run the shell command:
-```bash
-$ phpunit
-```
+   ```bash
+   composer -d tests/ run test -- --configuration=../phpunit.xml.dist ..
+   ```
 
 Hopefully you should see something like the following appear:
 
@@ -27,7 +30,7 @@ YOURLS installed, starting PHPUnit
 PHPUnit 7.5.20 by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 7.4.3
-Configuration: D:\home\planetozh\ozh.in\phpunit.xml.dist
+Configuration: ...\phpunit.xml.dist
 
 ...............................................................  63 / 519 ( 12%)
 ............................................................... 126 / 519 ( 24%)

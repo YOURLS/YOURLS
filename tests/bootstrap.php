@@ -11,8 +11,8 @@ global $yourls_user_passwords, $yourls_reserved_URL,          // main object & c
        $yourls_locale, $yourls_l10n, $yourls_locale_formats,  // used by L10N API
        $yourls_allowedentitynames, $yourls_allowedprotocols;  // used by KSES
 
-require_once dirname( __FILE__ ) . '/includes/utils.php';
-require_once dirname( __FILE__ ) . '/includes/install.php';
+require_once __DIR__ . '/includes/utils.php';
+require_once __DIR__ . '/includes/install.php';
 
 // Include relevant config file
 define('YOURLS_CONFIGFILE', yut_find_config());
@@ -20,7 +20,7 @@ require_once YOURLS_CONFIGFILE;
 
 // Bootstrap YOURLS
 require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
-define('YOURLS_TESTDATA_DIR', dirname( __FILE__ ) . '/data');
+define('YOURLS_TESTDATA_DIR', __DIR__ . '/data');
 define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
 define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
 define('YOURLS_PAGEDIR', YOURLS_TESTDATA_DIR.'/pages');
@@ -61,3 +61,5 @@ yourls_add_action( 'pre_yourls_die', function($params) {
 } );
 
 echo "YOURLS installed, starting PHPUnit\n\n";
+
+require_once __DIR__ . "/tests/auth/LoginBaseTestCase.php";
