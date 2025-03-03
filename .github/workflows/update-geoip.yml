@@ -41,7 +41,7 @@ jobs:
           LOCAL_CTIME=$(date -d "$LOCAL_MODIFIED" +%s)
           echo "Remote: $REMOTE_CTIME ($(date -d @$REMOTE_CTIME))"
           echo "Local: $LOCAL_CTIME ($(date -d @$LOCAL_CTIME))"
-          if [ $LOCAL_CTIME -lt $REMOTE_CTIME ] ; then curl -s "$URL" | tar -zvx -C includes/geo/ --strip-components 1 -- ; fi
+          if [ $LOCAL_CTIME -lt $REMOTE_CTIME ] ; then curl -sL "$URL" | tar -zvx -C includes/geo/ --strip-components 1 -- ; fi
 
       - name: "Debug info: Show git status"
         run: git status -vv --untracked=all
