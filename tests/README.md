@@ -27,9 +27,8 @@ Hopefully you should see something like the following appear:
 ```
 YOURLS installed, starting PHPUnit
 
-PHPUnit 7.5.20 by Sebastian Bergmann and contributors.
+PHPUnit by Sebastian Bergmann and contributors.
 
-Runtime:       PHP 7.4.3
 Configuration: ...\phpunit.xml.dist
 
 ...............................................................  63 / 519 ( 12%)
