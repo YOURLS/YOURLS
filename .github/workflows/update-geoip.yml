@@ -68,3 +68,15 @@ jobs:
             Source: https://www.maxmind.com/en/account/login
           labels: |
             dependencies
+
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "1"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
