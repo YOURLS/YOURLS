@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   certificate-check:
     name: "Check for updated certificate bundle"
@@ -23,6 +27,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Generate token
+        uses: tibdex/github-app-token@v2
+        id: generate-token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Get current certificate bundle
         working-directory: ./includes/vendor/rmccue/requests/certificates
@@ -43,7 +54,9 @@ jobs:
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
+        id: pull-request
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           base: master
           branch: auto-update-cacert
           delete-branch: true
@@ -55,7 +68,15 @@ jobs:
             Source: https://curl.se/docs/caextract.html
           labels: |
             dependencies
-          reviewers: |
-            ozh
-            LeoColomb
-            dgw
+
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "1"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
