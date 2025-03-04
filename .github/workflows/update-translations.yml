@@ -32,7 +32,7 @@ jobs:
           find . -name "*.php" ! -path "./user/*" ! -path "./tests/*" ! -path "./includes/vendor/*" \
           | xargs xgettext \
             --output=YOURLS.pot --package-name=YOURLS --package-version=$YOURLS_VERSION \
-            --add-location --language=PHP \
+            --add-location --language=PHP --sort-by-file \
             --keyword=yourls__ \
             --keyword=yourls_e \
             --keyword=yourls_s \
@@ -102,10 +102,10 @@ jobs:
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       # - name: Enable Pull Request Automerge
       #   run: gh pr merge --auto --rebase "$PR_URL"
       #   env:
       #     PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
-      #     GITHUB_TOKEN: ${{ github.token }}
+      #     GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
