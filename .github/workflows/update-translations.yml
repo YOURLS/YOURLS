@@ -31,7 +31,7 @@ jobs:
         run: |
           find . -name "*.php" ! -path "./user/*" ! -path "./tests/*" ! -path "./includes/vendor/*" \
           | xargs xgettext \
-            --output=YOURLS.pot --package-name=YOURLS --package-version=$YOURLS_VERSION \
+            --output=YOURLS.pot --package-name=YOURLS --package-version=$YOURLS_VERSION --foreign-user \
             --add-location --language=PHP --sort-by-file \
             --keyword=yourls__ \
             --keyword=yourls_e \
