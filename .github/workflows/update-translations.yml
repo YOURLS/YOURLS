@@ -1,8 +1,9 @@
 name: Update translations
 
 on:
-  schedule:
-    - cron: '37 13 * * 1'
+  push:
+    tags:
+      - '*'
   workflow_dispatch:
 
 concurrency:
