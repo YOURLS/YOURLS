@@ -1,0 +1,107 @@
+name: Update translations
+
+on:
+  schedule:
+    - cron: '37 13 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  translations-check:
+    name: Check for updated translations
+    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install GNU gettext
+        run: sudo apt-get install gettext
+
+      - name: Get version
+        id: get-version
+        run: php -r 'require "includes/version.php"; echo YOURLS_VERSION;' >> $GITHUB_OUTPUT
+
+      - name: Extract translations
+        run: |
+          find . -name "*.php" ! -path "./user/*" ! -path "./tests/*" ! -path "./includes/vendor/*" \
+          | xargs xgettext \
+            --output=YOURLS.pot --package-name=YOURLS --package-version=1.10 \
+            --add-location --language=PHP \
+            --keyword=yourls__ \
+            --keyword=yourls_e \
+            --keyword=yourls_s \
+            --keyword=yourls_se \
+            --keyword=yourls_esc_attr__ \
+            --keyword=yourls_esc_html__ \
+            --keyword=yourls_x \
+            --keyword=yourls_ex \
+            --keyword=yourls_esc_attr_x \
+            --keyword=yourls_esc_html_x \
+            --keyword=yourls_n:1,2 \
+            --keyword=yourls_nx:1,2 \
+            --keyword=yourls_n_noop:1,2 \
+            --keyword=yourls_nx_noop:1,2
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YOURLS-pot
+          path: YOURLS.pot
+
+  translations-submit:
+    name: Submit updated translations
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'YOURLS/YOURLS' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: YOURLS/YOURLS.pot
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: YOURLS-pot
+
+      - name: Generate token
+        uses: tibdex/github-app-token@v2
+        id: generate-token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - name: Show git status
+        run: git status -vv --untracked=all
+
+      - name: Get date
+        id: get-date
+        run: echo "DATE=$(/bin/date -u "+%F")" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        id: pull-request
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          base: master
+          branch: auto-update-translations
+          delete-branch: true
+          commit-message: "Update translations"
+          title: "Update translations"
+          body: |
+            Updated translations, last verified on ${{ steps.get-date.outputs.DATE }}.
+          labels: |
+            dependencies
+
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      # - name: Enable Pull Request Automerge
+      #   run: gh pr merge --auto --rebase "$PR_URL"
+      #   env:
+      #     PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+      #     GITHUB_TOKEN: ${{ github.token }}
