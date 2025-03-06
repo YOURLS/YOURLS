@@ -138,13 +138,16 @@ class FilesTest extends PHPUnit\Framework\TestCase {
 	/**
      * Check that valid plugin deactivates correctly
      */
-    // #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
-    // public function test_plugin_deactivate( $plugin ) {
-	// 	$this->assertTrue( yourls_deactivate_plugin($plugin) );
-	// 	$this->assertSame( 0, yourls_has_active_plugins() );
-	// 	$this->assertFalse( yourls_is_active_plugin($plugin) );
-	// 	return $plugin;
-	// }
+    #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
+    public function test_plugin_deactivate( $plugin ) {
+        $this->markTestSkipped(
+            'Raising issues',
+        );
+		// $this->assertTrue( yourls_deactivate_plugin($plugin) );
+		// $this->assertSame( 0, yourls_has_active_plugins() );
+		// $this->assertFalse( yourls_is_active_plugin($plugin) );
+		// return $plugin;
+	}
 
     /**
      * Check that deactivating a plugin correctly ran the uninstall script
