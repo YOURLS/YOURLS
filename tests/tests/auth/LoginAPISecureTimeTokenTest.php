@@ -7,7 +7,7 @@
  */
 #[\PHPUnit\Framework\Attributes\Group('auth')]
 #[\PHPUnit\Framework\Attributes\Group('login')]
-class LoginAPISecureTimeTokenTest extends LoginBaseTestCase {
+class LoginAPISecureTimeTokenTest extends AbstractLoginTestCase {
 
     public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_true' );
