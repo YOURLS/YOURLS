@@ -6,8 +6,6 @@
  */
 abstract class AbstractLoginTestCase extends PHPUnit\Framework\TestCase {
 
-    use LoginAssertionTrait;
-
     protected $backup_request;
 
     protected function setUp(): void {
