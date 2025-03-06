@@ -140,10 +140,8 @@ class FilesTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_plugin_deactivate( $plugin ) {
-        $this->markTestSkipped(
-            'Raising issues',
-        );
-		// $this->assertTrue( yourls_deactivate_plugin($plugin) );
+		$this->assertTrue( yourls_deactivate_plugin($plugin) );
+        $this->markTestSkipped('Raising issues');
 		// $this->assertSame( 0, yourls_has_active_plugins() );
 		// $this->assertFalse( yourls_is_active_plugin($plugin) );
 		// return $plugin;
