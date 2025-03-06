@@ -175,7 +175,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         $plugin = rand_str();
 
 		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
-		$this->assertTrue( yourls_deactivate_plugin( $plugin ) );
+		$this->assertSame( yourls__( 'Plugin not active' ), yourls_deactivate_plugin( $plugin ) );
 	}
 
 	/**
