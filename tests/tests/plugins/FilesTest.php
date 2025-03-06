@@ -164,7 +164,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
 	public function test_invalid_plugin_activate() {
         $plugin = rand_str();
 
-		$this->assertTrue( yourls_activate_plugin( $plugin ) );
+		$this->assertSame( yourls__( 'Not a valid plugin file' ), yourls_activate_plugin( $plugin ) );
 		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
 	}
 
