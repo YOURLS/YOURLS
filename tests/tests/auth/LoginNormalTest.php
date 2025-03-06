@@ -9,4 +9,6 @@
 #[\PHPUnit\Framework\Attributes\Group('login')]
 class LoginNormalTest extends AbstractLoginTestCase {
 
+    use LoginAssertionTrait;
+
 }

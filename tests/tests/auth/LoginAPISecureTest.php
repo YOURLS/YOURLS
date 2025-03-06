@@ -9,6 +9,8 @@
 #[\PHPUnit\Framework\Attributes\Group('login')]
 class LoginAPISecureTest extends AbstractLoginTestCase {
 
+    use LoginAssertionTrait;
+
     public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_true' );
         $_REQUEST['signature'] = yourls_auth_signature( 'yourls' );
