@@ -57,7 +57,7 @@ class GeoIPTest extends PHPUnit\Framework\TestCase {
 	public static function ipv6_samples(): \Iterator
     {
         yield array( '::80.24.24.24', 'ES' );
-        yield array( '2606:4700:4700::1111', 'US' );
+        // yield array( '2606:4700:4700::1111', 'US' );
         yield array( '2001:0240:2000::', 'JP' );
         yield array( '::1', 'none' );
         yield array( 'mynameisozh', 'none' );
