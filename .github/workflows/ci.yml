@@ -71,6 +71,6 @@ jobs:
         cp tests/data/config/yourls-tests-config-ci.php user/config.php
 
     - name: Test
-      run: phpunit --configuration phpunit.xml.dist ${{ matrix.flags }}
+      run: phpunit --configuration phpunit.xml.dist --testdox ${{ matrix.flags }}
       env:
         DB_PORT: ${{ job.services.mysql.ports['3306'] }}
