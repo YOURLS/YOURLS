@@ -19,6 +19,8 @@
     <testsuites>
         <testsuite name="YOURLS Test Suite">
             <directory suffix=".php">./tests/tests</directory>
+            <exclude>./tests/tests/auth/AbstractLoginTestCase.php</exclude>
+            <exclude>./tests/tests/auth/LoginAssertionTrait.php</exclude>
         </testsuite>
     </testsuites>
     <groups>
