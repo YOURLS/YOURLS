@@ -5,9 +5,7 @@
  *
  * @group themes
  */
-
-if( function_exists( 'yourls_activate_theme' ) ) :
-
+#[\PHPUnit\Framework\Attributes\RequiresFunction('yourls_activate_theme')]
 class ThemesTest extends \PHPUnit\Framework\TestCase {
 
 	/**
@@ -16,12 +14,12 @@ class ThemesTest extends \PHPUnit\Framework\TestCase {
 	 * @since 0.1
 	 */
 	public function test_get_themes() {
-		$themes = array_keys( yourls_get_themes() );
-		$this->assertNotEmpty( $themes );
+        $themes = array_keys( yourls_get_themes() );
+        $this->assertNotEmpty( $themes );
 
-		// Pick one random theme
-		$theme = $themes[ array_rand( $themes ) ];
-		return dirname( $theme );
+        // Pick one random theme
+        $theme = $themes[ array_rand( $themes ) ];
+        return dirname( $theme );
 	}
 
 	/**
@@ -37,7 +35,4 @@ class ThemesTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals( $theme, yourls_get_active_theme() );
 		return $theme;
 	}
-
 }
-
-endif;
