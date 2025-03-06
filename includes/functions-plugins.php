@@ -690,7 +690,7 @@ function yourls_deactivate_plugin( $plugin ) {
 
     // Check if we have an uninstall file - load if so
     $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
-    $attempt = yourls_include_file_sandbox( $uninst_file );
+    $attempt = null; // yourls_include_file_sandbox( $uninst_file );
 
     // Check if we have an error to display
     if ( is_string( $attempt ) ) {
@@ -712,8 +712,8 @@ function yourls_deactivate_plugin( $plugin ) {
 
     $ydb->set_plugins( $plugins );
     yourls_update_option( 'active_plugins', $plugins );
-    // yourls_do_action( 'deactivated_plugin', $plugin );
-    // yourls_do_action( 'deactivated_'.$plugin );
+    yourls_do_action( 'deactivated_plugin', $plugin );
+    yourls_do_action( 'deactivated_'.$plugin );
 
     return true;
 }
