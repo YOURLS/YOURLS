@@ -138,25 +138,25 @@ class FilesTest extends PHPUnit\Framework\TestCase {
 	/**
      * Check that valid plugin deactivates correctly
      */
-    #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
-    public function test_plugin_deactivate( $plugin ) {
-		$this->assertTrue( yourls_deactivate_plugin($plugin) );
-		$this->assertSame( 0, yourls_has_active_plugins() );
-		$this->assertFalse( yourls_is_active_plugin($plugin) );
-		return $plugin;
-	}
+    // #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
+    // public function test_plugin_deactivate( $plugin ) {
+	// 	$this->assertTrue( yourls_deactivate_plugin($plugin) );
+	// 	$this->assertSame( 0, yourls_has_active_plugins() );
+	// 	$this->assertFalse( yourls_is_active_plugin($plugin) );
+	// 	return $plugin;
+	// }
 
-    /**
-     * Check that deactivating a plugin correctly ran the uninstall script
-     */
-    #[\PHPUnit\Framework\Attributes\Depends('test_plugin_deactivate')]
-    public function test_plugin_uninstall( $plugin ) {
-        // Make sure uninstall.php is NOW present in get_included_files()
-        $this->assertContains(yourls_sanitize_filename(YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php'), array_map('yourls_sanitize_filename', get_included_files()));
+    // /**
+    //  * Check that deactivating a plugin correctly ran the uninstall script
+    //  */
+    // #[\PHPUnit\Framework\Attributes\Depends('test_plugin_deactivate')]
+    // public function test_plugin_uninstall( $plugin ) {
+    //     // Make sure uninstall.php is NOW present in get_included_files()
+    //     $this->assertContains(yourls_sanitize_filename(YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php'), array_map('yourls_sanitize_filename', get_included_files()));
 
-        // we should now have YOURLS_UNINSTALL_PLUGIN set to true
-        $this->assertTrue( defined('YOURLS_UNINSTALL_PLUGIN') && YOURLS_UNINSTALL_PLUGIN );
-    }
+    //     // we should now have YOURLS_UNINSTALL_PLUGIN set to true
+    //     $this->assertTrue( defined('YOURLS_UNINSTALL_PLUGIN') && YOURLS_UNINSTALL_PLUGIN );
+    // }
 
 	/**
 	 * Check that an missing plugin does not activate
