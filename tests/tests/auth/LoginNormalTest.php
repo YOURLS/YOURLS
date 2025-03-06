@@ -7,6 +7,6 @@
  */
 #[\PHPUnit\Framework\Attributes\Group('auth')]
 #[\PHPUnit\Framework\Attributes\Group('login')]
-class LoginNormalTest extends LoginBaseTestCase {
+class LoginNormalTest extends AbstractLoginTestCase {
 
 }
