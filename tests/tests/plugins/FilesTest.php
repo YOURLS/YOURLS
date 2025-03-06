@@ -94,7 +94,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         // We should NOT have YOURLS_UNINSTALL_PLUGIN defined
         $this->assertFalse(defined('YOURLS_UNINSTALL_PLUGIN'));
 
-		return $plugin;
+		return [ $plugin ];
 	}
 
 	/**
