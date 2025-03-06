@@ -712,8 +712,8 @@ function yourls_deactivate_plugin( $plugin ) {
 
     $ydb->set_plugins( $plugins );
     yourls_update_option( 'active_plugins', $plugins );
-    yourls_do_action( 'deactivated_plugin', $plugin );
-    yourls_do_action( 'deactivated_'.$plugin );
+    // yourls_do_action( 'deactivated_plugin', $plugin );
+    // yourls_do_action( 'deactivated_'.$plugin );
 
     return true;
 }
