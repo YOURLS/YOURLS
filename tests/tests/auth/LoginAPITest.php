@@ -9,6 +9,8 @@
 #[\PHPUnit\Framework\Attributes\Group('login')]
 class LoginAPITest extends AbstractLoginTestCase {
 
+    use LoginAssertionTrait;
+
     public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_true' );
     }
