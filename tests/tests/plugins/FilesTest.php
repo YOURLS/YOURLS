@@ -94,7 +94,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         // We should NOT have YOURLS_UNINSTALL_PLUGIN defined
         $this->assertFalse(defined('YOURLS_UNINSTALL_PLUGIN'));
 
-		return [ $plugin ];
+		return $plugin;
 	}
 
 	/**
@@ -102,9 +102,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_plugin_activate_twice( $plugin ) {
-		$this->assertTrue( yourls_activate_plugin( $plugin ) );
-		// Note: we assertNotSame() with true because the function either returns true or a string
-    	return $plugin;
+		$this->assertSame( yourls__( 'Plugin already activated' ), yourls_activate_plugin( $plugin ) );
 	}
 
     /**
