@@ -32,7 +32,7 @@ class DomainTest extends PHPUnit\Framework\TestCase {
         $this->markTestSkipped(
             'Notice are not checked by PHPUnit anymore. https://github.com/sebastianbergmann/phpunit/issues/5222',
         );
-        $this->expectExceptionMessageMatches('/Cannot read file [0-9a-z]+\/[0-9a-z]+-fr_FR\.mo\. Make sure there is a language file installed. More info: http:\/\/yourls\.org\/translations/');
+        // $this->expectExceptionMessageMatches('/Cannot read file [0-9a-z]+\/[0-9a-z]+-fr_FR\.mo\. Make sure there is a language file installed. More info: http:\/\/yourls\.org\/translations/');
 
         // yourls_load_custom_textdomain( rand_str(), rand_str() );
     }
