@@ -1312,13 +1312,9 @@ function yourls_tell_if_new_version() {
  */
 function yourls_include_file_sandbox($file) {
     try {
-        if (is_readable( $file )) {
-            include_once $file;
-            yourls_debug_log("loaded $file");
-            return true;
-        } else {
-            throw new \Exception('File not readable');
-        }
+        include_once $file;
+        yourls_debug_log("loaded $file");
+        return true;
     } catch ( \Throwable $e ) {
         yourls_debug_log("could not load $file");
         return sprintf("%s (%s : %s)", $e->getMessage() , $e->getFile() , $e->getLine() );
