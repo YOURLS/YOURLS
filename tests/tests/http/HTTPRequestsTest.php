@@ -11,7 +11,7 @@
 class HTTPRequestsTest extends PHPUnit\Framework\TestCase {
 
     private function url( $what = '' ) {
-        return 'https://httpbin.org/' . $what;
+        return 'https://httpbin.io/' . $what;
     }
 
     /**
