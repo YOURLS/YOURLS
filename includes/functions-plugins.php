@@ -690,7 +690,7 @@ function yourls_deactivate_plugin( $plugin ) {
 
     // Check if we have an uninstall file - load if so
     $uninst_file = YOURLS_PLUGINDIR . '/' . dirname($plugin) . '/uninstall.php';
-    $attempt = null; // yourls_include_file_sandbox( $uninst_file );
+    $attempt = yourls_include_file_sandbox( $uninst_file );
 
     // Check if we have an error to display
     if ( is_string( $attempt ) ) {
