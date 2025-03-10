@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
     backupGlobals="false"
-    stopOnFailure="false"
+    stopOnFailure="true"
     cacheDirectory=".phpunit.cache"
     cacheResult="true"
     bootstrap="tests/bootstrap.php"
@@ -19,6 +19,8 @@
     <testsuites>
         <testsuite name="YOURLS Test Suite">
             <directory suffix=".php">./tests/tests</directory>
+            <exclude>./tests/tests/auth/AbstractLoginTestCase.php</exclude>
+            <exclude>./tests/tests/auth/LoginAssertionTrait.php</exclude>
         </testsuite>
     </testsuites>
     <groups>
