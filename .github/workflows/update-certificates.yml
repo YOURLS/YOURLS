@@ -35,6 +35,12 @@ jobs:
           app-id: ${{ vars.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
       - name: Get current certificate bundle
         working-directory: ./includes/vendor/rmccue/requests/certificates
         run: |
@@ -57,6 +63,7 @@ jobs:
         id: pull-request
         with:
           token: ${{ steps.app-token.outputs.token }}
+          author: "${{ steps.app-token.outputs.app-slug }}[bot] <${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>"
           base: master
           branch: auto-update-cacert
           delete-branch: true
