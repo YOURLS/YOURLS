@@ -1,24 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
-/**
- * This abstract class isn't supposed to be run as tests
- * See login_*.php files
- */
-abstract class LoginBaseTestCase extends PHPUnit\Framework\TestCase {
-
-    protected $backup_request;
-
-    protected function setUp(): void {
-        $this->backup_request = $_REQUEST;
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
-    }
-
-    protected function tearDown(): void {
-        $_REQUEST = $this->backup_request;
-        yourls_remove_all_actions('pre_yourls_die');
-    }
-
-	/**
+trait LoginAssertionTrait
+{
+    /**
 	 * Check that user, as submitted by REQUEST (see phpunit XML config file), is valid
 	 *
 	 * @since 0.1
@@ -98,5 +82,4 @@ abstract class LoginBaseTestCase extends PHPUnit\Framework\TestCase {
 
         $this->assertNotTrue( yourls_is_valid_user() );
     }
-
 }

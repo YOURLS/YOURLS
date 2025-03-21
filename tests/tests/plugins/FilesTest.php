@@ -102,9 +102,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_plugin_activate_twice( $plugin ) {
-		$this->assertTrue( yourls_activate_plugin( $plugin ) );
-		// Note: we assertNotSame() with true because the function either returns true or a string
-    	return $plugin;
+		$this->assertSame( yourls__( 'Plugin already activated' ), yourls_activate_plugin( $plugin ) );
 	}
 
     /**
@@ -166,7 +164,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
 	public function test_invalid_plugin_activate() {
         $plugin = rand_str();
 
-		$this->assertTrue( yourls_activate_plugin( $plugin ) );
+		$this->assertSame( yourls__( 'Not a valid plugin file' ), yourls_activate_plugin( $plugin ) );
 		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
 	}
 
@@ -177,7 +175,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         $plugin = rand_str();
 
 		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
-		$this->assertTrue( yourls_deactivate_plugin( $plugin ) );
+		$this->assertSame( yourls__( 'Plugin not active' ), yourls_deactivate_plugin( $plugin ) );
 	}
 
 	/**
