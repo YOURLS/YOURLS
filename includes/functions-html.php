@@ -51,8 +51,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 			$tablesorter = true;
 			break;
 
-		case 'install':
 		case 'login':
+			$_title_page = 'Login';
+			break;
+
+		case 'install':
 		case 'new':
 		case 'upgrade':
 			break;
@@ -75,6 +78,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
 
 	// Page title
 	$_title = 'YOURLS &mdash; Your Own URL Shortener | ' . yourls_link();
+	$_title = $_title_page ? $_title_page . ' &mdash; ' . $_title : $_title;
 	$title = $title ? $title . " &laquo; " . $_title : $_title;
 	$title = yourls_apply_filter( 'html_title', $title, $context );
 
@@ -746,35 +750,37 @@ function yourls_login_screen( $error_msg = '' ) {
 
 	yourls_html_logo();
 	?>
-	<div id="login">
-		<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
-			<?php
-				if( !empty( $error_msg ) ) {
-					echo '<p class="error">'.$error_msg.'</p>';
-				}
-				yourls_do_action( 'login_form_top' );
-			?>
-			<p>
-				<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
-				<input type="text" id="username" name="username" size="30" class="text" />
-			</p>
-			<p>
-				<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
-				<input type="password" id="password" name="password" size="30" class="text" />
-			</p>
-			<?php
-				yourls_do_action( 'login_form_bottom' );
-			?>
-			<p style="text-align: right;">
-			    <?php yourls_nonce_field('admin_login'); ?>
-				<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
-			</p>
-			<?php
-				yourls_do_action( 'login_form_end' );
-			?>
-		</form>
-		<script type="text/javascript">$('#username').focus();</script>
-	</div>
+	<main role="main">
+		<div id="login">
+			<form method="post" action="<?php echo $action; ?>"> <?php // reset any QUERY parameters ?>
+				<?php
+					if( !empty( $error_msg ) ) {
+						echo '<p id="error-message" class="error">'.$error_msg.'</p>';
+					}
+					yourls_do_action( 'login_form_top' );
+				?>
+				<p>
+					<label for="username"><?php yourls_e( 'Username' ); ?></label><br />
+					<input type="text" id="username" aria-describedby="error-message" name="username" class="text" autocomplete="username" />
+				</p>
+				<p>
+					<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
+					<input type="password" id="password" name="password" class="text" autocomplete="current-password" />
+				</p>
+				<?php
+					yourls_do_action( 'login_form_bottom' );
+				?>
+				<p style="text-align: right;">
+					<?php yourls_nonce_field('admin_login'); ?>
+					<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
+				</p>
+				<?php
+					yourls_do_action( 'login_form_end' );
+				?>
+			</form>
+			<script type="text/javascript">$('#username').focus();</script>
+		</div>
+	</main>
 	<?php
 	yourls_html_footer();
 	die();
