@@ -765,14 +765,14 @@ function yourls_login_screen( $error_msg = '' ) {
 				</p>
 				<p>
 					<label for="password"><?php yourls_e( 'Password' ); ?></label><br />
-					<input type="password" id="password" name="password" class="text" />
+					<input type="password" id="password" name="password" class="text" autocomplete="current-password" />
 				</p>
 				<?php
 					yourls_do_action( 'login_form_bottom' );
 				?>
 				<p style="text-align: right;">
 					<?php yourls_nonce_field('admin_login'); ?>
-					<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" autocomplete="current-password" />
+					<input type="submit" id="submit" name="submit" value="<?php yourls_e( 'Login' ); ?>" class="button" />
 				</p>
 				<?php
 					yourls_do_action( 'login_form_end' );
