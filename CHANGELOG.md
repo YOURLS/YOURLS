@@ -11,6 +11,8 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 - changed: Ensure all `statusCode`/`errorCode` API values are strings (#3756)
 - fixed: Results with 0 clicks on search (#3589)
 - fixed: Upgrade Aura.SQL to fix PHP 8.4 compatibility (#3852)
+- fixed: login page accessibility (#3660)
+- fixed: MySQL 8+ compatibility (#3828)
 - changed: Upgrade dependencies
 - changed: Update GeoIP DB
 - changed: Update certificates
