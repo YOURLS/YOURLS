@@ -37,10 +37,7 @@
         "ext-ctype": "*"
     },
     "config": {
-        "vendor-dir": "includes/vendor",
-        "platform": {
-            "php": "8.1.0"
-        }
+        "vendor-dir": "includes/vendor"
     },
     "autoload": {
         "psr-4": {
