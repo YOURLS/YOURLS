@@ -4,6 +4,19 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.0
+---
+- added: Support PHP 8.3 & 8.4
+- removed: Support for PHP prior to 8.1 which is now minimal requirement
+- changed: Ensure all `statusCode`/`errorCode` API values are strings (#3756)
+- fixed: Results with 0 clicks on search (#3589)
+- fixed: Upgrade Aura.SQL to fix PHP 8.4 compatibility (#3852)
+- fixed: login page accessibility (#3660)
+- fixed: MySQL 8+ compatibility (#3828)
+- changed: Upgrade dependencies
+- changed: Update GeoIP DB
+- changed: Update certificates
+
 1.9.2
 ---
 - added: Support PHP 8.2 (#3474)
