@@ -63,17 +63,17 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.5.5",
-            "version_normalized": "1.5.5.0",
+            "version": "1.5.6",
+            "version_normalized": "1.5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6"
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/f65c239c970e7f072f067ab78646e9f0b2935175",
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "psr/log": "^1.0 || ^2.0 || ^3.0",
                 "symfony/process": "^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
-            "time": "2025-01-08T16:17:16+00:00",
+            "time": "2025-03-06T14:30:56+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -122,7 +122,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.5.5"
+                "source": "https://github.com/composer/ca-bundle/tree/1.5.6"
             },
             "funding": [
                 {
