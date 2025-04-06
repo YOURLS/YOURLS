@@ -75,8 +75,6 @@ class Options {
             $this->ydb->set_option($name, yourls_maybe_unserialize($value));
         }
 
-        yourls_apply_filter('get_all_options', 'deprecated');
-
         return true;
     }
 
@@ -172,7 +170,7 @@ class Options {
 
         // Cache option value to save a DB query if needed later
         $this->ydb->set_option($name, $newvalue);
-    	yourls_do_action( 'update_option', $name, $oldvalue, $newvalue );
+
         return true;
     }
 
@@ -217,7 +215,6 @@ class Options {
 
         // Cache option value to save a DB query if needed later
         $this->ydb->set_option($name, $value);
-        yourls_do_action('add_option', $name, $_value);
 
         return true;
     }
@@ -246,7 +243,6 @@ class Options {
             return false;
         }
 
-        yourls_do_action('delete_option', $name);
         $this->ydb->delete_option($name);
         return true;
     }
