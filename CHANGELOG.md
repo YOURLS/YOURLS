@@ -6,8 +6,8 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 
 1.10.1
 ---
-- fixed: sandbox exceptions when disabling plugins by @LeoColomb in (#3893)
-- fixed: stats date calculation are now correct by @ntindicator in (#3895)
+- fixed: sandbox exceptions when disabling plugins (#3893)
+- fixed: stats date calculation are now correct (#3895)
 - fixed: unexpected warning raised on login page
 - removed: unsupported installation cases with Composer
 
