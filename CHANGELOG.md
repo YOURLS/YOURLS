@@ -4,6 +4,13 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.1
+---
+- fixed: sandbox exceptions when disabling plugins (#3893)
+- fixed: stats date calculation are now correct (#3895)
+- fixed: unexpected warning raised on login page
+- removed: unsupported installation cases with Composer
+
 1.10.0
 ---
 - added: Support PHP 8.3 & 8.4
