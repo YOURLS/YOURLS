@@ -107,14 +107,9 @@ jobs:
           labels: |
             dependencies
 
-      # - name: Approve a PR
-      #   run: gh pr review --approve "$PR_URL"
-      #   env:
-      #     PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
-      #     GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-
-      # - name: Enable Pull Request Automerge
-      #   run: gh pr merge --auto --rebase "$PR_URL"
-      #   env:
-      #     PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
-      #     GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Enable Pull Request Automerge
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
+        run: gh pr merge --auto --rebase "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
