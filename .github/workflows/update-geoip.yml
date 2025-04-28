@@ -78,12 +78,14 @@ jobs:
             dependencies
 
       - name: Approve a PR
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Enable Pull Request Automerge
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
         run: gh pr merge --auto --rebase "$PR_URL"
         env:
           PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
