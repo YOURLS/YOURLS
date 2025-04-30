@@ -717,6 +717,38 @@ class Iri {
 		return true;
 	}
 
+    /**
+    * This method was added to prevent object injection vulnerabilities during PHP object unserialization.
+    * 
+    * When PHP unserializes objects, the __wakeup() magic method is called automatically. Without
+    * proper validation in this method, attackers could potentially craft malicious serialized strings
+    * that, when unserialized, could lead to unexpected behavior, data exposure, or remote code execution.
+    * 
+    * The implemented fix validates that class properties are of expected types after unserialization:
+    * - String properties (scheme, iuserinfo, ihost, port, ipath, iquery, ifragment) must be strings
+    * - Array properties (normalization) must be arrays
+    * 
+    * If any property has an unexpected type, an UnexpectedValueException is thrown, preventing the 
+    * potentially dangerous object from being fully instantiated and used in the application.
+    * 
+    * This fix follows the secure coding practice of validating untrusted input, especially when 
+    * dealing with PHP's serialization/unserialization which has been a vector for many security 
+    * vulnerabilities in PHP applications.
+    */
+    public function __wakeup() {
+		$class_props = get_class_vars( __CLASS__ );
+		$string_props = array( 'scheme', 'iuserinfo', 'ihost', 'port', 'ipath', 'iquery', 'ifragment' );
+		$array_props = array( 'normalization' );
+		foreach ( $class_props as $prop => $default_value ) {
+			if ( in_array( $prop, $string_props, true ) && ! is_string( $this->$prop ) ) {
+				throw new UnexpectedValueException();
+			} elseif ( in_array( $prop, $array_props, true ) && ! is_array( $this->$prop ) ) {
+				throw new UnexpectedValueException();
+			}
+			$this->$prop = null;
+		}
+	}
+
 	/**
 	 * Set the entire IRI. Returns true on success, false on failure (if there
 	 * are any invalid characters).
