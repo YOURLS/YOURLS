@@ -245,7 +245,7 @@ if ( !$is_bookmark ) { ?>
 	<p><?php
 		if ( $total_items === 0 ) {
 			printf( yourls__( 'No URLs.' ) );
-			if ( $search !== "" )
+			if ( ! empty( $search ) )
 				printf( ' ' . yourls__( 'Try being less specific' ) );
 		} else {
 			printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
