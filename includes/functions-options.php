@@ -42,17 +42,20 @@ function yourls_get_all_options() {
     // Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
     $pre = yourls_apply_filter( 'shunt_all_options', false );
     if ( false !== $pre ) {
-        return $pre;
+        return;
     }
 
     $options = new \YOURLS\Database\Options(yourls_get_db());
+    $value   = $options->get_all_options();
 
-    if ($options->get_all_options() === false) {
+    if ($value === false) {
         // Zero option found but no unexpected error so far: YOURLS isn't installed
         yourls_set_installed(false);
         return;
     }
 
+    yourls_do_action( 'get_all_options', $value );
+    
     yourls_set_installed(true);
 }
 
@@ -67,8 +70,11 @@ function yourls_get_all_options() {
  * @return bool False if value was not updated, true otherwise.
  */
 function yourls_update_option( $option_name, $newvalue ) {
-    $option = new \YOURLS\Database\Options(yourls_get_db());
-    $update = $option->update($option_name, $newvalue);
+    $option   = new \YOURLS\Database\Options(yourls_get_db());
+    $update   = $option->update($option_name, $newvalue);
+    $oldvalue = $oldvalue = yourls_get_option($option_name);
+
+    yourls_do_action( 'update_option', $option_name, $oldvalue, $newvalue, $update );
 
     return $update;
 }
@@ -87,6 +93,8 @@ function yourls_add_option( $name, $value = '' ) {
     $option = new \YOURLS\Database\Options(yourls_get_db());
     $add    = $option->add($name, $value);
 
+    yourls_do_action( 'add_option', $name, $value, $add );
+
     return $add;
 }
 
@@ -102,6 +110,8 @@ function yourls_add_option( $name, $value = '' ) {
 function yourls_delete_option( $name ) {
     $option = new \YOURLS\Database\Options(yourls_get_db());
     $delete = $option->delete($name);
+
+    yourls_do_action( 'delete_option', $name, $delete );
 
     return $delete;
 }
