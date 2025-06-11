@@ -1,0 +1,55 @@
+#delete-confirm-modal {
+    z-index:9999;
+    background-color: #ffffff;;
+    position: fixed;
+    width: 50em;
+    height: 20em;
+    top: 20%;
+    left: 30%;
+    display:none;
+	border: 3px solid #2a85b3;
+	border-radius: 20px;
+}
+#delete-confirm-modal > div[name="modal_title"] {
+    background-color: #c7e7ff;
+	font-size: 20px;
+    color: #595441;
+    width: 100%;
+    max-width: 100%;
+    float: none;
+    text-align: center;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+	border-start-start-radius: 17px 17px;
+	border-start-end-radius: 17px 17px;
+}
+#delete-confirm-modal div.confirm-message {
+    background-color: #ffffff;
+    width: calc(50em - 4em);
+    height: calc(20em - 50px - 4em - 2em + 6px);
+    float: none;
+    text-align: left;
+    padding: 1em 2em;
+    overflow: hidden;
+}
+#delete-confirm-modal div.button-group {
+    background-color: #e3f3ff;
+    width: calc(50em - 4em);
+    height: 3em;
+    float: none;
+    text-align: right;
+    padding: 0.5em 2em;
+
+	border-end-start-radius: 17px 17px;
+	border-end-end-radius: 17px 17px;
+}
+#delete-confirm-modal-dimmer {
+    z-index:9998;
+    background-color: #666666cc;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    display:none;
+}

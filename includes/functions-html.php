@@ -207,6 +207,35 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 }
 
 /**
+ * Display hidden modal for link delete confirmation
+ *
+ * @param void
+ * @return void
+ */
+function yourls_delete_link_modal() {
+	?>
+    <link rel="stylesheet" href="<?php yourls_site_url() ?>/css/modal.css" type="text/css" media="screen">
+    <div id="delete-confirm-modal-dimmer"></div>
+    <div id="delete-confirm-modal">
+        <div name="modal_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
+        <div class="confirm-message">
+            <p><?php yourls_e( 'Really delete?' ) ?></p>
+            <p>
+                <?php yourls_e( 'Short URL' ) ?>: <span name="short_url"></span><br>
+                <?php yourls_e( 'Title' ) ?>: <span name="title"></span><br>
+                <?php yourls_e( 'URL' ) ?>: <span name="url"></span><br>
+            </p>
+        </div>
+        <div class="button-group">
+            <input type="button" class="button primary" value="<?php yourls_e( 'Delete' ) ?>" onclick="remove_link_confirmed();">
+            <input type="reset" class="button" value="<?php yourls_e( 'Cancel' ) ?>" onclick="remove_link_canceled(); return false;">
+            <input type="hidden" name="keyword_id" value="">
+        </div>
+    </div>
+	<?php
+}
+
+/**
  * Display main table's footer
  *
  * The $param array is defined in /admin/index.php, check the yourls_html_tfooter() call

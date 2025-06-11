@@ -323,6 +323,8 @@ yourls_table_end();
 
 yourls_do_action( 'admin_page_after_table' );
 
+yourls_delete_link_modal();
+
 if ( $is_bookmark )
 	yourls_share_box( $url, $return['shorturl'], $title, $text );
 ?>
