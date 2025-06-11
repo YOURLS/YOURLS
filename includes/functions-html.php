@@ -215,9 +215,8 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 function yourls_delete_link_modal() {
 	?>
     <link rel="stylesheet" href="<?php yourls_site_url() ?>/css/modal.css" type="text/css" media="screen">
-    <div id="delete-confirm-modal-dimmer"></div>
-    <div id="delete-confirm-modal">
-        <div name="modal_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
+    <dialog id="delete-confirm-dialog">
+        <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
         <div class="confirm-message">
             <p><?php yourls_e( 'Really delete?' ) ?></p>
             <p>
@@ -231,7 +230,7 @@ function yourls_delete_link_modal() {
             <input type="reset" class="button" value="<?php yourls_e( 'Cancel' ) ?>" onclick="remove_link_canceled(); return false;">
             <input type="hidden" name="keyword_id" value="">
         </div>
-    </div>
+    </dialog>
 	<?php
 }
 
