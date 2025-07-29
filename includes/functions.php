@@ -1316,8 +1316,6 @@ function yourls_include_file_sandbox($file) {
             require_once $file;
             yourls_debug_log("loaded $file");
             return true;
-        } else {
-            throw new \Exception('File not readable');
         }
     } catch ( \Throwable $e ) {
         yourls_debug_log("could not load $file");
