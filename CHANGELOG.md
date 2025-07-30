@@ -4,6 +4,14 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.2
+---
+- fixed: `admin/tools.php` now uses `yourls_get_nonce_life()` (#3906)
+- fixed: "Display 1 to 0 of 0 URLs" on admin list page (#3910)
+- fixed: replace deprecated `get_all_options` filter with an action (#3683)
+- fixed: defer loading text domain after plugins (#3679)
+- removed: Gandi references (#3929)
+
 1.10.1
 ---
 - fixed: sandbox exceptions when disabling plugins (#3893)
