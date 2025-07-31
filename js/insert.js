@@ -93,9 +93,23 @@ function remove_link(id) {
 	if( $('#delete-button-'+id).hasClass('disabled') ) {
 		return false;
 	}
-	if (!confirm('Really delete?')) {
-		return;
-	}
+	document.getElementById('delete-confirm-dialog').showModal();
+
+	$('#delete-confirm-dialog input[name="keyword_id"]').val(id);
+	var keyword = $('#keyword-'+id+' > a').text();
+	keyword = trim_long_string(keyword, 80);
+	$('#delete-confirm-dialog span[name="short_url"]').text(keyword);
+	var title = $('#url-'+id+' > a').attr('title');
+	$('#delete-confirm-dialog span[name="title"]').text(title);
+	var url = $('#url-'+id+' > a').attr('href');
+	$('#delete-confirm-dialog span[name="url"]').text(url);
+
+	// Only show confirm dialog
+	return false;
+}
+
+function remove_link_confirmed(id) {
+	var id = $('#delete-confirm-dialog input[name="keyword_id"]').val();
 	var keyword = $('#keyword_'+id).val();
 	var nonce = get_var_from_query( $('#delete-button-'+id).attr('href'), 'nonce' );
 	$.getJSON(
@@ -114,10 +128,15 @@ function remove_link(id) {
 				decrement_counter();
 				decrease_total_clicks( id );
 			} else {
-				alert('something wrong happened while deleting :/');
+				feedback('something wrong happened while deleting!' , 'fail');
 			}
+			document.getElementById('delete-confirm-dialog').close();
 		}
 	);
+}
+
+function remove_link_canceled() {
+	document.getElementById('delete-confirm-dialog').close();
 }
 
 // Redirect to stat page

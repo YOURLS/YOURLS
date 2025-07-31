@@ -1,0 +1,41 @@
+#delete-confirm-dialog {
+    background-color: #ffffff;
+    width: 50em;
+    height: 20em;
+    padding: 0px;
+	border: 3px solid #2a85b3;
+	border-radius: 20px;
+}
+#delete-confirm-dialog > div[name="dialog_title"] {
+    background-color: #c7e7ff;
+	font-size: 20px;
+    color: #595441;
+    text-align: center;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+	border-start-start-radius: 17px 17px;
+	border-start-end-radius: 17px 17px;
+}
+#delete-confirm-dialog div.confirm-message {
+    background-color: #ffffff;
+    width: calc(50em - 4em);
+    height: calc(20em - 50px - 4em - 2em + 6px);
+    float: none;
+    text-align: left;
+    padding: 1em 2em;
+    overflow: hidden;
+}
+#delete-confirm-dialog div.button-group {
+    background-color: #e3f3ff;
+    width: calc(50em - 4em);
+    height: 3em;
+    float: none;
+    text-align: right;
+    padding: 0.5em 2em;
+
+	border-end-start-radius: 17px 17px;
+	border-end-end-radius: 17px 17px;
+}
+#delete-confirm-dialog::backdrop {
+  background-color: #666666cc;
+}
