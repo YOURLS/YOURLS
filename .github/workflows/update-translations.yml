@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install GNU gettext
         run: sudo apt-get install gettext
@@ -62,7 +62,7 @@ jobs:
       - translations-check
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOURLS/YOURLS.pot
 
