@@ -23,7 +23,7 @@ class Profiler extends \Aura\Sql\Profiler\Profiler {
      * @param array $values The values bound to the statement, if any.
      * @return void
      */
-    public function finish($statement = null, array $values = [])
+    public function finish(?string $statement = null, array $values = []): void
     {
         if (! $this->active) {
             return;

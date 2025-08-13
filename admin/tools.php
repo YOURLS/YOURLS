@@ -326,7 +326,7 @@ $signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 		<p><code><?php echo yourls_get_yourls_site(); ?>/yourls-api.php?timestamp=<strong>$timestamp</strong>&signature=<strong>$signature</strong>&action=...</code></p>
 		<p><?php yourls_e( 'Actual values:' ); ?><br/>
 		<tt><?php echo yourls_get_yourls_site(); ?>/yourls-api.php?timestamp=<?php echo $time; ?>&signature=<?php echo $sign; ?>&action=...</tt></p>
-		<p><?php yourls_se( 'This URL would be valid for only %s seconds', YOURLS_NONCE_LIFE ); ?></p>
+		<p><?php yourls_se( 'This URL would be valid for only %s seconds', yourls_get_nonce_life() ); ?></p>
 		</li>
 	</ul>
 

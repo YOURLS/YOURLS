@@ -24,7 +24,7 @@ interface ProfilerInterface
      * @param bool $active
      *
      */
-    public function setActive($active);
+    public function setActive(bool $active);
 
     /**
      *
@@ -33,7 +33,7 @@ interface ProfilerInterface
      * @return bool
      *
      */
-    public function isActive();
+    public function isActive(): bool;
 
     /**
      *
@@ -42,7 +42,7 @@ interface ProfilerInterface
      * @return \Psr\Log\LoggerInterface
      *
      */
-    public function getLogger();
+    public function getLogger(): \Psr\Log\LoggerInterface;
 
     /**
      *
@@ -51,7 +51,7 @@ interface ProfilerInterface
      * @return string
      *
      */
-    public function getLogLevel();
+    public function getLogLevel(): string;
 
     /**
      *
@@ -59,10 +59,9 @@ interface ProfilerInterface
      *
      * @param string $logLevel A PSR LogLevel constant.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setLogLevel($logLevel);
+    public function setLogLevel(string $logLevel): void;
 
     /**
      *
@@ -71,7 +70,7 @@ interface ProfilerInterface
      * @return string
      *
      */
-    public function getLogFormat();
+    public function getLogFormat(): string;
 
     /**
      *
@@ -79,10 +78,9 @@ interface ProfilerInterface
      *
      * @param string $logFormat
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setLogFormat($logFormat);
+    public function setLogFormat(string $logFormat): void;
 
     /**
      *
@@ -90,21 +88,19 @@ interface ProfilerInterface
      *
      * @param string $function The function starting the profile entry.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function start($function);
+    public function start(string $function): void;
 
     /**
      *
      * Finishes and logs a profile entry.
      *
-     * @param string $statement The statement being profiled, if any.
+     * @param string|null $statement The statement being profiled, if any.
      *
      * @param array $values The values bound to the statement, if any.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function finish($statement = null, array $values = []);
+    public function finish(?string $statement = null, array $values = []): void;
 }

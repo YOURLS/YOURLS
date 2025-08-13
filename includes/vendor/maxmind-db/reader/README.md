@@ -132,7 +132,7 @@ make test
 sudo make install
 ```
 
-You then must load your extension. The recommend method is to add the
+You then must load your extension. The recommended method is to add the
 following to your `php.ini` file:
 
 ```
@@ -180,6 +180,6 @@ The MaxMind DB Reader PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2014-2020 by MaxMind, Inc.
+This software is Copyright (c) 2014-2024 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

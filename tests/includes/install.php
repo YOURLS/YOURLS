@@ -44,7 +44,7 @@ function yut_find_config() {
         }
     }
 
-    die( sprintf( "ERROR: config file missing. Current directory: %s\n", dirname(__DIR__) ) );
+    die( sprintf( "ERROR: YOURLS config file missing. Current directory: %s\n", dirname(__DIR__) ) );
 }
 
 /**

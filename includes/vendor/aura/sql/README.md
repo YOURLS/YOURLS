@@ -54,8 +54,8 @@ Alternatively, [download a release][], or clone this repository, then map the
 
 ## Dependencies
 
-This package requires PHP 5.6 or later; it has also been tested on PHP 7 and
-HHVM. We recommend using the latest available version of PHP as a matter of
+This package requires PHP 8.1 or later; it has also been tested on PHP 8.1-8.2.
+We recommend using the latest available version of PHP as a matter of
 principle.
 
 Aura library packages may sometimes depend on external interfaces, but never on
@@ -65,9 +65,9 @@ without compromising flexibility. For specifics, please examine the package
 
 ## Quality
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/quality-score.png?b=3.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
-[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/coverage.png?b=3.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
-[![Build Status](https://travis-ci.org/auraphp/Aura.Sql.png?branch=3.x)](https://travis-ci.org/auraphp/Aura.Sql)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/quality-score.png?b=5.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
+[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/badges/coverage.png?b=5.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Sql/)
+[![Build Status](https://github.com/auraphp/Aura.Sql/actions/workflows/continuous-integration.yml/badge.svg?branch=5.x)](https://github.com/auraphp/Aura.Sql/actions/workflows/continuous-integration.yml)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat-square)](https://github.com/php-pds/skeleton)
 
 This project adheres to [Semantic Versioning](http://semver.org/).

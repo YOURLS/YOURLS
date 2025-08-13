@@ -243,9 +243,15 @@ yourls_do_action( 'admin_page_before_content' );
 if ( !$is_bookmark ) { ?>
 	<p><?php echo $search_sentence; ?></p>
 	<p><?php
-		printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
-		if( $total_items_clicks !== false )
-			echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
+		if ( $total_items === 0 ) {
+			printf( yourls__( 'No URLs.' ) );
+			if ( ! empty( $search ) )
+				printf( ' ' . yourls__( 'Try being less specific' ) );
+		} else {
+			printf( yourls__( 'Display <strong>%1$s</strong> to <strong class="increment">%2$s</strong> of <strong class="increment">%3$s</strong> URLs' ), $display_on_page, $max_on_page, $total_items );
+			if( $total_items_clicks !== false )
+				echo ", " . sprintf( yourls_n( 'counting <strong>1</strong> click', 'counting <strong>%s</strong> clicks', $total_items_clicks ), yourls_number_format_i18n( $total_items_clicks ) );
+		}
 	?>.</p>
 <?php } ?>
 <p id="overall_tracking"><?php printf( yourls__( 'Overall, tracking <strong class="increment">%1$s</strong> links, <strong>%2$s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>

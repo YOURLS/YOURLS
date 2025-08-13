@@ -10,7 +10,9 @@ namespace Aura\Sql;
 
 use Aura\Sql\Parser\ParserInterface;
 use Aura\Sql\Profiler\ProfilerInterface;
+use Generator;
 use PDO;
+use PDOStatement;
 
 /**
  *
@@ -26,14 +28,14 @@ interface ExtendedPdoInterface extends PdoInterface
      * Connects to the database.
      *
      */
-    public function connect();
+    public function lazyConnect(): void;
 
     /**
      *
      * Disconnects from the database.
      *
      */
-    public function disconnect();
+    public function disconnect(): void;
 
     /**
      *
@@ -46,7 +48,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return int
      *
      */
-    public function fetchAffected($statement, array $values = []);
+    public function fetchAffected(string $statement, array $values = []): int;
 
     /**
      *
@@ -60,7 +62,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return array
      *
      */
-    public function fetchAll($statement, array $values = []);
+    public function fetchAll(string $statement, array $values = []): array;
 
     /**
      *
@@ -78,7 +80,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return array
      *
      */
-    public function fetchAssoc($statement, array $values = []);
+    public function fetchAssoc(string $statement, array $values = []): array;
 
     /**
      *
@@ -91,7 +93,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return array
      *
      */
-    public function fetchCol($statement, array $values = []);
+    public function fetchCol(string $statement, array $values = []): array;
 
     /**
      *
@@ -109,10 +111,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      */
     public function fetchGroup(
-        $statement,
+        string $statement,
         array $values = [],
-        $style = PDO::FETCH_COLUMN
-    );
+        int $style = PDO::FETCH_COLUMN
+    ): array;
 
     /**
      *
@@ -133,15 +135,15 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $args Arguments to pass to the object constructor.
      *
-     * @return object
+     * @return object|false
      *
      */
     public function fetchObject(
-        $statement,
+        string $statement,
         array $values = [],
-        $class = 'stdClass',
+        string $class = 'stdClass',
         array $args = []
-    );
+    ): object|false;
 
     /**
      *
@@ -168,11 +170,11 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      */
     public function fetchObjects(
-        $statement,
+        string $statement,
         array $values = [],
-        $class = 'stdClass',
+        string $class = 'stdClass',
         array $args = []
-    );
+    ): array;
 
     /**
      *
@@ -182,10 +184,10 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      * @param array $values Values to bind to the query.
      *
-     * @return array
+     * @return array|false
      *
      */
-    public function fetchOne($statement, array $values = []);
+    public function fetchOne(string $statement, array $values = []): array|false;
 
     /**
      *
@@ -199,7 +201,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return array
      *
      */
-    public function fetchPairs($statement, array $values = []);
+    public function fetchPairs(string $statement, array $values = []): array;
 
     /**
      *
@@ -212,7 +214,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return mixed
      *
      */
-    public function fetchValue($statement, array $values = []);
+    public function fetchValue(string $statement, array $values = []): mixed;
 
     /**
      *
@@ -221,7 +223,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return ParserInterface
      *
      */
-    public function getParser();
+    public function getParser(): ParserInterface;
 
     /**
      *
@@ -230,7 +232,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \PDO
      *
      */
-    public function getPdo();
+    public function getPdo(): PDO;
 
     /**
      *
@@ -239,7 +241,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return ProfilerInterface
      *
      */
-    public function getProfiler();
+    public function getProfiler(): ProfilerInterface;
 
     /**
      *
@@ -250,7 +252,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return string The multi-part identifier name, quoted.
      *
      */
-    public function quoteName($name);
+    public function quoteName(string $name): string;
 
     /**
      *
@@ -261,7 +263,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return string The quoted identifier name.
      *
      */
-    public function quoteSingleName($name);
+    public function quoteSingleName(string $name): string;
 
     /**
      *
@@ -270,7 +272,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return bool
      *
      */
-    public function isConnected();
+    public function isConnected(): bool;
 
     /**
      *
@@ -279,7 +281,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @param ParserInterface $parser The Parser instance.
      *
      */
-    public function setParser(ParserInterface $parser);
+    public function setParser(ParserInterface $parser): void;
 
     /**
      *
@@ -288,7 +290,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @param ProfilerInterface $profiler The Profiler instance.
      *
      */
-    public function setProfiler(ProfilerInterface $profiler);
+    public function setProfiler(ProfilerInterface $profiler): void;
 
     /**
      *
@@ -301,7 +303,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \Generator
      *
      */
-    public function yieldAll($statement, array $values = []);
+    public function yieldAll(string $statement, array $values = []): Generator;
 
     /**
      *
@@ -314,7 +316,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \Generator
      *
      */
-    public function yieldAssoc($statement, array $values = []);
+    public function yieldAssoc(string $statement, array $values = []): Generator;
 
     /**
      *
@@ -327,7 +329,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \Generator
      *
      */
-    public function yieldCol($statement, array $values = []);
+    public function yieldCol(string $statement, array $values = []): Generator;
 
     /**
      *
@@ -352,11 +354,11 @@ interface ExtendedPdoInterface extends PdoInterface
      *
      */
     public function yieldObjects(
-        $statement,
+        string $statement,
         array $values = [],
-        $class = 'stdClass',
+        string $class = 'stdClass',
         array $args = []
-    );
+    ): Generator;
 
     /**
      *
@@ -370,7 +372,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \Generator
      *
      */
-    public function yieldPairs($statement, array $values = []);
+    public function yieldPairs(string $statement, array $values = []): Generator;
 
     /**
      *
@@ -384,7 +386,7 @@ interface ExtendedPdoInterface extends PdoInterface
      * @return \PDOStatement
      *
      */
-    public function perform($statement, array $values = []);
+    public function perform(string $statement, array $values = []): PDOStatement;
 
     /**
      *
@@ -408,5 +410,5 @@ interface ExtendedPdoInterface extends PdoInterface
      * @see http://php.net/manual/en/pdo.prepare.php
      *
      */
-    public function prepareWithValues($statement, array $values = []);
+    public function prepareWithValues(string $statement, array $values = []): PDOStatement;
 }

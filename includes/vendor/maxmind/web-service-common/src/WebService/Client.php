@@ -77,17 +77,17 @@ class Client
     private $accountId;
 
     /**
-     * @param int    $accountId  your MaxMind account ID
-     * @param string $licenseKey your MaxMind license key
-     * @param array  $options    an array of options. Possible keys:
-     *                           * `host` - The host to use when connecting to the web service.
-     *                           * `useHttps` - A boolean flag for sending the request via https.(True by default)
-     *                           * `userAgent` - The prefix of the User-Agent to use in the request.
-     *                           * `caBundle` - The bundle of CA root certificates to use in the request.
-     *                           * `connectTimeout` - The connect timeout to use for the request.
-     *                           * `timeout` - The timeout to use for the request.
-     *                           * `proxy` - The HTTP proxy to use. May include a schema, port,
-     *                           username, and password, e.g., `http://username:password@127.0.0.1:10`.
+     * @param int                  $accountId  your MaxMind account ID
+     * @param string               $licenseKey your MaxMind license key
+     * @param array<string, mixed> $options    an array of options. Possible keys:
+     *                                         * `host` - The host to use when connecting to the web service.
+     *                                         * `useHttps` - Set to false to disable HTTPS.
+     *                                         * `userAgent` - The prefix of the User-Agent to use in the request.
+     *                                         * `caBundle` - The bundle of CA root certificates to use in the request.
+     *                                         * `connectTimeout` - The connect timeout to use for the request.
+     *                                         * `timeout` - The timeout to use for the request.
+     *                                         * `proxy` - The HTTP proxy to use. May include a schema, port,
+     *                                         username, and password, e.g., `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
         int $accountId,
@@ -127,9 +127,9 @@ class Client
     }
 
     /**
-     * @param string $service name of the service querying
-     * @param string $path    the URI path to use
-     * @param array  $input   the data to be posted as JSON
+     * @param string       $service name of the service querying
+     * @param string       $path    the URI path to use
+     * @param array<mixed> $input   the data to be posted as JSON
      *
      * @throws InvalidInputException      when the request has missing or invalid
      *                                    data
@@ -142,7 +142,7 @@ class Client
      * @throws WebServiceException        when some other error occurs. This also
      *                                    serves as the base class for the above exceptions.
      *
-     * @return array|null The decoded content of a successful response
+     * @return array<mixed>|null The decoded content of a successful response
      */
     public function post(string $service, string $path, array $input): ?array
     {
@@ -170,6 +170,9 @@ class Client
         );
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function get(string $service, string $path): ?array
     {
         $request = $this->createRequest(
@@ -195,6 +198,9 @@ class Client
            ' curl/' . $curlVersion['version'];
     }
 
+    /**
+     * @param array<string> $headers
+     */
     private function createRequest(string $path, array $headers = []): Http\Request
     {
         array_push(
@@ -233,7 +239,7 @@ class Client
      * @throws WebServiceException        when some other error occurs. This also
      *                                    serves as the base class for the above exceptions
      *
-     * @return array|null The decoded content of a successful response
+     * @return array<mixed>|null The decoded content of a successful response
      */
     private function handleResponse(
         int $statusCode,
@@ -463,7 +469,7 @@ class Client
      *                             included, or is expected and included
      *                             but cannot be decoded as JSON
      *
-     * @return array|null the decoded request body
+     * @return array<mixed>|null the decoded request body
      */
     private function handleSuccess(int $statusCode, ?string $body, string $service): ?array
     {

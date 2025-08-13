@@ -30,5 +30,5 @@ interface ParserInterface
      * element 1 is the rebuilt array of values.
      *
      */
-    public function rebuild($string, array $parameters = []);
+    public function rebuild(string $string, array $parameters = []): array;
 }

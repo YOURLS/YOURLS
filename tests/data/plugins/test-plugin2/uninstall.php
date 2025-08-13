@@ -5,7 +5,7 @@
  */
 
 // No direct call.
-if( !defined( 'YOURLS_UNINSTALL_PLUGIN' ) ) die();
+if( !defined( 'YOURLS_UNINSTALL_PLUGIN' ) ) return;
 
 // The uninstallation process itself
 

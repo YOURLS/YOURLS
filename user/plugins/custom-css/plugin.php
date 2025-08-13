@@ -20,20 +20,33 @@ function my_custom_css() { ?>
 	|* vvv CUSTOM CSS GOES BELOW vvv *|
 	\*********************************/
 
+	/* Break long URLs in tables */
+	td { word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; }
+
+	/* Do not wrap these elements */
+	.plugin_author, .actions, .url { white-space: nowrap; }
+
+	/* Make all tables a fixed size */
+	table { table-layout: fixed; }
+
+	/* Stat Tables Fixes */
+	.tab table { width: 100%; }
+	#stat_tab_location td:first-child { width: 340px; }
+
 	/* Main Table Widths */
 	#main_table_head_shorturl { width: 130px; }
 	#main_table_head_longurl  { width:  auto; }
 	#main_table_head_date     { width:  80px; }
 	#main_table_head_ip       { width: 100px; }
 	#main_table_head_clicks   { width:  45px; }
-	#main_table_head_username { width:  auto; }
-	#main_table_head_actions  { width:  auto; }
+	#main_table_head_actions  { width: 111px; }
 
-	/* Input field widths for URL Entry */
-    input.text      {       font-size: 1.2em;       }
-    #add-keyword    {       width: 200px;   }
-    #add-button     {       height: 40px; font-size: 1.2em}
-
+	/* Plugins Table Widths */
+	.plugins #main_table th             { width: 150px; }
+	.plugins #main_table th+th          { width:  50px; }
+	.plugins #main_table th+th+th       { width:  auto; }
+	.plugins #main_table th+th+th+th    { width: 150px; }
+	.plugins #main_table th+th+th+th+th { width:  80px; }
 
 	/*********************************\
 	|* ^^^ CUSTOM CSS GOES ABOVE ^^^ *|

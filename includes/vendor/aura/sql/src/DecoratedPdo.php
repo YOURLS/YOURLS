@@ -30,31 +30,42 @@ class DecoratedPdo extends AbstractExtendedPdo
      *
      * @param PDO $pdo An existing PDO instance to decorate.
      *
-     * @param ProfilerInterface $profiler Tracks and logs query profiles.
+     * @param ProfilerInterface|null $profiler Tracks and logs query profiles.
      *
      */
-    public function __construct(PDO $pdo, ProfilerInterface $profiler = null)
+    public function __construct(PDO $pdo, ?ProfilerInterface $profiler = null)
     {
         $this->pdo = $pdo;
 
-        if ($profiler === null) {
-            $profiler = new Profiler();
-        }
-        $this->setProfiler($profiler);
+        $this->setProfiler($profiler ?? new Profiler());
 
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         $this->setParser($this->newParser($driver));
         $this->setQuoteName($driver);
     }
 
+    public static function connect(
+        string $dsn,
+        ?string $username = null,
+        ?string $password = null,
+        ?array $options = null,
+        ?ProfilerInterface $profiler = null
+    ): static {
+        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            return new static(\PDO::connect($dsn, $username, $password, $options));
+        } else {
+            return new static(new PDO($dsn, $username, $password, $options), $profiler);
+        }
+    }
+
     /**
      *
      * Connects to the database.
      *
-     * @return null
+     * @return void
      *
      */
-    public function connect()
+    public function lazyConnect(): void
     {
         // already connected
     }
@@ -63,10 +74,11 @@ class DecoratedPdo extends AbstractExtendedPdo
      *
      * Disconnects from the database; disallowed with decorated PDO connections.
      *
-     * @return null
+     * @return void
      *
+     * @throws Exception\CannotDisconnect
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $message = "Cannot disconnect a DecoratedPdo instance.";
         throw new Exception\CannotDisconnect($message);

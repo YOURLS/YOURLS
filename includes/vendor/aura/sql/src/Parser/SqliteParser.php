@@ -20,17 +20,17 @@ class SqliteParser extends AbstractParser
     /**
      * {@inheritDoc}
      */
-    protected $split = [
+    protected array $split = [
         // single-quoted string
         "'(?:[^'\\\\]|\\\\'?)*'",
         // double-quoted string
         '"(?:[^"\\\\]|\\\\"?)*"',
         // backticked column names
-        '`(?:[^`\\\\]|\\\\`?)*`', 
+        '`(?:[^`\\\\]|\\\\`?)*`',
     ];
-  
+
     /**
      * {@inheritDoc}
      */
-    protected $skip = '/^(\'|"|`|\:[^a-zA-Z_])/um';
+    protected string $skip = '/^(\'|"|`|\:[^a-zA-Z_])/um';
 }

@@ -26,7 +26,7 @@ class MemoryLogger extends AbstractLogger
      * @var array
      *
      */
-    protected $messages = [];
+    protected array $messages = [];
 
     /**
      *
@@ -38,10 +38,9 @@ class MemoryLogger extends AbstractLogger
      *
      * @param array $context Data to interpolate into the message.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $replace = [];
         foreach ($context as $key => $val) {
@@ -57,7 +56,7 @@ class MemoryLogger extends AbstractLogger
      * @return array
      *
      */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
     }

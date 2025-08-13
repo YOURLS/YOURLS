@@ -24,10 +24,13 @@ class CurlRequest implements Request
     private $url;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $options;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(string $url, array $options)
     {
         $this->url = $url;
@@ -37,6 +40,8 @@ class CurlRequest implements Request
 
     /**
      * @throws HttpException
+     *
+     * @return array{0:int, 1:string|null, 2:string|null}
      */
     public function post(string $body): array
     {
@@ -48,6 +53,9 @@ class CurlRequest implements Request
         return $this->execute($curl);
     }
 
+    /**
+     * @return array{0:int, 1:string|null, 2:string|null}
+     */
     public function get(): array
     {
         $curl = $this->createCurl();
@@ -106,6 +114,8 @@ class CurlRequest implements Request
      * @param \CurlHandle $curl
      *
      * @throws HttpException
+     *
+     * @return array{0:int, 1:string|null, 2:string|null}
      */
     private function execute($curl): array
     {
@@ -129,7 +139,7 @@ class CurlRequest implements Request
             // indicates server did not send valid Content-Type: header" for
             // CURLINFO_CONTENT_TYPE. However, it will return FALSE if no header
             // is set. To keep our types simple, we return null in this case.
-            ($contentType === false ? null : $contentType),
+            $contentType === false ? null : $contentType,
             $body,
         ];
     }

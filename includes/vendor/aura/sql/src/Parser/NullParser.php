@@ -22,15 +22,15 @@ class NullParser implements ParserInterface
      *
      * Leaves the query and parameters alone.
      *
-     * @param string $statement The query statement string.
+     * @param string $string The query statement string.
      *
-     * @param array $values Bind these values into the query.
+     * @param array $parameters Bind these values into the query.
      *
      * @return array
      *
      */
-    public function rebuild($statement, array $values = [])
+    public function rebuild(string $string, array $parameters = []): array
     {
-        return [$statement, $values];
+        return [$string, $parameters];
     }
 }

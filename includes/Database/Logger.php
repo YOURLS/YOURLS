@@ -49,7 +49,7 @@ class Logger extends AbstractLogger {
      *
      * @return void
      */
-    public function log($level, $message, array $context = []) {
+    public function log($level, string|\Stringable $message, array $context = []): void {
         // if it's an internal SQL query, format the message, otherwise store a string
         if($level === 'query') {
             $this->messages[] = sprintf(

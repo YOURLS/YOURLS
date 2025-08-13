@@ -75,7 +75,7 @@ class Options {
             $this->ydb->set_option($name, yourls_maybe_unserialize($value));
         }
 
-        yourls_apply_filter('get_all_options', 'deprecated');
+        yourls_do_action('get_all_options', $options);
 
         return true;
     }
