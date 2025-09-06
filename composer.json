@@ -16,7 +16,7 @@
         "source": "https://github.com/YOURLS/YOURLS"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-dom": "*",
         "ext-filter": "*",
         "ext-hash": "*",
