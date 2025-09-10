@@ -20,7 +20,7 @@ function yourls_check_database_version() {
 }
 
 /**
- * Get DB version
+ * Get DB server version
  *
  * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
  * follows after that.
