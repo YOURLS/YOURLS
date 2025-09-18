@@ -20,7 +20,7 @@ function yourls_check_database_version() {
 }
 
 /**
- * Get DB version
+ * Get DB server version
  *
  * @since 1.7
  * @return string sanitized DB version
