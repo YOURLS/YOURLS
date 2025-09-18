@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Aura SQL wrapper for YOURLS that creates the allmighty YDB object.
+ * Aura SQL wrapper for YOURLS that creates the almighty YDB object.
  *
  * A fine example of a "class that knows too much" (see https://en.wikipedia.org/wiki/God_object)
  *
  * Note to plugin authors: you most likely SHOULD NOT use directly methods and properties of this class. Use instead
- * function wrappers (eg don't use $ydb->option, or $ydb->set_option(), use yourls_*_options() functions instead).
+ * function wrappers (e.g. don't use $ydb->option, or $ydb->set_option(), use yourls_*_options() functions instead).
  *
  * @since 1.7.3
  */
@@ -33,7 +33,7 @@ class YDB extends ExtendedPdo {
     protected $context = '';
 
     /**
-     * Information related to a short URL keyword (eg timestamp, long URL, ...)
+     * Information related to a short URL keyword (e.g. timestamp, long URL, ...)
      *
      * @var array
      *
@@ -53,13 +53,13 @@ class YDB extends ExtendedPdo {
     protected $option = [];
 
     /**
-     * Plugin admin pages informations
+     * Plugin admin pages information
      * @var array
      */
     protected $plugin_pages = [];
 
     /**
-     * Plugin informations
+     * Plugin information
      * @var array
      */
     protected $plugins = [];
@@ -86,7 +86,7 @@ class YDB extends ExtendedPdo {
      * Init everything needed
      *
      * Everything we need to set up is done here in init(), not in the constructor, so even
-     * when the connection fails (eg config error or DB dead), the constructor has worked
+     * when the connection fails (e.g. config error or DB dead), the constructor has worked,
      * and we have a $ydb object properly instantiated (and for instance yourls_die() can
      * correctly die, even if using $ydb methods)
      *
@@ -405,22 +405,13 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Return standardized DB version
-     *
-     * The regex removes everything that's not a number at the start of the string, or remove anything that's not a number and what
-     * follows after that.
-     *   'omgmysql-5.5-ubuntu-4.20' => '5.5'
-     *   'mysql5.5-ubuntu-4.20'     => '5.5'
-     *   '5.5-ubuntu-4.20'          => '5.5'
-     *   '5.5-beta2'                => '5.5'
-     *   '5.5'                      => '5.5'
+     * Return MySQL version
      *
      * @since  1.7.3
      * @return string
      */
     public function mysql_version() {
-        $version = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-        return $version;
+        return $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
 }
