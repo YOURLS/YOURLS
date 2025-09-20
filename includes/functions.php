@@ -22,22 +22,22 @@ function yourls_make_regexp_pattern( $string ) {
  * @return string
  */
 function yourls_get_IP() {
-	$ip = '';
+    $ip = '';
 
-	// Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
-	$headers = [ 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' ];
-	foreach( $headers as $header ) {
-		if ( !empty( $_SERVER[ $header ] ) ) {
-			$ip = $_SERVER[ $header ];
-			break;
-		}
-	}
+    // Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
+    $headers = [ 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' ];
+    foreach( $headers as $header ) {
+        if ( !empty( $_SERVER[ $header ] ) ) {
+            $ip = $_SERVER[ $header ];
+            break;
+        }
+    }
 
-	// headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
-	if ( strpos( $ip, ',' ) !== false )
-		$ip = substr( $ip, 0, strpos( $ip, ',' ) );
+    // headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
+    if ( strpos( $ip, ',' ) !== false )
+        $ip = substr( $ip, 0, strpos( $ip, ',' ) );
 
-	return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
+    return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
 
 /**
@@ -47,7 +47,7 @@ function yourls_get_IP() {
  * @return int            id of next link
  */
 function yourls_get_next_decimal() {
-	return (int)yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
+    return (int)yourls_apply_filter( 'get_next_decimal', (int)yourls_get_option( 'next_id' ) );
 }
 
 /**
@@ -64,10 +64,10 @@ function yourls_get_next_decimal() {
  * @return bool        true or false depending on if there has been an actual MySQL query. See note above.
  */
 function yourls_update_next_decimal( $int = 0 ) {
-	$int = ( $int == 0 ) ? yourls_get_next_decimal() + 1 : (int)$int ;
-	$update = yourls_update_option( 'next_id', $int );
-	yourls_do_action( 'update_next_decimal', $int, $update );
-	return $update;
+    $int = ( $int == 0 ) ? yourls_get_next_decimal() + 1 : (int)$int ;
+    $update = yourls_update_option( 'next_id', $int );
+    yourls_do_action( 'update_next_decimal', $int, $update );
+    return $update;
 }
 
 /**
@@ -88,15 +88,15 @@ function yourls_xml_encode( $array ) {
  * @return int 0 or 1 for error/success
  */
 function yourls_update_clicks( $keyword, $clicks = false ) {
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
-	if ( false !== $pre ) {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
+    if ( false !== $pre ) {
         return $pre;
     }
 
-	$keyword = yourls_sanitize_keyword( $keyword );
-	$table = YOURLS_DB_TABLE_URL;
-	if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 ) {
+    $keyword = yourls_sanitize_keyword( $keyword );
+    $table = YOURLS_DB_TABLE_URL;
+    if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 ) {
         $update = "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword";
         $values = [ 'clicks' => $clicks, 'keyword' => $keyword ];
     } else {
@@ -104,16 +104,16 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
         $values = [ 'keyword' => $keyword ];
     }
 
-	// Try and update click count. An error probably means a concurrency problem : just skip the update
+    // Try and update click count. An error probably means a concurrency problem : just skip the update
     try {
         $result = yourls_get_db()->fetchAffected($update, $values);
     } catch (Exception $e) {
-	    $result = 0;
+        $result = 0;
     }
 
-	yourls_do_action( 'update_clicks', $keyword, $result, $clicks );
+    yourls_do_action( 'update_clicks', $keyword, $result, $clicks );
 
-	return $result;
+    return $result;
 }
 
 
@@ -126,55 +126,55 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
  * @return array          Array of links
  */
 function yourls_get_stats($filter = 'top', $limit = 10, $start = 0) {
-	switch( $filter ) {
-		case 'bottom':
-			$sort_by    = '`clicks`';
-			$sort_order = 'asc';
-			break;
-		case 'last':
-			$sort_by    = '`timestamp`';
-			$sort_order = 'desc';
-			break;
-		case 'rand':
-		case 'random':
-			$sort_by    = 'RAND()';
-			$sort_order = '';
-			break;
-		case 'top':
-		default:
-			$sort_by    = '`clicks`';
-			$sort_order = 'desc';
-			break;
-	}
+    switch( $filter ) {
+        case 'bottom':
+            $sort_by    = '`clicks`';
+            $sort_order = 'asc';
+            break;
+        case 'last':
+            $sort_by    = '`timestamp`';
+            $sort_order = 'desc';
+            break;
+        case 'rand':
+        case 'random':
+            $sort_by    = 'RAND()';
+            $sort_order = '';
+            break;
+        case 'top':
+        default:
+            $sort_by    = '`clicks`';
+            $sort_order = 'desc';
+            break;
+    }
 
-	// Fetch links
-	$limit = intval( $limit );
-	$start = intval( $start );
-	if ( $limit > 0 ) {
+    // Fetch links
+    $limit = intval( $limit );
+    $start = intval( $start );
+    if ( $limit > 0 ) {
 
-		$table_url = YOURLS_DB_TABLE_URL;
-		$results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
+        $table_url = YOURLS_DB_TABLE_URL;
+        $results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
-		$return = [];
-		$i = 1;
+        $return = [];
+        $i = 1;
 
-		foreach ( (array)$results as $res ) {
-			$return['links']['link_'.$i++] = [
-				'shorturl' => yourls_link($res->keyword),
-				'url'      => $res->url,
-				'title'    => $res->title,
-				'timestamp'=> $res->timestamp,
-				'ip'       => $res->ip,
-				'clicks'   => $res->clicks,
+        foreach ( (array)$results as $res ) {
+            $return['links']['link_'.$i++] = [
+                'shorturl' => yourls_link($res->keyword),
+                'url'      => $res->url,
+                'title'    => $res->title,
+                'timestamp'=> $res->timestamp,
+                'ip'       => $res->ip,
+                'clicks'   => $res->clicks,
             ];
-		}
-	}
+        }
+    }
 
-	$return['stats'] = yourls_get_db_stats();
+    $return['stats'] = yourls_get_db_stats();
 
-	$return['statusCode'] = '200';
+    $return['statusCode'] = '200';
 
-	return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
+    return yourls_apply_filter( 'get_stats', $return, $filter, $limit, $start );
 }
 
 /**
@@ -188,12 +188,12 @@ function yourls_get_stats($filter = 'top', $limit = 10, $start = 0) {
  * @return array
  */
 function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
-	$table_url = YOURLS_DB_TABLE_URL;
+    $table_url = YOURLS_DB_TABLE_URL;
 
-	$totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
-	$return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
+    $totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
+    $return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
 
-	return yourls_apply_filter( 'get_db_stats', $return, $where );
+    return yourls_apply_filter( 'get_db_stats', $return, $where );
 }
 
 /**
@@ -239,25 +239,25 @@ function yourls_get_referrer() {
  * @return int                  1 for header redirection, 2 for js redirection, 3 otherwise (CLI)
  */
 function yourls_redirect( $location, $code = 301 ) {
-	yourls_do_action( 'pre_redirect', $location, $code );
-	$location = yourls_apply_filter( 'redirect_location', $location, $code );
-	$code     = yourls_apply_filter( 'redirect_code', $code, $location );
+    yourls_do_action( 'pre_redirect', $location, $code );
+    $location = yourls_apply_filter( 'redirect_location', $location, $code );
+    $code     = yourls_apply_filter( 'redirect_code', $code, $location );
 
-	// Redirect, either properly if possible, or via Javascript otherwise
-	if( !headers_sent() ) {
-		yourls_status_header( $code );
-		header( "Location: $location" );
+    // Redirect, either properly if possible, or via Javascript otherwise
+    if( !headers_sent() ) {
+        yourls_status_header( $code );
+        header( "Location: $location" );
         return 1;
-	}
+    }
 
-	// Headers sent : redirect with JS if not in CLI
-	if( php_sapi_name() !== 'cli') {
+    // Headers sent : redirect with JS if not in CLI
+    if( php_sapi_name() !== 'cli') {
         yourls_redirect_javascript( $location );
         return 2;
-	}
+    }
 
-	// We're in CLI
-	return 3;
+    // We're in CLI
+    return 3;
 }
 
 /**
@@ -355,12 +355,12 @@ function yourls_no_frame_header() {
  */
 function yourls_content_type_header( $type ) {
     yourls_do_action( 'content_type_header', $type );
-	if( !headers_sent() ) {
-		$charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
-		header( "Content-Type: $type; charset=$charset" );
-		return true;
-	}
-	return false;
+    if( !headers_sent() ) {
+        $charset = yourls_apply_filter( 'content_type_header_charset', 'utf-8' );
+        header( "Content-Type: $type; charset=$charset" );
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -371,19 +371,19 @@ function yourls_content_type_header( $type ) {
  * @return bool      whether header was sent
  */
 function yourls_status_header( $code = 200 ) {
-	yourls_do_action( 'status_header', $code );
+    yourls_do_action( 'status_header', $code );
 
-	if( headers_sent() )
-		return false;
+    if( headers_sent() )
+        return false;
 
-	$protocol = $_SERVER['SERVER_PROTOCOL'];
-	if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
-		$protocol = 'HTTP/1.0';
+    $protocol = $_SERVER['SERVER_PROTOCOL'];
+    if ( 'HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol )
+        $protocol = 'HTTP/1.0';
 
-	$code = intval( $code );
-	$desc = yourls_get_HTTP_status( $code );
+    $code = intval( $code );
+    $desc = yourls_get_HTTP_status( $code );
 
-	@header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
+    @header ("$protocol $code $desc"); // This causes problems on IIS and some FastCGI setups
 
     return true;
 }
@@ -402,10 +402,10 @@ function yourls_redirect_javascript( $location, $dontwait = true ) {
     if ( $dontwait ) {
         $message = yourls_s( 'if you are not redirected after 10 seconds, please <a href="%s">click here</a>', $location );
         echo <<<REDIR
-		<script type="text/javascript">
-		window.location="$location";
-		</script>
-		<small>($message)</small>
+        <script type="text/javascript">
+        window.location="$location";
+        </script>
+        <small>($message)</small>
 REDIR;
     }
     else {
@@ -421,63 +421,63 @@ REDIR;
  * @return string
  */
 function yourls_get_HTTP_status( $code ) {
-	$code = intval( $code );
-	$headers_desc = [
-		100 => 'Continue',
-		101 => 'Switching Protocols',
-		102 => 'Processing',
+    $code = intval( $code );
+    $headers_desc = [
+        100 => 'Continue',
+        101 => 'Switching Protocols',
+        102 => 'Processing',
 
-		200 => 'OK',
-		201 => 'Created',
-		202 => 'Accepted',
-		203 => 'Non-Authoritative Information',
-		204 => 'No Content',
-		205 => 'Reset Content',
-		206 => 'Partial Content',
-		207 => 'Multi-Status',
-		226 => 'IM Used',
+        200 => 'OK',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative Information',
+        204 => 'No Content',
+        205 => 'Reset Content',
+        206 => 'Partial Content',
+        207 => 'Multi-Status',
+        226 => 'IM Used',
 
-		300 => 'Multiple Choices',
-		301 => 'Moved Permanently',
-		302 => 'Found',
-		303 => 'See Other',
-		304 => 'Not Modified',
-		305 => 'Use Proxy',
-		306 => 'Reserved',
-		307 => 'Temporary Redirect',
+        300 => 'Multiple Choices',
+        301 => 'Moved Permanently',
+        302 => 'Found',
+        303 => 'See Other',
+        304 => 'Not Modified',
+        305 => 'Use Proxy',
+        306 => 'Reserved',
+        307 => 'Temporary Redirect',
 
-		400 => 'Bad Request',
-		401 => 'Unauthorized',
-		402 => 'Payment Required',
-		403 => 'Forbidden',
-		404 => 'Not Found',
-		405 => 'Method Not Allowed',
-		406 => 'Not Acceptable',
-		407 => 'Proxy Authentication Required',
-		408 => 'Request Timeout',
-		409 => 'Conflict',
-		410 => 'Gone',
-		411 => 'Length Required',
-		412 => 'Precondition Failed',
-		413 => 'Request Entity Too Large',
-		414 => 'Request-URI Too Long',
-		415 => 'Unsupported Media Type',
-		416 => 'Requested Range Not Satisfiable',
-		417 => 'Expectation Failed',
-		422 => 'Unprocessable Entity',
-		423 => 'Locked',
-		424 => 'Failed Dependency',
-		426 => 'Upgrade Required',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        402 => 'Payment Required',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        406 => 'Not Acceptable',
+        407 => 'Proxy Authentication Required',
+        408 => 'Request Timeout',
+        409 => 'Conflict',
+        410 => 'Gone',
+        411 => 'Length Required',
+        412 => 'Precondition Failed',
+        413 => 'Request Entity Too Large',
+        414 => 'Request-URI Too Long',
+        415 => 'Unsupported Media Type',
+        416 => 'Requested Range Not Satisfiable',
+        417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
+        423 => 'Locked',
+        424 => 'Failed Dependency',
+        426 => 'Upgrade Required',
 
-		500 => 'Internal Server Error',
-		501 => 'Not Implemented',
-		502 => 'Bad Gateway',
-		503 => 'Service Unavailable',
-		504 => 'Gateway Timeout',
-		505 => 'HTTP Version Not Supported',
-		506 => 'Variant Also Negotiates',
-		507 => 'Insufficient Storage',
-		510 => 'Not Extended'
+        500 => 'Internal Server Error',
+        501 => 'Not Implemented',
+        502 => 'Bad Gateway',
+        503 => 'Service Unavailable',
+        504 => 'Gateway Timeout',
+        505 => 'HTTP Version Not Supported',
+        506 => 'Variant Also Negotiates',
+        507 => 'Insufficient Storage',
+        510 => 'Not Extended'
     ];
 
     return $headers_desc[$code] ?? '';
@@ -494,17 +494,17 @@ function yourls_get_HTTP_status( $code ) {
  * @return mixed Result of the INSERT query (1 on success)
  */
 function yourls_log_redirect( $keyword ) {
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
-	if ( false !== $pre ) {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
+    if ( false !== $pre ) {
         return $pre;
     }
 
-	if (!yourls_do_log_redirect()) {
+    if (!yourls_do_log_redirect()) {
         return true;
     }
 
-	$table = YOURLS_DB_TABLE_LOG;
+    $table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
     $binds = [
         'now' => date( 'Y-m-d H:i:s' ),
@@ -531,7 +531,7 @@ function yourls_log_redirect( $keyword ) {
  * @return bool
  */
 function yourls_do_log_redirect() {
-	return ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
+    return ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
 }
 
 /**
@@ -622,54 +622,54 @@ function yourls_allow_duplicate_longurls() {
  */
 function yourls_check_IP_flood( $ip = '' ) {
 
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_check_IP_flood', false, $ip );
-	if ( false !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_check_IP_flood', false, $ip );
+    if ( false !== $pre )
+        return $pre;
 
-	yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
+    yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
-	// Raise white flag if installing or if no flood delay defined
-	if(
-		( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
-		!defined('YOURLS_FLOOD_DELAY_SECONDS') ||
-		yourls_is_installing()
-	)
-		return true;
+    // Raise white flag if installing or if no flood delay defined
+    if(
+        ( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
+        !defined('YOURLS_FLOOD_DELAY_SECONDS') ||
+        yourls_is_installing()
+    )
+        return true;
 
-	// Don't throttle logged in users
-	if( yourls_is_private() ) {
-		 if( yourls_is_valid_user() === true )
-			return true;
-	}
+    // Don't throttle logged in users
+    if( yourls_is_private() ) {
+         if( yourls_is_valid_user() === true )
+            return true;
+    }
 
-	// Don't throttle whitelist IPs
-	if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
-		$whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
-		foreach( (array)$whitelist_ips as $whitelist_ip ) {
-			$whitelist_ip = trim( $whitelist_ip );
-			if ( $whitelist_ip == $ip )
-				return true;
-		}
-	}
+    // Don't throttle whitelist IPs
+    if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
+        $whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
+        foreach( (array)$whitelist_ips as $whitelist_ip ) {
+            $whitelist_ip = trim( $whitelist_ip );
+            if ( $whitelist_ip == $ip )
+                return true;
+        }
+    }
 
-	$ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
+    $ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
 
-	yourls_do_action( 'check_ip_flood', $ip );
+    yourls_do_action( 'check_ip_flood', $ip );
 
-	$table = YOURLS_DB_TABLE_URL;
-	$lasttime = yourls_get_db()->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
-	if( $lasttime ) {
-		$now = date( 'U' );
-		$then = date( 'U', strtotime( $lasttime ) );
-		if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
-			// Flood!
-			yourls_do_action( 'ip_flood', $ip, $now - $then );
-			yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
-		}
-	}
+    $table = YOURLS_DB_TABLE_URL;
+    $lasttime = yourls_get_db()->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
+    if( $lasttime ) {
+        $now = date( 'U' );
+        $then = date( 'U', strtotime( $lasttime ) );
+        if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
+            // Flood!
+            yourls_do_action( 'ip_flood', $ip, $now - $then );
+            yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
+        }
+    }
 
-	return true;
+    return true;
 }
 
 /**
@@ -679,7 +679,7 @@ function yourls_check_IP_flood( $ip = '' ) {
  * @return bool
  */
 function yourls_is_installing() {
-	return (bool)yourls_apply_filter( 'is_installing', defined( 'YOURLS_INSTALLING' ) && YOURLS_INSTALLING );
+    return (bool)yourls_apply_filter( 'is_installing', defined( 'YOURLS_INSTALLING' ) && YOURLS_INSTALLING );
 }
 
 /**
@@ -702,7 +702,7 @@ function yourls_is_upgrading() {
  * @return bool
  */
 function yourls_is_installed() {
-	return (bool)yourls_apply_filter( 'is_installed', yourls_get_db()->is_installed() );
+    return (bool)yourls_apply_filter( 'is_installed', yourls_get_db()->is_installed() );
 }
 
 /**
@@ -822,7 +822,7 @@ function yourls_is_admin() {
  * @return bool
  */
 function yourls_is_windows() {
-	return defined( 'DIRECTORY_SEPARATOR' ) && DIRECTORY_SEPARATOR == '\\';
+    return defined( 'DIRECTORY_SEPARATOR' ) && DIRECTORY_SEPARATOR == '\\';
 }
 
 /**
@@ -952,22 +952,22 @@ function yourls_get_remote_title( $url ) {
  * @return bool
  */
 function yourls_is_mobile_device() {
-	// Strings searched
-	$mobiles = [
-		'android', 'blackberry', 'blazer',
-		'compal', 'elaine', 'fennec', 'hiptop',
-		'iemobile', 'iphone', 'ipod', 'ipad',
-		'iris', 'kindle', 'opera mobi', 'opera mini',
-		'palm', 'phone', 'pocket', 'psp', 'symbian',
-		'treo', 'wap', 'windows ce', 'windows phone'
+    // Strings searched
+    $mobiles = [
+        'android', 'blackberry', 'blazer',
+        'compal', 'elaine', 'fennec', 'hiptop',
+        'iemobile', 'iphone', 'ipod', 'ipad',
+        'iris', 'kindle', 'opera mobi', 'opera mini',
+        'palm', 'phone', 'pocket', 'psp', 'symbian',
+        'treo', 'wap', 'windows ce', 'windows phone'
     ];
 
-	// Current user-agent
-	$current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
+    // Current user-agent
+    $current = strtolower( $_SERVER['HTTP_USER_AGENT'] );
 
-	// Check and return
-	$is_mobile = ( str_replace( $mobiles, '', $current ) != $current );
-	return (bool)yourls_apply_filter( 'is_mobile_device', $is_mobile );
+    // Check and return
+    $is_mobile = ( str_replace( $mobiles, '', $current ) != $current );
+    return (bool)yourls_apply_filter( 'is_mobile_device', $is_mobile );
 }
 
 /**
@@ -1091,20 +1091,20 @@ function yourls_fix_request_uri() {
  * @return void
  */
 function yourls_check_maintenance_mode() {
-	$dot_file = YOURLS_ABSPATH . '/.maintenance' ;
+    $dot_file = YOURLS_ABSPATH . '/.maintenance' ;
 
     if ( !file_exists( $dot_file ) || yourls_is_upgrading() || yourls_is_installing() ) {
         return;
     }
 
-	global $maintenance_start;
-	yourls_include_file_sandbox( $dot_file );
-	// If the $maintenance_start timestamp is older than 10 minutes, don't die.
-	if ( ( time() - $maintenance_start ) >= 600 ) {
+    global $maintenance_start;
+    yourls_include_file_sandbox( $dot_file );
+    // If the $maintenance_start timestamp is older than 10 minutes, don't die.
+    if ( ( time() - $maintenance_start ) >= 600 ) {
         return;
     }
 
-	// Use any /user/maintenance.php file
+    // Use any /user/maintenance.php file
     $file = YOURLS_USERDIR . '/maintenance.php';
     if(file_exists($file)) {
         if(yourls_include_file_sandbox( $file ) == true) {
@@ -1158,15 +1158,15 @@ function yourls_is_allowed_protocol( $url, $protocols = [] ) {
  * @return string Protocol, with slash slash if applicable. Empty string if no protocol
  */
 function yourls_get_protocol( $url ) {
-	/*
-	http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
-	The scheme name consists of a sequence of characters beginning with a letter and followed by any
-	combination of letters, digits, plus ("+"), period ("."), or hyphen ("-"). Although schemes are
-	case-insensitive, the canonical form is lowercase and documents that specify schemes must do so
-	with lowercase letters. It is followed by a colon (":").
-	*/
+    /*
+    http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
+    The scheme name consists of a sequence of characters beginning with a letter and followed by any
+    combination of letters, digits, plus ("+"), period ("."), or hyphen ("-"). Although schemes are
+    case-insensitive, the canonical form is lowercase and documents that specify schemes must do so
+    with lowercase letters. It is followed by a colon (":").
+    */
     preg_match( '!^[a-zA-Z][a-zA-Z0-9+.-]+:(//)?!', $url, $matches );
-	return (string)yourls_apply_filter( 'get_protocol', isset( $matches[0] ) ? $matches[0] : '', $url );
+    return (string)yourls_apply_filter( 'get_protocol', isset( $matches[0] ) ? $matches[0] : '', $url );
 }
 
 /**
@@ -1219,15 +1219,15 @@ function yourls_get_relative_url( $url, $strict = true ) {
  */
 function yourls_deprecated_function( $function, $version, $replacement = null ) {
 
-	yourls_do_action( 'deprecated_function', $function, $replacement, $version );
+    yourls_do_action( 'deprecated_function', $function, $replacement, $version );
 
-	// Allow plugin to filter the output error trigger
-	if ( yourls_get_debug_mode() && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
-		if ( ! is_null( $replacement ) )
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
-		else
-			trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
-	}
+    // Allow plugin to filter the output error trigger
+    if ( yourls_get_debug_mode() && yourls_apply_filter( 'deprecated_function_trigger_error', true ) ) {
+        if ( ! is_null( $replacement ) )
+            trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function, $version, $replacement ) );
+        else
+            trigger_error( sprintf( yourls__('%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
+    }
 }
 
 /**

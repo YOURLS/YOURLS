@@ -6,23 +6,23 @@ $auth = yourls_is_valid_user();
 
 if( $auth !== true ) {
 
-	// API mode,
-	if ( yourls_is_API() ) {
-		$format = ( isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml' );
-		$callback = ( isset($_REQUEST['callback']) ? $_REQUEST['callback'] : '' );
-		yourls_api_output( $format, array(
-			'simple' => $auth,
-			'message' => $auth,
-			'errorCode' => '403',
-			'callback' => $callback,
-		) );
+    // API mode,
+    if ( yourls_is_API() ) {
+        $format = ( isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml' );
+        $callback = ( isset($_REQUEST['callback']) ? $_REQUEST['callback'] : '' );
+        yourls_api_output( $format, array(
+            'simple' => $auth,
+            'message' => $auth,
+            'errorCode' => '403',
+            'callback' => $callback,
+        ) );
 
-	// Regular mode
-	} else {
-		yourls_login_screen( $auth );
-	}
+    // Regular mode
+    } else {
+        yourls_login_screen( $auth );
+    }
 
-	die();
+    die();
 }
 
 yourls_do_action( 'auth_successful' );
@@ -36,12 +36,12 @@ yourls_do_action( 'auth_successful' );
 
 // Did we just fail at encrypting passwords ?
 if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
-	yourls_update_option( 'defer_hashing_error', time() + 86400 * 7 ); // now + 1 week
+    yourls_update_option( 'defer_hashing_error', time() + 86400 * 7 ); // now + 1 week
 
 } else {
 
-	// Encrypt passwords that are clear text
-	if ( yourls_maybe_hash_passwords() ) {
+    // Encrypt passwords that are clear text
+    if ( yourls_maybe_hash_passwords() ) {
         $hash = yourls_hash_passwords_now( YOURLS_CONFIGFILE );
         if ( $hash === true ) {
             // Hashing successful. Remove flag from DB if any.
@@ -59,5 +59,5 @@ if ( isset( $_GET['dismiss'] ) && $_GET['dismiss'] == 'hasherror' ) {
                 yourls_add_notice( $message );
             }
         }
-	}
+    }
 }

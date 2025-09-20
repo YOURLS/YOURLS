@@ -8,18 +8,18 @@
 function yut_install_yourls() {
     yut_drop_all_tables_if_local();
 
-	if (!yourls_check_database_version()) {
-		die( sprintf( 'MySQL version too old. Version is: %s', yourls_get_database_version() ) );
-	}
+    if (!yourls_check_database_version()) {
+        die( sprintf( 'MySQL version too old. Version is: %s', yourls_get_database_version() ) );
+    }
 
-	if (!yourls_check_php_version()) {
-		die( sprintf( 'PHP version too old. Version is: %s', phpversion() ) );
-	}
+    if (!yourls_check_php_version()) {
+        die( sprintf( 'PHP version too old. Version is: %s', phpversion() ) );
+    }
 
-	$create = yourls_create_sql_tables();
-	if (array() != $create['error']) {
-		die( sprintf( 'Could not run SQL. Error is: %s', implode( "\n\n", $create['error'] ) ) );
-	}
+    $create = yourls_create_sql_tables();
+    if (array() != $create['error']) {
+        die( sprintf( 'Could not run SQL. Error is: %s', implode( "\n\n", $create['error'] ) ) );
+    }
 }
 
 
@@ -55,10 +55,10 @@ function yut_find_config() {
  * @return void
  */
 function yut_drop_all_tables_if_local() {
-	if( !yut_is_local() )
-		return;
+    if( !yut_is_local() )
+        return;
 
-	// If not running in Travis environment, drop any tables from the selected database prior to starting tests
+    // If not running in Travis environment, drop any tables from the selected database prior to starting tests
     $tables = sprintf('%s,%s,%s', YOURLS_DB_TABLE_URL, YOURLS_DB_TABLE_OPTIONS, YOURLS_DB_TABLE_LOG);
     $sql = sprintf('DROP TABLE IF EXISTS %s', $tables);
     yourls_get_db()->perform($sql);

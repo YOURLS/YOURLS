@@ -23,5 +23,5 @@ yourls_add_filter( 'get_shorturl_charset', 'ozh_hyphen_in_charset' );
 yourls_add_action('add_new_link_create_keyword', function() {yourls_remove_filter('get_shorturl_charset', 'ozh_hyphen_in_charset');});
 
 function ozh_hyphen_in_charset( $in ) {
-	return $in.'-';
+    return $in.'-';
 }

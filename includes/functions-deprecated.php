@@ -129,12 +129,12 @@ function yourls_get_search_text() {
  */
 function yourls_current_time( $type, $gmt = 0 ) {
     yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_timestamp' );
-	switch ( $type ) {
-		case 'mysql':
-			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
-		case 'timestamp':
-			return ( $gmt ) ? time() : yourls_get_timestamp( time() );
-	}
+    switch ( $type ) {
+        case 'mysql':
+            return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', yourls_get_timestamp( time() ));
+        case 'timestamp':
+            return ( $gmt ) ? time() : yourls_get_timestamp( time() );
+    }
 }
 
 /**
@@ -169,8 +169,8 @@ function yourls_sanitize_string( $string, $restrict_to_shorturl_charset = false 
  *
  */
 function yourls_favicon( $echo = true ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_yourls_favicon_url' );
-	return yourls_get_yourls_favicon_url( $echo );
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_yourls_favicon_url' );
+    return yourls_get_yourls_favicon_url( $echo );
 }
 
 /**
@@ -180,8 +180,8 @@ function yourls_favicon( $echo = true ) {
  *
  */
 function yourls_get_link_stats( $url ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_keyword_stats' );
-	return yourls_get_keyword_stats( $url );
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_get_keyword_stats' );
+    return yourls_get_keyword_stats( $url );
 }
 
 /**
@@ -192,8 +192,8 @@ function yourls_get_link_stats( $url ) {
  *
  */
 function yourls_url_exists( $url ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_long_url_exists' );
-	return yourls_long_url_exists( $url );
+    yourls_deprecated_function( __FUNCTION__, '1.7.10', 'yourls_long_url_exists' );
+    return yourls_long_url_exists( $url );
 }
 
 /**
@@ -201,8 +201,8 @@ function yourls_url_exists( $url ) {
  *
  */
 function yourls_plural( $word, $count=1 ) {
-	yourls_deprecated_function( __FUNCTION__, '1.6', 'yourls_n' );
-	return $word . ($count > 1 ? 's' : '');
+    yourls_deprecated_function( __FUNCTION__, '1.6', 'yourls_n' );
+    return $word . ($count > 1 ? 's' : '');
 }
 
 /**
@@ -210,10 +210,10 @@ function yourls_plural( $word, $count=1 ) {
  *
  */
 function yourls_get_duplicate_keywords( $longurl ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_get_longurl_keywords' );
-	if( !yourls_allow_duplicate_longurls() )
-		return NULL;
-	return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_longurl_keywords ( $longurl ), $longurl );
+    yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_get_longurl_keywords' );
+    if( !yourls_allow_duplicate_longurls() )
+        return NULL;
+    return yourls_apply_filter( 'get_duplicate_keywords', yourls_get_longurl_keywords ( $longurl ), $longurl );
 }
 
 /**
@@ -223,8 +223,8 @@ function yourls_get_duplicate_keywords( $longurl ) {
  *
  */
 function yourls_intval( $int ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_sanitize_int' );
-	return yourls_escape( $int );
+    yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_sanitize_int' );
+    return yourls_escape( $int );
 }
 
 /**
@@ -232,8 +232,8 @@ function yourls_intval( $int ) {
  *
  */
 function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_http_get_body' );
-	return yourls_http_get_body( $url );
+    yourls_deprecated_function( __FUNCTION__, '1.7', 'yourls_http_get_body' );
+    return yourls_http_get_body( $url );
 }
 
 /**
@@ -250,8 +250,8 @@ function yourls_get_remote_content( $url,  $maxlen = 4096, $timeout = 5 ) {
  * @return mixed
  */
 function yourls_apply_filters( $hook, $value = '' ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_apply_filter' );
-	return yourls_apply_filter( $hook, $value );
+    yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_apply_filter' );
+    return yourls_apply_filter( $hook, $value );
 }
 
 /**
@@ -259,10 +259,10 @@ function yourls_apply_filters( $hook, $value = '' ) {
  *
  */
 function yourls_has_interface() {
-	yourls_deprecated_function( __FUNCTION__, '1.7.1' );
-	if( yourls_is_API() or yourls_is_GO() )
-		return false;
-	return true;
+    yourls_deprecated_function( __FUNCTION__, '1.7.1' );
+    if( yourls_is_API() or yourls_is_GO() )
+        return false;
+    return true;
 }
 
 /**
@@ -274,8 +274,8 @@ function yourls_has_interface() {
  * @return bool true if a proxy is defined, false otherwise
  */
 function yourls_http_proxy_is_defined() {
-	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_http_get_proxy' );
-	return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
+    yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_http_get_proxy' );
+    return yourls_apply_filter( 'http_proxy_is_defined', defined( 'YOURLS_PROXY' ) );
 }
 
 /**
@@ -293,8 +293,8 @@ function yourls_http_proxy_is_defined() {
  * @return string Translated context string without pipe
  */
 function yourls_ex( $text, $context, $domain = 'default' ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_xe' );
-	echo yourls_xe( $text, $context, $domain );
+    yourls_deprecated_function( __FUNCTION__, '1.7.1', 'yourls_xe' );
+    echo yourls_xe( $text, $context, $domain );
 }
 
 /**
@@ -308,20 +308,20 @@ function yourls_ex( $text, $context, $domain = 'default' ) {
  * @return string|array escaped data
  */
 function yourls_escape( $data ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
-	if( is_array( $data ) ) {
-		foreach( $data as $k => $v ) {
-			if( is_array( $v ) ) {
-				$data[ $k ] = yourls_escape( $v );
-			} else {
-				$data[ $k ] = yourls_escape_real( $v );
-			}
-		}
-	} else {
-		$data = yourls_escape_real( $data );
-	}
+    yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
+    if( is_array( $data ) ) {
+        foreach( $data as $k => $v ) {
+            if( is_array( $v ) ) {
+                $data[ $k ] = yourls_escape( $v );
+            } else {
+                $data[ $k ] = yourls_escape_real( $v );
+            }
+        }
+    } else {
+        $data = yourls_escape_real( $data );
+    }
 
-	return $data;
+    return $data;
 }
 
 /**
@@ -338,13 +338,13 @@ function yourls_escape( $data ) {
  * @return string escaped string
  */
 function yourls_escape_real( $string ) {
-	yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
-	global $ydb;
-	if( isset( $ydb ) && ( $ydb instanceof \YOURLS\Database\YDB ) )
-		return $ydb->escape( $string );
+    yourls_deprecated_function( __FUNCTION__, '1.7.3', 'PDO' );
+    global $ydb;
+    if( isset( $ydb ) && ( $ydb instanceof \YOURLS\Database\YDB ) )
+        return $ydb->escape( $string );
 
-	// YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
-	return yourls_apply_filter( 'custom_escape_real', addslashes( $string ), $string );
+    // YOURLS DB classes have been bypassed by a custom DB engine or a custom cache layer
+    return yourls_apply_filter( 'custom_escape_real', addslashes( $string ), $string );
 }
 
 // @codeCoverageIgnoreEnd

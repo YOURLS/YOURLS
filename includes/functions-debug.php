@@ -40,7 +40,7 @@ function yourls_get_debug_log() {
  * @return int
  */
 function yourls_get_num_queries() {
-	return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
+    return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
 }
 
 /**

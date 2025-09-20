@@ -9,5 +9,5 @@ $yourls_user_passwords = array(
     'quote2'  => "'ahah'",
     'utf8fun' => 'أنا أحب النقانق',
     's[p]e(c)i{a}!@#$%^&*-=l<>,/?' => 'password',
-	);
+    );
 

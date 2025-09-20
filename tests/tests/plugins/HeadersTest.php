@@ -9,9 +9,9 @@
 class HeadersTest extends PHPUnit\Framework\TestCase {
 
     /**
-	 * Regular header
-	 */
-	public function test_regular_header() {
+     * Regular header
+     */
+    public function test_regular_header() {
         $expected = array(
           'Plugin Name' => 'regular',
           'Plugin URI'  => 'regular',
@@ -24,9 +24,9 @@ class HeadersTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-	 * PHPDoc header
-	 */
-	public function test_phpdoc_header() {
+     * PHPDoc header
+     */
+    public function test_phpdoc_header() {
         $expected = array(
           'Plugin Name' => 'phpdoc',
           'Description' => 'phpdoc',
@@ -39,9 +39,9 @@ class HeadersTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-	 * Incomplete header
-	 */
-	public function test_incomplete_header() {
+     * Incomplete header
+     */
+    public function test_incomplete_header() {
         $expected = array(
           'Plugin Name' => 'incomplete',
           'Description' => 'incomplete',
@@ -51,23 +51,23 @@ class HeadersTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-	 * Incorrect header
-	 */
-	public function test_incorrect_header() {
+     * Incorrect header
+     */
+    public function test_incorrect_header() {
         $this->assertEquals( [] , yourls_get_plugin_data( YOURLS_PLUGINDIR . '/headers/header_incorrect.php' ) );
     }
 
     /**
-	 * Missing header
-	 */
-	public function test_missing_header() {
+     * Missing header
+     */
+    public function test_missing_header() {
         $this->assertEquals( [] , yourls_get_plugin_data( YOURLS_PLUGINDIR . '/headers/header_missing.php' ) );
     }
 
     /**
-	 * Missing header - no comment at all
-	 */
-	public function test_missing_header_no_comment() {
+     * Missing header - no comment at all
+     */
+    public function test_missing_header_no_comment() {
         $this->assertEquals( [] , yourls_get_plugin_data( YOURLS_PLUGINDIR . '/headers/header_nocomment.php' ) );
     }
 

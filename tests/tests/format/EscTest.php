@@ -40,8 +40,8 @@ class EscTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_attributes')]
     function test_esc_attr( $attr, $escaped ) {
-		$this->assertSame( $escaped, yourls_esc_attr( $attr ) );
-	}
+        $this->assertSame( $escaped, yourls_esc_attr( $attr ) );
+    }
 
     /**
      * Attribute escaping -- escaping twice shouldn't change
@@ -50,8 +50,8 @@ class EscTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_attributes')]
     function test_esc_attr_twice( $attr, $escaped ) {
-		$this->assertSame( $escaped, yourls_esc_attr( yourls_esc_attr( $attr ) ) );
-	}
+        $this->assertSame( $escaped, yourls_esc_attr( yourls_esc_attr( $attr ) ) );
+    }
 
     /**
      * HTML string and how they should be escaped
@@ -100,15 +100,15 @@ class EscTest extends PHPUnit\Framework\TestCase {
         );
     }
 
-	/**
+    /**
      * HTML escaping
      *
      * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_strings')]
     function test_esc_html( $html, $escaped ) {
-		$this->assertSame( $escaped, yourls_esc_html( $html ) );
-	}
+        $this->assertSame( $escaped, yourls_esc_html( $html ) );
+    }
 
     /**
      * String to escape and what they should look like once escaped

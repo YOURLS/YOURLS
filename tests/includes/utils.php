@@ -12,7 +12,7 @@
  * @return string Random string
  */
 function rand_str( $len=32 ) {
-	return substr( md5( uniqid( rand() ) ), 0, $len );
+    return substr( md5( uniqid( rand() ) ), 0, $len );
 }
 
 /**
@@ -21,7 +21,7 @@ function rand_str( $len=32 ) {
  * @since 0.1
  */
 function yut_is_local() {
-	return ! defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false;
+    return ! defined( 'YOURLS_TESTS_CI' ) || YOURLS_TESTS_CI === false;
 }
 
 /**
@@ -116,27 +116,27 @@ function yourls_ut_var_dump( ...$what ) {
  */
 class Log_in_File {
 
-	public static $has_logged = false;
+    public static $has_logged = false;
 
-	public static function log( $what ) {
-		// Don't mess with Travis
-		if( !yut_is_local() )
-			return;
+    public static function log( $what ) {
+        // Don't mess with Travis
+        if( !yut_is_local() )
+            return;
 
-		if( ! self::$has_logged ) {
-			self::$has_logged = true;
-			self::start_log();
-		}
+        if( ! self::$has_logged ) {
+            self::$has_logged = true;
+            self::start_log();
+        }
 
-		ob_start();
-		var_dump( $what );
-		$what = ob_get_clean();
+        ob_start();
+        var_dump( $what );
+        $what = ob_get_clean();
 
-		error_log( $what."\n", 3, dirname( dirname( __FILE__ ) ) . '/log.txt' );
-	}
+        error_log( $what."\n", 3, dirname( dirname( __FILE__ ) ) . '/log.txt' );
+    }
 
-	public static function start_log() {
-		self::log( "---------------- START TESTS ----------------" );
-	}
+    public static function start_log() {
+        self::log( "---------------- START TESTS ----------------" );
+    }
 
 }

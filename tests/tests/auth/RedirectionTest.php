@@ -21,13 +21,13 @@ class RedirectionTest extends PHPUnit\Framework\TestCase {
         $_SERVER  = $this->backup_server;
     }
 
-	/**
-	 * Check that authentication on a webpage triggers a redirection
-	 */
-	public function test_login() {
+    /**
+     * Check that authentication on a webpage triggers a redirection
+     */
+    public function test_login() {
         $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
         $_SERVER['REQUEST_URI'] = '/';
-		$this->assertSame( 3, yourls_is_valid_user() );
-	}
+        $this->assertSame( 3, yourls_is_valid_user() );
+    }
 
 }
