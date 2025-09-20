@@ -28,7 +28,7 @@ yourls_add_action( 'admin_menu', 'ozh_sample_add_menu' );
  */
 
 function ozh_sample_add_menu() {
-	echo '<li><a href="http://ozh.org/">Ozh</a></li>';
+    echo '<li><a href="http://ozh.org/">Ozh</a></li>';
 }
 /* And that's it. Activate the plugin and notice the new menu entry.
  */
@@ -54,8 +54,8 @@ yourls_add_filter( 'html_title', 'ozh_sample_change_title' );
  */
  
 function ozh_sample_change_title( $value ) {
-	$value = $value . ' -- the sample plugin is activated';
-	return $value; // a filter *always* has to return a value
+    $value = $value . ' -- the sample plugin is activated';
+    return $value; // a filter *always* has to return a value
 }
 /* And that's it. Activate the plugin and notice how the page title changes */
 

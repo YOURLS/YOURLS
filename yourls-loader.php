@@ -1,17 +1,17 @@
 <?php
 // Handle inexistent root favicon requests and exit
 if ( '/favicon.ico' == $_SERVER['REQUEST_URI'] ) {
-	header( 'Content-Type: image/gif' );
-	echo base64_decode( "R0lGODlhEAAQAJECAAAAzFZWzP///wAAACH5BAEAAAIALAAAAAAQABAAAAIplI+py+0PUQAgSGoNQFt0LWTVOE6GuX1H6onTVHaW2tEHnJ1YxPc+UwAAOw==" );
-	exit;
+    header( 'Content-Type: image/gif' );
+    echo base64_decode( "R0lGODlhEAAQAJECAAAAzFZWzP///wAAACH5BAEAAAIALAAAAAAQABAAAAIplI+py+0PUQAgSGoNQFt0LWTVOE6GuX1H6onTVHaW2tEHnJ1YxPc+UwAAOw==" );
+    exit;
 }
 
 // Handle inexistent root robots.txt requests and exit
 if ( '/robots.txt' == $_SERVER['REQUEST_URI'] ) {
-	header( 'Content-Type: text/plain; charset=utf-8' );
-	echo "User-agent: *\n";
-	echo "Disallow:\n";
-	exit;
+    header( 'Content-Type: text/plain; charset=utf-8' );
+    echo "User-agent: *\n";
+    echo "Disallow:\n";
+    exit;
 }
 
 // Load YOURLS
@@ -32,8 +32,8 @@ $stats_all = isset($matches[3]) ? $matches[3] : null; // null, or 'all' if reque
 
 // if request has a scheme (eg scheme://uri) : "Prefix-n-Shorten" sends to bookmarklet (doesn't work on Windows)
 if ( yourls_get_protocol($keyword) ) {
-	$url = yourls_sanitize_url_safe($keyword);
-	$parse = yourls_get_protocol_slashes_and_rest( $url, [ 'up', 'us', 'ur' ] );
+    $url = yourls_sanitize_url_safe($keyword);
+    $parse = yourls_get_protocol_slashes_and_rest( $url, [ 'up', 'us', 'ur' ] );
     yourls_do_action( 'load_template_redirect_admin', $url );
     yourls_do_action( 'pre_redirect_bookmarklet', $url );
 

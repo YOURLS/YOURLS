@@ -7,8 +7,8 @@
 class FilesTest extends PHPUnit\Framework\TestCase {
 
     /**
-	 * Reset active plugin list
-	 */
+     * Reset active plugin list
+     */
     public static function tearDownAfterClass(): void {
         yourls_get_db()->set_plugins( array() );
     }
@@ -25,54 +25,54 @@ class FilesTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-	 * Return one of the "valid" test plugins from tests/data/plugins
-	 */
-	public function pick_a_plugin() {
-		$plugins = array_keys( yourls_get_plugins() );
+     * Return one of the "valid" test plugins from tests/data/plugins
+     */
+    public function pick_a_plugin() {
+        $plugins = array_keys( yourls_get_plugins() );
         $plugin = $plugins[ array_rand( $plugins ) ];
         return $plugin;
     }
 
     /**
-	 * Check that only 2 "valid" plugins are found in tests/data/plugins
-	 */
-	public function test_get_plugins() {
-		$plugins = array_keys( yourls_get_plugins() );
-		$expected = [
+     * Check that only 2 "valid" plugins are found in tests/data/plugins
+     */
+    public function test_get_plugins() {
+        $plugins = array_keys( yourls_get_plugins() );
+        $expected = [
             '0' => 'test-plugin/plugin.php',
             '1' => 'test-plugin2/plugin.php',
         ];
-		$this->assertSame($expected, $plugins);
-	}
+        $this->assertSame($expected, $plugins);
+    }
 
-	/**
-	 * Check that a random "valid" plugin file validates as a plugin file
-	 */
-	public function test_plugin_validate() {
+    /**
+     * Check that a random "valid" plugin file validates as a plugin file
+     */
+    public function test_plugin_validate() {
         $plugin = $this->pick_a_plugin();
-		$this->assertTrue( yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $plugin ) );
-	}
+        $this->assertTrue( yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $plugin ) );
+    }
 
-	/**
-	 * Check that a nonexistent plugin file does not validate as a plugin file
-	 */
-	public function test_missing_plugin_validate() {
+    /**
+     * Check that a nonexistent plugin file does not validate as a plugin file
+     */
+    public function test_missing_plugin_validate() {
         $plugin = rand_str();
-		$this->assertFalse( yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $plugin ) );
-	}
+        $this->assertFalse( yourls_is_a_plugin_file(YOURLS_PLUGINDIR . '/' . $plugin ) );
+    }
 
-	/**
+    /**
      * Check that an invalid plugin file does not validate as a plugin file
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('get_invalid_code_plugins')]
     public function test_invalid_plugin_validate($plugin) {
-		$this->assertFalse( yourls_is_a_plugin_file($plugin) );
-	}
+        $this->assertFalse( yourls_is_a_plugin_file($plugin) );
+    }
 
-	/**
-	 * Check that a random valid plugin activates correctly
-	 */
-	public function test_plugin_activate() {
+    /**
+     * Check that a random valid plugin activates correctly
+     */
+    public function test_plugin_activate() {
         $plugin = $this->pick_a_plugin();
 
         // Make sure the plugin.php is NOT present in get_included_files()
@@ -80,30 +80,30 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         $this->assertNotContains(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.$plugin), array_map('yourls_sanitize_filename', get_included_files()));
 
         // Activate the plugin
-		$this->assertTrue( yourls_activate_plugin( $plugin ) );
-		$this->assertGreaterThan( 0, yourls_has_active_plugins() );
-		$this->assertTrue( yourls_is_active_plugin( $plugin ) );
+        $this->assertTrue( yourls_activate_plugin( $plugin ) );
+        $this->assertGreaterThan( 0, yourls_has_active_plugins() );
+        $this->assertTrue( yourls_is_active_plugin( $plugin ) );
 
-		// Make sure the plugin.php is now present in get_included_files()
+        // Make sure the plugin.php is now present in get_included_files()
         $included_files = array_map('yourls_sanitize_filename', get_included_files()) ;
         $this->assertContains(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.$plugin), $included_files);
 
-		// Make sure the plugin's uninstall.php is NOT present in get_included_files()
+        // Make sure the plugin's uninstall.php is NOT present in get_included_files()
         $this->assertNotContains(yourls_sanitize_filename(YOURLS_PLUGINDIR.'/'.dirname($plugin).'/uninstall.php'), $included_files);
 
         // We should NOT have YOURLS_UNINSTALL_PLUGIN defined
         $this->assertFalse(defined('YOURLS_UNINSTALL_PLUGIN'));
 
-		return $plugin;
-	}
+        return $plugin;
+    }
 
-	/**
+    /**
      * Check that an active plugin does not activate
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_plugin_activate_twice( $plugin ) {
-		$this->assertSame( yourls__( 'Plugin already activated' ), yourls_activate_plugin( $plugin ) );
-	}
+        $this->assertSame( yourls__( 'Plugin already activated' ), yourls_activate_plugin( $plugin ) );
+    }
 
     /**
      * Simulate initial plugin loading
@@ -135,16 +135,16 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         $this->assertSame( 1, yourls_has_active_plugins() );
     }
 
-	/**
+    /**
      * Check that valid plugin deactivates correctly
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_plugin_deactivate( $plugin ) {
-		$this->assertTrue( yourls_deactivate_plugin($plugin) );
-		$this->assertSame( 0, yourls_has_active_plugins() );
-		$this->assertFalse( yourls_is_active_plugin($plugin) );
-		return $plugin;
-	}
+        $this->assertTrue( yourls_deactivate_plugin($plugin) );
+        $this->assertSame( 0, yourls_has_active_plugins() );
+        $this->assertFalse( yourls_is_active_plugin($plugin) );
+        return $plugin;
+    }
 
     /**
      * Check that deactivating a plugin correctly ran the uninstall script
@@ -158,27 +158,27 @@ class FilesTest extends PHPUnit\Framework\TestCase {
         $this->assertTrue( defined('YOURLS_UNINSTALL_PLUGIN') && YOURLS_UNINSTALL_PLUGIN );
     }
 
-	/**
-	 * Check that an missing plugin does not activate
-	 */
-	public function test_invalid_plugin_activate() {
+    /**
+     * Check that an missing plugin does not activate
+     */
+    public function test_invalid_plugin_activate() {
         $plugin = rand_str();
 
-		$this->assertSame( yourls__( 'Not a valid plugin file' ), yourls_activate_plugin( $plugin ) );
-		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
-	}
+        $this->assertSame( yourls__( 'Not a valid plugin file' ), yourls_activate_plugin( $plugin ) );
+        $this->assertFalse( yourls_is_active_plugin( $plugin ) );
+    }
 
-	/**
-	 * Check that a missing plugin does not deactivate
-	 */
-	public function test_invalid_plugin_deactivate() {
+    /**
+     * Check that a missing plugin does not deactivate
+     */
+    public function test_invalid_plugin_deactivate() {
         $plugin = rand_str();
 
-		$this->assertFalse( yourls_is_active_plugin( $plugin ) );
-		$this->assertSame( yourls__( 'Plugin not active' ), yourls_deactivate_plugin( $plugin ) );
-	}
+        $this->assertFalse( yourls_is_active_plugin( $plugin ) );
+        $this->assertSame( yourls__( 'Plugin not active' ), yourls_deactivate_plugin( $plugin ) );
+    }
 
-	/**
+    /**
      * Check that a plugin with invalid code does not activate
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('get_invalid_code_plugins')]

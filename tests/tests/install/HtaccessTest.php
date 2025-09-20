@@ -33,7 +33,7 @@ class HtaccessTest extends PHPUnit\Framework\TestCase {
         yield array( 'meh IIS meh',        false, 'web.config' );
     }
 
-	/**
+    /**
      * Check .htaccess creation - general function, checking if file is created
      *
      * @since 0.1
@@ -47,9 +47,9 @@ class HtaccessTest extends PHPUnit\Framework\TestCase {
         if( file_exists( YOURLS_ABSPATH . '/' . $file ) )
             @unlink( YOURLS_ABSPATH . '/' . $file );
 
-		$this->assertTrue( yourls_create_htaccess() );
-		$this->assertFileExists( YOURLS_ABSPATH . '/' . $file );
-	}
+        $this->assertTrue( yourls_create_htaccess() );
+        $this->assertFileExists( YOURLS_ABSPATH . '/' . $file );
+    }
 
     /**
      * Files in which we want to insert content
@@ -63,7 +63,7 @@ class HtaccessTest extends PHPUnit\Framework\TestCase {
         yield array( 'original_other-content.txt' );
     }
 
-	/**
+    /**
      * Check .htaccess creation - specific cases, checking file contents
      *
      * @since 0.1
@@ -100,6 +100,6 @@ class HtaccessTest extends PHPUnit\Framework\TestCase {
         $new = array_map( function($line) {return str_replace(array("\r", "\n"), '', $line);}, file($newfile));
         $this->assertSame($exp, $new);
         unlink( $newfile );
-	}
+    }
 
 }
