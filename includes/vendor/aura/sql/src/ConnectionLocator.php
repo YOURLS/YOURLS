@@ -33,7 +33,7 @@ class ConnectionLocator implements ConnectionLocatorInterface
      * @var array
      *
      */
-    protected $read = [];
+    protected array $read = [];
 
     /**
      *
@@ -42,13 +42,13 @@ class ConnectionLocator implements ConnectionLocatorInterface
      * @var array
      *
      */
-    protected $write = [];
+    protected array $write = [];
 
     /**
      *
      * Constructor.
      *
-     * @param callable $default A callable to create a default connection.
+     * @param callable|null $default A callable to create a default connection.
      *
      * @param array $read An array of callables to create read connections.
      *
@@ -56,7 +56,7 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      */
     public function __construct(
-        $default = null,
+        ?callable $default = null,
         array $read = [],
         array $write = []
     ) {
@@ -77,10 +77,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @param callable $callable The factory for the connection.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setDefault(callable $callable)
+    public function setDefault(callable $callable): void
     {
         $this->default = $callable;
     }
@@ -91,9 +90,14 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @return ExtendedPdoInterface
      *
+     * @throws Exception\ConnectionNotFound
      */
-    public function getDefault()
+    public function getDefault(): ExtendedPdoInterface
     {
+        if (! $this->default) {
+            throw new Exception\ConnectionNotFound("default");
+        }
+
         if (! $this->default instanceof ExtendedPdo) {
             $this->default = call_user_func($this->default);
         }
@@ -109,10 +113,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @param callable $callable The factory for the connection.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setRead($name, callable $callable)
+    public function setRead(string $name, callable $callable): void
     {
         $this->read[$name] = $callable;
     }
@@ -127,8 +130,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @return ExtendedPdoInterface
      *
+     * @throws \Aura\Sql\Exception\ConnectionNotFound
      */
-    public function getRead($name = '')
+    public function getRead(string $name = ''): ExtendedPdoInterface
     {
         return $this->getConnection('read', $name);
     }
@@ -141,10 +145,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @param callable $callable The factory for the connection.
      *
-     * @return null
-     *
+     * @return void
      */
-    public function setWrite($name, callable $callable)
+    public function setWrite(string $name, callable $callable): void
     {
         $this->write[$name] = $callable;
     }
@@ -159,8 +162,9 @@ class ConnectionLocator implements ConnectionLocatorInterface
      *
      * @return ExtendedPdoInterface
      *
+     * @throws \Aura\Sql\Exception\ConnectionNotFound
      */
-    public function getWrite($name = '')
+    public function getWrite(string $name = ''): ExtendedPdoInterface
     {
         return $this->getConnection('write', $name);
     }
@@ -178,7 +182,7 @@ class ConnectionLocator implements ConnectionLocatorInterface
      * @throws Exception\ConnectionNotFound
      *
      */
-    protected function getConnection($type, $name)
+    protected function getConnection(string $type, string $name): ExtendedPdoInterface
     {
         $conn = &$this->{$type};
 
@@ -191,7 +195,7 @@ class ConnectionLocator implements ConnectionLocatorInterface
         }
 
         if (! isset($conn[$name])) {
-            throw new Exception\ConnectionNotFound("{$type}:{$name}");
+            throw new Exception\ConnectionNotFound("$type:$name");
         }
 
         if (! $conn[$name] instanceof ExtendedPdo) {

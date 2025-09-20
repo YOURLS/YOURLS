@@ -109,6 +109,10 @@ yourls_html_menu();
 				$data[ $field ] = $plugin[ $value ];
 			} else {
 				$data[ $field ] = yourls__('(no info)');
+                # If it's a URL, set to #
+                if( in_array( $field, array('uri', 'author_uri') ) ) {
+                    $data[$field] = '#' . $data[$field];
+                }
 			}
 			unset( $plugin[$value] );
 		}

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MaxMind\Db\Reader;
 
-use ArgumentCountError;
-
 /**
  * This class provides the metadata for the MaxMind DB file.
  */
@@ -18,6 +16,7 @@ class Metadata
      * @var int
      */
     public $binaryFormatMajorVersion;
+
     /**
      * This is an unsigned 16-bit integer indicating the minor version number
      * for the database's binary format.
@@ -25,6 +24,7 @@ class Metadata
      * @var int
      */
     public $binaryFormatMinorVersion;
+
     /**
      * This is an unsigned 64-bit integer that contains the database build
      * timestamp as a Unix epoch value.
@@ -32,6 +32,7 @@ class Metadata
      * @var int
      */
     public $buildEpoch;
+
     /**
      * This is a string that indicates the structure of each data record
      * associated with an IP address.  The actual definition of these
@@ -40,15 +41,17 @@ class Metadata
      * @var string
      */
     public $databaseType;
+
     /**
      * This key will always point to a map (associative array). The keys of
      * that map will be language codes, and the values will be a description
      * in that language as a UTF-8 string. May be undefined for some
      * databases.
      *
-     * @var array
+     * @var array<string, string>
      */
     public $description;
+
     /**
      * This is an unsigned 16-bit integer which is always 4 or 6. It indicates
      * whether the database contains IPv4 or IPv6 address data.
@@ -56,18 +59,21 @@ class Metadata
      * @var int
      */
     public $ipVersion;
+
     /**
      * An array of strings, each of which is a language code. A given record
      * may contain data items that have been localized to some or all of
      * these languages. This may be undefined.
      *
-     * @var array
+     * @var array<string>
      */
     public $languages;
+
     /**
      * @var int
      */
     public $nodeByteSize;
+
     /**
      * This is an unsigned 32-bit integer indicating the number of nodes in
      * the search tree.
@@ -75,6 +81,7 @@ class Metadata
      * @var int
      */
     public $nodeCount;
+
     /**
      * This is an unsigned 16-bit integer. It indicates the number of bits in a
      * record in the search tree. Note that each node consists of two records.
@@ -82,16 +89,20 @@ class Metadata
      * @var int
      */
     public $recordSize;
+
     /**
      * @var int
      */
     public $searchTreeSize;
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function __construct(array $metadata)
     {
         if (\func_num_args() !== 1) {
-            throw new ArgumentCountError(
-                sprintf('%s() expects exactly 1 parameter, %d given', __METHOD__, \func_num_args())
+            throw new \ArgumentCountError(
+                \sprintf('%s() expects exactly 1 parameter, %d given', __METHOD__, \func_num_args())
             );
         }
 

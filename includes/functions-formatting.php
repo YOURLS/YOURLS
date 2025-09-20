@@ -234,7 +234,12 @@ function yourls_trim_long_string($string, $length = 60, $append = '[...]') {
  *
  * The regexp searches for the first digits, then a period, then more digits and periods, and discards
  * all the rest.
- * For instance, 'mysql-5.5-beta' and '5.5-RC1' return '5.5'
+ * Examples:
+ * 'omgmysql-5.5-ubuntu-4.20' => '5.5'
+ * 'mysql5.5-ubuntu-4.20'     => '5.5'
+ * '5.5-ubuntu-4.20'          => '5.5'
+ * '5.5-beta2'                => '5.5'
+ * '5.5'                      => '5.5'
  *
  * @since 1.4.1
  * @param  string $version  Version number

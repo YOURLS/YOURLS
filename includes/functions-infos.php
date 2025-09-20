@@ -136,20 +136,27 @@ function yourls_build_list_of_days($dates) {
 
 	unset( $_keys );
 
+	// Extend to today
+	$today = new DateTime();
+	$today->setTime( 0, 0, 0 ); // Start of today
+	$today_year = $today->format( 'Y' );
+	$today_month = $today->format( 'm' );
+	$today_day = $today->format( 'd' );
+
 	// Now build a list of all years (2009), month (08 & 09) and days (all from 2009-08-29 to 2009-09-05)
 	$list_of_years  = array();
 	$list_of_months = array();
 	$list_of_days   = array();
-	for ( $year = $first_year; $year <= $last_year; $year++ ) {
+	for ( $year = $first_year; $year <= $today_year; $year++ ) {
 		$_year = sprintf( '%04d', $year );
 		$list_of_years[ $_year ] = $_year;
 		$current_first_month = ( $year == $first_year ? $first_month : '01' );
-		$current_last_month  = ( $year == $last_year ? $last_month : '12' );
+		$current_last_month = ( $year == $today_year ? $today_month : '12' );
 		for ( $month = $current_first_month; $month <= $current_last_month; $month++ ) {
 			$_month = sprintf( '%02d', $month );
 			$list_of_months[ $_month ] = $_month;
 			$current_first_day = ( $year == $first_year && $month == $first_month ? $first_day : '01' );
-			$current_last_day  = ( $year == $last_year && $month == $last_month ? $last_day : yourls_days_in_month( $month, $year) );
+			$current_last_day = ( $year == $today_year && $month == $today_month ? $today_day : yourls_days_in_month( $month, $year ) );
 			for ( $day = $current_first_day; $day <= $current_last_day; $day++ ) {
 				$day = sprintf( '%02d', $day );
 				$key = date( 'M d, Y', mktime( 0, 0, 0, $_month, $day, $_year ) );

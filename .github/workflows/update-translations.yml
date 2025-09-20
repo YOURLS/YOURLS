@@ -1,0 +1,115 @@
+name: Update translations
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  translations-check:
+    name: Check for updated translations
+    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install GNU gettext
+        run: sudo apt-get install gettext
+
+      - name: Get version
+        id: get-version
+        run: echo "yourls-version=$(php -r 'require "includes/version.php"; echo YOURLS_VERSION;')" >> $GITHUB_OUTPUT
+
+      - name: Extract translations
+        env:
+          YOURLS_VERSION: ${{ steps.get-version.outputs.yourls-version }}
+        run: |
+          find . -name "*.php" ! -path "./user/*" ! -path "./tests/*" ! -path "./includes/vendor/*" \
+          | xargs xgettext \
+            --output=YOURLS.pot --package-name=YOURLS --package-version=$YOURLS_VERSION --foreign-user \
+            --add-location --language=PHP --from-code=UTF-8 --sort-by-file \
+            --keyword=yourls__ \
+            --keyword=yourls_e \
+            --keyword=yourls_s \
+            --keyword=yourls_se \
+            --keyword=yourls_esc_attr__ \
+            --keyword=yourls_esc_html__ \
+            --keyword=yourls_x \
+            --keyword=yourls_ex \
+            --keyword=yourls_esc_attr_x \
+            --keyword=yourls_esc_html_x \
+            --keyword=yourls_n:1,2 \
+            --keyword=yourls_nx:1,2 \
+            --keyword=yourls_n_noop:1,2 \
+            --keyword=yourls_nx_noop:1,2
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YOURLS-pot
+          path: YOURLS.pot
+
+  translations-submit:
+    name: Submit updated translations
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'YOURLS/YOURLS' }}
+    runs-on: ubuntu-latest
+    needs:
+      - translations-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          repository: YOURLS/YOURLS.pot
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: YOURLS-pot
+
+      - name: Generate token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Show git status
+        run: git status -vv --untracked=all
+
+      - name: Get date
+        id: get-date
+        run: echo "DATE=$(/bin/date -u "+%F")" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        id: pull-request
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          author: "${{ steps.app-token.outputs.app-slug }}[bot] <${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>"
+          base: main
+          branch: auto-update-translations
+          delete-branch: true
+          commit-message: "Update translations"
+          title: "Update translations"
+          body: |
+            Updated translations, last verified on ${{ steps.get-date.outputs.DATE }}.
+          labels: |
+            dependencies
+
+      - name: Enable Pull Request Automerge
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
+        run: gh pr merge --auto --rebase "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
