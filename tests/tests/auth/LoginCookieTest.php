@@ -35,31 +35,31 @@ class LoginCookieTest extends PHPUnit\Framework\TestCase {
         yourls_remove_filter( 'is_API', 'yourls_return_false' );
     }
 
-	/**
-	 * Check for valid cookie name
-	 */
-	public function test_cookie_name() {
+    /**
+     * Check for valid cookie name
+     */
+    public function test_cookie_name() {
         $this->assertTrue( is_string(yourls_cookie_name()) );
     }
 
-	/**
-	 * Check for valid cookie value
-	 */
-	public function test_cookie_value() {
+    /**
+     * Check for valid cookie value
+     */
+    public function test_cookie_value() {
         $this->assertTrue( is_string(yourls_cookie_value(rand_str())) );
     }
 
-	/**
-	 * Check for valid cookie life
-	 */
-	public function test_cookie_life() {
+    /**
+     * Check for valid cookie life
+     */
+    public function test_cookie_life() {
         $this->assertTrue( is_int(yourls_get_cookie_life()) );
     }
 
-	/**
-	 * Test login with valid cookie - also check that cookie is set
-	 */
-	public function test_login_valid_cookie() {
+    /**
+     * Test login with valid cookie - also check that cookie is set
+     */
+    public function test_login_valid_cookie() {
         global $yourls_user_passwords;
         $random_user = array_rand($yourls_user_passwords);
         $_COOKIE[yourls_cookie_name()] = yourls_cookie_value( $random_user );
@@ -71,10 +71,10 @@ class LoginCookieTest extends PHPUnit\Framework\TestCase {
         $this->assertSame( 1, yourls_did_action('pre_setcookie') );
     }
 
-	/**
-	 * Test login with invalid cookie - also check that no cookie is set
-	 */
-	public function test_login_invalid_cookie() {
+    /**
+     * Test login with invalid cookie - also check that no cookie is set
+     */
+    public function test_login_invalid_cookie() {
         $_COOKIE[yourls_cookie_name()] = yourls_cookie_value( rand_str() );
         unset($_REQUEST);
 

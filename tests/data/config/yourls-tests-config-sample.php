@@ -32,13 +32,13 @@ define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the d
 define('YOURLS_DEBUG', true);
 
 $yourls_reserved_URL = array(
-	'porn', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
+    'porn', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 );
 
 $yourls_user_passwords = array(
-	'yourls'  => 'secret-ci-test',
-	'clear'   => 'somepassword',
-	'md5'     => 'md5:12373:e52e4488f79a740bd341f229e3c163c8',                          // password: '3cd6944201fa7bbc5e0fe852e36b1096' with md5 and salt
+    'yourls'  => 'secret-ci-test',
+    'clear'   => 'somepassword',
+    'md5'     => 'md5:12373:e52e4488f79a740bd341f229e3c163c8',                          // password: '3cd6944201fa7bbc5e0fe852e36b1096' with md5 and salt
     'phpass'  => 'phpass:!2a!08!T1ptMlBSxu7g3odpbUXgd.9wbKvg8k7cJt.HbwSqUNrlLPudWnf/6', // password: '3cd6944201fa7bbc5e0fe852e36b1096' with old PHPass library
     'phpass2' => 'phpass:$2a$08$gt2bnpfUyuCX3hrp0RPOieFR1RwBnLsMzpq/NvPXwCdV3LqI3RGYi', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' with old PHPass lib but without YOURLS internal char substitution
     'phpass3' => 'phpass:!2y!10!.FjK.vQR0JVivkMwckiiIesFUFhtMxX/f9pes.i/ccp/W0IuUSxPW', // password: also '3cd6944201fa7bbc5e0fe852e36b1096' hashed with password_hash

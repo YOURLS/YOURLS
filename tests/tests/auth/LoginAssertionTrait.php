@@ -3,21 +3,21 @@
 trait LoginAssertionTrait
 {
     /**
-	 * Check that user, as submitted by REQUEST (see phpunit XML config file), is valid
-	 *
-	 * @since 0.1
-	 */
-	public function test_login() {
+     * Check that user, as submitted by REQUEST (see phpunit XML config file), is valid
+     *
+     * @since 0.1
+     */
+    public function test_login() {
         $pre_login    = yourls_did_action( 'pre_login' );
         $login        = yourls_did_action( 'login' );
         $login_failed = yourls_did_action( 'login_failed' );
 
-		$this->assertTrue( yourls_is_valid_user() );
+        $this->assertTrue( yourls_is_valid_user() );
 
-		$this->assertEquals( $pre_login + 1, yourls_did_action( 'pre_login' ) );
-		$this->assertEquals( $login + 1, yourls_did_action( 'login' ) );
-		$this->assertEquals( $login_failed, yourls_did_action( 'login_failed' ) );
-	}
+        $this->assertEquals( $pre_login + 1, yourls_did_action( 'pre_login' ) );
+        $this->assertEquals( $login + 1, yourls_did_action( 'login' ) );
+        $this->assertEquals( $login_failed, yourls_did_action( 'login_failed' ) );
+    }
 
     /**
      * Check that auth is shuntable
@@ -42,8 +42,8 @@ trait LoginAssertionTrait
 
         $this->assertNotTrue( yourls_is_valid_user() );
 
-		$this->assertEquals( $login, yourls_did_action( 'login' ) );
-		$this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
+        $this->assertEquals( $login, yourls_did_action( 'login' ) );
+        $this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
     }
 
     /**
@@ -58,8 +58,8 @@ trait LoginAssertionTrait
 
         $this->assertNotTrue( yourls_is_valid_user() );
 
-		$this->assertEquals( $login, yourls_did_action( 'login' ) );
-		$this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
+        $this->assertEquals( $login, yourls_did_action( 'login' ) );
+        $this->assertEquals( $login_failed + 1, yourls_did_action( 'login_failed' ) );
     }
 
     /**

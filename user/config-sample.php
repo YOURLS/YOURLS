@@ -63,9 +63,9 @@ define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
  ** YOURLS will auto encrypt plain text passwords in this file
  ** Read http://yourls.org/userpassword for more information */
 $yourls_user_passwords = [
-	'username' => 'password',
-	// 'username2' => 'password2',
-	// You can have one or more 'login'=>'password' lines
+    'username' => 'password',
+    // 'username2' => 'password2',
+    // You can have one or more 'login'=>'password' lines
 ];
 
 /** URL shortening method: either 36 or 62
@@ -83,7 +83,7 @@ define( 'YOURLS_DEBUG', false );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = [
-	'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
+    'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
 ];
 
 /*

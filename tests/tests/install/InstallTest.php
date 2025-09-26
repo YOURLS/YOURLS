@@ -7,25 +7,25 @@
 class InstallTest extends PHPUnit\Framework\TestCase {
 
     /**
-	 * Check if YOURLS is declared installed
-	 */
-	public function test_install() {
-		$this->assertTrue( yourls_is_installed() );
-	}
+     * Check if YOURLS is declared installed
+     */
+    public function test_install() {
+        $this->assertTrue( yourls_is_installed() );
+    }
 
-	/**
-	 * Check that tables were correctly populated during install
-	 */
-	public function test_init_tables() {
-		// This should fail because these inserts have been taken care of during install
-		$this->assertFalse( yourls_initialize_options() );
-		$this->assertFalse( yourls_insert_sample_links() );
-	}
+    /**
+     * Check that tables were correctly populated during install
+     */
+    public function test_init_tables() {
+        // This should fail because these inserts have been taken care of during install
+        $this->assertFalse( yourls_initialize_options() );
+        $this->assertFalse( yourls_insert_sample_links() );
+    }
 
-	/**
-	 * Test (sort of) table creation
-	 */
-	public function test_create_tables() {
+    /**
+     * Test (sort of) table creation
+     */
+    public function test_create_tables() {
 
         /* The expected result has:
          *   - success messages: the table are created with a "CREATE IF NOT EXISTS",
@@ -53,11 +53,11 @@ class InstallTest extends PHPUnit\Framework\TestCase {
         );
 
         $this->assertSame( $expected, yourls_create_sql_tables() );
-	}
+    }
 
-	/**
-	 * Test (sort of) defining constants
-	 */
+    /**
+     * Test (sort of) defining constants
+     */
     public function test_correct_config() {
         $test = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
 
@@ -76,9 +76,9 @@ class InstallTest extends PHPUnit\Framework\TestCase {
         $this->assertSame($before,$after);
     }
 
-	/**
-	 * Test incorrect config provided
-	 */
+    /**
+     * Test incorrect config provided
+     */
     public function test_incorrect_config() {
         $this->expectException(YOURLS\Exceptions\ConfigException::class);
         $this->expectExceptionMessageMatches('/User defined config not found at \'[0-9a-z]+\'/');
@@ -87,9 +87,9 @@ class InstallTest extends PHPUnit\Framework\TestCase {
         $test->find_config();
     }
 
-	/**
-	 * Test config not found
-	 */
+    /**
+     * Test config not found
+     */
     public function test_not_found_config() {
         $this->expectException(YOURLS\Exceptions\ConfigException::class);
         $this->expectExceptionMessage('Cannot find config.php. Please read the readme.html to learn how to install YOURLS');
@@ -99,9 +99,9 @@ class InstallTest extends PHPUnit\Framework\TestCase {
         $test->find_config();
     }
 
-	/**
-	 * Test Init actions. Not sure this is a good idea, might become cumbersome to maintain?
-	 */
+    /**
+     * Test Init actions. Not sure this is a good idea, might become cumbersome to maintain?
+     */
     public function test_init_defaults() {
         $test = new \YOURLS\Config\InitDefaults();
 
