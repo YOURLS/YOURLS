@@ -35,14 +35,14 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /** YOURLS installation URL
  ** All lowercase, no trailing slash at the end.
- ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa)
- ** To use an IDN domain (eg http://héhé.com), write its ascii form here (eg http://xn--hh-bjab.com) */
+ ** If you define it to "https://sho.rt", don't use "https://www.sho.rt" in your browser (and vice-versa)
+ ** To use an IDN domain (eg https://héhé.com), write its ascii form here (eg https://xn--hh-bjab.com) */
 define( 'YOURLS_SITE', 'https://your-own-domain-here.com' );
 
 /** YOURLS language
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
- ** See http://yourls.org/translations for more information */
+ ** See https://yourls.org/translations for more information */
 define( 'YOURLS_LANG', '' );
 
 /** Allow multiple short URLs for a same long URL
