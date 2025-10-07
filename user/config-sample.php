@@ -35,14 +35,14 @@ define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /** YOURLS installation URL
  ** All lowercase, no trailing slash at the end.
- ** If you define it to "http://sho.rt", don't use "http://www.sho.rt" in your browser (and vice-versa)
- ** To use an IDN domain (eg http://héhé.com), write its ascii form here (eg http://xn--hh-bjab.com) */
-define( 'YOURLS_SITE', 'http://your-own-domain-here.com' );
+ ** If you define it to "https://sho.rt", don't use "https://www.sho.rt" in your browser (and vice-versa)
+ ** To use an IDN domain (eg https://héhé.com), write its ascii form here (eg https://xn--hh-bjab.com) */
+define( 'YOURLS_SITE', 'https://your-own-domain-here.com' );
 
 /** YOURLS language
  ** Change this setting to use a translation file for your language, instead of the default English.
  ** That translation file (a .mo file) must be installed in the user/language directory.
- ** See http://yourls.org/translations for more information */
+ ** See https://yourls.org/translations for more information */
 define( 'YOURLS_LANG', '' );
 
 /** Allow multiple short URLs for a same long URL
@@ -52,16 +52,16 @@ define( 'YOURLS_UNIQUE_URLS', true );
 
 /** Private means the Admin area will be protected with login/pass as defined below.
  ** Set to false for public usage (eg on a restricted intranet or for test setups)
- ** Read http://yourls.org/privatepublic for more details if you're unsure */
+ ** Read https://yourls.org/privatepublic for more details if you're unsure */
 define( 'YOURLS_PRIVATE', true );
 
 /** A random secret hash used to encrypt cookies. You don't have to remember it, make it long and complicated
- ** Hint: copy from http://yourls.org/cookie */
+ ** Hint: copy from https://yourls.org/cookie */
 define( 'YOURLS_COOKIEKEY', 'modify this text with something random' );
 
 /** Username(s) and password(s) allowed to access the site. Passwords either in plain text or as encrypted hashes
  ** YOURLS will auto encrypt plain text passwords in this file
- ** Read http://yourls.org/userpassword for more information */
+ ** Read https://yourls.org/userpassword for more information */
 $yourls_user_passwords = [
     'username' => 'password',
     // 'username2' => 'password2',
@@ -83,7 +83,13 @@ define( 'YOURLS_DEBUG', false );
 * Define here negative, unwanted or potentially misleading keywords.
 */
 $yourls_reserved_URL = [
-    'porn', 'faggot', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
+    'porn',
+    'faggot',
+    'sex',
+    'nigger',
+    'fuck',
+    'cunt',
+    'dick',
 ];
 
 /*
