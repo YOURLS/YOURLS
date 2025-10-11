@@ -85,6 +85,10 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr' );
         yield array( 'http://www.طارق.net/طارق?hello=%2B' );
         yield array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/' );
+        // Backslashes should be preserved in URL fragments and queries
+        yield array( 'https://example.com/path?q=a\\b\\c#x\\y\\z' );
+        // Preserve backslashes in JSON-like fragment (regression for issue #3802)
+        yield array( 'https://terminal.jcubic.pl/404#[[0,1,%22jargon%20\\%22Don%27t%20do%20that%20then!\\%22%22]]' );
     }
 
     /**
