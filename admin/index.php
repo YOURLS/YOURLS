@@ -34,13 +34,16 @@ if( $search && $search_in && $search_in_text ) {
     $search_text     = $search;
     $search          = str_replace( '*', '%', '*' . $search . '*' );
     if( $search_in == 'all' ) {
-        $where['sql'] .= " AND CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE (:search)";
-        // Search across all fields. The resulting SQL will be something like:
-        // SELECT * FROM `yourls_url` WHERE CONCAT_WS('',`keyword`,`url`,`title`,`ip`) LIKE ("%ozh%")
-        // CONCAT_WS because CONCAT('foo', 'bar', NULL) = NULL. NULL wins. Not sure if values can be NULL now or in the future, so better safe.
-        // TODO: pay attention to this bit when the DB schema changes
+        $where['sql'] .= " AND `keyword` LIKE (:search)
+                        OR `url` LIKE (:search)
+                        OR `title` COLLATE utf8mb4_unicode_ci LIKE (:search) COLLATE utf8mb4_unicode_ci
+                        OR `ip` LIKE (:search) ";
     } else {
-        $where['sql'] .= " AND `$search_in` LIKE (:search)";
+        $collate = '';
+        if( $search_in == 'title' ) {
+            $collate = ' COLLATE utf8mb4_unicode_ci';
+        }
+        $where['sql'] .= " AND `$search_in` $collate LIKE (:search) $collate";
     }
     $where['binds']['search'] = $search;
 }
