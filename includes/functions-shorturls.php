@@ -208,17 +208,30 @@ function yourls_is_shorturl( $shorturl ) {
 }
 
 /**
+ * Get the list of reserved keywords for URLs.
+ *
+ * @return array             Array of reserved keywords
+ */
+function yourls_get_reserved_URL() {
+    global $yourls_reserved_URL;
+    if ( ! isset( $yourls_reserved_URL ) || ! is_array( $yourls_reserved_URL ) ) {
+        return array();
+    }
+
+    return $yourls_reserved_URL;
+}
+
+/**
  * Check to see if a given keyword is reserved (ie reserved URL or an existing page). Returns bool
  *
  * @param  string $keyword   Short URL keyword
  * @return bool              True if keyword reserved, false if free to be used
  */
 function yourls_keyword_is_reserved( $keyword ) {
-    global $yourls_reserved_URL;
     $keyword = yourls_sanitize_keyword( $keyword );
     $reserved = false;
 
-    if ( in_array( $keyword, $yourls_reserved_URL)
+    if ( in_array( $keyword, yourls_get_reserved_URL() )
         or yourls_is_page($keyword)
         or is_dir( YOURLS_ABSPATH ."/$keyword" )
     )
