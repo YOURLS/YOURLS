@@ -9,14 +9,23 @@
 class ShortURLTest extends PHPUnit\Framework\TestCase {
 
     public function test_reserved_keywords() {
-        global $yourls_reserved_URL;
+        $yourls_reserved_URL = yourls_get_reserved_URL();
         $reserved = $yourls_reserved_URL[ array_rand( $yourls_reserved_URL, 1 )  ];
         $this->assertTrue( yourls_keyword_is_reserved( $reserved ) );
         $this->assertFalse( yourls_keyword_is_reserved( rand_str() ) );
     }
 
-    public function test_free_keywords() {
+    public function test_no_reserved_keywords() {
         global $yourls_reserved_URL;
+        $existing_keywords = $yourls_reserved_URL;
+        $yourls_reserved_URL = null;
+        $this->assertFalse( yourls_keyword_is_reserved( rand_str() ) );
+        // put it back for other tests.
+        $yourls_reserved_URL = $existing_keywords;
+    }
+
+    public function test_free_keywords() {
+        $yourls_reserved_URL = yourls_get_reserved_URL();
         $reserved = $yourls_reserved_URL[ array_rand( $yourls_reserved_URL, 1 )  ];
         $this->assertFalse( yourls_keyword_is_free( $reserved ) );
         $this->assertFalse( yourls_keyword_is_free( 'ozh' ) );
