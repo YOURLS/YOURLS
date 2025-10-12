@@ -539,6 +539,18 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
     $url = yourls_normalize_uri( $url );
 
     $url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\\\\\x80-\\xff]|i', '', $url );
+    // The replace above allows backslashes now, but we only should only allow them after a query string or a fragment identifier.
+    if ( str_contains( $url, '\\') ) {
+        if ( str_contains( $url, '?') ) {
+            $parts = explode( '?', $url );
+            $url = str_replace( '\\', '', array_shift( $parts ) ) . '?' . implode( '?', $parts );
+        } elseif ( str_contains( $url, '#') ) {
+            $parts = explode( '#', $url );
+            $url = str_replace( '\\', '', array_shift( $parts ) ) . '#' . implode( '#', $parts );
+        } else {
+            $url = str_replace( '\\', '', $url );
+        }
+    }
     // Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
     // TODO: check if that was it too destructive
 
