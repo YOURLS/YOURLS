@@ -89,6 +89,8 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'https://example.com/path?q=a\\b\\c#x\\y\\z' );
         yield array( 'https://example.com/path?q=a\\b\\c' );
         yield array( 'https://example.com/path#x\\y\\z' );
+        yield array( 'https://example.com/path#x\\y\\z?a\\b\\c' );
+        yield array( 'mailto:ozh@ozh.ozh?subject=hello\\world&body=this%20is%20%a%20#fragment' );
         // Preserve backslashes in JSON-like fragment (regression for issue #3802)
         yield array( 'https://terminal.jcubic.pl/404#[[0,1,%22jargon%20\\%22Don%27t%20do%20that%20then!\\%22%22]]' );
     }
