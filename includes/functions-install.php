@@ -218,13 +218,15 @@ function yourls_create_sql_tables() {
         'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_URL.'` ('.
          '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT \'\','.
          '`url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,'.
+         '`url_hash` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,'.
          '`title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
          '`timestamp` timestamp NOT NULL DEFAULT current_timestamp(),'.
          '`ip` varchar(41) COLLATE utf8mb4_unicode_ci NOT NULL,'.
          '`clicks` int(10) unsigned NOT NULL,'.
          'PRIMARY KEY (`keyword`),'.
          'KEY `ip` (`ip`),'.
-         'KEY `timestamp` (`timestamp`)'.
+         'KEY `timestamp` (`timestamp`),'.
+         'KEY `url_hash` (`url_hash`)'.
         ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;';
 
     $create_tables[YOURLS_DB_TABLE_OPTIONS] =

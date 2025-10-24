@@ -17,6 +17,20 @@ function yourls_make_regexp_pattern( $string ) {
 }
 
 /**
+ * Compute a stable hash for a long URL used for fast lookups.
+ *
+ * The URL will be sanitized the same way it is before DB storage, then hashed
+ * using SHA-1 and returned as lowercase to match DB backfill logic.
+ *
+ * @param string $url The long URL
+ * @return string lowercase SHA-1 hash (first 8 chars)
+ */
+function yourls_url_hash( $url ) {
+    $url = yourls_sanitize_url( $url );
+    return substr( strtolower( hash( 'sha1', $url ) ), 0, 8 );
+}
+
+/**
  * Get client IP Address. Returns a DB safe string.
  *
  * @return string

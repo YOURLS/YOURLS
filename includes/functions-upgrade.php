@@ -68,6 +68,10 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             }
         }
 
+        if( $oldsql < 507 ) {
+            yourls_upgrade_to_507();
+        }
+
         yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
         break;
@@ -82,6 +86,49 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
 }
 
 /************************** 1.6 -> 1.8 **************************/
+
+/**
+ * Add url_hash column for fast URL equality lookups and backfill values.
+ * DB version 507.
+ */
+function yourls_upgrade_to_507() {
+    $ydb = yourls_get_db();
+    $errors = [];
+
+    echo "<p>Adding url_hash column and backfilling. Please wait...</p>";
+
+    $table = YOURLS_DB_TABLE_URL;
+
+    $queries = array(
+        // Add column if it does not exist
+        sprintf("ALTER TABLE `%s` ADD COLUMN `url_hash` CHAR(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL AFTER `url`;", $table),
+        // Add index on the new column
+        sprintf("ALTER TABLE `%s` ADD INDEX `url_hash` (`url_hash`);", $table),
+        // Backfill existing rows
+        sprintf("UPDATE `%s` SET `url_hash` = LOWER(SUBSTR(SHA(`url`), 1, 8));", $table),
+    );
+
+    foreach ($queries as $query) {
+        try {
+            $ydb->perform($query);
+        } catch (\Exception $e) {
+            $errors[] = $e->getMessage();
+        }
+    }
+
+    if ($errors) {
+        echo "<p class='error'>Unable to fully update the DB.</p>";
+        echo "<p>You may need to apply some of these changes manually.</p>";
+        echo "<p>The errors were:<pre>";
+        foreach ($errors as $error) {
+            echo "$error\n";
+        }
+        echo "</pre>";
+        die();
+    }
+
+    echo "<p class='success'>OK!</p>";
+}
 
 /**
  * Update to 506, just the fix for people who had updated to master on 1.7.10
