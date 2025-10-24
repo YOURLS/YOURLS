@@ -102,10 +102,10 @@ function yourls_upgrade_to_507() {
     $queries = array(
         // Add column if it does not exist
         sprintf("ALTER TABLE `%s` ADD COLUMN `url_hash` CHAR(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL AFTER `url`;", $table),
-        // Add index on the new column
-        sprintf("ALTER TABLE `%s` ADD INDEX `url_hash` (`url_hash`);", $table),
         // Backfill existing rows
         sprintf("UPDATE `%s` SET `url_hash` = LOWER(SUBSTR(SHA(`url`), 1, 8));", $table),
+        // Add index on the new column
+        sprintf("ALTER TABLE `%s` ADD INDEX `url_hash` (`url_hash`);", $table),
     );
 
     foreach ($queries as $query) {
