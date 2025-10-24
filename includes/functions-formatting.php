@@ -538,7 +538,10 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
     // force scheme and domain to lowercase - see issues 591 and 1630
     $url = yourls_normalize_uri( $url );
 
-    $url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
+    $url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\\\\x80-\\xff]|i', '', $url );
+    // The replace above allows backslashes now, but we only should only allow them after a query string or a fragment identifier
+    $url = yourls_remove_backslashes_before_query_fragment($url);
+
     // Previous regexp in YOURLS was '|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*`\'<>"()\\x80-\\xff\{\}]|i'
     // TODO: check if that was it too destructive
 
@@ -573,6 +576,42 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
     return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
 }
 
+/**
+ * Remove backslashes before query string or fragment identifier
+ *
+ * This function removes backslashes before the first ? or #, if any.
+ * If there's no ? or #, all backslashes are removed.
+ * See issue #3802 and PR #3998
+ *
+ * @since 1.10.3
+ * @param string $url URL
+ * @return string URL without backslashes before query string or fragment identifier
+ */
+function yourls_remove_backslashes_before_query_fragment(string $url): string {
+    $posQ = strpos($url, '?');
+    $posH = strpos($url, '#');
+
+    if ($posQ === false && $posH === false) {
+        // no ? or # -> remove all backslashes
+        return str_replace('\\', '', $url);
+    }
+
+    // chose the first of ? or #
+    if ($posQ === false) {
+        $pos = $posH;
+    } elseif ($posH === false) {
+        $pos = $posQ;
+    } else {
+        $pos = min($posQ, $posH);
+    }
+
+    $before = substr($url, 0, $pos);
+    $after  = substr($url, $pos);
+
+    $before = str_replace('\\', '', $before);
+
+    return $before . $after;
+}
 
 /**
  * Normalize a URI : lowercase scheme and domain, convert IDN to UTF8
