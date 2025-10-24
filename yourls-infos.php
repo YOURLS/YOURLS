@@ -209,6 +209,10 @@ if( yourls_do_log_redirect() ) {
 
 }
 
+// Whether to show referrers on the statistics page
+// Default: show only on private installs; hide on public installs to prevent referrer spam (filterable)
+$show_referrers = yourls_apply_filter( 'statistics_show_referrers', yourls_is_private() );
+
 yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
 yourls_html_logo();
 yourls_html_menu();
@@ -242,7 +246,9 @@ yourls_html_menu();
         <?php if( yourls_do_log_redirect() ) { ?>
         <li class="selected"><a href="#stat_tab_stats"><h2><?php yourls_e( 'Traffic statistics'); ?></h2></a></li>
         <li><a href="#stat_tab_location"><h2><?php yourls_e( 'Traffic location'); ?></h2></a></li>
+        <?php if( $show_referrers ) { ?>
         <li><a href="#stat_tab_sources"><h2><?php yourls_e( 'Traffic sources'); ?></h2></a></li>
+        <?php } ?>
         <?php } ?>
         <li><a href="#stat_tab_share"><h2><?php yourls_e( 'Share'); ?></h2></a></li>
     </ul>
@@ -473,7 +479,7 @@ yourls_html_menu();
         } ?>
     </div>
 
-
+<?php if( $show_referrers ) { ?>
     <div id="stat_tab_sources" class="tab">
         <h2><?php yourls_e( 'Traffic sources' ); ?></h2>
 
@@ -540,6 +546,7 @@ yourls_html_menu();
         } ?>
 
     </div>
+<?php } // endif $show_referrers ?>
 
 <?php } // endif do log redirect ?>
 
