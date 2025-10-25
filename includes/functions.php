@@ -99,16 +99,36 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
     if ( $clicks !== false && is_int( $clicks ) && $clicks >= 0 ) {
         $update = "UPDATE `$table` SET `clicks` = :clicks WHERE `keyword` = :keyword";
         $values = [ 'clicks' => $clicks, 'keyword' => $keyword ];
+        $update_type = 'set';
     } else {
         $update = "UPDATE `$table` SET `clicks` = clicks + 1 WHERE `keyword` = :keyword";
         $values = [ 'keyword' => $keyword ];
+        $update_type = 'increment';
     }
+
+    $ydb = yourls_get_db();
 
     // Try and update click count. An error probably means a concurrency problem : just skip the update
     try {
-        $result = yourls_get_db()->fetchAffected($update, $values);
+        $result = $ydb->fetchAffected($update, $values);
     } catch (Exception $e) {
         $result = 0;
+    }
+
+    if ( $result ) {
+        if ( $ydb->has_infos($keyword) ) {
+            if ( $update_type === 'increment' ) {
+                $infos = $ydb->get_infos($keyword);
+                if ( isset( $infos['clicks'] ) ) {
+                    $infos['clicks']++;
+                    $ydb->set_infos($keyword, $infos);
+                } else {
+                    $ydb->delete_infos($keyword); // We don't know why it's missing, so just purge the cache.
+                }
+            } elseif ( $update_type === 'set' ) {
+                $ydb->update_infos_if_exists($keyword, ['clicks' => $clicks]);
+            }
+        }
     }
 
     yourls_do_action( 'update_clicks', $keyword, $result, $clicks );
