@@ -274,16 +274,18 @@ function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
     $title     = yourls_sanitize_title($title);
     $timestamp = date('Y-m-d H:i:s');
     $ip        = yourls_get_IP();
+    $url_hash  = yourls_url_hash($url);
 
     $table = YOURLS_DB_TABLE_URL;
     $binds = array(
         'keyword'   => $keyword,
         'url'       => $url,
+        'url_hash'  => $url_hash,
         'title'     => $title,
         'timestamp' => $timestamp,
         'ip'        => $ip,
     );
-    $insert = yourls_get_db()->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+    $insert = yourls_get_db()->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `url_hash`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :url_hash, :title, :timestamp, :ip, 0);", $binds);
 
     yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 
@@ -308,7 +310,8 @@ function yourls_long_url_exists( $url ) {
 
     $table = YOURLS_DB_TABLE_URL;
     $url   = yourls_sanitize_url($url);
-    $url_exists = yourls_get_db()->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
+    $hash  = yourls_url_hash($url);
+    $url_exists = yourls_get_db()->fetchObject("SELECT * FROM `$table` WHERE `url_hash` = :hash AND `url` = :url", array('hash'=>$hash, 'url'=>$url));
 
     if ($url_exists === false) {
         $url_exists = NULL;
@@ -350,7 +353,8 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
 
     // Check if new URL is not here already
     if ( $old_url != $url && !yourls_allow_duplicate_longurls() ) {
-        $new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url` = :url;", array('url' => $url)));
+        $new_hash = yourls_url_hash($url);
+        $new_url_already_there = intval($ydb->fetchValue("SELECT COUNT(keyword) FROM `$table` WHERE `url_hash` = :hash AND `url` = :url;", array('hash' => $new_hash, 'url' => $url)));
     } else {
         $new_url_already_there = false;
     }
@@ -365,9 +369,10 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
     yourls_do_action( 'pre_edit_link', $url, $keyword, $newkeyword, $new_url_already_there, $keyword_is_ok );
 
     // All clear, update
-    if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
-            $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
+        if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
+            $new_hash = yourls_url_hash($url);
+            $sql   = "UPDATE `$table` SET `url` = :url, `url_hash` = :hash, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $binds = array('url' => $url, 'hash' => $new_hash, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
             $update_url = $ydb->fetchAffected($sql, $binds);
         if( $update_url ) {
             $return['url']     = array( 'keyword'       => $newkeyword,
@@ -639,12 +644,13 @@ function yourls_get_keyword_stats( $shorturl ) {
  */
 function yourls_get_longurl_keywords( $longurl, $order = 'ASC' ) {
     $longurl = yourls_sanitize_url($longurl);
+    $hash    = yourls_url_hash($longurl);
     $table   = YOURLS_DB_TABLE_URL;
-    $sql     = "SELECT `keyword` FROM `$table` WHERE `url` = :url";
+    $sql     = "SELECT `keyword` FROM `$table` WHERE `url_hash` = :hash AND `url` = :url";
 
     if (in_array($order, array('ASC','DESC'))) {
         $sql .= " ORDER BY `keyword` ".$order;
     }
 
-    return yourls_apply_filter( 'get_longurl_keywords', yourls_get_db()->fetchCol($sql, array('url'=>$longurl)), $longurl );
+    return yourls_apply_filter( 'get_longurl_keywords', yourls_get_db()->fetchCol($sql, array('hash'=>$hash, 'url'=>$longurl)), $longurl );
 }
