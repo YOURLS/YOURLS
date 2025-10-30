@@ -276,7 +276,20 @@ class YDB extends ExtendedPdo {
      * @return void
      */
     public function delete_infos($keyword) {
-        unset($this->infos[$keyword]);
+        if (isset($this->infos[$keyword])) {
+            unset($this->infos[$keyword]);
+        }
+    }
+
+    /**
+     * @param string $keyword
+     * @param mixed  $infos
+     * @return void
+     */
+    public function update_infos_if_exists($keyword, $infos) {
+        if ($this->has_infos($keyword) && $this->infos[$keyword]) {
+            $this->infos[$keyword] = array_merge($this->infos[$keyword], $infos);
+        }
     }
 
     /**
