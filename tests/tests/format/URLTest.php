@@ -85,6 +85,14 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr' );
         yield array( 'http://www.طارق.net/طارق?hello=%2B' );
         yield array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/' );
+        // Backslashes should be preserved in URL fragments and queries
+        yield array( 'https://example.com/path?q=a\\b\\c#x\\y\\z' );
+        yield array( 'https://example.com/path?q=a\\b\\c' );
+        yield array( 'https://example.com/path#x\\y\\z' );
+        yield array( 'https://example.com/path#x\\y\\z?a\\b\\c' );
+        yield array( 'mailto:ozh@ozh.ozh?subject=hello\\world&body=this%20is%20%a%20#fragment' );
+        // Preserve backslashes in JSON-like fragment (regression for issue #3802)
+        yield array( 'https://terminal.jcubic.pl/404#[[0,1,%22jargon%20\\%22Don%27t%20do%20that%20then!\\%22%22]]' );
     }
 
     /**
@@ -133,6 +141,13 @@ class URLTest extends PHPUnit\Framework\TestCase {
         $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
         $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
         $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
+
+        // Backslash tests
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://exa\\mple.com/' ) );
+        $this->assertEquals( 'http://example.com/testingtesting', yourls_sanitize_url_safe( 'http://example.com/testing\\testing' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test#hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test#hash' ) );
+        $this->assertEquals( 'http://example.com/testingtesting#hash\\hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing#hash\\hash' ) );
     }
 
     /**
