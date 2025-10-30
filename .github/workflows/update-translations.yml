@@ -49,7 +49,7 @@ jobs:
             --keyword=yourls_n_noop:1,2 \
             --keyword=yourls_nx_noop:1,2
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: YOURLS-pot
           path: YOURLS.pot
@@ -66,7 +66,7 @@ jobs:
         with:
           repository: YOURLS/YOURLS.pot
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: YOURLS-pot
 
