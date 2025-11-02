@@ -123,7 +123,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * @return void
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
-	yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
+    yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
 }
 
 /**
@@ -175,12 +175,12 @@ function yourls_filter_unique_id($function) {
  *
  * Typical use:
  *
- * 		1) Modify a variable if a function is attached to hook 'yourls_hook'
- *		$yourls_var = "default value";
- *		$yourls_var = yourls_apply_filter( 'yourls_hook', $yourls_var );
+ *         1) Modify a variable if a function is attached to hook 'yourls_hook'
+ *        $yourls_var = "default value";
+ *        $yourls_var = yourls_apply_filter( 'yourls_hook', $yourls_var );
  *
- *		2) Trigger functions is attached to event 'yourls_event'
- *		yourls_apply_filter( 'yourls_event' );
+ *        2) Trigger functions is attached to event 'yourls_event'
+ *        yourls_apply_filter( 'yourls_event' );
  *      (see yourls_do_action() )
  *
  * Returns a value which may have been modified by a filter.
@@ -726,7 +726,7 @@ function yourls_deactivate_plugin( $plugin ) {
  * @return string
  */
 function yourls_plugin_basename( $file ) {
-	return trim( str_replace( yourls_sanitize_filename( YOURLS_PLUGINDIR ), '', yourls_sanitize_filename( $file ) ), '/' );
+    return trim( str_replace( yourls_sanitize_filename( YOURLS_PLUGINDIR ), '', yourls_sanitize_filename( $file ) ), '/' );
 }
 
 /**

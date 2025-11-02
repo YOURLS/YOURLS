@@ -208,17 +208,30 @@ function yourls_is_shorturl( $shorturl ) {
 }
 
 /**
+ * Get the list of reserved keywords for URLs.
+ *
+ * @return array             Array of reserved keywords
+ */
+function yourls_get_reserved_URL() {
+    global $yourls_reserved_URL;
+    if ( ! isset( $yourls_reserved_URL ) || ! is_array( $yourls_reserved_URL ) ) {
+        return array();
+    }
+
+    return $yourls_reserved_URL;
+}
+
+/**
  * Check to see if a given keyword is reserved (ie reserved URL or an existing page). Returns bool
  *
  * @param  string $keyword   Short URL keyword
  * @return bool              True if keyword reserved, false if free to be used
  */
 function yourls_keyword_is_reserved( $keyword ) {
-    global $yourls_reserved_URL;
     $keyword = yourls_sanitize_keyword( $keyword );
     $reserved = false;
 
-    if ( in_array( $keyword, $yourls_reserved_URL)
+    if ( in_array( $keyword, yourls_get_reserved_URL() )
         or yourls_is_page($keyword)
         or is_dir( YOURLS_ABSPATH ."/$keyword" )
     )
@@ -242,7 +255,9 @@ function yourls_delete_link_by_keyword( $keyword ) {
 
     $table = YOURLS_DB_TABLE_URL;
     $keyword = yourls_sanitize_keyword($keyword);
-    $delete = yourls_get_db()->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    $ydb = yourls_get_db();
+    $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    $ydb->delete_infos($keyword); // Clear the cache.
     yourls_do_action( 'delete_link', $keyword, $delete );
     return $delete;
 }
@@ -270,7 +285,14 @@ function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
         'timestamp' => $timestamp,
         'ip'        => $ip,
     );
-    $insert = yourls_get_db()->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+    $ydb = yourls_get_db();
+    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+
+    if ( $insert ) {
+        $infos = $binds;
+        $infos['clicks'] = 0;
+        $ydb->set_infos($keyword, $infos);
+    }
 
     yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );
 
@@ -366,6 +388,10 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
                                 );
             $return['status']  = 'success';
             $return['message'] = yourls__( 'Link updated in database' );
+            $ydb->update_infos_if_exists($newkeyword, array('url' => $url, 'title' => $title)); // Clear the cache.
+            if ($keyword != $newkeyword) {
+                $ydb->delete_infos($keyword); // Clear the cache on the old keyword.
+            }
         } else {
             $return['status']  = 'fail';
             $return['message'] = /* //translators: "Error updating http://someurl/ (Shorturl: http://sho.rt/blah)" */ yourls_s( 'Error updating %s (Short URL: %s)', yourls_esc_html(yourls_trim_long_string($url)), $keyword ) ;
@@ -398,7 +424,12 @@ function yourls_edit_link_title( $keyword, $title ) {
     $title = yourls_sanitize_title( $title );
 
     $table = YOURLS_DB_TABLE_URL;
-    $update = yourls_get_db()->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
+    $ydb = yourls_get_db();
+    $update = $ydb->fetchAffected("UPDATE `$table` SET `title` = :title WHERE `keyword` = :keyword;", array('title' => $title, 'keyword' => $keyword));
+
+    if ( $update ) {
+        $ydb->update_infos_if_exists( $keyword, array('title' => $title) );
+    }
 
     return $update;
 }

@@ -16,6 +16,7 @@ require_once __DIR__ . '/includes/install.php';
 
 // Include relevant config file
 define('YOURLS_CONFIGFILE', yut_find_config());
+echo "Using config file: " . YOURLS_CONFIGFILE . "\n";
 require_once YOURLS_CONFIGFILE;
 
 // Bootstrap YOURLS

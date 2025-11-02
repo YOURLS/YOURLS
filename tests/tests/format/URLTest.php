@@ -85,6 +85,14 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr' );
         yield array( 'http://www.طارق.net/طارق?hello=%2B' );
         yield array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/' );
+        // Backslashes should be preserved in URL fragments and queries
+        yield array( 'https://example.com/path?q=a\\b\\c#x\\y\\z' );
+        yield array( 'https://example.com/path?q=a\\b\\c' );
+        yield array( 'https://example.com/path#x\\y\\z' );
+        yield array( 'https://example.com/path#x\\y\\z?a\\b\\c' );
+        yield array( 'mailto:ozh@ozh.ozh?subject=hello\\world&body=this%20is%20%a%20#fragment' );
+        // Preserve backslashes in JSON-like fragment (regression for issue #3802)
+        yield array( 'https://terminal.jcubic.pl/404#[[0,1,%22jargon%20\\%22Don%27t%20do%20that%20then!\\%22%22]]' );
     }
 
     /**
@@ -97,62 +105,69 @@ class URLTest extends PHPUnit\Framework\TestCase {
         $this->assertEquals( $url, yourls_sanitize_url( $url ) );
     }
 
-	/**
-	 * URL with spaces
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_spaces() {
-		$this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
-		$this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/ ' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/ ' ) );
-	}
+    /**
+     * URL with spaces
+     *
+     * @since 0.1
+     */
+    function test_url_with_spaces() {
+        $this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
+        $this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/ ' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/ ' ) );
+    }
 
-	/**
-	 * URL with bad chars
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_bad_characters() {
+    /**
+     * URL with bad chars
+     *
+     * @since 0.1
+     */
+    function test_url_with_bad_characters() {
         // regular sanitize leaves %0A & %0D alone
         $this->assertEquals( 'http://example.com/keep%0Dlinefeed%0A', yourls_sanitize_url( 'http://example.com/keep%0Dlinefeed%0A' ) );
         $this->assertEquals( 'http://example.com/%0%0%0DAD', yourls_sanitize_url( 'http://example.com/%0%0%0DAD' ) );
 
         // sanitize with anti CRLF
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0dgo' ) );
+        $this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
+        $this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0dgo' ) );
 
-		//Nesting Checks
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAD' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
-	}
+        //Nesting Checks
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAD' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
 
-	/**
-	 * Test valid, missing and fake protocols
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_protocols() {
-		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'http://example.com' ) );
-		$this->assertEquals( 'example.php', yourls_sanitize_url( 'example.php' ) );
-		$this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
-		$this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
+        // Backslash tests
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://exa\\mple.com/' ) );
+        $this->assertEquals( 'http://example.com/testingtesting', yourls_sanitize_url_safe( 'http://example.com/testing\\testing' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test#hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test#hash' ) );
+        $this->assertEquals( 'http://example.com/testingtesting#hash\\hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing#hash\\hash' ) );
+    }
+
+    /**
+     * Test valid, missing and fake protocols
+     *
+     * @since 0.1
+     */
+    function test_url_with_protocols() {
+        $this->assertEquals( 'http://example.com', yourls_sanitize_url( 'http://example.com' ) );
+        $this->assertEquals( 'example.php', yourls_sanitize_url( 'example.php' ) );
+        $this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
+        $this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
         // play with allowed protocols
-		$this->assertEquals( '', yourls_sanitize_url( 'nasty://example.com/' ) );
-		$this->assertEquals( 'nasty://example.com/', yourls_sanitize_url( 'nasty://example.com/', array('nasty://') ) );
+        $this->assertEquals( '', yourls_sanitize_url( 'nasty://example.com/' ) );
+        $this->assertEquals( 'nasty://example.com/', yourls_sanitize_url( 'nasty://example.com/', array('nasty://') ) );
         global $yourls_allowedprotocols;
         $yourls_allowedprotocols[] = 'evil://';
         $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
         $yourls_allowedprotocols = yourls_kses_allowed_protocols();
-	}
+    }
 
     /**
      * List of URLs with MiXeD CaSe to test. Structure: array( sanitized url, unsanitized url with mixed case )
@@ -181,15 +196,15 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr'                     , 'http://Académie-française.FR' );
     }
 
-	/**
+    /**
      * Protocol and domain with mixed case
      *
      * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_mixed_case')]
     function test_url_with_protocol_case( $sanitized, $unsanitized ) {
-		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
-	}
+        $this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
+    }
 
     /**
      * List of URLs with IDN domain, and how YOURLS should sanitize them
@@ -206,13 +221,13 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://xn--p1ai.xn--p1ai'                     , 'http://рф.рф' );
     }
 
-	/**
+    /**
      * Protocol and domain with mixed case
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_IDN')]
     function test_url_with_IDN( $unsanitized, $sanitized ) {
-		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
-	}
+        $this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
+    }
 
     /**
      * List of URLS and expected matches whether we're on SSL or not.
