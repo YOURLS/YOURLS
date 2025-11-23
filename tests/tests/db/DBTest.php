@@ -9,6 +9,7 @@ class DBTest extends PHPUnit\Framework\TestCase {
     public function test_get_num_queries() {
         $num = yourls_get_num_queries();
         $this->assertIsInt($num);
+        $this->assertGreaterThan(0, $num);
     }
 
 }
