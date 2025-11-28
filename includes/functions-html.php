@@ -1017,7 +1017,7 @@ LINK;
  * @return void
  */
 function yourls_set_html_context($context) {
-    yourls_get_db()->set_html_context($context);
+    yourls_get_db('other-set_html_context')->set_html_context($context);
 }
 
 /**
@@ -1027,7 +1027,7 @@ function yourls_set_html_context($context) {
  * @return string
  */
 function yourls_get_html_context() {
-    return yourls_get_db()->get_html_context();
+    return yourls_get_db('other-get_html_context')->get_html_context();
 }
 
 /**

@@ -106,7 +106,7 @@ function yourls_update_clicks( $keyword, $clicks = false ) {
         $update_type = 'increment';
     }
 
-    $ydb = yourls_get_db();
+    $ydb = yourls_get_db('write-update_clicks');
 
     // Try and update click count. An error probably means a concurrency problem : just skip the update
     try {
@@ -173,7 +173,7 @@ function yourls_get_stats($filter = 'top', $limit = 10, $start = 0) {
     if ( $limit > 0 ) {
 
         $table_url = YOURLS_DB_TABLE_URL;
-        $results = yourls_get_db()->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
+        $results = yourls_get_db('read-get_stats')->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 ORDER BY $sort_by $sort_order LIMIT $start, $limit;" );
 
         $return = [];
         $i = 1;
@@ -210,7 +210,7 @@ function yourls_get_stats($filter = 'top', $limit = 10, $start = 0) {
 function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
     $table_url = YOURLS_DB_TABLE_URL;
 
-    $totals = yourls_get_db()->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
+    $totals = yourls_get_db('read-get_db_stats')->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
     $return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
 
     return yourls_apply_filter( 'get_db_stats', $return, $where );
@@ -537,7 +537,7 @@ function yourls_log_redirect( $keyword ) {
 
     // Try and log. An error probably means a concurrency problem : just skip the logging
     try {
-        $result = yourls_get_db()->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
+        $result = yourls_get_db('write-log_redirect')->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
     } catch (Exception $e) {
         $result = 0;
     }
@@ -678,7 +678,7 @@ function yourls_check_IP_flood( $ip = '' ) {
     yourls_do_action( 'check_ip_flood', $ip );
 
     $table = YOURLS_DB_TABLE_URL;
-    $lasttime = yourls_get_db()->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
+    $lasttime = yourls_get_db('read-check_ip_flood')->fetchValue( "SELECT `timestamp` FROM $table WHERE `ip` = :ip ORDER BY `timestamp` DESC LIMIT 1", [ 'ip' => $ip ] );
     if( $lasttime ) {
         $now = date( 'U' );
         $then = date( 'U', strtotime( $lasttime ) );
@@ -722,7 +722,7 @@ function yourls_is_upgrading() {
  * @return bool
  */
 function yourls_is_installed() {
-    return (bool)yourls_apply_filter( 'is_installed', yourls_get_db()->is_installed() );
+    return (bool)yourls_apply_filter( 'is_installed', yourls_get_db('other-is_installed')->is_installed() );
 }
 
 /**
@@ -733,7 +733,7 @@ function yourls_is_installed() {
  * @return void
  */
 function yourls_set_installed( $bool ) {
-    yourls_get_db()->set_installed( $bool );
+    yourls_get_db('other-set_installed')->set_installed( $bool );
 }
 
 /**
