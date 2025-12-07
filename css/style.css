@@ -130,16 +130,22 @@ td.url small a{
 	color:#bbc;
 }
 body.desktop td.actions input,body.desktop  td.actions a {
-	visibility:hidden;
+	position: absolute !important;
+	left: -9999px;
+	clip: rect(1px, 1px, 1px, 1px);
 }
 td.timestamp span.timestamp {
     display:none;
 }
 td.actions input.disabled, td.actions input.loading {
-	visibility:visible;
+	position: relative !important;
+	left: auto;
+	clip: auto;
 }
 tr:hover td.actions input, tr:hover td.actions a {
-	visibility:visible;
+	position: relative !important;
+	left: auto;
+clip: auto;
 }
 td.actions .button {
 	font-family: Verdana, Arial;
@@ -333,5 +339,13 @@ a.bookmarklet:hover {
   font-size:11px;
 }
 tr.plugin.active a{ font-weight:bolder;}
-body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
-tr:hover.plugin td.plugin_desc small{ visibility:visible;}
+body.desktop tr.plugin td.plugin_desc small {
+	position: absolute !important;
+	left: -9999px;
+	clip: rect(1px, 1px, 1px, 1px);
+}
+tr:hover.plugin td.plugin_desc small {
+	position: relative !important;
+	left: auto;
+	clip: auto;
+}
