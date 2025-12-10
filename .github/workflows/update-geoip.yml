@@ -61,7 +61,7 @@ jobs:
         run: echo "DATE=$(/bin/date -u "+%F")" >> $GITHUB_OUTPUT
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         id: pull-request
         with:
           token: ${{ steps.app-token.outputs.token }}
