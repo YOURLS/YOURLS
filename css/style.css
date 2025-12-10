@@ -129,23 +129,32 @@ tr.edit-row  td {
 td.url small a{
 	color:#bbc;
 }
-body.desktop td.actions input,body.desktop  td.actions a {
-	position: absolute !important;
-	left: -9999px;
-	clip: rect(1px, 1px, 1px, 1px);
+/* Hide buttons visually but keep them accessible to screen readers */
+body.desktop td.actions input, body.desktop td.actions a {
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
 }
 td.timestamp span.timestamp {
     display:none;
 }
 td.actions input.disabled, td.actions input.loading {
-	position: relative !important;
-	left: auto;
-	clip: auto;
+	visibility:visible;
 }
+/* Show buttons on row hover */
 tr:hover td.actions input, tr:hover td.actions a {
-	position: relative !important;
-	left: auto;
-clip: auto;
+	opacity: 1;
+	pointer-events: auto;
+}
+/* Show buttons when any button in the actions cell receives focus */
+td.actions:focus-within input, td.actions:focus-within a {
+	opacity: 1;
+	pointer-events: auto;
+}
+/* Show all buttons when any element in the row receives focus (for keyboard nav through the entire row) */
+tr:focus-within td.actions input, tr:focus-within td.actions a {
+	opacity: 1;
+	pointer-events: auto;
 }
 td.actions .button {
 	font-family: Verdana, Arial;
@@ -296,7 +305,6 @@ a.bookmarklet:hover {
 	margin-bottom:5px;
 }
 
-
 .jquery-notify-bar {
   width:100%;
   position:fixed;
@@ -339,13 +347,5 @@ a.bookmarklet:hover {
   font-size:11px;
 }
 tr.plugin.active a{ font-weight:bolder;}
-body.desktop tr.plugin td.plugin_desc small {
-	position: absolute !important;
-	left: -9999px;
-	clip: rect(1px, 1px, 1px, 1px);
-}
-tr:hover.plugin td.plugin_desc small {
-	position: relative !important;
-	left: auto;
-	clip: auto;
-}
+body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
+tr:hover.plugin td.plugin_desc small{ visibility:visible;}
