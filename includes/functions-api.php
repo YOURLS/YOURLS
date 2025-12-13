@@ -124,7 +124,7 @@ function yourls_api_output( $mode, $output, $send_headers = true, $echo = true )
             if( $send_headers )
                 yourls_content_type_header( 'application/javascript' );
 
-            $callback = isset( $output['callback'] ) ? $output['callback'] : '';
+            $callback = isset( $output['callback'] ) ? yourls_sanitize_jsonp_callback( $output['callback'] ) : '';
             $result =  $callback . '(' . json_encode( $output ) . ')';
             break;
 

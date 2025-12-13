@@ -265,6 +265,33 @@ function yourls_sanitize_filename($file) {
 }
 
 /**
+ * Sanitize a JSONP callback name
+ *
+ * Keep only characters allowed in a safe callback identifier: [a-zA-Z0-9_$.]
+ * All other characters are stripped out.
+ *
+ * Examples:
+ * - 'alert(1)'                 => 'alert1'
+ * - 'foo[bar]'                 => 'foobar'
+ * - '</script>'               => 'script'
+ * - '$.constructor.alert(1)//' => '$.constructor.alert1'
+ *
+ * @since 1.10.3
+ * @param string $callback Raw callback value
+ * @return string Sanitized callback name
+ */
+function yourls_sanitize_jsonp_callback( $callback ) {
+    $callback = (string) $callback;
+    // First, strip JavaScript unicode escape sequences like \u2028 or u2028
+    // They are sometimes used to smuggle line/paragraph separators.
+    $callback = preg_replace( '/\\\\?u[0-9a-fA-F]{4}/', '', $callback );
+
+    // Remove everything not in the safe character class
+    $sanitized = preg_replace( '/[^a-zA-Z0-9_$.]/', '', $callback );
+    return yourls_apply_filter( 'sanitize_jsonp_callback', $sanitized, $callback );
+}
+
+/**
  * Check if a string seems to be UTF-8. Stolen from WP.
  *
  * @param string $str  String to check
