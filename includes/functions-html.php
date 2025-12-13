@@ -218,12 +218,12 @@ function yourls_delete_link_modal() {
     <dialog id="delete-confirm-dialog">
         <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
         <div class="confirm-message">
-            <p><?php yourls_e( 'Really delete?' ) ?></p>
-            <p>
-                <?php yourls_e( 'Short URL' ) ?>: <span name="short_url"></span><br>
-                <?php yourls_e( 'Title' ) ?>: <span name="title"></span><br>
-                <?php yourls_e( 'URL' ) ?>: <span name="url"></span><br>
-            </p>
+            <p><strong><?php yourls_e( 'Really delete?' ) ?></strong></p>
+            <ul>
+            <li><?php yourls_e( 'Short URL' ) ?>: <span name="short_url"></span></li>
+            <li><?php yourls_e( 'Title' ) ?>: <span name="title"></span></li>
+            <li><?php yourls_e( 'URL' ) ?>: <span name="url"></span></li>
+            </ul>
         </div>
         <div class="button-group">
             <input type="button" class="button primary" value="<?php yourls_e( 'Delete' ) ?>" onclick="remove_link_confirmed();">

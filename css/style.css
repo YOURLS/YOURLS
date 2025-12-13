@@ -18,8 +18,6 @@ body {
 	border-right:3px solid #2a85b3;
 	border-bottom:3px solid #2a85b3;
 	border-top:3px solid #2a85b3;
-	-moz-border-radius:20px;
-	-webkit-border-radius:20px;
 	border-radius:20px;
 }
 .hide-if-no-js {display: none;}
@@ -68,8 +66,6 @@ tt {
 }
 
 input, textarea {
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 }
 Input.text, select, textarea {
@@ -163,8 +159,6 @@ td.actions .button {
 	font-weight: bold;
 	background-color: #FFFFFF;
 	border: 1px solid #88c0eb;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 	cursor:pointer;
 	height:22px;
@@ -255,8 +249,6 @@ td.actions .button_stats {
 }
 a.bookmarklet {
 	border:2px solid #2a85b3;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.svg) 2px center no-repeat;
@@ -277,14 +269,8 @@ a.bookmarklet:hover {
 	background:white;
 	margin:0 auto;
 	max-width:950px;
-	-moz-border-radius:10px;
-	-webkit-border-radius:10px;
 	border-radius:10px;
 	border:2px solid #2a85b3;
-	-moz-border-radius-bottomleft:30px;
-	-moz-border-radius-bottomright:30px;
-	-webkit-border-bottom-left-radius:25px;
-	-webkit-border-bottom-right-radius:25px;
 	border-bottom-left-radius:25px;
 	border-bottom-right-radius:25px;
 }
@@ -296,8 +282,6 @@ a.bookmarklet:hover {
 .notice {
 	border:1px solid #2a85b3;
 	background: #F3FAFD;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
 	border-radius:6px;
 	width:70%;
 	margin-left:15%;
@@ -319,11 +303,7 @@ a.bookmarklet:hover {
   padding:20px 0px;
   border-bottom:1px solid #bbb;
   filter:alpha(opacity=95);
-  -moz-opacity:0.95;
-  -khtml-opacity:0.95;
   opacity:0.95;
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 .jquery-notify-bar.error ,.jquery-notify-bar.fail {
