@@ -209,12 +209,12 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
 /**
  * Display hidden modal for link delete confirmation
  *
+ * @since 1.10.3
  * @param void
  * @return void
  */
 function yourls_delete_link_modal() {
 	?>
-    <link rel="stylesheet" href="<?php yourls_site_url() ?>/css/modal.css" type="text/css" media="screen">
     <dialog id="delete-confirm-dialog">
         <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
         <div class="confirm-message">
