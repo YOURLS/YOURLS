@@ -4,6 +4,20 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.3
+---
+- added: function to get reserved URLs from global variable (#3999)
+- changed: hide referrers on public statistics page by default (#4005)
+- changed: set the infos cache of the keyword after a url is added/updated/deleted (#4008)
+- changed: fix hover-actions in tables for screen reader users (#4025)
+- fixed: filtering for links with more than 0 clicks (#3977)
+- fixed: case-sensitivity in admin search (#3997)
+- fixed: missing or invalid reserved URL configuration causing crash (#3999)
+- fixed: handling of invalid charsets on remote sites (#4007)
+- fixed: preserve backslashes in URLs (#4000)
+- fixed: enhance configuration template formatting (#3994)
+- fixed: minor cleanup (#3979, #3984, #3988)
+
 1.10.2
 ---
 - fixed: `admin/tools.php` now uses `yourls_get_nonce_life()` (#3906)
