@@ -102,7 +102,7 @@ function yourls_upgrade_to_507() {
         yourls_get_db()->perform($query);
     } catch (\Exception $e) {
         echo "<p class='error'>Unable to update the DB.</p>";
-        echo "<p>Could index urls. You will have to fix things manually :(. The error was
+        echo "<p>Could not index urls. You will have to fix things manually :(. The error was
         <pre>";
         echo $e->getMessage();
         echo "/n</pre>";
