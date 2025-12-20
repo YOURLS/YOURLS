@@ -22,10 +22,10 @@ class JsonpCallbackTest extends PHPUnit\Framework\TestCase {
      * Provide malicious or invalid callback names and their sanitized result
      */
     public static function malicious_callbacks(): \Iterator {
-        yield array( 'alert(1)'                         , 'alert1' );
-        yield array( 'foo[bar]'                         , 'foobar' );
-        yield array( 'foo-bar'                          , 'foobar' );
-        yield array( '</script>'                        , 'script' );
+        yield array( 'alert(1)', 'alert1' );
+        yield array( 'foo[bar]', 'foobar' );
+        yield array( 'foo-bar', 'foobar' );
+        yield array( '</script>', 'script' );
         yield array( '$.constructor.prototype.alert(1)//', '$.constructor.prototype.alert1' );
         yield array( 'callback;window.location="https://example.com"', 'callbackwindow.locationhttpsexample.com' );
         yield array( "\"evil\"", 'evil' );
