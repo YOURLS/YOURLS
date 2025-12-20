@@ -265,30 +265,36 @@ function yourls_sanitize_filename($file) {
 }
 
 /**
- * Sanitize a JSONP callback name
+ * Validate a JSONP callback name
  *
- * Keep only characters allowed in a safe callback identifier: [a-zA-Z0-9_$.]
- * All other characters are stripped out.
+ * Check if the callback contains only safe characters: [a-zA-Z0-9_$.]
+ * Returns the original callback if valid, or false if invalid.
  *
- * Examples:
- * - 'alert(1)'                 => 'alert1'
- * - 'foo[bar]'                 => 'foobar'
- * - '</script>'               => 'script'
- * - '$.constructor.alert(1)//' => '$.constructor.alert1'
+ *  Examples:
+ *  - 'myCallback' => 'myCallback'
+ *  - 'alert(1)'   => false
+ *  See tests/tests/format/JsonpCallbackTest.php for various cases covered
  *
  * @since 1.10.3
  * @param string $callback Raw callback value
- * @return string Sanitized callback name
+ * @return string|false Original callback if valid, false otherwise
  */
-function yourls_sanitize_jsonp_callback( $callback ) {
+function yourls_validate_jsonp_callback($callback ) {
     $callback = (string) $callback;
-    // First, strip JavaScript unicode escape sequences like \u2028 or u2028
-    // They are sometimes used to smuggle line/paragraph separators.
-    $callback = preg_replace( '/\\\\?u[0-9a-fA-F]{4}/', '', $callback );
 
-    // Remove everything not in the safe character class
-    $sanitized = preg_replace( '/[^a-zA-Z0-9_$.]/', '', $callback );
-    return yourls_apply_filter( 'sanitize_jsonp_callback', $sanitized, $callback );
+    // First, check for JavaScript unicode escape sequences like \u2028 or u2028
+    // They are sometimes used to smuggle line/paragraph separators.
+    if ( preg_match( '/\\\\?u[0-9a-fA-F]{4}/', $callback ) ) {
+        return yourls_apply_filter( 'validate_jsonp_callback_error', false, $callback );
+    }
+
+    // Check if callback contains only safe characters [a-zA-Z0-9_$.]
+    if ( !preg_match( '/^[a-zA-Z0-9_$.]+$/', $callback ) ) {
+        return yourls_apply_filter( 'validate_jsonp_callback_error', false, $callback );
+    }
+
+    // Callback is valid, return original value
+    return yourls_apply_filter( 'validate_jsonp_callback', $callback );
 }
 
 /**
