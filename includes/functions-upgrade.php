@@ -105,7 +105,7 @@ function yourls_upgrade_to_507() {
         echo "<p>Could not index urls. You will have to fix things manually :(. The error was
         <pre>";
         echo $e->getMessage();
-        echo "/n</pre>";
+        echo "\n</pre>";
         die();
     }
 
@@ -128,7 +128,7 @@ function yourls_upgrade_505_to_506() {
         echo "<p>Could not change collation. You will have to fix things manually :(. The error was
         <pre>";
         echo $e->getMessage();
-        echo "/n</pre>";
+        echo "\n</pre>";
         die();
     }
 
