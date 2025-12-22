@@ -7,6 +7,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 1.10.3
 ---
 - added: function to get reserved URLs from global variable (#3999)
+- added: database index on long URLs, for faster searches (#4013)
 - changed: hide referrers on public statistics page by default (#4005)
 - changed: set the infos cache of the keyword after a url is added/updated/deleted (#4008)
 - changed: fix hover-actions in tables for screen reader users (#4025)
@@ -15,6 +16,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 - fixed: missing or invalid reserved URL configuration causing crash (#3999)
 - fixed: handling of invalid charsets on remote sites (#4007)
 - fixed: preserve backslashes in URLs (#4000)
+- fixed: validate JSONP callback names (#4030)
 - fixed: enhance configuration template formatting (#3994)
 - fixed: minor cleanup (#3979, #3984, #3988)
 
