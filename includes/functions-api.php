@@ -124,8 +124,14 @@ function yourls_api_output( $mode, $output, $send_headers = true, $echo = true )
             if( $send_headers )
                 yourls_content_type_header( 'application/javascript' );
 
-            $callback = isset( $output['callback'] ) ? $output['callback'] : '';
-            $result =  $callback . '(' . json_encode( $output ) . ')';
+            $callback = isset( $output['callback'] ) ? yourls_validate_jsonp_callback($output['callback'] ) : '';
+            if( $callback === false ) {
+                yourls_status_header( 400 );
+                $result = json_encode( ['errorCode' => '400', 'error' => 'Invalid callback parameter'] );
+            } else {
+                $result =  $callback . '(' . json_encode( $output ) . ')';
+            }
+
             break;
 
         case 'json':
