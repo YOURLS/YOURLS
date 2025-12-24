@@ -11,6 +11,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 - changed: hide referrers on public statistics page by default (#4005)
 - changed: set the infos cache of the keyword after a url is added/updated/deleted (#4008)
 - changed: fix hover-actions in tables for screen reader users (#4025)
+- changed: confirm link deletion with a modal dialog (#3932)
 - fixed: filtering for links with more than 0 clicks (#3977)
 - fixed: case-sensitivity in admin search (#3997)
 - fixed: missing or invalid reserved URL configuration causing crash (#3999)
