@@ -32,7 +32,7 @@ function yourls_get_database_version() {
         return $pre;
     }
 
-    return yourls_sanitize_version(yourls_get_db()->mysql_version());
+    return yourls_sanitize_version(yourls_get_db('read-get_database_version')->mysql_version());
 }
 
 /**
@@ -207,7 +207,7 @@ function yourls_create_sql_tables() {
         return $pre;
     }
 
-    $ydb = yourls_get_db();
+    $ydb = yourls_get_db('write-create_sql_tables');
 
     $error_msg = array();
     $success_msg = array();
