@@ -224,7 +224,8 @@ function yourls_create_sql_tables() {
          '`clicks` int(10) unsigned NOT NULL,'.
          'PRIMARY KEY (`keyword`),'.
          'KEY `ip` (`ip`),'.
-         'KEY `timestamp` (`timestamp`)'.
+         'KEY `timestamp` (`timestamp`),'.
+         'KEY `url_idx` (`url`(30))'.
         ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;';
 
     $create_tables[YOURLS_DB_TABLE_OPTIONS] =

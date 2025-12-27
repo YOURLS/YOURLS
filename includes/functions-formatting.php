@@ -265,6 +265,39 @@ function yourls_sanitize_filename($file) {
 }
 
 /**
+ * Validate a JSONP callback name
+ *
+ * Check if the callback contains only safe characters: [a-zA-Z0-9_$.]
+ * Returns the original callback if valid, or false if invalid.
+ *
+ *  Examples:
+ *  - 'myCallback' => 'myCallback'
+ *  - 'alert(1)'   => false
+ *  See tests/tests/format/JsonpCallbackTest.php for various cases covered
+ *
+ * @since 1.10.3
+ * @param string $callback Raw callback value
+ * @return string|false Original callback if valid, false otherwise
+ */
+function yourls_validate_jsonp_callback($callback ) {
+    $callback = (string) $callback;
+
+    // First, check for JavaScript unicode escape sequences like \u2028 or u2028
+    // They are sometimes used to smuggle line/paragraph separators.
+    if ( preg_match( '/\\\\?u[0-9a-fA-F]{4}/', $callback ) ) {
+        return yourls_apply_filter( 'validate_jsonp_callback_error', false, $callback );
+    }
+
+    // Check if callback contains only safe characters [a-zA-Z0-9_$.]
+    if ( !preg_match( '/^[a-zA-Z0-9_$.]+$/', $callback ) ) {
+        return yourls_apply_filter( 'validate_jsonp_callback_error', false, $callback );
+    }
+
+    // Callback is valid, return original value
+    return yourls_apply_filter( 'validate_jsonp_callback', $callback );
+}
+
+/**
  * Check if a string seems to be UTF-8. Stolen from WP.
  *
  * @param string $str  String to check

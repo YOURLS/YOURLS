@@ -68,6 +68,10 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             }
         }
 
+        if( $oldsql < 507 ) {
+            yourls_upgrade_to_507();
+        }
+
         yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
         break;
@@ -82,6 +86,31 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
 }
 
 /************************** 1.6 -> 1.8 **************************/
+
+/**
+ * Add sort index for fast URL lookups.
+ * DB version 507.
+ */
+function yourls_upgrade_to_507() {
+    echo "<p>Adding index for url column. Please wait...</p>";
+
+    $table = YOURLS_DB_TABLE_URL;
+
+    $query = sprintf("ALTER TABLE `%s` ADD INDEX `url_idx` (`url`(50));", $table);
+
+    try {
+        yourls_get_db()->perform($query);
+    } catch (\Exception $e) {
+        echo "<p class='error'>Unable to update the DB.</p>";
+        echo "<p>Could not index urls. You will have to fix things manually :(. The error was
+        <pre>";
+        echo $e->getMessage();
+        echo "\n</pre>";
+        die();
+    }
+
+    echo "<p class='success'>OK!</p>";
+}
 
 /**
  * Update to 506, just the fix for people who had updated to master on 1.7.10
@@ -99,7 +128,7 @@ function yourls_upgrade_505_to_506() {
         echo "<p>Could not change collation. You will have to fix things manually :(. The error was
         <pre>";
         echo $e->getMessage();
-        echo "/n</pre>";
+        echo "\n</pre>";
         die();
     }
 

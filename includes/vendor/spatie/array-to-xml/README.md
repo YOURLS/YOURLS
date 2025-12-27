@@ -1,6 +1,3 @@
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
-
 # Convert an array to xml
 
 [![Latest Version](https://img.shields.io/github/release/spatie/array-to-xml.svg?style=flat-square)](https://github.com/spatie/array-to-xml/releases)
@@ -95,7 +92,11 @@ $array = [
     'The survivor' => [
         '_attributes' => ['house'=>'Hogwarts'],
         '_value' => 'Harry Potter'
-    ]
+    ],
+    'Good movie' => [
+        '_attributes' => ['category' => 'Action'],
+        '_value' => 300,
+    ],
 ];
 
 $result = ArrayToXml::convert($array);
@@ -117,10 +118,73 @@ This code will result in:
     <The_survivor house="Hogwarts">
         Harry Potter
     </The_survivor>
+    <Good_movie category="Action">300</Good_movie>
 </root>
 ```
 
 *Note, that the value of the `_value` field must be a string. [(More)](https://github.com/spatie/array-to-xml/issues/75#issuecomment-413726065)* 
+
+### Adding comments
+
+You can use a key named `_comment` to add a comment to a node. The exact placement depends on where you put the key in your array. You can also add multiple keys *starting with* `_comment` to add multiple comments.
+
+```php
+$array = [
+    'Good guy' => [
+        '_comment' => 'Our hero',
+        'name' => 'Luke Skywalker',
+        'weapon' => 'Lightsaber'
+    ],
+    'Bad guy' => [
+        'name' => 'Sauron',
+        'weapon' => 'Evil Eye',
+        '_comment' => 'Finally gone',
+    ],
+    'Another guy' => [
+        '_comment' => 'The GOAT',
+        'name' => 'John Wick',
+        '_comment2' => 'famous for',
+        'weapon' => 'Pencil',
+        '_comment_other' => 'His dog needs an entry',
+    ];
+    'The survivor' => [
+        '_attributes' => ['house'=>'Hogwarts'],
+        '_value' => 'Harry Potter',
+        '_comment' => 'He made it',
+    ]
+];
+
+$result = ArrayToXml::convert($array);
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0"?>
+<root>
+    <Good_guy>
+        <!--Our hero-->
+        <name>Luke Skywalker</name>
+        <weapon>Lightsaber</weapon>
+    </Good_guy>
+    <Bad_guy>
+        <name>Sauron</name>
+        <weapon>Evil Eye</weapon>
+        <!--Finally gone-->
+    </Bad_guy>
+    <Another_guy>
+        <!--The GOAT-->
+        <name>John Wick</name>
+        <!--famous for-->
+        <weapon>Pencil</weapon>
+        <!--His dog needs an entry-->
+    </Another_guy>
+    <The_survivor house="Hogwarts">Harry Potter<!--He made it--></The_survivor>
+</root>
+```
+
+> [!NOTE]
+> A comment will be omitted if the value is an empty string "" or `null`.
 
 ### Using reserved characters
 
@@ -167,7 +231,8 @@ If your input contains something that cannot be parsed a `DOMException` will be 
 You could specify specific values in for:
  - encoding as the fourth argument (string)
  - version as the fifth argument (string)
- - standalone as sixth argument (boolean)
+ - DOM properties as the sixth argument (array)
+ - standalone as seventh argument (boolean)
 
 ```php
 $result = ArrayToXml::convert($array, [], true, 'UTF-8', '1.1', [], true);
@@ -240,6 +305,58 @@ This will result in:
         </Guy>
     </Bad_guys>
 </helloyouluckypeople>
+```
+
+### Using Closure values
+The package can use Closure values:
+
+```php
+$users = [
+    [
+        'name' => 'one',
+        'age' => 10,
+    ],
+    [
+        'name' => 'two',
+        'age' => 12,
+    ],
+];
+
+$array = [
+    'users' => function () use ($users) {
+        $new_users = [];
+        foreach ($users as $user) {
+            $new_users[] = array_merge(
+                $user,
+                [
+                    'double_age' => $user['age'] * 2,
+                ]
+            );
+        }
+
+        return $new_users;
+    },
+];
+
+ArrayToXml::convert($array)
+```
+
+This will result in:
+
+```xml
+<?xml version="1.0"?>
+<root>
+    <users>
+        <name>one</name>
+        <age>10</age>
+        <double_age>20</double_age>
+    </users>
+    <users>
+        <name>two</name>
+        <age>12</age>
+        <double_age>24</double_age>
+    </users>
+</root>
 ```
 
 ### Handling numeric keys
