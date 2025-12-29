@@ -51,7 +51,7 @@ class DBSetTest extends PHPUnit\Framework\TestCase {
      *
      *     yourls_set_db(null);                // should unset $ydb
      *     global $ydb;
-     *     yourls_ut_var_dump( $ydb);          // $ydb is still set and has the same value
+     *     yourls_ut_var_dump( $ydb );         // $ydb is still set and has the same value
      *     $this->assertFalse( isset($ydb) );  // Not OK
      * }
      *
