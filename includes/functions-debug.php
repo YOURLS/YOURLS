@@ -15,7 +15,7 @@
  */
 function yourls_debug_log( $msg ) {
     yourls_do_action( 'debug_log', $msg );
-    yourls_get_db('other-debug_log')->getProfiler()->getLogger()->log( 'debug', $msg);
+    yourls_get_db('other-debug_log')->getProfiler()->getLogger()->log('debug', $msg);
     return $msg;
 }
 
