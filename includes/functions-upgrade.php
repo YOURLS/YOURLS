@@ -222,7 +222,7 @@ function yourls_upgrade_to_15( ) {
  */
 function yourls_upgrade_to_143( ) {
     // Check if we have 'keyword' (borked install) or 'shorturl' (ok install)
-    $ydb = yourls_get_db('read-upgrade_to_143');
+    $ydb = yourls_get_db('write-upgrade_to_143');
     $table_log = YOURLS_DB_TABLE_LOG;
     $sql = "SHOW COLUMNS FROM `$table_log`";
     $cols = $ydb->fetchObjects( $sql );
