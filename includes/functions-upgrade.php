@@ -403,7 +403,7 @@ function yourls_alter_url_table_to_14_part_two() {
  *
  */
 function yourls_update_table_to_14() {
-    $ydb = yourls_get_db('read-update_table_to_14');
+    $ydb = yourls_get_db('write-update_table_to_14');
     $table = YOURLS_DB_TABLE_URL;
 
     // Modify each link to reflect new structure
