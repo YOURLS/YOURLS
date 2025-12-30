@@ -722,7 +722,7 @@ function yourls_is_upgrading() {
  * @return bool
  */
 function yourls_is_installed() {
-    return (bool)yourls_apply_filter( 'is_installed', yourls_get_db('other-is_installed')->is_installed() );
+    return (bool)yourls_apply_filter( 'is_installed', yourls_get_db('read-is_installed')->is_installed() );
 }
 
 /**
@@ -733,7 +733,7 @@ function yourls_is_installed() {
  * @return void
  */
 function yourls_set_installed( $bool ) {
-    yourls_get_db('other-set_installed')->set_installed( $bool );
+    yourls_get_db('read-set_installed')->set_installed( $bool );
 }
 
 /**

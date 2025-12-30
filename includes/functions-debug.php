@@ -15,7 +15,7 @@
  */
 function yourls_debug_log( $msg ) {
     yourls_do_action( 'debug_log', $msg );
-    yourls_get_db('other-debug_log')->getProfiler()->getLogger()->log('debug', $msg);
+    yourls_get_db('read-debug_log')->getProfiler()->getLogger()->log('debug', $msg);
     return $msg;
 }
 
@@ -26,7 +26,7 @@ function yourls_debug_log( $msg ) {
  * @return array
  */
 function yourls_get_debug_log() {
-    return yourls_get_db('other-get_debug_log')->getProfiler()->getLogger()->getMessages();
+    return yourls_get_db('read-get_debug_log')->getProfiler()->getLogger()->getMessages();
 }
 
 /**
@@ -35,7 +35,7 @@ function yourls_get_debug_log() {
  * @return int
  */
 function yourls_get_num_queries() {
-    return yourls_apply_filter( 'get_num_queries', yourls_get_db('other-get_num_queries')->get_num_queries() );
+    return yourls_apply_filter( 'get_num_queries', yourls_get_db('read-get_num_queries')->get_num_queries() );
 }
 
 /**
@@ -47,7 +47,7 @@ function yourls_get_num_queries() {
  */
 function yourls_debug_mode( $bool ) {
     // log queries if true
-    yourls_get_db('other-debug_mode')->getProfiler()->setActive( (bool)$bool );
+    yourls_get_db('read-debug_mode')->getProfiler()->setActive( (bool)$bool );
 
     // report notices if true
     $level = $bool ? -1 : ( E_ERROR | E_PARSE );

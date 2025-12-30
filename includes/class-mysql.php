@@ -72,7 +72,7 @@ function yourls_db_connect($context = '') {
 }
 
 /**
- * Helper function : return instance of the DB
+ * Helper function: return instance of the DB
  *
  * Instead of:
  *     global $ydb;
@@ -83,18 +83,13 @@ function yourls_db_connect($context = '') {
  * @since  1.7.10
  * @param string $context Optional context. Default: ''.
  *   When provided, use a naming schema starting with a prefix describing the operation, followed by a short description:
- *   - Prefix should be one of: "read-", "write-", or "other-".
+ *   - Prefix should be either "read-" or "write-", as follows:
  *        * "read-" for operations that only read from the DB (eg get_keyword_infos)
  *        * "write-" for operations that write to the DB (eg insert_link_in_db)
- *        * "other-" for operations that do not fit in the other categories because they are not SQL queries (eg
- *           when just storing info in memory, in the YDB object)
  *   - The description should be lowercase, words separated with underscores, eg "insert_link_in_db".
  *   Examples:
  *   - read-fetch_keyword
  *   - write-insert_link_in_db
- *   - write-update_url_title
- *   - read-get_options
- *   - other-get_debug_log
  * @return \YOURLS\Database\YDB
  */
 function yourls_get_db($context = '') {
@@ -102,6 +97,11 @@ function yourls_get_db($context = '') {
     $pre = yourls_apply_filter( 'shunt_get_db', false, $context );
     if ( false !== $pre ) {
         return $pre;
+    }
+
+    // Validate context, or raise soft notice
+    if (!preg_match('/^(read|write)-[a-z0-9_]+$/', $context) && $context !== '') {
+        yourls_debug_log( 'yourls_get_db called with improperly formatted context "' . $context . '". Recommended format is "read-description" or "write-description", eg "read-fetch_keyword".' );
     }
 
     yourls_do_action( 'get_db_action', $context );

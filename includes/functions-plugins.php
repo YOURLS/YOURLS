@@ -477,7 +477,7 @@ function yourls_has_action( $hook, $function_to_check = false ) {
  * @return int Number of activated plugins
  */
 function yourls_has_active_plugins() {
-    return count( yourls_get_db('other-has_active_plugins')->get_plugins() );
+    return count( yourls_get_db('read-has_active_plugins')->get_plugins() );
 }
 
 /**
@@ -506,7 +506,7 @@ function yourls_get_plugins() {
  */
 function yourls_is_active_plugin( $plugin ) {
     return yourls_has_active_plugins() > 0 ?
-        in_array( yourls_plugin_basename( $plugin ), yourls_get_db('other-is_active_plugin')->get_plugins() )
+        in_array( yourls_plugin_basename( $plugin ), yourls_get_db('read-is_active_plugin')->get_plugins() )
         : false;
 }
 
@@ -602,7 +602,7 @@ function yourls_load_plugins() {
     }
 
     // Replace active plugin list with list of plugins we just activated
-    yourls_get_db('other-load_plugins')->set_plugins( $plugins );
+    yourls_get_db('read-load_plugins')->set_plugins( $plugins );
     $info = count( $plugins ).' activated';
 
     // $active_plugins should be empty now, if not, a plugin could not be found, or is erroneous : remove it
@@ -653,7 +653,7 @@ function yourls_activate_plugin( $plugin ) {
     }
 
     // check not activated already
-    $ydb = yourls_get_db('other-activate_plugin');
+    $ydb = yourls_get_db('read-activate_plugin');
     if ( yourls_is_active_plugin( $plugin ) ) {
         return yourls__( 'Plugin already activated' );
     }
@@ -703,7 +703,7 @@ function yourls_deactivate_plugin( $plugin ) {
     }
 
     // Deactivate the plugin
-    $ydb = yourls_get_db('other-deactivate_plugin');
+    $ydb = yourls_get_db('read-deactivate_plugin');
     $plugins = $ydb->get_plugins();
     $key = array_search( $plugin, $plugins );
     if ( $key !== false ) {
@@ -752,7 +752,7 @@ function yourls_plugin_url( $file ) {
  */
 function yourls_list_plugin_admin_pages() {
     $plugin_links = [];
-    foreach ( yourls_get_db('other-list_plugin_admin_pages')->get_plugin_pages() as $plugin => $page ) {
+    foreach ( yourls_get_db('read-list_plugin_admin_pages')->get_plugin_pages() as $plugin => $page ) {
         $plugin_links[ $plugin ] = [
             'url'    => yourls_admin_url( 'plugins.php?page='.$page[ 'slug' ] ),
             'anchor' => $page[ 'title' ],
@@ -771,7 +771,7 @@ function yourls_list_plugin_admin_pages() {
  * @return void
  */
 function yourls_register_plugin_page( $slug, $title, $function ) {
-    yourls_get_db('other-register_plugin_page')->add_plugin_page( $slug, $title, $function );
+    yourls_get_db('read-register_plugin_page')->add_plugin_page( $slug, $title, $function );
 }
 
 /**
@@ -783,7 +783,7 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
  */
 function yourls_plugin_admin_page( $plugin_page ) {
     // Check the plugin page is actually registered
-    $pages = yourls_get_db('other-plugin_admin_page')->get_plugin_pages();
+    $pages = yourls_get_db('read-plugin_admin_page')->get_plugin_pages();
     if ( !isset( $pages[ $plugin_page ] ) ) {
         yourls_die( yourls__( 'This page does not exist. Maybe a plugin you thought was activated is inactive?' ), yourls__( 'Invalid link' ) );
     }

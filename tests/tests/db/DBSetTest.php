@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DB instance test
+ * DB set instance test
  */
 #[\PHPUnit\Framework\Attributes\Group('db')]
 class DBSetTest extends PHPUnit\Framework\TestCase {
@@ -23,23 +23,13 @@ class DBSetTest extends PHPUnit\Framework\TestCase {
         yourls_set_db($this->ydb_copy);
     }
 
-    public function test_get() {
-        $this->assertInstanceOf( '\YOURLS\Database\YDB', yourls_get_db() );
-    }
-
     public function test_set() {
         yourls_set_db("hello");
         $this->assertSame( "hello", yourls_get_db() );
     }
 
-    public function test_context_optional_parameter() {
-        $db_default = yourls_get_db();
-        $db_with_ctx = yourls_get_db('some_context');
-        $this->assertSame($db_default, $db_with_ctx);
-    }
-
     /**
-     * Note to self : I'm unable to write a test to check that yourls_get_db(null)
+     * Note to self: I'm unable to write a test to check that yourls_get_db(null)
      * actually unsets $ydb. It seems I'm hitting the limits to my understandings
      * of PHPUnit and global vars.
      *
