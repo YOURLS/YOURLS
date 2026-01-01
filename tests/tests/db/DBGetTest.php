@@ -4,7 +4,7 @@
  * DB get instance test
  */
 #[\PHPUnit\Framework\Attributes\Group('db')]
-class DBTestGet extends PHPUnit\Framework\TestCase {
+class DBGetTest extends PHPUnit\Framework\TestCase {
 
     protected $ydb_copy = null;
 
