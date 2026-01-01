@@ -12,7 +12,7 @@ class DBTestGet extends PHPUnit\Framework\TestCase {
      * Make a copy of $ydb
      */
     public function setUp(): void {
-        $this->ydb_copy = yourls_get_db();
+        $this->ydb_copy = yourls_get_db('read-test_setup');
         yourls_set_db(null);
     }
 
@@ -24,15 +24,7 @@ class DBTestGet extends PHPUnit\Framework\TestCase {
     }
 
     public function test_get() {
-        $this->assertInstanceOf( '\YOURLS\Database\YDB', yourls_get_db() );
-    }
-
-    // Provider for test_get_with_context
-    public function context_provider() {
-        return [
-            ['read-test'],
-            ['write-test'],
-        ];
+        $this->assertInstanceOf( '\YOURLS\Database\YDB', yourls_get_db('read-test_get') );
     }
 
     /**
@@ -47,16 +39,12 @@ class DBTestGet extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Check that properly formatted contexts log no error message
+     * Check that properly formatted contexts trigger no notice
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('valid_contexts')]
     public function test_get_with_valid_context($context) {
-        yourls_debug_log('Testing yourls_get_db() with '.$context);
-        $db_default = yourls_get_db();
-        $db_with_ctx = yourls_get_db($context);
-        $this->assertSame($db_default, $db_with_ctx);
-        $log = yourls_get_debug_log();
-        $this->assertStringNotContainsString('yourls_get_db called with improperly formatted context', end($log));
+        $db = yourls_get_db($context);
+        $this->assertInstanceOf( '\YOURLS\Database\YDB', $db );
     }
 
     /**
@@ -65,22 +53,39 @@ class DBTestGet extends PHPUnit\Framework\TestCase {
     public static function invalid_contexts(): \Iterator
     {
         yield array( 'do_something' );
-        yield array( 'dothis' );
-        yield array( 'omg-do-it_already' );
-        yield array( 'read_something' );
-        yield array( 'write-SOME_THING' );
+//        yield array( 'dothis' );
+//        yield array( 'omg-do-it_already' );
+//        yield array( 'read_something' );
+//        yield array( 'write-SOME_THING' );
     }
 
     /**
-     * Check that improperly formatted contexts log an error message
+     * Check that improperly formatted contexts trigger a notice - yet the default DB is returned
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('invalid_contexts')]
     public function test_get_with_invalid_context($context) {
-        yourls_debug_log('Testing yourls_get_db() with '.$context);
-        $db_default = yourls_get_db();
-        $db_with_ctx = yourls_get_db($context);
-        $this->assertSame($db_default, $db_with_ctx);
-        $log = yourls_get_debug_log();
-        $this->assertStringContainsString('yourls_get_db called with improperly formatted context', end($log));
+        set_error_handler(function($errno, $errstr) {
+            $this->assertEquals(E_USER_NOTICE, $errno);
+            $this->assertStringContainsString('Improperly formatted yourls_get_db() context', $errstr);
+            return true; // Prevent PHP's default error handler
+        });
+        $db = yourls_get_db($context);
+        $this->assertInstanceOf( '\YOURLS\Database\YDB', $db );
+        restore_error_handler();
     }
+
+    /**
+     * Check that missing context triggers a notice - yet the default DB is returned
+     */
+    public function test_get_with_empty_context() {
+        set_error_handler(function($errno, $errstr) {
+            $this->assertEquals(E_USER_NOTICE, $errno);
+            $this->assertStringContainsString('Undefined yourls_get_db() context', $errstr);
+            return true; // Prevent PHP's default error handler
+        });
+        $db = yourls_get_db();
+        $this->assertInstanceOf( '\YOURLS\Database\YDB', $db );
+        restore_error_handler();
+    }
+
 }

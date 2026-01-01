@@ -27,7 +27,7 @@ function yourls_db_connect($context = '') {
     yourls_do_action( 'set_DB_driver', 'deprecated' );
 
     // Get custom port if any
-    if ( false !== strpos( $dbhost, ':' ) ) {
+    if (str_contains($dbhost, ':')) {
         list( $dbhost, $dbport ) = explode( ':', $dbhost );
         $dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
     }
@@ -82,7 +82,9 @@ function yourls_db_connect($context = '') {
  *
  * @since  1.7.10
  * @param string $context Optional context. Default: ''.
- *   When provided, use a naming schema starting with a prefix describing the operation, followed by a short description:
+ *   If not provided, the function will trigger a notice to encourage developers to provide a context while not
+ *   breaking existing code. A context is a string describing the operation for which the DB is requested.
+ *   Use a naming schema starting with a prefix describing the operation, followed by a short description:
  *   - Prefix should be either "read-" or "write-", as follows:
  *        * "read-" for operations that only read from the DB (eg get_keyword_infos)
  *        * "write-" for operations that write to the DB (eg insert_link_in_db)
@@ -99,9 +101,19 @@ function yourls_get_db($context = '') {
         return $pre;
     }
 
-    // Validate context, or raise soft notice
-    if (!preg_match('/^(read|write)-[a-z0-9_]+$/', $context) && $context !== '') {
-        yourls_debug_log( 'yourls_get_db called with improperly formatted context "' . $context . '". Recommended format is "read-description" or "write-description", eg "read-fetch_keyword".' );
+    // Validate context and raise notice if missing or malformed
+    if ($context == '' || !preg_match('/^(read|write)-[a-z0-9_]+$/', $context)) {
+        $db = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $file = $db[0]['file'];
+        $line = $db[0]['line'];
+
+        if ($context == '') {
+            $msg = 'Undefined yourls_get_db() context';
+        } else {
+            $msg = 'Improperly formatted yourls_get_db() context ("' . $context . '")';
+        }
+
+        trigger_error( $msg . ' at <b>' . $file . ':' . $line .'</b>', E_USER_NOTICE );
     }
 
     yourls_do_action( 'get_db_action', $context );

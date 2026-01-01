@@ -12,7 +12,7 @@ class DBSetTest extends PHPUnit\Framework\TestCase {
      * Make a copy of $ydb
      */
     public function setUp(): void {
-        $this->ydb_copy = yourls_get_db();
+        $this->ydb_copy = yourls_get_db('read-test_setup');
         yourls_set_db(null);
     }
 
@@ -25,7 +25,7 @@ class DBSetTest extends PHPUnit\Framework\TestCase {
 
     public function test_set() {
         yourls_set_db("hello");
-        $this->assertSame( "hello", yourls_get_db() );
+        $this->assertSame( "hello", yourls_get_db('read-test_set') );
     }
 
     /**
@@ -48,6 +48,5 @@ class DBSetTest extends PHPUnit\Framework\TestCase {
      * Oh well. ¯\_(ツ)_/¯
      *
      */
-
 
 }
