@@ -10,7 +10,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
      * Reset active plugin list
      */
     public static function tearDownAfterClass(): void {
-        yourls_get_db()->set_plugins( array() );
+        yourls_get_db('read-test_plugins')->set_plugins( array() );
     }
 
     /**
@@ -110,7 +110,7 @@ class FilesTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_plugin_activate')]
     public function test_load_plugins( $plugin ) {
-        $ydb = yourls_get_db();
+        $ydb = yourls_get_db('read-test_load_plugins');
 
         // at this point, we have exactly 1 plugin activated
         $this->assertSame( $ydb->get_plugins(), array( $plugin ) );
