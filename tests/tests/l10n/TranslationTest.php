@@ -85,13 +85,10 @@ class TranslationTest extends PHPUnit\Framework\TestCase {
      * @since 0.1
      */
     public function test_yourls_s_too_few() {
-        if (PHP_VERSION_ID >= 80000) {
-            $this->expectException(ArgumentCountError::class);
-        } else {
-            $this->expectException(PHPUnit\Framework\Error\Error::class);
-        }
+        $this->expectException(ArgumentCountError::class);
         $this->expectExceptionMessageMatches('/arguments/');
 
+        // this will trigger a Fatal error -- Uncaught ArgumentCountError: 3 arguments are required, 2 given
         yourls_s( 'Hello %s you are %s', 'Ozh' );
     }
 
