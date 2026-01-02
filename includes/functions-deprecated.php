@@ -268,7 +268,6 @@ function yourls_has_interface() {
 /**
  * Check if a proxy is defined for HTTP requests
  *
- * @uses YOURLS_PROXY
  * @since 1.7
  * @deprecated 1.7.1
  * @return bool true if a proxy is defined, false otherwise

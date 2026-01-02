@@ -12,7 +12,7 @@
 /**
  * Load POMO files required to run library
  */
-use \POMO\MO;
+use POMO\MO;
 use POMO\Translations\NOOPTranslations;
 
 /**
@@ -29,8 +29,6 @@ use POMO\Translations\NOOPTranslations;
  * always be filtered using the 'get_locale' hook.
  *
  * @since 1.6
- * @uses yourls_apply_filter() Calls 'get_locale' hook on locale value.
- * @uses $yourls_locale Gets the locale stored in the global.
  *
  * @return string The locale of the YOURLS instance
  */
@@ -55,8 +53,6 @@ function yourls_get_locale() {
  *
  * @see yourls__() Don't use yourls_translate() directly, use yourls__()
  * @since 1.6
- * @uses yourls_apply_filter() Calls 'translate' on domain translated text
- *        with the untranslated text as second parameter.
  *
  * @param string $text Text to translate.
  * @param string $domain Domain to retrieve the translated text.
@@ -325,9 +321,6 @@ function yourls_esc_html_x( $single, $context, $domain = 'default' ) {
  * type will be a string.
  *
  * @since 1.6
- * @uses $yourls_l10n Gets list of domain translated string (gettext_reader) objects
- * @uses yourls_apply_filter() Calls 'translate_n' hook on domains text returned,
- *        along with $single, $plural, and $number parameters. Expected to return string.
  *
  * @param string $single The text that will be used if $number is 1
  * @param string $plural The text that will be used if $number is not 1
@@ -447,7 +440,6 @@ function yourls_translate_nooped_plural( $nooped_plural, $count, $domain = 'defa
  * and will be a MO object.
  *
  * @since 1.6
- * @uses $yourls_l10n Gets list of domain translated string objects
  *
  * @param string $domain Unique identifier for retrieving translated strings
  * @param string $mofile Path to the .mo file
@@ -979,11 +971,7 @@ class YOURLS_Locale_Formats {
     /**
      * Constructor which calls helper methods to set up object variables
      *
-     * @uses YOURLS_Locale_Formats::init()
-     * @uses YOURLS_Locale_Formats::register_globals()
      * @since 1.6
-     *
-     * @return YOURLS_Locale_Formats
      */
     function __construct() {
         $this->init();
@@ -1011,7 +999,7 @@ class YOURLS_Locale_Formats {
  *
  * @param string $domain Unique identifier (the "domain") for retrieving translated strings
  * @param string $path Full path to directory containing MO files.
- * @return mixed Returns nothing if locale undefined, otherwise return bool: true on success, false on failure
+ * @return mixed|void Returns nothing if locale undefined, otherwise return bool: true on success, false on failure
  */
 function yourls_load_custom_textdomain( $domain, $path ) {
     $locale = yourls_apply_filter( 'load_custom_textdomain', yourls_get_locale(), $domain );
