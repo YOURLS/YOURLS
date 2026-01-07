@@ -301,7 +301,7 @@ function yourls_check_core_version() {
         'yourls_site'        => defined( 'YOURLS_SITE' ) ? yourls_get_yourls_site() : 'unknown',
         'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
         'php_version'        => PHP_VERSION,
-        'mysql_version'      => yourls_get_db()->mysql_version(),
+        'mysql_version'      => yourls_get_db('read-check_core_version')->mysql_version(),
         'locale'             => yourls_get_locale(),
 
         // custom DB driver if any, and useful common PHP extensions
