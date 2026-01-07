@@ -18,7 +18,7 @@ class PluginPagesTest extends PHPUnit\Framework\TestCase {
         yourls_remove_all_actions('pre_yourls_die');
 
         // unregister plugin pages
-        yourls_get_db()->set_plugin_pages(array());
+        yourls_get_db('read-test_plugins')->set_plugin_pages(array());
     }
 
     /**
@@ -83,7 +83,7 @@ class PluginPagesTest extends PHPUnit\Framework\TestCase {
     * @since 0.1
     */
     public function test_register_plugin_page() {
-        $ydb = yourls_get_db();
+        $ydb = yourls_get_db('read-test_plugins');
         $plugin = rand_str();
         $title = rand_str();
         $func = rand_str();
