@@ -24,17 +24,20 @@ class DomainTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Load custom fake domains - should raise an error
+     * Load custom fake domains - should raise a notice
      *
      * @since 0.1
      */
     public function test_custom_fake_domain() {
-        $this->markTestSkipped(
-            'Notice are not checked by PHPUnit anymore. https://github.com/sebastianbergmann/phpunit/issues/5222',
-        );
-        // $this->expectExceptionMessageMatches('/Cannot read file [0-9a-z]+\/[0-9a-z]+-fr_FR\.mo\. Make sure there is a language file installed. More info: http:\/\/yourls\.org\/translations/');
+        set_error_handler(function($errno, $errstr) {
+            $this->assertEquals(E_USER_NOTICE, $errno);
+            $this->assertStringContainsString('Cannot read file', $errstr);
+            return true; // Prevent PHP's default error handler
+        });
 
-        // yourls_load_custom_textdomain( rand_str(), rand_str() );
+        yourls_load_custom_textdomain( rand_str(), rand_str() );
+
+        restore_error_handler();
     }
 
     /**

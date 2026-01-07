@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   pull_request:
   workflow_dispatch:
-  
+
 # Cancels all previous workflow runs for the same branch that have not yet completed.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -79,6 +79,6 @@ jobs:
         cp tests/data/config/yourls-tests-config-ci.php user/config.php
 
     - name: Test
-      run: phpunit --configuration phpunit.xml.dist --testdox --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
+      run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
       env:
         DB_PORT: ${{ job.services.mysql.ports['3306'] }}

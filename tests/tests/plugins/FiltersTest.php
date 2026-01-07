@@ -396,16 +396,12 @@ class FiltersTest extends PHPUnit\Framework\TestCase {
      * @since 0.1
      */
     public function test_function_must_exist_if_applied() {
-        if (PHP_VERSION_ID >= 80000) {
-            $this->expectException(TypeError::class);
-        } else {
-            $this->expectException(PHPUnit\Framework\Error\Error::class);
-        }
+        $this->expectException(TypeError::class);
         $this->expectExceptionMessageMatches('/call_user_func_array\(\).* a valid callback, function (\'|")[0-9a-z]+(\'|") not found or invalid function name/');
 
         $hook = rand_str();
         yourls_add_filter( $hook, rand_str() );
-        // this will trigger an error, converted to an exception by PHPUnit
+        // this will trigger a Fatal error -- Uncaught TypeError: call_user_func_array(): Argument #1 ($callback) must be a valid callback
         $test = yourls_apply_filter( $hook, rand_str() );
     }
 

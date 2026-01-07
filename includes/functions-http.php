@@ -88,7 +88,6 @@ function yourls_http_post_body( $url, $headers = array(), $data = array(), $opti
 /**
  * Get proxy information
  *
- * @uses YOURLS_PROXY YOURLS_PROXY_USERNAME YOURLS_PROXY_PASSWORD
  * @since 1.7.1
  * @return mixed false if no proxy is defined, or string like '10.0.0.201:3128' or array like ('10.0.0.201:3128', 'username', 'password')
  */
@@ -108,7 +107,6 @@ function yourls_http_get_proxy() {
 /**
  * Get list of hosts that should bypass the proxy
  *
- * @uses YOURLS_PROXY_BYPASS_HOSTS
  * @since 1.7.1
  * @return mixed false if no host defined, or string like "example.com, *.mycorp.com"
  */
@@ -147,8 +145,6 @@ function yourls_http_default_options() {
  * Concept stolen from WordPress. The idea is to allow some URLs, including localhost and the YOURLS install itself,
  * to be requested directly and bypassing any defined proxy.
  *
- * @uses YOURLS_PROXY
- * @uses YOURLS_PROXY_BYPASS_HOSTS
  * @since 1.7
  * @param string $url URL to check
  * @return bool true to request through proxy, false to request directly
