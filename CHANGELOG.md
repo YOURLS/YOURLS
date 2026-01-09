@@ -9,6 +9,7 @@ For a much more detailed list, simply refer to [commit messages](https://github.
 - added: testing on PHP 8.5 & 8.6 (#4036)
 - added: function to get reserved URLs from global variable (#3999)
 - added: database index on long URLs, for faster searches (#4013)
+- added: `$context` parameter of `yourls_get_db()` (#4020)
 - changed: hide referrers on public statistics page by default (#4005)
 - changed: set the infos cache of the keyword after a url is added/updated/deleted (#4008)
 - changed: fix hover-actions in tables for screen reader users (#4025)
