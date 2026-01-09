@@ -6,8 +6,8 @@
 /**
  * Add a message to the debug log
  *
- * When in debug mode ( YOURLS_DEBUG == true ) the debug log is echoed in yourls_html_footer()
- * Log messages are appended to $ydb->debug_log array, which is instanciated within class Database\YDB
+ * When in debug mode (YOURLS_DEBUG == true) the debug log is echoed in yourls_html_footer()
+ * Log messages are appended to $ydb->debug_log array, which is instantiated within class Database\YDB
  *
  * @since 1.7
  * @param string $msg Message to add to the debug log
@@ -15,12 +15,7 @@
  */
 function yourls_debug_log( $msg ) {
     yourls_do_action( 'debug_log', $msg );
-    // Get the DB object ($ydb), get its profiler (\Aura\Sql\Profiler\Profiler), its logger (\Aura\Sql\Profiler\MemoryLogger) and
-    // pass it a unused argument (loglevel) and the message
-    // Check if function exists to allow usage of the function in very early stages
-    if(function_exists('yourls_debug_log')) {
-        yourls_get_db()->getProfiler()->getLogger()->log( 'debug', $msg);
-    }
+    yourls_get_db('read-debug_log')->getProfiler()->getLogger()->log('debug', $msg);
     return $msg;
 }
 
@@ -31,7 +26,7 @@ function yourls_debug_log( $msg ) {
  * @return array
  */
 function yourls_get_debug_log() {
-    return yourls_get_db()->getProfiler()->getLogger()->getMessages();
+    return yourls_get_db('read-get_debug_log')->getProfiler()->getLogger()->getMessages();
 }
 
 /**
@@ -40,7 +35,7 @@ function yourls_get_debug_log() {
  * @return int
  */
 function yourls_get_num_queries() {
-	return yourls_apply_filter( 'get_num_queries', yourls_get_db()->get_num_queries() );
+    return yourls_apply_filter( 'get_num_queries', yourls_get_db('read-get_num_queries')->get_num_queries() );
 }
 
 /**
@@ -52,7 +47,7 @@ function yourls_get_num_queries() {
  */
 function yourls_debug_mode( $bool ) {
     // log queries if true
-    yourls_get_db()->getProfiler()->setActive( (bool)$bool );
+    yourls_get_db('read-debug_mode')->getProfiler()->setActive( (bool)$bool );
 
     // report notices if true
     $level = $bool ? -1 : ( E_ERROR | E_PARSE );

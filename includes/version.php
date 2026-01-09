@@ -17,4 +17,4 @@ define( 'YOURLS_VERSION', '1.10.3' );
  * Must be a string of an integer.
  *
  */
-define( 'YOURLS_DB_VERSION', '506' );
+define( 'YOURLS_DB_VERSION', '507' );

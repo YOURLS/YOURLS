@@ -18,8 +18,6 @@ body {
 	border-right:3px solid #2a85b3;
 	border-bottom:3px solid #2a85b3;
 	border-top:3px solid #2a85b3;
-	-moz-border-radius:20px;
-	-webkit-border-radius:20px;
 	border-radius:20px;
 }
 .hide-if-no-js {display: none;}
@@ -68,8 +66,6 @@ tt {
 }
 
 input, textarea {
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 }
 Input.text, select, textarea {
@@ -129,8 +125,11 @@ tr.edit-row  td {
 td.url small a{
 	color:#bbc;
 }
-body.desktop td.actions input,body.desktop  td.actions a {
-	visibility:hidden;
+/* Hide buttons visually but keep them accessible to screen readers */
+body.desktop td.actions input, body.desktop td.actions a {
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
 }
 td.timestamp span.timestamp {
     display:none;
@@ -138,8 +137,20 @@ td.timestamp span.timestamp {
 td.actions input.disabled, td.actions input.loading {
 	visibility:visible;
 }
+/* Show buttons on row hover */
 tr:hover td.actions input, tr:hover td.actions a {
-	visibility:visible;
+	opacity: 1;
+	pointer-events: auto;
+}
+/* Show buttons when any button in the actions cell receives focus */
+td.actions:focus-within input, td.actions:focus-within a {
+	opacity: 1;
+	pointer-events: auto;
+}
+/* Show all buttons when any element in the row receives focus (for keyboard nav through the entire row) */
+tr:focus-within td.actions input, tr:focus-within td.actions a {
+	opacity: 1;
+	pointer-events: auto;
 }
 td.actions .button {
 	font-family: Verdana, Arial;
@@ -148,8 +159,6 @@ td.actions .button {
 	font-weight: bold;
 	background-color: #FFFFFF;
 	border: 1px solid #88c0eb;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 	cursor:pointer;
 	height:22px;
@@ -240,8 +249,6 @@ td.actions .button_stats {
 }
 a.bookmarklet {
 	border:2px solid #2a85b3;
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
 	border-radius:3px;
 	padding:5px 5px 5px 20px;
 	background:#eef url(../images/favicon.svg) 2px center no-repeat;
@@ -262,14 +269,8 @@ a.bookmarklet:hover {
 	background:white;
 	margin:0 auto;
 	max-width:950px;
-	-moz-border-radius:10px;
-	-webkit-border-radius:10px;
 	border-radius:10px;
 	border:2px solid #2a85b3;
-	-moz-border-radius-bottomleft:30px;
-	-moz-border-radius-bottomright:30px;
-	-webkit-border-bottom-left-radius:25px;
-	-webkit-border-bottom-right-radius:25px;
 	border-bottom-left-radius:25px;
 	border-bottom-right-radius:25px;
 }
@@ -281,15 +282,12 @@ a.bookmarklet:hover {
 .notice {
 	border:1px solid #2a85b3;
 	background: #F3FAFD;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
 	border-radius:6px;
 	width:70%;
 	margin-left:15%;
 	padding-left:10px;
 	margin-bottom:5px;
 }
-
 
 .jquery-notify-bar {
   width:100%;
@@ -305,11 +303,7 @@ a.bookmarklet:hover {
   padding:20px 0px;
   border-bottom:1px solid #bbb;
   filter:alpha(opacity=95);
-  -moz-opacity:0.95;
-  -khtml-opacity:0.95;
   opacity:0.95;
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 .jquery-notify-bar.error ,.jquery-notify-bar.fail {
@@ -335,3 +329,59 @@ a.bookmarklet:hover {
 tr.plugin.active a{ font-weight:bolder;}
 body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
 tr:hover.plugin td.plugin_desc small{ visibility:visible;}
+
+#delete-confirm-dialog {
+    background-color: #ffffff;
+    width: 50em;
+    height: 19em;
+    padding: 0px;
+    border: 3px solid #2a85b3;
+    border-radius: 20px;
+}
+#delete-confirm-dialog > div[name="dialog_title"] {
+    background-color: #c7e7ff;
+    font-size: 20px;
+    color: #026090;
+    text-align: center;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    border-start-start-radius: 17px 17px;
+    border-start-end-radius: 17px 17px;
+}
+#delete-confirm-dialog div.confirm-message {
+    background-color: #ffffff;
+    width: calc(50em - 4em);
+    height: calc(20em - 50px - 5em - 2em + 6px);
+    float: none;
+    text-align: left;
+    padding: 1em 2em;
+    overflow: hidden;
+}
+#delete-confirm-dialog div.confirm-message ul {
+    border-left: 5px solid #026090;
+    list-style-type: none;
+    padding: 0 1em;
+}
+#delete-confirm-dialog div.confirm-message ul li {
+    margin-bottom: 0.5em;
+}
+#delete-confirm-dialog div.confirm-message ul li span {
+    border: 1px solid #c7e7ff;
+    border-radius: 3px;
+    padding: 1px 5px;
+    color:#333;
+}
+#delete-confirm-dialog div.button-group {
+    background-color: #e3f3ff;
+    width: calc(50em - 4em);
+    height: 2em;
+    float: none;
+    text-align: right;
+    padding: 1em 2em;
+    border-end-start-radius: 17px 17px;
+    border-end-end-radius: 17px 17px;
+}
+#delete-confirm-dialog::backdrop {
+    background-color: #666;
+    opacity: 80%;
+}

@@ -182,7 +182,7 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
         yield array( 'Motörhead', 'Motrhead' );
     }
 
-	/**
+    /**
      * Checking that keyword are correctly sanitized
      *
      * @since 0.1

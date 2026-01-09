@@ -12,7 +12,7 @@ class VersionTest extends PHPUnit\Framework\TestCase {
      * Make a copy of $ydb
      */
     public function setUp(): void {
-        $this->ydb_copy = yourls_get_db();
+        $this->ydb_copy = yourls_get_db('read-test_setup');
     }
 
     /**

@@ -31,7 +31,7 @@ use WpOrg\Requests\Requests;
  * @return mixed Response object, or error string
  */
 function yourls_http_get( $url, $headers = array(), $data = array(), $options = array() ) {
-	return yourls_http_request( 'GET', $url, $headers, $data, $options );
+    return yourls_http_request( 'GET', $url, $headers, $data, $options );
 }
 
 /**
@@ -46,8 +46,8 @@ function yourls_http_get( $url, $headers = array(), $data = array(), $options = 
  * @return mixed String (page body) or null if error
  */
 function yourls_http_get_body( $url, $headers = array(), $data = array(), $options = array() ) {
-	$return = yourls_http_get( $url, $headers, $data, $options );
-	return isset( $return->body ) ? $return->body : null;
+    $return = yourls_http_get( $url, $headers, $data, $options );
+    return isset( $return->body ) ? $return->body : null;
 }
 
 /**
@@ -64,7 +64,7 @@ function yourls_http_get_body( $url, $headers = array(), $data = array(), $optio
  * @return mixed Response object, or error string
  */
 function yourls_http_post( $url, $headers = array(), $data = array(), $options = array() ) {
-	return yourls_http_request( 'POST', $url, $headers, $data, $options );
+    return yourls_http_request( 'POST', $url, $headers, $data, $options );
 }
 
 /**
@@ -81,14 +81,13 @@ function yourls_http_post( $url, $headers = array(), $data = array(), $options =
  * @return mixed String (page body) or null if error
  */
 function yourls_http_post_body( $url, $headers = array(), $data = array(), $options = array() ) {
-	$return = yourls_http_post( $url, $headers, $data, $options );
-	return isset( $return->body ) ? $return->body : null;
+    $return = yourls_http_post( $url, $headers, $data, $options );
+    return isset( $return->body ) ? $return->body : null;
 }
 
 /**
  * Get proxy information
  *
- * @uses YOURLS_PROXY YOURLS_PROXY_USERNAME YOURLS_PROXY_PASSWORD
  * @since 1.7.1
  * @return mixed false if no proxy is defined, or string like '10.0.0.201:3128' or array like ('10.0.0.201:3128', 'username', 'password')
  */
@@ -108,7 +107,6 @@ function yourls_http_get_proxy() {
 /**
  * Get list of hosts that should bypass the proxy
  *
- * @uses YOURLS_PROXY_BYPASS_HOSTS
  * @since 1.7.1
  * @return mixed false if no host defined, or string like "example.com, *.mycorp.com"
  */
@@ -127,18 +125,18 @@ function yourls_http_get_proxy_bypass_host() {
  * @return array Options
  */
 function yourls_http_default_options() {
-	$options = array(
-		'timeout'          => yourls_apply_filter( 'http_default_options_timeout', 3 ),
-		'useragent'        => yourls_http_user_agent(),
-		'follow_redirects' => true,
-		'redirects'        => 3,
-	);
+    $options = array(
+        'timeout'          => yourls_apply_filter( 'http_default_options_timeout', 3 ),
+        'useragent'        => yourls_http_user_agent(),
+        'follow_redirects' => true,
+        'redirects'        => 3,
+    );
 
-	if( yourls_http_get_proxy() ) {
+    if( yourls_http_get_proxy() ) {
         $options['proxy'] = yourls_http_get_proxy();
-	}
+    }
 
-	return yourls_apply_filter( 'http_default_options', $options );
+    return yourls_apply_filter( 'http_default_options', $options );
 }
 
 /**
@@ -147,35 +145,33 @@ function yourls_http_default_options() {
  * Concept stolen from WordPress. The idea is to allow some URLs, including localhost and the YOURLS install itself,
  * to be requested directly and bypassing any defined proxy.
  *
- * @uses YOURLS_PROXY
- * @uses YOURLS_PROXY_BYPASS_HOSTS
  * @since 1.7
  * @param string $url URL to check
  * @return bool true to request through proxy, false to request directly
  */
 function yourls_send_through_proxy( $url ) {
 
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_send_through_proxy', null, $url );
-	if ( null !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_send_through_proxy', null, $url );
+    if ( null !== $pre )
+        return $pre;
 
-	$check = @parse_url( $url );
+    $check = @parse_url( $url );
 
     if( !isset( $check['host'] ) ) {
         return false;
     }
 
-	// Malformed URL, can not process, but this could mean ssl, so let through anyway.
-	if ( $check === false )
-		return true;
+    // Malformed URL, can not process, but this could mean ssl, so let through anyway.
+    if ( $check === false )
+        return true;
 
-	// Self and loopback URLs are considered local (':' is parse_url() host on '::1')
-	$home = parse_url( yourls_get_yourls_site() );
-	$local = array( 'localhost', '127.0.0.1', '127.1', '[::1]', ':', $home['host'] );
+    // Self and loopback URLs are considered local (':' is parse_url() host on '::1')
+    $home = parse_url( yourls_get_yourls_site() );
+    $local = array( 'localhost', '127.0.0.1', '127.1', '[::1]', ':', $home['host'] );
 
-	if( in_array( $check['host'], $local ) )
-		return false;
+    if( in_array( $check['host'], $local ) )
+        return false;
 
     $bypass = yourls_http_get_proxy_bypass_host();
 
@@ -183,10 +179,10 @@ function yourls_send_through_proxy( $url ) {
         return true;
     }
 
-	// Build array of hosts to bypass
-	static $bypass_hosts;
-	static $wildcard_regex = false;
-	if ( null == $bypass_hosts ) {
+    // Build array of hosts to bypass
+    static $bypass_hosts;
+    static $wildcard_regex = false;
+    if ( null == $bypass_hosts ) {
         $bypass_hosts = preg_split( '|\s*,\s*|', $bypass );
 
         if ( false !== strpos( $bypass, '*' ) ) {
@@ -199,12 +195,12 @@ function yourls_send_through_proxy( $url ) {
             }
             $wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
         }
-	}
+    }
 
-	if ( !empty( $wildcard_regex ) )
-		return !preg_match( $wildcard_regex, $check['host'] );
-	else
-		return !in_array( $check['host'], $bypass_hosts );
+    if ( !empty( $wildcard_regex ) )
+        return !preg_match( $wildcard_regex, $check['host'] );
+    else
+        return !in_array( $check['host'], $bypass_hosts );
 }
 
 /**
@@ -220,16 +216,16 @@ function yourls_send_through_proxy( $url ) {
  */
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
 
-	// Allow plugins to short-circuit the whole function
-	$pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
-	if ( null !== $pre )
-		return $pre;
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
+    if ( null !== $pre )
+        return $pre;
 
-	$options = array_merge( yourls_http_default_options(), $options );
+    $options = array_merge( yourls_http_default_options(), $options );
 
-	if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) ) {
-		unset( $options['proxy'] );
-	}
+    if( yourls_http_get_proxy() && !yourls_send_through_proxy( $url ) ) {
+        unset( $options['proxy'] );
+    }
 
     // filter everything
     $type    = yourls_apply_filter('http_request_type', $type);
@@ -238,13 +234,13 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
     $data    = yourls_apply_filter('http_request_data', $data);
     $options = yourls_apply_filter('http_request_options', $options);
 
-	try {
-		$result = Requests::request( $url, $headers, $data, $type, $options );
-	} catch( \WpOrg\Requests\Exception $e ) {
-		$result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
-	};
+    try {
+        $result = Requests::request( $url, $headers, $data, $type, $options );
+    } catch( \WpOrg\Requests\Exception $e ) {
+        $result = yourls_debug_log( $e->getMessage() . ' (' . $type . ' on ' . $url . ')' );
+    };
 
-	return $result;
+    return $result;
 }
 
 /**
@@ -254,7 +250,7 @@ function yourls_http_request( $type, $url, $headers, $data, $options ) {
  * @return string UA string
  */
 function yourls_http_user_agent() {
-	return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.yourls_get_yourls_site().')' );
+    return yourls_apply_filter( 'http_user_agent', 'YOURLS v'.YOURLS_VERSION.' +http://yourls.org/ (running on '.yourls_get_yourls_site().')' );
 }
 
 /**
@@ -274,51 +270,51 @@ function yourls_http_user_agent() {
  */
 function yourls_check_core_version() {
 
-	global $yourls_user_passwords;
+    global $yourls_user_passwords;
 
-	$checks = yourls_get_option( 'core_version_checks' );
+    $checks = yourls_get_option( 'core_version_checks' );
 
-	// Invalidate check data when YOURLS version changes
-	if ( is_object( $checks ) && YOURLS_VERSION != $checks->version_checked ) {
-		$checks = false;
-	}
+    // Invalidate check data when YOURLS version changes
+    if ( is_object( $checks ) && YOURLS_VERSION != $checks->version_checked ) {
+        $checks = false;
+    }
 
-	if( !is_object( $checks ) ) {
-		$checks = new stdClass;
-		$checks->failed_attempts = 0;
-		$checks->last_attempt    = 0;
-		$checks->last_result     = '';
-		$checks->version_checked = YOURLS_VERSION;
-	}
+    if( !is_object( $checks ) ) {
+        $checks = new stdClass;
+        $checks->failed_attempts = 0;
+        $checks->last_attempt    = 0;
+        $checks->last_result     = '';
+        $checks->version_checked = YOURLS_VERSION;
+    }
 
-	// Total number of links and clicks
+    // Total number of links and clicks
     list( $total_urls, $total_clicks ) = array_values(yourls_get_db_stats());
 
-	// The collection of stuff to report
-	$stuff = array(
-		// Globally uniquish site identifier
+    // The collection of stuff to report
+    $stuff = array(
+        // Globally uniquish site identifier
         // This uses const YOURLS_SITE and not yourls_get_yourls_site() to prevent creating another id for an already known install
-		'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),
+        'md5'                => md5( YOURLS_SITE . YOURLS_ABSPATH ),
 
-		// Install information
-		'failed_attempts'    => $checks->failed_attempts,
-		'yourls_site'        => defined( 'YOURLS_SITE' ) ? yourls_get_yourls_site() : 'unknown',
-		'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
-		'php_version'        => PHP_VERSION,
-		'mysql_version'      => yourls_get_db()->mysql_version(),
-		'locale'             => yourls_get_locale(),
+        // Install information
+        'failed_attempts'    => $checks->failed_attempts,
+        'yourls_site'        => defined( 'YOURLS_SITE' ) ? yourls_get_yourls_site() : 'unknown',
+        'yourls_version'     => defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : 'unknown',
+        'php_version'        => PHP_VERSION,
+        'mysql_version'      => yourls_get_db('read-check_core_version')->mysql_version(),
+        'locale'             => yourls_get_locale(),
 
-		// custom DB driver if any, and useful common PHP extensions
-		'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unset',
-		'db_ext_pdo'         => extension_loaded( 'PDO' )     ? 1 : 0,
-		'db_ext_mysql'       => extension_loaded( 'mysql' )   ? 1 : 0,
-		'db_ext_mysqli'      => extension_loaded( 'mysqli' )  ? 1 : 0,
-		'ext_curl'           => extension_loaded( 'curl' )    ? 1 : 0,
+        // custom DB driver if any, and useful common PHP extensions
+        'db_driver'          => defined( 'YOURLS_DB_DRIVER' ) ? YOURLS_DB_DRIVER : 'unset',
+        'db_ext_pdo'         => extension_loaded( 'PDO' )     ? 1 : 0,
+        'db_ext_mysql'       => extension_loaded( 'mysql' )   ? 1 : 0,
+        'db_ext_mysqli'      => extension_loaded( 'mysqli' )  ? 1 : 0,
+        'ext_curl'           => extension_loaded( 'curl' )    ? 1 : 0,
 
-		// Config information
-		'yourls_private'     => defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ? 1 : 0,
-		'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
-		'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
+        // Config information
+        'yourls_private'     => defined( 'YOURLS_PRIVATE' ) && YOURLS_PRIVATE ? 1 : 0,
+        'yourls_unique'      => defined( 'YOURLS_UNIQUE_URLS' ) && YOURLS_UNIQUE_URLS ? 1 : 0,
+        'yourls_url_convert' => defined( 'YOURLS_URL_CONVERT' ) ? YOURLS_URL_CONVERT : 'unknown',
 
         // Usage information
         'num_users'          => count( $yourls_user_passwords ),
@@ -326,44 +322,44 @@ function yourls_check_core_version() {
         'num_pages'          => defined( 'YOURLS_PAGEDIR' ) ? count( (array) glob( YOURLS_PAGEDIR .'/*.php') ) : 0,
         'num_links'          => $total_urls,
         'num_clicks'         => $total_clicks,
-	);
+    );
 
-	$stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
+    $stuff = yourls_apply_filter( 'version_check_stuff', $stuff );
 
-	// Send it in
-	$url = 'http://api.yourls.org/core/version/1.1/';
+    // Send it in
+    $url = 'http://api.yourls.org/core/version/1.1/';
     if( yourls_can_http_over_ssl() ) {
         $url = yourls_set_url_scheme($url, 'https');
     }
-	$req = yourls_http_post( $url, array(), $stuff );
+    $req = yourls_http_post( $url, array(), $stuff );
 
-	$checks->last_attempt = time();
-	$checks->version_checked = YOURLS_VERSION;
+    $checks->last_attempt = time();
+    $checks->version_checked = YOURLS_VERSION;
 
-	// Unexpected results ?
-	if( is_string( $req ) or !$req->success ) {
-		$checks->failed_attempts = $checks->failed_attempts + 1;
-		yourls_update_option( 'core_version_checks', $checks );
-		if( is_string($req) ) {
+    // Unexpected results ?
+    if( is_string( $req ) or !$req->success ) {
+        $checks->failed_attempts = $checks->failed_attempts + 1;
+        yourls_update_option( 'core_version_checks', $checks );
+        if( is_string($req) ) {
             yourls_debug_log('Version check failed: ' . $req);
         }
-		return false;
-	}
+        return false;
+    }
 
-	// Parse response
-	$json = json_decode( trim( $req->body ) );
+    // Parse response
+    $json = json_decode( trim( $req->body ) );
 
-	if( yourls_validate_core_version_response($json) ) {
-		// All went OK - mark this down
-		$checks->failed_attempts = 0;
-		$checks->last_result     = $json;
-		yourls_update_option( 'core_version_checks', $checks );
+    if( yourls_validate_core_version_response($json) ) {
+        // All went OK - mark this down
+        $checks->failed_attempts = 0;
+        $checks->last_result     = $json;
+        yourls_update_option( 'core_version_checks', $checks );
 
-		return $json;
-	}
+        return $json;
+    }
 
-	// Request returned actual result, but not what we expected
-	return false;
+    // Request returned actual result, but not what we expected
+    return false;
 }
 
 /**
@@ -467,33 +463,33 @@ function yourls_maybe_check_core_version() {
         return false;
     }
 
-	$checks = yourls_get_option( 'core_version_checks' );
+    $checks = yourls_get_option( 'core_version_checks' );
 
-	/* We don't want to check if :
-	 - last_result is set (a previous check was performed)
-	 - and it was less than 24h ago (or less than 2h ago if it wasn't successful)
-	 - and version checked matched version running
-	 Otherwise, we want to check.
-	*/
-	if( !empty( $checks->last_result )
-		AND
-		(
-			( $checks->failed_attempts == 0 && ( ( time() - $checks->last_attempt ) < 24 * 3600 ) )
-			OR
-			( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) <  2 * 3600 ) )
-		)
-		AND ( $checks->version_checked == YOURLS_VERSION )
-	)
-		return false;
+    /* We don't want to check if :
+     - last_result is set (a previous check was performed)
+     - and it was less than 24h ago (or less than 2h ago if it wasn't successful)
+     - and version checked matched version running
+     Otherwise, we want to check.
+    */
+    if( !empty( $checks->last_result )
+        AND
+        (
+            ( $checks->failed_attempts == 0 && ( ( time() - $checks->last_attempt ) < 24 * 3600 ) )
+            OR
+            ( $checks->failed_attempts > 0  && ( ( time() - $checks->last_attempt ) <  2 * 3600 ) )
+        )
+        AND ( $checks->version_checked == YOURLS_VERSION )
+    )
+        return false;
 
-	// We want to check if there's a new version
-	$new_check = yourls_check_core_version();
+    // We want to check if there's a new version
+    $new_check = yourls_check_core_version();
 
-	// Could not check for a new version, and we don't have ancient data
-	if( false == $new_check && !isset( $checks->last_result->latest ) )
-		return false;
+    // Could not check for a new version, and we don't have ancient data
+    if( false == $new_check && !isset( $checks->last_result->latest ) )
+        return false;
 
-	return true;
+    return true;
 }
 
 /**
