@@ -87,7 +87,6 @@ if ( !isset( $yourls_actions ) ) {
  * @param int      $accepted_args  optional. The number of arguments the function accept (default is the number
  *                                 provided).
  * @param string   $type
- * @global array   $yourls_filters Storage for all of the filters
  * @return void
  */
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
@@ -185,7 +184,6 @@ function yourls_filter_unique_id($function) {
  *
  * Returns a value which may have been modified by a filter.
  *
- * @global array $yourls_filters storage for all of the filters
  * @param string $hook the name of the YOURLS element or action
  * @param mixed $value the value of the element before filtering
  * @param true|mixed $is_action true if the function is called by yourls_do_action() - otherwise may be the second parameter of an arbitrary number of parameters
@@ -332,7 +330,6 @@ function yourls_call_all_hooks($type, $hook, ...$args) {
  * To remove a hook, the $function_to_remove and $priority arguments must match
  * when the hook was added.
  *
- * @global array $yourls_filters storage for all of the filters
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callable $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
@@ -433,7 +430,6 @@ function yourls_get_actions($hook) {
  * Check if any filter has been registered for a hook.
  *
  * @since 1.5
- * @global array         $yourls_filters    storage for all of the filters
  * @param string         $hook              The name of the filter hook.
  * @param callable|false $function_to_check optional. If specified, return the priority of that function on this hook or false if not attached.
  * @return int|bool Optionally returns the priority on that hook for the specified function.
