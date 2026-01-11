@@ -1247,10 +1247,6 @@ function yourls_get_relative_url( $url, $strict = true ) {
  * This function is to be used in every function that is deprecated.
  *
  * @since 1.6
- * @uses yourls_do_action() Calls 'deprecated_function' and passes the function name, what to use instead,
- *   and the version the function was deprecated in.
- * @uses yourls_apply_filter() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
- *   trigger or false to not trigger error.
  *
  * @param string $function The function that was called
  * @param string $version The version of WordPress that deprecated the function

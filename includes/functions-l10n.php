@@ -284,7 +284,6 @@ function yourls_xe( $text, $context, $domain = 'default' ) {
  * @param string   $single
  * @param string   $context
  * @param string   $domain Optional. Domain to retrieve the translated text
- * @internal param string $text Text to translate
  * @return string
  */
 function yourls_esc_attr_x( $single, $context, $domain = 'default' ) {
@@ -302,7 +301,6 @@ function yourls_esc_attr_x( $single, $context, $domain = 'default' ) {
  * @param string   $single
  * @param string   $context
  * @param string   $domain Optional. Domain to retrieve the translated text
- * @internal param string $text Text to translate
  * @return string
  */
 function yourls_esc_html_x( $single, $context, $domain = 'default' ) {
