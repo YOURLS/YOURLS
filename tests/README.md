@@ -52,7 +52,5 @@ You can elect to run only selected groups of tests, eg:
 $ phpunit --group formatting
 ```
 
-See each `@group` directive in selected tests.
-
 PHPUnit supports both `phpunit.xml` and `phpunit.xml.dist`, where `phpunit.xml` has higher priority:
 if you want to specify your own settings, copy `phpunit.xml.dist` to `phpunit.xml` and edit that file.

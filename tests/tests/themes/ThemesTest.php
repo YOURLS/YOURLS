@@ -2,8 +2,6 @@
 
 /**
  * Themes functions
- *
- * @group themes
  */
 #[\PHPUnit\Framework\Attributes\RequiresFunction('yourls_activate_theme')]
 class ThemesTest extends \PHPUnit\Framework\TestCase {
