@@ -90,6 +90,7 @@ function yourls_html_head( $context = 'index', $title = '' ) {
     <meta http-equiv="Content-Type" content="<?php echo yourls_apply_filter( 'html_head_meta_content-type', 'text/html; charset=utf-8' ); ?>" />
     <meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
     <meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php yourls_do_action('html_head_meta', $context); ?>
     <?php yourls_html_favicon(); ?>
     <script src="<?php yourls_site_url(); ?>/js/jquery-3.5.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
