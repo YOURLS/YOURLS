@@ -929,8 +929,8 @@ function yourls_return_empty_string() {
  * efficient as filtered functions can legitimately return false.
  *
  * @since 1.10.4
- * @return array
+ * @return string
  */
 function yourls_shunt_default() {
-    return ['__yourls_shunt__' => '__yourls_shunt__'];
+    return '__yourls_shunt__';
 }

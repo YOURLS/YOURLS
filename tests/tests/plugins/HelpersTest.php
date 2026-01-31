@@ -17,7 +17,7 @@ class HelpersTest extends PHPUnit\Framework\TestCase {
         yield array( []   , 'yourls_return_empty_array' );
         yield array( null , 'yourls_return_null' );
         yield array( ''   , 'yourls_return_empty_string' );
-        yield array( ['__yourls_shunt__' => '__yourls_shunt__']   , 'yourls_shunt_default' );
+        yield array( '__yourls_shunt__', 'yourls_shunt_default' );
     }
 
     /**
