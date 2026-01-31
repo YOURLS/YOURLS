@@ -27,8 +27,8 @@ function yourls_check_database_version() {
  */
 function yourls_get_database_version() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_database_version', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_get_database_version', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -201,9 +201,9 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
  */
 function yourls_create_sql_tables() {
     // Allow plugins (most likely a custom db.php layer in user dir) to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_yourls_create_sql_tables', null );
+    $pre = yourls_apply_filter( 'shunt_yourls_create_sql_tables', yourls_shunt_default() );
     // your filter function should return an array of ( 'success' => $success_msg, 'error' => $error_msg ), see below
-    if ( null !== $pre ) {
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 

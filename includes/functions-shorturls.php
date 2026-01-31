@@ -31,8 +31,8 @@
  */
 function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_add_new_link', false, $url, $keyword, $title );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_add_new_link', yourls_shunt_default(), $url, $keyword, $title );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -248,8 +248,8 @@ function yourls_keyword_is_reserved( $keyword ) {
  */
 function yourls_delete_link_by_keyword( $keyword ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_delete_link_by_keyword', null, $keyword );
-    if ( null !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_delete_link_by_keyword', yourls_shunt_default(), $keyword );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -310,8 +310,8 @@ function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
  */
 function yourls_long_url_exists( $url ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_url_exists', false, $url );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_url_exists', yourls_shunt_default(), $url );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -337,9 +337,10 @@ function yourls_long_url_exists( $url ) {
  */
 function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_edit_link', null, $keyword, $url, $keyword, $newkeyword, $title );
-    if ( null !== $pre )
+    $pre = yourls_apply_filter( 'shunt_edit_link', yourls_shunt_default(), $keyword, $url, $keyword, $newkeyword, $title );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     $ydb = yourls_get_db('write-edit_link');
 
@@ -415,8 +416,8 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
  */
 function yourls_edit_link_title( $keyword, $title ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_edit_link_title', null, $keyword, $title );
-    if ( null !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_edit_link_title', yourls_shunt_default(), $keyword, $title );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -474,8 +475,8 @@ function yourls_is_page($keyword) {
  */
 function yourls_keyword_is_taken( $keyword, $use_cache = true ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_keyword_is_taken', false, $keyword );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_keyword_is_taken', yourls_shunt_default(), $keyword );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -539,9 +540,10 @@ function yourls_get_keyword_infos( $keyword, $use_cache = true ) {
 function yourls_get_keyword_info($keyword, $field, $notfound = false ) {
 
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_keyword_info', false, $keyword, $field, $notfound );
-    if ( false !== $pre )
+    $pre = yourls_apply_filter( 'shunt_get_keyword_info', yourls_shunt_default(), $keyword, $field, $notfound );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     $keyword = yourls_sanitize_keyword( $keyword );
     $infos = yourls_get_keyword_infos( $keyword );

@@ -25,8 +25,8 @@ function yourls_maybe_require_auth() {
  */
 function yourls_is_valid_user() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_is_valid_user', null );
-    if ( null !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_is_valid_user', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 

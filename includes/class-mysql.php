@@ -96,8 +96,8 @@ function yourls_db_connect($context = '') {
  */
 function yourls_get_db($context = '') {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_db', false, $context );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_get_db', yourls_shunt_default(), $context );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
