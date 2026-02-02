@@ -923,3 +923,14 @@ function yourls_return_null() {
 function yourls_return_empty_string() {
     return '';
 }
+
+/**
+ * Default value used to check for 'shunt_*' filters. Before 1.10.4 we were checking for false, but that's not
+ * efficient as filtered functions can legitimately return false.
+ *
+ * @since 1.10.4
+ * @return string
+ */
+function yourls_shunt_default() {
+    return '__yourls_shunt__';
+}

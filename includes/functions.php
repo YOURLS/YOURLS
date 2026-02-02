@@ -89,8 +89,8 @@ function yourls_xml_encode( $array ) {
  */
 function yourls_update_clicks( $keyword, $clicks = false ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_update_clicks', false, $keyword, $clicks );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_update_clicks', yourls_shunt_default(), $keyword, $clicks );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -314,8 +314,8 @@ function yourls_redirect_shorturl($url, $keyword) {
  */
 function yourls_robots_tag_header() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_robots_tag_header', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_robots_tag_header', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -356,8 +356,8 @@ function yourls_no_cache_headers() {
  */
 function yourls_no_frame_header() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_no_frame_header', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_no_frame_header', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -515,8 +515,8 @@ function yourls_get_HTTP_status( $code ) {
  */
 function yourls_log_redirect( $keyword ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_log_redirect', false, $keyword );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_log_redirect', yourls_shunt_default(), $keyword );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -643,9 +643,10 @@ function yourls_allow_duplicate_longurls() {
 function yourls_check_IP_flood( $ip = '' ) {
 
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_check_IP_flood', false, $ip );
-    if ( false !== $pre )
+    $pre = yourls_apply_filter( 'shunt_check_IP_flood', yourls_shunt_default(), $ip );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
@@ -892,8 +893,8 @@ function yourls_is_ssl() {
  */
 function yourls_get_remote_title( $url ) {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_remote_title', false, $url );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_get_remote_title', yourls_shunt_default(), $url );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -1024,8 +1025,8 @@ function yourls_is_mobile_device() {
  */
 function yourls_get_request($yourls_site = '', $uri = '') {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_get_request', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_get_request', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
