@@ -211,7 +211,7 @@ function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
     $table_url = YOURLS_DB_TABLE_URL;
 
     $totals = yourls_get_db('read-get_db_stats')->fetchObject( "SELECT COUNT(keyword) as count, SUM(clicks) as sum FROM `$table_url` WHERE 1=1 " . $where['sql'] , $where['binds'] );
-    $return = [ 'total_links' => $totals->count, 'total_clicks' => $totals->sum ];
+    $return = [ 'total_links' => (int)$totals->count, 'total_clicks' => (int)$totals->sum ];
 
     return yourls_apply_filter( 'get_db_stats', $return, $where );
 }
