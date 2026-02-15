@@ -581,6 +581,9 @@ class YDB extends ExtendedPdo {
             }
         }
 
+        // Filter the query statement
+        $args[0] = yourls_apply_filter('fetch_wrapper_statement', $args[0], $method, $args);
+
         return parent::$method( ...$args);
     }
 

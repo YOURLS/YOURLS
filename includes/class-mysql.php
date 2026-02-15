@@ -4,7 +4,7 @@
  * Connect to DB
  *
  * @since 1.0
- * @param string $context Optional context. Default: ''.
+ * @param string $context Optional context. Default: ''. See yourls_get_db()
  * @return \YOURLS\Database\YDB
  */
 function yourls_db_connect($context = '') {
