@@ -564,7 +564,6 @@ class YDB extends ExtendedPdo {
      * @param array  $values    Values to bind to the query
      * @return PDOStatement
      */
-
     public function perform(string $statement, array $values = []): PDOStatement {
         return $this->fetch_wrapper('perform', $statement, $values);
     }

@@ -60,11 +60,7 @@ function yourls_db_connect($context = '') {
     $ydb->init();
 
     // Past this point, we're connected
-    $msg = 'Connected to ' . $dsn;
-    if ($context !== '') {
-        $msg .= ', context: ' . $context;
-    }
-    yourls_debug_log( $msg );
+    yourls_debug_log( 'Connected to ' . $dsn );
 
     yourls_debug_mode( YOURLS_DEBUG );
 
