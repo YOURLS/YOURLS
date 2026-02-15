@@ -49,7 +49,7 @@ class DebugLogTest extends PHPUnit\Framework\TestCase {
         yourls_debug_mode(true);
         $this->assertEquals( error_reporting(), -1 );
         // SQL queries should be stored
-        yourls_get_db('read-test_rand')->fetchValue("SELECT RAND('$str')");
+        yourls_get_db('read-test_rand')->fetchValue("SELECT '$str'");
         $log = yourls_get_debug_log();
         $this->assertStringContainsString($str, end($log));
 
@@ -57,7 +57,7 @@ class DebugLogTest extends PHPUnit\Framework\TestCase {
         yourls_debug_mode(false);
         $this->assertEquals( error_reporting(), ( E_ERROR | E_PARSE ) );
         // SQL queries should not be stored
-        yourls_get_db('read-test_rand')->fetchValue("SELECT RAND('$str')");
+        yourls_get_db('read-test_rand')->fetchValue("SELECT '$str'");
         $log = yourls_get_debug_log();
         $this->assertStringNotContainsString($str, end($log));
 
