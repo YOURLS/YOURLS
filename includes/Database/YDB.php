@@ -15,6 +15,7 @@ namespace YOURLS\Database;
 
 use Aura\Sql\ExtendedPdo;
 use PDO;
+use PDOStatement;
 
 class YDB extends ExtendedPdo {
 
@@ -430,8 +431,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch the number of affected rows from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch the number of affected rows
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -443,8 +443,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch all rows from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch all rows
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -456,8 +455,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch all rows as associative arrays from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch all rows as associative arrays
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -469,8 +467,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch a single column from all rows from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch a single column from all rows
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -482,8 +479,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch rows grouped by the first column from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch rows grouped by the first column
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -496,8 +492,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch a single row as an object from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch a single row as an object
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -511,8 +506,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch all rows as objects from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch all rows as objects
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -526,8 +520,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch a single row as an array from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch a single row as an array
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -539,8 +532,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch key-value pairs from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch key-value pairs
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -552,8 +544,7 @@ class YDB extends ExtendedPdo {
     }
 
     /**
-     * Fetch a single value from a cached query
-     * Results are cached to avoid redundant database queries for identical statements.
+     * Fetch a single value
      *
      * @since 1.10.4
      * @param string $statement SQL statement to execute
@@ -562,6 +553,20 @@ class YDB extends ExtendedPdo {
      */
     public function fetchValue(string $statement, array $values = []): mixed {
         return $this->fetch_wrapper('fetchValue', $statement, $values);
+    }
+
+    /**
+     * Performs a query with bound values and returns the resulting PDOStatement
+     * You most likely should not use this method directly. Use the fetch_* methods instead.
+     *
+     * @since 1.10.4
+     * @param string $statement The SQL statement to perform.
+     * @param array  $values    Values to bind to the query
+     * @return PDOStatement
+     */
+
+    public function perform(string $statement, array $values = []): PDOStatement {
+        return $this->fetch_wrapper('perform', $statement, $values);
     }
 
     /**
