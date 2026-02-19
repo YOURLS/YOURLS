@@ -708,8 +708,7 @@ function yourls_verify_nonce($action, $nonce = false, $user = false, $return = '
  * @return bool  true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
  */
 function yourls_is_user_from_env() {
-    return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD'));
-
+    return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && (getenv('YOURLS_PASSWORD') || getenv('YOURLS_PASS_FILE')));
 }
 
 /**
