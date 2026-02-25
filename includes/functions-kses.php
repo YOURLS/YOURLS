@@ -44,6 +44,7 @@
 
 // Populate after plugins have loaded to allow user defined values
 yourls_add_action( 'plugins_loaded', 'yourls_kses_init' );
+yourls_add_action( 'delete_link', 'yourls_delete_stats_for_keyword' );
 
 /**
  * Init KSES globals if not already defined (by a plugin)
