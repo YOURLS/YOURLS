@@ -1,32 +1,6 @@
 <?php
 
 /**
- * Delete stats entries for a given keyword
- *
- * @param  string|array $keyword   Short URL keyword, or action payload whose first item is the keyword
- * @return int                     Number of log rows deleted
- */
-function yourls_delete_stats_for_keyword( $keyword ) {
-    if ( is_array( $keyword ) ) {
-        $keyword = $keyword[0] ?? '';
-    }
-
-    // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_delete_stats_for_keyword', null, $keyword );
-    if ( null !== $pre ) {
-        return $pre;
-    }
-
-    $table   = YOURLS_DB_TABLE_LOG;
-    $keyword = yourls_sanitize_keyword($keyword);
-    $ydb     = yourls_get_db('write-delete_stats_for_keyword');
-    $deleted = $ydb->fetchAffected("DELETE FROM `$table` WHERE `shorturl` = :keyword", array('keyword' => $keyword));
-
-    yourls_do_action( 'delete_stats_for_keyword', $keyword, $deleted );
-    return $deleted;
-}
-
-/**
  * Echoes an image tag of Google Charts map from sorted array of 'country_code' => 'number of visits' (sort by DESC)
  *
  * @param array $countries  Array of 'country_code' => 'number of visits'
