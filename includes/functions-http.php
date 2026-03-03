@@ -152,9 +152,10 @@ function yourls_http_default_options() {
 function yourls_send_through_proxy( $url ) {
 
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_send_through_proxy', null, $url );
-    if ( null !== $pre )
+    $pre = yourls_apply_filter( 'shunt_send_through_proxy', yourls_shunt_default(), $url );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     $check = @parse_url( $url );
 
@@ -217,9 +218,10 @@ function yourls_send_through_proxy( $url ) {
 function yourls_http_request( $type, $url, $headers, $data, $options ) {
 
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_yourls_http_request', null, $type, $url, $headers, $data, $options );
-    if ( null !== $pre )
+    $pre = yourls_apply_filter( 'shunt_yourls_http_request', yourls_shunt_default(), $type, $url, $headers, $data, $options );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     $options = array_merge( yourls_http_default_options(), $options );
 
@@ -450,8 +452,8 @@ function yourls_validate_core_version_response_keys($json) {
  */
 function yourls_maybe_check_core_version() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter('shunt_maybe_check_core_version', null);
-    if (null !== $pre) {
+    $pre = yourls_apply_filter( 'shunt_maybe_check_core_version', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 

@@ -34,9 +34,12 @@ class GeoIPTest extends PHPUnit\Framework\TestCase {
      * Check a few code return a string when getting their country flag
      */
     public function test_country_images() {
-        $this->assertIsString(yourls_geo_get_flag('AU'));      // something like http://yourls/includes/geo/flags/flag_au.gif
-        $this->assertIsString(yourls_geo_get_flag(''));        // something like http://yourls/includes/geo/flags/flag_.gif
-        $this->assertIsString(yourls_geo_get_flag('OMGLOL'));  // fall back to default ''
+        // something like http://yourls/includes/geo/flags/flag_au.gif
+        $this->assertStringEndsWith('geo/flags/flag_au.gif', yourls_geo_get_flag('AU'));
+
+        // something like http://yourls/includes/geo/flags/flag_.gif
+        $this->assertStringEndsWith('geo/flags/flag_.gif', yourls_geo_get_flag(''));
+        $this->assertStringEndsWith('geo/flags/flag_.gif', yourls_geo_get_flag('OMGLOL'));
     }
 
     /**
@@ -57,7 +60,7 @@ class GeoIPTest extends PHPUnit\Framework\TestCase {
     public static function ipv6_samples(): \Iterator
     {
         yield array( '::80.24.24.24', 'ES' );
-        // yield array( '2606:4700:4700::1111', 'US' );
+        yield array( '2001:4860:4860::8888', 'US' ); // 8.8.8.8
         yield array( '2001:0240:2000::', 'JP' );
         yield array( '::1', 'none' );
         yield array( 'mynameisozh', 'none' );

@@ -181,8 +181,8 @@ function yourls_html_footer($can_query = true) {
  * @return void
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
-    $pre = yourls_apply_filter( 'shunt_html_addnew', false, $url, $keyword );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_html_addnew', yourls_shunt_default(), $url, $keyword );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
     ?>
@@ -439,9 +439,10 @@ function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlin
         $share_title = '<h2>' . yourls__( 'Quick Share' ) . '</h2>';
 
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_share_box', false );
-    if ( false !== $pre )
+    $pre = yourls_apply_filter( 'shunt_share_box', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
+    }
 
     // Make sure IDN domains are in their UTF8 form
     $shorturl = yourls_normalize_uri($shorturl);
@@ -662,7 +663,7 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
         'timestamp' => array(
             'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
             'timestamp' => $timestamp,
-            'date'     => yourls_date_i18n( yourls_get_datetime_format('M d, Y H:i'), yourls_get_timestamp( $timestamp )),
+            'date'     => yourls_date_i18n( yourls_get_datetime_format(yourls__('M d, Y H:i')), yourls_get_timestamp( $timestamp )),
         ),
         'ip' => array(
             'template' => '%ip%',
@@ -1066,8 +1067,8 @@ function yourls_get_html_context() {
  */
 function yourls_html_favicon() {
     // Allow plugins to short-circuit the whole function
-    $pre = yourls_apply_filter( 'shunt_html_favicon', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_html_favicon', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 

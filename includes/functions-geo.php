@@ -14,10 +14,12 @@
  */
 function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
     // Allow plugins to short-circuit the Geo IP API
-    $location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', false, $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
-    if ( false !== $location ) {
+    $location = yourls_apply_filter( 'shunt_geo_ip_to_countrycode', yourls_shunt_default(), $ip, $default ); // at this point $ip can be '', check if your plugin hooks in here
+    if ( yourls_shunt_default() !== $location ) {
         return $location;
     }
+
+    $location = false;
 
     if ( yourls_apply_filter( 'geo_use_cloudflare', true )
          && !empty( $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) && preg_match( '/^[A-Z]{2}$/', $_SERVER[ 'HTTP_CF_IPCOUNTRY' ] ) ) {
@@ -74,10 +76,12 @@ function yourls_geo_ip_to_countrycode( $ip = '', $default = '' ) {
  */
 function yourls_geo_countrycode_to_countryname( $code ) {
     // Allow plugins to short-circuit the function
-    $country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', false, $code );
-    if ( false !== $country ) {
+    $country = yourls_apply_filter( 'shunt_geo_countrycode_to_countryname', yourls_shunt_default(), $code );
+    if ( yourls_shunt_default() !== $country ) {
         return $country;
     }
+
+    $country = false;
 
     // Weeeeeeeeeeee
     $countries = [

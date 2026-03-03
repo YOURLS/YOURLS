@@ -16,8 +16,8 @@
  */
 function yourls_get_option( $option_name, $default = false ) {
     // Allow plugins to short-circuit options
-    $pre = yourls_apply_filter( 'shunt_option_'.$option_name, false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_option_'.$option_name, yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
@@ -40,8 +40,8 @@ function yourls_get_option( $option_name, $default = false ) {
  */
 function yourls_get_all_options() {
     // Allow plugins to short-circuit all options. (Note: regular plugins are loaded after all options)
-    $pre = yourls_apply_filter( 'shunt_all_options', false );
-    if ( false !== $pre ) {
+    $pre = yourls_apply_filter( 'shunt_all_options', yourls_shunt_default() );
+    if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
 
