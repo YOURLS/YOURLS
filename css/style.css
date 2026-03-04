@@ -32,7 +32,7 @@ a, a:link, a:active, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-h1 {height:50px;margin:0;float:right;max-width:500px;}
+h1 {margin:0;float:right;max-width:500px;}
 h1 a {text-align:right;font-size:20px;float:right;}
 h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2a85b3}
 h1 a:hover{text-decoration:none;}
@@ -287,6 +287,7 @@ a.bookmarklet:hover {
 	margin-left:15%;
 	padding-left:10px;
 	margin-bottom:5px;
+	clear: both;
 }
 
 .jquery-notify-bar {
