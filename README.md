@@ -95,7 +95,7 @@ Does your company use YOURLS? Ask your manager or marketing team if your company
 
 #### Angel Sponsors
 
-For their outstanding support to the project, we are very thankful to :
+For their outstanding support to the project, we are very thankful to:
 
 <a href="https://www.bairesdev.com/sponsoring-open-source-projects/"><img width="350px" alt="bd-logo-orange" src="https://github.com/user-attachments/assets/caa67711-33df-4974-9bbe-cd2b7356712e" /></a>
 
