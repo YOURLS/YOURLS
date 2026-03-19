@@ -257,6 +257,7 @@ function yourls_delete_link_by_keyword( $keyword ) {
     $keyword = yourls_sanitize_keyword($keyword);
     $ydb = yourls_get_db('write-delete_link_by_keyword');
     $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
+    yourls_delete_stats_for_keyword( $keyword );
     $ydb->delete_infos($keyword); // Clear the cache.
     yourls_do_action( 'delete_link', $keyword, $delete );
     return $delete;
