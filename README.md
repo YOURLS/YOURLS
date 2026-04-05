@@ -64,7 +64,6 @@ Do you use and enjoy YOURLS? [Become a backer](https://opencollective.com/yourls
 [![](https://opencollective.com/yourls/backer/28/avatar.svg)](https://opencollective.com/yourls/backer/28/website)
 [![](https://opencollective.com/yourls/backer/29/avatar.svg)](https://opencollective.com/yourls/backer/29/website)
 
-
 ## Sponsors
 
 Does your company use YOURLS? Ask your manager or marketing team if your company would be interested in supporting our project. Your company logo will show here. Help support our open-source development efforts by [becoming a sponsor](https://opencollective.com/yourls).
@@ -93,12 +92,11 @@ Does your company use YOURLS? Ask your manager or marketing team if your company
 [![](https://opencollective.com/yourls/sponsor/21/avatar.svg)](https://opencollective.com/yourls/sponsor/21/website)
 [![](https://opencollective.com/yourls/sponsor/22/avatar.svg)](https://opencollective.com/yourls/sponsor/22/website)
 
-#### Angel Sponsors
+### Angel Sponsors
 
-For their outstanding support to the project, we are very thankful to:
+We are very thankful to our Angel Sponsors for their outstanding support to the project.
 
-<a href="https://www.bairesdev.com/sponsoring-open-source-projects/"><img width="350px" alt="bd-logo-orange" src="https://github.com/user-attachments/assets/caa67711-33df-4974-9bbe-cd2b7356712e" /></a>
-
+[![BairesDev-LLC](https://avatars.githubusercontent.com/u/133211198?s=96&v=4)](https://github.com/BairesDev-LLC)
 
 ## License
 
