@@ -702,14 +702,13 @@ function yourls_verify_nonce($action, $nonce = false, $user = false, $return = '
 }
 
 /**
- * Check if YOURLS_USER comes from environment variables
+ * Check if user credentials comes from environment variables
  *
  * @since 1.8.2
- * @return bool  true if YOURLS_USER and YOURLS_PASSWORD are defined as environment variables
+ * @return bool  true if credentials are defined as environment variables
  */
 function yourls_is_user_from_env() {
-    return yourls_apply_filter('is_user_from_env', getenv('YOURLS_USER') && getenv('YOURLS_PASSWORD'));
-
+    return yourls_apply_filter('is_user_from_env', getenv('YOURLS_PASSWORD') || getenv('YOURLS_PASS') || getenv('YOURLS_PASS_FILE'));
 }
 
 /**
