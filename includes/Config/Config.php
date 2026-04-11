@@ -13,48 +13,48 @@ class Config {
     /**
      * @var string
      */
-    protected $root;
+    protected string $root;
 
     /**
      * @var string
      */
-    protected $config;
+    protected string $config;
 
     /**
      * @since  1.7.3
-     * @param  string $config   Optional user defined config path
+     * @param string $config Optional user defined config path
      */
-    public function __construct($config = '') {
-        $this->set_root( $this->fix_win32_path( dirname( dirname( __DIR__ ) ) ) );
+    public function __construct(string $config = '') {
+        $this->set_root( $this->fix_win32_path(dirname(__DIR__, 2)) );
         $this->set_config($config);
     }
 
     /**
-     * Convert antislashes to slashes
+     * Convert backslashes to slashes
      *
      * @since  1.7.3
-     * @param  string  $path
+     * @param string $path
      * @return string  path with \ converted to /
      */
-    public function fix_win32_path($path) {
+    public function fix_win32_path(string $path): string {
         return str_replace('\\', '/', $path);
     }
 
     /**
      * @since  1.7.3
-     * @param  string $config   path to config file
+     * @param string $config path to config file
      * @return void
      */
-    public function set_config($config) {
+    public function set_config(string $config): void {
         $this->config = $config;
     }
 
     /**
      * @since  1.7.3
-     * @param  string $root   path to YOURLS root directory
+     * @param string $root path to YOURLS root directory
      * @return void
      */
-    public function set_root($root) {
+    public function set_root(string $root): void {
         $this->root = $root;
     }
 
@@ -65,7 +65,7 @@ class Config {
      * @return string         path to found config file
      * @throws ConfigException
      */
-    public function find_config() {
+    public function find_config(): string {
 
         $config = $this->fix_win32_path($this->config);
 
@@ -99,7 +99,7 @@ class Config {
      * @return void
      * @throws ConfigException
      */
-    public function define_core_constants() {
+    public function define_core_constants(): void {
         // Check minimal config job has been properly done
         $must_haves = array('YOURLS_DB_USER', 'YOURLS_DB_PASS', 'YOURLS_DB_NAME', 'YOURLS_DB_HOST', 'YOURLS_DB_PREFIX', 'YOURLS_SITE');
         foreach($must_haves as $must_have) {
@@ -201,16 +201,11 @@ class Config {
         if (!defined( 'YOURLS_ADMIN_SSL' ))
             define( 'YOURLS_ADMIN_SSL', false );
 
-        // if set to true, verbose debug infos. Will break things. Don't enable.
-        if (!defined( 'YOURLS_DEBUG' ))
-            define( 'YOURLS_DEBUG', false );
-
-        // Error reporting
-        if (defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-            error_reporting( -1 );
-        } else {
-            error_reporting( E_ERROR | E_PARSE );
+        // if set to true, verbose debug infos
+        if (!defined( 'YOURLS_DEBUG' )) {
+            define('YOURLS_DEBUG', false);
         }
+
     }
 
 }
