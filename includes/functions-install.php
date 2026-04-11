@@ -199,7 +199,7 @@ function yourls_insert_with_markers( $filename, $marker, $insertion ) {
  * @since 1.3
  * @return array  An array like array( 'success' => array of success strings, 'errors' => array of error strings )
  */
-function yourls_create_sql_tables() {
+function yourls_create_sql_tables(): array {
     // Allow plugins (most likely a custom db.php layer in user dir) to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_yourls_create_sql_tables', yourls_shunt_default() );
     // your filter function should return an array of ( 'success' => $success_msg, 'error' => $error_msg ), see below
@@ -253,6 +253,8 @@ function yourls_create_sql_tables() {
 
     $create_table_count = 0;
 
+    // Make install process verbose to help troubleshoot installation issues
+    $debug = yourls_get_debug_mode();
     yourls_debug_mode(true);
 
     // Create tables
@@ -281,6 +283,9 @@ function yourls_create_sql_tables() {
     } else {
         $error_msg[] = yourls__( 'Error creating YOURLS tables.' );
     }
+
+    // Restore debug mode to its original value
+    yourls_debug_mode( $debug );
 
     return array( 'success' => $success_msg, 'error' => $error_msg );
 }
