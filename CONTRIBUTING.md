@@ -25,15 +25,17 @@ To build and run the environment:
 docker compose up --build
 ```
 
-Ensure that all necessary configuration files are in place (e.g., `docker/web/php.ini`,
-`docker/web/ssl/localhost.crt`).
+⚠️ Ensure that HTTPS credentials are in place:
+
+1. `docker/web/ssl/localhost.crt`
+2. `docker/web/ssl/localhost.key`
 
 ## Useful Commands
 
 ### Connect to a running container's shell
 
 ```shell
-docker exec -it yourls bash
+docker exec -it yourls-web-1 bash
 ```
 
 ## Accessing the Admin Panel
