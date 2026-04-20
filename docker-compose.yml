@@ -1,0 +1,69 @@
+name: yourls
+
+services:
+    db:
+        restart: always
+        build:
+            context: ./docker
+            dockerfile: db.Dockerfile
+        env_file:
+            - ./.development.env
+        volumes:
+            - db-data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+
+    web:
+        restart: always
+        build:
+            context: ./docker
+            dockerfile: web.Dockerfile
+        env_file:
+            - ./.development.env
+        user: "${UID:-33}:${GID:-33}"
+        volumes:
+            - .:/var/www/html
+            - ./docker/web/yourls.config.php:/var/www/html/user/config.php
+            - ./docker/web/ssl:/var/www/ssl
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        depends_on:
+            - db
+
+    browsersync:
+        image: node:22-alpine
+        working_dir: /yourls
+        volumes:
+            - .:/yourls
+        environment:
+            - CHOKIDAR_USEPOLLING=1
+        command: >
+            sh -lc "npx --yes browser-sync start
+            --proxy https://web
+            --files '/yourls'
+            --host 0.0.0.0
+            --port 443
+            --https
+            --no-ui
+            --no-ghost-mode
+            --no-notify
+            --no-open"
+        ports:
+            - "443:443"
+        depends_on:
+            - web
+
+    phpmyadmin:
+        image: phpmyadmin
+        environment:
+            PMA_HOST: db
+            UPLOAD_LIMIT: 256M
+        volumes:
+            - ./docker/pma.config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+        ports:
+            - "8080:80"
+        depends_on:
+            - db
+
+volumes:
+    db-data:
