@@ -41,6 +41,8 @@ services:
             sh -lc "npx --yes browser-sync start
             --proxy https://web
             --files '/yourls'
+            --ignore '.git' '.idea' 'php_errors.log'
+            --reload-debounce 500
             --host 0.0.0.0
             --port 443
             --https

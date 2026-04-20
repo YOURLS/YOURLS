@@ -191,6 +191,7 @@ user/*
 # ... and index.html files
 !user/index.html
 !user/**/index.html
+php_errors.log
 
 ############
 ## Tests
