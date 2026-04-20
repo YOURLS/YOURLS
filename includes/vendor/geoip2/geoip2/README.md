@@ -25,7 +25,7 @@ You should now have the file `composer.phar` in your project directory.
 Run in your project root:
 
 ```sh
-php composer.phar require geoip2/geoip2:~2.0
+php composer.phar require geoip2/geoip2:^3.3.0
 ```
 
 You should now have the files `composer.json` and `composer.lock` as well as
@@ -107,7 +107,8 @@ If the record is not found, a `\GeoIp2\Exception\AddressNotFoundException`
 is thrown. If the database is invalid or corrupt, a
 `\MaxMind\Db\InvalidDatabaseException` will be thrown.
 
-See the API documentation for more details.
+See the [API documentation](https://maxmind.github.io/GeoIP2-php/) for more
+details.
 
 ### City Example ###
 
@@ -118,11 +119,11 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-City.mmdb');
+$cityDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-City.mmdb');
 
 // Replace "city" with the appropriate method for your database, e.g.,
 // "country".
-$record = $reader->city('128.101.101.101');
+$record = $cityDbReader->city('128.101.101.101');
 
 print($record->country->isoCode . "\n"); // 'US'
 print($record->country->name . "\n"); // 'United States'
@@ -151,13 +152,35 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-Anonymous-IP.mmdb');
+$anonymousDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-Anonymous-IP.mmdb');
 
-$record = $reader->anonymousIp('128.101.101.101');
+$record = $anonymousDbReader->anonymousIp('128.101.101.101');
 
 if ($record->isAnonymous) { print "anon\n"; }
 print($record->ipAddress . "\n"); // '128.101.101.101'
 print($record->network . "\n"); // '128.101.101.101/32'
+
+```
+
+### Anonymous Plus Example ###
+
+```php
+<?php
+require_once 'vendor/autoload.php';
+use GeoIp2\Database\Reader;
+
+// This creates the Reader object, which should be reused across
+// lookups.
+$anonymousDbReader = new Reader('/usr/local/share/GeoIP/GeoIP-Anonymous-Plus.mmdb');
+
+$record = $anonymousDbReader->anonymousIp('203.0.113.0');
+
+print($record->anonymizerConfidence . "\n"); // 30
+print($record->networkLastSeen . "\n"); // '2025-04-14'
+print($record->providerName . "\n"); // 'FooBar VPN'
+
+print($record->ipAddress . "\n"); // '203.0.113.0'
+print($record->network . "\n"); // '203.0.113.0/32'
 
 ```
 
@@ -170,9 +193,9 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-Connection-Type.mmdb');
+$connectionTypeDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-Connection-Type.mmdb');
 
-$record = $reader->connectionType('128.101.101.101');
+$record = $connectionTypeDbReader->connectionType('128.101.101.101');
 
 print($record->connectionType . "\n"); // 'Corporate'
 print($record->ipAddress . "\n"); // '128.101.101.101'
@@ -189,9 +212,9 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-Domain.mmdb');
+$domainDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-Domain.mmdb');
 
-$record = $reader->domain('128.101.101.101');
+$record = $domainDbReader->domain('128.101.101.101');
 
 print($record->domain . "\n"); // 'umn.edu'
 print($record->ipAddress . "\n"); // '128.101.101.101'
@@ -208,10 +231,10 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-Enterprise.mmdb');
+$enterpriseDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-Enterprise.mmdb');
 
 // Use the ->enterprise method to do a lookup in the Enterprise database
-$record = $reader->enterprise('128.101.101.101');
+$record = $enterpriseDbReader->enterprise('128.101.101.101');
 
 print($record->country->confidence . "\n"); // 99
 print($record->country->isoCode . "\n"); // 'US'
@@ -244,9 +267,9 @@ use GeoIp2\Database\Reader;
 
 // This creates the Reader object, which should be reused across
 // lookups.
-$reader = new Reader('/usr/local/share/GeoIP/GeoIP2-ISP.mmdb');
+$ispDbReader = new Reader('/usr/local/share/GeoIP/GeoIP2-ISP.mmdb');
 
-$record = $reader->isp('128.101.101.101');
+$record = $ispDbReader->isp('128.101.101.101');
 
 print($record->autonomousSystemNumber . "\n"); // 217
 print($record->autonomousSystemOrganization . "\n"); // 'University of Minnesota'
@@ -264,11 +287,6 @@ You can keep your databases up to date with our
 [GeoIP Update program](https://github.com/maxmind/geoipupdate/releases).
 [Learn more about GeoIP Update on our developer
 portal.](https://dev.maxmind.com/geoip/updating-databases?lang=en)
-
-There is also a third-party tool for updating databases using PHP and
-Composer. MaxMind does not offer support for this tool or maintain it.
-[Learn more about the Geoip2 Update tool for PHP and Composer on its
-GitHub page.](https://github.com/tronovav/geoip2-update)
 
 ## Web Service Client ##
 
@@ -293,6 +311,13 @@ service:
 $client = new Client(42, 'abcdef123456', ['en'], ['host' => 'geolite.info']);
 ```
 
+To call the Sandbox GeoIP2 web service instead of the production GeoIP2 web
+service:
+
+```php
+$client = new Client(42, 'abcdef123456', ['en'], ['host' => 'sandbox.maxmind.com']);
+```
+
 After creating the client, you may now call the method corresponding to a
 specific endpoint with the IP address to look up, e.g.:
 
@@ -306,7 +331,8 @@ of which represents part of the data returned by the web service.
 
 If there is an error, a structured exception is thrown.
 
-See the API documentation for more details.
+See the [API documentation](https://maxmind.github.io/GeoIP2-php/) for more
+details.
 
 ### Example ###
 
@@ -319,7 +345,9 @@ use GeoIp2\WebService\Client;
 // Replace "42" with your account ID and "license_key" with your license
 // key. Set the "host" to "geolite.info" in the fourth argument options
 // array to use the GeoLite2 web service instead of the GeoIP2 web
-// service.
+// service. Set the "host" to "sandbox.maxmind.com" in the fourth argument
+// options array to use the Sandbox GeoIP2 web service instead of the
+// production GeoIP2 web service.
 $client = new Client(42, 'abcdef123456');
 
 // Replace "city" with the method corresponding to the web service that
@@ -419,7 +447,7 @@ to the client API, please see
 
 ## Requirements  ##
 
-This library requires PHP 7.2 or greater.
+This library requires PHP 8.1 or greater.
 
 This library also relies on the [MaxMind DB Reader](https://github.com/maxmind/MaxMind-DB-Reader-php).
 
@@ -437,6 +465,6 @@ The GeoIP2 PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2013-2020 by MaxMind, Inc.
+This software is Copyright (c) 2013-2025 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

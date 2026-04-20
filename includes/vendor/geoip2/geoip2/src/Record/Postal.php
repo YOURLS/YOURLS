@@ -9,22 +9,49 @@ namespace GeoIp2\Record;
  *
  * This record is returned by all location databases and services besides
  * Country.
- *
- * @property-read string|null $code The postal code of the location. Postal codes
- * are not available for all countries. In some countries, this will only
- * contain part of the postal code. This attribute is returned by all location
- * databases and services besides Country.
- * @property-read int|null $confidence A value from 0-100 indicating MaxMind's
- * confidence that the postal code is correct. This attribute is only
- * available from the Insights service and the GeoIP2 Enterprise
- * database.
  */
-class Postal extends AbstractRecord
+class Postal implements \JsonSerializable
 {
+    /**
+     * @var string|null The postal code of the location. Postal codes
+     *                  are not available for all countries. In some countries, this will only
+     *                  contain part of the postal code. This attribute is returned by all location
+     *                  databases and services besides Country.
+     */
+    public readonly ?string $code;
+
+    /**
+     * @var int|null A value from 0-100 indicating MaxMind's
+     *               confidence that the postal code is correct. This attribute is only
+     *               available from the Insights service and the GeoIP2 Enterprise
+     *               database.
+     */
+    public readonly ?int $confidence;
+
     /**
      * @ignore
      *
-     * @var array<string>
+     * @param array<string, mixed> $record
      */
-    protected $validAttributes = ['code', 'confidence'];
+    public function __construct(array $record)
+    {
+        $this->code = $record['code'] ?? null;
+        $this->confidence = $record['confidence'] ?? null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        $js = [];
+        if ($this->code !== null) {
+            $js['code'] = $this->code;
+        }
+        if ($this->confidence !== null) {
+            $js['confidence'] = $this->confidence;
+        }
+
+        return $js;
+    }
 }

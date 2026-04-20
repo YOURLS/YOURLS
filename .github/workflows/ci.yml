@@ -76,9 +76,12 @@ jobs:
       run: |
         git clone https://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
         cp user/languages/fr/fr_FR.* user/languages
-        cp tests/data/config/yourls-tests-config-ci.php user/config.php
 
     - name: Test
       run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
       env:
-        DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+        YOURLS_ABSPATH: ${{ github.workspace }}
+        YOURLS_DB_USER: root
+        YOURLS_DB_PASS: secret
+        YOURLS_DB_NAME: yourls_tests
+        YOURLS_DB_HOST: 127.0.0.1:${{ job.services.mysql.ports['3306'] }}

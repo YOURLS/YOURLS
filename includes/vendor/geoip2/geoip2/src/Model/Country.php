@@ -4,93 +4,117 @@ declare(strict_types=1);
 
 namespace GeoIp2\Model;
 
+use GeoIp2\Record\Continent;
+use GeoIp2\Record\Country as CountryRecord;
+use GeoIp2\Record\MaxMind;
+use GeoIp2\Record\RepresentedCountry;
+use GeoIp2\Record\Traits;
+
 /**
  * Model class for the data returned by GeoIP2 Country web service and database.
  *
  * See https://dev.maxmind.com/geoip/docs/web-services?lang=en for more details.
- *
- * @property-read \GeoIp2\Record\Continent $continent Continent data for the
- * requested IP address.
- * @property-read \GeoIp2\Record\Country $country Country data for the requested
- * IP address. This object represents the country where MaxMind believes the
- * end user is located.
- * @property-read \GeoIp2\Record\MaxMind $maxmind Data related to your MaxMind
- * account.
- * @property-read \GeoIp2\Record\Country $registeredCountry Registered country
- * data for the requested IP address. This record represents the country
- * where the ISP has registered a given IP block and may differ from the
- * user's country.
- * @property-read \GeoIp2\Record\RepresentedCountry $representedCountry
- * Represented country data for the requested IP address. The represented
- * country is used for things like military bases. It is only present when
- * the represented country differs from the country.
- * @property-read \GeoIp2\Record\Traits $traits Data for the traits of the
- * requested IP address.
- * @property-read array $raw The raw data from the web service.
  */
-class Country extends AbstractModel
+class Country implements \JsonSerializable
 {
     /**
-     * @var \GeoIp2\Record\Continent
+     * @var Continent continent data for the requested IP address
      */
-    protected $continent;
+    public readonly Continent $continent;
 
     /**
-     * @var \GeoIp2\Record\Country
+     * @var CountryRecord Country data for the requested IP address. This
+     *                    object represents the country where MaxMind believes
+     *                    the end user is located.
      */
-    protected $country;
+    public readonly CountryRecord $country;
 
     /**
-     * @var array<string>
+     * @var MaxMind data related to your MaxMind account
      */
-    protected $locales;
+    public readonly MaxMind $maxmind;
 
     /**
-     * @var \GeoIp2\Record\MaxMind
+     * @var CountryRecord Registered country data for the requested IP address.
+     *                    This record represents the country where the ISP has
+     *                    registered a given IP block and may differ from the
+     *                    user's country.
      */
-    protected $maxmind;
+    public readonly CountryRecord $registeredCountry;
 
     /**
-     * @var \GeoIp2\Record\Country
+     * @var RepresentedCountry Represented country data for the requested IP
+     *                         address. The represented country is used for
+     *                         things like military bases. It is only present
+     *                         when the represented country differs from the
+     *                         country.
      */
-    protected $registeredCountry;
+    public readonly RepresentedCountry $representedCountry;
 
     /**
-     * @var \GeoIp2\Record\RepresentedCountry
+     * @var Traits data for the traits of the requested IP address
      */
-    protected $representedCountry;
-
-    /**
-     * @var \GeoIp2\Record\Traits
-     */
-    protected $traits;
+    public readonly Traits $traits;
 
     /**
      * @ignore
+     *
+     * @param array<string, mixed> $raw
+     * @param list<string>         $locales
      */
     public function __construct(array $raw, array $locales = ['en'])
     {
-        parent::__construct($raw);
+        $this->continent = new Continent(
+            $raw['continent'] ?? [],
+            $locales
+        );
+        $this->country = new CountryRecord(
+            $raw['country'] ?? [],
+            $locales
+        );
+        $this->maxmind = new MaxMind($raw['maxmind'] ?? []);
+        $this->registeredCountry = new CountryRecord(
+            $raw['registered_country'] ?? [],
+            $locales
+        );
+        $this->representedCountry = new RepresentedCountry(
+            $raw['represented_country'] ?? [],
+            $locales
+        );
+        $this->traits = new Traits($raw['traits'] ?? []);
+    }
 
-        $this->continent = new \GeoIp2\Record\Continent(
-            $this->get('continent'),
-            $locales
-        );
-        $this->country = new \GeoIp2\Record\Country(
-            $this->get('country'),
-            $locales
-        );
-        $this->maxmind = new \GeoIp2\Record\MaxMind($this->get('maxmind'));
-        $this->registeredCountry = new \GeoIp2\Record\Country(
-            $this->get('registered_country'),
-            $locales
-        );
-        $this->representedCountry = new \GeoIp2\Record\RepresentedCountry(
-            $this->get('represented_country'),
-            $locales
-        );
-        $this->traits = new \GeoIp2\Record\Traits($this->get('traits'));
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function jsonSerialize(): ?array
+    {
+        $js = [];
+        $continent = $this->continent->jsonSerialize();
+        if (!empty($continent)) {
+            $js['continent'] = $continent;
+        }
+        $country = $this->country->jsonSerialize();
+        if (!empty($country)) {
+            $js['country'] = $country;
+        }
+        $maxmind = $this->maxmind->jsonSerialize();
+        if (!empty($maxmind)) {
+            $js['maxmind'] = $maxmind;
+        }
+        $registeredCountry = $this->registeredCountry->jsonSerialize();
+        if (!empty($registeredCountry)) {
+            $js['registered_country'] = $registeredCountry;
+        }
+        $representedCountry = $this->representedCountry->jsonSerialize();
+        if (!empty($representedCountry)) {
+            $js['represented_country'] = $representedCountry;
+        }
+        $traits = $this->traits->jsonSerialize();
+        if (!empty($traits)) {
+            $js['traits'] = $traits;
+        }
 
-        $this->locales = $locales;
+        return $js;
     }
 }

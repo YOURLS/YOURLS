@@ -26,8 +26,8 @@
         "ozh/bookmarkletgen": "^1.2",
         "rmccue/requests" : "^2.0",
         "pomo/pomo" : "^1.4",
-        "geoip2/geoip2" : "^2.10",
-        "aura/sql": "^6.0",
+        "geoip2/geoip2" : "^3.0",
+        "aura/sql": "^5.0",
         "jakeasmith/http_build_url": "^1.0",
         "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
@@ -59,6 +59,7 @@
         "ext-zlib": "For best performance"
     },
     "scripts": {
-        "post-update-cmd": "bash ./includes/vendor/build-script/yourls-build.sh ./includes/vendor"
+        "post-update-cmd": "bash ./includes/vendor/build-script/yourls-build.sh ./includes/vendor",
+        "test": "@php tests/vendor/bin/phpunit"
     }
 }

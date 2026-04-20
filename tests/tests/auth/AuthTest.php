@@ -177,8 +177,7 @@ class AuthTest extends PHPUnit\Framework\TestCase {
      */
     public function test_hash_passwords_now_unwritable() {
         // generate un-writable file
-        $file = YOURLS_TESTDATA_DIR . '/auth/unwritable.php';
-        touch( $file );
+        $file = tempnam(sys_get_temp_dir(), 'yourls_test_');
 
         if(yourls_is_windows()) {
             exec( 'attrib +r ' . escapeshellarg( $file ) );
@@ -208,7 +207,7 @@ class AuthTest extends PHPUnit\Framework\TestCase {
      * Check that encrypting empty file returns expected error
      */
     public function test_hash_passwords_now_empty() {
-        $this->assertSame('could not read file', yourls_hash_passwords_now( YOURLS_TESTDATA_DIR . '/auth/empty.php' ) );
+        $this->assertSame('no password found', yourls_hash_passwords_now( YOURLS_TESTDATA_DIR . '/auth/empty.php' ) );
     }
 
     /**

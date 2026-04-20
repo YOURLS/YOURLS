@@ -9,36 +9,40 @@ namespace GeoIp2\Record;
  *
  * This record is returned by all location databases and services besides
  * Country.
- *
- * @property-read int|null $confidence This is a value from 0-100 indicating
- * MaxMind's confidence that the subdivision is correct. This attribute is
- * only available from the Insights service and the GeoIP2 Enterprise
- * database.
- * @property-read int|null $geonameId This is a GeoName ID for the subdivision.
- * This attribute is returned by all location databases and services besides
- * Country.
- * @property-read string|null $isoCode This is a string up to three characters long
- * contain the subdivision portion of the ISO 3166-2 code. See
- * https://en.wikipedia.org/wiki/ISO_3166-2. This attribute is returned by all
- * location databases and services except Country.
- * @property-read string|null $name The name of the subdivision based on the
- * locales list passed to the constructor. This attribute is returned by all
- * location databases and services besides Country.
- * @property-read array|null $names An array map where the keys are locale codes
- * and the values are names. This attribute is returned by all location
- * databases and services besides Country.
  */
 class Subdivision extends AbstractPlaceRecord
 {
     /**
+     * @var string|null This is a string up to three characters long
+     *                  contain the subdivision portion of the ISO 3166-2 code. See
+     *                  https://en.wikipedia.org/wiki/ISO_3166-2. This attribute is returned by all
+     *                  location databases and services except Country.
+     */
+    public readonly ?string $isoCode;
+
+    /**
      * @ignore
      *
-     * @var array<string>
+     * @param array<string, mixed> $record
+     * @param list<string>         $locales
      */
-    protected $validAttributes = [
-        'confidence',
-        'geonameId',
-        'isoCode',
-        'names',
-    ];
+    public function __construct(array $record, array $locales = ['en'])
+    {
+        parent::__construct($record, $locales);
+
+        $this->isoCode = $record['iso_code'] ?? null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        $js = parent::jsonSerialize();
+        if ($this->isoCode !== null) {
+            $js['iso_code'] = $this->isoCode;
+        }
+
+        return $js;
+    }
 }

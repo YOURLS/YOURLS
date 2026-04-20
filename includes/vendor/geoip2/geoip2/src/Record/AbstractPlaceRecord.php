@@ -4,64 +4,49 @@ declare(strict_types=1);
 
 namespace GeoIp2\Record;
 
-abstract class AbstractPlaceRecord extends AbstractRecord
+abstract class AbstractPlaceRecord extends AbstractNamedRecord
 {
     /**
-     * @var array<string>
+     * @var int|null A value from 0-100 indicating MaxMind's
+     *               confidence that the location level is correct. This attribute is only available
+     *               from the Insights service and the GeoIP2 Enterprise database.
      */
-    private $locales;
+    public readonly ?int $confidence;
 
     /**
-     * @ignore
+     * @var int|null The GeoName ID for the location level. This attribute
+     *               is returned by all location services and databases.
      */
-    public function __construct(?array $record, array $locales = ['en'])
-    {
-        $this->locales = $locales;
-        parent::__construct($record);
-    }
+    public readonly ?int $geonameId;
 
     /**
      * @ignore
      *
-     * @return mixed
+     * @param array<string, mixed> $record
+     * @param list<string>         $locales
      */
-    public function __get(string $attr)
+    public function __construct(array $record, array $locales = ['en'])
     {
-        if ($attr === 'name') {
-            return $this->name();
-        }
+        parent::__construct($record, $locales);
 
-        return parent::__get($attr);
+        $this->confidence = $record['confidence'] ?? null;
+        $this->geonameId = $record['geoname_id'] ?? null;
     }
 
     /**
-     * @ignore
+     * @return array<string, mixed>
      */
-    public function __isset(string $attr): bool
+    public function jsonSerialize(): array
     {
-        if ($attr === 'name') {
-            return $this->firstSetNameLocale() !== null;
+        $js = parent::jsonSerialize();
+        if ($this->confidence !== null) {
+            $js['confidence'] = $this->confidence;
         }
 
-        return parent::__isset($attr);
-    }
-
-    private function name(): ?string
-    {
-        $locale = $this->firstSetNameLocale();
-
-        // @phpstan-ignore-next-line
-        return $locale === null ? null : $this->names[$locale];
-    }
-
-    private function firstSetNameLocale(): ?string
-    {
-        foreach ($this->locales as $locale) {
-            if (isset($this->names[$locale])) {
-                return $locale;
-            }
+        if ($this->geonameId !== null) {
+            $js['geoname_id'] = $this->geonameId;
         }
 
-        return null;
+        return $js;
     }
 }

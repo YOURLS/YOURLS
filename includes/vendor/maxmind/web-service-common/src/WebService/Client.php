@@ -26,55 +26,16 @@ class Client
 {
     public const VERSION = '0.2.0';
 
-    /**
-     * @var string|null
-     */
-    private $caBundle;
-
-    /**
-     * @var float|null
-     */
-    private $connectTimeout;
-
-    /**
-     * @var string
-     */
-    private $host = 'api.maxmind.com';
-
-    /**
-     * @var bool
-     */
-    private $useHttps = true;
-
-    /**
-     * @var RequestFactory
-     */
-    private $httpRequestFactory;
-
-    /**
-     * @var string
-     */
-    private $licenseKey;
-
-    /**
-     * @var string|null
-     */
-    private $proxy;
-
-    /**
-     * @var float|null
-     */
-    private $timeout;
-
-    /**
-     * @var string
-     */
-    private $userAgentPrefix;
-
-    /**
-     * @var int
-     */
-    private $accountId;
+    private readonly ?string $caBundle;
+    private readonly ?float $connectTimeout;
+    private readonly string $host;
+    private readonly bool $useHttps;
+    private readonly RequestFactory $httpRequestFactory;
+    private readonly string $licenseKey;
+    private readonly ?string $proxy;
+    private readonly ?float $timeout;
+    private readonly string $userAgentPrefix;
+    private readonly int $accountId;
 
     /**
      * @param int                  $accountId  your MaxMind account ID
@@ -97,33 +58,14 @@ class Client
         $this->accountId = $accountId;
         $this->licenseKey = $licenseKey;
 
-        $this->httpRequestFactory = isset($options['httpRequestFactory'])
-            ? $options['httpRequestFactory']
-            : new RequestFactory();
-
-        if (isset($options['host'])) {
-            $this->host = $options['host'];
-        }
-        if (isset($options['useHttps'])) {
-            $this->useHttps = $options['useHttps'];
-        }
-        if (isset($options['userAgent'])) {
-            $this->userAgentPrefix = $options['userAgent'] . ' ';
-        }
-
-        $this->caBundle = isset($options['caBundle']) ?
-            $this->caBundle = $options['caBundle'] : $this->getCaBundle();
-
-        if (isset($options['connectTimeout'])) {
-            $this->connectTimeout = $options['connectTimeout'];
-        }
-        if (isset($options['timeout'])) {
-            $this->timeout = $options['timeout'];
-        }
-
-        if (isset($options['proxy'])) {
-            $this->proxy = $options['proxy'];
-        }
+        $this->httpRequestFactory = $options['httpRequestFactory'] ?? new RequestFactory();
+        $this->host = $options['host'] ?? 'api.maxmind.com';
+        $this->useHttps = $options['useHttps'] ?? true;
+        $this->userAgentPrefix = isset($options['userAgent']) ? $options['userAgent'] . ' ' : '';
+        $this->caBundle = $options['caBundle'] ?? $this->getCaBundle();
+        $this->connectTimeout = $options['connectTimeout'] ?? null;
+        $this->timeout = $options['timeout'] ?? null;
+        $this->proxy = $options['proxy'] ?? null;
     }
 
     /**
@@ -193,9 +135,12 @@ class Client
     private function userAgent(): string
     {
         $curlVersion = curl_version();
+        if ($curlVersion === false) {
+            throw new \RuntimeException('curl_version() returned false');
+        }
 
-        return $this->userAgentPrefix . 'MaxMind-WS-API/' . self::VERSION . ' PHP/' . \PHP_VERSION .
-           ' curl/' . $curlVersion['version'];
+        return $this->userAgentPrefix . 'MaxMind-WS-API/' . self::VERSION . ' PHP/' . \PHP_VERSION
+           . ' curl/' . $curlVersion['version'];
     }
 
     /**
@@ -203,12 +148,12 @@ class Client
      */
     private function createRequest(string $path, array $headers = []): Http\Request
     {
-        array_push(
-            $headers,
+        $headers = [
+            ...$headers,
             'Authorization: Basic '
             . base64_encode($this->accountId . ':' . $this->licenseKey),
-            'Accept: application/json'
-        );
+            'Accept: application/json',
+        ];
 
         return $this->httpRequestFactory->request(
             $this->urlFor($path),
@@ -323,10 +268,10 @@ class Client
                 $this->urlFor($path)
             );
         }
-        if ($contentType === null || !strstr($contentType, 'json')) {
+        if ($contentType === null || !str_contains($contentType, 'json')) {
             throw new HttpException(
-                "Received a $statusCode error for $service with " .
-                'the following body: ' . $body,
+                "Received a $statusCode error for $service with "
+                . 'the following body: ' . $body,
                 $statusCode,
                 $this->urlFor($path)
             );
@@ -335,8 +280,8 @@ class Client
         $message = json_decode($body, true);
         if ($message === null) {
             throw new HttpException(
-                "Received a $statusCode error for $service but could " .
-                'not decode the response as JSON: '
+                "Received a $statusCode error for $service but could "
+                . 'not decode the response as JSON: '
                 . $this->jsonErrorDescription() . ' Body: ' . $body,
                 $statusCode,
                 $this->urlFor($path)
@@ -345,8 +290,8 @@ class Client
 
         if (!isset($message['code']) || !isset($message['error'])) {
             throw new HttpException(
-                'Error response contains JSON but it does not ' .
-                'specify code or error keys: ' . $body,
+                'Error response contains JSON but it does not '
+                . 'specify code or error keys: ' . $body,
                 $statusCode,
                 $this->urlFor($path)
             );
@@ -452,8 +397,8 @@ class Client
     private function handleUnexpectedStatus(int $statusCode, string $service, string $path): void
     {
         throw new HttpException(
-            'Received an unexpected HTTP status ' .
-            "($statusCode) for $service",
+            'Received an unexpected HTTP status '
+            . "($statusCode) for $service",
             $statusCode,
             $this->urlFor($path)
         );
@@ -477,8 +422,8 @@ class Client
         if ($statusCode === 204) {
             if ($body !== null && $body !== '') {
                 throw new WebServiceException(
-                    "Received a 204 response for $service along with an " .
-                    "unexpected HTTP body: $body"
+                    "Received a 204 response for $service along with an "
+                    . "unexpected HTTP body: $body"
                 );
             }
 
@@ -488,16 +433,16 @@ class Client
         // A 200 should have a valid JSON body
         if ($body === null || $body === '') {
             throw new WebServiceException(
-                "Received a 200 response for $service but did not " .
-                'receive a HTTP body.'
+                "Received a 200 response for $service but did not "
+                . 'receive a HTTP body.'
             );
         }
 
         $decodedContent = json_decode($body, true);
         if ($decodedContent === null) {
             throw new WebServiceException(
-                "Received a 200 response for $service but could " .
-                'not decode the response as JSON: '
+                "Received a 200 response for $service but could "
+                . 'not decode the response as JSON: '
                 . $this->jsonErrorDescription() . ' Body: ' . $body
             );
         }
@@ -508,6 +453,9 @@ class Client
     private function getCaBundle(): ?string
     {
         $curlVersion = curl_version();
+        if ($curlVersion === false) {
+            throw new \RuntimeException('curl_version() returned false');
+        }
 
         // On OS X, when the SSL version is "SecureTransport", the system's
         // keychain will be used.
@@ -518,7 +466,7 @@ class Client
 
         // Check if the cert is inside a phar. If so, we need to copy the cert
         // to a temp file so that curl can see it.
-        if (substr($cert, 0, 7) === 'phar://') {
+        if (str_starts_with($cert, 'phar://')) {
             $tempDir = sys_get_temp_dir();
             $newCert = tempnam($tempDir, 'geoip2-');
             if ($newCert === false) {

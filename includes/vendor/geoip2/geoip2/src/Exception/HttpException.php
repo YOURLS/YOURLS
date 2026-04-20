@@ -11,16 +11,14 @@ class HttpException extends GeoIp2Exception
 {
     /**
      * The URI queried.
-     *
-     * @var string
      */
-    public $uri;
+    public string $uri;
 
     public function __construct(
         string $message,
         int $httpStatus,
         string $uri,
-        \Exception $previous = null
+        ?\Exception $previous = null
     ) {
         $this->uri = $uri;
         parent::__construct($message, $httpStatus, $previous);

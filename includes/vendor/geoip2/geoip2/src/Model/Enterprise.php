@@ -10,6 +10,5 @@ namespace GeoIp2\Model;
  * See https://dev.maxmind.com/geoip/docs/web-services?lang=en for more
  * details.
  */
-class Enterprise extends City
-{
-}
+// phpcs:disable
+class Enterprise extends City {}

@@ -1,32 +1,31 @@
 <?php
 /**
- * YOURLS Config for CI
+ * YOURLS Config for unit tests (Docker dev and CI)
+ *
+ * Environment variables override defaults. Defaults match the Docker dev setup.
  */
-define('YOURLS_TESTS_CI', getenv('CI') || false);
-define('YOURLS_ABSPATH', getenv('GITHUB_WORKSPACE'));
 
-define( 'YOURLS_SITE', 'http://localhost/YOURLS' );
+define('YOURLS_TESTS_CI', (bool) getenv('CI'));
+define('YOURLS_ABSPATH', getenv('YOURLS_ABSPATH') ?: '/var/www/html');
+define('YOURLS_SITE', getenv('YOURLS_SITE') ?: 'http://localhost');
 
 /*** MySQL settings */
-define( 'YOURLS_DB_USER', 'root' );
-define( 'YOURLS_DB_PASS', 'secret' );
-define( 'YOURLS_DB_NAME', 'yourls_tests' );
-define( 'YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT') );
+define('YOURLS_DB_USER', getenv('YOURLS_DB_USER') ?: 'yourlsUser');
+define('YOURLS_DB_PASS', getenv('YOURLS_DB_PASS') ?: 'yourlsUserPassword');
+define('YOURLS_DB_NAME', getenv('YOURLS_DB_NAME') ?: 'yourlsDB');
+define('YOURLS_DB_HOST', getenv('YOURLS_DB_HOST') ?: 'db-test');
 
-/*** Site options */
-define( 'YOURLS_PHP_BIN', 'php' );
-
-/*** Standard YOURLS config. */
-
+/*** Standard test config */
+define('YOURLS_PHP_BIN', 'php');
 define('YOURLS_HOURS_OFFSET', 5);
-define('YOURLS_UNIQUE_URLS',  true);
-define('YOURLS_PRIVATE',  true);
-define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
-define('YOURLS_URL_CONVERT',  62);
-define('YOURLS_DB_PREFIX',  'yourls_');
-define('YOURLS_FLOOD_DELAY_SECONDS',  0);
-define('YOURLS_FLOOD_IP_WHITELIST',  '');
-define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
+define('YOURLS_UNIQUE_URLS', true);
+define('YOURLS_PRIVATE', true);
+define('YOURLS_COOKIEKEY', 'I &hearts; unit tests');
+define('YOURLS_URL_CONVERT', 62);
+define('YOURLS_DB_PREFIX', 'yourls_');
+define('YOURLS_FLOOD_DELAY_SECONDS', 0);
+define('YOURLS_FLOOD_IP_WHITELIST', '');
+define('YOURLS_LANG', 'fr_FR');
 define('YOURLS_DEBUG', true);
 
 $yourls_reserved_URL = array(

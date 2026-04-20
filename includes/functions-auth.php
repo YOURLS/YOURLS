@@ -198,7 +198,7 @@ function yourls_hash_passwords_now( $config_file ) {
 
     $configdata = file_get_contents( $config_file );
 
-    if( $configdata == false ) {
+    if( $configdata === false ) {
         yourls_debug_log('Cannot hash passwords: file_get_contents() false with ' . $config_file);
         return 'could not read file';
     }
