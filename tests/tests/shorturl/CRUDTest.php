@@ -192,4 +192,35 @@ class CRUDTest extends PHPUnit\Framework\TestCase {
         $this->assertFalse( yourls_get_keyword_infos( $keyword ) );
     }
 
+    public function test_delete_url_clears_log() {
+        $keyword = rand_str();
+        $url     = 'http://' . rand_str();
+
+        yourls_add_new_link( $url, $keyword );
+
+        // Simulate a logged click directly
+        $table = YOURLS_DB_TABLE_LOG;
+        $ydb   = yourls_get_db( 'write-test_delete_url_clears_log' );
+        $ydb->fetchAffected(
+            "INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code)
+             VALUES (NOW(), :keyword, '', '', '127.0.0.1', '')",
+            array( 'keyword' => $keyword )
+        );
+
+        // Verify the log row was inserted
+        $count_before = yourls_get_db( 'read-test_delete_url_clears_log' )->fetchValue(
+            "SELECT COUNT(*) FROM `$table` WHERE `shorturl` = :keyword",
+            array( 'keyword' => $keyword )
+        );
+        $this->assertGreaterThan( 0, $count_before );
+
+        yourls_delete_link_by_keyword( $keyword );
+
+        $count_after = yourls_get_db( 'read-test_delete_url_clears_log' )->fetchValue(
+            "SELECT COUNT(*) FROM `$table` WHERE `shorturl` = :keyword",
+            array( 'keyword' => $keyword )
+        );
+        $this->assertEquals( 0, $count_after );
+    }
+
 }
