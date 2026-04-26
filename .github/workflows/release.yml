@@ -1,0 +1,164 @@
+name: Release on tag
+
+on:
+  push:
+    tags:
+      # GitHub Actions tag filters use fnmatch (no regex quantifiers).
+      # These cover 2- and 3-component versions: 1.8, 1.10.3, etc.
+      # Pre-release suffixes (e.g. 1.10.3-rc1) match the second pattern;
+      # the workflow tolerates that and produces a draft for review.
+      - '[0-9]*.[0-9]*'
+      - '[0-9]*.[0-9]*.[0-9]*'
+  # Allow re-running for an existing tag if the changelog was updated late.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to (re)build a draft release for'
+        required: true
+
+permissions:
+  contents: write
+
+# Cancel an in-flight run for the same tag if a newer run is queued.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  draft-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    # Don't run on forks; the upstream repo is the source of truth for releases.
+    if: github.repository == 'YOURLS/YOURLS'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Need full history so we can find the previous tag for the compare link.
+          fetch-depth: 0
+
+      - name: Determine tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          TAG="${INPUT_TAG:-$REF_NAME}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $TAG"
+
+      - name: Skip if a non-draft release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          # Idempotent: don't fight a release the maintainer already published.
+          # A draft release with the same tag is fine — it will be replaced.
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft' 2>/dev/null | grep -q '^false$'; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Published release for $TAG already exists; skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract CHANGELOG section
+        if: steps.check.outputs.exists == 'false'
+        id: changelog
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          # Pull lines between the `<TAG>` header and the next version header.
+          # CHANGELOG format:
+          #   1.10.3
+          #   ---
+          #   - added: ...
+          #
+          #   1.10.2
+          #   ---
+          SECTION=$(awk -v tag="$TAG" '
+            $0 == tag                                              { found=1; next }
+            found && /^---+$/                                      { next }
+            found && /^[0-9]+\.[0-9]+(\.[0-9]+)?(-[A-Za-z0-9.]+)?$/ { exit }
+            found                                                  { print }
+          ' CHANGELOG.md | sed -e 's/[[:space:]]*$//')
+
+          if [ -z "$(printf '%s' "$SECTION" | tr -d '[:space:]')" ]; then
+            echo "::warning::No CHANGELOG section found for tag $TAG. Draft will be created with a placeholder body."
+            SECTION="_(No CHANGELOG entry found for \`$TAG\`. Update CHANGELOG.md and re-run via workflow_dispatch.)_"
+          fi
+
+          {
+            echo 'section<<CHANGELOG_EOF'
+            printf '%s\n' "$SECTION"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Find previous tag for compare link
+        if: steps.check.outputs.exists == 'false'
+        id: prev
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          # Highest version-sorted tag that is not the current one and not a pre-release.
+          PREV=$(git tag --list --sort=-v:refname \
+            | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' \
+            | grep -v "^${TAG}$" \
+            | head -1 || true)
+          echo "prev=$PREV" >> "$GITHUB_OUTPUT"
+          echo "Previous tag: ${PREV:-<none>}"
+
+      - name: Compose release body
+        if: steps.check.outputs.exists == 'false'
+        id: body
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+          SECTION: ${{ steps.changelog.outputs.section }}
+          PREV: ${{ steps.prev.outputs.prev }}
+        run: |
+          {
+            echo 'body<<BODY_EOF'
+            echo "## YOURLS **$TAG**"
+            echo
+            echo "### What's Changed"
+            echo
+            printf '%s\n' "$SECTION"
+            if [ -n "$PREV" ]; then
+              echo
+              echo "**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$PREV...$TAG"
+            fi
+            echo
+            echo "### How to install or update"
+            echo
+            echo "Download the source code below and upload to your server."
+            echo "We recommend to back up your DB before any update."
+            echo
+            echo "More detailed instructions available on https://yourls.org/docs/"
+            echo
+            echo "### Shorten your links and make YOURLS bigger!"
+            echo
+            echo "Does your company use YOURLS? Help the project, become a sponsor and get your logo on our README on GitHub with a link to your site. [Become a sponsor](https://yourls.org/sponsor/)."
+            echo 'BODY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or replace draft release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          BODY: ${{ steps.body.outputs.body }}
+        run: |
+          # Delete any existing draft for this tag before recreating.
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft' 2>/dev/null | grep -q '^true$'; then
+            echo "Deleting existing draft for $TAG"
+            gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes
+          fi
+
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --notes "$BODY" \
+            --draft
+
+          echo "::notice::Draft release created for $TAG. Review and publish at https://github.com/$GITHUB_REPOSITORY/releases"
