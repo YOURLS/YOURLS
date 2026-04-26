@@ -82,3 +82,33 @@ jobs:
       run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
       env:
         DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+
+  phpstan:
+    name: PHPStan (advisory)
+    runs-on: ubuntu-latest
+    # Advisory job: surfaces static-analysis findings without blocking merges.
+    # Promote to required by removing this line once the codebase is clean
+    # (or once a baseline file is committed).
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Use PHP
+      uses: shivammathur/setup-php@2.37.0
+      with:
+        php-version: '8.4'
+        extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
+        tools: phpstan
+        coverage: none
+
+    - name: Cache PHPStan results
+      uses: actions/cache@v4
+      with:
+        path: .phpstan.cache
+        key: phpstan-${{ runner.os }}-${{ hashFiles('phpstan.neon.dist', 'composer.lock') }}
+        restore-keys: |
+          phpstan-${{ runner.os }}-
+
+    - name: Run PHPStan
+      run: phpstan analyse --memory-limit=1G --no-progress --error-format=github
