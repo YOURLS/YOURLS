@@ -29,7 +29,8 @@ jobs:
 
     services:
       mysql:
-        image: mariadb
+        # Pinned to a MariaDB LTS line for reproducible CI; bump deliberately when upstream LTS rolls.
+        image: mariadb:11.4
         ports:
           - 3306/tcp
         env:
@@ -50,6 +51,14 @@ jobs:
         extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
         tools: phpunit
         coverage: ${{ matrix.coverage }}
+
+    - name: Cache PHPUnit result cache
+      uses: actions/cache@v4
+      with:
+        path: .phpunit.cache
+        key: phpunit-${{ runner.os }}-php${{ matrix.php }}-${{ hashFiles('phpunit.xml.dist', 'tests/**/*.php') }}
+        restore-keys: |
+          phpunit-${{ runner.os }}-php${{ matrix.php }}-
 
     # - name: Validate composer.json and composer.lock
     #   run: composer validate
