@@ -1,0 +1,17 @@
+parameters:
+    level: 0
+    phpVersion: 80100
+    paths:
+        - admin
+        - includes
+        - yourls-loader.php
+        - yourls-go.php
+        - yourls-infos.php
+        - yourls-api.php
+    excludePaths:
+        - includes/vendor/*
+    bootstrapFiles:
+        - includes/vendor/autoload.php
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    tmpDir: .phpstan.cache
