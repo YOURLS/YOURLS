@@ -8,8 +8,13 @@
         'notice'  => ['bg' => 'bg-neutral-50 dark:bg-neutral-900', 'border' => 'border-neutral-200 dark:border-neutral-800', 'text' => 'text-neutral-800 dark:text-neutral-100', 'icon' => 'info'],
     ];
     $t = $tones[$tone] ?? $tones['info'];
+    // Critical alerts use role="alert" + aria-live="assertive" so screen
+    // readers announce them immediately; status banners use the gentler
+    // role="status" + aria-live="polite".
+    $role = in_array($tone, ['danger', 'warning'], true) ? 'alert'  : 'status';
+    $live = in_array($tone, ['danger', 'warning'], true) ? 'assertive' : 'polite';
 @endphp
-<div role="status" {{ $attributes->merge(['class' => 'flex items-start gap-3 rounded-md border ' . $t['bg'] . ' ' . $t['border'] . ' ' . $t['text'] . ' p-3 text-sm']) }}>
+<div role="{{ $role }}" aria-live="{{ $live }}" {{ $attributes->merge(['class' => 'flex items-start gap-3 rounded-md border ' . $t['bg'] . ' ' . $t['border'] . ' ' . $t['text'] . ' p-3 text-sm']) }}>
     <x-atoms::icon :name="$t['icon']" size="md" class="mt-0.5 shrink-0" />
     <div class="flex-1 min-w-0">{{ $slot }}</div>
     @if($dismissible)

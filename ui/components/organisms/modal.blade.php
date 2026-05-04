@@ -14,10 +14,10 @@
     $cancelLabel  = $cancelLabel  ?? (function_exists('yourls__') ? yourls__('Cancel')  : 'Cancel');
     $confirmLabel = $confirmLabel ?? (function_exists('yourls__') ? yourls__('Confirm') : 'Confirm');
 @endphp
-<dialog id="{{ $id }}" {{ $attributes->merge(['class' => 'rounded-lg p-0 backdrop:bg-black/40 backdrop:backdrop-blur-sm w-full max-w-md border border-neutral-200 dark:border-neutral-800']) }}>
+<dialog id="{{ $id }}" aria-labelledby="{{ $id }}-title" {{ $attributes->merge(['class' => 'rounded-lg p-0 backdrop:bg-black/40 backdrop:backdrop-blur-sm w-full max-w-md border border-neutral-200 dark:border-neutral-800']) }}>
     <div class="bg-white dark:bg-neutral-900 rounded-lg shadow-xl">
         <header class="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
-            <h2 class="text-base font-semibold text-neutral-900 dark:text-neutral-100">{{ $title }}</h2>
+            <h2 id="{{ $id }}-title" class="text-base font-semibold text-neutral-900 dark:text-neutral-100">{{ $title }}</h2>
         </header>
         <div class="p-5 text-sm text-neutral-700 dark:text-neutral-300">
             {{ $slot }}
