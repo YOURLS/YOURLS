@@ -65,37 +65,50 @@
     <link rel="stylesheet" href="{{ \YOURLS\UI\Asset::url('admin.css') }}" />
     <script src="{{ \YOURLS\UI\Asset::url('admin.js') }}" defer></script>
 
-    {{-- Legacy assets, kept opt-in via context so plugins that call into
-         common.js / share.js / tablesorter / cal / etc. keep working. --}}
-    <script src="{{ $siteUrl }}/js/jquery-3.5.1.min.js?v={{ $version }}"></script>
-    <script src="{{ $siteUrl }}/js/common.js?v={{ $version }}"></script>
-    <script src="{{ $siteUrl }}/js/jquery.notifybar.js?v={{ $version }}"></script>
-    <link rel="stylesheet" href="{{ $siteUrl }}/css/style.css?v={{ $version }}" />
-    @if($tabs)
-        <link rel="stylesheet" href="{{ $siteUrl }}/css/infos.css?v={{ $version }}" />
-        <script src="{{ $siteUrl }}/js/infos.js?v={{ $version }}"></script>
-    @endif
-    @if($tablesorter)
-        <link rel="stylesheet" href="{{ $siteUrl }}/css/tablesorter.css?v={{ $version }}" />
-        <script src="{{ $siteUrl }}/js/jquery-3.tablesorter.min.js?v={{ $version }}"></script>
-        <script src="{{ $siteUrl }}/js/tablesorte.js?v={{ $version }}"></script>
-    @endif
-    @if($insert)
-        <script src="{{ $siteUrl }}/js/insert.js?v={{ $version }}"></script>
-    @endif
-    @if($share)
-        <link rel="stylesheet" href="{{ $siteUrl }}/css/share.css?v={{ $version }}" />
-        <script src="{{ $siteUrl }}/js/share.js?v={{ $version }}"></script>
-        <script src="{{ $siteUrl }}/js/clipboard.min.js?v={{ $version }}"></script>
-    @endif
-    @if($cal)
-        <link rel="stylesheet" href="{{ $siteUrl }}/css/cal.css?v={{ $version }}" />
-        @php if (function_exists('yourls_l10n_calendar_strings')) yourls_l10n_calendar_strings(); @endphp
-        <script src="{{ $siteUrl }}/js/jquery.cal.js?v={{ $version }}"></script>
-    @endif
-    @if($charts)
-        <script src="https://www.google.com/jsapi"></script>
-        <script>google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});</script>
+    @php
+        // Legacy assets are loaded by default to keep every plugin working.
+        // Set YOURLS_UI_LEGACY_ASSETS=false in user/config.php to opt
+        // out and rely solely on the new admin.css / admin.js bundle;
+        // expect breakage with plugins that still call jQuery or
+        // tablesorter directly.
+        $loadLegacy = !defined('YOURLS_UI_LEGACY_ASSETS') || YOURLS_UI_LEGACY_ASSETS;
+        if (defined('YOURLS_DEBUG') && YOURLS_DEBUG && !$loadLegacy && function_exists('yourls_debug_log')) {
+            yourls_debug_log('[YOURLS\\UI] Legacy admin assets disabled via YOURLS_UI_LEGACY_ASSETS. Plugins relying on jQuery/common.js/tablesorter may break.');
+        }
+    @endphp
+    @if($loadLegacy)
+        {{-- Legacy assets, gated by context so plugins that call into
+             common.js / share.js / tablesorter / cal / etc. keep working. --}}
+        <script src="{{ $siteUrl }}/js/jquery-3.5.1.min.js?v={{ $version }}"></script>
+        <script src="{{ $siteUrl }}/js/common.js?v={{ $version }}"></script>
+        <script src="{{ $siteUrl }}/js/jquery.notifybar.js?v={{ $version }}"></script>
+        <link rel="stylesheet" href="{{ $siteUrl }}/css/style.css?v={{ $version }}" />
+        @if($tabs)
+            <link rel="stylesheet" href="{{ $siteUrl }}/css/infos.css?v={{ $version }}" />
+            <script src="{{ $siteUrl }}/js/infos.js?v={{ $version }}"></script>
+        @endif
+        @if($tablesorter)
+            <link rel="stylesheet" href="{{ $siteUrl }}/css/tablesorter.css?v={{ $version }}" />
+            <script src="{{ $siteUrl }}/js/jquery-3.tablesorter.min.js?v={{ $version }}"></script>
+            <script src="{{ $siteUrl }}/js/tablesorte.js?v={{ $version }}"></script>
+        @endif
+        @if($insert)
+            <script src="{{ $siteUrl }}/js/insert.js?v={{ $version }}"></script>
+        @endif
+        @if($share)
+            <link rel="stylesheet" href="{{ $siteUrl }}/css/share.css?v={{ $version }}" />
+            <script src="{{ $siteUrl }}/js/share.js?v={{ $version }}"></script>
+            <script src="{{ $siteUrl }}/js/clipboard.min.js?v={{ $version }}"></script>
+        @endif
+        @if($cal)
+            <link rel="stylesheet" href="{{ $siteUrl }}/css/cal.css?v={{ $version }}" />
+            @php if (function_exists('yourls_l10n_calendar_strings')) yourls_l10n_calendar_strings(); @endphp
+            <script src="{{ $siteUrl }}/js/jquery.cal.js?v={{ $version }}"></script>
+        @endif
+        @if($charts)
+            <script src="https://www.google.com/jsapi"></script>
+            <script>google.load('visualization', '1.0', {'packages':['corechart', 'geochart']});</script>
+        @endif
     @endif
     <script>
     //<![CDATA[

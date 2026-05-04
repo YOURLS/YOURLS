@@ -48,6 +48,12 @@ if (!\YOURLS\UI\BladeFactory::isAvailable()) {
     false
 );
 
+// Load the Blade-backed alternatives to yourls_html_*.
+$facadeFile = __DIR__ . '/facade.php';
+if (is_file($facadeFile)) {
+    require_once $facadeFile;
+}
+
 if (function_exists('yourls_do_action')) {
     yourls_do_action('yourls_ui_loaded');
 }

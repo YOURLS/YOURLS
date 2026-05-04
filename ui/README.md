@@ -266,13 +266,54 @@ ready-to-use bundle without running Node themselves.
 
 ---
 
-## Disabling the new layer
+## Configuration knobs
 
 ```php
 // user/config.php
+
+// Disable the new layer entirely; legacy renderer takes over.
 define('YOURLS_UI_DISABLE', true);
+
+// Stop loading the legacy CSS/JS bundle (jquery, common, tablesorter,
+// cal, share, clipboard, …). The new admin.css / admin.js only.
+// Most plugins still depend on jQuery — flip this only if you've
+// audited your active plugin set.
+define('YOURLS_UI_LEGACY_ASSETS', false);
+
+// Show the dev-only UI Kit catalog at /admin/ui-kit.php in addition
+// to YOURLS_DEBUG.
+define('YOURLS_UI_KIT', true);
 ```
 
-The legacy `includes/functions-html.php` continues to render every
-admin page. This is the recommended escape hatch if a critical plugin
-breaks; please open an issue on GitHub so we can fix the regression.
+If a critical plugin breaks with the new layer, set
+`YOURLS_UI_DISABLE = true` and please open an issue on GitHub so the
+regression can be fixed upstream.
+
+---
+
+## Migration path: legacy → Blade
+
+The Blade-backed alternatives in `ui/facade.php` mirror the legacy
+`yourls_html_*` functions one-for-one. They keep every preserved hook
+fire and every legacy DOM id/class:
+
+| Legacy | Blade equivalent |
+|---|---|
+| `yourls_html_addnew($url, $kw)` | `yourls_ui_render_html_addnew($url, $kw)` |
+| `yourls_share_box(...)`         | `yourls_ui_render_share_box(...)` |
+| `yourls_html_select(...)`       | `yourls_ui_render_html_select(...)` |
+| `yourls_table_head()`           | `yourls_ui_render_table_head()` |
+| `yourls_table_tbody_start()`    | `yourls_ui_render_table_tbody_start()` |
+| `yourls_table_tbody_end()`      | `yourls_ui_render_table_tbody_end()` |
+| `yourls_table_end()`            | `yourls_ui_render_table_end()` |
+| `yourls_delete_link_modal()`    | `yourls_ui_render_delete_link_modal()` |
+
+PHP cannot redefine global functions, so the legacy implementations
+in `includes/functions-html.php` stay in place as the default
+rendering path. The Blade alternatives are opt-in: a plugin or core
+contributor can call them where the legacy version was used and the
+output (DOM + hook firing) stays equivalent.
+
+A future major release can migrate the legacy file to a thin facade
+once the plugin ecosystem has been validated against the new
+components.
