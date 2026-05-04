@@ -52,3 +52,4 @@ Desktop.ini
 .idea
 .vs
 .vscode
+node_modules/
