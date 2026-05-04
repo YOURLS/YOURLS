@@ -141,6 +141,36 @@
     </section>
 
     {{-- Molecules --}}
+    {{-- Organisms --}}
+    <section class="kit-section">
+        <h2>Organisms — Cards, banners, stats</h2>
+        <div class="kit-grid">
+            <x-organisms::card title="Card title" description="Card description">
+                <p class="text-sm">Card body content.</p>
+            </x-organisms::card>
+            <x-organisms::stat label="Total clicks" value="12,345" icon="chart" tone="primary" />
+            <x-organisms::stat label="Active links" value="42" icon="link" tone="success" />
+            <x-organisms::empty-state title="Nothing here yet" description="Create your first short URL to get started." icon="link" />
+        </div>
+        <h3>Banners</h3>
+        <div class="space-y-2">
+            <x-organisms::banner tone="info">Informational banner.</x-organisms::banner>
+            <x-organisms::banner tone="success" dismissible>Success banner with dismiss.</x-organisms::banner>
+            <x-organisms::banner tone="warning">Heads up — warning banner.</x-organisms::banner>
+            <x-organisms::banner tone="danger">Danger zone.</x-organisms::banner>
+        </div>
+    </section>
+
+    <section class="kit-section">
+        <h2>Organisms — Forms</h2>
+        <h3>Add URL</h3>
+        <x-forms::add-url url="" keyword="" />
+        <h3>Login form</h3>
+        <div class="max-w-sm yourls-card p-5">
+            <x-forms::login-form action="" username="" />
+        </div>
+    </section>
+
     <section class="kit-section">
         <h2>Molecules</h2>
         <div class="kit-grid">
