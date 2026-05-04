@@ -6,6 +6,10 @@
  * @return void
  */
 function yourls_html_logo() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'logo' );
+        return;
+    }
     yourls_do_action( 'pre_html_logo' );
     ?>
     <header role="banner">
@@ -26,6 +30,11 @@ function yourls_html_logo() {
  * @return void
  */
 function yourls_html_head( $context = 'index', $title = '' ) {
+
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.head', [ 'context' => $context, 'title' => $title ] );
+        return;
+    }
 
     yourls_do_action( 'pre_html_head', $context, $title );
 
@@ -146,6 +155,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  * @return void
  */
 function yourls_html_footer($can_query = true) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.footer', [ 'canQuery' => (bool) $can_query ] );
+        return;
+    }
+
     if($can_query & yourls_get_debug_mode()) {
         $num_queries = yourls_get_num_queries();
         $num_queries = ' &ndash; '. sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
@@ -181,6 +195,10 @@ function yourls_html_footer($can_query = true) {
  * @return void
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_html_addnew( (string) $url, (string) $keyword );
+        return;
+    }
     $pre = yourls_apply_filter( 'shunt_html_addnew', yourls_shunt_default(), $url, $keyword );
     if ( yourls_shunt_default() !== $pre ) {
         return $pre;
@@ -214,6 +232,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @return void
  */
 function yourls_delete_link_modal() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_delete_link_modal();
+        return;
+    }
 	?>
     <dialog id="delete-confirm-dialog">
         <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
@@ -243,6 +265,13 @@ function yourls_delete_link_modal() {
  * @return void
  */
 function yourls_html_tfooter( $params = array() ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'organisms.table.footer', [ 'params' => (array) $params ] );
+        if ( function_exists( 'yourls_do_action' ) ) {
+            yourls_do_action( 'html_tfooter' );
+        }
+        return;
+    }
     // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
     // to make things clearer and more explicit about what var is used.
     $search       = $params['search'];
@@ -404,6 +433,9 @@ function yourls_html_tfooter( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        return yourls_ui_render_html_select( (string) $name, (array) $options, (string) $selected, (bool) $display, (string) $label );
+    }
     // Allow plugins to filter the options -- see #3262
     $options = yourls_apply_filter( 'html_select_options', $options, $name, $selected, $display, $label );
     $html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
@@ -433,6 +465,10 @@ function yourls_html_select( $name, $options, $selected = '', $display = false, 
  * @return void
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_share_box( (string) $longurl, (string) $shorturl, (string) $title, (string) $text, (string) $shortlink_title, (string) $share_title, (bool) $hidden );
+        return;
+    }
     if ( $shortlink_title == '' )
         $shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
     if ( $share_title == '' )
@@ -701,6 +737,10 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
  * @return void
  */
 function yourls_table_head() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_head();
+        return;
+    }
     $start = '<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1"><thead><tr>'."\n";
     echo yourls_apply_filter( 'table_head_start', $start );
 
@@ -726,6 +766,10 @@ function yourls_table_head() {
  * @return void
  */
 function yourls_table_tbody_start() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_tbody_start();
+        return;
+    }
     echo yourls_apply_filter( 'table_tbody_start', '<tbody>' );
 }
 
@@ -735,6 +779,10 @@ function yourls_table_tbody_start() {
  * @return void
  */
 function yourls_table_tbody_end() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_tbody_end();
+        return;
+    }
     echo yourls_apply_filter( 'table_tbody_end', '</tbody>' );
 }
 
@@ -744,6 +792,10 @@ function yourls_table_tbody_end() {
  * @return void
  */
 function yourls_table_end() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_end();
+        return;
+    }
     echo yourls_apply_filter( 'table_end', '</table></main>' );
 }
 
@@ -773,6 +825,10 @@ function yourls_html_link( $href, $anchor = '', $element = '' ) {
  * @return void
  */
 function yourls_login_screen( $error_msg = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'auth.login', [ 'error_msg' => (string) $error_msg ] );
+        die();
+    }
     yourls_html_head( 'login' );
 
     $action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
@@ -822,6 +878,10 @@ function yourls_login_screen( $error_msg = '' ) {
  * @return void
  */
 function yourls_html_menu() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.sidebar' );
+        return;
+    }
     // Build menu links
     if( defined( 'YOURLS_USER' ) ) {
         // Create a logout link with a nonce associated to fake user 'logout' : the user is not yet defined
