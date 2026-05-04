@@ -27,11 +27,19 @@
         "rmccue/requests" : "^2.0",
         "pomo/pomo" : "^1.4",
         "geoip2/geoip2" : "^2.10",
-        "aura/sql": "^6.0",
+        "aura/sql": "^5.0",
         "jakeasmith/http_build_url": "^1.0",
         "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
-        "spatie/array-to-xml": "^3.4"
+        "spatie/array-to-xml": "^3.4",
+        "jenssegers/blade": "^2.0",
+        "illuminate/view": "^9.52",
+        "illuminate/contracts": "^9.52",
+        "illuminate/container": "^9.52",
+        "illuminate/events": "^9.52",
+        "illuminate/filesystem": "^9.52",
+        "illuminate/config": "^9.52",
+        "illuminate/support": "^9.52"
     },
     "require-dev": {
         "ext-ctype": "*"
@@ -44,8 +52,12 @@
     },
     "autoload": {
         "psr-4": {
-            "YOURLS\\": "includes/"
-        }
+            "YOURLS\\": "includes/",
+            "YOURLS\\UI\\": "ui/helpers/"
+        },
+        "files": [
+            "ui/helpers.php"
+        ]
     },
     "suggest": {
         "ext-bcmath": "May be needed to read GeoIP database (or ext-gmp)",

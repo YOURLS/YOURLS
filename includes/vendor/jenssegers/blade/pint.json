@@ -1,0 +1,6 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "tests/cache"
+    ]
+}
