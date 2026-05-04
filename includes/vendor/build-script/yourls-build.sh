@@ -33,6 +33,13 @@ PRESERVE_IN_VENDOR=(
     'psr'
     'voku'
     'carbonphp'
+    'phpunit'
+    'sebastian'
+    'theseer'
+    'myclabs'
+    'phar-io'
+    'nikic'
+    'bin'
 )
 
 # Files & dirs to keep in each library directory

@@ -42,7 +42,8 @@
         "illuminate/support": "^9.52"
     },
     "require-dev": {
-        "ext-ctype": "*"
+        "ext-ctype": "*",
+        "phpunit/phpunit": "^10.5"
     },
     "config": {
         "vendor-dir": "includes/vendor",

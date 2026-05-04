@@ -57,7 +57,46 @@ final class BladeFactory
         $cachePath = self::resolveCachePath();
 
         try {
-            self::$blade = new Blade($viewPaths, $cachePath);
+            // Use jenssegers/blade's Container subclass: it adds the
+            // terminating() method that illuminate/view 9.x calls during
+            // ViewServiceProvider::register() (Foundation\Application has it,
+            // Illuminate\Container\Container does not).
+            $container = new \Jenssegers\Blade\Container();
+
+            // ComponentTagCompiler resolves the view Factory via the
+            // global Container singleton, so promote our container to it
+            // BEFORE constructing Blade (which calls ViewServiceProvider).
+            \Illuminate\Container\Container::setInstance($container);
+
+            self::$blade = new Blade($viewPaths, $cachePath, $container);
+
+            // Anonymous <x-component> tags resolve Factory by interface;
+            // jenssegers/blade only binds the 'view' alias, so wire the
+            // contract + concrete to the same instance.
+            $factory = $container->make('view');
+            $container->instance(\Illuminate\Contracts\View\Factory::class, $factory);
+            $container->instance(\Illuminate\View\Factory::class, $factory);
+
+            // ComponentTagCompiler::guessClassName() does
+            //   Container::getInstance()->make(Application::class)->getNamespace()
+            // Outside of Laravel there is no Application; provide a stub
+            // that returns an empty namespace so guessing falls through to
+            // the anonymous-component path lookup.
+            $container->instance(
+                \Illuminate\Contracts\Foundation\Application::class,
+                new class {
+                    public function getNamespace(): string { return ''; }
+                    public function __call($n, $a) { return null; }
+                }
+            );
+
+            // Register anonymous component paths so authors can write
+            // <x-atoms::button>, <x-molecules::pagination>, etc.
+            $componentsRoot = dirname(__DIR__) . '/components';
+            self::$blade->compiler()->anonymousComponentPath($componentsRoot . '/atoms',     'atoms');
+            self::$blade->compiler()->anonymousComponentPath($componentsRoot . '/molecules', 'molecules');
+            self::$blade->compiler()->anonymousComponentPath($componentsRoot . '/organisms', 'organisms');
+            self::$blade->compiler()->anonymousComponentPath($componentsRoot . '/forms',     'forms');
         } catch (\Throwable $e) {
             self::$available = false;
             if (defined('YOURLS_DEBUG') && YOURLS_DEBUG) {
