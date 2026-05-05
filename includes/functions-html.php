@@ -217,6 +217,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
                     <input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" />
                 </div>
             </form>
+            <div>
+                <label for="add-notes"><?php yourls_e( 'Optional' ); ?> : <strong><?php yourls_e( 'Notes' ); ?></strong></label>:
+                <input type="text" id="add-notes" name="notes" value="" class="text" size="40" placeholder="<?php yourls_e( 'Add a note about this URL' ); ?>" />
+            </div>
             <div id="feedback" style="display:none"></div>
         </div>
         <?php yourls_do_action( 'html_addnew' ); ?>
@@ -291,7 +295,7 @@ function yourls_html_tfooter( $params = array() ) {
     ?>
     <tfoot>
         <tr>
-            <th colspan="6">
+            <th colspan="7">
             <div id="filter_form">
                 <form action="" method="get">
                     <div id="filter_options">
@@ -617,7 +621,7 @@ RETURN;
  * @param int    $row_id      Numeric value used to form row IDs, defaults to one
  * @return string             HTML of the row
  */
-function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, $row_id = 1 ) {
+function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, $row_id = 1, $notes = '' ) {
     $keyword  = yourls_sanitize_keyword($keyword);
     $id       = yourls_unique_element_id('yid', $row_id);
     $shorturl = yourls_link( $keyword );
@@ -696,6 +700,10 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
             'long_url_html' => yourls_esc_html( yourls_trim_long_string( urldecode( $url ) ) ),
             'warning'       => $protocol_warning,
         ),
+        'notes' => array(
+            'template' => '%notes%',
+            'notes'    => yourls_esc_html( $notes ),
+        ),
         'timestamp' => array(
             'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
             'timestamp' => $timestamp,
@@ -747,6 +755,7 @@ function yourls_table_head() {
     $cells = yourls_apply_filter( 'table_head_cells', array(
         'shorturl' => yourls__( 'Short URL' ),
         'longurl'  => yourls__( 'Original URL' ),
+        'notes'    => yourls__( 'Notes' ),
         'date'     => yourls__( 'Date' ),
         'ip'       => yourls__( 'IP' ),
         'clicks'   => yourls__( 'Clicks' ),
@@ -913,6 +922,20 @@ function yourls_html_menu() {
             'anchor' => yourls__( 'Manage Plugins' )
         );
         $admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
+
+        if ( function_exists( 'yourls_current_user_can' ) && yourls_current_user_can( 'manage_users' ) ) {
+            $admin_links['users'] = array(
+                'url'    => yourls_admin_url( 'users.php' ),
+                'anchor' => yourls__( 'Users' )
+            );
+        }
+    }
+
+    if ( defined( 'YOURLS_USER' ) && function_exists( 'yourls_current_user_can' ) && yourls_current_user_can( 'manage_own_profile' ) ) {
+        $admin_links['profile'] = array(
+            'url'    => yourls_admin_url( 'profile.php' ),
+            'anchor' => yourls__( 'Profile' )
+        );
     }
 
     $admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );
