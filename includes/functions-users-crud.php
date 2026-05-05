@@ -213,3 +213,90 @@ function yourls_touch_last_login( $user_id ) {
         yourls_debug_log( 'touch_last_login failed: ' . $e->getMessage() );
     }
 }
+
+/**
+ * Delete a user.
+ *
+ * Refuses to delete the last active admin (would lock everyone out of user management).
+ *
+ * @throws \RuntimeException when user does not exist or is the sole active admin
+ */
+function yourls_delete_user( $user_id ) {
+    $user_id = (int) $user_id;
+    $ydb    = yourls_get_db( 'write-delete_user' );
+    $table  = YOURLS_DB_TABLE_USERS;
+
+    $row = $ydb->fetchObject(
+        "SELECT * FROM `$table` WHERE `user_id` = :id",
+        [ 'id' => $user_id ]
+    );
+    if ( !$row ) {
+        throw new \RuntimeException( "User $user_id does not exist" );
+    }
+
+    if ( $row->role === 'admin' && (int) $row->is_active === 1 ) {
+        $other_active_admins = (int) $ydb->fetchValue(
+            "SELECT COUNT(*) FROM `$table` WHERE `role` = 'admin' AND `is_active` = 1 AND `user_id` <> :id",
+            [ 'id' => $user_id ]
+        );
+        if ( $other_active_admins === 0 ) {
+            throw new \RuntimeException( 'Cannot delete the last active admin' );
+        }
+    }
+
+    $ydb->perform(
+        "DELETE FROM `$table` WHERE `user_id` = :id",
+        [ 'id' => $user_id ]
+    );
+    yourls_do_action( 'user_deleted', $user_id, $row->username );
+}
+
+/**
+ * Whether the given user is the only remaining active admin.
+ *
+ * Used by the UI to disable the "demote/disable" controls so we don't lock everyone out.
+ * Returns false for non-admin users, inactive users, unknown users.
+ */
+function yourls_user_is_last_active_admin( $user_id ) {
+    $user_id = (int) $user_id;
+    $ydb    = yourls_get_db( 'read-last_admin_check' );
+    $table  = YOURLS_DB_TABLE_USERS;
+
+    $row = $ydb->fetchObject(
+        "SELECT `role`, `is_active` FROM `$table` WHERE `user_id` = :id",
+        [ 'id' => $user_id ]
+    );
+    if ( !$row || $row->role !== 'admin' || (int) $row->is_active !== 1 ) {
+        return false;
+    }
+
+    $others = (int) $ydb->fetchValue(
+        "SELECT COUNT(*) FROM `$table` WHERE `role` = 'admin' AND `is_active` = 1 AND `user_id` <> :id",
+        [ 'id' => $user_id ]
+    );
+    return $others === 0;
+}
+
+/**
+ * List users for the admin UI.
+ *
+ * @param int $limit
+ * @param int $offset
+ * @return array<int, array<string, mixed>>  Indexed array of associative rows
+ */
+function yourls_list_users( $limit = 100, $offset = 0 ) {
+    $limit  = max( 1, (int) $limit );
+    $offset = max( 0, (int) $offset );
+
+    $ydb   = yourls_get_db( 'read-list_users' );
+    $table = YOURLS_DB_TABLE_USERS;
+
+    $rows = $ydb->fetchObjects(
+        "SELECT `user_id`, `username`, `role`, `is_active`, `api_key_version`, `last_login_at`, `created_at`, `updated_at` ".
+        "FROM `$table` ".
+        "ORDER BY `username` ASC ".
+        "LIMIT $limit OFFSET $offset"
+    );
+
+    return array_map( fn( $obj ) => (array) $obj, (array) $rows );
+}

@@ -190,4 +190,152 @@ class UserCrudTest extends TestCase
         \yourls_touch_last_login(0);
         $this->assertTrue(true);
     }
+
+    public function test_delete_user_removes_row()
+    {
+        $id = \yourls_create_user('crudtest_nick', 'p@ssw0rd1', 'editor');
+        \yourls_delete_user($id);
+        $this->assertNull(\yourls_get_user_by_username('crudtest_nick'));
+    }
+
+    public function test_cannot_delete_last_active_admin()
+    {
+        // Snapshot existing users so we can restore them after this destructive test
+        $ydb = \yourls_get_db();
+        $existing = $ydb->fetchObjects("SELECT * FROM `".YOURLS_DB_TABLE_USERS."`");
+        $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."`");
+
+        $admin_id = \yourls_create_user('crudtest_solo_admin', 'p@ssw0rd1', 'admin');
+        try {
+            $thrown = null;
+            try {
+                \yourls_delete_user($admin_id);
+            } catch (\RuntimeException $e) {
+                $thrown = $e;
+            }
+            $this->assertNotNull($thrown, 'Expected RuntimeException for last-admin delete');
+            $this->assertNotNull(\yourls_get_user_by_username('crudtest_solo_admin'),
+                'last admin must remain in DB after refused delete');
+        } finally {
+            // Cleanup the test admin and restore prior users (best-effort)
+            $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."` WHERE username = 'crudtest_solo_admin'");
+            foreach ((array) $existing as $row) {
+                $ydb->perform(
+                    "INSERT IGNORE INTO `".YOURLS_DB_TABLE_USERS."` ".
+                    "(`user_id`,`username`,`password_hash`,`role`,`is_active`,`api_key_version`,`last_login_at`,`created_at`,`updated_at`) ".
+                    "VALUES (:uid,:un,:ph,:r,:ia,:akv,:lla,:ca,:ua)",
+                    [
+                        'uid' => (int) $row->user_id,
+                        'un'  => $row->username,
+                        'ph'  => $row->password_hash,
+                        'r'   => $row->role,
+                        'ia'  => (int) $row->is_active,
+                        'akv' => (int) $row->api_key_version,
+                        'lla' => $row->last_login_at,
+                        'ca'  => $row->created_at,
+                        'ua'  => $row->updated_at,
+                    ]
+                );
+            }
+        }
+    }
+
+    public function test_can_delete_admin_when_another_admin_exists()
+    {
+        $ydb = \yourls_get_db();
+        $existing = $ydb->fetchObjects("SELECT * FROM `".YOURLS_DB_TABLE_USERS."`");
+        $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."`");
+        try {
+            $a = \yourls_create_user('crudtest_admin_a', 'p@ssw0rd1', 'admin');
+            $b = \yourls_create_user('crudtest_admin_b', 'p@ssw0rd1', 'admin');
+            \yourls_delete_user($a);
+            $this->assertNull(\yourls_get_user_by_username('crudtest_admin_a'));
+            $this->assertNotNull(\yourls_get_user_by_username('crudtest_admin_b'));
+        } finally {
+            $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."` WHERE username LIKE 'crudtest_admin_%'");
+            foreach ((array) $existing as $row) {
+                $ydb->perform(
+                    "INSERT IGNORE INTO `".YOURLS_DB_TABLE_USERS."` ".
+                    "(`user_id`,`username`,`password_hash`,`role`,`is_active`,`api_key_version`,`last_login_at`,`created_at`,`updated_at`) ".
+                    "VALUES (:uid,:un,:ph,:r,:ia,:akv,:lla,:ca,:ua)",
+                    [
+                        'uid' => (int) $row->user_id,
+                        'un'  => $row->username,
+                        'ph'  => $row->password_hash,
+                        'r'   => $row->role,
+                        'ia'  => (int) $row->is_active,
+                        'akv' => (int) $row->api_key_version,
+                        'lla' => $row->last_login_at,
+                        'ca'  => $row->created_at,
+                        'ua'  => $row->updated_at,
+                    ]
+                );
+            }
+        }
+    }
+
+    public function test_delete_user_rejects_unknown_id()
+    {
+        $this->expectException(\RuntimeException::class);
+        \yourls_delete_user(999999);
+    }
+
+    public function test_user_is_last_active_admin_returns_true_when_alone()
+    {
+        $ydb = \yourls_get_db();
+        $existing = $ydb->fetchObjects("SELECT * FROM `".YOURLS_DB_TABLE_USERS."`");
+        $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."`");
+        try {
+            $solo = \yourls_create_user('crudtest_solo2', 'p@ssw0rd1', 'admin');
+            $this->assertTrue(\yourls_user_is_last_active_admin($solo));
+        } finally {
+            $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."` WHERE username = 'crudtest_solo2'");
+            foreach ((array) $existing as $row) {
+                $ydb->perform(
+                    "INSERT IGNORE INTO `".YOURLS_DB_TABLE_USERS."` ".
+                    "(`user_id`,`username`,`password_hash`,`role`,`is_active`,`api_key_version`,`last_login_at`,`created_at`,`updated_at`) ".
+                    "VALUES (:uid,:un,:ph,:r,:ia,:akv,:lla,:ca,:ua)",
+                    [
+                        'uid' => (int) $row->user_id, 'un' => $row->username, 'ph' => $row->password_hash,
+                        'r' => $row->role, 'ia' => (int) $row->is_active, 'akv' => (int) $row->api_key_version,
+                        'lla' => $row->last_login_at, 'ca' => $row->created_at, 'ua' => $row->updated_at,
+                    ]
+                );
+            }
+        }
+    }
+
+    public function test_user_is_last_active_admin_false_for_editor()
+    {
+        $id = \yourls_create_user('crudtest_editor_check', 'p@ssw0rd1', 'editor');
+        $this->assertFalse(\yourls_user_is_last_active_admin($id));
+    }
+
+    public function test_user_is_last_active_admin_false_for_inactive_admin()
+    {
+        $id = \yourls_create_user('crudtest_inactive_admin', 'p@ssw0rd1', 'admin', false);
+        $this->assertFalse(\yourls_user_is_last_active_admin($id));
+    }
+
+    public function test_user_is_last_active_admin_false_for_unknown()
+    {
+        $this->assertFalse(\yourls_user_is_last_active_admin(999999));
+    }
+
+    public function test_list_users_returns_array_of_assoc_rows()
+    {
+        \yourls_create_user('crudtest_list1', 'p@ssw0rd1', 'editor');
+        \yourls_create_user('crudtest_list2', 'p@ssw0rd1', 'admin');
+        $rows = \yourls_list_users();
+        $this->assertIsArray($rows);
+        $usernames = array_column($rows, 'username');
+        $this->assertContains('crudtest_list1', $usernames);
+        $this->assertContains('crudtest_list2', $usernames);
+        // Each row must be an assoc array with the documented keys
+        $first = $rows[0];
+        $this->assertIsArray($first);
+        foreach (['user_id', 'username', 'role', 'is_active', 'api_key_version', 'last_login_at', 'created_at', 'updated_at'] as $key) {
+            $this->assertArrayHasKey($key, $first);
+        }
+    }
 }
