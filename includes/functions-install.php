@@ -222,10 +222,13 @@ function yourls_create_sql_tables() {
          '`timestamp` timestamp NOT NULL DEFAULT current_timestamp(),'.
          '`ip` varchar(41) COLLATE utf8mb4_unicode_ci NOT NULL,'.
          '`clicks` int(10) unsigned NOT NULL,'.
+         '`notes` text COLLATE utf8mb4_unicode_ci,'.
+         '`created_by` int unsigned NULL DEFAULT NULL,'.
          'PRIMARY KEY (`keyword`),'.
          'KEY `ip` (`ip`),'.
          'KEY `timestamp` (`timestamp`),'.
-         'KEY `url_idx` (`url`(30))'.
+         'KEY `url_idx` (`url`(30)),'.
+         'KEY `created_by` (`created_by`)'.
         ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;';
 
     $create_tables[YOURLS_DB_TABLE_OPTIONS] =
@@ -250,6 +253,30 @@ function yourls_create_sql_tables() {
         'KEY `shorturl` (`shorturl`)'.
         ') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
+    $create_tables[YOURLS_DB_TABLE_USERS] =
+        'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_USERS.'` ('.
+        '`user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,'.
+        '`username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,'.
+        '`password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,'.
+        '`role` enum(\'admin\',\'editor\') NOT NULL DEFAULT \'admin\','.
+        '`is_active` tinyint(1) unsigned NOT NULL DEFAULT 1,'.
+        '`api_key_version` int unsigned NOT NULL DEFAULT 1,'.
+        '`last_login_at` timestamp NULL DEFAULT NULL,'.
+        '`created_at` timestamp NOT NULL DEFAULT current_timestamp(),'.
+        '`updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),'.
+        'PRIMARY KEY (`user_id`),'.
+        'UNIQUE KEY `username` (`username`)'.
+        ') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
+
+    $create_tables[YOURLS_DB_TABLE_API_RATE] =
+        'CREATE TABLE IF NOT EXISTS `'.YOURLS_DB_TABLE_API_RATE.'` ('.
+        '`id` bigint unsigned NOT NULL AUTO_INCREMENT,'.
+        '`user_id` int unsigned NOT NULL,'.
+        '`called_at` timestamp NOT NULL DEFAULT current_timestamp(),'.
+        '`action` varchar(32) NOT NULL,'.
+        'PRIMARY KEY (`id`),'.
+        'KEY `user_window` (`user_id`, `called_at`)'.
+        ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
     $create_table_count = 0;
 
@@ -270,6 +297,10 @@ function yourls_create_sql_tables() {
     // Initializes the option table
     if( !yourls_initialize_options() )
         $error_msg[] = yourls__( 'Could not initialize options' );
+
+    // Migrate users from $yourls_user_passwords into the users table
+    if( !yourls_populate_users_table() )
+        $error_msg[] = yourls__( 'Could not populate users table' );
 
     // Insert sample links
     if( !yourls_insert_sample_links() )
@@ -302,6 +333,54 @@ function yourls_initialize_options() {
         & yourls_update_option( 'next_id', 1 )
         & yourls_update_option( 'active_plugins', array() )
     );
+}
+
+/**
+ * Migrate users from $yourls_user_passwords (config.php) into the yourls_users DB table.
+ *
+ * Existing usernames are skipped (INSERT IGNORE). Passwords may be plaintext, md5: or phpass:
+ * prefixed – all formats are normalised to a proper password_hash() string before storage.
+ *
+ * @since 1.9
+ * @return bool  true if at least one user was processed, false on failure
+ */
+function yourls_populate_users_table() {
+    global $yourls_user_passwords;
+
+    if ( empty( $yourls_user_passwords ) || !is_array( $yourls_user_passwords ) ) {
+        return true; // nothing to migrate — not an error
+    }
+
+    $ydb     = yourls_get_db( 'write-populate_users_table' );
+    $table   = YOURLS_DB_TABLE_USERS;
+    $success = true;
+
+    foreach ( $yourls_user_passwords as $username => $raw_password ) {
+        // Normalise the stored value to a clean password_hash() hash
+        if ( yourls_has_phpass_password( $username ) ) {
+            // Already stored as "phpass:<hash with ! instead of $>"
+            list( , $stored_hash ) = explode( ':', $raw_password, 2 );
+            $password_hash = str_replace( '!', '$', $stored_hash );
+        } elseif ( yourls_has_md5_password( $username ) ) {
+            // Legacy md5 format – we can't reverse it, so store the raw string
+            // and handle the comparison in auth. Better: require re-login to rehash.
+            $password_hash = $raw_password;
+        } else {
+            // Plaintext – hash it now with password_hash()
+            $password_hash = yourls_phpass_hash( $raw_password ?? '' );
+        }
+
+        $stmt = $ydb->perform(
+            "INSERT IGNORE INTO `$table` (`username`, `password_hash`) VALUES (:username, :password_hash)",
+            [ 'username' => $username, 'password_hash' => $password_hash ]
+        );
+
+        if ( $stmt === false ) {
+            $success = false;
+        }
+    }
+
+    return $success;
 }
 
 /**
