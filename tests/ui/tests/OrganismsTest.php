@@ -76,6 +76,8 @@ final class OrganismsTest extends TestCase
         }
         $this->assertStringContainsString("edit_link_save('42')", $html);
         $this->assertStringContainsString("edit_link_hide('42')", $html);
+        preg_match_all('/id="edit-(?:url|keyword|title)-42"[^>]*class="[^"]*\btext\b[^"]*"/m', $html, $matches);
+        $this->assertCount(3, $matches[0]);
     }
 
     public function testTableFooterFiresHtmlTfooterAction(): void

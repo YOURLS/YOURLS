@@ -53,7 +53,7 @@
                  table_add_row_cell_array filter contract is preserved. --}}
             {!! $rowsHtml !!}
             <tr id="nourl_found" @if($foundRows) style="display:none" @endif>
-                <td colspan="6">@yourlsT('No URL')</td>
+                <td colspan="7">@yourlsT('No URL')</td>
             </tr>
         </x-organisms::table.tbody>
     </x-organisms::table.index>

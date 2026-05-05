@@ -3,6 +3,236 @@ define( 'YOURLS_ADMIN', true );
 require_once( dirname( __DIR__ ).'/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
+if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+    $base_bookmarklet = yourls_admin_url( 'index.php' );
+
+    // Helper: capture bookmarklet link HTML
+    $bm = function( $js_code, $label ) {
+        ob_start();
+        yourls_bookmarklet_link( yourls_make_bookmarklet( $js_code ), $label );
+        return ob_get_clean();
+    };
+
+    // Standard Simple
+    $js_code = <<<STANDARD_SIMPLE
+    var d   = document,
+        w   = window,
+        enc = encodeURIComponent,
+        e   = w.getSelection,
+        k   = d.getSelection,
+        x   = d.selection,
+        s   = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+        s2  = ((s.toString() == '') ? s : enc(s)),
+        f   = '$base_bookmarklet',
+        l   = d.location.href,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2,
+        u   = f + p;
+    try {
+        throw ('ozhismygod');
+    } catch (z) {
+        a = function () {
+            if (!w.open(u)) l.href = u;
+        };
+        if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+        else a();
+    }
+    void(0);
+STANDARD_SIMPLE;
+    $bm_std_simple = $bm( $js_code, yourls__( 'Shorten' ) );
+
+    // Popup Simple
+    $js_code = <<<POPUP_SIMPLE
+    var d   = document,
+        sc  = d.createElement('script'),
+        l   = d.location.href,
+        enc = encodeURIComponent,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);
+    window.yourls_callback = function (r) {
+        if (r.short_url) {
+            prompt(r.message, r.short_url);
+        } else {
+            alert('An error occurred: ' + r.message);
+        }
+    };
+    sc.src = '$base_bookmarklet' + p + '&jsonp=yourls';
+    void(d.body.appendChild(sc));
+POPUP_SIMPLE;
+    $bm_popup_simple = $bm( $js_code, yourls__( 'Instant Shorten' ) );
+
+    // Custom Standard
+    $js_code = <<<CUSTOM_STANDARD
+    var d   = document,
+        enc = encodeURIComponent,
+        w   = window,
+        e   = w.getSelection,
+        k   = d.getSelection,
+        x   = d.selection,
+        s   = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+        s2  = ((s.toString() == '') ? s : enc(s)),
+        f   = '$base_bookmarklet',
+        l   = d.location.href,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        k   = prompt("Custom URL"),
+        k2  = (k ? '&k=' + k : ""),
+        p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title)+'&s='+s2 + k2,
+        u   = f + p;
+    if (k != null) {
+        try {
+            throw ('ozhismygod');
+        } catch (z) {
+            a = function () {
+                if (!w.open(u)) l = u;
+            };
+            if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+            else a();
+        }
+        void(0)
+    }
+CUSTOM_STANDARD;
+    $bm_custom_std = $bm( $js_code, yourls__( 'Custom shorten' ) );
+
+    // Custom Popup
+    $js_code = <<<CUSTOM_POPUP
+    var d   = document,
+        l   = d.location.href,
+        k   = prompt('Custom URL'),
+        enc = encodeURIComponent,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p   = '?up='+enc(ups[0]+':')+'&us='+enc(ups[1])+'&ur='+enc(ur)+'&t='+enc(d.title);
+        sc  = d.createElement('script');
+    if (k != null) {
+        window.yourls_callback = function (r) {
+            if (r.short_url) {
+                prompt(r.message, r.short_url);
+            } else {
+                alert('An error occurred: ' + r.message);
+            }
+        };
+        sc.src = '$base_bookmarklet' + p + '&k=' + k + '&jsonp=yourls';
+        void(d.body.appendChild(sc));
+    }
+CUSTOM_POPUP;
+    $bm_custom_popup = $bm( $js_code, yourls__( 'Instant Custom Shorten' ) );
+
+    // Facebook social bookmarklet
+    $js_code = <<<FACEBOOK
+    var d   = document,
+        enc = encodeURIComponent,
+        f   = '$base_bookmarklet',
+        l   = d.location.href,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p   = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur=' + enc(ur) + '&t=' + enc(d.title) + '&share=facebook',
+        u   = f + p;
+    try {
+        throw ('ozhismygod');
+    } catch (z) {
+        a = function () {
+            if (!window.open(u,'Share','width=500,height=340,left=100','_blank')) l.href = u;
+        };
+        if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+        else a();
+    }
+    void(0);
+FACEBOOK;
+    $bm_facebook = $bm( $js_code, yourls__( 'YOURLS &amp; Facebook' ) );
+
+    // Twitter social bookmarklet
+    $js_code = <<<TWITTER
+    var d = document,
+        w = window,
+        enc = encodeURIComponent,
+        e = w.getSelection,
+        k = d.getSelection,
+        x = d.selection,
+        s = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+        s2 = ((s.toString() == '') ? s : '%20%22' + enc(s) + '%22'),
+        f = '$base_bookmarklet',
+        l = d.location.href,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur='+enc(ur) + '&t=' + enc(d.title) + s2 + '&share=twitter',
+        u = f + p;
+    try {
+        throw ('ozhismygod');
+    } catch (z) {
+        a = function () {
+            if (!w.open(u,'Share','width=780,height=265,left=100','_blank')) l = u;
+        };
+        if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+        else a();
+    }
+    void(0);
+TWITTER;
+    $bm_twitter = $bm( $js_code, yourls__( 'YOURLS &amp; Twitter' ) );
+
+    // Tumblr social bookmarklet
+    $js_code = <<<TUMBLR
+    var d = document,
+        w = window,
+        enc = encodeURIComponent,
+        share = 'tumblr',
+        e = w.getSelection,
+        k = d.getSelection,
+        x = d.selection,
+        s = (e ? e() : (k) ? k() : (x ? x.createRange().text : 0)),
+        s2 = ((s.toString() == '') ? s : '%20%22' + enc(s) + '%22'),
+        f = '$base_bookmarklet',
+        l = d.location.href,
+        ups = l.match( /^[a-zA-Z0-9\+\.-]+:(\/\/)?/ )[0],
+        ur  = l.split(new RegExp(ups))[1],
+        ups = ups.split(/\:/),
+        p = '?up=' + enc(ups[0]+':') + '&us=' + enc(ups[1]) + '&ur='+enc(ur) + '&t=' + enc(d.title) + '&s=' + s2 + '&share=tumblr',
+        u = f + p;
+    try {
+        throw ('ozhismygod');
+    } catch (z) {
+        a = function () {
+            if (!w.open(u,'Share','width=450,height=450,left=430','_blank')) l = u;
+        };
+        if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0);
+        else a();
+    }
+    void(0);
+TUMBLR;
+    $bm_tumblr = $bm( $js_code, yourls__( 'YOURLS &amp; Tumblr' ) );
+
+    $sample_time      = time();
+    $auth_signature   = yourls_auth_signature();
+    $sample_signature = md5( $sample_time . $auth_signature );
+
+    echo yourls_ui_view( 'admin.tools', [
+        'bookmarkletStandardSimple'  => $bm_std_simple,
+        'bookmarkletPopupSimple'     => $bm_popup_simple,
+        'bookmarkletCustomStandard'  => $bm_custom_std,
+        'bookmarkletCustomPopup'     => $bm_custom_popup,
+        'bookmarkletFacebook'        => $bm_facebook,
+        'bookmarkletTwitter'         => $bm_twitter,
+        'bookmarkletTumblr'          => $bm_tumblr,
+        'prefixHost'                 => preg_replace( '@https?://@', '', yourls_get_yourls_site() ) . '/',
+        'isWindows'                  => yourls_is_windows(),
+        'isPrivate'                  => yourls_is_private(),
+        'authSignature'              => $auth_signature,
+        'sampleTime'                 => $sample_time,
+        'sampleSignature'            => $sample_signature,
+        'yourlsSite'                 => yourls_get_yourls_site(),
+        'nonceLife'                  => yourls_get_nonce_life(),
+    ] );
+    return;
+}
+
 yourls_html_head( 'tools', yourls__( 'Cool YOURLS Tools' ) );
 yourls_html_logo();
 yourls_html_menu();

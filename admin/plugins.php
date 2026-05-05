@@ -57,6 +57,66 @@ if( isset( $_GET['success'] ) && ( ( $_GET['success'] == 'activated' ) OR ( $_GE
     yourls_add_notice( $message );
 }
 
+if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+    $plugins      = (array) yourls_get_plugins();
+    uasort( $plugins, 'yourls_plugins_sort_callback' );
+    $count         = count( $plugins );
+    $plugins_count = sprintf( yourls_n( '%s plugin', '%s plugins', $count ), $count );
+    $count_active  = yourls_has_active_plugins();
+    $plugin_rows   = [];
+
+    foreach ( $plugins as $file => $plugin ) {
+        $fields = [
+            'name'       => 'Plugin Name',
+            'uri'        => 'Plugin URI',
+            'desc'       => 'Description',
+            'version'    => 'Version',
+            'author'     => 'Author',
+            'author_uri' => 'Author URI',
+        ];
+        $data = [];
+        foreach ( $fields as $field => $value ) {
+            if ( isset( $plugin[ $value ] ) ) {
+                $data[ $field ] = $plugin[ $value ];
+            } else {
+                $data[ $field ] = yourls__( '(no info)' );
+                if ( in_array( $field, [ 'uri', 'author_uri' ] ) ) {
+                    $data[ $field ] = '#' . $data[ $field ];
+                }
+            }
+            unset( $plugin[ $value ] );
+        }
+
+        $plugindir = trim( dirname( $file ), '/' );
+        if ( yourls_is_active_plugin( $file ) ) {
+            $data['class']         = 'active';
+            $data['action_url']    = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( [ 'action' => 'deactivate', 'plugin' => $plugindir ], yourls_admin_url( 'plugins.php' ) ) );
+            $data['action_anchor'] = yourls__( 'Deactivate' );
+        } else {
+            $data['class']         = 'inactive';
+            $data['action_url']    = yourls_nonce_url( 'manage_plugins', yourls_add_query_arg( [ 'action' => 'activate', 'plugin' => $plugindir ], yourls_admin_url( 'plugins.php' ) ) );
+            $data['action_anchor'] = yourls__( 'Activate' );
+        }
+
+        if ( $plugin ) {
+            foreach ( $plugin as $extra_field => $extra_value ) {
+                $data['desc'] .= "<br/>\n<em>" . yourls_esc_html( $extra_field ) . '</em>: ' . yourls_esc_html( $extra_value );
+                unset( $plugin[ $extra_value ] );
+            }
+        }
+        $data['desc'] .= '<br/><small>' . yourls_s( 'plugin file location: %s', $file ) . '</small>';
+
+        $plugin_rows[] = $data;
+    }
+
+    echo yourls_ui_view( 'admin.plugins', [
+        'pluginsCount' => $plugins_count,
+        'countActive'  => $count_active,
+        'pluginRows'   => $plugin_rows,
+    ] );
+    return;
+}
+
 yourls_html_head( 'plugins', yourls__( 'Manage Plugins' ) );
 yourls_html_logo();
 yourls_html_menu();

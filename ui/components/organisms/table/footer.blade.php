@@ -62,7 +62,7 @@
 @endphp
 <tfoot>
     <tr>
-        <th colspan="6" class="px-3 py-4 bg-neutral-50 dark:bg-neutral-950">
+        <th colspan="7" class="px-3 py-4 bg-neutral-50 dark:bg-neutral-950">
             <div id="filter_form">
                 <form action="" method="get" class="space-y-3">
                     <div id="filter_options" class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">

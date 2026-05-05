@@ -35,6 +35,13 @@ final class Asset
 
         $version = defined('YOURLS_VERSION') ? (string) YOURLS_VERSION : '0';
 
+        // Append the file's mtime so a fresh build invalidates browser
+        // caches even when YOURLS_VERSION hasn't bumped.
+        $physical = dirname(__DIR__) . '/assets/dist/' . ltrim($hashed, '/');
+        if (is_file($physical)) {
+            $version .= '.' . filemtime($physical);
+        }
+
         return $base . '/ui/assets/dist/' . ltrim($hashed, '/') . '?v=' . rawurlencode($version);
     }
 

@@ -105,6 +105,15 @@ final class BladeFactory
             return;
         }
 
+        // In debug/dev mode disable the compiled-view cache so every
+        // request re-compiles Blade templates — no manual cache flush needed.
+        if (defined('YOURLS_DEBUG') && YOURLS_DEBUG) {
+            $compiler = self::$blade->compiler();
+            $ref = new \ReflectionProperty($compiler, 'shouldCache');
+            $ref->setAccessible(true);
+            $ref->setValue($compiler, false);
+        }
+
         self::registerDirectives();
         self::registerComposers();
 

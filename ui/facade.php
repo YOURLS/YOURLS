@@ -123,6 +123,7 @@ if (!function_exists('yourls_ui_render_table_head')) {
         $cells = [
             'shorturl' => function_exists('yourls__') ? yourls__('Short URL')    : 'Short URL',
             'longurl'  => function_exists('yourls__') ? yourls__('Original URL') : 'Original URL',
+            'notes'    => function_exists('yourls__') ? yourls__('Notes')        : 'Notes',
             'date'     => function_exists('yourls__') ? yourls__('Date')         : 'Date',
             'ip'       => function_exists('yourls__') ? yourls__('IP')           : 'IP',
             'clicks'   => function_exists('yourls__') ? yourls__('Clicks')       : 'Clicks',

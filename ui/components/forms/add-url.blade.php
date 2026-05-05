@@ -1,8 +1,7 @@
-@props(['url' => '', 'keyword' => ''])
+@props(['url' => '', 'keyword' => '', 'notes' => ''])
 {{-- Preserves legacy DOM hooks (#new_url, #new_url_form, #add-url,
-     #add-keyword, #add-button, #feedback) so plugins that target them
+     #add-keyword, #add-notes, #add-button, #feedback) so plugins that target them
      keep working. --}}
-<main role="main">
     <div id="new_url" class="yourls-card mb-6 p-4 sm:p-5">
         <form id="new_url_form" action="" method="get" class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
             <x-molecules::form-field :label="function_exists('yourls__') ? yourls__('Enter the URL') : 'Enter the URL'" for="add-url" required>
@@ -35,7 +34,16 @@
                 >@yourlsT('Shorten The URL')</x-atoms::button>
             </div>
         </form>
+        <div class="mt-3">
+            <x-molecules::form-field :label="(function_exists('yourls__') ? yourls__('Optional') : 'Optional') . ': ' . (function_exists('yourls__') ? yourls__('Notes') : 'Notes')" for="add-notes">
+                <x-atoms::input
+                    id="add-notes"
+                    name="notes"
+                    :value="$notes"
+                    placeholder="{{ function_exists('yourls__') ? yourls__('Add a note about this URL') : 'Add a note about this URL' }}"
+                />
+            </x-molecules::form-field>
+        </div>
         <div id="feedback" class="mt-3" style="display:none"></div>
         @yourlsAction('html_addnew')
     </div>
-</main>

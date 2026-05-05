@@ -77,18 +77,19 @@
         }
     @endphp
     @if($loadLegacy)
-        {{-- Legacy assets, gated by context so plugins that call into
-             common.js / share.js / tablesorter / cal / etc. keep working. --}}
+        {{-- Legacy JS retained for plugin compat (jQuery, common.js,
+             tablesorter, cal, share, infos, charts). Legacy CSS is
+             intentionally NOT loaded — Tailwind/admin.css owns styling.
+             Plugins that rely on the old visual look can opt back in
+             via the `legacy_css` filter or by enqueuing style.css from
+             their own bootstrap. --}}
         <script src="{{ $siteUrl }}/js/jquery-3.5.1.min.js?v={{ $version }}"></script>
         <script src="{{ $siteUrl }}/js/common.js?v={{ $version }}"></script>
         <script src="{{ $siteUrl }}/js/jquery.notifybar.js?v={{ $version }}"></script>
-        <link rel="stylesheet" href="{{ $siteUrl }}/css/style.css?v={{ $version }}" />
         @if($tabs)
-            <link rel="stylesheet" href="{{ $siteUrl }}/css/infos.css?v={{ $version }}" />
             <script src="{{ $siteUrl }}/js/infos.js?v={{ $version }}"></script>
         @endif
         @if($tablesorter)
-            <link rel="stylesheet" href="{{ $siteUrl }}/css/tablesorter.css?v={{ $version }}" />
             <script src="{{ $siteUrl }}/js/jquery-3.tablesorter.min.js?v={{ $version }}"></script>
             <script src="{{ $siteUrl }}/js/tablesorte.js?v={{ $version }}"></script>
         @endif
@@ -96,12 +97,10 @@
             <script src="{{ $siteUrl }}/js/insert.js?v={{ $version }}"></script>
         @endif
         @if($share)
-            <link rel="stylesheet" href="{{ $siteUrl }}/css/share.css?v={{ $version }}" />
             <script src="{{ $siteUrl }}/js/share.js?v={{ $version }}"></script>
             <script src="{{ $siteUrl }}/js/clipboard.min.js?v={{ $version }}"></script>
         @endif
         @if($cal)
-            <link rel="stylesheet" href="{{ $siteUrl }}/css/cal.css?v={{ $version }}" />
             @php if (function_exists('yourls_l10n_calendar_strings')) yourls_l10n_calendar_strings(); @endphp
             <script src="{{ $siteUrl }}/js/jquery.cal.js?v={{ $version }}"></script>
         @endif
@@ -116,6 +115,5 @@
     //]]>
     </script>
     @yourlsAction('html_head', $context)
-</head>
-<body class="{{ $context }} {{ $bodyclass }}">
-<div id="wrap">
+<body class="{{ $context }} {{ $bodyclass }} yourls-app">
+<div id="wrap" class="yourls-shell">
