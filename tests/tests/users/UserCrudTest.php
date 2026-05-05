@@ -90,4 +90,104 @@ class UserCrudTest extends TestCase
             }
         }
     }
+
+    public function test_update_user_changes_role_and_active()
+    {
+        $id = \yourls_create_user('crudtest_eve', 'p@ssw0rd1', 'editor');
+        \yourls_update_user($id, ['role' => 'admin', 'is_active' => false]);
+        $row = \yourls_get_user_by_username('crudtest_eve');
+        $this->assertSame('admin', $row['role']);
+        $this->assertSame(0, (int) $row['is_active']);
+    }
+
+    public function test_update_user_changes_password_when_given()
+    {
+        $id = \yourls_create_user('crudtest_frank', 'p@ssw0rd1', 'editor');
+        \yourls_update_user($id, ['password' => 'newP@ssw0rd2']);
+        $row = \yourls_get_user_by_username('crudtest_frank');
+        $this->assertTrue(password_verify('newP@ssw0rd2', $row['password_hash']));
+    }
+
+    public function test_update_user_empty_password_is_no_op()
+    {
+        $id = \yourls_create_user('crudtest_grace', 'p@ssw0rd1', 'editor');
+        $original_hash = \yourls_get_user_by_username('crudtest_grace')['password_hash'];
+        \yourls_update_user($id, ['password' => '', 'role' => 'admin']);
+        $row = \yourls_get_user_by_username('crudtest_grace');
+        $this->assertSame($original_hash, $row['password_hash']);
+        $this->assertSame('admin', $row['role']);
+    }
+
+    public function test_update_user_can_rename()
+    {
+        $id = \yourls_create_user('crudtest_henry', 'p@ssw0rd1', 'editor');
+        \yourls_update_user($id, ['username' => 'crudtest_henry_renamed']);
+        $this->assertNull(\yourls_get_user_by_username('crudtest_henry'));
+        $this->assertNotNull(\yourls_get_user_by_username('crudtest_henry_renamed'));
+        // cleanup
+        $ydb = \yourls_get_db();
+        $ydb->perform("DELETE FROM `".YOURLS_DB_TABLE_USERS."` WHERE username = 'crudtest_henry_renamed'");
+    }
+
+    public function test_update_user_rejects_rename_to_existing()
+    {
+        \yourls_create_user('crudtest_iris', 'p@ssw0rd1', 'editor');
+        $jane_id = \yourls_create_user('crudtest_jane', 'p@ssw0rd1', 'editor');
+        $this->expectException(\RuntimeException::class);
+        \yourls_update_user($jane_id, ['username' => 'crudtest_iris']);
+    }
+
+    public function test_update_user_rejects_unknown_id()
+    {
+        $this->expectException(\RuntimeException::class);
+        \yourls_update_user(999999, ['role' => 'admin']);
+    }
+
+    public function test_update_user_rejects_invalid_id()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        \yourls_update_user(0, ['role' => 'admin']);
+    }
+
+    public function test_update_user_rejects_invalid_role()
+    {
+        $id = \yourls_create_user('crudtest_kate', 'p@ssw0rd1', 'editor');
+        $this->expectException(\InvalidArgumentException::class);
+        \yourls_update_user($id, ['role' => 'archduke']);
+    }
+
+    public function test_rotate_api_key_increments_version()
+    {
+        $id = \yourls_create_user('crudtest_leon', 'p@ssw0rd1', 'editor');
+        $before = (int) \yourls_get_user_by_username('crudtest_leon')['api_key_version'];
+        \yourls_rotate_user_api_key($id);
+        $after = (int) \yourls_get_user_by_username('crudtest_leon')['api_key_version'];
+        $this->assertSame($before + 1, $after);
+    }
+
+    public function test_rotate_api_key_handles_unknown_id_silently()
+    {
+        // Should not throw — UPDATE with no matching row is a no-op.
+        \yourls_rotate_user_api_key(999999);
+        $this->assertTrue(true);
+    }
+
+    public function test_touch_last_login_sets_timestamp()
+    {
+        $id = \yourls_create_user('crudtest_mike', 'p@ssw0rd1', 'editor');
+        $before = \yourls_get_user_by_username('crudtest_mike')['last_login_at'];
+        $this->assertNull($before);
+        \yourls_touch_last_login($id);
+        $after = \yourls_get_user_by_username('crudtest_mike')['last_login_at'];
+        $this->assertNotNull($after);
+        $this->assertNotEmpty($after);
+    }
+
+    public function test_touch_last_login_silently_ignores_null_id()
+    {
+        // Must not throw / crash for config-file users (id is null)
+        \yourls_touch_last_login(null);
+        \yourls_touch_last_login(0);
+        $this->assertTrue(true);
+    }
 }

@@ -97,3 +97,119 @@ function yourls_validate_password_strength( $password ) {
         throw new \InvalidArgumentException( "Password must be at least $min characters long" );
     }
 }
+
+/**
+ * Partial update of a user.
+ *
+ * $fields may contain any subset of:
+ *   'role'      => 'admin'|'editor'
+ *   'is_active' => bool|int
+ *   'password'  => plaintext (will be hashed; empty string = leave unchanged)
+ *   'username'  => string (renames; new value must be unique)
+ *
+ * @throws \InvalidArgumentException on validation failure
+ * @throws \RuntimeException when the user does not exist or DB write fails
+ */
+function yourls_update_user( $user_id, array $fields ) {
+    $user_id = (int) $user_id;
+    if ( $user_id <= 0 ) {
+        throw new \InvalidArgumentException( 'Invalid user id' );
+    }
+
+    $ydb   = yourls_get_db( 'write-update_user' );
+    $table = YOURLS_DB_TABLE_USERS;
+
+    $existing = $ydb->fetchObject(
+        "SELECT * FROM `$table` WHERE `user_id` = :id",
+        [ 'id' => $user_id ]
+    );
+    if ( !$existing ) {
+        throw new \RuntimeException( "User $user_id does not exist" );
+    }
+
+    $sets  = [];
+    $binds = [ 'id' => $user_id ];
+
+    if ( array_key_exists( 'role', $fields ) ) {
+        yourls_validate_role( $fields['role'] );
+        $sets[]        = '`role` = :role';
+        $binds['role'] = $fields['role'];
+    }
+    if ( array_key_exists( 'is_active', $fields ) ) {
+        $sets[]          = '`is_active` = :active';
+        $binds['active'] = $fields['is_active'] ? 1 : 0;
+    }
+    if ( array_key_exists( 'password', $fields ) && $fields['password'] !== '' ) {
+        yourls_validate_password_strength( $fields['password'] );
+        $sets[]        = '`password_hash` = :hash';
+        $binds['hash'] = yourls_phpass_hash( $fields['password'] );
+    }
+    if ( array_key_exists( 'username', $fields ) ) {
+        yourls_validate_username( $fields['username'] );
+        if ( $fields['username'] !== $existing->username
+             && yourls_get_user_by_username( $fields['username'] ) !== null ) {
+            throw new \RuntimeException( 'Username already in use' );
+        }
+        $sets[]            = '`username` = :username';
+        $binds['username'] = $fields['username'];
+    }
+
+    if ( empty( $sets ) ) {
+        return; // nothing to update
+    }
+
+    try {
+        $ydb->perform(
+            "UPDATE `$table` SET " . implode( ', ', $sets ) . " WHERE `user_id` = :id",
+            $binds
+        );
+    } catch ( \Exception $e ) {
+        throw new \RuntimeException( 'Failed to update user: ' . $e->getMessage(), 0, $e );
+    }
+
+    yourls_do_action( 'user_updated', $user_id, array_keys( $fields ) );
+}
+
+/**
+ * Increment a user's api_key_version, invalidating any pre-existing API signatures
+ * derived from the prior version. Silent no-op for unknown ids (no exception).
+ */
+function yourls_rotate_user_api_key( $user_id ) {
+    $user_id = (int) $user_id;
+    if ( $user_id <= 0 ) {
+        return;
+    }
+    try {
+        $ydb   = yourls_get_db( 'write-rotate_api_key' );
+        $table = YOURLS_DB_TABLE_USERS;
+        $ydb->perform(
+            "UPDATE `$table` SET `api_key_version` = `api_key_version` + 1 WHERE `user_id` = :id",
+            [ 'id' => $user_id ]
+        );
+        yourls_do_action( 'user_api_key_rotated', $user_id );
+    } catch ( \Exception $e ) {
+        yourls_debug_log( 'rotate_user_api_key failed: ' . $e->getMessage() );
+    }
+}
+
+/**
+ * Update last_login_at to NOW() for the given DB user. Non-fatal on error
+ * (logging failure must not break the login flow).
+ *
+ * @param int|null $user_id  Null/0 are silently ignored (config-file users).
+ */
+function yourls_touch_last_login( $user_id ) {
+    if ( !$user_id ) {
+        return;
+    }
+    try {
+        $ydb   = yourls_get_db( 'write-touch_last_login' );
+        $table = YOURLS_DB_TABLE_USERS;
+        $ydb->perform(
+            "UPDATE `$table` SET `last_login_at` = current_timestamp() WHERE `user_id` = :id",
+            [ 'id' => (int) $user_id ]
+        );
+    } catch ( \Exception $e ) {
+        yourls_debug_log( 'touch_last_login failed: ' . $e->getMessage() );
+    }
+}
