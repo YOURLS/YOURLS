@@ -29,12 +29,8 @@
 >
     <header class="flex items-center gap-2 px-5 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/60 dark:bg-neutral-900/40">
         <span aria-hidden="true" class="inline-block h-1.5 w-1.5 rounded-full bg-primary-500"></span>
-        <h2 class="flex items-baseline gap-2 min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
-            <span class="shrink-0">@yourlsT('Share')</span>
-            @if($shorturl !== '')
-                <span aria-hidden="true" class="text-neutral-300 dark:text-neutral-600">—</span>
-                <span class="min-w-0 truncate font-mono normal-case tracking-normal text-neutral-700 dark:text-neutral-200">{{ $shorturl }}</span>
-            @endif
+        <h2 class="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+            @yourlsT('Share')
         </h2>
     </header>
 
