@@ -22,7 +22,7 @@ function yourls_current_user_row( $reset = false ) {
 
     if ( $reset ) {
         $cache = false;
-        return null;
+        // Fall through and re-resolve in this same call so the caller gets fresh data.
     }
     if ( $cache !== false ) {
         return $cache;
@@ -119,7 +119,7 @@ function yourls_current_user_can( $cap, $ctx = [] ) {
             break;
     }
 
-    return (bool) yourls_apply_filter( 'user_can', $allowed, $cap, $user_id, $ctx );
+    return (bool) yourls_apply_filter( 'user_can', $allowed, $cap, $user_id, $role, $ctx );
 }
 
 /**
