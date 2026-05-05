@@ -54,6 +54,28 @@ if (is_file($facadeFile)) {
     require_once $facadeFile;
 }
 
+// Theme-aware Google Charts options. Background is rendered transparent
+// (the surrounding card already provides the surface) and the line color
+// uses the design-system primary so charts read correctly in both
+// light and dark modes (the rest of the recoloring is handled in CSS,
+// since Google Charts paints the rest as inline SVG).
+if (function_exists('yourls_add_filter')) {
+    yourls_add_filter('stats_line_options', function ($options) {
+        $options['backgroundColor'] = "{ fill: 'transparent' }";
+        $options['colors']          = "['#3b82f6']";
+        $options['chartArea']       = "{ left: 40, top: 16, right: 16, bottom: 32 }";
+        return $options;
+    });
+    yourls_add_filter('stats_pie_options', function ($options) {
+        $options['backgroundColor']  = "{ fill: 'transparent' }";
+        $options['legend']           = "{ position: 'right', textStyle: { color: '#737373', fontSize: 12 } }";
+        $options['pieSliceTextStyle'] = "{ color: '#ffffff', fontSize: 12 }";
+        $options['colors']           = "['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#1d4ed8', '#1e40af']";
+        $options['chartArea']        = "{ left: 12, top: 12, right: 12, bottom: 12 }";
+        return $options;
+    });
+}
+
 if (function_exists('yourls_do_action')) {
     yourls_do_action('yourls_ui_loaded');
 }

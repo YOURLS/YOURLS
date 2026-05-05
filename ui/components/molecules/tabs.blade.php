@@ -14,12 +14,26 @@
     x-data="{
         active: @js($active),
         keys: {{ $tabKeysJs }},
+        prefix: @js($idPrefix),
         focusTab(idx) {
             const key = this.keys[(idx + this.keys.length) % this.keys.length];
             this.active = key;
-            this.$nextTick(() => this.$root.querySelector(`#${@js($idPrefix)}-tab-${key}`)?.focus());
+            this.$nextTick(() => this.$root.querySelector(`#${this.prefix}-tab-${key}`)?.focus());
+        },
+        syncPanels() {
+            const panels = this.$root.querySelectorAll('[role=tabpanel]');
+            panels.forEach((p) => {
+                const id = p.getAttribute('id') || '';
+                const key = id.replace(`${this.prefix}-panel-`, '');
+                if (key === this.active) {
+                    p.removeAttribute('hidden');
+                } else {
+                    p.setAttribute('hidden', '');
+                }
+            });
         },
     }"
+    x-init="$nextTick(() => syncPanels()); $watch('active', () => syncPanels())"
     {{ $attributes->merge(['class' => 'space-y-4']) }}
 >
     <div role="tablist" aria-orientation="horizontal" class="flex items-center gap-1 border-b border-neutral-200 dark:border-neutral-800">
