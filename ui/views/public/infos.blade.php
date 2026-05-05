@@ -12,13 +12,13 @@
 
     <x-molecules::tabs :tabs="$tabs" :active="$activeTab ?? 'stats'" idPrefix="infos">
         <div role="tabpanel" id="infos-panel-stats">
-            {{ $statsPanel ?? '' }}
+            {!! $statsPanel ?? '' !!}
         </div>
         <div role="tabpanel" id="infos-panel-locations" hidden>
-            {{ $locationsPanel ?? '' }}
+            {!! $locationsPanel ?? '' !!}
         </div>
         <div role="tabpanel" id="infos-panel-sources" hidden>
-            {{ $sourcesPanel ?? '' }}
+            {!! $sourcesPanel ?? '' !!}
         </div>
         <div role="tabpanel" id="infos-panel-share" hidden>
             <x-forms::share-box :longurl="$longUrl ?? ''"
