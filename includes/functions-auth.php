@@ -487,7 +487,23 @@ function yourls_auth_signature( $username = false ) {
     if( !$username && defined('YOURLS_USER') ) {
         $username = YOURLS_USER;
     }
-    return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
+    if ( !$username ) {
+        return 'Cannot generate auth signature: no username';
+    }
+
+    // If the user has a DB row, fold api_key_version into the hash material when v > 1.
+    // For v == 1 (default for new rows and post-upgrade backfill) we use the un-versioned
+    // material to keep byte-perfect backward compatibility with pre-rotation signatures.
+    $version = 1;
+    if ( function_exists( 'yourls_get_user_by_username' ) ) {
+        $row = yourls_get_user_by_username( $username );
+        if ( $row && isset( $row['api_key_version'] ) ) {
+            $version = max( 1, (int) $row['api_key_version'] );
+        }
+    }
+
+    $material = $version > 1 ? $username . '|v' . $version : $username;
+    return substr( yourls_salt( $material ), 0, 10 );
 }
 
 /**
