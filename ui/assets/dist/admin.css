@@ -932,6 +932,602 @@ body {
     box-shadow: var(--shadow-sm);
   }
 
+/* ==========================================================
+     App shell — Filament-like layout
+     The legacy DOM is: body > #wrap > [header(logo), nav#admin_menu, body inline, #footer].
+     CSS Grid arranges them into: sidebar | main, with footer below.
+     ========================================================== */
+
+.yourls-app {
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+/* Two-column shell. Sidebar in column 1 (banner stacked above nav).
+     Everything else flows in column 2 as auto-sized rows so multiple
+     <main> blocks (add-url card, table, modals) stack vertically rather
+     than overlapping in a single grid cell. */
+
+.yourls-app #wrap.yourls-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-auto-flow: row;
+    grid-auto-rows: min-content;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] {
+    grid-column: 1;
+    /*grid-row: 2 / span 9999; /* fill the rest of the sidebar column */
+  }
+
+/* Shared sidebar surface — banner and nav share the same column. */
+
+.yourls-app #wrap.yourls-shell > [role="banner"],
+  .yourls-app #wrap.yourls-shell > [role="navigation"] {
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] {
+    padding: var(--space-6) var(--space-5) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 {
+    margin: 0;
+    font-size: 0; /* hide stray whitespace from <span> letters */
+    line-height: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+  }
+
+/* The legacy <h1> contains the literal text "YOURLS: Your Own URL
+     Shortener" wrapped in many <span>s for screen-reader spelling.
+     Hide the textual fragments in the sidebar — only the logo image
+     should show. */
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a {
+    font-size: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a > br {
+    display: none;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] #yourls-logo {
+    width: 110px;
+    height: auto;
+    display: block;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a::after {
+    content: "Admin";
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--text-muted);
+    line-height: var(--lh-normal);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] {
+    padding: var(--space-3) var(--space-2);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 200px);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] > #admin_menu {
+    flex: 1;
+    min-height: 100%;
+  }
+
+/* Highlight the menu link matching the current body context. Body
+     receives the context as a class (e.g. body.index, body.tools,
+     body.plugins) — match that to the corresponding admin_menu_*_link. */
+
+.yourls-app.index #wrap.yourls-shell #admin_menu_admin_link > a,
+  .yourls-app.tools #wrap.yourls-shell #admin_menu_tools_link > a,
+  .yourls-app.plugins #wrap.yourls-shell #admin_menu_plugins_link > a {
+    background: var(--bg-surface-2);
+    color: var(--accent);
+    font-weight: var(--fw-semibold);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li {
+    margin: 0;
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li a:hover,
+  .yourls-app #wrap.yourls-shell #admin_menu li a:focus {
+    background: var(--bg-surface-2);
+    color: var(--text-primary);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li.admin_menu_toplevel a {
+    font-weight: var(--fw-medium);
+    color: var(--text-primary);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li#admin_menu_logout_link,
+  .yourls-app #wrap.yourls-shell #admin_menu li#admin_menu_help_link {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    padding: var(--space-2) var(--space-3);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu ul {
+    list-style: none;
+    margin: var(--space-1) 0 var(--space-1) var(--space-3);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+/* The legacy admin pages dump their content as bare children of #wrap
+     (between the nav and the footer). Treat any direct child that is
+     not the banner/nav/footer as the "main" area and style it like a
+     content surface. */
+
+/* Main column container: wrap every non-sidebar/non-footer child in
+     a tight content stream. We intentionally don't pad each child
+     individually (some are empty <p>s, hidden #shareboxes, <dialog>s)
+     — instead, the visible cards/tables/forms own their own padding
+     via .yourls-card or matching rules below. */
+
+.yourls-app #wrap.yourls-shell > *:not([role="banner"]):not([role="navigation"]):not(#footer) {
+    grid-column: 2;
+    width: 100%;
+    min-width: 0;
+    align-self: start;
+    margin: 0;
+  }
+
+/* Hide stray empty paragraphs the legacy admin/index.php emits. */
+
+.yourls-app #wrap.yourls-shell > p:empty {
+    display: none;
+  }
+
+/* The legacy "Display X to Y of Z URLs / Overall tracking..." line
+     is two adjacent <p>s. Render them as a compact muted header above
+     the add-url card. */
+
+.yourls-app #wrap.yourls-shell > p,
+  .yourls-app #wrap.yourls-shell > p#overall_tracking {
+    padding: 0 var(--space-8);
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+
+.yourls-app #wrap.yourls-shell > p:first-of-type {
+    padding-top: var(--space-6);
+  }
+
+/* All direct content blocks of the shell get matched horizontal
+     padding so they line up with the sidebar edge and the right gutter. */
+
+.yourls-app #wrap.yourls-shell > main[role="main"],
+  .yourls-app #wrap.yourls-shell > #shareboxes,
+  .yourls-app #wrap.yourls-shell > #main_table,
+  .yourls-app #wrap.yourls-shell > table,
+  .yourls-app #wrap.yourls-shell > dialog {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+    padding-top: var(--space-4);
+    padding-bottom: 0;
+  }
+
+/* But <table> can't take padding directly (it'd push thead/tbody
+     against the visual border). Wrap the visual edge by giving the
+     table itself a max-width minus the sidebar gutter, and box it. */
+
+.yourls-app #wrap.yourls-shell > #main_table {
+    box-sizing: border-box;
+    width: calc(100% - var(--space-8) * 2);
+    margin-left: var(--space-8);
+    margin-right: var(--space-8);
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+
+/* Last visible content block before #footer gets bottom breathing room. */
+
+.yourls-app #wrap.yourls-shell > main[role="main"]:last-of-type,
+  .yourls-app #wrap.yourls-shell > #main_table:last-of-type {
+    margin-bottom: var(--space-6);
+  }
+
+/* Belt and suspenders: ensure the legacy table never inherits an
+     explicit height that would cause the browser to distribute extra
+     space across tbody rows. */
+
+.yourls-app #main_table {
+    height: auto !important;
+  }
+
+.yourls-app #main_table tbody tr {
+    height: auto !important;
+  }
+
+.yourls-app #main_table tbody td {
+    height: auto !important;
+  }
+
+.yourls-app #wrap.yourls-shell > #footer {
+    grid-column: 2;
+    border-top: 1px solid var(--border-subtle);
+    padding: var(--space-3) var(--space-8);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    background: var(--bg-surface);
+    margin-top: auto;
+  }
+
+/* The "Hello admin (Logout)" + Help links live as <li>s inside
+     #admin_menu. Style them as compact rows distinct from top-level
+     navigation. */
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link {
+    order: 99; /* push to bottom of the sidebar */
+    margin-top: auto;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link strong {
+    color: var(--text-primary);
+    font-weight: var(--fw-medium);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link a,
+  .yourls-app #wrap.yourls-shell #admin_menu #admin_menu_help_link a {
+    display: inline;
+    padding: 0;
+    background: transparent;
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_help_link {
+    order: 100;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+/* Auth shell (login / install / upgrade / new): single column,
+     centered card. */
+
+.yourls-app.login #wrap,
+  .yourls-app.install #wrap,
+  .yourls-app.upgrade #wrap,
+  .yourls-app.new #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12) var(--space-4);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+.yourls-app.login #wrap > *,
+  .yourls-app.install #wrap > *,
+  .yourls-app.upgrade #wrap > *,
+  .yourls-app.new #wrap > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+.yourls-app.login #wrap > [role="banner"],
+  .yourls-app.install #wrap > [role="banner"] {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    position: static;
+    height: auto;
+    text-align: center;
+    margin-bottom: var(--space-6);
+  }
+
+.yourls-app.login #wrap > [role="banner"] h1,
+  .yourls-app.install #wrap > [role="banner"] h1 {
+    align-items: center;
+  }
+
+/* Existing legacy table — at least give it the new card surface so the
+     dashboard doesn't look raw while we migrate to Blade table rows. */
+
+.yourls-app #main_table {
+    width: 100%;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-top: var(--space-4);
+    table-layout: auto;
+  }
+
+/* Defensive: tablesorter / Tailwind utilities sometimes leave each
+     <tr> as a block — force the table-row display so rows stay tight. */
+
+.yourls-app #main_table thead,
+  .yourls-app #main_table tbody,
+  .yourls-app #main_table tfoot {
+    display: table-row-group;
+  }
+
+.yourls-app #main_table thead { display: table-header-group; }
+
+.yourls-app #main_table tfoot { display: table-footer-group; }
+
+.yourls-app #main_table tr {
+    display: table-row;
+    height: auto;
+  }
+
+.yourls-app #main_table tr td,
+  .yourls-app #main_table tr th {
+    display: table-cell;
+  }
+
+/* Hard reset: any block-level descendants in cells that should not
+     introduce extra height. */
+
+.yourls-app #main_table td > * {
+    margin: 0;
+  }
+
+.yourls-app #main_table td input[type="hidden"] {
+    display: none !important;
+  }
+
+/* In case @tailwindcss/forms gives base inputs a min-height that
+     somehow leaks here, neutralize it inside table cells. */
+
+.yourls-app #main_table td input,
+  .yourls-app #main_table td button {
+    min-height: 0;
+  }
+
+.yourls-app #main_table thead th {
+    background: var(--bg-surface-2);
+    color: var(--text-secondary);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: var(--fw-semibold);
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    line-height: var(--lh-tight, 1.25);
+    white-space: nowrap;
+  }
+
+.yourls-app #main_table tbody td {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+    line-height: 1.35;
+  }
+
+.yourls-app #main_table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+.yourls-app #main_table tbody tr:hover {
+    background: var(--bg-surface-2);
+  }
+
+/* Hide the legacy aria-hidden Unix timestamp span — only the
+     human-readable date should be shown. */
+
+.yourls-app #main_table td.timestamp span.timestamp[aria-hidden="true"] {
+    display: none;
+  }
+
+/* Original URL secondary line: smaller, muted. */
+
+.yourls-app #main_table td.url small {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+.yourls-app #main_table td.url small a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+.yourls-app #main_table td.url > a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: var(--fw-medium);
+  }
+
+.yourls-app #main_table td.keyword a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: var(--fs-sm);
+  }
+
+/* Action buttons row: tight spacing, pill style. */
+
+.yourls-app #main_table td.actions {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+.yourls-app #main_table td.actions a.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app #main_table td.actions a.button:first-child {
+    margin-left: 0;
+  }
+
+.yourls-app #main_table td.actions a.button:hover {
+    background: var(--bg-surface-2);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+.yourls-app #main_table td.actions a.button_delete:hover {
+    background: rgb(var(--color-danger-50, var(--color-neutral-100)));
+    color: rgb(var(--color-danger-600, 220 38 38));
+    border-color: rgb(var(--color-danger-300, var(--color-neutral-300)));
+  }
+
+/* Truncate long original URLs so a row stays one line tall. */
+
+.yourls-app #main_table td.url {
+    max-width: 360px;
+  }
+
+.yourls-app #main_table td.url > a,
+  .yourls-app #main_table td.url small a {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+/* Add-new + filter forms: keep the legacy IDs (#new_url, #nourl,
+     #search_filter_form) but apply a card surface + spacing. */
+
+.yourls-app #new_url_form,
+  .yourls-app #search_filter_form {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-top: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+.yourls-app #new_url_form input[type="text"],
+  .yourls-app #new_url_form input[type="url"],
+  .yourls-app #search_filter_form input[type="text"],
+  .yourls-app #search_filter_form input[type="search"],
+  .yourls-app input[type="number"],
+  .yourls-app input[type="date"],
+  .yourls-app select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+  }
+
+.yourls-app input[type="submit"],
+  .yourls-app button[type="submit"] {
+    background: var(--accent);
+    color: var(--accent-foreground);
+    border: 0;
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app input[type="submit"]:hover,
+  .yourls-app button[type="submit"]:hover {
+    background: var(--accent-hover);
+  }
+
+/* Notice / banner styling for plugin-fired admin_notices. */
+
+.yourls-app .notice {
+    background: var(--bg-surface);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+    margin: var(--space-3) 0;
+    color: var(--text-primary);
+    font-size: var(--fs-sm);
+  }
+
+/* The "x queries" debug bar at the bottom — keep visible but tame. */
+
+.yourls-app #footer p {
+    margin: 0;
+  }
+
 .sr-only {
   position:  absolute;
   width:  1px;
