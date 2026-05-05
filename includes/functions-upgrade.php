@@ -72,6 +72,14 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             yourls_upgrade_to_507();
         }
 
+        if( $oldsql < 508 ) {
+            yourls_upgrade_to_508();
+        }
+
+        if( $oldsql < 509 ) {
+            yourls_upgrade_to_509();
+        }
+
         yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
         break;
@@ -110,6 +118,138 @@ function yourls_upgrade_to_507() {
     }
 
     echo "<p class='success'>OK!</p>";
+}
+
+/**
+ * Add `notes` column to URL table and create the users table.
+ * DB version 508.
+ */
+function yourls_upgrade_to_508() {
+    $ydb = yourls_get_db( 'write-upgrade_to_508' );
+
+    // 1. Add `notes` column to URL table if missing
+    $url_table = YOURLS_DB_TABLE_URL;
+    $has_notes = false;
+    try {
+        $cols = $ydb->fetchObjects( "SHOW COLUMNS FROM `$url_table` LIKE 'notes'" );
+        $has_notes = !empty( $cols );
+    } catch ( \Exception $e ) {
+        // fall through to ALTER attempt
+    }
+
+    if ( !$has_notes ) {
+        echo "<p>Adding `notes` column to URL table. Please wait...</p>";
+        try {
+            $ydb->perform( "ALTER TABLE `$url_table` ADD COLUMN `notes` text COLLATE utf8mb4_unicode_ci AFTER `clicks`" );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `notes` column. The error was<pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    // 2. Create users table if missing
+    $users_table = YOURLS_DB_TABLE_USERS;
+    echo "<p>Ensuring users table exists. Please wait...</p>";
+    try {
+        $ydb->perform(
+            "CREATE TABLE IF NOT EXISTS `$users_table` (".
+            "`user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,".
+            "`username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,".
+            "`password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,".
+            "`is_active` tinyint(1) unsigned NOT NULL DEFAULT 1,".
+            "`created_at` timestamp NOT NULL DEFAULT current_timestamp(),".
+            "`updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),".
+            "PRIMARY KEY (`user_id`),".
+            "UNIQUE KEY `username` (`username`)".
+            ") AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+        );
+        echo "<p class='success'>OK!</p>";
+    } catch ( \Exception $e ) {
+        echo "<p class='error'>Unable to create users table. The error was<pre>" . $e->getMessage() . "</pre></p>";
+        die();
+    }
+}
+
+/**
+ * Add role/api_key_version/last_login_at to users; add created_by to urls;
+ * create api_rate table.
+ * DB version 509.
+ */
+function yourls_upgrade_to_509() {
+    $ydb = yourls_get_db( 'write-upgrade_to_509' );
+
+    $users_table = YOURLS_DB_TABLE_USERS;
+    $url_table   = YOURLS_DB_TABLE_URL;
+    $rate_table  = YOURLS_DB_TABLE_API_RATE;
+
+    // 1. yourls_users new columns
+    $existing = array_column( (array) $ydb->fetchObjects( "SHOW COLUMNS FROM `$users_table`" ), 'Field' );
+
+    if ( !in_array( 'role', $existing, true ) ) {
+        echo "<p>Adding `role` column to users table. Please wait...</p>";
+        try {
+            $ydb->perform( "ALTER TABLE `$users_table` ADD COLUMN `role` enum('admin','editor') NOT NULL DEFAULT 'admin' AFTER `password_hash`" );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `role` column. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    if ( !in_array( 'api_key_version', $existing, true ) ) {
+        echo "<p>Adding `api_key_version` column to users table. Please wait...</p>";
+        try {
+            $ydb->perform( "ALTER TABLE `$users_table` ADD COLUMN `api_key_version` int unsigned NOT NULL DEFAULT 1 AFTER `is_active`" );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `api_key_version` column. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    if ( !in_array( 'last_login_at', $existing, true ) ) {
+        echo "<p>Adding `last_login_at` column to users table. Please wait...</p>";
+        try {
+            $ydb->perform( "ALTER TABLE `$users_table` ADD COLUMN `last_login_at` timestamp NULL DEFAULT NULL" );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `last_login_at` column. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    // 2. yourls_url.created_by
+    $url_cols = array_column( (array) $ydb->fetchObjects( "SHOW COLUMNS FROM `$url_table`" ), 'Field' );
+    if ( !in_array( 'created_by', $url_cols, true ) ) {
+        echo "<p>Adding `created_by` column to URL table. Please wait...</p>";
+        try {
+            $ydb->perform( "ALTER TABLE `$url_table` ADD COLUMN `created_by` int unsigned NULL DEFAULT NULL, ADD KEY `created_by` (`created_by`)" );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `created_by` column. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    // 3. yourls_api_rate
+    echo "<p>Ensuring API rate-limit table exists. Please wait...</p>";
+    try {
+        $ydb->perform(
+            "CREATE TABLE IF NOT EXISTS `$rate_table` (".
+            "`id` bigint unsigned NOT NULL AUTO_INCREMENT,".
+            "`user_id` int unsigned NOT NULL,".
+            "`called_at` timestamp NOT NULL DEFAULT current_timestamp(),".
+            "`action` varchar(32) NOT NULL,".
+            "PRIMARY KEY (`id`),".
+            "KEY `user_window` (`user_id`, `called_at`)".
+            ") DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+        );
+        echo "<p class='success'>OK!</p>";
+    } catch ( \Exception $e ) {
+        echo "<p class='error'>Unable to create api_rate table. Error: <pre>" . $e->getMessage() . "</pre></p>";
+        die();
+    }
 }
 
 /**
