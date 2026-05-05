@@ -29,7 +29,7 @@
  * @param  int    $row_id   used to form unique IDs in the generated HTML
  * @return array            array with error/success state and short URL information
  */
-function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
+function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1, $notes = '' ) {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_add_new_link', yourls_shunt_default(), $url, $keyword, $title );
     if ( yourls_shunt_default() !== $pre ) {
@@ -135,13 +135,13 @@ function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
     $timestamp = date( 'Y-m-d H:i:s' );
 
     try {
-        if (yourls_insert_link_in_db( $url, $keyword, $title )){
+        if (yourls_insert_link_in_db( $url, $keyword, $title, $notes, function_exists('yourls_current_user_id') ? yourls_current_user_id() : null )){
             // everything ok, populate needed vars
             $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
             $return['status']   = 'success';
             $return['message']  = /* //translators: eg "http://someurl/ added to DB" */ yourls_s( '%s added to database', yourls_trim_long_string( $url ) );
             $return['title']    = $title;
-            $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time(), $row_id );
+            $return['html']     = yourls_table_add_row( $keyword, $url, $title, $ip, 0, time(), $row_id, $notes );
             $return['shorturl'] = yourls_link($keyword);
             $return['statusCode'] = '200'; // 200 OK
         } else {
@@ -270,23 +270,26 @@ function yourls_delete_link_by_keyword( $keyword ) {
  * @param string $title
  * @return bool true if insert succeeded, false if failed
  */
-function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
+function yourls_insert_link_in_db($url, $keyword, $title = '', $notes = '', $created_by = null ) {
     $url       = yourls_sanitize_url($url);
     $keyword   = yourls_sanitize_keyword($keyword);
     $title     = yourls_sanitize_title($title);
+    $notes     = yourls_sanitize_title($notes);
     $timestamp = date('Y-m-d H:i:s');
     $ip        = yourls_get_IP();
 
     $table = YOURLS_DB_TABLE_URL;
     $binds = array(
-        'keyword'   => $keyword,
-        'url'       => $url,
-        'title'     => $title,
-        'timestamp' => $timestamp,
-        'ip'        => $ip,
+        'keyword'    => $keyword,
+        'url'        => $url,
+        'title'      => $title,
+        'notes'      => $notes !== '' ? $notes : null,
+        'timestamp'  => $timestamp,
+        'ip'         => $ip,
+        'created_by' => $created_by !== null ? (int) $created_by : null,
     );
     $ydb = yourls_get_db('write-insert_link_in_db');
-    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `timestamp`, `ip`, `clicks`) VALUES(:keyword, :url, :title, :timestamp, :ip, 0);", $binds);
+    $insert = $ydb->fetchAffected("INSERT INTO `$table` (`keyword`, `url`, `title`, `notes`, `timestamp`, `ip`, `clicks`, `created_by`) VALUES(:keyword, :url, :title, :notes, :timestamp, :ip, 0, :created_by);", $binds);
 
     if ( $insert ) {
         $infos = $binds;
