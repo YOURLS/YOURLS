@@ -26,6 +26,20 @@ PRESERVE_IN_VENDOR=(
     'composer'
     'build-script'
     'symfony'
+    'illuminate'
+    'jenssegers'
+    'nesbot'
+    'doctrine'
+    'psr'
+    'voku'
+    'carbonphp'
+    'phpunit'
+    'sebastian'
+    'theseer'
+    'myclabs'
+    'phar-io'
+    'nikic'
+    'bin'
 )
 
 # Files & dirs to keep in each library directory
@@ -39,6 +53,10 @@ PRESERVE_IN_LIB=(
     'README.md'
     'readme.md'
     'certificates'
+    'helpers.php'
+    'autoload.php'
+    'functions.php'
+    'compatibility.php'
 )
 
 # Nothing to edit past this line !

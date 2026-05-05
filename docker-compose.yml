@@ -1,0 +1,89 @@
+# YOURLS dev stack — bring it up with `docker compose up`.
+# Reach the admin at http://localhost:8080/admin/, then log in as
+# admin / changeme (override via .env or the `environment:` block).
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpw
+      MARIADB_DATABASE: yourls
+      MARIADB_USER: yourls
+      MARIADB_PASSWORD: yourls
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      # Exposed for local DB inspection (e.g. with TablePlus). Comment
+      # out if you don't need it.
+      - "33306:3306"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: yourls/dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      YOURLS_DB_HOST: db
+      YOURLS_DB_PORT: "3306"
+      YOURLS_DB_USER: yourls
+      YOURLS_DB_PASS: yourls
+      YOURLS_DB_NAME: yourls
+      YOURLS_SITE: http://localhost:8080
+      YOURLS_USER: admin
+      YOURLS_PASS: changeme
+      YOURLS_COOKIEKEY: dev-only-cookie-key-please-rotate-in-production
+      YOURLS_DEBUG: "true"
+      YOURLS_PRIVATE: "true"
+      YOURLS_UI_DISABLE: "false"
+      YOURLS_UI_LEGACY_ASSETS: "true"
+      YOURLS_UI_KIT: "true"
+    volumes:
+      # Bind-mount the source so editing files on the host reflects in
+      # the container immediately. The compiled vendor/ and dist/
+      # bundles are baked into the image, but they live under the same
+      # paths so the bind mount overrides them — keep both committed.
+      - ./:/var/www/html
+      # Keep the Blade compiled view cache outside the bind mount so
+      # opcache/realpath churn stays inside the container.
+      - blade-cache:/var/www/html/user/cache
+    ports:
+      - "8080:80"
+
+  # One-shot helper to (re)build CSS+JS without leaving a long-running
+  # container. Run with: `docker compose run --rm assets`.
+  assets:
+    image: node:20-alpine
+    working_dir: /work
+    volumes:
+      - ./:/work
+    command: sh -c "npm install --no-audit --no-fund --no-progress && npm run build"
+    profiles:
+      - tools
+
+  # Run the UI PHPUnit suite inside the container. Shares the web
+  # image so vendor/ is the same.
+  test:
+    image: yourls/dev
+    depends_on:
+      - web
+    working_dir: /var/www/html
+    entrypoint: []
+    command: includes/vendor/bin/phpunit -c tests/ui/phpunit.xml.dist
+    volumes:
+      - ./:/var/www/html
+    profiles:
+      - tools
+
+volumes:
+  db-data:
+  blade-cache:

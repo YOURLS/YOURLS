@@ -1,0 +1,3214 @@
+/*
+ * YOURLS UI design tokens
+ *
+ * Color values are stored as space-separated R G B triplets so Tailwind's
+ * <alpha-value> placeholder works (e.g. bg-primary-500/20 in dark mode).
+ * Plugins can override any token by re-declaring it in a more specific
+ * scope, e.g. body[data-theme="my-brand"] { --color-primary-500: ... }.
+ */
+
+:root {
+  /* Neutral scale */
+  --color-neutral-50:  250 250 250;
+  --color-neutral-100: 244 244 245;
+  --color-neutral-200: 228 228 231;
+  --color-neutral-300: 212 212 216;
+  --color-neutral-400: 161 161 170;
+  --color-neutral-500: 113 113 122;
+  --color-neutral-600: 82 82 91;
+  --color-neutral-700: 63 63 70;
+  --color-neutral-800: 39 39 42;
+  --color-neutral-900: 24 24 27;
+  --color-neutral-950: 9 9 11;
+
+  /* Primary scale */
+  --color-primary-50:  239 246 255;
+  --color-primary-100: 219 234 254;
+  --color-primary-200: 191 219 254;
+  --color-primary-300: 147 197 253;
+  --color-primary-400: 96 165 250;
+  --color-primary-500: 59 130 246;
+  --color-primary-600: 37 99 235;
+  --color-primary-700: 29 78 216;
+  --color-primary-800: 30 64 175;
+  --color-primary-900: 30 58 138;
+  --color-primary-950: 23 37 84;
+
+  /* Semantic scales */
+  --color-success-500: 34 197 94;
+  --color-success-600: 22 163 74;
+  --color-warning-500: 245 158 11;
+  --color-warning-600: 217 119 6;
+  --color-danger-500:  239 68 68;
+  --color-danger-600:  220 38 38;
+  --color-info-500:    14 165 233;
+  --color-info-600:    2 132 199;
+
+  /* Semantic aliases (light) */
+  --bg-app:        rgb(var(--color-neutral-50));
+  --bg-surface:    rgb(255 255 255);
+  --bg-surface-2:  rgb(var(--color-neutral-100));
+  --bg-overlay:    rgb(0 0 0 / 0.40);
+
+  --text-primary:   rgb(var(--color-neutral-900));
+  --text-secondary: rgb(var(--color-neutral-700));
+  --text-muted:     rgb(var(--color-neutral-500));
+  --text-inverse:   rgb(255 255 255);
+
+  --border-subtle:  rgb(var(--color-neutral-200));
+  --border-default: rgb(var(--color-neutral-300));
+  --border-strong:  rgb(var(--color-neutral-400));
+
+  --ring-focus:        rgb(var(--color-primary-500) / 0.40);
+  --accent:            rgb(var(--color-primary-600));
+  --accent-hover:      rgb(var(--color-primary-700));
+  --accent-foreground: rgb(255 255 255);
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+
+  --fs-xs:  12px;
+  --fs-sm:  13px;
+  --fs-base: 14px;
+  --fs-md:  16px;
+  --fs-lg:  18px;
+  --fs-xl:  20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+
+  --lh-tight:   1.25;
+  --lh-snug:    1.375;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.625;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Spacing scale (4px base) */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Radii */
+  --radius-xs:  2px;
+  --radius-sm:  4px;
+  --radius:     6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --shadow-focus: 0 0 0 3px var(--ring-focus);
+
+  /* Z-index */
+  --z-base:     0;
+  --z-dropdown: 1000;
+  --z-sticky:   1100;
+  --z-banner:   1200;
+  --z-overlay:  1300;
+  --z-modal:    1400;
+  --z-popover:  1500;
+  --z-toast:    1600;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration:      200ms;
+  --duration-slow: 320ms;
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-theme="dark"] {
+  --bg-app:        rgb(var(--color-neutral-950));
+  --bg-surface:    rgb(var(--color-neutral-900));
+  --bg-surface-2:  rgb(var(--color-neutral-800));
+  --bg-overlay:    rgb(0 0 0 / 0.60);
+
+  --text-primary:   rgb(var(--color-neutral-50));
+  --text-secondary: rgb(var(--color-neutral-300));
+  --text-muted:     rgb(var(--color-neutral-400));
+  --text-inverse:   rgb(var(--color-neutral-900));
+
+  --border-subtle:  rgb(var(--color-neutral-800));
+  --border-default: rgb(var(--color-neutral-700));
+  --border-strong:  rgb(var(--color-neutral-600));
+
+  --accent:            rgb(var(--color-primary-500));
+  --accent-hover:      rgb(var(--color-primary-400));
+  --accent-foreground: rgb(var(--color-neutral-950));
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.30);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.40), 0 1px 2px -1px rgb(0 0 0 / 0.40);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.40), 0 2px 4px -2px rgb(0 0 0 / 0.40);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.40), 0 4px 6px -4px rgb(0 0 0 / 0.40);
+}
+
+*, ::before, ::after {
+  --tw-border-spacing-x:  0;
+  --tw-border-spacing-y:  0;
+  --tw-translate-x:  0;
+  --tw-translate-y:  0;
+  --tw-rotate:  0;
+  --tw-skew-x:  0;
+  --tw-skew-y:  0;
+  --tw-scale-x:  1;
+  --tw-scale-y:  1;
+  --tw-pan-x:   ;
+  --tw-pan-y:   ;
+  --tw-pinch-zoom:   ;
+  --tw-scroll-snap-strictness:  proximity;
+  --tw-gradient-from-position:   ;
+  --tw-gradient-via-position:   ;
+  --tw-gradient-to-position:   ;
+  --tw-ordinal:   ;
+  --tw-slashed-zero:   ;
+  --tw-numeric-figure:   ;
+  --tw-numeric-spacing:   ;
+  --tw-numeric-fraction:   ;
+  --tw-ring-inset:   ;
+  --tw-ring-offset-width:  0px;
+  --tw-ring-offset-color:  #fff;
+  --tw-ring-color:  rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow:  0 0 #0000;
+  --tw-ring-shadow:  0 0 #0000;
+  --tw-shadow:  0 0 #0000;
+  --tw-shadow-colored:  0 0 #0000;
+  --tw-blur:   ;
+  --tw-brightness:   ;
+  --tw-contrast:   ;
+  --tw-grayscale:   ;
+  --tw-hue-rotate:   ;
+  --tw-invert:   ;
+  --tw-saturate:   ;
+  --tw-sepia:   ;
+  --tw-drop-shadow:   ;
+  --tw-backdrop-blur:   ;
+  --tw-backdrop-brightness:   ;
+  --tw-backdrop-contrast:   ;
+  --tw-backdrop-grayscale:   ;
+  --tw-backdrop-hue-rotate:   ;
+  --tw-backdrop-invert:   ;
+  --tw-backdrop-opacity:   ;
+  --tw-backdrop-saturate:   ;
+  --tw-backdrop-sepia:   ;
+  --tw-contain-size:   ;
+  --tw-contain-layout:   ;
+  --tw-contain-paint:   ;
+  --tw-contain-style:   ;
+}
+
+::backdrop {
+  --tw-border-spacing-x:  0;
+  --tw-border-spacing-y:  0;
+  --tw-translate-x:  0;
+  --tw-translate-y:  0;
+  --tw-rotate:  0;
+  --tw-skew-x:  0;
+  --tw-skew-y:  0;
+  --tw-scale-x:  1;
+  --tw-scale-y:  1;
+  --tw-pan-x:   ;
+  --tw-pan-y:   ;
+  --tw-pinch-zoom:   ;
+  --tw-scroll-snap-strictness:  proximity;
+  --tw-gradient-from-position:   ;
+  --tw-gradient-via-position:   ;
+  --tw-gradient-to-position:   ;
+  --tw-ordinal:   ;
+  --tw-slashed-zero:   ;
+  --tw-numeric-figure:   ;
+  --tw-numeric-spacing:   ;
+  --tw-numeric-fraction:   ;
+  --tw-ring-inset:   ;
+  --tw-ring-offset-width:  0px;
+  --tw-ring-offset-color:  #fff;
+  --tw-ring-color:  rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow:  0 0 #0000;
+  --tw-ring-shadow:  0 0 #0000;
+  --tw-shadow:  0 0 #0000;
+  --tw-shadow-colored:  0 0 #0000;
+  --tw-blur:   ;
+  --tw-brightness:   ;
+  --tw-contrast:   ;
+  --tw-grayscale:   ;
+  --tw-hue-rotate:   ;
+  --tw-invert:   ;
+  --tw-saturate:   ;
+  --tw-sepia:   ;
+  --tw-drop-shadow:   ;
+  --tw-backdrop-blur:   ;
+  --tw-backdrop-brightness:   ;
+  --tw-backdrop-contrast:   ;
+  --tw-backdrop-grayscale:   ;
+  --tw-backdrop-hue-rotate:   ;
+  --tw-backdrop-invert:   ;
+  --tw-backdrop-opacity:   ;
+  --tw-backdrop-saturate:   ;
+  --tw-backdrop-sepia:   ;
+  --tw-contain-size:   ;
+  --tw-contain-layout:   ;
+  --tw-contain-paint:   ;
+  --tw-contain-style:   ;
+}
+
+/*
+ ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
+ */
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e5e7eb; /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4; /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 4 */
+  font-feature-settings: normal; /* 5 */
+  font-variation-settings: normal; /* 6 */
+  -webkit-tap-highlight-color: transparent; /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace; /* 1 */
+  font-feature-settings: normal; /* 2 */
+  font-variation-settings: normal; /* 3 */
+  font-size: 1em; /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  letter-spacing: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type='button']),
+input:where([type='reset']),
+input:where([type='submit']) {
+  -webkit-appearance: button; /* 1 */
+  background-color: transparent; /* 2 */
+  background-image: none; /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none;
+}
+
+input:where([type='text']),input:where(:not([type])),input:where([type='email']),input:where([type='url']),input:where([type='password']),input:where([type='number']),input:where([type='date']),input:where([type='datetime-local']),input:where([type='month']),input:where([type='search']),input:where([type='tel']),input:where([type='time']),input:where([type='week']),select:where([multiple]),textarea,select {
+  -webkit-appearance:  none;
+     -moz-appearance:  none;
+          appearance:  none;
+  background-color:  #fff;
+  border-color:  #6b7280;
+  border-width:  1px;
+  border-radius:  0px;
+  padding-top:  0.5rem;
+  padding-right:  0.75rem;
+  padding-bottom:  0.5rem;
+  padding-left:  0.75rem;
+  font-size:  1rem;
+  line-height:  1.5rem;
+  --tw-shadow:  0 0 #0000;
+}
+
+input:where([type='text']):focus, input:where(:not([type])):focus, input:where([type='email']):focus, input:where([type='url']):focus, input:where([type='password']):focus, input:where([type='number']):focus, input:where([type='date']):focus, input:where([type='datetime-local']):focus, input:where([type='month']):focus, input:where([type='search']):focus, input:where([type='tel']):focus, input:where([type='time']):focus, input:where([type='week']):focus, select:where([multiple]):focus, textarea:focus, select:focus {
+  outline:  2px solid transparent;
+  outline-offset:  2px;
+  --tw-ring-inset:  var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width:  0px;
+  --tw-ring-offset-color:  #fff;
+  --tw-ring-color:  #2563eb;
+  --tw-ring-offset-shadow:  var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow:  var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow:  var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  border-color:  #2563eb;
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color:  #6b7280;
+  opacity:  1;
+}
+
+input::placeholder,textarea::placeholder {
+  color:  #6b7280;
+  opacity:  1;
+}
+
+::-webkit-datetime-edit-fields-wrapper {
+  padding:  0;
+}
+
+::-webkit-date-and-time-value {
+  min-height:  1.5em;
+  text-align:  inherit;
+}
+
+::-webkit-datetime-edit {
+  display:  inline-flex;
+}
+
+::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {
+  padding-top:  0;
+  padding-bottom:  0;
+}
+
+select {
+  background-image:  url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position:  right 0.5rem center;
+  background-repeat:  no-repeat;
+  background-size:  1.5em 1.5em;
+  padding-right:  2.5rem;
+  -webkit-print-color-adjust:  exact;
+          print-color-adjust:  exact;
+}
+
+select:where([multiple]),select:where([size]:not([size="1"])) {
+  background-image:  initial;
+  background-position:  initial;
+  background-repeat:  unset;
+  background-size:  initial;
+  padding-right:  0.75rem;
+  -webkit-print-color-adjust:  unset;
+          print-color-adjust:  unset;
+}
+
+input:where([type='checkbox']),input:where([type='radio']) {
+  -webkit-appearance:  none;
+     -moz-appearance:  none;
+          appearance:  none;
+  padding:  0;
+  -webkit-print-color-adjust:  exact;
+          print-color-adjust:  exact;
+  display:  inline-block;
+  vertical-align:  middle;
+  background-origin:  border-box;
+  -webkit-user-select:  none;
+     -moz-user-select:  none;
+          user-select:  none;
+  flex-shrink:  0;
+  height:  1rem;
+  width:  1rem;
+  color:  #2563eb;
+  background-color:  #fff;
+  border-color:  #6b7280;
+  border-width:  1px;
+  --tw-shadow:  0 0 #0000;
+}
+
+input:where([type='checkbox']) {
+  border-radius:  0px;
+}
+
+input:where([type='radio']) {
+  border-radius:  100%;
+}
+
+input:where([type='checkbox']):focus,input:where([type='radio']):focus {
+  outline:  2px solid transparent;
+  outline-offset:  2px;
+  --tw-ring-inset:  var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width:  2px;
+  --tw-ring-offset-color:  #fff;
+  --tw-ring-color:  #2563eb;
+  --tw-ring-offset-shadow:  var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow:  var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow:  var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+input:where([type='checkbox']):checked,input:where([type='radio']):checked {
+  border-color:  transparent;
+  background-color:  currentColor;
+  background-size:  100% 100%;
+  background-position:  center;
+  background-repeat:  no-repeat;
+}
+
+input:where([type='checkbox']):checked {
+  background-image:  url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+@media (forced-colors: active)  {
+
+  input:where([type='checkbox']):checked {
+    -webkit-appearance:  auto;
+       -moz-appearance:  auto;
+            appearance:  auto;
+  }
+}
+
+input:where([type='radio']):checked {
+  background-image:  url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+
+@media (forced-colors: active)  {
+
+  input:where([type='radio']):checked {
+    -webkit-appearance:  auto;
+       -moz-appearance:  auto;
+            appearance:  auto;
+  }
+}
+
+input:where([type='checkbox']):checked:hover,input:where([type='checkbox']):checked:focus,input:where([type='radio']):checked:hover,input:where([type='radio']):checked:focus {
+  border-color:  transparent;
+  background-color:  currentColor;
+}
+
+input:where([type='checkbox']):indeterminate {
+  background-image:  url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");
+  border-color:  transparent;
+  background-color:  currentColor;
+  background-size:  100% 100%;
+  background-position:  center;
+  background-repeat:  no-repeat;
+}
+
+@media (forced-colors: active)  {
+
+  input:where([type='checkbox']):indeterminate {
+    -webkit-appearance:  auto;
+       -moz-appearance:  auto;
+            appearance:  auto;
+  }
+}
+
+input:where([type='checkbox']):indeterminate:hover,input:where([type='checkbox']):indeterminate:focus {
+  border-color:  transparent;
+  background-color:  currentColor;
+}
+
+input:where([type='file']) {
+  background:  unset;
+  border-color:  inherit;
+  border-width:  0;
+  border-radius:  0;
+  padding:  0;
+  font-size:  unset;
+  line-height:  inherit;
+}
+
+input:where([type='file']):focus {
+  outline:  1px solid ButtonText;
+  outline:  1px auto -webkit-focus-ring-color;
+}
+
+html {
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+  }
+
+body {
+    min-height: 100vh;
+  }
+
+*:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+
+.container {
+  width:  100%;
+}
+
+@media (min-width: 640px) {
+
+  .container {
+    max-width:  640px;
+  }
+}
+
+@media (min-width: 768px) {
+
+  .container {
+    max-width:  768px;
+  }
+}
+
+@media (min-width: 1024px) {
+
+  .container {
+    max-width:  1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+
+  .container {
+    max-width:  1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+
+  .container {
+    max-width:  1536px;
+  }
+}
+
+.yourls-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+/* ==========================================================
+     App shell — Filament-like layout
+     The legacy DOM is: body > #wrap > [header(logo), nav#admin_menu, body inline, #footer].
+     CSS Grid arranges them into: sidebar | main, with footer below.
+     ========================================================== */
+
+.yourls-app {
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+/* Two-column shell. Sidebar in column 1 (banner stacked above nav).
+     Everything else flows in column 2 as auto-sized rows so multiple
+     <main> blocks (add-url card, table, modals) stack vertically rather
+     than overlapping in a single grid cell. */
+
+.yourls-app #wrap.yourls-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-auto-flow: row;
+    grid-auto-rows: min-content;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] {
+    grid-column: 1;
+    /*grid-row: 2 / span 9999; /* fill the rest of the sidebar column */
+  }
+
+/* Shared sidebar surface — banner and nav share the same column. */
+
+.yourls-app #wrap.yourls-shell > [role="banner"],
+  .yourls-app #wrap.yourls-shell > [role="navigation"] {
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] {
+    padding: var(--space-6) var(--space-5) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 {
+    margin: 0;
+    font-size: 0; /* hide stray whitespace from <span> letters */
+    line-height: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+  }
+
+/* The legacy <h1> contains the literal text "YOURLS: Your Own URL
+     Shortener" wrapped in many <span>s for screen-reader spelling.
+     Hide the textual fragments in the sidebar — only the logo image
+     should show. */
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a {
+    font-size: 0;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a > br {
+    display: none;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] #yourls-logo {
+    width: 110px;
+    height: auto;
+    display: block;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="banner"] h1 a::after {
+    content: "Admin";
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--text-muted);
+    line-height: var(--lh-normal);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] {
+    padding: var(--space-3) var(--space-2);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 200px);
+  }
+
+.yourls-app #wrap.yourls-shell > [role="navigation"] > #admin_menu {
+    flex: 1;
+    min-height: 100%;
+  }
+
+/* Highlight the menu link matching the current body context. Body
+     receives the context as a class (e.g. body.index, body.tools,
+     body.plugins) — match that to the corresponding admin_menu_*_link. */
+
+.yourls-app.index #wrap.yourls-shell #admin_menu_admin_link > a,
+  .yourls-app.tools #wrap.yourls-shell #admin_menu_tools_link > a,
+  .yourls-app.plugins #wrap.yourls-shell #admin_menu_plugins_link > a {
+    background: var(--bg-surface-2);
+    color: var(--accent);
+    font-weight: var(--fw-semibold);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li {
+    margin: 0;
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li a:hover,
+  .yourls-app #wrap.yourls-shell #admin_menu li a:focus {
+    background: var(--bg-surface-2);
+    color: var(--text-primary);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li.admin_menu_toplevel a {
+    font-weight: var(--fw-medium);
+    color: var(--text-primary);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu li#admin_menu_logout_link,
+  .yourls-app #wrap.yourls-shell #admin_menu li#admin_menu_help_link {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    padding: var(--space-2) var(--space-3);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu ul {
+    list-style: none;
+    margin: var(--space-1) 0 var(--space-1) var(--space-3);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+/* The legacy admin pages dump their content as bare children of #wrap
+     (between the nav and the footer). Treat any direct child that is
+     not the banner/nav/footer as the "main" area and style it like a
+     content surface. */
+
+/* Main column container: wrap every non-sidebar/non-footer child in
+     a tight content stream. We intentionally don't pad each child
+     individually (some are empty <p>s, hidden #shareboxes, <dialog>s)
+     — instead, the visible cards/tables/forms own their own padding
+     via .yourls-card or matching rules below. */
+
+.yourls-app #wrap.yourls-shell > *:not([role="banner"]):not([role="navigation"]):not(#footer) {
+    grid-column: 2;
+    width: 100%;
+    min-width: 0;
+    align-self: start;
+    margin: 0;
+  }
+
+/* Hide stray empty paragraphs the legacy admin/index.php emits. */
+
+.yourls-app #wrap.yourls-shell > p:empty {
+    display: none;
+  }
+
+/* The legacy "Display X to Y of Z URLs / Overall tracking..." line
+     is two adjacent <p>s. Render them as a compact muted header above
+     the add-url card. */
+
+.yourls-app #wrap.yourls-shell > p,
+  .yourls-app #wrap.yourls-shell > p#overall_tracking {
+    padding: 0 var(--space-8);
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+
+.yourls-app #wrap.yourls-shell > p:first-of-type {
+    padding-top: var(--space-6);
+  }
+
+/* All direct content blocks of the shell get matched horizontal
+     padding so they line up with the sidebar edge and the right gutter. */
+
+.yourls-app #wrap.yourls-shell > main[role="main"],
+  .yourls-app #wrap.yourls-shell > #shareboxes,
+  .yourls-app #wrap.yourls-shell > #main_table,
+  .yourls-app #wrap.yourls-shell > table,
+  .yourls-app #wrap.yourls-shell > dialog {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+    padding-top: var(--space-4);
+    padding-bottom: 0;
+  }
+
+/* But <table> can't take padding directly (it'd push thead/tbody
+     against the visual border). Wrap the visual edge by giving the
+     table itself a max-width minus the sidebar gutter, and box it. */
+
+.yourls-app #wrap.yourls-shell > #main_table {
+    box-sizing: border-box;
+    width: calc(100% - var(--space-8) * 2);
+    margin-left: var(--space-8);
+    margin-right: var(--space-8);
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+
+/* Last visible content block before #footer gets bottom breathing room. */
+
+.yourls-app #wrap.yourls-shell > main[role="main"]:last-of-type,
+  .yourls-app #wrap.yourls-shell > #main_table:last-of-type {
+    margin-bottom: var(--space-6);
+  }
+
+/* Belt and suspenders: ensure the legacy table never inherits an
+     explicit height that would cause the browser to distribute extra
+     space across tbody rows. */
+
+.yourls-app #main_table {
+    height: auto !important;
+  }
+
+.yourls-app #main_table tbody tr {
+    height: auto !important;
+  }
+
+.yourls-app #main_table tbody td {
+    height: auto !important;
+  }
+
+.yourls-app #wrap.yourls-shell > #footer {
+    grid-column: 2;
+    border-top: 1px solid var(--border-subtle);
+    padding: var(--space-3) var(--space-8);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    background: var(--bg-surface);
+    margin-top: auto;
+  }
+
+/* The "Hello admin (Logout)" + Help links live as <li>s inside
+     #admin_menu. Style them as compact rows distinct from top-level
+     navigation. */
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link {
+    order: 99; /* push to bottom of the sidebar */
+    margin-top: auto;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link strong {
+    color: var(--text-primary);
+    font-weight: var(--fw-medium);
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_logout_link a,
+  .yourls-app #wrap.yourls-shell #admin_menu #admin_menu_help_link a {
+    display: inline;
+    padding: 0;
+    background: transparent;
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+.yourls-app #wrap.yourls-shell #admin_menu #admin_menu_help_link {
+    order: 100;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+/* Auth shell (login / install / upgrade / new): single column,
+     centered card. */
+
+.yourls-app.login #wrap,
+  .yourls-app.install #wrap,
+  .yourls-app.upgrade #wrap,
+  .yourls-app.new #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12) var(--space-4);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+.yourls-app.login #wrap > *,
+  .yourls-app.install #wrap > *,
+  .yourls-app.upgrade #wrap > *,
+  .yourls-app.new #wrap > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+.yourls-app.login #wrap > [role="banner"],
+  .yourls-app.install #wrap > [role="banner"] {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    position: static;
+    height: auto;
+    text-align: center;
+    margin-bottom: var(--space-6);
+  }
+
+.yourls-app.login #wrap > [role="banner"] h1,
+  .yourls-app.install #wrap > [role="banner"] h1 {
+    align-items: center;
+  }
+
+/* Existing legacy table — at least give it the new card surface so the
+     dashboard doesn't look raw while we migrate to Blade table rows. */
+
+.yourls-app #main_table {
+    width: 100%;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-top: var(--space-4);
+    table-layout: auto;
+  }
+
+/* Defensive: tablesorter / Tailwind utilities sometimes leave each
+     <tr> as a block — force the table-row display so rows stay tight. */
+
+.yourls-app #main_table thead,
+  .yourls-app #main_table tbody,
+  .yourls-app #main_table tfoot {
+    display: table-row-group;
+  }
+
+.yourls-app #main_table thead { display: table-header-group; }
+
+.yourls-app #main_table tfoot { display: table-footer-group; }
+
+.yourls-app #main_table tr {
+    display: table-row;
+    height: auto;
+  }
+
+.yourls-app #main_table tr td,
+  .yourls-app #main_table tr th {
+    display: table-cell;
+  }
+
+/* Hard reset: any block-level descendants in cells that should not
+     introduce extra height. */
+
+.yourls-app #main_table td > * {
+    margin: 0;
+  }
+
+.yourls-app #main_table td input[type="hidden"] {
+    display: none !important;
+  }
+
+/* In case @tailwindcss/forms gives base inputs a min-height that
+     somehow leaks here, neutralize it inside table cells. */
+
+.yourls-app #main_table td input,
+  .yourls-app #main_table td button {
+    min-height: 0;
+  }
+
+.yourls-app #main_table thead th {
+    background: var(--bg-surface-2);
+    color: var(--text-secondary);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: var(--fw-semibold);
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    line-height: var(--lh-tight, 1.25);
+    white-space: nowrap;
+  }
+
+.yourls-app #main_table tbody td {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+    line-height: 1.35;
+  }
+
+.yourls-app #main_table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+.yourls-app #main_table tbody tr:hover {
+    background: var(--bg-surface-2);
+  }
+
+/* Hide the legacy aria-hidden Unix timestamp span — only the
+     human-readable date should be shown. */
+
+.yourls-app #main_table td.timestamp span.timestamp[aria-hidden="true"] {
+    display: none;
+  }
+
+/* Original URL secondary line: smaller, muted. */
+
+.yourls-app #main_table td.url small {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+.yourls-app #main_table td.url small a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+.yourls-app #main_table td.url > a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: var(--fw-medium);
+  }
+
+.yourls-app #main_table td.keyword a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: var(--fs-sm);
+  }
+
+/* Action buttons row: tight spacing, pill style. */
+
+.yourls-app #main_table td.actions {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+.yourls-app #main_table td.actions a.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app #main_table td.actions a.button:first-child {
+    margin-left: 0;
+  }
+
+.yourls-app #main_table td.actions a.button:hover {
+    background: var(--bg-surface-2);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+.yourls-app #main_table td.actions a.button_delete:hover {
+    background: rgb(var(--color-danger-50, var(--color-neutral-100)));
+    color: rgb(var(--color-danger-600, 220 38 38));
+    border-color: rgb(var(--color-danger-300, var(--color-neutral-300)));
+  }
+
+/* Truncate long original URLs so a row stays one line tall. */
+
+.yourls-app #main_table td.url {
+    max-width: 360px;
+  }
+
+.yourls-app #main_table td.url > a,
+  .yourls-app #main_table td.url small a {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+/* Add-new + filter forms: keep the legacy IDs (#new_url, #nourl,
+     #search_filter_form) but apply a card surface + spacing. */
+
+.yourls-app #new_url_form,
+  .yourls-app #search_filter_form {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-top: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+.yourls-app #new_url_form input[type="text"],
+  .yourls-app #new_url_form input[type="url"],
+  .yourls-app #search_filter_form input[type="text"],
+  .yourls-app #search_filter_form input[type="search"],
+  .yourls-app input[type="number"],
+  .yourls-app input[type="date"],
+  .yourls-app select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+  }
+
+.yourls-app input[type="submit"],
+  .yourls-app button[type="submit"] {
+    background: var(--accent);
+    color: var(--accent-foreground);
+    border: 0;
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+
+.yourls-app input[type="submit"]:hover,
+  .yourls-app button[type="submit"]:hover {
+    background: var(--accent-hover);
+  }
+
+/* Notice / banner styling for plugin-fired admin_notices. */
+
+.yourls-app .notice {
+    background: var(--bg-surface);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+    margin: var(--space-3) 0;
+    color: var(--text-primary);
+    font-size: var(--fs-sm);
+  }
+
+/* The "x queries" debug bar at the bottom — keep visible but tame. */
+
+.yourls-app #footer p {
+    margin: 0;
+  }
+
+.sr-only {
+  position:  absolute;
+  width:  1px;
+  height:  1px;
+  padding:  0;
+  margin:  -1px;
+  overflow:  hidden;
+  clip:  rect(0, 0, 0, 0);
+  white-space:  nowrap;
+  border-width:  0;
+}
+
+.pointer-events-none {
+  pointer-events:  none;
+}
+
+.pointer-events-auto {
+  pointer-events:  auto;
+}
+
+.static {
+  position:  static;
+}
+
+.fixed {
+  position:  fixed;
+}
+
+.absolute {
+  position:  absolute;
+}
+
+.relative {
+  position:  relative;
+}
+
+.sticky {
+  position:  sticky;
+}
+
+.inset-0 {
+  inset:  0px;
+}
+
+.inset-y-0 {
+  top:  0px;
+  bottom:  0px;
+}
+
+.bottom-4 {
+  bottom:  1rem;
+}
+
+.left-0 {
+  left:  0px;
+}
+
+.left-0\.5 {
+  left:  0.125rem;
+}
+
+.left-3 {
+  left:  0.75rem;
+}
+
+.right-0 {
+  right:  0px;
+}
+
+.right-2 {
+  right:  0.5rem;
+}
+
+.right-4 {
+  right:  1rem;
+}
+
+.top-0 {
+  top:  0px;
+}
+
+.top-0\.5 {
+  top:  0.125rem;
+}
+
+.top-full {
+  top:  100%;
+}
+
+.z-dropdown {
+  z-index:  1000;
+}
+
+.z-modal {
+  z-index:  1400;
+}
+
+.z-sticky {
+  z-index:  1100;
+}
+
+.z-toast {
+  z-index:  1600;
+}
+
+.col-span-full {
+  grid-column:  1 / -1;
+}
+
+.mx-auto {
+  margin-left:  auto;
+  margin-right:  auto;
+}
+
+.my-4 {
+  margin-top:  1rem;
+  margin-bottom:  1rem;
+}
+
+.my-auto {
+  margin-top:  auto;
+  margin-bottom:  auto;
+}
+
+.-mb-px {
+  margin-bottom:  -1px;
+}
+
+.mb-1 {
+  margin-bottom:  0.25rem;
+}
+
+.mb-2 {
+  margin-bottom:  0.5rem;
+}
+
+.mb-3 {
+  margin-bottom:  0.75rem;
+}
+
+.mb-6 {
+  margin-bottom:  1.5rem;
+}
+
+.mb-8 {
+  margin-bottom:  2rem;
+}
+
+.ml-0\.5 {
+  margin-left:  0.125rem;
+}
+
+.ml-1 {
+  margin-left:  0.25rem;
+}
+
+.ml-auto {
+  margin-left:  auto;
+}
+
+.mt-0\.5 {
+  margin-top:  0.125rem;
+}
+
+.mt-1 {
+  margin-top:  0.25rem;
+}
+
+.mt-2 {
+  margin-top:  0.5rem;
+}
+
+.mt-3 {
+  margin-top:  0.75rem;
+}
+
+.mt-4 {
+  margin-top:  1rem;
+}
+
+.mt-6 {
+  margin-top:  1.5rem;
+}
+
+.block {
+  display:  block;
+}
+
+.inline-block {
+  display:  inline-block;
+}
+
+.inline {
+  display:  inline;
+}
+
+.flex {
+  display:  flex;
+}
+
+.inline-flex {
+  display:  inline-flex;
+}
+
+.table {
+  display:  table;
+}
+
+.grid {
+  display:  grid;
+}
+
+.hidden {
+  display:  none;
+}
+
+.h-1\.5 {
+  height:  0.375rem;
+}
+
+.h-1\/2 {
+  height:  50%;
+}
+
+.h-11 {
+  height:  2.75rem;
+}
+
+.h-12 {
+  height:  3rem;
+}
+
+.h-14 {
+  height:  3.5rem;
+}
+
+.h-2\.5 {
+  height:  0.625rem;
+}
+
+.h-3\.5 {
+  height:  0.875rem;
+}
+
+.h-4 {
+  height:  1rem;
+}
+
+.h-5 {
+  height:  1.25rem;
+}
+
+.h-6 {
+  height:  1.5rem;
+}
+
+.h-7 {
+  height:  1.75rem;
+}
+
+.h-8 {
+  height:  2rem;
+}
+
+.h-9 {
+  height:  2.25rem;
+}
+
+.h-full {
+  height:  100%;
+}
+
+.w-0\.5 {
+  width:  0.125rem;
+}
+
+.w-1\.5 {
+  width:  0.375rem;
+}
+
+.w-1\/2 {
+  width:  50%;
+}
+
+.w-11 {
+  width:  2.75rem;
+}
+
+.w-12 {
+  width:  3rem;
+}
+
+.w-2\.5 {
+  width:  0.625rem;
+}
+
+.w-3\.5 {
+  width:  0.875rem;
+}
+
+.w-4 {
+  width:  1rem;
+}
+
+.w-48 {
+  width:  12rem;
+}
+
+.w-5 {
+  width:  1.25rem;
+}
+
+.w-6 {
+  width:  1.5rem;
+}
+
+.w-7 {
+  width:  1.75rem;
+}
+
+.w-80 {
+  width:  20rem;
+}
+
+.w-9 {
+  width:  2.25rem;
+}
+
+.w-full {
+  width:  100%;
+}
+
+.w-px {
+  width:  1px;
+}
+
+.min-w-0 {
+  min-width:  0px;
+}
+
+.min-w-40 {
+  min-width:  10rem;
+}
+
+.min-w-8 {
+  min-width:  2rem;
+}
+
+.max-w-2xl {
+  max-width:  42rem;
+}
+
+.max-w-5xl {
+  max-width:  64rem;
+}
+
+.max-w-7xl {
+  max-width:  80rem;
+}
+
+.max-w-md {
+  max-width:  28rem;
+}
+
+.max-w-sm {
+  max-width:  24rem;
+}
+
+.flex-1 {
+  flex:  1 1 0%;
+}
+
+.shrink-0 {
+  flex-shrink:  0;
+}
+
+.border-separate {
+  border-collapse:  separate;
+}
+
+.border-spacing-0 {
+  --tw-border-spacing-x:  0px;
+  --tw-border-spacing-y:  0px;
+  border-spacing:  var(--tw-border-spacing-x) var(--tw-border-spacing-y);
+}
+
+.origin-top {
+  transform-origin:  top;
+}
+
+.-translate-x-full {
+  --tw-translate-x:  -100%;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-x-0 {
+  --tw-translate-x:  0px;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-x-full {
+  --tw-translate-x:  100%;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-y-0 {
+  --tw-translate-y:  0px;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-y-2 {
+  --tw-translate-y:  0.5rem;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.scale-y-0 {
+  --tw-scale-y:  0;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.transform {
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes spin {
+
+  to {
+    transform:  rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation:  spin 1s linear infinite;
+}
+
+.cursor-pointer {
+  cursor:  pointer;
+}
+
+.resize-none {
+  resize:  none;
+}
+
+.list-disc {
+  list-style-type:  disc;
+}
+
+.list-none {
+  list-style-type:  none;
+}
+
+.grid-cols-1 {
+  grid-template-columns:  repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-\[max-content_1fr\] {
+  grid-template-columns:  max-content 1fr;
+}
+
+.flex-col {
+  flex-direction:  column;
+}
+
+.flex-wrap {
+  flex-wrap:  wrap;
+}
+
+.items-start {
+  align-items:  flex-start;
+}
+
+.items-end {
+  align-items:  flex-end;
+}
+
+.items-center {
+  align-items:  center;
+}
+
+.items-baseline {
+  align-items:  baseline;
+}
+
+.justify-start {
+  justify-content:  flex-start;
+}
+
+.justify-end {
+  justify-content:  flex-end;
+}
+
+.justify-center {
+  justify-content:  center;
+}
+
+.justify-between {
+  justify-content:  space-between;
+}
+
+.gap-1 {
+  gap:  0.25rem;
+}
+
+.gap-1\.5 {
+  gap:  0.375rem;
+}
+
+.gap-2 {
+  gap:  0.5rem;
+}
+
+.gap-3 {
+  gap:  0.75rem;
+}
+
+.gap-4 {
+  gap:  1rem;
+}
+
+.gap-px {
+  gap:  1px;
+}
+
+.gap-x-3 {
+  -moz-column-gap:  0.75rem;
+       column-gap:  0.75rem;
+}
+
+.gap-x-4 {
+  -moz-column-gap:  1rem;
+       column-gap:  1rem;
+}
+
+.gap-y-1 {
+  row-gap:  0.25rem;
+}
+
+.gap-y-2 {
+  row-gap:  0.5rem;
+}
+
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse:  0;
+  margin-top:  calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom:  calc(0.25rem * var(--tw-space-y-reverse));
+}
+
+.space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse:  0;
+  margin-top:  calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom:  calc(0.375rem * var(--tw-space-y-reverse));
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse:  0;
+  margin-top:  calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom:  calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse:  0;
+  margin-top:  calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom:  calc(0.75rem * var(--tw-space-y-reverse));
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse:  0;
+  margin-top:  calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom:  calc(1rem * var(--tw-space-y-reverse));
+}
+
+.self-stretch {
+  align-self:  stretch;
+}
+
+.overflow-auto {
+  overflow:  auto;
+}
+
+.overflow-hidden {
+  overflow:  hidden;
+}
+
+.overflow-x-auto {
+  overflow-x:  auto;
+}
+
+.truncate {
+  overflow:  hidden;
+  text-overflow:  ellipsis;
+  white-space:  nowrap;
+}
+
+.break-all {
+  word-break:  break-all;
+}
+
+.rounded {
+  border-radius:  6px;
+}
+
+.rounded-full {
+  border-radius:  9999px;
+}
+
+.rounded-lg {
+  border-radius:  12px;
+}
+
+.rounded-md {
+  border-radius:  8px;
+}
+
+.border {
+  border-width:  1px;
+}
+
+.border-2 {
+  border-width:  2px;
+}
+
+.border-b {
+  border-bottom-width:  1px;
+}
+
+.border-b-2 {
+  border-bottom-width:  2px;
+}
+
+.border-t {
+  border-top-width:  1px;
+}
+
+.border-dashed {
+  border-style:  dashed;
+}
+
+.border-danger-200 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-danger-200) / var(--tw-border-opacity, 1));
+}
+
+.border-danger-500 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-danger-500) / var(--tw-border-opacity, 1));
+}
+
+.border-info-200 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-info-200) / var(--tw-border-opacity, 1));
+}
+
+.border-neutral-100 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-neutral-100) / var(--tw-border-opacity, 1));
+}
+
+.border-neutral-200 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-neutral-200) / var(--tw-border-opacity, 1));
+}
+
+.border-neutral-300 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-neutral-300) / var(--tw-border-opacity, 1));
+}
+
+.border-primary-600 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-primary-600) / var(--tw-border-opacity, 1));
+}
+
+.border-success-200 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-success-200) / var(--tw-border-opacity, 1));
+}
+
+.border-transparent {
+  border-color:  transparent;
+}
+
+.border-warning-200 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-warning-200) / var(--tw-border-opacity, 1));
+}
+
+.border-warning-300 {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-warning-300) / var(--tw-border-opacity, 1));
+}
+
+.bg-black\/40 {
+  background-color:  rgb(0 0 0 / 0.4);
+}
+
+.bg-danger-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-danger-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-danger-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-danger-600 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-600) / var(--tw-bg-opacity, 1));
+}
+
+.bg-info-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-info-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-info-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-info-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-info-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-info-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-200 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-200) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-300 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-300) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-50\/60 {
+  background-color:  rgb(var(--color-neutral-50) / 0.6);
+}
+
+.bg-neutral-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-900 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-900) / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary-600 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-600) / var(--tw-bg-opacity, 1));
+}
+
+.bg-success-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-success-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-success-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-success-600 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-600) / var(--tw-bg-opacity, 1));
+}
+
+.bg-transparent {
+  background-color:  transparent;
+}
+
+.bg-warning-100 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-warning-100) / var(--tw-bg-opacity, 1));
+}
+
+.bg-warning-50 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-warning-50) / var(--tw-bg-opacity, 1));
+}
+
+.bg-warning-500 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-warning-500) / var(--tw-bg-opacity, 1));
+}
+
+.bg-white {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.bg-white\/80 {
+  background-color:  rgb(255 255 255 / 0.8);
+}
+
+.object-cover {
+  -o-object-fit:  cover;
+     object-fit:  cover;
+}
+
+.p-0 {
+  padding:  0px;
+}
+
+.p-2\.5 {
+  padding:  0.625rem;
+}
+
+.p-3 {
+  padding:  0.75rem;
+}
+
+.p-4 {
+  padding:  1rem;
+}
+
+.p-5 {
+  padding:  1.25rem;
+}
+
+.p-6 {
+  padding:  1.5rem;
+}
+
+.p-8 {
+  padding:  2rem;
+}
+
+.px-1\.5 {
+  padding-left:  0.375rem;
+  padding-right:  0.375rem;
+}
+
+.px-2 {
+  padding-left:  0.5rem;
+  padding-right:  0.5rem;
+}
+
+.px-2\.5 {
+  padding-left:  0.625rem;
+  padding-right:  0.625rem;
+}
+
+.px-3 {
+  padding-left:  0.75rem;
+  padding-right:  0.75rem;
+}
+
+.px-3\.5 {
+  padding-left:  0.875rem;
+  padding-right:  0.875rem;
+}
+
+.px-4 {
+  padding-left:  1rem;
+  padding-right:  1rem;
+}
+
+.px-5 {
+  padding-left:  1.25rem;
+  padding-right:  1.25rem;
+}
+
+.px-6 {
+  padding-left:  1.5rem;
+  padding-right:  1.5rem;
+}
+
+.py-0\.5 {
+  padding-top:  0.125rem;
+  padding-bottom:  0.125rem;
+}
+
+.py-1 {
+  padding-top:  0.25rem;
+  padding-bottom:  0.25rem;
+}
+
+.py-1\.5 {
+  padding-top:  0.375rem;
+  padding-bottom:  0.375rem;
+}
+
+.py-2 {
+  padding-top:  0.5rem;
+  padding-bottom:  0.5rem;
+}
+
+.py-2\.5 {
+  padding-top:  0.625rem;
+  padding-bottom:  0.625rem;
+}
+
+.py-3 {
+  padding-top:  0.75rem;
+  padding-bottom:  0.75rem;
+}
+
+.py-4 {
+  padding-top:  1rem;
+  padding-bottom:  1rem;
+}
+
+.py-8 {
+  padding-top:  2rem;
+  padding-bottom:  2rem;
+}
+
+.pl-6 {
+  padding-left:  1.5rem;
+}
+
+.pl-9 {
+  padding-left:  2.25rem;
+}
+
+.pr-9 {
+  padding-right:  2.25rem;
+}
+
+.pt-2 {
+  padding-top:  0.5rem;
+}
+
+.text-left {
+  text-align:  left;
+}
+
+.text-center {
+  text-align:  center;
+}
+
+.align-top {
+  vertical-align:  top;
+}
+
+.align-middle {
+  vertical-align:  middle;
+}
+
+.font-mono {
+  font-family:  ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+}
+
+.text-2xl {
+  font-size:  1.5rem;
+  line-height:  2rem;
+}
+
+.text-\[11px\] {
+  font-size:  11px;
+}
+
+.text-\[13px\] {
+  font-size:  13px;
+}
+
+.text-base {
+  font-size:  1rem;
+  line-height:  1.5rem;
+}
+
+.text-sm {
+  font-size:  0.875rem;
+  line-height:  1.25rem;
+}
+
+.text-xs {
+  font-size:  0.75rem;
+  line-height:  1rem;
+}
+
+.font-medium {
+  font-weight:  500;
+}
+
+.font-semibold {
+  font-weight:  600;
+}
+
+.uppercase {
+  text-transform:  uppercase;
+}
+
+.tabular-nums {
+  --tw-numeric-spacing:  tabular-nums;
+  font-variant-numeric:  var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.leading-snug {
+  line-height:  1.375;
+}
+
+.tracking-\[0\.14em\] {
+  letter-spacing:  0.14em;
+}
+
+.tracking-tight {
+  letter-spacing:  -0.025em;
+}
+
+.tracking-wide {
+  letter-spacing:  0.025em;
+}
+
+.text-current {
+  color:  currentColor;
+}
+
+.text-danger-200 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-danger-200) / var(--tw-text-opacity, 1));
+}
+
+.text-danger-600 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-danger-600) / var(--tw-text-opacity, 1));
+}
+
+.text-danger-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-danger-800) / var(--tw-text-opacity, 1));
+}
+
+.text-info-200 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-info-200) / var(--tw-text-opacity, 1));
+}
+
+.text-info-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-info-800) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-100 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-100) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-300 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-300) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-400 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-400) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-500 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-500) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-600 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-600) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-700 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-700) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-800) / var(--tw-text-opacity, 1));
+}
+
+.text-neutral-900 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-900) / var(--tw-text-opacity, 1));
+}
+
+.text-primary-600 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-600) / var(--tw-text-opacity, 1));
+}
+
+.text-primary-700 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-700) / var(--tw-text-opacity, 1));
+}
+
+.text-primary-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-800) / var(--tw-text-opacity, 1));
+}
+
+.text-success-200 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-success-200) / var(--tw-text-opacity, 1));
+}
+
+.text-success-600 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-success-600) / var(--tw-text-opacity, 1));
+}
+
+.text-success-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-success-800) / var(--tw-text-opacity, 1));
+}
+
+.text-warning-200 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-warning-200) / var(--tw-text-opacity, 1));
+}
+
+.text-warning-600 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-warning-600) / var(--tw-text-opacity, 1));
+}
+
+.text-warning-800 {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-warning-800) / var(--tw-text-opacity, 1));
+}
+
+.text-white {
+  --tw-text-opacity:  1;
+  color:  rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.opacity-0 {
+  opacity:  0;
+}
+
+.opacity-100 {
+  opacity:  1;
+}
+
+.shadow-md {
+  --tw-shadow:  0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --tw-shadow-colored:  0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow:  var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-sm {
+  --tw-shadow:  0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --tw-shadow-colored:  0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow:  var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-xl {
+  --tw-shadow:  0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --tw-shadow-colored:  0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow:  var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.filter {
+  filter:  var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.backdrop-blur {
+  --tw-backdrop-blur:  blur(8px);
+  backdrop-filter:  var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.backdrop-blur-sm {
+  --tw-backdrop-blur:  blur(4px);
+  backdrop-filter:  var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.transition {
+  transition-property:  color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function:  cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration:  200ms;
+}
+
+.transition-colors {
+  transition-property:  color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function:  cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration:  200ms;
+}
+
+.transition-transform {
+  transition-property:  transform;
+  transition-timing-function:  cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration:  200ms;
+}
+
+.duration-200 {
+  transition-duration:  200ms;
+}
+
+.duration-fast {
+  transition-duration:  120ms;
+}
+
+.ease-in {
+  transition-timing-function:  cubic-bezier(0.4, 0, 1, 1);
+}
+
+.ease-out {
+  transition-timing-function:  cubic-bezier(0, 0, 0.2, 1);
+}
+
+.placeholder\:text-neutral-400::-moz-placeholder {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-400) / var(--tw-text-opacity, 1));
+}
+
+.placeholder\:text-neutral-400::placeholder {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-400) / var(--tw-text-opacity, 1));
+}
+
+.backdrop\:bg-black\/40::backdrop {
+  background-color:  rgb(0 0 0 / 0.4);
+}
+
+.backdrop\:backdrop-blur-sm::backdrop {
+  --tw-backdrop-blur:  blur(4px);
+  backdrop-filter:  var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.focus-within\:bg-primary-50\/30:focus-within {
+  background-color:  rgb(var(--color-primary-50) / 0.3);
+}
+
+.hover\:border-primary-400:hover {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-primary-400) / var(--tw-border-opacity, 1));
+}
+
+.hover\:bg-black\/10:hover {
+  background-color:  rgb(0 0 0 / 0.1);
+}
+
+.hover\:bg-black\/5:hover {
+  background-color:  rgb(0 0 0 / 0.05);
+}
+
+.hover\:bg-danger-50:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-50) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-danger-700:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-700) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-neutral-100:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-100) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-neutral-50:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-50) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-primary-50:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-50) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-primary-700:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-700) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-success-700:hover {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-700) / var(--tw-bg-opacity, 1));
+}
+
+.hover\:text-neutral-800:hover {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-800) / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-neutral-900:hover {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-900) / var(--tw-text-opacity, 1));
+}
+
+.hover\:underline:hover {
+  text-decoration-line:  underline;
+}
+
+.focus\:border-danger-500:focus {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-danger-500) / var(--tw-border-opacity, 1));
+}
+
+.focus\:border-primary-500:focus {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-primary-500) / var(--tw-border-opacity, 1));
+}
+
+.focus-visible\:border-primary-500:focus-visible {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-primary-500) / var(--tw-border-opacity, 1));
+}
+
+.focus-visible\:outline-none:focus-visible {
+  outline:  2px solid transparent;
+  outline-offset:  2px;
+}
+
+.focus-visible\:ring:focus-visible {
+  --tw-ring-offset-shadow:  var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow:  var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow:  var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-visible\:ring-primary-500:focus-visible {
+  --tw-ring-opacity:  1;
+  --tw-ring-color:  rgb(var(--color-primary-500) / var(--tw-ring-opacity, 1));
+}
+
+.focus-visible\:ring-primary-500\/20:focus-visible {
+  --tw-ring-color:  rgb(var(--color-primary-500) / 0.2);
+}
+
+.focus-visible\:ring-offset-1:focus-visible {
+  --tw-ring-offset-width:  1px;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor:  not-allowed;
+}
+
+.disabled\:opacity-50:disabled {
+  opacity:  0.5;
+}
+
+.group:focus-within .group-focus-within\:scale-y-100 {
+  --tw-scale-y:  1;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.peer:checked ~ .peer-checked\:translate-x-4 {
+  --tw-translate-x:  1rem;
+  transform:  translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.peer:checked ~ .peer-checked\:bg-primary-600 {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-600) / var(--tw-bg-opacity, 1));
+}
+
+.peer:focus-visible ~ .peer-focus-visible\:ring {
+  --tw-ring-offset-shadow:  var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow:  var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow:  var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.peer:focus-visible ~ .peer-focus-visible\:ring-primary-500 {
+  --tw-ring-opacity:  1;
+  --tw-ring-color:  rgb(var(--color-primary-500) / var(--tw-ring-opacity, 1));
+}
+
+.aria-disabled\:cursor-not-allowed[aria-disabled="true"] {
+  cursor:  not-allowed;
+}
+
+.aria-disabled\:opacity-50[aria-disabled="true"] {
+  opacity:  0.5;
+}
+
+@media (min-width: 640px) {
+
+  .sm\:not-sr-only {
+    position:  static;
+    width:  auto;
+    height:  auto;
+    padding:  0;
+    margin:  0;
+    overflow:  visible;
+    clip:  auto;
+    white-space:  normal;
+  }
+
+  .sm\:grid-cols-2 {
+    grid-template-columns:  repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:grid-cols-\[1fr_auto_auto\] {
+    grid-template-columns:  1fr auto auto;
+  }
+
+  .sm\:items-end {
+    align-items:  flex-end;
+  }
+
+  .sm\:p-5 {
+    padding:  1.25rem;
+  }
+
+  .sm\:px-6 {
+    padding-left:  1.5rem;
+    padding-right:  1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+
+  .md\:grid-cols-2 {
+    grid-template-columns:  repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+
+  .lg\:px-8 {
+    padding-left:  2rem;
+    padding-right:  2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+
+  .xl\:grid-cols-4 {
+    grid-template-columns:  repeat(4, minmax(0, 1fr));
+  }
+}
+
+.dark\:border-danger-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-danger-800) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-info-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-info-800) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-neutral-700:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-neutral-700) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-neutral-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-neutral-800) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-success-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-success-800) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-warning-700:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-warning-700) / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-warning-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-border-opacity:  1;
+  border-color:  rgb(var(--color-warning-800) / var(--tw-border-opacity, 1));
+}
+
+.dark\:bg-danger-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-danger-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-info-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-info-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-info-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-info-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-neutral-700:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-700) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-neutral-800:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-800) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-neutral-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-neutral-900\/40:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-neutral-900) / 0.4);
+}
+
+.dark\:bg-neutral-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-neutral-950\/50:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-neutral-950) / 0.5);
+}
+
+.dark\:bg-neutral-950\/80:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-neutral-950) / 0.8);
+}
+
+.dark\:bg-primary-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-primary-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-primary-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-success-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-success-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-success-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-warning-900:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-warning-900) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-warning-900\/30:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-warning-900) / 0.3);
+}
+
+.dark\:bg-warning-950:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-warning-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:text-danger-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-danger-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-info-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-info-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-100:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-100) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-300:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-300) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-400:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-400) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-500:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-500) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-neutral-700:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-700) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-primary-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-primary-300:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-300) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-primary-400:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-primary-400) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-success-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-success-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-warning-200:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-warning-200) / var(--tw-text-opacity, 1));
+}
+
+.dark\:focus-within\:bg-primary-950\/20:focus-within:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-primary-950) / 0.2);
+}
+
+.dark\:hover\:bg-danger-950:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-danger-950) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:hover\:bg-neutral-700:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-700) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:hover\:bg-neutral-800:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-bg-opacity:  1;
+  background-color:  rgb(var(--color-neutral-800) / var(--tw-bg-opacity, 1));
+}
+
+.dark\:hover\:bg-primary-950\/40:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(var(--color-primary-950) / 0.4);
+}
+
+.dark\:hover\:bg-white\/10:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(255 255 255 / 0.1);
+}
+
+.dark\:hover\:bg-white\/5:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  background-color:  rgb(255 255 255 / 0.05);
+}
+
+.dark\:hover\:text-neutral-100:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-100) / var(--tw-text-opacity, 1));
+}
+
+.dark\:hover\:text-neutral-200:hover:where([data-theme="dark"], [data-theme="dark"] *) {
+  --tw-text-opacity:  1;
+  color:  rgb(var(--color-neutral-200) / var(--tw-text-opacity, 1));
+}

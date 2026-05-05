@@ -24,3 +24,10 @@ $config->define_core_constants();
 
 $init_defaults = new \YOURLS\Config\InitDefaults;
 new \YOURLS\Config\Init($init_defaults);
+
+// Bootstrap the new Blade-based UI when present (graceful fallback otherwise).
+$yourls_ui_bootstrap = dirname(__DIR__) . '/ui/bootstrap.php';
+if (is_file($yourls_ui_bootstrap)) {
+    require_once $yourls_ui_bootstrap;
+}
+unset($yourls_ui_bootstrap);

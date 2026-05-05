@@ -177,9 +177,25 @@ class Config {
         if (!defined( 'YOURLS_DB_TABLE_LOG' ))
             define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
+        // table to store users (replaces $yourls_user_passwords in config.php)
+        if (!defined( 'YOURLS_DB_TABLE_USERS' ))
+            define( 'YOURLS_DB_TABLE_USERS', YOURLS_DB_PREFIX.'users' );
+
+        if (!defined( 'YOURLS_DB_TABLE_API_RATE' ))
+            define( 'YOURLS_DB_TABLE_API_RATE', YOURLS_DB_PREFIX.'api_rate' );
+
         // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
         if (!defined( 'YOURLS_FLOOD_DELAY_SECONDS' ))
             define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
+
+        if (!defined( 'YOURLS_API_RATE_LIMIT_PER_WINDOW' ))
+            define( 'YOURLS_API_RATE_LIMIT_PER_WINDOW', 60 );
+
+        if (!defined( 'YOURLS_API_RATE_LIMIT_WINDOW' ))
+            define( 'YOURLS_API_RATE_LIMIT_WINDOW', 60 );
+
+        if (!defined( 'YOURLS_USER_PASSWORD_MIN_LENGTH' ))
+            define( 'YOURLS_USER_PASSWORD_MIN_LENGTH', 8 );
 
         // comma separated list of IPs that can bypass flood check.
         if (!defined( 'YOURLS_FLOOD_IP_WHITELIST' ))

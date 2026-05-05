@@ -234,9 +234,112 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
     $total_pages = ceil( $total_items / $perpage );
 }
 
-
 // Begin output of the page
 $context = ( $is_bookmark ? 'bookmark' : 'index' );
+
+if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+
+    // Table head cells
+    $tableHeadCells = [
+        'shorturl' => yourls__( 'Short URL' ),
+        'longurl'  => yourls__( 'Original URL' ),
+        'notes'    => yourls__( 'Notes' ),
+        'date'     => yourls__( 'Date' ),
+        'ip'       => yourls__( 'IP' ),
+        'clicks'   => yourls__( 'Clicks' ),
+        'actions'  => yourls__( 'Actions' ),
+    ];
+    $tableHeadCells = (array) yourls_apply_filter( 'table_head_cells', $tableHeadCells );
+
+    // Footer / pagination params
+    $footerParams = $is_bookmark ? [] : [
+        'search'       => $search,       'search_text'  => $search_text,
+        'search_in'    => $search_in,    'sort_by'      => $sort_by,
+        'sort_order'   => $sort_order,   'page'         => $page,
+        'perpage'      => $perpage,      'click_filter' => $click_filter,
+        'click_limit'  => $click_limit,  'total_pages'  => $total_pages,
+        'date_filter'  => $date_filter,  'date_first'   => $date_first,
+        'date_second'  => $date_second,
+    ];
+
+    // Editor scoping: limit dashboard to own links
+    if ( function_exists( 'yourls_current_user_role' ) && yourls_current_user_role() === 'editor' ) {
+        $_uid = (int) yourls_current_user_id();
+        $where['sql']             .= ' AND `created_by` = :ed_uid';
+        $where['binds']['ed_uid']  = $_uid;
+    }
+
+    // Capture table rows HTML
+    $where       = yourls_apply_filter( 'admin_list_where', $where );
+    $url_results = yourls_get_db( 'read-admin_index' )->fetchObjects(
+        "SELECT * FROM `$table_url` WHERE 1=1 {$where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;",
+        $where['binds']
+    );
+    $found_rows = false;
+    $rowsHtml   = '';
+    if ( $url_results ) {
+        $found_rows = true;
+        ob_start();
+        foreach ( $url_results as $url_result ) {
+            $_kw     = yourls_sanitize_keyword( $url_result->keyword );
+            $_ts     = strtotime( $url_result->timestamp );
+            $_url    = stripslashes( $url_result->url );
+            $_notes  = stripslashes( $url_result->notes ?? '' );
+            $_ip     = $url_result->ip;
+            $_title  = $url_result->title ? $url_result->title : '';
+            $_clicks = $url_result->clicks;
+            echo yourls_table_add_row( $_kw, $_url, $_title, $_ip, $_clicks, $_ts, 1, $_notes );
+        }
+        $rowsHtml = ob_get_clean();
+    }
+
+    // Bookmark-specific vars
+    $bookmarkLongUrl   = $is_bookmark ? $url                          : '';
+    $bookmarkShortUrl  = $is_bookmark ? ( $return['shorturl'] ?? '' ) : '';
+    $bookmarkTitle     = $is_bookmark ? ( $title  ?? '' )             : '';
+    $bookmarkText      = $is_bookmark ? ( $text   ?? '' )             : '';
+    $bookmarkMessage   = $is_bookmark ? ( $return['message'] ?? '' )  : '';
+    $bookmarkStatus    = $is_bookmark ? ( $return['status']  ?? '' )  : '';
+    if ( $is_bookmark ) {
+        $_share            = ( $bookmarkTitle !== '' ? $bookmarkTitle . ' ' : '' )
+                           . ( $bookmarkText  !== '' ? '"' . $bookmarkText . '" ' : '' )
+                           . $bookmarkShortUrl;
+        $bookmarkShareText = function_exists( 'yourls_esc_textarea' )
+            ? yourls_esc_textarea( $_share )
+            : htmlspecialchars( $_share, ENT_QUOTES );
+        $bookmarkCharCount = 280 - strlen( $bookmarkShareText );
+    } else {
+        $bookmarkShareText = '';
+        $bookmarkCharCount = 0;
+    }
+
+    echo yourls_ui_view( 'admin.dashboard', [
+        'isBookmark'        => $is_bookmark,
+        'searchSentence'    => $search_sentence,
+        'totalItems'        => $total_items,
+        'displayOnPage'     => $display_on_page ?? $total_items,
+        'maxOnPage'         => $max_on_page     ?? $total_items,
+        'totalItemsClicks'  => $total_items_clicks,
+        'totalUrls'         => $total_urls,
+        'totalClicks'       => $total_clicks,
+        'url'               => $url,
+        'keyword'           => $keyword,
+        'tableHeadCells'    => $tableHeadCells,
+        'footerParams'      => $footerParams,
+        'rowsHtml'          => $rowsHtml,
+        'foundRows'         => $found_rows,
+        'bookmarkLongUrl'   => $bookmarkLongUrl,
+        'bookmarkShortUrl'  => $bookmarkShortUrl,
+        'bookmarkTitle'     => $bookmarkTitle,
+        'bookmarkText'      => $bookmarkText,
+        'bookmarkShareText' => $bookmarkShareText,
+        'bookmarkCharCount' => $bookmarkCharCount,
+        'bookmarkMessage'   => $bookmarkMessage,
+        'bookmarkStatus'    => $bookmarkStatus,
+    ] );
+    return;
+}
+
 yourls_html_head( $context );
 yourls_html_logo();
 yourls_html_menu() ;
@@ -299,6 +402,13 @@ if ( !$is_bookmark ) {
 
 yourls_table_tbody_start();
 
+// Editor scoping: limit dashboard to own links
+if ( function_exists( 'yourls_current_user_role' ) && yourls_current_user_role() === 'editor' ) {
+    $_uid = (int) yourls_current_user_id();
+    $where['sql']             .= ' AND `created_by` = :ed_uid';
+    $where['binds']['ed_uid']  = $_uid;
+}
+
 // Main Query
 $where = yourls_apply_filter( 'admin_list_where', $where );
 $url_results = yourls_get_db('read-admin_index')->fetchObjects( "SELECT * FROM `$table_url` WHERE 1=1 {$where['sql']} ORDER BY `$sort_by` $sort_order LIMIT $offset, $perpage;", $where['binds'] );
@@ -312,8 +422,8 @@ if( $url_results ) {
         $ip = $url_result->ip;
         $title = $url_result->title ? $url_result->title : '';
         $clicks = $url_result->clicks;
-
-        echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp );
+        $notes = $url_result->notes ?? '';
+        echo yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, 1, $notes );
     }
 }
 

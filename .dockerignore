@@ -1,0 +1,22 @@
+.git
+.github
+.idea
+.vscode
+.DS_Store
+
+# Composer dev-only: re-installed inside the image
+includes/vendor/bin/.phpunit.result.cache
+.phpunit.cache
+.phpunit.result.cache
+
+# Node artefacts (we rebuild inside the assets stage)
+node_modules
+
+# YOURLS user data — the entrypoint materializes user/config.php from
+# environment and the Blade cache is recreated on demand.
+user/config.php
+user/cache
+
+# Local docker artefacts
+docker-compose.override.yml
+.env

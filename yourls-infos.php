@@ -213,10 +213,30 @@ if( yourls_do_log_redirect() ) {
 // Default: show only on private installs; hide on public installs to prevent referrer spam (filterable)
 $show_referrers = yourls_apply_filter( 'statistics_show_referrers', yourls_is_private() );
 
-yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
-yourls_html_logo();
-yourls_html_menu();
+// ---- Blade vs legacy dispatch -----------------------------------------------
+$_blade = function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled();
+
+$_ui_tabs           = [];
+$_ui_stats_panel    = '';
+$_ui_location_panel = '';
+$_ui_sources_panel  = '';
+
+if ( $_blade ) {
+    if ( yourls_do_log_redirect() ) {
+        $_ui_tabs['stats']     = yourls__( 'Traffic statistics' );
+        $_ui_tabs['locations'] = yourls__( 'Traffic location' );
+        if ( $show_referrers ) {
+            $_ui_tabs['sources'] = yourls__( 'Traffic sources' );
+        }
+    }
+    $_ui_tabs['share'] = yourls__( 'Share' );
+} else {
+    yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
+    yourls_html_logo();
+    yourls_html_menu();
+}
 ?>
+<?php if ( ! $_blade ) { // ---- LEGACY ONLY: page header + tabs nav ---- ?>
 
 <h2 id="informations"><?php echo yourls_esc_html( $title ); ?></h2>
 
@@ -243,20 +263,21 @@ yourls_html_menu();
 <div id="tabs">
     <div class="wrap_unfloat">
     <ul id="headers" class="toggle_display stat_tab">
-        <?php if( yourls_do_log_redirect() ) { ?>
-        <li class="selected"><a href="#stat_tab_stats"><h2><?php yourls_e( 'Traffic statistics'); ?></h2></a></li>
-        <li><a href="#stat_tab_location"><h2><?php yourls_e( 'Traffic location'); ?></h2></a></li>
-        <?php if( $show_referrers ) { ?>
-        <li><a href="#stat_tab_sources"><h2><?php yourls_e( 'Traffic sources'); ?></h2></a></li>
-        <?php } ?>
-        <?php } ?>
-        <li><a href="#stat_tab_share"><h2><?php yourls_e( 'Share'); ?></h2></a></li>
-    </ul>
+<?php if( yourls_do_log_redirect() ) { ?>
+    <li class="selected"><a href="#stat_tab_stats"><h2><?php yourls_e( 'Traffic statistics'); ?></h2></a></li>
+    <li><a href="#stat_tab_location"><h2><?php yourls_e( 'Traffic location'); ?></h2></a></li>
+    <?php if( $show_referrers ) { ?>
+    <li><a href="#stat_tab_sources"><h2><?php yourls_e( 'Traffic sources'); ?></h2></a></li>
+    <?php } ?>
+    <?php } ?>
+    <li><a href="#stat_tab_share"><h2><?php yourls_e( 'Share'); ?></h2></a></li>
+</ul>
     </div>
+<?php } // end legacy header + div#tabs nav (div#tabs stays open in legacy path) ?>
 
 
 <?php if( yourls_do_log_redirect() ) { ?>
-    <div id="stat_tab_stats" class="tab">
+<?php if ( $_blade ) { ob_start(); } else { ?><div id="stat_tab_stats" class="tab"><?php } ?>
         <h2><?php yourls_e( 'Traffic statistics'); ?></h2>
 
         <?php yourls_do_action( 'pre_yourls_info_stats', $keyword ); ?>
@@ -440,10 +461,10 @@ yourls_html_menu();
         <?php } else {
             echo '<p>' . yourls__( 'No traffic yet. Get some clicks first!' ) . '</p>';
         } ?>
-    </div>
+<?php if ( $_blade ) { $_ui_stats_panel = ob_get_clean(); } else { ?></div><?php } ?>
 
 
-    <div id="stat_tab_location" class="tab">
+<?php if ( $_blade ) { ob_start(); } else { ?><div id="stat_tab_location" class="tab"><?php } ?>
         <h2><?php yourls_e( 'Traffic location' ); ?></h2>
 
         <?php yourls_do_action( 'pre_yourls_info_location', $keyword ); ?>
@@ -477,10 +498,12 @@ yourls_html_menu();
         <?php } else {
             echo '<p>' . yourls__( 'No country data.' ) . '</p>';
         } ?>
-    </div>
+<?php if ( $_blade ) { $_ui_location_panel = ob_get_clean(); } else { ?></div><?php } ?>
+
+<?php } // endif do log redirect ?>
 
 <?php if( $show_referrers ) { ?>
-    <div id="stat_tab_sources" class="tab">
+<?php if ( $_blade ) { ob_start(); } else { ?><div id="stat_tab_sources" class="tab"><?php } ?>
         <h2><?php yourls_e( 'Traffic sources' ); ?></h2>
 
         <?php yourls_do_action( 'pre_yourls_info_sources', $keyword ); ?>
@@ -545,11 +568,29 @@ yourls_html_menu();
             echo '<p>' . yourls__( 'No referrer data.' ) . '</p>';
         } ?>
 
-    </div>
+<?php if ( $_blade ) { $_ui_sources_panel = ob_get_clean(); } else { ?></div><?php } ?>
 <?php } // endif $show_referrers ?>
 
-<?php } // endif do log redirect ?>
-
+<?php if ( $_blade ) {
+    // Blade: render the complete page and exit
+    $_ui_short_url   = yourls_link( $keyword );
+    $_ui_share_raw   = ( $title !== '' ? $title . ' ' : '' ) . $_ui_short_url;
+    $_ui_share_text  = yourls_esc_textarea( $_ui_share_raw );
+    echo yourls_ui_view( 'public.infos', [
+        'pageTitle'      => yourls_s( 'Statistics for %s', YOURLS_SITE . '/' . $keyword ),
+        'shortUrl'       => $_ui_short_url,
+        'longUrl'        => $longurl,
+        'longUrlDisplay' => yourls_trim_long_string( $longurl ),
+        'title'          => $title,
+        'shareText'      => $_ui_share_text,
+        'shareCharCount' => 280 - strlen( $_ui_share_text ),
+        'tabs'           => $_ui_tabs,
+        'statsPanel'     => $_ui_stats_panel,
+        'locationsPanel' => $_ui_location_panel,
+        'sourcesPanel'   => $_ui_sources_panel,
+    ] );
+    return;
+} ?>
 
     <div id="stat_tab_share" class="tab">
         <h2><?php yourls_e( 'Share' ); ?></h2>
@@ -558,7 +599,7 @@ yourls_html_menu();
 
     </div>
 
-</div>
+</div><!-- /div#tabs -->
 
 
 <?php yourls_html_footer(); ?>

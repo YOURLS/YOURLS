@@ -1,0 +1,26 @@
+{
+  "name": "yourls-ui",
+  "private": true,
+  "description": "Build pipeline for the YOURLS admin/public UI (Tailwind + Alpine.js + Blade).",
+  "scripts": {
+    "build:css": "postcss ui/assets/src/css/app.css -o ui/assets/dist/admin.css && postcss ui/assets/src/css/infos.css -o ui/assets/dist/public.css",
+    "build:js": "esbuild ui/assets/src/js/app.js --bundle --minify --outfile=ui/assets/dist/admin.js && esbuild ui/assets/src/js/public.js --bundle --minify --outfile=ui/assets/dist/public.js",
+    "build:manifest": "node scripts/manifest.mjs",
+    "build": "npm run build:css && npm run build:js && npm run build:manifest",
+    "watch:css": "postcss ui/assets/src/css/app.css -o ui/assets/dist/admin.css -w",
+    "watch:js": "esbuild ui/assets/src/js/app.js --bundle --outfile=ui/assets/dist/admin.js --watch",
+    "dev": "npm run watch:css & npm run watch:js"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "alpinejs": "^3.13.5",
+    "autoprefixer": "^10.4.17",
+    "cssnano": "^7.0.0",
+    "esbuild": "^0.21.0",
+    "postcss": "^8.4.35",
+    "postcss-cli": "^11.0.0",
+    "postcss-import": "^16.0.0",
+    "tailwindcss": "^3.4.1"
+  }
+}

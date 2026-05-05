@@ -11,6 +11,13 @@ define( 'YOURLS_API', true );
 require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 yourls_maybe_require_auth();
 
+// Per-user sliding-window rate limit (no-op for admin / config-file / when disabled).
+// Skip the cheap 'version' action used by health checks.
+$_rl_action = isset( $_REQUEST['action'] ) ? (string) $_REQUEST['action'] : '';
+if ( $_rl_action !== 'version' && function_exists( 'yourls_check_user_api_rate' ) ) {
+    yourls_check_user_api_rate( yourls_current_user_id(), $_rl_action );
+}
+
 $action = ( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null );
 
 yourls_do_action( 'api', $action );

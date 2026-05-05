@@ -6,6 +6,10 @@
  * @return void
  */
 function yourls_html_logo() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'logo' );
+        return;
+    }
     yourls_do_action( 'pre_html_logo' );
     ?>
     <header role="banner">
@@ -26,6 +30,11 @@ function yourls_html_logo() {
  * @return void
  */
 function yourls_html_head( $context = 'index', $title = '' ) {
+
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.head', [ 'context' => $context, 'title' => $title ] );
+        return;
+    }
 
     yourls_do_action( 'pre_html_head', $context, $title );
 
@@ -146,6 +155,11 @@ function yourls_html_head( $context = 'index', $title = '' ) {
  * @return void
  */
 function yourls_html_footer($can_query = true) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.footer', [ 'canQuery' => (bool) $can_query ] );
+        return;
+    }
+
     if($can_query & yourls_get_debug_mode()) {
         $num_queries = yourls_get_num_queries();
         $num_queries = ' &ndash; '. sprintf( yourls_n( '1 query', '%s queries', $num_queries ), $num_queries );
@@ -181,6 +195,10 @@ function yourls_html_footer($can_query = true) {
  * @return void
  */
 function yourls_html_addnew( $url = '', $keyword = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_html_addnew( (string) $url, (string) $keyword );
+        return;
+    }
     $pre = yourls_apply_filter( 'shunt_html_addnew', yourls_shunt_default(), $url, $keyword );
     if ( yourls_shunt_default() !== $pre ) {
         return $pre;
@@ -199,6 +217,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
                     <input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" />
                 </div>
             </form>
+            <div>
+                <label for="add-notes"><?php yourls_e( 'Optional' ); ?> : <strong><?php yourls_e( 'Notes' ); ?></strong></label>:
+                <input type="text" id="add-notes" name="notes" value="" class="text" size="40" placeholder="<?php yourls_e( 'Add a note about this URL' ); ?>" />
+            </div>
             <div id="feedback" style="display:none"></div>
         </div>
         <?php yourls_do_action( 'html_addnew' ); ?>
@@ -214,6 +236,10 @@ function yourls_html_addnew( $url = '', $keyword = '' ) {
  * @return void
  */
 function yourls_delete_link_modal() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_delete_link_modal();
+        return;
+    }
 	?>
     <dialog id="delete-confirm-dialog">
         <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
@@ -243,6 +269,13 @@ function yourls_delete_link_modal() {
  * @return void
  */
 function yourls_html_tfooter( $params = array() ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'organisms.table.footer', [ 'params' => (array) $params ] );
+        if ( function_exists( 'yourls_do_action' ) ) {
+            yourls_do_action( 'html_tfooter' );
+        }
+        return;
+    }
     // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
     // to make things clearer and more explicit about what var is used.
     $search       = $params['search'];
@@ -262,7 +295,7 @@ function yourls_html_tfooter( $params = array() ) {
     ?>
     <tfoot>
         <tr>
-            <th colspan="6">
+            <th colspan="7">
             <div id="filter_form">
                 <form action="" method="get">
                     <div id="filter_options">
@@ -404,6 +437,9 @@ function yourls_html_tfooter( $params = array() ) {
  * @return string HTML content of the select element
  */
 function yourls_html_select( $name, $options, $selected = '', $display = false, $label = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        return yourls_ui_render_html_select( (string) $name, (array) $options, (string) $selected, (bool) $display, (string) $label );
+    }
     // Allow plugins to filter the options -- see #3262
     $options = yourls_apply_filter( 'html_select_options', $options, $name, $selected, $display, $label );
     $html = "<select aria-label='$label' name='$name' id='$name' size='1'>\n";
@@ -433,6 +469,10 @@ function yourls_html_select( $name, $options, $selected = '', $display = false, 
  * @return void
  */
 function yourls_share_box( $longurl, $shorturl, $title = '', $text='', $shortlink_title = '', $share_title = '', $hidden = false ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_share_box( (string) $longurl, (string) $shorturl, (string) $title, (string) $text, (string) $shortlink_title, (string) $share_title, (bool) $hidden );
+        return;
+    }
     if ( $shortlink_title == '' )
         $shortlink_title = '<h2>' . yourls__( 'Your short link' ) . '</h2>';
     if ( $share_title == '' )
@@ -543,23 +583,39 @@ function yourls_table_edit_row( $keyword, $id ) {
     $keyword = yourls_sanitize_keyword($keyword);
     $url = yourls_get_keyword_longurl( $keyword );
     $title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
+    $notes = (string) ( yourls_get_keyword_info( $keyword, 'notes', '' ) ?? '' );
     $safe_url = yourls_esc_attr( $url );
     $safe_title = yourls_esc_attr( $title );
+    $safe_notes = yourls_esc_attr( $notes );
     $safe_keyword = yourls_esc_attr( $keyword );
 
     // Make strings sprintf() safe: '%' -> '%%'
     $safe_url = str_replace( '%', '%%', $safe_url );
     $safe_title = str_replace( '%', '%%', $safe_title );
+    $safe_notes = str_replace( '%', '%%', $safe_notes );
 
     $www = yourls_link();
 
     $nonce = yourls_create_nonce( 'edit-save_'.$id );
 
     if( $url ) {
-        $return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+        // Blade-rendered UI takes precedence when enabled.
+        if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled()
+             && function_exists( 'yourls_ui_view' ) ) {
+            $return = (string) yourls_ui_view( 'organisms.table.edit-row', [
+                'id'         => $id,
+                'keyword'    => $keyword,
+                'url'        => $url,
+                'title'      => $title,
+                'notes'      => $notes,
+                'sitePrefix' => $www,
+            ] );
+        } else {
+            $return = <<<RETURN
+<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /><br/><strong>%s</strong>: <input type="text" id="edit-notes-$id" name="edit-notes-$id" value="$safe_notes" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
-        $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+            $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Notes' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+        }
     } else {
         $return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
     }
@@ -581,7 +637,7 @@ RETURN;
  * @param int    $row_id      Numeric value used to form row IDs, defaults to one
  * @return string             HTML of the row
  */
-function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, $row_id = 1 ) {
+function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp, $row_id = 1, $notes = '' ) {
     $keyword  = yourls_sanitize_keyword($keyword);
     $id       = yourls_unique_element_id('yid', $row_id);
     $shorturl = yourls_link( $keyword );
@@ -595,6 +651,12 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
     $edit_link = yourls_nonce_url( 'edit-link_'.$id,
         yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
     );
+
+    // Editor scoping: hide edit/delete on rows the current user does not own.
+    // Defense-in-depth — admin-ajax also checks the capability server-side.
+    $can_edit = function_exists( 'yourls_current_user_can' )
+        ? yourls_current_user_can( 'edit_link', [ 'keyword' => $keyword ] )
+        : true;
 
     // Action link buttons: the array
     $actions = array(
@@ -611,21 +673,24 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
             'anchor'  => yourls__( 'Share' ),
             'onclick' => "toggle_share('$id');return false;",
         ),
-        'edit' => array(
+    );
+
+    if ( $can_edit ) {
+        $actions['edit'] = array(
             'href'    => $edit_link,
             'id'      => "edit-button-$id",
             'title'   => yourls_esc_attr__( 'Edit' ),
             'anchor'  => yourls__( 'Edit' ),
             'onclick' => "edit_link_display('$id');return false;",
-        ),
-        'delete' => array(
+        );
+        $actions['delete'] = array(
             'href'    => $delete_link,
             'id'      => "delete-button-$id",
             'title'   => yourls_esc_attr__( 'Delete' ),
             'anchor'  => yourls__( 'Delete' ),
             'onclick' => "remove_link('$id');return false;",
-        )
-    );
+        );
+    }
     $actions = yourls_apply_filter( 'table_add_row_action_array', $actions, $keyword );
 
     // Action link buttons: the HTML
@@ -659,6 +724,10 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
             'title_html'    => yourls_esc_html( yourls_trim_long_string( $title ) ),
             'long_url_html' => yourls_esc_html( yourls_trim_long_string( urldecode( $url ) ) ),
             'warning'       => $protocol_warning,
+        ),
+        'notes' => array(
+            'template' => '%notes%',
+            'notes'    => yourls_esc_html( $notes ),
         ),
         'timestamp' => array(
             'template' => '<span class="timestamp" aria-hidden="true">%timestamp%</span> %date%',
@@ -701,12 +770,17 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
  * @return void
  */
 function yourls_table_head() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_head();
+        return;
+    }
     $start = '<table id="main_table" class="tblSorter" cellpadding="0" cellspacing="1"><thead><tr>'."\n";
     echo yourls_apply_filter( 'table_head_start', $start );
 
     $cells = yourls_apply_filter( 'table_head_cells', array(
         'shorturl' => yourls__( 'Short URL' ),
         'longurl'  => yourls__( 'Original URL' ),
+        'notes'    => yourls__( 'Notes' ),
         'date'     => yourls__( 'Date' ),
         'ip'       => yourls__( 'IP' ),
         'clicks'   => yourls__( 'Clicks' ),
@@ -726,6 +800,10 @@ function yourls_table_head() {
  * @return void
  */
 function yourls_table_tbody_start() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_tbody_start();
+        return;
+    }
     echo yourls_apply_filter( 'table_tbody_start', '<tbody>' );
 }
 
@@ -735,6 +813,10 @@ function yourls_table_tbody_start() {
  * @return void
  */
 function yourls_table_tbody_end() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_tbody_end();
+        return;
+    }
     echo yourls_apply_filter( 'table_tbody_end', '</tbody>' );
 }
 
@@ -744,6 +826,10 @@ function yourls_table_tbody_end() {
  * @return void
  */
 function yourls_table_end() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        yourls_ui_render_table_end();
+        return;
+    }
     echo yourls_apply_filter( 'table_end', '</table></main>' );
 }
 
@@ -773,6 +859,10 @@ function yourls_html_link( $href, $anchor = '', $element = '' ) {
  * @return void
  */
 function yourls_login_screen( $error_msg = '' ) {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'auth.login', [ 'error_msg' => (string) $error_msg ] );
+        die();
+    }
     yourls_html_head( 'login' );
 
     $action = ( isset( $_GET['action'] ) && $_GET['action'] == 'logout' ? '?' : '' );
@@ -822,6 +912,10 @@ function yourls_login_screen( $error_msg = '' ) {
  * @return void
  */
 function yourls_html_menu() {
+    if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+        echo yourls_ui_view( 'partials.sidebar' );
+        return;
+    }
     // Build menu links
     if( defined( 'YOURLS_USER' ) ) {
         // Create a logout link with a nonce associated to fake user 'logout' : the user is not yet defined
@@ -853,6 +947,20 @@ function yourls_html_menu() {
             'anchor' => yourls__( 'Manage Plugins' )
         );
         $admin_sublinks['plugins'] = yourls_list_plugin_admin_pages();
+
+        if ( function_exists( 'yourls_current_user_can' ) && yourls_current_user_can( 'manage_users' ) ) {
+            $admin_links['users'] = array(
+                'url'    => yourls_admin_url( 'users.php' ),
+                'anchor' => yourls__( 'Users' )
+            );
+        }
+    }
+
+    if ( defined( 'YOURLS_USER' ) && function_exists( 'yourls_current_user_can' ) && yourls_current_user_can( 'manage_own_profile' ) ) {
+        $admin_links['profile'] = array(
+            'url'    => yourls_admin_url( 'profile.php' ),
+            'anchor' => yourls__( 'Profile' )
+        );
     }
 
     $admin_links    = yourls_apply_filter( 'admin_links',    $admin_links );

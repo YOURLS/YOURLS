@@ -44,29 +44,6 @@ interface PdoInterface
 
     /**
      *
-     * Introduced in 6.x due to PHP 8.4 change. This is a BC break for Aura.Sql.
-     *
-     * @param string $dsn The Data Source Name, or DSN, contains the information required to connect to the database.
-     *
-     * @param string | null $username  The user name for the DSN string. This parameter is optional for some PDO drivers.
-     *
-     * @param string | null $password The password for the DSN string. This parameter is optional for some PDO drivers.
-     *
-     * @param array | null $options  A key=>value array of driver-specific connection options.
-     *
-     * @return \PDO Returns an instance of a generic PDO instance.
-     *
-     * @see https://www.php.net/manual/en/pdo.connect.php
-     */
-    public static function connect(
-        string $dsn,
-        ?string $username = null,
-        #[\SensitiveParameter] ?string $password = null,
-        ?array $options = null
-    ): static;
-
-    /**
-     *
      * Gets the most recent error code.
      *
      * @return string|null
@@ -105,15 +82,6 @@ interface PdoInterface
      *
      */
     public function getAttribute(int $attribute): bool|int|string|array|null;
-
-    /**
-     *
-     * Returns all currently available PDO drivers.
-     *
-     * @return array
-     *
-     */
-    public static function getAvailableDrivers(): array;
 
     /**
      *
@@ -210,4 +178,13 @@ interface PdoInterface
      *
      */
     public function setAttribute(int $attribute, mixed $value): bool;
+
+    /**
+     *
+     * Returns all currently available PDO drivers.
+     *
+     * @return array
+     *
+     */
+    public static function getAvailableDrivers(): array;
 }

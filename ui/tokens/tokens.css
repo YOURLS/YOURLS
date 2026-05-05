@@ -1,0 +1,163 @@
+/*
+ * YOURLS UI design tokens
+ *
+ * Color values are stored as space-separated R G B triplets so Tailwind's
+ * <alpha-value> placeholder works (e.g. bg-primary-500/20 in dark mode).
+ * Plugins can override any token by re-declaring it in a more specific
+ * scope, e.g. body[data-theme="my-brand"] { --color-primary-500: ... }.
+ */
+
+:root {
+  /* Neutral scale */
+  --color-neutral-50:  250 250 250;
+  --color-neutral-100: 244 244 245;
+  --color-neutral-200: 228 228 231;
+  --color-neutral-300: 212 212 216;
+  --color-neutral-400: 161 161 170;
+  --color-neutral-500: 113 113 122;
+  --color-neutral-600: 82 82 91;
+  --color-neutral-700: 63 63 70;
+  --color-neutral-800: 39 39 42;
+  --color-neutral-900: 24 24 27;
+  --color-neutral-950: 9 9 11;
+
+  /* Primary scale */
+  --color-primary-50:  239 246 255;
+  --color-primary-100: 219 234 254;
+  --color-primary-200: 191 219 254;
+  --color-primary-300: 147 197 253;
+  --color-primary-400: 96 165 250;
+  --color-primary-500: 59 130 246;
+  --color-primary-600: 37 99 235;
+  --color-primary-700: 29 78 216;
+  --color-primary-800: 30 64 175;
+  --color-primary-900: 30 58 138;
+  --color-primary-950: 23 37 84;
+
+  /* Semantic scales */
+  --color-success-500: 34 197 94;
+  --color-success-600: 22 163 74;
+  --color-warning-500: 245 158 11;
+  --color-warning-600: 217 119 6;
+  --color-danger-500:  239 68 68;
+  --color-danger-600:  220 38 38;
+  --color-info-500:    14 165 233;
+  --color-info-600:    2 132 199;
+
+  /* Semantic aliases (light) */
+  --bg-app:        rgb(var(--color-neutral-50));
+  --bg-surface:    rgb(255 255 255);
+  --bg-surface-2:  rgb(var(--color-neutral-100));
+  --bg-overlay:    rgb(0 0 0 / 0.40);
+
+  --text-primary:   rgb(var(--color-neutral-900));
+  --text-secondary: rgb(var(--color-neutral-700));
+  --text-muted:     rgb(var(--color-neutral-500));
+  --text-inverse:   rgb(255 255 255);
+
+  --border-subtle:  rgb(var(--color-neutral-200));
+  --border-default: rgb(var(--color-neutral-300));
+  --border-strong:  rgb(var(--color-neutral-400));
+
+  --ring-focus:        rgb(var(--color-primary-500) / 0.40);
+  --accent:            rgb(var(--color-primary-600));
+  --accent-hover:      rgb(var(--color-primary-700));
+  --accent-foreground: rgb(255 255 255);
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+
+  --fs-xs:  12px;
+  --fs-sm:  13px;
+  --fs-base: 14px;
+  --fs-md:  16px;
+  --fs-lg:  18px;
+  --fs-xl:  20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+
+  --lh-tight:   1.25;
+  --lh-snug:    1.375;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.625;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Spacing scale (4px base) */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Radii */
+  --radius-xs:  2px;
+  --radius-sm:  4px;
+  --radius:     6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --shadow-focus: 0 0 0 3px var(--ring-focus);
+
+  /* Z-index */
+  --z-base:     0;
+  --z-dropdown: 1000;
+  --z-sticky:   1100;
+  --z-banner:   1200;
+  --z-overlay:  1300;
+  --z-modal:    1400;
+  --z-popover:  1500;
+  --z-toast:    1600;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration:      200ms;
+  --duration-slow: 320ms;
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-theme="dark"] {
+  --bg-app:        rgb(var(--color-neutral-950));
+  --bg-surface:    rgb(var(--color-neutral-900));
+  --bg-surface-2:  rgb(var(--color-neutral-800));
+  --bg-overlay:    rgb(0 0 0 / 0.60);
+
+  --text-primary:   rgb(var(--color-neutral-50));
+  --text-secondary: rgb(var(--color-neutral-300));
+  --text-muted:     rgb(var(--color-neutral-400));
+  --text-inverse:   rgb(var(--color-neutral-900));
+
+  --border-subtle:  rgb(var(--color-neutral-800));
+  --border-default: rgb(var(--color-neutral-700));
+  --border-strong:  rgb(var(--color-neutral-600));
+
+  --accent:            rgb(var(--color-primary-500));
+  --accent-hover:      rgb(var(--color-primary-400));
+  --accent-foreground: rgb(var(--color-neutral-950));
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.30);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.40), 0 1px 2px -1px rgb(0 0 0 / 0.40);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.40), 0 2px 4px -2px rgb(0 0 0 / 0.40);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.40), 0 4px 6px -4px rgb(0 0 0 / 0.40);
+}

@@ -1,0 +1,15 @@
+@import './app.css';
+
+@layer components {
+  .yourls-infos-tabs {
+    display: flex;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .yourls-infos-chart {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+}

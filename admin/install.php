@@ -50,7 +50,20 @@ if ( isset($_REQUEST['install']) && count( $error ) == 0 ) {
 }
 
 
-// Start output
+// Blade path: render complete page via new UI
+if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled() ) {
+    $installed = yourls_is_installed() || ( isset( $_REQUEST['install'] ) && count( $error ) === 0 );
+    echo yourls_ui_view( 'auth.install', [
+        'errors'    => $error,
+        'warnings'  => $warning,
+        'success'   => $success,
+        'installed' => $installed,
+        'adminUrl'  => yourls_admin_url( 'index.php' ),
+    ] );
+    return;
+}
+
+// Legacy output
 yourls_html_head( 'install', yourls__( 'Install YOURLS' ) );
 ?>
 <div id="login">
