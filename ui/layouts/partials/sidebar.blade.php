@@ -28,6 +28,13 @@
     if (function_exists('yourls_is_admin') && yourls_is_admin()) {
         $adminLinks['tools']   = ['url' => $adminUrl('tools.php'),   'anchor' => function_exists('yourls__') ? yourls__('Tools') : 'Tools'];
         $adminLinks['plugins'] = ['url' => $adminUrl('plugins.php'), 'anchor' => function_exists('yourls__') ? yourls__('Manage Plugins') : 'Manage Plugins'];
+
+        if (function_exists('yourls_current_user_can') && yourls_current_user_can('manage_users')) {
+            $adminLinks['users'] = ['url' => $adminUrl('users.php'), 'anchor' => function_exists('yourls__') ? yourls__('Users') : 'Users'];
+        }
+    }
+    if (defined('YOURLS_USER') && function_exists('yourls_current_user_can') && yourls_current_user_can('manage_own_profile')) {
+        $adminLinks['profile'] = ['url' => $adminUrl('profile.php'), 'anchor' => function_exists('yourls__') ? yourls__('Profile') : 'Profile'];
     }
     $adminSublinks = [];
     if (function_exists('yourls_list_plugin_admin_pages')) {
