@@ -223,13 +223,13 @@ $_ui_sources_panel  = '';
 
 if ( $_blade ) {
     if ( yourls_do_log_redirect() ) {
-        $_ui_tabs[] = [ 'id' => 'stats',     'label' => yourls__( 'Traffic statistics' ) ];
-        $_ui_tabs[] = [ 'id' => 'locations', 'label' => yourls__( 'Traffic location' ) ];
+        $_ui_tabs['stats']     = yourls__( 'Traffic statistics' );
+        $_ui_tabs['locations'] = yourls__( 'Traffic location' );
         if ( $show_referrers ) {
-            $_ui_tabs[] = [ 'id' => 'sources', 'label' => yourls__( 'Traffic sources' ) ];
+            $_ui_tabs['sources'] = yourls__( 'Traffic sources' );
         }
     }
-    $_ui_tabs[] = [ 'id' => 'share', 'label' => yourls__( 'Share' ) ];
+    $_ui_tabs['share'] = yourls__( 'Share' );
 } else {
     yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
     yourls_html_logo();
