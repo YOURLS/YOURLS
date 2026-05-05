@@ -135,10 +135,28 @@ function yourls_check_username_password() {
         yourls_verify_nonce('admin_login');
     }
 
-    if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
-        yourls_set_user( $_REQUEST['username'] );
+    $username  = $_REQUEST['username'] ?? '';
+    $submitted = $_REQUEST['password'] ?? '';
+
+    // Either credential source can authenticate the user. We don't short-circuit
+    // on DB presence, so the documented "edit user/config.php to reset" path
+    // keeps working even when a same-named user happens to exist in the DB.
+    if ( yourls_db_user_exists( $username ) && yourls_db_check_password( $username, $submitted ) ) {
+        yourls_set_user( $username );
+        if ( function_exists( 'yourls_get_user_by_username' ) && function_exists( 'yourls_touch_last_login' ) ) {
+            $row = yourls_get_user_by_username( $username );
+            if ( $row ) {
+                yourls_touch_last_login( (int) $row['user_id'] );
+            }
+        }
         return true;
     }
+
+    if ( isset( $yourls_user_passwords[ $username ] ) && yourls_check_password_hash( $username, $submitted ) ) {
+        yourls_set_user( $username );
+        return true;
+    }
+
     return false;
 }
 
@@ -340,8 +358,23 @@ function yourls_has_phpass_password( $user ) {
  */
 function yourls_check_auth_cookie() {
     global $yourls_user_passwords;
+
+    $submitted = $_COOKIE[ yourls_cookie_name() ] ?? '';
+    if ( $submitted === '' ) {
+        return false;
+    }
+
+    // Check DB users first
+    foreach( yourls_get_db_users_list() as $valid_user ) {
+        if ( hash_equals( yourls_cookie_value( $valid_user ), $submitted ) ) {
+            yourls_set_user( $valid_user );
+            return true;
+        }
+    }
+
+    // Fall back to config-file users
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-        if ( yourls_cookie_value( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
+        if ( hash_equals( yourls_cookie_value( $valid_user ), $submitted ) ) {
             yourls_set_user( $valid_user );
             return true;
         }
@@ -382,6 +415,20 @@ function yourls_check_signature_timestamp() {
 
     // Check signature & timestamp against all possible users
     global $yourls_user_passwords;
+
+    // DB users first
+    foreach( yourls_get_db_users_list() as $valid_user ) {
+        if (
+            hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+            or
+            hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
+            ) {
+            yourls_set_user( $valid_user );
+            return true;
+        }
+    }
+
+    // Config-file users fallback
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
         if (
             hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
@@ -409,6 +456,16 @@ function yourls_check_signature() {
 
     // Check signature against all possible users
     global $yourls_user_passwords;
+
+    // DB users first
+    foreach( yourls_get_db_users_list() as $valid_user ) {
+        if ( yourls_auth_signature( $valid_user ) === $_REQUEST['signature'] ) {
+            yourls_set_user( $valid_user );
+            return true;
+        }
+    }
+
+    // Config-file users fallback
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
         if ( yourls_auth_signature( $valid_user ) === $_REQUEST['signature'] ) {
             yourls_set_user( $valid_user );
@@ -519,6 +576,10 @@ function yourls_setcookie($name, $value, $expire, $path, $domain, $secure, $http
 function yourls_set_user( $user ) {
     if( !defined( 'YOURLS_USER' ) )
         define( 'YOURLS_USER', $user );
+    if ( function_exists( 'yourls_current_user_row' ) ) {
+        // Invalidate the cached current-user row so subsequent helpers re-resolve.
+        yourls_current_user_row( true );
+    }
 }
 
 /**
@@ -744,3 +805,97 @@ function yourls_maybe_hash_passwords() {
 function yourls_skip_password_hashing() {
     return yourls_apply_filter('skip_password_hashing', defined('YOURLS_NO_HASH_PASSWORD') && YOURLS_NO_HASH_PASSWORD);
 }
+
+// ---------------------------------------------------------------------------
+// DB-based user helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Return all active usernames from the yourls_users table.
+ *
+ * Results are statically cached per request to avoid repeated queries.
+ *
+ * @since 1.9
+ * @return string[]  Array of username strings (may be empty if table doesn't exist yet)
+ */
+function yourls_get_db_users_list() {
+    static $cache = null;
+    if ( $cache !== null ) {
+        return $cache;
+    }
+
+    // Gracefully bail out if the table doesn't exist (e.g. before install)
+    try {
+        $ydb   = yourls_get_db( 'read-get_db_users_list' );
+        $table = YOURLS_DB_TABLE_USERS;
+        $rows  = $ydb->fetchObjects( "SELECT `username` FROM `$table` WHERE `is_active` = 1 ORDER BY `user_id` ASC" );
+        $cache = $rows ? array_column( (array) $rows, 'username' ) : [];
+    } catch ( \Exception $e ) {
+        $cache = [];
+    }
+
+    return $cache;
+}
+
+/**
+ * Check whether a username exists in the DB users table.
+ *
+ * @since 1.9
+ * @param string $username
+ * @return bool
+ */
+function yourls_db_user_exists( $username ) {
+    try {
+        $ydb   = yourls_get_db( 'read-db_user_exists' );
+        $table = YOURLS_DB_TABLE_USERS;
+        $count = $ydb->fetchValue(
+            "SELECT COUNT(*) FROM `$table` WHERE `username` = :username AND `is_active` = 1",
+            [ 'username' => $username ]
+        );
+        return (int) $count > 0;
+    } catch ( \Exception $e ) {
+        return false;
+    }
+}
+
+/**
+ * Verify a plain-text password against the hash stored in the DB users table.
+ *
+ * @since 1.9
+ * @param string $username
+ * @param string $submitted_password  Password in plain text (as submitted in form/API)
+ * @return bool
+ */
+function yourls_db_check_password( $username, $submitted_password ) {
+    try {
+        $ydb   = yourls_get_db( 'read-db_check_password' );
+        $table = YOURLS_DB_TABLE_USERS;
+        $hash  = $ydb->fetchValue(
+            "SELECT `password_hash` FROM `$table` WHERE `username` = :username AND `is_active` = 1 LIMIT 1",
+            [ 'username' => $username ]
+        );
+    } catch ( \Exception $e ) {
+        return false;
+    }
+
+    if ( !$hash ) {
+        return false;
+    }
+
+    // Legacy md5: format stored as-is during migration ("md5:<salt>:<md5(salt.password)>")
+    if ( substr( $hash, 0, 4 ) === 'md5:' ) {
+        $parts = explode( ':', $hash );
+        if ( count( $parts ) !== 3 ) {
+            return false;
+        }
+        $salt     = $parts[1];
+        $expected = $parts[2];
+        return hash_equals( $expected, md5( $salt . $submitted_password ) );
+    }
+
+    // password_hash() / bcrypt (and any other password_hash-compatible) format.
+    // No plaintext fallback: anything not recognised above is treated as invalid
+    // to avoid trusting raw column contents as a password.
+    return password_verify( $submitted_password, $hash );
+}
+
