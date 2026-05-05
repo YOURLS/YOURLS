@@ -583,23 +583,39 @@ function yourls_table_edit_row( $keyword, $id ) {
     $keyword = yourls_sanitize_keyword($keyword);
     $url = yourls_get_keyword_longurl( $keyword );
     $title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
+    $notes = (string) ( yourls_get_keyword_info( $keyword, 'notes', '' ) ?? '' );
     $safe_url = yourls_esc_attr( $url );
     $safe_title = yourls_esc_attr( $title );
+    $safe_notes = yourls_esc_attr( $notes );
     $safe_keyword = yourls_esc_attr( $keyword );
 
     // Make strings sprintf() safe: '%' -> '%%'
     $safe_url = str_replace( '%', '%%', $safe_url );
     $safe_title = str_replace( '%', '%%', $safe_title );
+    $safe_notes = str_replace( '%', '%%', $safe_notes );
 
     $www = yourls_link();
 
     $nonce = yourls_create_nonce( 'edit-save_'.$id );
 
     if( $url ) {
-        $return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+        // Blade-rendered UI takes precedence when enabled.
+        if ( function_exists( 'yourls_ui_is_enabled' ) && yourls_ui_is_enabled()
+             && function_exists( 'yourls_ui_view' ) ) {
+            $return = (string) yourls_ui_view( 'organisms.table.edit-row', [
+                'id'         => $id,
+                'keyword'    => $keyword,
+                'url'        => $url,
+                'title'      => $title,
+                'notes'      => $notes,
+                'sitePrefix' => $www,
+            ] );
+        } else {
+            $return = <<<RETURN
+<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /><br/><strong>%s</strong>: <input type="text" id="edit-notes-$id" name="edit-notes-$id" value="$safe_notes" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
-        $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+            $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Notes' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+        }
     } else {
         $return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
     }

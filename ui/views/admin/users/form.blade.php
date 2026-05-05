@@ -1,59 +1,95 @@
 @extends('admin', ['title' => function_exists('yourls__') ? yourls__('User') : 'User'])
 
 @section('content')
-    @if(!empty($flash))
-        <x-organisms::banner :tone="$flash['tone']">{{ $flash['message'] }}</x-organisms::banner>
-    @endif
+    <div class="space-y-4">
+        @if(!empty($flash))
+            <x-organisms::banner :tone="$flash['tone']">{{ $flash['message'] }}</x-organisms::banner>
+        @endif
 
-    <x-organisms::card :title="$editing_user ? yourls__('Edit user') : yourls__('New user')">
-        <form method="post" action="users.php" class="space-y-3">
-            <input type="hidden" name="action" value="{{ $editing_user ? 'update' : 'create' }}" />
-            <input type="hidden" name="id" value="{{ (int) ($editing_user['user_id'] ?? 0) }}" />
-            <input type="hidden" name="nonce" value="{{ $nonce }}" />
+        <x-organisms::card :title="$editing_user ? yourls__('Edit user') : yourls__('New user')">
+            <form method="post" action="users.php" class="space-y-4">
+                <input type="hidden" name="action" value="{{ $editing_user ? 'update' : 'create' }}" />
+                <input type="hidden" name="id" value="{{ (int) ($editing_user['user_id'] ?? 0) }}" />
+                <input type="hidden" name="nonce" value="{{ $nonce }}" />
 
-            <label class="block">
-                @yourlsT('Username')
-                <input class="text" name="username" value="{{ $editing_user['username'] ?? '' }}" required />
-            </label>
+                <x-molecules::form-field :label="yourls__('Username')" for="user_username" :required="!$editing_user">
+                    <x-atoms::input
+                        id="user_username"
+                        name="username"
+                        :value="$editing_user['username'] ?? ''"
+                        :required="!$editing_user"
+                    />
+                </x-molecules::form-field>
 
-            <label class="block">
-                @yourlsT('Role')
-                <select name="role">
-                    <option value="admin"  @if(($editing_user['role'] ?? 'editor') === 'admin')  selected @endif>admin</option>
-                    <option value="editor" @if(($editing_user['role'] ?? 'editor') === 'editor') selected @endif>editor</option>
-                </select>
-            </label>
+                <x-molecules::form-field :label="yourls__('Role')" for="user_role">
+                    <x-atoms::select
+                        id="user_role"
+                        name="role"
+                        :options="['admin' => 'admin', 'editor' => 'editor']"
+                        :selected="$editing_user['role'] ?? 'editor'"
+                    />
+                </x-molecules::form-field>
 
-            <label class="block">
-                <input type="checkbox" name="is_active" @if(!$editing_user || (int) ($editing_user['is_active'] ?? 1)) checked @endif />
-                @yourlsT('Active')
-            </label>
+                <div>
+                    <x-atoms::checkbox
+                        id="user_is_active"
+                        name="is_active"
+                        :checked="!$editing_user || (int) ($editing_user['is_active'] ?? 1)"
+                        :label="yourls__('Active')"
+                    />
+                </div>
 
-            <label class="block">
-                {{ $editing_user ? yourls__('New password (leave blank to keep)') : yourls__('Password') }}
-                <input class="text" type="password" name="password" autocomplete="new-password" {{ $editing_user ? '' : 'required' }} />
-            </label>
+                <x-molecules::form-field
+                    :label="$editing_user ? yourls__('New password (leave blank to keep)') : yourls__('Password')"
+                    for="user_password"
+                    :required="!$editing_user"
+                >
+                    <x-atoms::input
+                        type="password"
+                        id="user_password"
+                        name="password"
+                        autocomplete="new-password"
+                        :required="!$editing_user"
+                    />
+                </x-molecules::form-field>
 
-            <label class="block">
-                @yourlsT('Confirm password')
-                <input class="text" type="password" name="password_confirm" autocomplete="new-password" {{ $editing_user ? '' : 'required' }} />
-            </label>
+                <x-molecules::form-field :label="yourls__('Confirm password')" for="user_password_confirm" :required="!$editing_user">
+                    <x-atoms::input
+                        type="password"
+                        id="user_password_confirm"
+                        name="password_confirm"
+                        autocomplete="new-password"
+                        :required="!$editing_user"
+                    />
+                </x-molecules::form-field>
 
-            <div class="flex gap-2">
-                <button type="submit" class="yourls-btn-primary">{{ $editing_user ? yourls__('Save') : yourls__('Create') }}</button>
-                <a href="users.php" class="yourls-btn-secondary">@yourlsT('Cancel')</a>
-            </div>
-        </form>
+                <div class="flex items-center gap-2 pt-2">
+                    <x-atoms::button type="submit" variant="primary">
+                        {{ $editing_user ? yourls__('Save') : yourls__('Create') }}
+                    </x-atoms::button>
+                    <a href="users.php">
+                        <x-atoms::button type="button" variant="secondary" onclick="window.location='users.php'; return false;">
+                            @yourlsT('Cancel')
+                        </x-atoms::button>
+                    </a>
+                </div>
+            </form>
+        </x-organisms::card>
 
         @if($editing_user)
-            <hr class="my-4" />
-            <form method="post" action="users.php" onsubmit="return confirm('@yourlsT('Rotate this user\'s API key?')')">
-                <input type="hidden" name="action" value="rotate_key" />
-                <input type="hidden" name="id" value="{{ (int) $editing_user['user_id'] }}" />
-                <input type="hidden" name="nonce" value="{{ $nonce }}" />
-                <button type="submit">@yourlsT('Rotate API key')</button>
-                <span class="text-xs">@yourlsT('Current version'): v{{ (int) $editing_user['api_key_version'] }}</span>
-            </form>
+            <x-organisms::card :title="yourls__('API key')">
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
+                    @yourlsT('Current version'): <code>v{{ (int) $editing_user['api_key_version'] }}</code>
+                </p>
+                <form method="post" action="users.php" onsubmit="return confirm('@yourlsT('Rotate this user\'s API key? All scripts using the current signature will stop working.')')">
+                    <input type="hidden" name="action" value="rotate_key" />
+                    <input type="hidden" name="id" value="{{ (int) $editing_user['user_id'] }}" />
+                    <input type="hidden" name="nonce" value="{{ $nonce }}" />
+                    <x-atoms::button type="submit" variant="secondary">
+                        @yourlsT('Rotate API key')
+                    </x-atoms::button>
+                </form>
+            </x-organisms::card>
         @endif
-    </x-organisms::card>
+    </div>
 @endsection

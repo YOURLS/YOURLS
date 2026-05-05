@@ -45,7 +45,7 @@ switch( $action ) {
             echo json_encode( [ 'status' => 'fail', 'message' => yourls__( 'Forbidden' ) ] );
             die();
         }
-        $return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'] );
+        $return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'], $_REQUEST['notes'] ?? null );
         echo json_encode($return);
         break;
 

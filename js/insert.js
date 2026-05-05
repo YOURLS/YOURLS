@@ -35,11 +35,12 @@ function add_link() {
 		return;
 	}
 	var keyword = $("#add-keyword").val();
+	var notes = $("#add-notes").val();
 	var nextid = parseInt($('#main_table tbody tr[id^="id-"]').length) + 1;
 	add_loading("#add-button");
 	$.getJSON(
 		ajaxurl,
-		{action:'add', url: newurl, keyword: keyword, nonce: nonce, rowid: nextid},
+		{action:'add', url: newurl, keyword: keyword, notes: notes, nonce: nonce, rowid: nextid},
 		function(data){
 			if(data.status == 'success') {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
@@ -170,12 +171,16 @@ function edit_link_save(id) {
 	var newurl = $("#edit-url-" + id).val();
 	var newkeyword = $("#edit-keyword-" + id).val();
 	var title = $("#edit-title-" + id).val();
+	var notesEl = $("#edit-notes-" + id);
+	var notes = notesEl.length ? notesEl.val() : null;
 	var keyword = $('#old_keyword_'+id).val();
 	var nonce = $('#nonce_'+id).val();
 	var www = $('#yourls-site').val();
+	var payload = {action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce };
+	if (notes !== null) { payload.notes = notes; }
 	$.getJSON(
 		ajaxurl,
-		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
+		payload,
 		function(data){
 			if(data.status == 'success') {
 
@@ -215,6 +220,7 @@ function zebra_table() {
 function add_link_reset() {
 	$('#add-url').val('').focus();
 	$('#add-keyword').val('');
+	$('#add-notes').val('');
 }
 
 // Increment URL counters

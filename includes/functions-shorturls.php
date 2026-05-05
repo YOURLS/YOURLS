@@ -338,7 +338,7 @@ function yourls_long_url_exists( $url ) {
  * @param string $title
  * @return array Result of the edit and link information if successful
  */
-function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
+function yourls_edit_link($url, $keyword, $newkeyword='', $title='', $notes=null ) {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_edit_link', yourls_shunt_default(), $keyword, $url, $keyword, $newkeyword, $title );
     if ( yourls_shunt_default() !== $pre ) {
@@ -352,6 +352,11 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
     $keyword = yourls_sanitize_keyword($keyword);
     $title = yourls_sanitize_title($title);
     $newkeyword = yourls_sanitize_keyword($newkeyword, true);
+    // notes is null = "do not touch"; '' = "clear"; non-empty string = update
+    $update_notes = $notes !== null;
+    if ( $update_notes ) {
+        $notes = yourls_sanitize_title( (string) $notes );
+    }
 
     if(!$url OR !$newkeyword) {
         $return['status']  = 'fail';
@@ -379,8 +384,13 @@ function yourls_edit_link($url, $keyword, $newkeyword='', $title='' ) {
 
     // All clear, update
     if ( ( !$new_url_already_there || yourls_allow_duplicate_longurls() ) && $keyword_is_ok ) {
-            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title WHERE `keyword` = :keyword";
+            $sql   = "UPDATE `$table` SET `url` = :url, `keyword` = :newkeyword, `title` = :title";
             $binds = array('url' => $url, 'newkeyword' => $newkeyword, 'title' => $title, 'keyword' => $keyword);
+            if ( $update_notes ) {
+                $sql           .= ", `notes` = :notes";
+                $binds['notes'] = $notes !== '' ? $notes : null;
+            }
+            $sql .= " WHERE `keyword` = :keyword";
             $update_url = $ydb->fetchAffected($sql, $binds);
         if( $update_url ) {
             $return['url']     = array( 'keyword'       => $newkeyword,
