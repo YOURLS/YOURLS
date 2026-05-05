@@ -207,6 +207,7 @@ class Init {
         require_once YOURLS_INC.'/functions-deprecated.php';
         require_once YOURLS_INC.'/functions-auth.php';
         require_once YOURLS_INC.'/functions-auth-roles.php';
+        require_once YOURLS_INC.'/functions-users-crud.php';
         require_once YOURLS_INC.'/functions-upgrade.php';
         require_once YOURLS_INC.'/functions-install.php';
     }
