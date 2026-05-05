@@ -636,6 +636,12 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
         yourls_add_query_arg( array( 'id' => $id, 'action' => 'edit', 'keyword' => $keyword ), yourls_admin_url( 'admin-ajax.php' ) )
     );
 
+    // Editor scoping: hide edit/delete on rows the current user does not own.
+    // Defense-in-depth — admin-ajax also checks the capability server-side.
+    $can_edit = function_exists( 'yourls_current_user_can' )
+        ? yourls_current_user_can( 'edit_link', [ 'keyword' => $keyword ] )
+        : true;
+
     // Action link buttons: the array
     $actions = array(
         'stats' => array(
@@ -651,21 +657,24 @@ function yourls_table_add_row( $keyword, $url, $title, $ip, $clicks, $timestamp,
             'anchor'  => yourls__( 'Share' ),
             'onclick' => "toggle_share('$id');return false;",
         ),
-        'edit' => array(
+    );
+
+    if ( $can_edit ) {
+        $actions['edit'] = array(
             'href'    => $edit_link,
             'id'      => "edit-button-$id",
             'title'   => yourls_esc_attr__( 'Edit' ),
             'anchor'  => yourls__( 'Edit' ),
             'onclick' => "edit_link_display('$id');return false;",
-        ),
-        'delete' => array(
+        );
+        $actions['delete'] = array(
             'href'    => $delete_link,
             'id'      => "delete-button-$id",
             'title'   => yourls_esc_attr__( 'Delete' ),
             'anchor'  => yourls__( 'Delete' ),
             'onclick' => "remove_link('$id');return false;",
-        )
-    );
+        );
+    }
     $actions = yourls_apply_filter( 'table_add_row_action_array', $actions, $keyword );
 
     // Action link buttons: the HTML
