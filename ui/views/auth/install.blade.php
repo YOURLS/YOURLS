@@ -15,6 +15,7 @@
         @if(!($installed ?? false))
             <x-organisms::card :title="function_exists('yourls__') ? yourls__('Install YOURLS') : 'Install YOURLS'">
                 <form id="install" method="post" action="install.php">
+                    <input type="hidden" name="install" value="1" />
                     <x-atoms::button type="submit" variant="primary">@yourlsT('Install YOURLS')</x-atoms::button>
                 </form>
             </x-organisms::card>

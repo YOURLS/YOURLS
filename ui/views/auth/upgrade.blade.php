@@ -12,8 +12,12 @@
                 @yourlsT('We highly recommend you backup your database before going any further.')
             </x-organisms::banner>
             <x-organisms::card :title="function_exists('yourls__') ? yourls__('Upgrade YOURLS') : 'Upgrade YOURLS'">
-                <form method="post" action="upgrade.php">
+                <form method="get" action="upgrade.php">
                     <input type="hidden" name="step" value="1" />
+                    <input type="hidden" name="oldver" value="{{ $oldver ?? '' }}" />
+                    <input type="hidden" name="newver" value="{{ $newver ?? '' }}" />
+                    <input type="hidden" name="oldsql" value="{{ $oldsql ?? '' }}" />
+                    <input type="hidden" name="newsql" value="{{ $newsql ?? '' }}" />
                     <x-atoms::button type="submit" variant="primary">@yourlsT('Upgrade YOURLS')</x-atoms::button>
                 </form>
             </x-organisms::card>
