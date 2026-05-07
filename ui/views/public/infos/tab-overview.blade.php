@@ -85,7 +85,7 @@
 @else
 
 {{-- ── KPI row 1: 4 main stats with sparkline + delta vs prior period ── --}}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+<div class="mb-4" style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
     <div class="yourls-card p-4">
         <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">
@@ -154,7 +154,7 @@
 </div>
 
 {{-- ── KPI row 2: today / 7d / 30d / time-to-first-click ── --}}
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+<div class="mb-5" style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
     <div class="yourls-card p-4">
         <div class="text-xs font-medium text-neutral-500 dark:text-neutral-400">{{ yourls__( 'Today' ) }}</div>
         <div class="text-2xl font-semibold tabular-nums text-neutral-900 dark:text-neutral-100">{{ number_format( $windows['today'] ) }}</div>
