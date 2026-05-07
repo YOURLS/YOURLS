@@ -704,3 +704,220 @@ function yourls_get_top_user_agents( string $keyword, int $limit = 10 ): array {
     foreach ( $rows as $r ) $out[ (string) $r['ua'] ] = (int) $r['c'];
     return $out;
 }
+
+/**
+ * ISO 3166-1 alpha-2 country code -> continent code mapping.
+ * Used by Geography tab for continent rollups when the click row only
+ * carries a country_code.
+ */
+function yourls_country_to_continent( string $cc ): string {
+    static $map = null;
+    if ( $map === null ) {
+        $map = [
+            // Africa
+            'DZ'=>'AF','AO'=>'AF','BJ'=>'AF','BW'=>'AF','BF'=>'AF','BI'=>'AF','CM'=>'AF','CV'=>'AF','CF'=>'AF','TD'=>'AF',
+            'KM'=>'AF','CG'=>'AF','CD'=>'AF','CI'=>'AF','DJ'=>'AF','EG'=>'AF','GQ'=>'AF','ER'=>'AF','SZ'=>'AF','ET'=>'AF',
+            'GA'=>'AF','GM'=>'AF','GH'=>'AF','GN'=>'AF','GW'=>'AF','KE'=>'AF','LS'=>'AF','LR'=>'AF','LY'=>'AF','MG'=>'AF',
+            'MW'=>'AF','ML'=>'AF','MR'=>'AF','MU'=>'AF','YT'=>'AF','MA'=>'AF','MZ'=>'AF','NA'=>'AF','NE'=>'AF','NG'=>'AF',
+            'RE'=>'AF','RW'=>'AF','SH'=>'AF','ST'=>'AF','SN'=>'AF','SC'=>'AF','SL'=>'AF','SO'=>'AF','ZA'=>'AF','SS'=>'AF',
+            'SD'=>'AF','TZ'=>'AF','TG'=>'AF','TN'=>'AF','UG'=>'AF','EH'=>'AF','ZM'=>'AF','ZW'=>'AF',
+            // Antarctica
+            'AQ'=>'AN','BV'=>'AN','TF'=>'AN','HM'=>'AN','GS'=>'AN',
+            // Asia
+            'AF'=>'AS','AM'=>'AS','AZ'=>'AS','BH'=>'AS','BD'=>'AS','BT'=>'AS','BN'=>'AS','KH'=>'AS','CN'=>'AS','CY'=>'AS',
+            'GE'=>'AS','HK'=>'AS','IN'=>'AS','ID'=>'AS','IR'=>'AS','IQ'=>'AS','IL'=>'AS','JP'=>'AS','JO'=>'AS','KZ'=>'AS',
+            'KP'=>'AS','KR'=>'AS','KW'=>'AS','KG'=>'AS','LA'=>'AS','LB'=>'AS','MO'=>'AS','MY'=>'AS','MV'=>'AS','MN'=>'AS',
+            'MM'=>'AS','NP'=>'AS','OM'=>'AS','PK'=>'AS','PS'=>'AS','PH'=>'AS','QA'=>'AS','SA'=>'AS','SG'=>'AS','LK'=>'AS',
+            'SY'=>'AS','TW'=>'AS','TJ'=>'AS','TH'=>'AS','TL'=>'AS','TR'=>'AS','TM'=>'AS','AE'=>'AS','UZ'=>'AS','VN'=>'AS','YE'=>'AS',
+            // Europe
+            'AL'=>'EU','AD'=>'EU','AT'=>'EU','BY'=>'EU','BE'=>'EU','BA'=>'EU','BG'=>'EU','HR'=>'EU','CZ'=>'EU','DK'=>'EU',
+            'EE'=>'EU','FO'=>'EU','FI'=>'EU','FR'=>'EU','DE'=>'EU','GI'=>'EU','GR'=>'EU','GG'=>'EU','HU'=>'EU','IS'=>'EU',
+            'IE'=>'EU','IM'=>'EU','IT'=>'EU','JE'=>'EU','XK'=>'EU','LV'=>'EU','LI'=>'EU','LT'=>'EU','LU'=>'EU','MT'=>'EU',
+            'MD'=>'EU','MC'=>'EU','ME'=>'EU','NL'=>'EU','MK'=>'EU','NO'=>'EU','PL'=>'EU','PT'=>'EU','RO'=>'EU','RU'=>'EU',
+            'SM'=>'EU','RS'=>'EU','SK'=>'EU','SI'=>'EU','ES'=>'EU','SJ'=>'EU','SE'=>'EU','CH'=>'EU','UA'=>'EU','GB'=>'EU','VA'=>'EU','AX'=>'EU',
+            // North America
+            'AI'=>'NA','AG'=>'NA','AW'=>'NA','BS'=>'NA','BB'=>'NA','BZ'=>'NA','BM'=>'NA','BQ'=>'NA','CA'=>'NA','KY'=>'NA',
+            'CR'=>'NA','CU'=>'NA','CW'=>'NA','DM'=>'NA','DO'=>'NA','SV'=>'NA','GL'=>'NA','GD'=>'NA','GP'=>'NA','GT'=>'NA',
+            'HT'=>'NA','HN'=>'NA','JM'=>'NA','MQ'=>'NA','MX'=>'NA','MS'=>'NA','NI'=>'NA','PA'=>'NA','PR'=>'NA','BL'=>'NA',
+            'KN'=>'NA','LC'=>'NA','MF'=>'NA','PM'=>'NA','VC'=>'NA','SX'=>'NA','TT'=>'NA','TC'=>'NA','US'=>'NA','VG'=>'NA','VI'=>'NA',
+            // Oceania
+            'AS'=>'OC','AU'=>'OC','CX'=>'OC','CC'=>'OC','CK'=>'OC','FJ'=>'OC','PF'=>'OC','GU'=>'OC','KI'=>'OC','MH'=>'OC',
+            'FM'=>'OC','NR'=>'OC','NC'=>'OC','NZ'=>'OC','NU'=>'OC','NF'=>'OC','MP'=>'OC','PW'=>'OC','PG'=>'OC','PN'=>'OC',
+            'WS'=>'OC','SB'=>'OC','TK'=>'OC','TO'=>'OC','TV'=>'OC','UM'=>'OC','VU'=>'OC','WF'=>'OC',
+            // South America
+            'AR'=>'SA','BO'=>'SA','BR'=>'SA','CL'=>'SA','CO'=>'SA','EC'=>'SA','FK'=>'SA','GF'=>'SA','GY'=>'SA','PY'=>'SA',
+            'PE'=>'SA','SR'=>'SA','UY'=>'SA','VE'=>'SA',
+        ];
+    }
+    $cc = strtoupper( $cc );
+    return $map[ $cc ] ?? '??';
+}
+
+/**
+ * Pretty name for a continent code.
+ */
+function yourls_continent_name( string $code ): string {
+    return [
+        'AF' => yourls__( 'Africa' ),
+        'AN' => yourls__( 'Antarctica' ),
+        'AS' => yourls__( 'Asia' ),
+        'EU' => yourls__( 'Europe' ),
+        'NA' => yourls__( 'North America' ),
+        'OC' => yourls__( 'Oceania' ),
+        'SA' => yourls__( 'South America' ),
+    ][ $code ] ?? yourls__( 'Unknown' );
+}
+
+/**
+ * Country tier classification used for the tier-1/2/3 KPI.
+ * Sources: G7 + EU27 + ANZ + Israel + Korea + Singapore + HK + Taiwan in tier 1;
+ * BRICS + Gulf + LatAm majors + East Europe in tier 2; the rest in tier 3.
+ */
+function yourls_country_tier( string $cc ): int {
+    static $tiers = null;
+    if ( $tiers === null ) {
+        $tier1 = [ 'US','CA','GB','DE','FR','IT','JP','AU','NZ','IL','KR','SG','HK','TW','CH','NO','SE','FI','DK','IS','AT','BE','NL','LU','IE','ES','PT','GR','PL','CZ','HU','SK','SI','HR','EE','LV','LT','BG','RO','MT','CY','MC','LI','AD','SM' ];
+        $tier2 = [ 'BR','RU','IN','CN','ZA','MX','AR','CL','CO','PE','UY','SA','AE','QA','KW','BH','OM','TR','UA','BY','RS','BA','MK','AL','ME','MD','XK','MY','TH','VN','PH','ID','EG','MA','TN','NG','KE','GH' ];
+        $tiers = [];
+        foreach ( $tier1 as $c ) $tiers[ $c ] = 1;
+        foreach ( $tier2 as $c ) $tiers[ $c ] = 2;
+    }
+    $cc = strtoupper( $cc );
+    return $tiers[ $cc ] ?? 3;
+}
+
+/**
+ * Geography rollups for the page.
+ *
+ * @return array{
+ *   countries: array<string,int>,
+ *   cities: array<string,int>,
+ *   continents: array<string,int>,
+ *   tiers: array{1:int,2:int,3:int},
+ *   total_clicks: int,
+ *   reached: int,
+ *   coverage_pct: float,
+ *   hhi: float,
+ *   top5_share: float,
+ *   top_continent: ?string
+ * }
+ */
+function yourls_get_geography_rollup( string $keyword ): array {
+    $countries = yourls_get_clicks_by_dimension( $keyword, 'country_code', 'all', 250 );
+    $cities    = yourls_get_clicks_by_dimension( $keyword, 'city',         'all', 100 );
+
+    // Strip the (unknown) bucket for KPI math but keep it for the table view.
+    $real = $countries;
+    unset( $real['(unknown)'] );
+
+    $totalReal = array_sum( $real );
+    $reached   = count( $real );
+
+    // Continent rollup
+    $continents = [];
+    $tiers      = [ 1 => 0, 2 => 0, 3 => 0 ];
+    foreach ( $real as $cc => $n ) {
+        $cont = yourls_country_to_continent( $cc );
+        $continents[ $cont ] = ( $continents[ $cont ] ?? 0 ) + (int) $n;
+        $tiers[ yourls_country_tier( $cc ) ] += (int) $n;
+    }
+    arsort( $continents );
+
+    // HHI = sum of squared shares (0..10000 in market-share convention; we use 0..1)
+    $hhi = 0.0;
+    if ( $totalReal > 0 ) {
+        foreach ( $real as $n ) {
+            $share = $n / $totalReal;
+            $hhi  += $share * $share;
+        }
+    }
+
+    // Top-5 concentration
+    $top5Share = 0.0;
+    if ( $totalReal > 0 ) {
+        $top5Sum   = array_sum( array_slice( $real, 0, 5, true ) );
+        $top5Share = $top5Sum / $totalReal;
+    }
+
+    return [
+        'countries'     => $countries,
+        'cities'        => $cities,
+        'continents'    => $continents,
+        'tiers'         => $tiers,
+        'total_clicks'  => array_sum( $countries ),
+        'reached'       => $reached,
+        'coverage_pct'  => round( $reached * 100 / 195, 1 ), // 195 UN-recognised states
+        'hhi'           => round( $hhi, 4 ),
+        'top5_share'    => round( $top5Share * 100, 1 ),
+        'top_continent' => $continents ? array_key_first( $continents ) : null,
+    ];
+}
+
+/**
+ * Daily click series for the top-N countries (multi-line chart).
+ *
+ * @return array{labels:array<string>,series:array<string,array<int>>}
+ */
+function yourls_get_top_countries_trend( string $keyword, int $topN = 5, int $days = 30 ): array {
+    $days = max( 1, min( 90, $days ) );
+
+    // 1) find the top-N country codes for the period
+    $sql = 'SELECT country_code AS k, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'AND country_code != "" '
+         . 'GROUP BY k ORDER BY c DESC LIMIT :lim';
+    $top = yourls_get_db( 'read-top_countries_trend' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days, 'lim' => $topN ] );
+    $codes = array_map( fn( $r ) => (string) $r['k'], $top );
+    if ( ! $codes ) return [ 'labels' => [], 'series' => [] ];
+
+    // 2) per-day per-country click counts
+    $placeholders = implode( ',', array_map( fn( $i ) => ':c' . $i, array_keys( $codes ) ) );
+    $bind = [ 'k' => $keyword, 'days' => $days ];
+    foreach ( $codes as $i => $c ) $bind[ 'c' . $i ] = $c;
+    $sql = 'SELECT DATE(click_time) AS d, country_code AS cc, COUNT(*) AS n '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'AND country_code IN (' . $placeholders . ') '
+         . 'GROUP BY d, cc ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-top_countries_trend' )->fetchAll( $sql, $bind );
+
+    // build label axis + zero-filled series
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    $series = [];
+    foreach ( $codes as $c ) $series[ $c ] = array_fill( 0, $days, 0 );
+    foreach ( $rows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx !== false && isset( $series[ (string) $r['cc'] ] ) ) {
+            $series[ (string) $r['cc'] ][ $idx ] = (int) $r['n'];
+        }
+    }
+    return [ 'labels' => $labels, 'series' => $series ];
+}
+
+/**
+ * Country + city + unique-visitor breakdown for the table view.
+ *
+ * @return array<int,array{country:string,city:?string,clicks:int,visitors:int}>
+ */
+function yourls_get_geo_table( string $keyword, int $limit = 30 ): array {
+    $sql = 'SELECT country_code AS country, city, COUNT(*) AS clicks, '
+         . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY country, city ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-geo_table' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'country'  => (string) ( $r['country'] ?? '' ),
+            'city'     => $r['city'] !== null && $r['city'] !== '' ? (string) $r['city'] : null,
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}
