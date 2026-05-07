@@ -585,3 +585,122 @@ function yourls_format_duration( int $secs ): string {
     if ( $secs < 2592000 ) return round( $secs / 86400, 1 ) . 'd';
     return round( $secs / 2592000, 1 ) . 'mo';
 }
+
+/**
+ * New vs returning visitors based on visitor_hash repetition for the same shorturl.
+ *
+ * @return array{new:int,returning:int,total_visitors:int,total_clicks:int}
+ */
+function yourls_get_visitor_segments( string $keyword ): array {
+    $sql = 'SELECT COUNT(*) AS hits, COUNT(DISTINCT vh) AS visitors, '
+         . 'SUM(seen_count = 1) AS one_timers '
+         . 'FROM ('
+         . '  SELECT COALESCE(visitor_hash, ip_address) AS vh, COUNT(*) AS seen_count '
+         . '  FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . '  GROUP BY vh'
+         . ') t';
+    $row = yourls_get_db( 'read-visitor_segments' )->fetchOne( $sql, [ 'k' => $keyword ] );
+
+    $clicksSql = 'SELECT COUNT(*) FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $totalClicks = (int) yourls_get_db( 'read-visitor_segments' )->fetchValue( $clicksSql, [ 'k' => $keyword ] );
+
+    $visitors  = (int) ( $row['visitors']   ?? 0 );
+    $oneTimers = (int) ( $row['one_timers'] ?? 0 );
+    return [
+        'new'            => $oneTimers,
+        'returning'      => max( 0, $visitors - $oneTimers ),
+        'total_visitors' => $visitors,
+        'total_clicks'   => $totalClicks,
+    ];
+}
+
+/**
+ * Daily distinct-visitor series for the last $days days.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_unique_visitors_by_day( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-unique_visitors_day' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $out[ $cursor->format( 'Y-m-d' ) ] = 0;
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    foreach ( $rows as $r ) {
+        $key = (string) $r['d'];
+        if ( isset( $out[ $key ] ) ) {
+            $out[ $key ] = (int) $r['c'];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Bot vs human breakdown of the click count.
+ *
+ * @return array{bot:int,human:int}
+ */
+function yourls_get_bot_split( string $keyword ): array {
+    $sql = 'SELECT '
+         . 'SUM(device_type = "bot") AS bot, '
+         . 'SUM(device_type IS NOT NULL AND device_type != "bot") AS human '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $row = yourls_get_db( 'read-bot_split' )->fetchOne( $sql, [ 'k' => $keyword ] );
+    return [
+        'bot'   => (int) ( $row['bot']   ?? 0 ),
+        'human' => (int) ( $row['human'] ?? 0 ),
+    ];
+}
+
+/**
+ * OS × device-type cross-tab.
+ *
+ * @return array<string,array<string,int>>  os => [ device_type => count ]
+ */
+function yourls_get_os_by_device( string $keyword, int $limit = 6 ): array {
+    $sql = 'SELECT os, device_type, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY os, device_type';
+    $rows = yourls_get_db( 'read-os_by_device' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $totals = [];
+    foreach ( $rows as $r ) {
+        $os = $r['os'] ?: '(unknown)';
+        $totals[ $os ] = ( $totals[ $os ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $totals );
+    $top = array_slice( array_keys( $totals ), 0, $limit );
+
+    $out = [];
+    foreach ( $top as $os ) $out[ $os ] = [ 'desktop' => 0, 'mobile' => 0, 'tablet' => 0, 'bot' => 0 ];
+    foreach ( $rows as $r ) {
+        $os = $r['os'] ?: '(unknown)';
+        $dt = $r['device_type'] ?: '(unknown)';
+        if ( ! isset( $out[ $os ] ) ) continue;
+        if ( ! isset( $out[ $os ][ $dt ] ) ) $out[ $os ][ $dt ] = 0;
+        $out[ $os ][ $dt ] += (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * Top user-agent strings.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_top_user_agents( string $keyword, int $limit = 10 ): array {
+    $sql = 'SELECT user_agent AS ua, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k AND user_agent != "" '
+         . 'GROUP BY ua ORDER BY c DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-top_user_agents' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) $out[ (string) $r['ua'] ] = (int) $r['c'];
+    return $out;
+}
