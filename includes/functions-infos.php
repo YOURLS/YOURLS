@@ -389,3 +389,102 @@ function yourls_google_viz_code($graph_type, $data, $options, $id ) {
 
     return $code;
 }
+
+/**
+ * Group clicks by a hot column.
+ *
+ * @param string $keyword
+ * @param string $column   Whitelisted column name
+ * @param string $range    'all'|'24h'|'7d'|'30d'
+ * @param int    $limit
+ * @return array<string,int>  ordered desc
+ */
+function yourls_get_clicks_by_dimension( string $keyword, string $column, string $range = 'all', int $limit = 20 ): array {
+    static $allowed = [ 'device_type','browser','os','referrer_host','utm_source','utm_medium','utm_campaign','city','region','country_code' ];
+    if ( ! in_array( $column, $allowed, true ) ) return [];
+
+    $cacheKey = sprintf( 'yourls_click_agg:%s:%s:%s:%d', $keyword, $column, $range, $limit );
+    $cached   = yourls_click_cache_get( $cacheKey );
+    if ( $cached !== null ) return $cached;
+
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = 'SELECT `' . $column . '` AS k, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE ' . $where .
+        ' GROUP BY `' . $column . '` ORDER BY c DESC LIMIT :lim';
+    $sql = yourls_apply_filter( 'clicks_aggregate_query', $sql, $keyword, $column, $range, $limit );
+
+    $rows = yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
+        $out[ $key ] = (int) $r['c'];
+    }
+    yourls_click_cache_set( $cacheKey, $out );
+    return $out;
+}
+
+/**
+ * Group clicks by a JSON path inside the meta column.
+ *
+ * @param string $keyword
+ * @param string $jsonPath  Whitelisted JSON path (e.g. '$.tz')
+ * @param string $range
+ * @param int    $limit
+ * @return array<string,int>
+ */
+function yourls_get_clicks_meta_aggregate( string $keyword, string $jsonPath, string $range = 'all', int $limit = 20 ): array {
+    static $allowedPaths = [ '$.tz','$.lang','$.connection_type','$.viewport_w','$.is_bot' ];
+    if ( ! in_array( $jsonPath, $allowedPaths, true ) ) return [];
+
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = "SELECT JSON_UNQUOTE(JSON_EXTRACT(meta, :path)) AS k, COUNT(*) AS c FROM `" . YOURLS_DB_TABLE_LOG . "` WHERE $where GROUP BY k ORDER BY c DESC LIMIT :lim";
+
+    $rows = yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'path' => $jsonPath, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
+        $out[ $key ] = (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * Distinct visitor count.
+ */
+function yourls_get_unique_visitors( string $keyword, string $range = 'all' ): int {
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = 'SELECT COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS n FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE ' . $where;
+    return (int) yourls_get_db()->fetchValue( $sql, [ 'k' => $keyword ] );
+}
+
+/**
+ * Paginated raw click rows for the Activity tab.
+ */
+function yourls_get_recent_clicks( string $keyword, int $page = 1, int $perPage = 50 ): array {
+    $page = max( 1, $page );
+    $perPage = max( 1, min( 200, $perPage ) );
+    $sql = 'SELECT * FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k ORDER BY click_id DESC LIMIT :off, :lim';
+    return yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'off' => ( $page - 1 ) * $perPage, 'lim' => $perPage ] );
+}
+
+function yourls_clicks_range_where( string $range ): string {
+    return match ( $range ) {
+        '24h' => " AND click_time >= NOW() - INTERVAL 1 DAY",
+        '7d'  => " AND click_time >= NOW() - INTERVAL 7 DAY",
+        '30d' => " AND click_time >= NOW() - INTERVAL 30 DAY",
+        default => '',
+    };
+}
+
+function yourls_click_cache_get( string $key ) {
+    if ( function_exists( 'apcu_fetch' ) ) {
+        $ok = false; $v = apcu_fetch( $key, $ok );
+        return $ok ? $v : null;
+    }
+    return null;
+}
+
+function yourls_click_cache_set( string $key, $value, int $ttl = 300 ): void {
+    if ( function_exists( 'apcu_store' ) ) {
+        apcu_store( $key, $value, $ttl );
+    }
+}
