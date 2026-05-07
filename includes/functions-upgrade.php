@@ -620,3 +620,63 @@ function yourls_clean_htaccess_for_14() {
 
     return $result;
 }
+
+/**
+ * Add extended click tracking columns + indexes to the log table.
+ * DB version 510.
+ */
+function yourls_upgrade_to_510() {
+    $ydb = yourls_get_db( 'write-upgrade_to_510' );
+    $log = YOURLS_DB_TABLE_LOG;
+
+    $existing = array_column( (array) $ydb->fetchObjects( "SHOW COLUMNS FROM `$log`" ), 'Field' );
+
+    $columns = [
+        'device_type'   => "ALTER TABLE `$log` ADD COLUMN `device_type` varchar(16) NULL AFTER `country_code`",
+        'browser'       => "ALTER TABLE `$log` ADD COLUMN `browser` varchar(32) NULL AFTER `device_type`",
+        'os'            => "ALTER TABLE `$log` ADD COLUMN `os` varchar(32) NULL AFTER `browser`",
+        'referrer_host' => "ALTER TABLE `$log` ADD COLUMN `referrer_host` varchar(100) NULL AFTER `os`",
+        'utm_source'    => "ALTER TABLE `$log` ADD COLUMN `utm_source` varchar(100) NULL AFTER `referrer_host`",
+        'utm_medium'    => "ALTER TABLE `$log` ADD COLUMN `utm_medium` varchar(100) NULL AFTER `utm_source`",
+        'utm_campaign'  => "ALTER TABLE `$log` ADD COLUMN `utm_campaign` varchar(100) NULL AFTER `utm_medium`",
+        'city'          => "ALTER TABLE `$log` ADD COLUMN `city` varchar(100) NULL AFTER `utm_campaign`",
+        'region'        => "ALTER TABLE `$log` ADD COLUMN `region` varchar(100) NULL AFTER `city`",
+        'visitor_hash'  => "ALTER TABLE `$log` ADD COLUMN `visitor_hash` char(16) NULL AFTER `region`",
+        'click_uid'     => "ALTER TABLE `$log` ADD COLUMN `click_uid` char(16) NULL AFTER `visitor_hash`",
+        'meta'          => "ALTER TABLE `$log` ADD COLUMN `meta` JSON NULL AFTER `click_uid`",
+    ];
+
+    foreach ( $columns as $name => $sql ) {
+        if ( in_array( $name, $existing, true ) ) {
+            continue;
+        }
+        echo "<p>Adding `$name` column to log table. Please wait...</p>";
+        try {
+            $ydb->perform( $sql );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `$name` column. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+
+    $existing_idx = array_column( (array) $ydb->fetchObjects( "SHOW INDEX FROM `$log`" ), 'Key_name' );
+    $indexes = [
+        'device_type_idx' => "ALTER TABLE `$log` ADD INDEX `device_type_idx` (`device_type`)",
+        'utm_source_idx'  => "ALTER TABLE `$log` ADD INDEX `utm_source_idx` (`utm_source`)",
+        'click_uid_idx'   => "ALTER TABLE `$log` ADD INDEX `click_uid_idx` (`click_uid`)",
+    ];
+    foreach ( $indexes as $name => $sql ) {
+        if ( in_array( $name, $existing_idx, true ) ) {
+            continue;
+        }
+        echo "<p>Adding `$name` index. Please wait...</p>";
+        try {
+            $ydb->perform( $sql );
+            echo "<p class='success'>OK!</p>";
+        } catch ( \Exception $e ) {
+            echo "<p class='error'>Unable to add `$name` index. Error: <pre>" . $e->getMessage() . "</pre></p>";
+            die();
+        }
+    }
+}
