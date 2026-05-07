@@ -389,3 +389,1034 @@ function yourls_google_viz_code($graph_type, $data, $options, $id ) {
 
     return $code;
 }
+
+/**
+ * Group clicks by a hot column.
+ *
+ * @param string $keyword
+ * @param string $column   Whitelisted column name
+ * @param string $range    'all'|'24h'|'7d'|'30d'
+ * @param int    $limit
+ * @return array<string,int>  ordered desc
+ */
+function yourls_get_clicks_by_dimension( string $keyword, string $column, string $range = 'all', int $limit = 20 ): array {
+    static $allowed = [ 'device_type','browser','os','referrer_host','utm_source','utm_medium','utm_campaign','city','region','country_code' ];
+    if ( ! in_array( $column, $allowed, true ) ) return [];
+
+    $cacheKey = sprintf( 'yourls_click_agg:%s:%s:%s:%d', $keyword, $column, $range, $limit );
+    $cached   = yourls_click_cache_get( $cacheKey );
+    if ( $cached !== null ) return $cached;
+
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = 'SELECT `' . $column . '` AS k, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE ' . $where .
+        ' GROUP BY `' . $column . '` ORDER BY c DESC LIMIT :lim';
+    $sql = yourls_apply_filter( 'clicks_aggregate_query', $sql, $keyword, $column, $range, $limit );
+
+    $rows = yourls_get_db( 'read-clicks_by_dimension' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
+        $out[ $key ] = (int) $r['c'];
+    }
+    yourls_click_cache_set( $cacheKey, $out );
+    return $out;
+}
+
+/**
+ * Group clicks by a JSON path inside the meta column.
+ *
+ * @param string $keyword
+ * @param string $jsonPath  Whitelisted JSON path (e.g. '$.tz')
+ * @param string $range
+ * @param int    $limit
+ * @return array<string,int>
+ */
+function yourls_get_clicks_meta_aggregate( string $keyword, string $jsonPath, string $range = 'all', int $limit = 20 ): array {
+    static $allowedPaths = [ '$.tz','$.lang','$.connection_type','$.viewport_w','$.is_bot' ];
+    if ( ! in_array( $jsonPath, $allowedPaths, true ) ) return [];
+
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = "SELECT JSON_UNQUOTE(JSON_EXTRACT(meta, :path)) AS k, COUNT(*) AS c FROM `" . YOURLS_DB_TABLE_LOG . "` WHERE $where GROUP BY k ORDER BY c DESC LIMIT :lim";
+
+    $rows = yourls_get_db( 'read-clicks_meta_aggregate' )->fetchAll( $sql, [ 'k' => $keyword, 'path' => $jsonPath, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
+        $out[ $key ] = (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * Distinct visitor count.
+ */
+function yourls_get_unique_visitors( string $keyword, string $range = 'all' ): int {
+    $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
+    $sql = 'SELECT COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS n FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE ' . $where;
+    return (int) yourls_get_db( 'read-unique_visitors' )->fetchValue( $sql, [ 'k' => $keyword ] );
+}
+
+/**
+ * Paginated raw click rows for the Activity tab.
+ */
+function yourls_get_recent_clicks( string $keyword, int $page = 1, int $perPage = 50 ): array {
+    $page = max( 1, $page );
+    $perPage = max( 1, min( 200, $perPage ) );
+    $sql = 'SELECT * FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k ORDER BY click_id DESC LIMIT :off, :lim';
+    return yourls_get_db( 'read-recent_clicks' )->fetchAll( $sql, [ 'k' => $keyword, 'off' => ( $page - 1 ) * $perPage, 'lim' => $perPage ] );
+}
+
+function yourls_clicks_range_where( string $range ): string {
+    return match ( $range ) {
+        '24h' => " AND click_time >= NOW() - INTERVAL 1 DAY",
+        '7d'  => " AND click_time >= NOW() - INTERVAL 7 DAY",
+        '30d' => " AND click_time >= NOW() - INTERVAL 30 DAY",
+        default => '',
+    };
+}
+
+function yourls_click_cache_get( string $key ) {
+    if ( function_exists( 'apcu_fetch' ) ) {
+        $ok = false; $v = apcu_fetch( $key, $ok );
+        return $ok ? $v : null;
+    }
+    return null;
+}
+
+function yourls_click_cache_set( string $key, $value, int $ttl = 300 ): void {
+    if ( function_exists( 'apcu_store' ) ) {
+        apcu_store( $key, $value, $ttl );
+    }
+}
+
+/**
+ * Click counts in three rolling windows: today, last 7d, last 30d.
+ *
+ * @return array{today:int,last7d:int,last30d:int}
+ */
+function yourls_get_click_windows( string $keyword ): array {
+    $sql = 'SELECT '
+         . 'SUM(click_time >= CURRENT_DATE) AS today, '
+         . 'SUM(click_time >= NOW() - INTERVAL 7  DAY) AS last7d, '
+         . 'SUM(click_time >= NOW() - INTERVAL 30 DAY) AS last30d '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $row = yourls_get_db( 'read-click_windows' )->fetchOne( $sql, [ 'k' => $keyword ] );
+    return [
+        'today'   => (int) ( $row['today']   ?? 0 ),
+        'last7d'  => (int) ( $row['last7d']  ?? 0 ),
+        'last30d' => (int) ( $row['last30d'] ?? 0 ),
+    ];
+}
+
+/**
+ * Daily click count for the last $days days. Returns an associative array
+ * keyed by 'YYYY-MM-DD' (UTC date), every day filled (zeros included).
+ *
+ * @return array<string,int>
+ */
+function yourls_get_clicks_by_day( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-clicks_by_day' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $out[ $cursor->format( 'Y-m-d' ) ] = 0;
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    foreach ( $rows as $r ) {
+        $key = (string) $r['d'];
+        if ( isset( $out[ $key ] ) ) {
+            $out[ $key ] = (int) $r['c'];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Hour-of-day × day-of-week grid for the last $days days.
+ * Returns a 7x24 matrix indexed by [dow 0=Mon..6=Sun][hour 0..23].
+ *
+ * @return array<int,array<int,int>>
+ */
+function yourls_get_clicks_heatmap( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    // MySQL WEEKDAY() returns 0=Mon..6=Sun, matching our convention.
+    $sql = 'SELECT WEEKDAY(click_time) AS dow, HOUR(click_time) AS h, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY dow, h';
+    $rows = yourls_get_db( 'read-clicks_heatmap' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $grid = array_fill( 0, 7, array_fill( 0, 24, 0 ) );
+    foreach ( $rows as $r ) {
+        $dow = (int) $r['dow']; $h = (int) $r['h'];
+        if ( $dow >= 0 && $dow < 7 && $h >= 0 && $h < 24 ) {
+            $grid[ $dow ][ $h ] = (int) $r['c'];
+        }
+    }
+    return $grid;
+}
+
+/**
+ * Time elapsed between link creation and the first recorded click.
+ * Returns NULL if either anchor is missing.
+ */
+function yourls_get_time_to_first_click( string $keyword ): ?int {
+    $sql = 'SELECT TIMESTAMPDIFF(SECOND, u.timestamp, MIN(l.click_time)) AS secs '
+         . 'FROM `' . YOURLS_DB_TABLE_URL . '` u '
+         . 'LEFT JOIN `' . YOURLS_DB_TABLE_LOG . '` l ON l.shorturl = u.keyword '
+         . 'WHERE u.keyword = :k GROUP BY u.timestamp';
+    $val = yourls_get_db( 'read-time_to_first_click' )->fetchValue( $sql, [ 'k' => $keyword ] );
+    return $val === null ? null : (int) $val;
+}
+
+/**
+ * Format a number of seconds into a short human-readable string.
+ */
+function yourls_format_duration( int $secs ): string {
+    if ( $secs < 60 )      return $secs . 's';
+    if ( $secs < 3600 )    return round( $secs / 60 ) . 'm';
+    if ( $secs < 86400 )   return round( $secs / 3600, 1 ) . 'h';
+    if ( $secs < 2592000 ) return round( $secs / 86400, 1 ) . 'd';
+    return round( $secs / 2592000, 1 ) . 'mo';
+}
+
+/**
+ * New vs returning visitors based on visitor_hash repetition for the same shorturl.
+ *
+ * @return array{new:int,returning:int,total_visitors:int,total_clicks:int}
+ */
+function yourls_get_visitor_segments( string $keyword ): array {
+    $sql = 'SELECT COUNT(*) AS hits, COUNT(DISTINCT vh) AS visitors, '
+         . 'SUM(seen_count = 1) AS one_timers '
+         . 'FROM ('
+         . '  SELECT COALESCE(visitor_hash, ip_address) AS vh, COUNT(*) AS seen_count '
+         . '  FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . '  GROUP BY vh'
+         . ') t';
+    $row = yourls_get_db( 'read-visitor_segments' )->fetchOne( $sql, [ 'k' => $keyword ] );
+
+    $clicksSql = 'SELECT COUNT(*) FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $totalClicks = (int) yourls_get_db( 'read-visitor_segments' )->fetchValue( $clicksSql, [ 'k' => $keyword ] );
+
+    $visitors  = (int) ( $row['visitors']   ?? 0 );
+    $oneTimers = (int) ( $row['one_timers'] ?? 0 );
+    return [
+        'new'            => $oneTimers,
+        'returning'      => max( 0, $visitors - $oneTimers ),
+        'total_visitors' => $visitors,
+        'total_clicks'   => $totalClicks,
+    ];
+}
+
+/**
+ * Daily distinct-visitor series for the last $days days.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_unique_visitors_by_day( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-unique_visitors_day' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $out[ $cursor->format( 'Y-m-d' ) ] = 0;
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    foreach ( $rows as $r ) {
+        $key = (string) $r['d'];
+        if ( isset( $out[ $key ] ) ) {
+            $out[ $key ] = (int) $r['c'];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Bot vs human breakdown of the click count.
+ *
+ * @return array{bot:int,human:int}
+ */
+function yourls_get_bot_split( string $keyword ): array {
+    $sql = 'SELECT '
+         . 'SUM(device_type = "bot") AS bot, '
+         . 'SUM(device_type IS NOT NULL AND device_type != "bot") AS human '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $row = yourls_get_db( 'read-bot_split' )->fetchOne( $sql, [ 'k' => $keyword ] );
+    return [
+        'bot'   => (int) ( $row['bot']   ?? 0 ),
+        'human' => (int) ( $row['human'] ?? 0 ),
+    ];
+}
+
+/**
+ * OS × device-type cross-tab.
+ *
+ * @return array<string,array<string,int>>  os => [ device_type => count ]
+ */
+function yourls_get_os_by_device( string $keyword, int $limit = 6 ): array {
+    $sql = 'SELECT os, device_type, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY os, device_type';
+    $rows = yourls_get_db( 'read-os_by_device' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $totals = [];
+    foreach ( $rows as $r ) {
+        $os = $r['os'] ?: '(unknown)';
+        $totals[ $os ] = ( $totals[ $os ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $totals );
+    $top = array_slice( array_keys( $totals ), 0, $limit );
+
+    $out = [];
+    foreach ( $top as $os ) $out[ $os ] = [ 'desktop' => 0, 'mobile' => 0, 'tablet' => 0, 'bot' => 0 ];
+    foreach ( $rows as $r ) {
+        $os = $r['os'] ?: '(unknown)';
+        $dt = $r['device_type'] ?: '(unknown)';
+        if ( ! isset( $out[ $os ] ) ) continue;
+        if ( ! isset( $out[ $os ][ $dt ] ) ) $out[ $os ][ $dt ] = 0;
+        $out[ $os ][ $dt ] += (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * Top user-agent strings.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_top_user_agents( string $keyword, int $limit = 10 ): array {
+    $sql = 'SELECT user_agent AS ua, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k AND user_agent != "" '
+         . 'GROUP BY ua ORDER BY c DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-top_user_agents' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) $out[ (string) $r['ua'] ] = (int) $r['c'];
+    return $out;
+}
+
+/**
+ * ISO 3166-1 alpha-2 country code -> continent code mapping.
+ * Used by Geography tab for continent rollups when the click row only
+ * carries a country_code.
+ */
+function yourls_country_to_continent( string $cc ): string {
+    static $map = null;
+    if ( $map === null ) {
+        $map = [
+            // Africa
+            'DZ'=>'AF','AO'=>'AF','BJ'=>'AF','BW'=>'AF','BF'=>'AF','BI'=>'AF','CM'=>'AF','CV'=>'AF','CF'=>'AF','TD'=>'AF',
+            'KM'=>'AF','CG'=>'AF','CD'=>'AF','CI'=>'AF','DJ'=>'AF','EG'=>'AF','GQ'=>'AF','ER'=>'AF','SZ'=>'AF','ET'=>'AF',
+            'GA'=>'AF','GM'=>'AF','GH'=>'AF','GN'=>'AF','GW'=>'AF','KE'=>'AF','LS'=>'AF','LR'=>'AF','LY'=>'AF','MG'=>'AF',
+            'MW'=>'AF','ML'=>'AF','MR'=>'AF','MU'=>'AF','YT'=>'AF','MA'=>'AF','MZ'=>'AF','NA'=>'AF','NE'=>'AF','NG'=>'AF',
+            'RE'=>'AF','RW'=>'AF','SH'=>'AF','ST'=>'AF','SN'=>'AF','SC'=>'AF','SL'=>'AF','SO'=>'AF','ZA'=>'AF','SS'=>'AF',
+            'SD'=>'AF','TZ'=>'AF','TG'=>'AF','TN'=>'AF','UG'=>'AF','EH'=>'AF','ZM'=>'AF','ZW'=>'AF',
+            // Antarctica
+            'AQ'=>'AN','BV'=>'AN','TF'=>'AN','HM'=>'AN','GS'=>'AN',
+            // Asia
+            'AF'=>'AS','AM'=>'AS','AZ'=>'AS','BH'=>'AS','BD'=>'AS','BT'=>'AS','BN'=>'AS','KH'=>'AS','CN'=>'AS','CY'=>'AS',
+            'GE'=>'AS','HK'=>'AS','IN'=>'AS','ID'=>'AS','IR'=>'AS','IQ'=>'AS','IL'=>'AS','JP'=>'AS','JO'=>'AS','KZ'=>'AS',
+            'KP'=>'AS','KR'=>'AS','KW'=>'AS','KG'=>'AS','LA'=>'AS','LB'=>'AS','MO'=>'AS','MY'=>'AS','MV'=>'AS','MN'=>'AS',
+            'MM'=>'AS','NP'=>'AS','OM'=>'AS','PK'=>'AS','PS'=>'AS','PH'=>'AS','QA'=>'AS','SA'=>'AS','SG'=>'AS','LK'=>'AS',
+            'SY'=>'AS','TW'=>'AS','TJ'=>'AS','TH'=>'AS','TL'=>'AS','TR'=>'AS','TM'=>'AS','AE'=>'AS','UZ'=>'AS','VN'=>'AS','YE'=>'AS',
+            // Europe
+            'AL'=>'EU','AD'=>'EU','AT'=>'EU','BY'=>'EU','BE'=>'EU','BA'=>'EU','BG'=>'EU','HR'=>'EU','CZ'=>'EU','DK'=>'EU',
+            'EE'=>'EU','FO'=>'EU','FI'=>'EU','FR'=>'EU','DE'=>'EU','GI'=>'EU','GR'=>'EU','GG'=>'EU','HU'=>'EU','IS'=>'EU',
+            'IE'=>'EU','IM'=>'EU','IT'=>'EU','JE'=>'EU','XK'=>'EU','LV'=>'EU','LI'=>'EU','LT'=>'EU','LU'=>'EU','MT'=>'EU',
+            'MD'=>'EU','MC'=>'EU','ME'=>'EU','NL'=>'EU','MK'=>'EU','NO'=>'EU','PL'=>'EU','PT'=>'EU','RO'=>'EU','RU'=>'EU',
+            'SM'=>'EU','RS'=>'EU','SK'=>'EU','SI'=>'EU','ES'=>'EU','SJ'=>'EU','SE'=>'EU','CH'=>'EU','UA'=>'EU','GB'=>'EU','VA'=>'EU','AX'=>'EU',
+            // North America
+            'AI'=>'NA','AG'=>'NA','AW'=>'NA','BS'=>'NA','BB'=>'NA','BZ'=>'NA','BM'=>'NA','BQ'=>'NA','CA'=>'NA','KY'=>'NA',
+            'CR'=>'NA','CU'=>'NA','CW'=>'NA','DM'=>'NA','DO'=>'NA','SV'=>'NA','GL'=>'NA','GD'=>'NA','GP'=>'NA','GT'=>'NA',
+            'HT'=>'NA','HN'=>'NA','JM'=>'NA','MQ'=>'NA','MX'=>'NA','MS'=>'NA','NI'=>'NA','PA'=>'NA','PR'=>'NA','BL'=>'NA',
+            'KN'=>'NA','LC'=>'NA','MF'=>'NA','PM'=>'NA','VC'=>'NA','SX'=>'NA','TT'=>'NA','TC'=>'NA','US'=>'NA','VG'=>'NA','VI'=>'NA',
+            // Oceania
+            'AS'=>'OC','AU'=>'OC','CX'=>'OC','CC'=>'OC','CK'=>'OC','FJ'=>'OC','PF'=>'OC','GU'=>'OC','KI'=>'OC','MH'=>'OC',
+            'FM'=>'OC','NR'=>'OC','NC'=>'OC','NZ'=>'OC','NU'=>'OC','NF'=>'OC','MP'=>'OC','PW'=>'OC','PG'=>'OC','PN'=>'OC',
+            'WS'=>'OC','SB'=>'OC','TK'=>'OC','TO'=>'OC','TV'=>'OC','UM'=>'OC','VU'=>'OC','WF'=>'OC',
+            // South America
+            'AR'=>'SA','BO'=>'SA','BR'=>'SA','CL'=>'SA','CO'=>'SA','EC'=>'SA','FK'=>'SA','GF'=>'SA','GY'=>'SA','PY'=>'SA',
+            'PE'=>'SA','SR'=>'SA','UY'=>'SA','VE'=>'SA',
+        ];
+    }
+    $cc = strtoupper( $cc );
+    return $map[ $cc ] ?? '??';
+}
+
+/**
+ * Pretty name for a continent code.
+ */
+function yourls_continent_name( string $code ): string {
+    return [
+        'AF' => yourls__( 'Africa' ),
+        'AN' => yourls__( 'Antarctica' ),
+        'AS' => yourls__( 'Asia' ),
+        'EU' => yourls__( 'Europe' ),
+        'NA' => yourls__( 'North America' ),
+        'OC' => yourls__( 'Oceania' ),
+        'SA' => yourls__( 'South America' ),
+    ][ $code ] ?? yourls__( 'Unknown' );
+}
+
+/**
+ * Country tier classification used for the tier-1/2/3 KPI.
+ * Sources: G7 + EU27 + ANZ + Israel + Korea + Singapore + HK + Taiwan in tier 1;
+ * BRICS + Gulf + LatAm majors + East Europe in tier 2; the rest in tier 3.
+ */
+function yourls_country_tier( string $cc ): int {
+    static $tiers = null;
+    if ( $tiers === null ) {
+        $tier1 = [ 'US','CA','GB','DE','FR','IT','JP','AU','NZ','IL','KR','SG','HK','TW','CH','NO','SE','FI','DK','IS','AT','BE','NL','LU','IE','ES','PT','GR','PL','CZ','HU','SK','SI','HR','EE','LV','LT','BG','RO','MT','CY','MC','LI','AD','SM' ];
+        $tier2 = [ 'BR','RU','IN','CN','ZA','MX','AR','CL','CO','PE','UY','SA','AE','QA','KW','BH','OM','TR','UA','BY','RS','BA','MK','AL','ME','MD','XK','MY','TH','VN','PH','ID','EG','MA','TN','NG','KE','GH' ];
+        $tiers = [];
+        foreach ( $tier1 as $c ) $tiers[ $c ] = 1;
+        foreach ( $tier2 as $c ) $tiers[ $c ] = 2;
+    }
+    $cc = strtoupper( $cc );
+    return $tiers[ $cc ] ?? 3;
+}
+
+/**
+ * Geography rollups for the page.
+ *
+ * @return array{
+ *   countries: array<string,int>,
+ *   cities: array<string,int>,
+ *   continents: array<string,int>,
+ *   tiers: array{1:int,2:int,3:int},
+ *   total_clicks: int,
+ *   reached: int,
+ *   coverage_pct: float,
+ *   hhi: float,
+ *   top5_share: float,
+ *   top_continent: ?string
+ * }
+ */
+function yourls_get_geography_rollup( string $keyword ): array {
+    $countries = yourls_get_clicks_by_dimension( $keyword, 'country_code', 'all', 250 );
+    $cities    = yourls_get_clicks_by_dimension( $keyword, 'city',         'all', 100 );
+
+    // Strip the (unknown) bucket for KPI math but keep it for the table view.
+    $real = $countries;
+    unset( $real['(unknown)'] );
+
+    $totalReal = array_sum( $real );
+    $reached   = count( $real );
+
+    // Continent rollup
+    $continents = [];
+    $tiers      = [ 1 => 0, 2 => 0, 3 => 0 ];
+    foreach ( $real as $cc => $n ) {
+        $cont = yourls_country_to_continent( $cc );
+        $continents[ $cont ] = ( $continents[ $cont ] ?? 0 ) + (int) $n;
+        $tiers[ yourls_country_tier( $cc ) ] += (int) $n;
+    }
+    arsort( $continents );
+
+    // HHI = sum of squared shares (0..10000 in market-share convention; we use 0..1)
+    $hhi = 0.0;
+    if ( $totalReal > 0 ) {
+        foreach ( $real as $n ) {
+            $share = $n / $totalReal;
+            $hhi  += $share * $share;
+        }
+    }
+
+    // Top-5 concentration
+    $top5Share = 0.0;
+    if ( $totalReal > 0 ) {
+        $top5Sum   = array_sum( array_slice( $real, 0, 5, true ) );
+        $top5Share = $top5Sum / $totalReal;
+    }
+
+    return [
+        'countries'     => $countries,
+        'cities'        => $cities,
+        'continents'    => $continents,
+        'tiers'         => $tiers,
+        'total_clicks'  => array_sum( $countries ),
+        'reached'       => $reached,
+        'coverage_pct'  => round( $reached * 100 / 195, 1 ), // 195 UN-recognised states
+        'hhi'           => round( $hhi, 4 ),
+        'top5_share'    => round( $top5Share * 100, 1 ),
+        'top_continent' => $continents ? array_key_first( $continents ) : null,
+    ];
+}
+
+/**
+ * Daily click series for the top-N countries (multi-line chart).
+ *
+ * @return array{labels:array<string>,series:array<string,array<int>>}
+ */
+function yourls_get_top_countries_trend( string $keyword, int $topN = 5, int $days = 30 ): array {
+    $days = max( 1, min( 90, $days ) );
+
+    // 1) find the top-N country codes for the period
+    $sql = 'SELECT country_code AS k, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'AND country_code != "" '
+         . 'GROUP BY k ORDER BY c DESC LIMIT :lim';
+    $top = yourls_get_db( 'read-top_countries_trend' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days, 'lim' => $topN ] );
+    $codes = array_map( fn( $r ) => (string) $r['k'], $top );
+    if ( ! $codes ) return [ 'labels' => [], 'series' => [] ];
+
+    // 2) per-day per-country click counts
+    $placeholders = implode( ',', array_map( fn( $i ) => ':c' . $i, array_keys( $codes ) ) );
+    $bind = [ 'k' => $keyword, 'days' => $days ];
+    foreach ( $codes as $i => $c ) $bind[ 'c' . $i ] = $c;
+    $sql = 'SELECT DATE(click_time) AS d, country_code AS cc, COUNT(*) AS n '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'AND country_code IN (' . $placeholders . ') '
+         . 'GROUP BY d, cc ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-top_countries_trend' )->fetchAll( $sql, $bind );
+
+    // build label axis + zero-filled series
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    $series = [];
+    foreach ( $codes as $c ) $series[ $c ] = array_fill( 0, $days, 0 );
+    foreach ( $rows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx !== false && isset( $series[ (string) $r['cc'] ] ) ) {
+            $series[ (string) $r['cc'] ][ $idx ] = (int) $r['n'];
+        }
+    }
+    return [ 'labels' => $labels, 'series' => $series ];
+}
+
+/**
+ * Country + city + unique-visitor breakdown for the table view.
+ *
+ * @return array<int,array{country:string,city:?string,clicks:int,visitors:int}>
+ */
+function yourls_get_geo_table( string $keyword, int $limit = 30 ): array {
+    $sql = 'SELECT country_code AS country, city, COUNT(*) AS clicks, '
+         . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY country, city ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-geo_table' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'country'  => (string) ( $r['country'] ?? '' ),
+            'city'     => $r['city'] !== null && $r['city'] !== '' ? (string) $r['city'] : null,
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}
+
+/**
+ * ISO 3166-1 alpha-2 -> numeric mapping. The world-atlas TopoJSON used by
+ * the Geography map identifies features by ISO numeric, so the Blade view
+ * needs a JS-readable map alpha2 -> numeric. The PHP side already groups
+ * clicks by alpha-2; we hand the JS an array keyed by numeric.
+ */
+function yourls_country_to_iso_numeric( string $cc ): ?string {
+    static $map = null;
+    if ( $map === null ) {
+        $map = [
+            'AF'=>'004','AL'=>'008','DZ'=>'012','AS'=>'016','AD'=>'020','AO'=>'024','AI'=>'660','AQ'=>'010','AG'=>'028','AR'=>'032',
+            'AM'=>'051','AW'=>'533','AU'=>'036','AT'=>'040','AZ'=>'031','BS'=>'044','BH'=>'048','BD'=>'050','BB'=>'052','BY'=>'112',
+            'BE'=>'056','BZ'=>'084','BJ'=>'204','BM'=>'060','BT'=>'064','BO'=>'068','BQ'=>'535','BA'=>'070','BW'=>'072','BV'=>'074',
+            'BR'=>'076','IO'=>'086','BN'=>'096','BG'=>'100','BF'=>'854','BI'=>'108','CV'=>'132','KH'=>'116','CM'=>'120','CA'=>'124',
+            'KY'=>'136','CF'=>'140','TD'=>'148','CL'=>'152','CN'=>'156','CX'=>'162','CC'=>'166','CO'=>'170','KM'=>'174','CG'=>'178',
+            'CD'=>'180','CK'=>'184','CR'=>'188','CI'=>'384','HR'=>'191','CU'=>'192','CW'=>'531','CY'=>'196','CZ'=>'203','DK'=>'208',
+            'DJ'=>'262','DM'=>'212','DO'=>'214','EC'=>'218','EG'=>'818','SV'=>'222','GQ'=>'226','ER'=>'232','EE'=>'233','SZ'=>'748',
+            'ET'=>'231','FK'=>'238','FO'=>'234','FJ'=>'242','FI'=>'246','FR'=>'250','GF'=>'254','PF'=>'258','TF'=>'260','GA'=>'266',
+            'GM'=>'270','GE'=>'268','DE'=>'276','GH'=>'288','GI'=>'292','GR'=>'300','GL'=>'304','GD'=>'308','GP'=>'312','GU'=>'316',
+            'GT'=>'320','GG'=>'831','GN'=>'324','GW'=>'624','GY'=>'328','HT'=>'332','HM'=>'334','VA'=>'336','HN'=>'340','HK'=>'344',
+            'HU'=>'348','IS'=>'352','IN'=>'356','ID'=>'360','IR'=>'364','IQ'=>'368','IE'=>'372','IM'=>'833','IL'=>'376','IT'=>'380',
+            'JM'=>'388','JP'=>'392','JE'=>'832','JO'=>'400','KZ'=>'398','KE'=>'404','KI'=>'296','KP'=>'408','KR'=>'410','KW'=>'414',
+            'KG'=>'417','LA'=>'418','LV'=>'428','LB'=>'422','LS'=>'426','LR'=>'430','LY'=>'434','LI'=>'438','LT'=>'440','LU'=>'442',
+            'MO'=>'446','MG'=>'450','MW'=>'454','MY'=>'458','MV'=>'462','ML'=>'466','MT'=>'470','MH'=>'584','MQ'=>'474','MR'=>'478',
+            'MU'=>'480','YT'=>'175','MX'=>'484','FM'=>'583','MD'=>'498','MC'=>'492','MN'=>'496','ME'=>'499','MS'=>'500','MA'=>'504',
+            'MZ'=>'508','MM'=>'104','NA'=>'516','NR'=>'520','NP'=>'524','NL'=>'528','NC'=>'540','NZ'=>'554','NI'=>'558','NE'=>'562',
+            'NG'=>'566','NU'=>'570','NF'=>'574','MK'=>'807','MP'=>'580','NO'=>'578','OM'=>'512','PK'=>'586','PW'=>'585','PS'=>'275',
+            'PA'=>'591','PG'=>'598','PY'=>'600','PE'=>'604','PH'=>'608','PN'=>'612','PL'=>'616','PT'=>'620','PR'=>'630','QA'=>'634',
+            'RE'=>'638','RO'=>'642','RU'=>'643','RW'=>'646','BL'=>'652','SH'=>'654','KN'=>'659','LC'=>'662','MF'=>'663','PM'=>'666',
+            'VC'=>'670','WS'=>'882','SM'=>'674','ST'=>'678','SA'=>'682','SN'=>'686','RS'=>'688','SC'=>'690','SL'=>'694','SG'=>'702',
+            'SX'=>'534','SK'=>'703','SI'=>'705','SB'=>'090','SO'=>'706','ZA'=>'710','GS'=>'239','SS'=>'728','ES'=>'724','LK'=>'144',
+            'SD'=>'729','SR'=>'740','SJ'=>'744','SE'=>'752','CH'=>'756','SY'=>'760','TW'=>'158','TJ'=>'762','TZ'=>'834','TH'=>'764',
+            'TL'=>'626','TG'=>'768','TK'=>'772','TO'=>'776','TT'=>'780','TN'=>'788','TR'=>'792','TM'=>'795','TC'=>'796','TV'=>'798',
+            'UG'=>'800','UA'=>'804','AE'=>'784','GB'=>'826','US'=>'840','UM'=>'581','UY'=>'858','UZ'=>'860','VU'=>'548','VE'=>'862',
+            'VN'=>'704','VG'=>'092','VI'=>'850','WF'=>'876','EH'=>'732','YE'=>'887','ZM'=>'894','ZW'=>'716','XK'=>'983',
+        ];
+    }
+    $cc = strtoupper( $cc );
+    return $map[ $cc ] ?? null;
+}
+
+/**
+ * Pretty country name from ISO 3166-1 alpha-2 code (English).
+ * Used by the Geography map tooltips. Best-effort — falls back to the code.
+ */
+function yourls_country_name( string $cc ): string {
+    if ( function_exists( 'yourls_geo_countrycode_to_countryname' ) ) {
+        $name = (string) yourls_geo_countrycode_to_countryname( strtoupper( $cc ) );
+        if ( $name !== '' ) return $name;
+    }
+    return strtoupper( $cc );
+}
+
+/**
+ * Categorise a referrer host into a traffic source category.
+ *
+ * Returns one of: 'direct', 'social', 'search', 'email', 'qr', 'referral'.
+ *  - direct  : no referrer host
+ *  - social  : known social platform domain
+ *  - search  : known search engine domain
+ *  - email   : known webmail / newsletter domain (best-effort)
+ *  - qr      : utm_medium tag flagged as 'qr' (caller passes it in)
+ *  - referral: anything else
+ */
+function yourls_classify_source( ?string $host, ?string $utmMedium = null ): string {
+    if ( is_string( $utmMedium ) && strtolower( trim( $utmMedium ) ) === 'qr' ) return 'qr';
+    if ( $host === null || $host === '' ) return 'direct';
+
+    $host = strtolower( $host );
+    static $social = [
+        'facebook.com','m.facebook.com','l.facebook.com','fb.com','fb.me',
+        'twitter.com','x.com','t.co','mobile.twitter.com',
+        'linkedin.com','www.linkedin.com','lnkd.in',
+        'instagram.com','l.instagram.com',
+        'tiktok.com','www.tiktok.com',
+        'reddit.com','www.reddit.com','old.reddit.com','out.reddit.com',
+        'pinterest.com','www.pinterest.com','pin.it',
+        'youtube.com','www.youtube.com','youtu.be','m.youtube.com',
+        'whatsapp.com','wa.me',
+        'telegram.org','t.me',
+        'snapchat.com',
+        'discord.com','discord.gg',
+        'mastodon.social','threads.net','bsky.app',
+        'news.ycombinator.com',
+        'medium.com',
+    ];
+    static $search = [
+        'google.com','www.google.com','google.co.uk','google.fr','google.de','google.it','google.es','google.nl','google.ca','google.com.au','google.co.jp','google.com.br','google.co.in','google.ru',
+        'bing.com','www.bing.com',
+        'duckduckgo.com',
+        'yahoo.com','search.yahoo.com',
+        'yandex.com','yandex.ru',
+        'baidu.com','www.baidu.com',
+        'ecosia.org','startpage.com','qwant.com','brave.com','search.brave.com','kagi.com',
+    ];
+    static $email = [
+        'mail.google.com','outlook.live.com','outlook.office.com','outlook.office365.com',
+        'mail.yahoo.com','mail.aol.com','mail.proton.me','protonmail.com',
+        'mailchimp.com','sendgrid.net','sendinblue.com','brevo.com','convertkit.com',
+        'zoho.com','superhuman.com','fastmail.com',
+    ];
+    if ( in_array( $host, $social, true ) ) return 'social';
+    if ( in_array( $host, $search, true ) ) return 'search';
+    if ( in_array( $host, $email,  true ) ) return 'email';
+
+    // suffix matches for google.* and similar
+    foreach ( $search as $s ) if ( str_ends_with( $host, '.' . $s ) ) return 'search';
+    foreach ( $social as $s ) if ( str_ends_with( $host, '.' . $s ) ) return 'social';
+
+    return 'referral';
+}
+
+/**
+ * Aggregate clicks by source category. Pulls each (referrer_host, utm_medium)
+ * combo and rolls up via yourls_classify_source.
+ *
+ * @return array<string,int>  category => clicks (ordered desc)
+ */
+function yourls_get_clicks_by_source_category( string $keyword ): array {
+    $sql = 'SELECT referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY h, m';
+    $rows = yourls_get_db( 'read-source_categories' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [ 'direct' => 0, 'social' => 0, 'search' => 0, 'email' => 0, 'qr' => 0, 'referral' => 0 ];
+    foreach ( $rows as $r ) {
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $out[ $cat ] = ( $out[ $cat ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $out );
+    return array_filter( $out, fn( $v ) => $v > 0 );
+}
+
+/**
+ * Top referrers within a category, with optional drill-down.
+ *
+ * @param string $category one of 'social', 'search', 'email', 'referral'
+ * @return array<string,int>
+ */
+function yourls_get_top_referrers_in_category( string $keyword, string $category, int $limit = 10 ): array {
+    $sql = 'SELECT referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND referrer_host IS NOT NULL AND referrer_host != "" '
+         . 'GROUP BY h, m';
+    $rows = yourls_get_db( 'read-referrers_in_category' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $host = (string) $r['h'];
+        $cat  = yourls_classify_source( $host, $r['m'] ?? null );
+        if ( $cat !== $category ) continue;
+        $out[ $host ] = ( $out[ $host ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $out );
+    return array_slice( $out, 0, $limit, true );
+}
+
+/**
+ * Source category daily series for stacked area / multi-line.
+ *
+ * @return array{labels:array<string>,series:array<string,array<int>>}
+ */
+function yourls_get_source_categories_trend( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 90, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d, h, m ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-source_categories_trend' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor   = $cursor->modify( '+1 day' );
+    }
+    $cats = [ 'direct', 'social', 'search', 'email', 'qr', 'referral' ];
+    $series = [];
+    foreach ( $cats as $c ) $series[ $c ] = array_fill( 0, $days, 0 );
+
+    foreach ( $rows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx === false ) continue;
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $series[ $cat ][ $idx ] += (int) $r['c'];
+    }
+    // drop empty series
+    $series = array_filter( $series, fn( $vals ) => array_sum( $vals ) > 0 );
+    return [ 'labels' => $labels, 'series' => $series ];
+}
+
+/**
+ * Source category × day-of-week heatmap (UTC).
+ *
+ * @return array<string,array<int,int>>  category => [ dow=>count ]
+ */
+function yourls_get_source_dow_heatmap( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT WEEKDAY(click_time) AS dow, referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY dow, h, m';
+    $rows = yourls_get_db( 'read-source_dow_heatmap' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    foreach ( $rows as $r ) {
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $dow = (int) $r['dow'];
+        if ( ! isset( $out[ $cat ] ) ) $out[ $cat ] = array_fill( 0, 7, 0 );
+        if ( $dow >= 0 && $dow < 7 ) $out[ $cat ][ $dow ] += (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * UTM matrix: source × medium × campaign rollup.
+ *
+ * @return array<int,array{source:string,medium:string,campaign:string,clicks:int,visitors:int}>
+ */
+function yourls_get_utm_matrix( string $keyword, int $limit = 50 ): array {
+    $sql = 'SELECT '
+         . '  COALESCE(utm_source,"(none)") AS source, '
+         . '  COALESCE(utm_medium,"(none)") AS medium, '
+         . '  COALESCE(utm_campaign,"(none)") AS campaign, '
+         . '  COUNT(*) AS clicks, '
+         . '  COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND (utm_source IS NOT NULL OR utm_medium IS NOT NULL OR utm_campaign IS NOT NULL) '
+         . 'GROUP BY source, medium, campaign ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-utm_matrix' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'source'   => (string) $r['source'],
+            'medium'   => (string) $r['medium'],
+            'campaign' => (string) $r['campaign'],
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}
+
+/**
+ * Top referrers with optional 30-day daily series for sparklines.
+ *
+ * @return array<int,array{host:string,category:string,clicks:int,visitors:int,sparkline:array<int>}>
+ */
+function yourls_get_top_referrers_with_trend( string $keyword, int $limit = 20, int $days = 30 ): array {
+    // 1) totals + visitors
+    $totalsSql = 'SELECT referrer_host AS h, COUNT(*) AS clicks, '
+               . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+               . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+               . 'AND referrer_host IS NOT NULL AND referrer_host != "" '
+               . 'GROUP BY h ORDER BY clicks DESC LIMIT :lim';
+    $totals = yourls_get_db( 'read-top_referrers' )->fetchAll( $totalsSql, [ 'k' => $keyword, 'lim' => $limit ] );
+    if ( ! $totals ) return [];
+
+    $hosts = array_map( fn( $r ) => (string) $r['h'], $totals );
+    $placeholders = implode( ',', array_map( fn( $i ) => ':h' . $i, array_keys( $hosts ) ) );
+    $bind = [ 'k' => $keyword, 'days' => $days ];
+    foreach ( $hosts as $i => $h ) $bind[ 'h' . $i ] = $h;
+
+    // 2) per-host per-day series
+    $trendSql = 'SELECT DATE(click_time) AS d, referrer_host AS h, COUNT(*) AS c '
+              . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+              . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+              . 'AND referrer_host IN (' . $placeholders . ') '
+              . 'GROUP BY d, h';
+    $trendRows = yourls_get_db( 'read-top_referrers' )->fetchAll( $trendSql, $bind );
+
+    // build label axis
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    $byHost = [];
+    foreach ( $hosts as $h ) $byHost[ $h ] = array_fill( 0, $days, 0 );
+    foreach ( $trendRows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx !== false && isset( $byHost[ (string) $r['h'] ] ) ) {
+            $byHost[ (string) $r['h'] ][ $idx ] = (int) $r['c'];
+        }
+    }
+
+    $out = [];
+    foreach ( $totals as $r ) {
+        $h = (string) $r['h'];
+        $out[] = [
+            'host'      => $h,
+            'category'  => yourls_classify_source( $h, null ),
+            'clicks'    => (int) $r['clicks'],
+            'visitors'  => (int) $r['visitors'],
+            'sparkline' => $byHost[ $h ] ?? array_fill( 0, $days, 0 ),
+        ];
+    }
+    return $out;
+}
+
+/**
+ * DPR distribution (1x / 2x / 3x / other) for the keyword.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_dpr_distribution( string $keyword ): array {
+    $sql = 'SELECT JSON_UNQUOTE(JSON_EXTRACT(meta, "$.dpr")) AS dpr, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'GROUP BY dpr';
+    $rows = yourls_get_db( 'read-dpr_dist' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $bucket = [ '1x' => 0, '2x' => 0, '3x' => 0, 'other' => 0 ];
+    foreach ( $rows as $r ) {
+        $v = $r['dpr'];
+        if ( $v === null || $v === '' || $v === 'null' ) continue;
+        $f = (float) $v;
+        if ( $f <= 1.25 )      $bucket['1x']    += (int) $r['c'];
+        elseif ( $f <= 2.25 )  $bucket['2x']    += (int) $r['c'];
+        elseif ( $f <= 3.25 )  $bucket['3x']    += (int) $r['c'];
+        else                   $bucket['other'] += (int) $r['c'];
+    }
+    return array_filter( $bucket, fn( $v ) => $v > 0 );
+}
+
+/**
+ * Average / median viewport size (width and height) over rows that have it.
+ *
+ * @return array{avg_w:int,avg_h:int,med_w:int,med_h:int,samples:int}
+ */
+function yourls_get_viewport_stats( string $keyword ): array {
+    $sql = 'SELECT '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_w")) AS UNSIGNED) AS w, '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_h")) AS UNSIGNED) AS h '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") != 0';
+    $rows = yourls_get_db( 'read-viewport_stats' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $ws = []; $hs = [];
+    foreach ( $rows as $r ) {
+        $w = (int) $r['w']; $h = (int) $r['h'];
+        if ( $w > 0 && $h > 0 ) { $ws[] = $w; $hs[] = $h; }
+    }
+    $median = function ( array $arr ) {
+        if ( ! $arr ) return 0;
+        sort( $arr );
+        $n = count( $arr );
+        return (int) ( $n % 2 ? $arr[ ( $n - 1 ) / 2 ] : ( $arr[ $n / 2 - 1 ] + $arr[ $n / 2 ] ) / 2 );
+    };
+    return [
+        'avg_w'   => $ws ? (int) round( array_sum( $ws ) / count( $ws ) ) : 0,
+        'avg_h'   => $hs ? (int) round( array_sum( $hs ) / count( $hs ) ) : 0,
+        'med_w'   => $median( $ws ),
+        'med_h'   => $median( $hs ),
+        'samples' => count( $ws ),
+    ];
+}
+
+/**
+ * Average DPR weighted by click count.
+ */
+function yourls_get_avg_dpr( string $keyword ): float {
+    $sql = 'SELECT AVG(CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.dpr")) AS DECIMAL(5,2))) AS avgdpr '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.dpr") IS NOT NULL';
+    $val = yourls_get_db( 'read-avg_dpr' )->fetchValue( $sql, [ 'k' => $keyword ] );
+    return $val === null ? 0.0 : round( (float) $val, 2 );
+}
+
+/**
+ * Top screen resolutions ('w x h') ordered desc.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_top_resolutions( string $keyword, int $limit = 10 ): array {
+    $sql = 'SELECT '
+         . '  CONCAT(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.screen_w")), "x", JSON_UNQUOTE(JSON_EXTRACT(meta, "$.screen_h"))) AS r, '
+         . '  COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.screen_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.screen_w") != 0 '
+         . 'GROUP BY r ORDER BY c DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-top_resolutions' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) $out[ (string) $r['r'] ] = (int) $r['c'];
+    return $out;
+}
+
+/**
+ * Portrait vs landscape based on viewport_w vs viewport_h.
+ *
+ * @return array{portrait:int,landscape:int,square:int}
+ */
+function yourls_get_orientation_split( string $keyword ): array {
+    $sql = 'SELECT '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_w")) AS UNSIGNED) AS w, '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_h")) AS UNSIGNED) AS h, '
+         . '  COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") != 0 '
+         . 'GROUP BY w, h';
+    $rows = yourls_get_db( 'read-orientation_split' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [ 'portrait' => 0, 'landscape' => 0, 'square' => 0 ];
+    foreach ( $rows as $r ) {
+        $w = (int) $r['w']; $h = (int) $r['h']; $c = (int) $r['c'];
+        if ( $w === 0 || $h === 0 ) continue;
+        if ( $w === $h )       $out['square']    += $c;
+        elseif ( $w > $h )     $out['landscape'] += $c;
+        else                   $out['portrait']  += $c;
+    }
+    return $out;
+}
+
+/**
+ * OS × Browser cross-tab.
+ *
+ * @return array{rows: array<string,array<string,int>>, browsers: array<string>, oses: array<string>}
+ */
+function yourls_get_os_browser_matrix( string $keyword ): array {
+    $sql = 'SELECT os, browser, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND os IS NOT NULL AND browser IS NOT NULL GROUP BY os, browser';
+    $rows = yourls_get_db( 'read-os_browser_matrix' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $matrix = [];
+    $browserTotals = [];
+    $osTotals = [];
+    foreach ( $rows as $r ) {
+        $os = (string) $r['os']; $br = (string) $r['browser']; $c = (int) $r['c'];
+        $matrix[ $os ][ $br ] = ( $matrix[ $os ][ $br ] ?? 0 ) + $c;
+        $browserTotals[ $br ] = ( $browserTotals[ $br ] ?? 0 ) + $c;
+        $osTotals[ $os ]      = ( $osTotals[ $os ]      ?? 0 ) + $c;
+    }
+    arsort( $browserTotals ); arsort( $osTotals );
+    return [
+        'rows'     => $matrix,
+        'browsers' => array_keys( $browserTotals ),
+        'oses'     => array_keys( $osTotals ),
+    ];
+}
+
+/**
+ * Map a browser family to its rendering engine.
+ */
+function yourls_browser_engine( string $browser ): string {
+    return match ( strtolower( $browser ) ) {
+        'chrome', 'edge', 'opera' => 'Blink',
+        'safari'                  => 'WebKit',
+        'firefox'                 => 'Gecko',
+        'ie'                      => 'Trident',
+        default                   => 'Other',
+    };
+}
+
+/**
+ * Engine distribution (Blink / WebKit / Gecko / Trident / Other).
+ *
+ * @return array<string,int>
+ */
+function yourls_get_engine_distribution( string $keyword ): array {
+    $browsers = yourls_get_clicks_by_dimension( $keyword, 'browser', 'all', 50 );
+    $out = [];
+    foreach ( $browsers as $b => $n ) {
+        if ( $b === '(unknown)' ) continue;
+        $engine = yourls_browser_engine( $b );
+        $out[ $engine ] = ( $out[ $engine ] ?? 0 ) + (int) $n;
+    }
+    arsort( $out );
+    return $out;
+}
+
+/**
+ * device_type × OS × browser combined breakdown for the table view.
+ *
+ * @return array<int,array{device:string,os:string,browser:string,clicks:int,visitors:int}>
+ */
+function yourls_get_device_stack_table( string $keyword, int $limit = 30 ): array {
+    $sql = 'SELECT device_type AS device, os, browser, COUNT(*) AS clicks, '
+         . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY device, os, browser ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-device_stack' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'device'   => (string) ( $r['device']  ?? '' ),
+            'os'       => (string) ( $r['os']      ?? '' ),
+            'browser'  => (string) ( $r['browser'] ?? '' ),
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}

@@ -4,6 +4,17 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+Unreleased
+---
+- added: extended click tracking with async logging
+  - DB version 510: log table gets `device_type`, `browser`, `os`, `referrer_host`, `utm_source`, `utm_medium`, `utm_campaign`, `city`, `region`, `visitor_hash`, `click_uid`, and a JSON `meta` column
+  - bots: 301 first, log after `fastcgi_finish_request` (faster than current behavior)
+  - humans: tiny interstitial + `navigator.sendBeacon` + `location.replace` in parallel
+  - new beacon endpoint `yourls-collect.php` with per-IP rate limit
+  - privacy: rotating daily `visitor_hash`, optional IP anonymization via `YOURLS_CLICK_ANONYMIZE_IP`
+  - new infos tabs: Overview / Audience / Geography / Sources / Technology / Activity (Filament-style design system, no new components)
+  - new hooks: `click_payload`, `click_is_bot`, `click_beacon_received`, `click_interstitial_html`
+
 1.10.3
 ---
 - added: testing on PHP 8.5 & 8.6 (#4036)

@@ -514,35 +514,45 @@ function yourls_get_HTTP_status( $code ) {
  * @return mixed Result of the INSERT query (1 on success)
  */
 function yourls_log_redirect( $keyword ) {
-    // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_log_redirect', yourls_shunt_default(), $keyword );
     if ( yourls_shunt_default() !== $pre ) {
         return $pre;
     }
-
-    if (!yourls_do_log_redirect()) {
+    if ( !yourls_do_log_redirect() ) {
         return true;
     }
 
-    $table = YOURLS_DB_TABLE_LOG;
-    $ip = yourls_get_IP();
-    $binds = [
-        'now' => date( 'Y-m-d H:i:s' ),
-        'keyword'  => yourls_sanitize_keyword($keyword),
-        'referrer' => substr( yourls_get_referrer(), 0, 200 ),
-        'ua'       => substr(yourls_get_user_agent(), 0, 255),
-        'ip'       => $ip,
-        'location' => yourls_geo_ip_to_countrycode($ip),
-    ];
+    $ip       = yourls_get_IP();
+    $ua       = yourls_get_user_agent();
+    $referrer = yourls_get_referrer();
+    $accept   = $_SERVER['HTTP_ACCEPT'] ?? '';
+    $qs       = $_SERVER['QUERY_STRING'] ?? '';
+    $detector = new \YOURLS\Click\BotDetector( $ua, $accept );
 
-    // Try and log. An error probably means a concurrency problem : just skip the logging
-    try {
-        $result = yourls_get_db('write-log_redirect')->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
-    } catch (Exception $e) {
-        $result = 0;
-    }
+    $pepper = defined( 'YOURLS_CLICK_VISITOR_SALT' ) ? YOURLS_CLICK_VISITOR_SALT : ( defined( 'YOURLS_COOKIEKEY' ) ? YOURLS_COOKIEKEY : 'yourls' );
+    $anon   = defined( 'YOURLS_CLICK_ANONYMIZE_IP' ) && YOURLS_CLICK_ANONYMIZE_IP === true;
 
-    return $result;
+    $collector = new \YOURLS\Click\ClickCollector(
+        new \YOURLS\Click\UserAgentParser(),
+        new \YOURLS\Click\GeoLookup(),
+        \YOURLS\Click\VisitorHasher::today( $pepper ),
+        anonymizeIp: $anon
+    );
+
+    $isBot = (bool) yourls_apply_filter( 'click_is_bot', $detector->isBot(), $ua, $accept );
+    $payload = $collector->collectFromServer(
+        keyword: yourls_sanitize_keyword( $keyword ),
+        ip: $ip,
+        ua: $ua,
+        referrer: $referrer,
+        queryString: $qs,
+        isBot: $isBot,
+        botName: $detector->botName(),
+        clickUid: bin2hex( random_bytes( 8 ) )
+    );
+    $payload = yourls_apply_filter( 'click_payload', $payload );
+
+    return $collector->persist( $payload ) ? 1 : 0;
 }
 
 /**
