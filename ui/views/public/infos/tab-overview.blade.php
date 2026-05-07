@@ -116,14 +116,19 @@
         <div class="text-xs font-medium text-neutral-500 dark:text-neutral-400">{{ yourls__( 'Top device' ) }}</div>
         <div class="text-2xl font-semibold tabular-nums text-neutral-900 dark:text-neutral-100 capitalize">{{ $topDevice }}</div>
         @if ( $devices )
-            <div class="mt-2 flex gap-1">
-                @php $deviceMax = max( $devices ); @endphp
+            @php $deviceTotal = array_sum( $devices ); @endphp
+            <ul class="mt-2 space-y-1">
                 @foreach ( $devices as $name => $n )
-                    <div class="flex-1 h-8 rounded-sm bg-primary-500/15 relative" title="{{ $name }}: {{ $n }}">
-                        <div class="absolute bottom-0 left-0 right-0 bg-primary-500 rounded-sm" style="height:{{ $deviceMax > 0 ? round( $n * 100 / $deviceMax ) : 0 }}%"></div>
-                    </div>
+                    @php $pct = $deviceTotal > 0 ? round( $n * 100 / $deviceTotal ) : 0; @endphp
+                    <li class="flex items-center gap-2 text-xs">
+                        <span class="w-16 truncate text-neutral-700 dark:text-neutral-300 capitalize">{{ $name }}</span>
+                        <span class="flex-1 h-1.5 rounded-full bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
+                            <span class="block h-full bg-primary-500" style="width:{{ $pct }}%"></span>
+                        </span>
+                        <span class="font-mono tabular-nums text-neutral-500 dark:text-neutral-400 w-9 text-right">{{ $pct }}%</span>
+                    </li>
                 @endforeach
-            </div>
+            </ul>
         @endif
         <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-1">{{ yourls__( 'split across devices' ) }}</div>
     </div>
