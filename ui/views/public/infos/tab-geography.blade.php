@@ -164,8 +164,13 @@
                         background: rgb(var(--color-neutral-900) / 0.04);
                         border-radius: 8px;
                         z-index: 0;
+                        overflow: hidden;
                     }
-                    #{{ $mapDomId }} .leaflet-container { background: transparent; }
+                    #{{ $mapDomId }} .leaflet-container { background: transparent; overflow: hidden; }
+                    /* Clip any svg path that overflows the map (e.g. countries
+                       crossing the antimeridian like Russia / Fiji / US-Alaska
+                       in equirectangular projection). */
+                    #{{ $mapDomId }} .leaflet-overlay-pane svg { overflow: hidden; }
                     .yourls-geo-tooltip {
                         background: rgb(var(--color-neutral-900));
                         color: rgb(var(--color-neutral-50));
@@ -243,11 +248,59 @@
                                     zoom: 1,
                                     minZoom: 1,
                                     maxZoom: 6,
-                                    worldCopyJump: true,
+                                    // Lock to a single world copy. worldCopyJump+wrap caused
+                                    // antimeridian-crossing polygons (Russia/Fiji/Alaska) to be
+                                    // drawn as a horizontal stripe across the whole viewport.
+                                    worldCopyJump: false,
+                                    maxBounds: [[-85, -180], [85, 180]],
+                                    maxBoundsViscosity: 1.0,
                                     attributionControl: false,
                                     zoomControl: true,
                                     preferCanvas: false,
                                 });
+
+                                // Split features that cross the antimeridian. The world-atlas
+                                // TopoJSON keeps Russia / Fiji / US (Alaska) as single polygons
+                                // whose longitudes jump from +180 to -180; in equirectangular
+                                // projection that draws a giant horizontal band. We split each
+                                // ring into two on-the-fly so each segment stays in its hemisphere.
+                                function splitAntimeridian(feature) {
+                                    if (!feature || !feature.geometry) return feature;
+                                    var g = feature.geometry;
+                                    if (g.type !== 'Polygon' && g.type !== 'MultiPolygon') return feature;
+
+                                    function splitRing(ring) {
+                                        var out = [[]];
+                                        for (var i = 0; i < ring.length; i++) {
+                                            var p = ring[i];
+                                            var prev = i > 0 ? ring[i - 1] : null;
+                                            if (prev && Math.abs(p[0] - prev[0]) > 180) {
+                                                // antimeridian crossing → start a new ring
+                                                out.push([]);
+                                            }
+                                            out[out.length - 1].push(p);
+                                        }
+                                        return out.filter(function (r) { return r.length >= 3; });
+                                    }
+
+                                    var newPolys = [];
+                                    var polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+                                    polys.forEach(function (rings) {
+                                        var splitOuter = splitRing(rings[0] || []);
+                                        splitOuter.forEach(function (r) { newPolys.push([r]); });
+                                    });
+                                    if (newPolys.length === 0) return feature;
+                                    return {
+                                        type: feature.type,
+                                        id: feature.id,
+                                        properties: feature.properties,
+                                        geometry: { type: 'MultiPolygon', coordinates: newPolys }
+                                    };
+                                }
+                                countries = {
+                                    type: countries.type,
+                                    features: countries.features.map(splitAntimeridian)
+                                };
                                 L.geoJSON(countries, {
                                     style: function (f) {
                                         var d = data[String(f.id)];
