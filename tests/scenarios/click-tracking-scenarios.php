@@ -336,6 +336,9 @@ scenario( 'D — 500 mixed clicks populate hot columns + meta JSON', function ()
         $_SERVER['QUERY_STRING']    = $qs;
         $_SERVER['HTTP_REFERER']    = realReferrer( $qs );
 
+        // Mirror what yourls-go.php does on every hit: bump the click counter
+        // on yourls_url AND record the rich row in yourls_log.
+        yourls_update_clicks( 'click500' );
         yourls_log_redirect( 'click500' );
     }
     $elapsed = microtime( true ) - $startedAt;
@@ -395,6 +398,12 @@ scenario( 'D — 500 mixed clicks populate hot columns + meta JSON', function ()
     $unique = yourls_get_unique_visitors( 'click500', 'all' );
     printf( "  unique visitors: %d\n", $unique );
     assert_true( $unique > 0 && $unique <= $totalHumans + $totalBots, 'unique visitor count plausible' );
+
+    // Counter shown in the admin index and infos overview must match the log
+    // row count after the upgrade — both are bumped on every hit.
+    $counter = (int) $ydb->fetchValue( 'SELECT clicks FROM `' . YOURLS_DB_TABLE_URL . '` WHERE keyword = "click500"' );
+    printf( "  yourls_url.clicks counter: %d\n", $counter );
+    assert_eq( $rows, $counter, 'yourls_url.clicks counter matches log row count' );
 } );
 
 echo "\nALL SCENARIOS PASSED\n";

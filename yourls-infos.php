@@ -578,6 +578,7 @@ if ( $_blade ) {
     $_ui_share_text  = yourls_esc_textarea( $_ui_share_raw );
     echo yourls_ui_view( 'public.infos', [
         'pageTitle'      => yourls_s( 'Statistics for %s', YOURLS_SITE . '/' . $keyword ),
+        'keyword'        => $keyword,
         'shortUrl'       => $_ui_short_url,
         'longUrl'        => $longurl,
         'longUrlDisplay' => yourls_trim_long_string( $longurl ),
