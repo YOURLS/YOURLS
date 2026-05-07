@@ -220,7 +220,27 @@ function botUAs(): array {
 }
 
 function realIpv4(): string {
-    // Documentation/test ranges so we never hit a real allocation.
+    // Mix documentation ranges (no geo lookup possible) with a handful of
+    // public IPs from well-known providers so the geo lookup can populate
+    // country_code on a slice of the rows. This makes the Overview "Top
+    // country" card show a real value end-to-end.
+    $pool = [
+        // Cloudflare resolvers (US)
+        '1.1.1.1', '1.0.0.1',
+        // Google DNS (US)
+        '8.8.8.8', '8.8.4.4',
+        // Quad9 (US/CH)
+        '9.9.9.9',
+        // OpenDNS (US)
+        '208.67.222.222',
+        // RIPE NCC (NL)
+        '193.0.14.129',
+        // Yandex DNS (RU)
+        '77.88.8.8',
+    ];
+    if ( random_int( 1, 100 ) <= 30 ) {
+        return $pool[ array_rand( $pool ) ];
+    }
     $ranges = [ '203.0.113', '198.51.100', '192.0.2' ];
     return $ranges[ array_rand( $ranges ) ] . '.' . random_int( 1, 254 );
 }

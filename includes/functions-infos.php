@@ -412,7 +412,7 @@ function yourls_get_clicks_by_dimension( string $keyword, string $column, string
         ' GROUP BY `' . $column . '` ORDER BY c DESC LIMIT :lim';
     $sql = yourls_apply_filter( 'clicks_aggregate_query', $sql, $keyword, $column, $range, $limit );
 
-    $rows = yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $rows = yourls_get_db( 'read-clicks_by_dimension' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
     $out = [];
     foreach ( $rows as $r ) {
         $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
@@ -438,7 +438,7 @@ function yourls_get_clicks_meta_aggregate( string $keyword, string $jsonPath, st
     $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
     $sql = "SELECT JSON_UNQUOTE(JSON_EXTRACT(meta, :path)) AS k, COUNT(*) AS c FROM `" . YOURLS_DB_TABLE_LOG . "` WHERE $where GROUP BY k ORDER BY c DESC LIMIT :lim";
 
-    $rows = yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'path' => $jsonPath, 'lim' => $limit ] );
+    $rows = yourls_get_db( 'read-clicks_meta_aggregate' )->fetchAll( $sql, [ 'k' => $keyword, 'path' => $jsonPath, 'lim' => $limit ] );
     $out = [];
     foreach ( $rows as $r ) {
         $key = $r['k'] !== null && $r['k'] !== '' ? (string) $r['k'] : '(unknown)';
@@ -453,7 +453,7 @@ function yourls_get_clicks_meta_aggregate( string $keyword, string $jsonPath, st
 function yourls_get_unique_visitors( string $keyword, string $range = 'all' ): int {
     $where = 'shorturl = :k' . yourls_clicks_range_where( $range );
     $sql = 'SELECT COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS n FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE ' . $where;
-    return (int) yourls_get_db()->fetchValue( $sql, [ 'k' => $keyword ] );
+    return (int) yourls_get_db( 'read-unique_visitors' )->fetchValue( $sql, [ 'k' => $keyword ] );
 }
 
 /**
@@ -463,7 +463,7 @@ function yourls_get_recent_clicks( string $keyword, int $page = 1, int $perPage 
     $page = max( 1, $page );
     $perPage = max( 1, min( 200, $perPage ) );
     $sql = 'SELECT * FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k ORDER BY click_id DESC LIMIT :off, :lim';
-    return yourls_get_db()->fetchAll( $sql, [ 'k' => $keyword, 'off' => ( $page - 1 ) * $perPage, 'lim' => $perPage ] );
+    return yourls_get_db( 'read-recent_clicks' )->fetchAll( $sql, [ 'k' => $keyword, 'off' => ( $page - 1 ) * $perPage, 'lim' => $perPage ] );
 }
 
 function yourls_clicks_range_where( string $range ): string {

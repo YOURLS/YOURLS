@@ -1,10 +1,19 @@
 @php
     $total     = function_exists( 'yourls_get_keyword_clicks' ) ? (int) yourls_get_keyword_clicks( $keyword ) : 0;
     $unique    = function_exists( 'yourls_get_unique_visitors' ) ? yourls_get_unique_visitors( $keyword, 'all' ) : 0;
-    $devices   = function_exists( 'yourls_get_clicks_by_dimension' ) ? yourls_get_clicks_by_dimension( $keyword, 'device_type', 'all', 1 ) : [];
-    $countries = function_exists( 'yourls_get_clicks_by_dimension' ) ? yourls_get_clicks_by_dimension( $keyword, 'country_code', 'all', 1 ) : [];
-    $topDevice  = $devices  ? array_key_first( $devices )  : '—';
-    $topCountry = $countries ? array_key_first( $countries ) : '—';
+    // Pull a few candidates so we can skip the "(unknown)" placeholder if the
+    // top entry happens to be unparsed/null (common for bot-only or local IPs).
+    $devices   = function_exists( 'yourls_get_clicks_by_dimension' ) ? yourls_get_clicks_by_dimension( $keyword, 'device_type', 'all', 5 ) : [];
+    $countries = function_exists( 'yourls_get_clicks_by_dimension' ) ? yourls_get_clicks_by_dimension( $keyword, 'country_code', 'all', 5 ) : [];
+
+    $firstReal = function ( array $rows ) {
+        foreach ( $rows as $k => $_ ) {
+            if ( $k !== '(unknown)' && $k !== '' ) return $k;
+        }
+        return $rows ? array_key_first( $rows ) : null;
+    };
+    $topDevice  = $firstReal( $devices )   ?? '—';
+    $topCountry = $firstReal( $countries ) ?? '—';
 @endphp
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
