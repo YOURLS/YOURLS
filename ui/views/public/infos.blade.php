@@ -238,21 +238,36 @@
         </p>
     </header>
 
-    <x-molecules::tabs :tabs="$tabs" :active="$activeTab ?? 'stats'" idPrefix="infos">
-        <div role="tabpanel" id="infos-panel-stats" class="yourls-infos-panel">
-            <div class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5">
-                {!! $statsPanel ?? '' !!}
-            </div>
+    @php
+        $newTabs = [
+            'overview'   => yourls__( 'Overview' ),
+            'audience'   => yourls__( 'Audience' ),
+            'geography'  => yourls__( 'Geography' ),
+            'sources'    => yourls__( 'Sources' ),
+            'technology' => yourls__( 'Technology' ),
+            'activity'   => yourls__( 'Activity' ),
+            'share'      => yourls__( 'Share' ),
+        ];
+    @endphp
+
+    <x-molecules::tabs :tabs="$newTabs" :active="$activeTab ?? 'overview'" idPrefix="infos">
+        <div role="tabpanel" id="infos-panel-overview" class="yourls-infos-panel">
+            @include( 'public.infos.tab-overview',   [ 'keyword' => $keyword ?? '' ] )
         </div>
-        <div role="tabpanel" id="infos-panel-locations" class="yourls-infos-panel" hidden>
-            <div class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5">
-                {!! $locationsPanel ?? '' !!}
-            </div>
+        <div role="tabpanel" id="infos-panel-audience" class="yourls-infos-panel" hidden>
+            @include( 'public.infos.tab-audience',   [ 'keyword' => $keyword ?? '' ] )
+        </div>
+        <div role="tabpanel" id="infos-panel-geography" class="yourls-infos-panel" hidden>
+            @include( 'public.infos.tab-geography',  [ 'keyword' => $keyword ?? '' ] )
         </div>
         <div role="tabpanel" id="infos-panel-sources" class="yourls-infos-panel" hidden>
-            <div class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5">
-                {!! $sourcesPanel ?? '' !!}
-            </div>
+            @include( 'public.infos.tab-sources',    [ 'keyword' => $keyword ?? '' ] )
+        </div>
+        <div role="tabpanel" id="infos-panel-technology" class="yourls-infos-panel" hidden>
+            @include( 'public.infos.tab-technology', [ 'keyword' => $keyword ?? '' ] )
+        </div>
+        <div role="tabpanel" id="infos-panel-activity" class="yourls-infos-panel" hidden>
+            @include( 'public.infos.tab-activity',   [ 'keyword' => $keyword ?? '' ] )
         </div>
         <div role="tabpanel" id="infos-panel-share" class="yourls-infos-panel" hidden>
             <x-forms::share-box :longurl="$longUrl ?? ''"
