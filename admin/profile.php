@@ -20,9 +20,12 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
             if ( !$is_db_user ) {
                 throw new \RuntimeException( yourls__( 'Config-file users must edit user/config.php to change credentials.' ) );
             }
-            $current = (string) ( $_POST['current_password'] ?? '' );
-            $new     = (string) ( $_POST['password']         ?? '' );
-            $confirm = (string) ( $_POST['password_confirm'] ?? '' );
+            // Field names prefixed with `user_` to keep the form distinct
+            // from yourls auth's reserved `username` / `password` keys
+            // (see admin/users.php for the same precaution).
+            $current = (string) ( $_POST['user_current_password']  ?? '' );
+            $new     = (string) ( $_POST['user_password']          ?? '' );
+            $confirm = (string) ( $_POST['user_password_confirm']  ?? '' );
             if ( !yourls_db_check_password( $me_name, $current ) ) {
                 throw new \RuntimeException( yourls__( 'Current password is incorrect' ) );
             }

@@ -15,9 +15,10 @@
                 <x-molecules::form-field :label="yourls__('Username')" for="user_username" :required="!$editing_user">
                     <x-atoms::input
                         id="user_username"
-                        name="username"
+                        name="user_username"
                         :value="$editing_user['username'] ?? ''"
                         :required="!$editing_user"
+                        autocomplete="off"
                     />
                 </x-molecules::form-field>
 
@@ -47,7 +48,7 @@
                     <x-atoms::input
                         type="password"
                         id="user_password"
-                        name="password"
+                        name="user_password"
                         autocomplete="new-password"
                         :required="!$editing_user"
                     />
@@ -57,7 +58,7 @@
                     <x-atoms::input
                         type="password"
                         id="user_password_confirm"
-                        name="password_confirm"
+                        name="user_password_confirm"
                         autocomplete="new-password"
                         :required="!$editing_user"
                     />

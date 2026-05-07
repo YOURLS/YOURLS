@@ -20,7 +20,7 @@
                         <x-atoms::input
                             type="password"
                             id="profile_current_password"
-                            name="current_password"
+                            name="user_current_password"
                             autocomplete="current-password"
                             :required="true"
                         />
@@ -30,7 +30,7 @@
                         <x-atoms::input
                             type="password"
                             id="profile_password"
-                            name="password"
+                            name="user_password"
                             autocomplete="new-password"
                             :required="true"
                         />
@@ -40,7 +40,7 @@
                         <x-atoms::input
                             type="password"
                             id="profile_password_confirm"
-                            name="password_confirm"
+                            name="user_password_confirm"
                             autocomplete="new-password"
                             :required="true"
                         />

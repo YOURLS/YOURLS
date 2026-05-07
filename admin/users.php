@@ -14,10 +14,15 @@ $flash   = [];
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
     yourls_verify_nonce( 'users_form' );
     try {
-        $username  = trim( (string) ( $_POST['username']         ?? '' ) );
-        $role      = (string) ( $_POST['role']             ?? 'editor' );
-        $password  = (string) ( $_POST['password']         ?? '' );
-        $confirm   = (string) ( $_POST['password_confirm'] ?? '' );
+        // Field names are intentionally prefixed with `user_` so they don't
+        // collide with the `username` / `password` reserved by yourls auth:
+        // yourls_is_valid_user() inspects $_REQUEST['username']/['password']
+        // and treats any request carrying both as a login attempt, which
+        // routes the nonce check to 'admin_login' instead of 'users_form'.
+        $username  = trim( (string) ( $_POST['user_username']     ?? '' ) );
+        $role      = (string) ( $_POST['role']                    ?? 'editor' );
+        $password  = (string) ( $_POST['user_password']           ?? '' );
+        $confirm   = (string) ( $_POST['user_password_confirm']   ?? '' );
         $is_active = isset( $_POST['is_active'] );
 
         if ( $action === 'create' ) {
