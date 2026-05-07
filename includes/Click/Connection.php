@@ -3,6 +3,10 @@ namespace YOURLS\Click;
 
 class Connection {
     public static function closeAndContinue(): void {
+        // Tests can opt out — PHPUnit owns the output buffer in their context.
+        if ( defined( 'YOURLS_CLICK_BEACON_TEST' ) && YOURLS_CLICK_BEACON_TEST === true ) {
+            return;
+        }
         if ( function_exists( 'fastcgi_finish_request' ) ) {
             @fastcgi_finish_request();
             return;

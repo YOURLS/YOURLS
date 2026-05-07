@@ -9,7 +9,7 @@ class BeaconEndpointTest extends PHPUnit\Framework\TestCase {
         if ( ! yourls_keyword_is_taken( 'beacontest' ) ) {
             yourls_add_new_link( 'https://example.com', 'beacontest', 'beacon test' );
         }
-        yourls_get_db()->perform( 'DELETE FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = "beacontest"' );
+        yourls_get_db('write-test_click')->perform( 'DELETE FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = "beacontest"' );
     }
 
     public function test_valid_beacon_persists_a_row() {
@@ -27,7 +27,7 @@ class BeaconEndpointTest extends PHPUnit\Framework\TestCase {
         $status = $this->invokeBeacon( $payload, '203.0.113.10', 'Mozilla/5.0 Chrome/120 Safari/537.36' );
         $this->assertSame( 204, $status );
 
-        $row = yourls_get_db()->fetchObject(
+        $row = yourls_get_db('read-test_click')->fetchObject(
             'SELECT * FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE click_uid = :uid',
             [ 'uid' => 'aaaaaaaaaaaaaaaa' ]
         );
@@ -41,7 +41,7 @@ class BeaconEndpointTest extends PHPUnit\Framework\TestCase {
     public function test_invalid_click_uid_is_rejected_silently() {
         $status = $this->invokeBeacon( '{"v":1,"click_uid":"BAD","keyword":"beacontest"}', '203.0.113.11', 'Chrome' );
         $this->assertSame( 204, $status );
-        $count = yourls_get_db()->fetchValue(
+        $count = yourls_get_db('read-test_click')->fetchValue(
             'SELECT COUNT(*) FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE click_uid = :uid',
             [ 'uid' => 'BAD' ]
         );
@@ -54,7 +54,7 @@ class BeaconEndpointTest extends PHPUnit\Framework\TestCase {
             '203.0.113.12', 'Chrome'
         );
         $this->assertSame( 204, $status );
-        $count = yourls_get_db()->fetchValue(
+        $count = yourls_get_db('read-test_click')->fetchValue(
             'SELECT COUNT(*) FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE click_uid = :uid',
             [ 'uid' => 'bbbbbbbbbbbbbbbb' ]
         );

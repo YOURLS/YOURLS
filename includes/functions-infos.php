@@ -488,3 +488,100 @@ function yourls_click_cache_set( string $key, $value, int $ttl = 300 ): void {
         apcu_store( $key, $value, $ttl );
     }
 }
+
+/**
+ * Click counts in three rolling windows: today, last 7d, last 30d.
+ *
+ * @return array{today:int,last7d:int,last30d:int}
+ */
+function yourls_get_click_windows( string $keyword ): array {
+    $sql = 'SELECT '
+         . 'SUM(click_time >= CURRENT_DATE) AS today, '
+         . 'SUM(click_time >= NOW() - INTERVAL 7  DAY) AS last7d, '
+         . 'SUM(click_time >= NOW() - INTERVAL 30 DAY) AS last30d '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k';
+    $row = yourls_get_db( 'read-click_windows' )->fetchOne( $sql, [ 'k' => $keyword ] );
+    return [
+        'today'   => (int) ( $row['today']   ?? 0 ),
+        'last7d'  => (int) ( $row['last7d']  ?? 0 ),
+        'last30d' => (int) ( $row['last30d'] ?? 0 ),
+    ];
+}
+
+/**
+ * Daily click count for the last $days days. Returns an associative array
+ * keyed by 'YYYY-MM-DD' (UTC date), every day filled (zeros included).
+ *
+ * @return array<string,int>
+ */
+function yourls_get_clicks_by_day( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-clicks_by_day' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $out[ $cursor->format( 'Y-m-d' ) ] = 0;
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    foreach ( $rows as $r ) {
+        $key = (string) $r['d'];
+        if ( isset( $out[ $key ] ) ) {
+            $out[ $key ] = (int) $r['c'];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Hour-of-day × day-of-week grid for the last $days days.
+ * Returns a 7x24 matrix indexed by [dow 0=Mon..6=Sun][hour 0..23].
+ *
+ * @return array<int,array<int,int>>
+ */
+function yourls_get_clicks_heatmap( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    // MySQL WEEKDAY() returns 0=Mon..6=Sun, matching our convention.
+    $sql = 'SELECT WEEKDAY(click_time) AS dow, HOUR(click_time) AS h, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY dow, h';
+    $rows = yourls_get_db( 'read-clicks_heatmap' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $grid = array_fill( 0, 7, array_fill( 0, 24, 0 ) );
+    foreach ( $rows as $r ) {
+        $dow = (int) $r['dow']; $h = (int) $r['h'];
+        if ( $dow >= 0 && $dow < 7 && $h >= 0 && $h < 24 ) {
+            $grid[ $dow ][ $h ] = (int) $r['c'];
+        }
+    }
+    return $grid;
+}
+
+/**
+ * Time elapsed between link creation and the first recorded click.
+ * Returns NULL if either anchor is missing.
+ */
+function yourls_get_time_to_first_click( string $keyword ): ?int {
+    $sql = 'SELECT TIMESTAMPDIFF(SECOND, u.timestamp, MIN(l.click_time)) AS secs '
+         . 'FROM `' . YOURLS_DB_TABLE_URL . '` u '
+         . 'LEFT JOIN `' . YOURLS_DB_TABLE_LOG . '` l ON l.shorturl = u.keyword '
+         . 'WHERE u.keyword = :k GROUP BY u.timestamp';
+    $val = yourls_get_db( 'read-time_to_first_click' )->fetchValue( $sql, [ 'k' => $keyword ] );
+    return $val === null ? null : (int) $val;
+}
+
+/**
+ * Format a number of seconds into a short human-readable string.
+ */
+function yourls_format_duration( int $secs ): string {
+    if ( $secs < 60 )      return $secs . 's';
+    if ( $secs < 3600 )    return round( $secs / 60 ) . 'm';
+    if ( $secs < 86400 )   return round( $secs / 3600, 1 ) . 'h';
+    if ( $secs < 2592000 ) return round( $secs / 86400, 1 ) . 'd';
+    return round( $secs / 2592000, 1 ) . 'mo';
+}

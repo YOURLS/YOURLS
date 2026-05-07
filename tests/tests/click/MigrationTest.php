@@ -13,7 +13,7 @@ class ClickMigrationTest extends PHPUnit\Framework\TestCase {
         ob_start(); yourls_upgrade_to_510(); ob_end_clean();
         ob_start(); yourls_upgrade_to_510(); ob_end_clean();
 
-        $ydb = yourls_get_db();
+        $ydb = yourls_get_db('read-test_click');
         $cols = array_column(
             (array) $ydb->fetchObjects( 'SHOW COLUMNS FROM `' . YOURLS_DB_TABLE_LOG . '`' ),
             'Field'

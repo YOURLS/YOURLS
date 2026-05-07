@@ -5,7 +5,7 @@ class InfosAggregatesTest extends PHPUnit\Framework\TestCase {
 
     protected function setUp(): void {
         parent::setUp();
-        $ydb = yourls_get_db();
+        $ydb = yourls_get_db('write-test_click');
         $ydb->perform( 'DELETE FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = "aggkw"' );
         if ( ! yourls_keyword_is_taken( 'aggkw' ) ) {
             yourls_add_new_link( 'https://example.com', 'aggkw', 'agg test' );
