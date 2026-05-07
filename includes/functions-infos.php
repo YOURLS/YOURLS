@@ -974,3 +974,250 @@ function yourls_country_name( string $cc ): string {
     }
     return strtoupper( $cc );
 }
+
+/**
+ * Categorise a referrer host into a traffic source category.
+ *
+ * Returns one of: 'direct', 'social', 'search', 'email', 'qr', 'referral'.
+ *  - direct  : no referrer host
+ *  - social  : known social platform domain
+ *  - search  : known search engine domain
+ *  - email   : known webmail / newsletter domain (best-effort)
+ *  - qr      : utm_medium tag flagged as 'qr' (caller passes it in)
+ *  - referral: anything else
+ */
+function yourls_classify_source( ?string $host, ?string $utmMedium = null ): string {
+    if ( is_string( $utmMedium ) && strtolower( trim( $utmMedium ) ) === 'qr' ) return 'qr';
+    if ( $host === null || $host === '' ) return 'direct';
+
+    $host = strtolower( $host );
+    static $social = [
+        'facebook.com','m.facebook.com','l.facebook.com','fb.com','fb.me',
+        'twitter.com','x.com','t.co','mobile.twitter.com',
+        'linkedin.com','www.linkedin.com','lnkd.in',
+        'instagram.com','l.instagram.com',
+        'tiktok.com','www.tiktok.com',
+        'reddit.com','www.reddit.com','old.reddit.com','out.reddit.com',
+        'pinterest.com','www.pinterest.com','pin.it',
+        'youtube.com','www.youtube.com','youtu.be','m.youtube.com',
+        'whatsapp.com','wa.me',
+        'telegram.org','t.me',
+        'snapchat.com',
+        'discord.com','discord.gg',
+        'mastodon.social','threads.net','bsky.app',
+        'news.ycombinator.com',
+        'medium.com',
+    ];
+    static $search = [
+        'google.com','www.google.com','google.co.uk','google.fr','google.de','google.it','google.es','google.nl','google.ca','google.com.au','google.co.jp','google.com.br','google.co.in','google.ru',
+        'bing.com','www.bing.com',
+        'duckduckgo.com',
+        'yahoo.com','search.yahoo.com',
+        'yandex.com','yandex.ru',
+        'baidu.com','www.baidu.com',
+        'ecosia.org','startpage.com','qwant.com','brave.com','search.brave.com','kagi.com',
+    ];
+    static $email = [
+        'mail.google.com','outlook.live.com','outlook.office.com','outlook.office365.com',
+        'mail.yahoo.com','mail.aol.com','mail.proton.me','protonmail.com',
+        'mailchimp.com','sendgrid.net','sendinblue.com','brevo.com','convertkit.com',
+        'zoho.com','superhuman.com','fastmail.com',
+    ];
+    if ( in_array( $host, $social, true ) ) return 'social';
+    if ( in_array( $host, $search, true ) ) return 'search';
+    if ( in_array( $host, $email,  true ) ) return 'email';
+
+    // suffix matches for google.* and similar
+    foreach ( $search as $s ) if ( str_ends_with( $host, '.' . $s ) ) return 'search';
+    foreach ( $social as $s ) if ( str_ends_with( $host, '.' . $s ) ) return 'social';
+
+    return 'referral';
+}
+
+/**
+ * Aggregate clicks by source category. Pulls each (referrer_host, utm_medium)
+ * combo and rolls up via yourls_classify_source.
+ *
+ * @return array<string,int>  category => clicks (ordered desc)
+ */
+function yourls_get_clicks_by_source_category( string $keyword ): array {
+    $sql = 'SELECT referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY h, m';
+    $rows = yourls_get_db( 'read-source_categories' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [ 'direct' => 0, 'social' => 0, 'search' => 0, 'email' => 0, 'qr' => 0, 'referral' => 0 ];
+    foreach ( $rows as $r ) {
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $out[ $cat ] = ( $out[ $cat ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $out );
+    return array_filter( $out, fn( $v ) => $v > 0 );
+}
+
+/**
+ * Top referrers within a category, with optional drill-down.
+ *
+ * @param string $category one of 'social', 'search', 'email', 'referral'
+ * @return array<string,int>
+ */
+function yourls_get_top_referrers_in_category( string $keyword, string $category, int $limit = 10 ): array {
+    $sql = 'SELECT referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND referrer_host IS NOT NULL AND referrer_host != "" '
+         . 'GROUP BY h, m';
+    $rows = yourls_get_db( 'read-referrers_in_category' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $host = (string) $r['h'];
+        $cat  = yourls_classify_source( $host, $r['m'] ?? null );
+        if ( $cat !== $category ) continue;
+        $out[ $host ] = ( $out[ $host ] ?? 0 ) + (int) $r['c'];
+    }
+    arsort( $out );
+    return array_slice( $out, 0, $limit, true );
+}
+
+/**
+ * Source category daily series for stacked area / multi-line.
+ *
+ * @return array{labels:array<string>,series:array<string,array<int>>}
+ */
+function yourls_get_source_categories_trend( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 90, $days ) );
+    $sql = 'SELECT DATE(click_time) AS d, referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY d, h, m ORDER BY d ASC';
+    $rows = yourls_get_db( 'read-source_categories_trend' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor   = $cursor->modify( '+1 day' );
+    }
+    $cats = [ 'direct', 'social', 'search', 'email', 'qr', 'referral' ];
+    $series = [];
+    foreach ( $cats as $c ) $series[ $c ] = array_fill( 0, $days, 0 );
+
+    foreach ( $rows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx === false ) continue;
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $series[ $cat ][ $idx ] += (int) $r['c'];
+    }
+    // drop empty series
+    $series = array_filter( $series, fn( $vals ) => array_sum( $vals ) > 0 );
+    return [ 'labels' => $labels, 'series' => $series ];
+}
+
+/**
+ * Source category × day-of-week heatmap (UTC).
+ *
+ * @return array<string,array<int,int>>  category => [ dow=>count ]
+ */
+function yourls_get_source_dow_heatmap( string $keyword, int $days = 30 ): array {
+    $days = max( 1, min( 365, $days ) );
+    $sql = 'SELECT WEEKDAY(click_time) AS dow, referrer_host AS h, utm_medium AS m, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+         . 'GROUP BY dow, h, m';
+    $rows = yourls_get_db( 'read-source_dow_heatmap' )->fetchAll( $sql, [ 'k' => $keyword, 'days' => $days ] );
+
+    $out = [];
+    foreach ( $rows as $r ) {
+        $cat = yourls_classify_source( $r['h'] ?? null, $r['m'] ?? null );
+        $dow = (int) $r['dow'];
+        if ( ! isset( $out[ $cat ] ) ) $out[ $cat ] = array_fill( 0, 7, 0 );
+        if ( $dow >= 0 && $dow < 7 ) $out[ $cat ][ $dow ] += (int) $r['c'];
+    }
+    return $out;
+}
+
+/**
+ * UTM matrix: source × medium × campaign rollup.
+ *
+ * @return array<int,array{source:string,medium:string,campaign:string,clicks:int,visitors:int}>
+ */
+function yourls_get_utm_matrix( string $keyword, int $limit = 50 ): array {
+    $sql = 'SELECT '
+         . '  COALESCE(utm_source,"(none)") AS source, '
+         . '  COALESCE(utm_medium,"(none)") AS medium, '
+         . '  COALESCE(utm_campaign,"(none)") AS campaign, '
+         . '  COUNT(*) AS clicks, '
+         . '  COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND (utm_source IS NOT NULL OR utm_medium IS NOT NULL OR utm_campaign IS NOT NULL) '
+         . 'GROUP BY source, medium, campaign ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-utm_matrix' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'source'   => (string) $r['source'],
+            'medium'   => (string) $r['medium'],
+            'campaign' => (string) $r['campaign'],
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}
+
+/**
+ * Top referrers with optional 30-day daily series for sparklines.
+ *
+ * @return array<int,array{host:string,category:string,clicks:int,visitors:int,sparkline:array<int>}>
+ */
+function yourls_get_top_referrers_with_trend( string $keyword, int $limit = 20, int $days = 30 ): array {
+    // 1) totals + visitors
+    $totalsSql = 'SELECT referrer_host AS h, COUNT(*) AS clicks, '
+               . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+               . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+               . 'AND referrer_host IS NOT NULL AND referrer_host != "" '
+               . 'GROUP BY h ORDER BY clicks DESC LIMIT :lim';
+    $totals = yourls_get_db( 'read-top_referrers' )->fetchAll( $totalsSql, [ 'k' => $keyword, 'lim' => $limit ] );
+    if ( ! $totals ) return [];
+
+    $hosts = array_map( fn( $r ) => (string) $r['h'], $totals );
+    $placeholders = implode( ',', array_map( fn( $i ) => ':h' . $i, array_keys( $hosts ) ) );
+    $bind = [ 'k' => $keyword, 'days' => $days ];
+    foreach ( $hosts as $i => $h ) $bind[ 'h' . $i ] = $h;
+
+    // 2) per-host per-day series
+    $trendSql = 'SELECT DATE(click_time) AS d, referrer_host AS h, COUNT(*) AS c '
+              . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+              . 'WHERE shorturl = :k AND click_time >= NOW() - INTERVAL :days DAY '
+              . 'AND referrer_host IN (' . $placeholders . ') '
+              . 'GROUP BY d, h';
+    $trendRows = yourls_get_db( 'read-top_referrers' )->fetchAll( $trendSql, $bind );
+
+    // build label axis
+    $labels = [];
+    $cursor = new \DateTimeImmutable( '-' . ( $days - 1 ) . ' days', new \DateTimeZone( 'UTC' ) );
+    for ( $i = 0; $i < $days; $i++ ) {
+        $labels[] = $cursor->format( 'Y-m-d' );
+        $cursor = $cursor->modify( '+1 day' );
+    }
+    $byHost = [];
+    foreach ( $hosts as $h ) $byHost[ $h ] = array_fill( 0, $days, 0 );
+    foreach ( $trendRows as $r ) {
+        $idx = array_search( (string) $r['d'], $labels, true );
+        if ( $idx !== false && isset( $byHost[ (string) $r['h'] ] ) ) {
+            $byHost[ (string) $r['h'] ][ $idx ] = (int) $r['c'];
+        }
+    }
+
+    $out = [];
+    foreach ( $totals as $r ) {
+        $h = (string) $r['h'];
+        $out[] = [
+            'host'      => $h,
+            'category'  => yourls_classify_source( $h, null ),
+            'clicks'    => (int) $r['clicks'],
+            'visitors'  => (int) $r['visitors'],
+            'sparkline' => $byHost[ $h ] ?? array_fill( 0, $days, 0 ),
+        ];
+    }
+    return $out;
+}
