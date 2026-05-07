@@ -80,6 +80,10 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             yourls_upgrade_to_509();
         }
 
+        if( $oldsql < 510 ) {
+            yourls_upgrade_to_510();
+        }
+
         yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
         break;
