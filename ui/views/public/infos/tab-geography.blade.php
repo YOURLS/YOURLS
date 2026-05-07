@@ -186,13 +186,15 @@
                     var domId   = @json( $mapDomId );
                     var data    = {!! $mapDataJs !!};
                     var maxHits = {{ $mapMaxJs }};
+                    var initialised = false;
+                    var mapInstance = null;
 
                     function loadScript(src, integrity) {
                         return new Promise(function (resolve, reject) {
                             var s = document.createElement('script');
                             s.src = src;
                             if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
-                            s.onload = resolve; s.onerror = reject;
+                            s.onload = resolve; s.onerror = function () { reject(new Error('script: ' + src)); };
                             document.head.appendChild(s);
                         });
                     }
@@ -209,61 +211,116 @@
                     }
                     function fetchAtlas() {
                         return fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
-                            .then(function (r) { return r.json(); });
+                            .then(function (r) {
+                                if (!r.ok) throw new Error('atlas http ' + r.status);
+                                return r.json();
+                            });
                     }
-
                     function colorFor(hits) {
                         if (!hits || maxHits === 0) return 'rgba(99,102,241,0.04)';
-                        // log scale to make small countries visible alongside top ones
                         var t = Math.log(1 + hits) / Math.log(1 + maxHits);
                         var alpha = 0.18 + t * 0.72;
                         return 'rgba(99,102,241,' + alpha.toFixed(3) + ')';
                     }
+                    function showError(msg) {
+                        var el = document.getElementById(domId);
+                        if (el) el.innerHTML = '<p style="color:#94a3b8;font-size:13px;padding:1rem">' + msg + '</p>';
+                    }
+                    function buildMap() {
+                        if (initialised) {
+                            if (mapInstance) mapInstance.invalidateSize();
+                            return;
+                        }
+                        initialised = true;
 
-                    Promise.all([ensureLeaflet(), ensureTopojson()])
-                        .then(fetchAtlas)
-                        .then(function (atlas) {
-                            var countries = topojson.feature(atlas, atlas.objects.countries);
-                            var map = L.map(domId, {
-                                center: [20, 0],
-                                zoom: 1,
-                                minZoom: 1,
-                                maxZoom: 6,
-                                worldCopyJump: true,
-                                attributionControl: false,
-                                zoomControl: true,
-                                preferCanvas: true,
+                        Promise.all([ensureLeaflet(), ensureTopojson()])
+                            .then(fetchAtlas)
+                            .then(function (atlas) {
+                                if (!window.topojson || !window.L) throw new Error('libs missing after load');
+                                var countries = topojson.feature(atlas, atlas.objects.countries);
+                                mapInstance = L.map(domId, {
+                                    center: [20, 0],
+                                    zoom: 1,
+                                    minZoom: 1,
+                                    maxZoom: 6,
+                                    worldCopyJump: true,
+                                    attributionControl: false,
+                                    zoomControl: true,
+                                    preferCanvas: false,
+                                });
+                                L.geoJSON(countries, {
+                                    style: function (f) {
+                                        var d = data[String(f.id)];
+                                        return {
+                                            fillColor: colorFor(d ? d.clicks : 0),
+                                            fillOpacity: 1,
+                                            weight: 0.5,
+                                            color: 'rgba(148,163,184,0.5)',
+                                        };
+                                    },
+                                    onEachFeature: function (f, layer) {
+                                        var d = data[String(f.id)];
+                                        var name = (d && d.name) || (f.properties && f.properties.name) || f.id;
+                                        var hits = d ? d.clicks : 0;
+                                        layer.bindTooltip(
+                                            '<strong>' + name + '</strong><br>' +
+                                            (hits > 0 ? hits.toLocaleString() + ' click' + (hits === 1 ? '' : 's') : 'no clicks'),
+                                            { sticky: true, className: 'yourls-geo-tooltip', direction: 'auto' }
+                                        );
+                                        layer.on('mouseover', function () { layer.setStyle({ weight: 1.5, color: '#6366f1' }); });
+                                        layer.on('mouseout',  function () { layer.setStyle({ weight: 0.5, color: 'rgba(148,163,184,0.5)' }); });
+                                    }
+                                }).addTo(mapInstance);
+
+                                // After Leaflet renders, force a size recompute on the next frame —
+                                // covers the case where the tab/panel was hidden when init started.
+                                setTimeout(function () { if (mapInstance) mapInstance.invalidateSize(); }, 100);
+                            })
+                            .catch(function (err) {
+                                console.error('[yourls geo map]', err);
+                                showError('Could not load the world map: ' + (err && err.message ? err.message : 'unknown error'));
                             });
-                            // pure choropleth — no tile layer, just our geometry
-                            L.geoJSON(countries, {
-                                style: function (f) {
-                                    var d = data[f.id];
-                                    return {
-                                        fillColor: colorFor(d ? d.clicks : 0),
-                                        fillOpacity: 1,
-                                        weight: 0.5,
-                                        color: 'rgba(148,163,184,0.5)',
-                                    };
-                                },
-                                onEachFeature: function (f, layer) {
-                                    var d = data[f.id];
-                                    var name = (d && d.name) || (f.properties && f.properties.name) || f.id;
-                                    var hits = d ? d.clicks : 0;
-                                    var visitors = '';
-                                    layer.bindTooltip(
-                                        '<strong>' + name + '</strong><br>' +
-                                        (hits > 0 ? hits.toLocaleString() + ' click' + (hits === 1 ? '' : 's') : 'no clicks'),
-                                        { sticky: true, className: 'yourls-geo-tooltip', direction: 'auto' }
-                                    );
-                                    layer.on('mouseover', function () { layer.setStyle({ weight: 1.5, color: '#6366f1' }); });
-                                    layer.on('mouseout',  function () { layer.setStyle({ weight: 0.5, color: 'rgba(148,163,184,0.5)' }); });
+                    }
+
+                    function isVisible(el) {
+                        if (!el) return false;
+                        // hidden attribute or zero box → not visible
+                        if (el.hasAttribute && el.hasAttribute('hidden')) return false;
+                        var rect = el.getBoundingClientRect();
+                        return rect.width > 0 && rect.height > 0;
+                    }
+
+                    function init() {
+                        var el = document.getElementById(domId);
+                        if (!el) return;
+                        // Walk up to find the closest tabpanel ancestor — the one whose
+                        // 'hidden' attr toggles when the user clicks Geography.
+                        var panel = el.closest ? el.closest('[role=tabpanel]') : null;
+
+                        // If we're already visible, build immediately.
+                        if (isVisible(panel || el)) { buildMap(); return; }
+
+                        // Otherwise watch for visibility changes.
+                        if (panel && 'MutationObserver' in window) {
+                            var mo = new MutationObserver(function () {
+                                if (isVisible(panel)) {
+                                    buildMap();
+                                    mo.disconnect();
                                 }
-                            }).addTo(map);
-                        })
-                        .catch(function (err) {
-                            var el = document.getElementById(domId);
-                            if (el) el.innerHTML = '<p style="color:#94a3b8;font-size:13px;padding:1rem">{{ yourls__( 'Could not load the world map (CDN unreachable).' ) }}</p>';
-                        });
+                            });
+                            mo.observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+                        }
+                        // Fallback: re-check on every click anywhere on the page.
+                        document.addEventListener('click', function () {
+                            if (isVisible(panel || el)) buildMap();
+                        }, { passive: true });
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', init);
+                    } else {
+                        init();
+                    }
                 })();
                 </script>
             @else
