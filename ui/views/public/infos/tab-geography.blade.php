@@ -86,29 +86,25 @@
         return $svg . '</svg>';
     };
 
-    // ── world choropleth (continent blocks) ────────────────────────────
-    // Stylised, not pixel-accurate: each continent is a rounded rect sized by
-    // approximate landmass and tinted by its share of the click volume.
-    $continentLayout = [
-        // [ code, x, y, w, h ]
-        [ 'NA', 30,  60,  220, 150, yourls__( 'North America' ) ],
-        [ 'SA', 130, 230, 130, 200, yourls__( 'South America' ) ],
-        [ 'EU', 290, 70,  120, 120, yourls__( 'Europe' ) ],
-        [ 'AF', 290, 210, 150, 200, yourls__( 'Africa' ) ],
-        [ 'AS', 430, 60,  300, 230, yourls__( 'Asia' ) ],
-        [ 'OC', 560, 320, 180, 110, yourls__( 'Oceania' ) ],
-        [ 'AN', 30,  450, 710, 30,  yourls__( 'Antarctica' ) ],
-    ];
-    $contMax = $continents ? max( $continents ) : 0;
-    $contColor = function ( int $v ) use ( $contMax ) {
-        if ( $contMax === 0 ) return '#1e293b';
-        $intensity = $v / $contMax;
-        $alpha = 0.15 + $intensity * 0.75;
-        return 'rgba(99,102,241,' . round( $alpha, 3 ) . ')';
-    };
-
     // ── continent name short alias ─────────────────────────────────────
     $continentName = fn( string $code ) => function_exists( 'yourls_continent_name' ) ? yourls_continent_name( $code ) : $code;
+
+    // ── build alpha-2 -> count map keyed by ISO numeric (for Leaflet) ──
+    $mapData = [];
+    foreach ( $countriesReal as $cc => $n ) {
+        $num = function_exists( 'yourls_country_to_iso_numeric' ) ? yourls_country_to_iso_numeric( $cc ) : null;
+        if ( $num !== null ) {
+            $mapData[ $num ] = [
+                'cc'     => $cc,
+                'name'   => function_exists( 'yourls_country_name' ) ? yourls_country_name( $cc ) : $cc,
+                'clicks' => (int) $n,
+            ];
+        }
+    }
+    $mapMax     = $mapData ? max( array_column( $mapData, 'clicks' ) ) : 0;
+    $mapDataJs  = json_encode( $mapData,  JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+    $mapMaxJs   = (int) $mapMax;
+    $mapDomId   = 'yourls-geo-map-' . substr( md5( $keyword . microtime() ), 0, 8 );
 @endphp
 
 @if ( ! $hasData )
@@ -157,32 +153,119 @@
 {{-- ── World choropleth (stylised continents) + Continent donut ── --}}
 <div class="mb-4" style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));">
 
-    <x-organisms::card :title="yourls__('World map (clicks by continent)')">
+    <x-organisms::card :title="yourls__('World map — clicks by country')">
         <div class="p-5">
-            @if ( $continents )
-                <svg viewBox="0 0 770 490" width="100%" height="auto" preserveAspectRatio="xMidYMid meet" style="max-height:340px">
-                    <rect x="0" y="0" width="770" height="490" fill="rgb(var(--color-neutral-900) / 0.04)" rx="8"/>
-                    @foreach ( $continentLayout as [ $code, $x, $y, $w, $h, $name ] )
-                        @php
-                            $v = $continents[ $code ] ?? 0;
-                            $share = $totalReal > 0 ? round( $v * 100 / $totalReal ) : 0;
-                            $fill = $contColor( $v );
-                        @endphp
-                        <g>
-                            <rect x="{{ $x }}" y="{{ $y }}" width="{{ $w }}" height="{{ $h }}" rx="6"
-                                  fill="{{ $fill }}" stroke="rgb(var(--color-neutral-700))" stroke-width="1"
-                                  style="cursor:default">
-                                <title>{{ $name }} — {{ number_format( $v ) }} clicks ({{ $share }}%)</title>
-                            </rect>
-                            <text x="{{ $x + 8 }}" y="{{ $y + 18 }}" font-size="11" font-weight="600" fill="currentColor">{{ $name }}</text>
-                            @if ( $v > 0 )
-                                <text x="{{ $x + 8 }}" y="{{ $y + 34 }}" font-size="14" font-weight="700" font-family="monospace" fill="currentColor">{{ number_format( $v ) }}</text>
-                                <text x="{{ $x + 8 }}" y="{{ $y + 48 }}" font-size="10" fill="currentColor" fill-opacity="0.7">{{ $share }}%</text>
-                            @endif
-                        </g>
-                    @endforeach
-                </svg>
-                <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-2">{{ yourls__( 'Stylised layout — continent blocks tinted by share of total clicks.' ) }}</p>
+            @if ( $mapData )
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+                      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+                <style>
+                    #{{ $mapDomId }} {
+                        height: 380px;
+                        background: rgb(var(--color-neutral-900) / 0.04);
+                        border-radius: 8px;
+                        z-index: 0;
+                    }
+                    #{{ $mapDomId }} .leaflet-container { background: transparent; }
+                    .yourls-geo-tooltip {
+                        background: rgb(var(--color-neutral-900));
+                        color: rgb(var(--color-neutral-50));
+                        border: 1px solid rgb(var(--color-neutral-700));
+                        font-size: 12px;
+                        padding: 6px 10px;
+                        border-radius: 6px;
+                        box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+                    }
+                </style>
+                <div id="{{ $mapDomId }}"></div>
+                <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-2">
+                    {{ yourls__( 'Hover a country for details. Color intensity reflects click volume on a log scale.' ) }}
+                </p>
+
+                <script>
+                (function () {
+                    var domId   = @json( $mapDomId );
+                    var data    = {!! $mapDataJs !!};
+                    var maxHits = {{ $mapMaxJs }};
+
+                    function loadScript(src, integrity) {
+                        return new Promise(function (resolve, reject) {
+                            var s = document.createElement('script');
+                            s.src = src;
+                            if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
+                            s.onload = resolve; s.onerror = reject;
+                            document.head.appendChild(s);
+                        });
+                    }
+                    function ensureLeaflet() {
+                        if (window.L) return Promise.resolve();
+                        return loadScript(
+                            'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+                            'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo='
+                        );
+                    }
+                    function ensureTopojson() {
+                        if (window.topojson) return Promise.resolve();
+                        return loadScript('https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js');
+                    }
+                    function fetchAtlas() {
+                        return fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
+                            .then(function (r) { return r.json(); });
+                    }
+
+                    function colorFor(hits) {
+                        if (!hits || maxHits === 0) return 'rgba(99,102,241,0.04)';
+                        // log scale to make small countries visible alongside top ones
+                        var t = Math.log(1 + hits) / Math.log(1 + maxHits);
+                        var alpha = 0.18 + t * 0.72;
+                        return 'rgba(99,102,241,' + alpha.toFixed(3) + ')';
+                    }
+
+                    Promise.all([ensureLeaflet(), ensureTopojson()])
+                        .then(fetchAtlas)
+                        .then(function (atlas) {
+                            var countries = topojson.feature(atlas, atlas.objects.countries);
+                            var map = L.map(domId, {
+                                center: [20, 0],
+                                zoom: 1,
+                                minZoom: 1,
+                                maxZoom: 6,
+                                worldCopyJump: true,
+                                attributionControl: false,
+                                zoomControl: true,
+                                preferCanvas: true,
+                            });
+                            // pure choropleth — no tile layer, just our geometry
+                            L.geoJSON(countries, {
+                                style: function (f) {
+                                    var d = data[f.id];
+                                    return {
+                                        fillColor: colorFor(d ? d.clicks : 0),
+                                        fillOpacity: 1,
+                                        weight: 0.5,
+                                        color: 'rgba(148,163,184,0.5)',
+                                    };
+                                },
+                                onEachFeature: function (f, layer) {
+                                    var d = data[f.id];
+                                    var name = (d && d.name) || (f.properties && f.properties.name) || f.id;
+                                    var hits = d ? d.clicks : 0;
+                                    var visitors = '';
+                                    layer.bindTooltip(
+                                        '<strong>' + name + '</strong><br>' +
+                                        (hits > 0 ? hits.toLocaleString() + ' click' + (hits === 1 ? '' : 's') : 'no clicks'),
+                                        { sticky: true, className: 'yourls-geo-tooltip', direction: 'auto' }
+                                    );
+                                    layer.on('mouseover', function () { layer.setStyle({ weight: 1.5, color: '#6366f1' }); });
+                                    layer.on('mouseout',  function () { layer.setStyle({ weight: 0.5, color: 'rgba(148,163,184,0.5)' }); });
+                                }
+                            }).addTo(map);
+                        })
+                        .catch(function (err) {
+                            var el = document.getElementById(domId);
+                            if (el) el.innerHTML = '<p style="color:#94a3b8;font-size:13px;padding:1rem">{{ yourls__( 'Could not load the world map (CDN unreachable).' ) }}</p>';
+                        });
+                })();
+                </script>
             @else
                 <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ yourls__( 'No geocoded clicks yet.' ) }}</p>
             @endif
@@ -273,7 +356,7 @@
 </x-organisms::card>
 
 {{-- ── Geo table: country, city, clicks, visitors, share, sparkline ── --}}
-<x-organisms::card :title="yourls__('Country &amp; city breakdown')">
+<x-organisms::card :title="yourls__('Country and city breakdown')">
     <div class="p-5 overflow-x-auto">
         @if ( $table )
             <table class="w-full text-xs">
