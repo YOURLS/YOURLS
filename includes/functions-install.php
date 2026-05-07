@@ -249,8 +249,23 @@ function yourls_create_sql_tables() {
         '`user_agent` varchar(255) NOT NULL,'.
         '`ip_address` varchar(41) NOT NULL,'.
         '`country_code` char(2) NOT NULL,'.
+        '`device_type` varchar(16) NULL,'.
+        '`browser` varchar(32) NULL,'.
+        '`os` varchar(32) NULL,'.
+        '`referrer_host` varchar(100) NULL,'.
+        '`utm_source` varchar(100) NULL,'.
+        '`utm_medium` varchar(100) NULL,'.
+        '`utm_campaign` varchar(100) NULL,'.
+        '`city` varchar(100) NULL,'.
+        '`region` varchar(100) NULL,'.
+        '`visitor_hash` char(16) NULL,'.
+        '`click_uid` char(16) NULL,'.
+        '`meta` JSON NULL,'.
         'PRIMARY KEY  (`click_id`),'.
-        'KEY `shorturl` (`shorturl`)'.
+        'KEY `shorturl` (`shorturl`),'.
+        'KEY `device_type_idx` (`device_type`),'.
+        'KEY `utm_source_idx` (`utm_source`),'.
+        'KEY `click_uid_idx` (`click_uid`)'.
         ') AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
 
     $create_tables[YOURLS_DB_TABLE_USERS] =
