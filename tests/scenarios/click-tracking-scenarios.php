@@ -427,3 +427,79 @@ scenario( 'D — 500 mixed clicks populate hot columns + meta JSON', function ()
 } );
 
 echo "\nALL SCENARIOS PASSED\n";
+
+scenario( 'E — 50 simulated beacon submissions populate technology meta', function () {
+    if ( ! yourls_keyword_is_taken( 'click500' ) ) {
+        yourls_add_new_link( 'https://example.com/landing', 'click500', 'load test target' );
+    }
+
+    $viewports = [
+        [ 1920, 1080, 1, '4g',   'Europe/Rome',     'it-IT' ],
+        [ 1366, 768,  1, 'wifi', 'America/New_York','en-US' ],
+        [ 1440, 900,  2, 'wifi', 'Europe/London',   'en-GB' ],
+        [ 390,  844,  3, '4g',   'Europe/Paris',    'fr-FR' ],
+        [ 412,  915,  3, '5g',   'America/Sao_Paulo','pt-BR'],
+        [ 768,  1024, 2, 'wifi', 'Asia/Tokyo',      'ja-JP' ],
+        [ 360,  640,  2, '3g',   'Asia/Kolkata',    'hi-IN' ],
+        [ 2560, 1440, 1, 'wifi', 'Europe/Berlin',   'de-DE' ],
+    ];
+    $uas = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120 Safari/537.36',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile Safari/604.1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/17.0 Safari/605.1.15',
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) Chrome/120 Mobile Safari/537.36',
+    ];
+
+    $count = 0;
+    for ( $i = 0; $i < 50; $i++ ) {
+        $vp = $viewports[ $i % count( $viewports ) ];
+        $ua = $uas[ $i % count( $uas ) ];
+        $payload = json_encode( [
+            'v'         => 1,
+            'click_uid' => bin2hex( random_bytes( 8 ) ),
+            'keyword'   => 'click500',
+            'screen'    => [ 'w' => $vp[0], 'h' => $vp[1], 'dpr' => $vp[2] ],
+            'viewport'  => [ 'w' => (int) ( $vp[0] * 0.95 ), 'h' => (int) ( $vp[1] * 0.92 ) ],
+            'connection'=> $vp[3],
+            'tz'        => $vp[4],
+            'lang'      => $vp[5],
+            'client_referrer' => '',
+        ] );
+        $_SERVER['REMOTE_ADDR']     = '203.0.113.' . ( ( $i % 250 ) + 1 );
+        $_SERVER['HTTP_USER_AGENT'] = $ua;
+        $_SERVER['REQUEST_METHOD']  = 'POST';
+        if ( ! defined( 'YOURLS_CLICK_BEACON_TEST' ) ) {
+            define( 'YOURLS_CLICK_BEACON_TEST', true );
+        }
+        $status = \YOURLS\Click\Beacon::handle( $payload );
+        if ( $status === 204 ) $count++;
+    }
+    printf( "  beacon submissions accepted: %d/50\n", $count );
+
+    $ydb = yourls_get_db();
+    $withVp = (int) $ydb->fetchValue(
+        'SELECT COUNT(*) FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = "click500" AND JSON_EXTRACT(meta, "$.viewport_w") IS NOT NULL'
+    );
+    printf( "  rows with viewport meta: %d\n", $withVp );
+    assert_true( $withVp >= 50, 'beacon rows persisted with viewport meta' );
+
+    $stats = yourls_get_viewport_stats( 'click500' );
+    printf( "  viewport stats: avg=%dx%d med=%dx%d samples=%d\n",
+        $stats['avg_w'], $stats['avg_h'], $stats['med_w'], $stats['med_h'], $stats['samples'] );
+    assert_true( $stats['samples'] >= 50, 'enough viewport samples' );
+    assert_true( $stats['avg_w'] > 300 && $stats['avg_w'] < 3000, 'plausible avg width' );
+
+    $orient = yourls_get_orientation_split( 'click500' );
+    printf( "  orientation: portrait=%d landscape=%d\n", $orient['portrait'], $orient['landscape'] );
+    assert_true( $orient['portrait'] > 0 && $orient['landscape'] > 0, 'mix of orientations' );
+
+    $dpr = yourls_get_dpr_distribution( 'click500' );
+    echo "  DPR distribution: ";
+    foreach ( $dpr as $k => $v ) printf( '%s=%d ', $k, $v );
+    echo "\n";
+
+    $resos = yourls_get_top_resolutions( 'click500', 10 );
+    echo "  top resolutions: ";
+    foreach ( array_slice( $resos, 0, 4, true ) as $r => $c ) printf( '%s=%d ', $r, $c );
+    echo "\n";
+} );

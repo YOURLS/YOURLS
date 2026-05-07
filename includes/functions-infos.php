@@ -1221,3 +1221,202 @@ function yourls_get_top_referrers_with_trend( string $keyword, int $limit = 20, 
     }
     return $out;
 }
+
+/**
+ * DPR distribution (1x / 2x / 3x / other) for the keyword.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_dpr_distribution( string $keyword ): array {
+    $sql = 'SELECT JSON_UNQUOTE(JSON_EXTRACT(meta, "$.dpr")) AS dpr, COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'GROUP BY dpr';
+    $rows = yourls_get_db( 'read-dpr_dist' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $bucket = [ '1x' => 0, '2x' => 0, '3x' => 0, 'other' => 0 ];
+    foreach ( $rows as $r ) {
+        $v = $r['dpr'];
+        if ( $v === null || $v === '' || $v === 'null' ) continue;
+        $f = (float) $v;
+        if ( $f <= 1.25 )      $bucket['1x']    += (int) $r['c'];
+        elseif ( $f <= 2.25 )  $bucket['2x']    += (int) $r['c'];
+        elseif ( $f <= 3.25 )  $bucket['3x']    += (int) $r['c'];
+        else                   $bucket['other'] += (int) $r['c'];
+    }
+    return array_filter( $bucket, fn( $v ) => $v > 0 );
+}
+
+/**
+ * Average / median viewport size (width and height) over rows that have it.
+ *
+ * @return array{avg_w:int,avg_h:int,med_w:int,med_h:int,samples:int}
+ */
+function yourls_get_viewport_stats( string $keyword ): array {
+    $sql = 'SELECT '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_w")) AS UNSIGNED) AS w, '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_h")) AS UNSIGNED) AS h '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") != 0';
+    $rows = yourls_get_db( 'read-viewport_stats' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $ws = []; $hs = [];
+    foreach ( $rows as $r ) {
+        $w = (int) $r['w']; $h = (int) $r['h'];
+        if ( $w > 0 && $h > 0 ) { $ws[] = $w; $hs[] = $h; }
+    }
+    $median = function ( array $arr ) {
+        if ( ! $arr ) return 0;
+        sort( $arr );
+        $n = count( $arr );
+        return (int) ( $n % 2 ? $arr[ ( $n - 1 ) / 2 ] : ( $arr[ $n / 2 - 1 ] + $arr[ $n / 2 ] ) / 2 );
+    };
+    return [
+        'avg_w'   => $ws ? (int) round( array_sum( $ws ) / count( $ws ) ) : 0,
+        'avg_h'   => $hs ? (int) round( array_sum( $hs ) / count( $hs ) ) : 0,
+        'med_w'   => $median( $ws ),
+        'med_h'   => $median( $hs ),
+        'samples' => count( $ws ),
+    ];
+}
+
+/**
+ * Average DPR weighted by click count.
+ */
+function yourls_get_avg_dpr( string $keyword ): float {
+    $sql = 'SELECT AVG(CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.dpr")) AS DECIMAL(5,2))) AS avgdpr '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.dpr") IS NOT NULL';
+    $val = yourls_get_db( 'read-avg_dpr' )->fetchValue( $sql, [ 'k' => $keyword ] );
+    return $val === null ? 0.0 : round( (float) $val, 2 );
+}
+
+/**
+ * Top screen resolutions ('w x h') ordered desc.
+ *
+ * @return array<string,int>
+ */
+function yourls_get_top_resolutions( string $keyword, int $limit = 10 ): array {
+    $sql = 'SELECT '
+         . '  CONCAT(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.screen_w")), "x", JSON_UNQUOTE(JSON_EXTRACT(meta, "$.screen_h"))) AS r, '
+         . '  COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.screen_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.screen_w") != 0 '
+         . 'GROUP BY r ORDER BY c DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-top_resolutions' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) $out[ (string) $r['r'] ] = (int) $r['c'];
+    return $out;
+}
+
+/**
+ * Portrait vs landscape based on viewport_w vs viewport_h.
+ *
+ * @return array{portrait:int,landscape:int,square:int}
+ */
+function yourls_get_orientation_split( string $keyword ): array {
+    $sql = 'SELECT '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_w")) AS UNSIGNED) AS w, '
+         . '  CAST(JSON_UNQUOTE(JSON_EXTRACT(meta, "$.viewport_h")) AS UNSIGNED) AS h, '
+         . '  COUNT(*) AS c '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` '
+         . 'WHERE shorturl = :k AND meta IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") IS NOT NULL '
+         . 'AND JSON_EXTRACT(meta, "$.viewport_w") != 0 '
+         . 'GROUP BY w, h';
+    $rows = yourls_get_db( 'read-orientation_split' )->fetchAll( $sql, [ 'k' => $keyword ] );
+    $out = [ 'portrait' => 0, 'landscape' => 0, 'square' => 0 ];
+    foreach ( $rows as $r ) {
+        $w = (int) $r['w']; $h = (int) $r['h']; $c = (int) $r['c'];
+        if ( $w === 0 || $h === 0 ) continue;
+        if ( $w === $h )       $out['square']    += $c;
+        elseif ( $w > $h )     $out['landscape'] += $c;
+        else                   $out['portrait']  += $c;
+    }
+    return $out;
+}
+
+/**
+ * OS × Browser cross-tab.
+ *
+ * @return array{rows: array<string,array<string,int>>, browsers: array<string>, oses: array<string>}
+ */
+function yourls_get_os_browser_matrix( string $keyword ): array {
+    $sql = 'SELECT os, browser, COUNT(*) AS c FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'AND os IS NOT NULL AND browser IS NOT NULL GROUP BY os, browser';
+    $rows = yourls_get_db( 'read-os_browser_matrix' )->fetchAll( $sql, [ 'k' => $keyword ] );
+
+    $matrix = [];
+    $browserTotals = [];
+    $osTotals = [];
+    foreach ( $rows as $r ) {
+        $os = (string) $r['os']; $br = (string) $r['browser']; $c = (int) $r['c'];
+        $matrix[ $os ][ $br ] = ( $matrix[ $os ][ $br ] ?? 0 ) + $c;
+        $browserTotals[ $br ] = ( $browserTotals[ $br ] ?? 0 ) + $c;
+        $osTotals[ $os ]      = ( $osTotals[ $os ]      ?? 0 ) + $c;
+    }
+    arsort( $browserTotals ); arsort( $osTotals );
+    return [
+        'rows'     => $matrix,
+        'browsers' => array_keys( $browserTotals ),
+        'oses'     => array_keys( $osTotals ),
+    ];
+}
+
+/**
+ * Map a browser family to its rendering engine.
+ */
+function yourls_browser_engine( string $browser ): string {
+    return match ( strtolower( $browser ) ) {
+        'chrome', 'edge', 'opera' => 'Blink',
+        'safari'                  => 'WebKit',
+        'firefox'                 => 'Gecko',
+        'ie'                      => 'Trident',
+        default                   => 'Other',
+    };
+}
+
+/**
+ * Engine distribution (Blink / WebKit / Gecko / Trident / Other).
+ *
+ * @return array<string,int>
+ */
+function yourls_get_engine_distribution( string $keyword ): array {
+    $browsers = yourls_get_clicks_by_dimension( $keyword, 'browser', 'all', 50 );
+    $out = [];
+    foreach ( $browsers as $b => $n ) {
+        if ( $b === '(unknown)' ) continue;
+        $engine = yourls_browser_engine( $b );
+        $out[ $engine ] = ( $out[ $engine ] ?? 0 ) + (int) $n;
+    }
+    arsort( $out );
+    return $out;
+}
+
+/**
+ * device_type × OS × browser combined breakdown for the table view.
+ *
+ * @return array<int,array{device:string,os:string,browser:string,clicks:int,visitors:int}>
+ */
+function yourls_get_device_stack_table( string $keyword, int $limit = 30 ): array {
+    $sql = 'SELECT device_type AS device, os, browser, COUNT(*) AS clicks, '
+         . 'COUNT(DISTINCT COALESCE(visitor_hash, ip_address)) AS visitors '
+         . 'FROM `' . YOURLS_DB_TABLE_LOG . '` WHERE shorturl = :k '
+         . 'GROUP BY device, os, browser ORDER BY clicks DESC LIMIT :lim';
+    $rows = yourls_get_db( 'read-device_stack' )->fetchAll( $sql, [ 'k' => $keyword, 'lim' => $limit ] );
+    $out = [];
+    foreach ( $rows as $r ) {
+        $out[] = [
+            'device'   => (string) ( $r['device']  ?? '' ),
+            'os'       => (string) ( $r['os']      ?? '' ),
+            'browser'  => (string) ( $r['browser'] ?? '' ),
+            'clicks'   => (int) $r['clicks'],
+            'visitors' => (int) $r['visitors'],
+        ];
+    }
+    return $out;
+}
