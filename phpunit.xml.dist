@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.0/phpunit.xsd"
     backupGlobals="false"
     stopOnFailure="true"
     cacheDirectory=".phpunit.cache"
@@ -13,7 +13,10 @@
     displayDetailsOnTestsThatTriggerNotices="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
     displayDetailsOnPhpunitDeprecations="true"
-    >
+    displayDetailsOnIncompleteTests="true"
+    displayDetailsOnPhpunitNotices="true"
+    displayDetailsOnSkippedTests="true"
+>
     <source>
         <include>
             <directory suffix=".php">./includes</directory>

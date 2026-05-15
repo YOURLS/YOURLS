@@ -27,7 +27,7 @@ class RedirectionTest extends PHPUnit\Framework\TestCase {
     public function test_login() {
         $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
         $_SERVER['REQUEST_URI'] = '/';
-        $this->assertSame( 3, yourls_is_valid_user() );
+        $this->assertSame( 3, yourls_is_valid_user(), sprintf('Could not auth with %s/%s', $_REQUEST['username'], $_REQUEST['password'] ) );
     }
 
 }

@@ -12,7 +12,7 @@ trait LoginAssertionTrait
         $login        = yourls_did_action( 'login' );
         $login_failed = yourls_did_action( 'login_failed' );
 
-        $this->assertTrue( yourls_is_valid_user() );
+        $this->assertTrue( yourls_is_valid_user(), sprintf('Could not auth with %s/%s', $_REQUEST['username'], $_REQUEST['password'] ) );
 
         $this->assertEquals( $pre_login + 1, yourls_did_action( 'pre_login' ) );
         $this->assertEquals( $login + 1, yourls_did_action( 'login' ) );

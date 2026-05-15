@@ -176,9 +176,15 @@ class AuthTest extends PHPUnit\Framework\TestCase {
      * Check that encrypting un-writable file returns expected error
      */
     public function test_hash_passwords_now_unwritable() {
+        // If running as root, skip test since file permissions are not enforced
+        if (function_exists('posix_getuid') && posix_getuid() === 0) {
+            $this->markTestSkipped('Running as root, file permissions are not enforced');
+        }
         // generate un-writable file
         $file = YOURLS_TESTDATA_DIR . '/auth/unwritable.php';
-        touch( $file );
+        if(touch( $file ) === false) {
+            $this->markTestSkipped("Could not create $file -- cannot run test");
+        }
 
         if(yourls_is_windows()) {
             exec( 'attrib +r ' . escapeshellarg( $file ) );
