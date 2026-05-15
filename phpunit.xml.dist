@@ -14,7 +14,6 @@
     displayDetailsOnTestsThatTriggerWarnings="true"
     displayDetailsOnPhpunitDeprecations="true"
     displayDetailsOnIncompleteTests="true"
-    displayDetailsOnPhpunitNotices="true"
     displayDetailsOnSkippedTests="true"
 >
     <source>
