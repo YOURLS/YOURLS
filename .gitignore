@@ -33,6 +33,8 @@ coverage/
 phpunit.xml
 .phpunit.result.cache
 .phpunit.cache
+.phpstan.cache
+phpstan.neon
 tests/yourls-tests-config.php
 tests/vendor/
 tests/data/auth/config-test-auth-hashed.php
