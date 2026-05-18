@@ -4,6 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+  # Composer updates are intentionally not managed by Dependabot:
+  # the vendor/ directory is committed to the repo and rebuilt with
+  # includes/vendor/build-script/yourls-build.sh after each composer
+  # update. A Dependabot PR would update composer.json/lock without
+  # running the build script, leaving vendor/ out of sync. Run
+  # `composer update --no-dev --prefer-dist` followed by the build
+  # script locally instead.
   # - package-ecosystem: composer
   #   directory: "/"
   #   schedule:
