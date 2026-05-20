@@ -317,4 +317,67 @@ class URLTest extends PHPUnit\Framework\TestCase {
         $this->assertEquals( yourls_sanitize_url($url), $expected );
     }
 
+    /**
+     * List of URLs to test yourls_get_domain(). Structure: [URL, include_scheme, expected_result]
+     */
+    static function list_of_get_domain(): \Iterator {
+        // Standard well-formed URLs: only host returned
+        yield [ 'http://example.com',                     false, 'example.com'      ];
+        yield [ 'http://example.com/',                    false, 'example.com'      ];
+        yield [ 'http://example.com/path?q=1#frag',       false, 'example.com'      ];
+        yield [ 'https://sub.example.com/path',           false, 'sub.example.com'  ];
+
+        // include_scheme=true: scheme:// is prepended
+        yield [ 'http://example.com',                     true,  'http://example.com'  ];
+        yield [ 'https://example.com/',                   true,  'https://example.com' ];
+
+        // Credentials and port are excluded from the returned domain
+        yield [ 'http://user:pass@example.com/',          false, 'example.com'      ];
+        yield [ 'http://example.com:8080/path',           false, 'example.com'      ];
+
+        // IPv4 address
+        yield [ 'http://192.168.1.1/',                    false, '192.168.1.1'      ];
+
+        // No scheme: parse_url returns it as path, function falls back to using path as host
+        yield [ 'example.com',                            false, 'example.com'      ];
+        // No scheme + include_scheme=true: scheme is empty so nothing is prepended
+        yield [ 'example.com',                            true,  'example.com'      ];
+
+        // Protocol-relative URL: host is parsed but scheme is absent
+        yield [ '//example.com/path',                     false, 'example.com'      ];
+        yield [ '//example.com/path',                     true,  'example.com'      ];
+
+        // IDN domain: returns ASCII punycode if idn_to_ascii() is available, unicode otherwise
+        yield [ 'http://münchen.de/',                     false, function_exists('idn_to_ascii') ? 'xn--mnchen-3ya.de' : 'münchen.de' ];
+        yield [ 'http://münchen.de/',                     true,  function_exists('idn_to_ascii') ? 'http://xn--mnchen-3ya.de' : 'http://münchen.de' ];
+        yield [ 'http://www.طارق.net/',                  false, function_exists('idn_to_ascii') ? 'www.xn--mgbuq0c.net' : 'www.طارق.net' ];
+
+        // Empty string and no host: return empty
+        yield [ '',                                       false, '' ];
+        yield [ 'http://',                                false, '' ];
+
+        // Bogus inputs: host position contains chars that fail the hostname regex
+        yield [ 'not a valid url',                        false, '' ]; // spaces in host fallback
+        yield [ 'javascript:alert(1)',                    false, '' ]; // parentheses from path-as-host
+        yield [ 'http://<script>alert(1)</script>/',      false, '' ]; // angle brackets in host
+        yield [ 'http://<script>alert(1)</script>/',      true,  '' ]; // same with include_scheme=true
+
+        // data: URI: path used as host, slash and comma fail regex
+        yield [ 'data:text/html,<h1>xss</h1>',           false, '' ];
+
+        // Null byte in host (percent-encoded): % is not in [a-zA-Z0-9._-]
+        yield [ 'http://evil.com%00.example.com/',        false, '' ];
+
+        // Host that is only invalid characters
+        yield [ 'http://!@#$%^&*()/path',                 false, '' ];
+    }
+
+    /**
+     * Test yourls_get_domain() against well-formed, IDN, bogus and exploit-attempt URLs
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_get_domain')]
+    function test_get_domain( $url, $include_scheme, $expected ) {
+        $this->assertSame( $expected, yourls_get_domain( $url, $include_scheme ) );
+    }
+
 }
