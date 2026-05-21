@@ -38,8 +38,8 @@ function yourls_stats_countries_map($countries, $id = null) {
  *
  * @param array $data  Array of 'data' => 'value'
  * @param int $limit   Optional limit list of X first countries
- * @param $size        Optional size of the image
- * @param $id          Optional HTML element ID
+ * @param int $size    Optional size of the image
+ * @param mixed $id    Optional HTML element ID
  * @return void
  */
 function yourls_stats_pie($data, $limit = 10, $size = '340x220', $id = null) {
@@ -253,18 +253,43 @@ function yourls_stats_get_best_day($list_of_days) {
  * @param bool $include_scheme
  * @return string
  */
-function yourls_get_domain($url, $include_scheme = false) {
-    $parse = @parse_url( $url ); // Hiding ugly stuff coming from malformed referrer URLs
+function yourls_get_domain(string $url, bool $include_scheme = false): string {
+    $parse = parse_url($url);
+
+    // parse_url() returns false on seriously malformed URLs
+    if ($parse === false) {
+        return '';
+    }
 
     // Get host & scheme. Fall back to path if not found.
-    $host = isset( $parse['host'] ) ? $parse['host'] : '';
-    $scheme = isset( $parse['scheme'] ) ? $parse['scheme'] : '';
-    $path = isset( $parse['path'] ) ? $parse['path'] : '';
-    if( !$host )
+    $host = $parse['host'] ?? '';
+    $scheme = $parse['scheme'] ?? '';
+    $path = $parse['path'] ?? '';
+    if (!$host) {
         $host = $path;
+    }
 
-    if ( $include_scheme && $scheme )
-        $host = $scheme.'://'.$host;
+    // Validate host: only allow valid hostname/IP characters.
+    // IPv6 addresses are wrapped in brackets eg [::1]
+    if ($host && !preg_match('/^(\[[\da-fA-F:]+\]|[a-zA-Z0-9._-]+)$/', $host)) {
+        // ASCII check failed - may be an IDN hostname (eg münchen.de)
+        if (function_exists('idn_to_ascii')) {
+            $ascii = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            if ($ascii === false || !preg_match('/^[a-zA-Z0-9._-]+$/', $ascii)) {
+                return '';
+            }
+            $host = $ascii;
+        } else {
+            // No intl extension: accept unicode letters/digits, dots and hyphens only
+            if (!preg_match('/^[\pL\pN._-]+$/u', $host)) {
+                return '';
+            }
+        }
+    }
+
+    if ($include_scheme && $scheme) {
+        $host = $scheme . '://' . $host;
+    }
 
     return $host;
 }
@@ -276,8 +301,8 @@ function yourls_get_domain($url, $include_scheme = false) {
  * @param string $url
  * @return string
  */
-function yourls_get_favicon_url($url) {
-    return yourls_match_current_protocol( '//www.google.com/s2/favicons?domain=' . yourls_get_domain( $url, false ) );
+function yourls_get_favicon_url(string $url): string {
+    return yourls_match_current_protocol( '//www.google.com/s2/favicons?domain=' . yourls_esc_url(yourls_get_domain( $url, false ) ) );
 }
 
 /**
@@ -335,16 +360,17 @@ function yourls_array_granularity($array, $grain = 100, $preserve_max = true) {
  * @param array $data
  * @return string
  */
-function yourls_google_array_to_data_table($data){
+function yourls_google_array_to_data_table(array $data): string {
     $str  = "var data = google.visualization.arrayToDataTable([\n";
     foreach( $data as $label => $values ){
         if( !is_array( $values ) ) {
             $values = array( $values );
         }
-        $str .= "\t['$label',";
+        $str .= "\t['" . yourls_esc_js($label) . "',";
         foreach( $values as $value ){
-            if( !is_numeric( $value ) && strpos( $value, '[' ) !== 0 && strpos( $value, '{' ) !== 0 ) {
-                $value = "'$value'";
+            $value = yourls_esc_url( $value );
+            if( !is_numeric( $value ) && !str_starts_with($value, '[') && !str_starts_with($value, '{')) {
+                $value = "'" . yourls_esc_js($value) . "'";
             }
             $str .= "$value";
         }
@@ -360,7 +386,7 @@ function yourls_google_array_to_data_table($data){
  *
  * @param string $graph_type
  * @param string $data
- * @param var $options
+ * @param array  $options
  * @param string $id
  * @return string
  */
