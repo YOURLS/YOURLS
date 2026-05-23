@@ -4,6 +4,17 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.4
+---
+- fixed: Prevent [XSS](https://github.com/YOURLS/YOURLS/security/advisories/GHSA-5h77-88j3-r659) in stat pages through referrers (#4107)
+- added: Localization support for date and time display (#4054)
+- improved: Improve shunt filters (#4058)
+- fixed: Notice overlapping logo in admin panel (#4069)
+- fixed: Flag password file as user auth from environment variables (#4066)
+- added: Filter SQL queries (#4064)
+- improved: Improve debug functions and logic (#4089)
+- improved: Make tests debugging easier (#4104)
+
 1.10.3
 ---
 - added: testing on PHP 8.5 & 8.6 (#4036)
