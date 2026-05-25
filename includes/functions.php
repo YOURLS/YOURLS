@@ -1050,7 +1050,7 @@ function yourls_get_request($yourls_site = '', $uri = '') {
     // | http://sho.rt/abc         | http://sho.rt           | /                   | abc          |
     // | https://SHO.rt/subdir/abc | https://shor.rt/subdir/ | /subdir/            | abc          |
     // +---------------------------+-------------------------+---------------------+--------------+
-    // and so on. You can find various test cases in /tests/tests/utilities/get_request.php
+    // and so on. You can find various test cases in tests/tests/utilities/GetRequestTest.php
 
     // Take only the URL_PATH part of YOURLS_SITE (ie "https://sho.rt:1337/path/to/yourls" -> "/path/to/yourls")
     $yourls_site = parse_url( $yourls_site, PHP_URL_PATH ).'/';

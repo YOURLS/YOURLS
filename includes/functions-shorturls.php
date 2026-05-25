@@ -453,12 +453,23 @@ function yourls_keyword_is_free( $keyword  ) {
 /**
  * Check if a keyword matches a "page"
  *
- * @see https://docs.yourls.org/guide/extend/pages.html
+ * @see https://yourls.org/docs/guide/extend/pages
  * @since 1.7.10
- * @param  string $keyword  Short URL $keyword
+ * @param string $keyword Short URL $keyword
  * @return bool             true if is page, false otherwise
  */
-function yourls_is_page($keyword) {
+function yourls_is_page(string $keyword): bool {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_is_page', yourls_shunt_default(), $keyword );
+    if ( yourls_shunt_default() !== $pre ) {
+        return $pre;
+    }
+
+    // If $keyword contains '../' or '..\', return false to prevent directory traversal attacks
+    if (str_contains($keyword, '../') || str_contains($keyword, '..\\')) {
+        return false;
+    }
+
     return yourls_apply_filter( 'is_page', file_exists( YOURLS_PAGEDIR . "/$keyword.php" ) );
 }
 
