@@ -1019,11 +1019,11 @@ function yourls_is_mobile_device() {
  * For testing purposes, parameters can be passed.
  *
  * @since 1.5
- * @param string $yourls_site   Optional, YOURLS installation URL (default to constant YOURLS_SITE)
- * @param string $uri           Optional, page requested (default to $_SERVER['REQUEST_URI'] eg '/yourls/abcd' )
- * @return string               request relative to YOURLS base (eg 'abdc')
+ * @param string $yourls_site Optional, YOURLS installation URL (default to constant YOURLS_SITE)
+ * @param string $uri         Optional, page requested (default to $_SERVER['REQUEST_URI'] eg '/yourls/abcd' )
+ * @return string             Request relative to YOURLS base (eg 'abdc')
  */
-function yourls_get_request($yourls_site = '', $uri = '') {
+function yourls_get_request(string $yourls_site = '', string $uri = ''): string {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_get_request', yourls_shunt_default() );
     if ( yourls_shunt_default() !== $pre ) {
@@ -1057,13 +1057,20 @@ function yourls_get_request($yourls_site = '', $uri = '') {
 
     // Strip path part from request if exists
     $request = $uri;
-    if ( substr( $uri, 0, strlen( $yourls_site ) ) == $yourls_site ) {
+    if (str_starts_with($uri, $yourls_site)) {
         $request = ltrim( substr( $uri, strlen( $yourls_site ) ), '/' );
     }
 
-    // Unless request looks like a full URL (ie request is a simple keyword) strip query string
+    // Request can be a full URL, ie https://sho.rt/http://site.com to "prefix n' shorten" a URL, see https://sho.rt/admin/tools.php
+    // If request is a simple keyword, strip query string and suspicious traversal attempts
+    // Note that in a real case use, this shouldn't happen since the server resolves the path before the request reaches YOURLS,
+    // ie https://github.com/ozh/../YOURLS/ resolves to https://github.com/YOURLS/
     if ( !preg_match( "@^[a-zA-Z]+://.+@", $request ) ) {
         $request = current( explode( '?', $request ) );
+        $request = str_replace( [ '../', '..\\' ], '', $request, $count );
+        if ( $count > 0 ) {
+            $request = trim( $request, '/' );
+        }
     }
 
     $request = yourls_sanitize_url( $request );

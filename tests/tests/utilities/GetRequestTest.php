@@ -76,6 +76,16 @@ class GetRequestTest extends PHPUnit\Framework\TestCase {
         yield array('http://longurl?https://sho.rt/yourls', 'https://sho.rt/yourls', '/yourls/http://longurl?https://sho.rt/yourls');
         yield array('http://sho.rt/somepage', 'http://sho.rt', '/http://sho.rt/somepage');
         yield array('http://www.sho.rt/sub/dir/', 'http://www.sho.rt/sub/dir/', '/sub/dir///http://www.sho.rt/sub/dir/');
+        // Traversal attempts should be ignored
+        yield array('hacked', 'http://sho.rt', '../hacked');
+        yield array('pwned', 'http://sho.rt', '/../pwned');
+        yield array('rekt', 'http://sho.rt', '../../rekt');
+        yield array('0wn3d', 'http://sho.rt', '/../../0wn3d');
+        yield array('h4x0r3d', 'http://sho.rt/yourls', '../h4x0r3d');
+        yield array('schooled', 'http://sho.rt/yourls', '/../schooled');
+        yield array('n00bed', 'http://sho.rt/', '///..//../n00bed');
+        // Full URLs should be preserved and not removed as a traversal attempt
+        yield array('http://longurl?q=/../something', 'https://sho.rt/', '/http://longurl?q=/../something');
     }
 
     /**
