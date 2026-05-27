@@ -1,8 +1,6 @@
 <?php
 /**
  * Tests with signatures
- *
- * @since 0.1
  */
 #[\PHPUnit\Framework\Attributes\Group('auth')]
 #[\PHPUnit\Framework\Attributes\Group('signatures')]
@@ -20,8 +18,6 @@ class SigTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that empty signature isn't valid
-     *
-     * @since 0.1
      */
     public function test_signature_empty() {
         unset( $_REQUEST['signature'] );
@@ -30,8 +26,6 @@ class SigTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that random signature isn't valid
-     *
-     * @since 0.1
      */
     public function test_signature_random() {
         $_REQUEST['signature'] = rand_str();
@@ -40,8 +34,6 @@ class SigTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that empty signature and timestamp isn't valid
-     *
-     * @since 0.1
      */
     public function test_signature_timestamp_empty() {
         unset( $_REQUEST['signature'] );
@@ -51,8 +43,6 @@ class SigTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that random signature and timestamp isn't valid
-     *
-     * @since 0.1
      */
     public function test_signature_timestamp_random() {
         $_REQUEST['signature'] = rand_str();
@@ -61,11 +51,9 @@ class SigTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Check that valid md5 timestamped sig is valid
-     *
-     * @since 0.1
+     * Check that valid sha256 (default algo) timestamped sig is valid
      */
-    public function test_signature_timestamp_md5() {
+    public function test_signature_timestamp_sha256() {
         $timestamp = time();
         $_REQUEST['timestamp'] = $timestamp;
 
@@ -73,19 +61,17 @@ class SigTest extends PHPUnit\Framework\TestCase {
         $random_user = array_rand($yourls_user_passwords);
         $signature = yourls_auth_signature($random_user);
 
-        $md5 = md5( $timestamp . $signature );
-        $_REQUEST['signature'] = $md5;
+        $hash = hash( 'sha256', $timestamp . $signature );
+        $_REQUEST['signature'] = $hash;
         $this->assertTrue( yourls_check_signature_timestamp() );
 
-        $md5 = md5( $signature . $timestamp );
-        $_REQUEST['signature'] = $md5;
+        $hash = hash( 'sha256', $signature . $timestamp );
+        $_REQUEST['signature'] = $hash;
         $this->assertTrue( yourls_check_signature_timestamp() );
     }
 
     /**
-     * Check that valid hashed timestamped sig is valid
-     *
-     * @since 0.1
+     * Check that valid hashed timestamped sig with a specified algo is valid
      */
     public function test_signature_timestamp_hash() {
         $timestamp = time();
@@ -95,20 +81,30 @@ class SigTest extends PHPUnit\Framework\TestCase {
         $random_user = array_rand($yourls_user_passwords);
         $signature = yourls_auth_signature($random_user);
 
-        $algos = hash_algos();
-        $random_algo = $algos[array_rand($algos)];
-        $_REQUEST['hash'] = $random_algo;
+        $algos = [ 'sha256', 'sha384', 'sha512' ];
 
-        $hash = hash($random_algo, $timestamp . $signature );
-        $_REQUEST['signature'] = $hash;
-        $this->assertTrue( yourls_check_signature_timestamp() );
+        foreach( $algos as $algo ) {
+            $hash = hash( $algo, $timestamp . $signature );
+            $_REQUEST['hash'] = $algo;
+            $_REQUEST['signature'] = $hash;
+            $this->assertTrue( yourls_check_signature_timestamp() );
 
-        $hash = hash($random_algo, $signature . $timestamp );
-        $_REQUEST['signature'] = $hash;
-        $this->assertTrue( yourls_check_signature_timestamp() );
+            $hash = hash( $algo, $signature . $timestamp );
+            $_REQUEST['signature'] = $hash;
+            $this->assertTrue( yourls_check_signature_timestamp() );
 
-        $_REQUEST['hash'] = rand_str();
-        $this->assertFalse( yourls_check_signature_timestamp() );
+            $_REQUEST['hash'] = rand_str();
+            $this->assertFalse( yourls_check_signature_timestamp() );
+        }
+    }
+
+    /**
+     * Make sure we always define a default hash algo and an allowed hash algos list, so that future update of function
+     * will maintain the same behavior (allow algo other than sha256, sha384 and sha512 via filter)
+     */
+    public function test_signature_timestamp_default_algo() {
+        $this->assertIsString( yourls_default_hash_algo() );
+        $this->assertIsArray( yourls_allowed_hash_algos() );
     }
 
     /**
@@ -130,8 +126,6 @@ class SigTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that timestamps are correctly handled (too old = bad, too future = bad, ...)
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('timestamps')]
     public function test_check_timestamp( $timestamp, $is_valid ) {

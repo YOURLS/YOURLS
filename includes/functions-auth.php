@@ -357,12 +357,15 @@ function yourls_check_auth_cookie() {
  * Since 1.7.7 we allow a `hash` parameter and an arbitrary hashed signature, hashed
  * with the `hash` function. Examples :
  *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<sha512 hash>&hash=sha512&action=...
- *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<crc32 hash>&hash=crc32&action=...
+ * Since 1.10.5, the hash must be one of: sha256, sha384, or sha512, unless explicitly allowed by a plugin via the
+ * `allowed_hash_algos` filter.
+ *
+ * @see https://yourls.org/docs/guide/advanced/passwordless-api
  *
  * @since 1.4.1
  * @return bool False if signature or timestamp missing or invalid, true if valid
  */
-function yourls_check_signature_timestamp() {
+function yourls_check_signature_timestamp(): bool {
     if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
        OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
     ) {
@@ -374,9 +377,9 @@ function yourls_check_signature_timestamp() {
         return false;
     }
 
-    // if there is a hash argument, make sure it's part of the availables algos
-    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : 'md5';
-    if( !in_array($hash_function, hash_algos()) ) {
+    // if there is a hash argument, make sure it's part of the available and allowed hash algorithms
+    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : yourls_default_hash_algo();
+    if( !in_array($hash_function, hash_algos()) OR !in_array( $hash_function, yourls_allowed_hash_algos() ) ) {
         return false;
     }
 
@@ -395,6 +398,26 @@ function yourls_check_signature_timestamp() {
 
     // Signature doesn't match known user
     return false;
+}
+
+/**
+ * Helper function: return default hash algorithm for signature hashing, which is sha256 unless filtered
+ *
+ * @since 1.10.5
+ * @return string default hash algorithm for signature hashing
+ */
+function yourls_default_hash_algo(): string {
+    return yourls_apply_filter('default_hash_algo', 'sha256');
+}
+
+/**
+ * Helper function: return list of allowed hash algorithms for signature hashing, which by default are sha256, sha384, and sha512 unless filtered
+ *
+ * @since 1.10.5
+ * @return array list of allowed hash algorithms for signature hashing
+ */
+function yourls_allowed_hash_algos(): array {
+    return yourls_apply_filter( 'allowed_hash_algos', ['sha256', 'sha384', 'sha512'] );
 }
 
 /**
