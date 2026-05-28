@@ -298,6 +298,22 @@ function yourls_has_cleartext_passwords() {
 }
 
 /**
+ * Check to see if any password is stored as md5.
+ *
+ * @since 1.10.5
+ * @return bool true if any passwords are md5
+ */
+function yourls_has_md5_passwords(): bool {
+    global $yourls_user_passwords;
+    foreach ( $yourls_user_passwords as $user => $pwdata ) {
+        if ( yourls_has_md5_password($user) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Check if a user has a md5 hashed password
  *
  * Check if a user password is 'md5:[38 chars]'.
