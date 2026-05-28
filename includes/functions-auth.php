@@ -247,13 +247,13 @@ function yourls_hash_passwords_now( $config_file ) {
  * @param string $password password to hash
  * @return string hashed password
  */
-function yourls_phpass_hash( $password ) {
+function yourls_phpass_hash(string $password ): string {
     /**
      * Filter for hashing algorithm. See https://www.php.net/manual/en/function.password-hash.php
-     * Hashing algos are available if PHP was compiled with it.
-     * PASSWORD_BCRYPT is always available.
+     * We're using the default password hashing. This allows us to use better algos as they become
+     * available in future PHP versions, without having to update YOURLS.
      */
-    $algo    = yourls_apply_filter('hash_algo', PASSWORD_BCRYPT);
+    $algo = yourls_apply_filter('hash_algo', PASSWORD_DEFAULT);
 
     /**
      * Filter for hashing options. See https://www.php.net/manual/en/function.password-hash.php
@@ -321,6 +321,7 @@ function yourls_has_md5_password( $user ) {
  * Check if a user password is 'phpass:[lots of chars]'.
  * (For historical reason we're using 'phpass' as an identifier.)
  * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
+ *       In such case, check password_needs_rehash()
  *
  * @since 1.7
  * @param string $user user login
@@ -739,7 +740,7 @@ function yourls_is_user_from_env() {
  *
  * By default, passwords are hashed. They are not if
  *    - there is no password in clear text in the config file (ie everything is already hashed)
- *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://docs.yourls.org/guide/essentials/credentials.html#i-don-t-want-to-encrypt-my-password
+ *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://yourls.org/docs/guide/essentials/credentials#i-don-t-want-to-encrypt-my-password
  *    - YOURLS_USER and YOURLS_PASSWORD are provided by the environment, not the config file
  *
  * @since 1.8.2
