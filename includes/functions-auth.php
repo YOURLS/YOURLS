@@ -163,10 +163,10 @@ function yourls_check_password_hash($user, $submitted_password ) {
     } else if( yourls_has_md5_password( $user ) ) {
         // Stored password is a salted md5 hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
         list( , $salt, ) = explode( ':', $yourls_user_passwords[ $user ] );
-        return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
+        return hash_equals( $yourls_user_passwords[ $user ], 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
     } else {
         // Password stored in clear text
-        return( $yourls_user_passwords[ $user ] === $submitted_password );
+        return hash_equals( (string) $yourls_user_passwords[ $user ], (string) $submitted_password );
     }
 }
 
@@ -358,7 +358,7 @@ function yourls_has_phpass_password( $user ) {
 function yourls_check_auth_cookie() {
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-        if ( yourls_cookie_value( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
+        if ( hash_equals( yourls_cookie_value( $valid_user ), (string) $_COOKIE[ yourls_cookie_name() ] ) ) {
             yourls_set_user( $valid_user );
             return true;
         }
@@ -404,9 +404,9 @@ function yourls_check_signature_timestamp(): bool {
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
         if (
-            hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+            hash_equals( hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ), (string) $_REQUEST['signature'] )
             or
-            hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
+            hash_equals( hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ), (string) $_REQUEST['signature'] )
             ) {
             yourls_set_user( $valid_user );
             return true;
@@ -450,7 +450,7 @@ function yourls_check_signature() {
     // Check signature against all possible users
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-        if ( yourls_auth_signature( $valid_user ) === $_REQUEST['signature'] ) {
+        if ( hash_equals( yourls_auth_signature( $valid_user ), (string) $_REQUEST['signature'] ) ) {
             yourls_set_user( $valid_user );
             return true;
         }
@@ -732,7 +732,7 @@ function yourls_verify_nonce($action, $nonce = false, $user = false, $return = '
     // What nonce should be
     $valid = yourls_create_nonce( $action, $user );
 
-    if( $nonce === $valid ) {
+    if( hash_equals( $valid, (string) $nonce ) ) {
         return true;
     } else {
         if( $return )
