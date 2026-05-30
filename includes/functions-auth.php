@@ -463,15 +463,28 @@ function yourls_check_signature() {
 /**
  * Generate secret signature hash
  *
- * @param false|string $username  Username to generate signature for, or false to use current user
+ * @param false|string $username Username to generate signature for, or false to use current user
  * @return string                 Signature
  */
-function yourls_auth_signature( $username = false ) {
+function yourls_auth_signature(false|string $username = false ): string {
     if( !$username && defined('YOURLS_USER') ) {
         $username = YOURLS_USER;
     }
-    return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
+    $signature = $username ? substr(yourls_salt($username ), 0, yourls_auth_signature_length() ) : 'Cannot generate auth signature: no username';
+
+    return yourls_apply_filter( 'auth_signature', $signature, $username );
 }
+
+
+/**
+ * Return length of auth signature, which is 32 chars by default unless filtered
+ *
+ * @return int
+ */
+function yourls_auth_signature_length(): int {
+    return (int)yourls_apply_filter( 'auth_signature_length', 32 );
+}
+
 
 /**
  * Check if timestamp is not too old
