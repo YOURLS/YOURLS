@@ -11,24 +11,22 @@ class InvalidRequestException extends HttpException
 {
     /**
      * The code returned by the MaxMind web service.
-     *
-     * @var string
      */
-    private $error;
+    private readonly string $error;
 
     /**
      * @param string     $message    the exception message
      * @param string     $error      the error code returned by the MaxMind web service
      * @param int        $httpStatus the HTTP status code of the response
      * @param string     $uri        the URI queries
-     * @param \Exception $previous   the previous exception, if any
+     * @param \Throwable $previous   the previous exception, if any
      */
     public function __construct(
         string $message,
         string $error,
         int $httpStatus,
         string $uri,
-        ?\Exception $previous = null
+        ?\Throwable $previous = null
     ) {
         $this->error = $error;
         parent::__construct($message, $httpStatus, $uri, $previous);
