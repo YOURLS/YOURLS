@@ -318,7 +318,7 @@ TUMBLR;
 <pre><code>&lt;?php
 $timestamp = time();
 <tt>// <?php yourls_e( 'actual value:' ); ?> $time = <?php $time = time(); echo $time; ?></tt>
-$signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
+$signature = hash('sha256', $timestamp . '<?php echo yourls_auth_signature(); ?>' );
 <tt>// <?php yourls_e( 'actual value:' ); ?> $signature = "<?php $sign = md5( $time. yourls_auth_signature() ); echo $sign; ?>"</tt>
 ?>
 </code></pre>
