@@ -470,7 +470,7 @@ function yourls_auth_signature(false|string $username = false ): string {
     if( !$username && defined('YOURLS_USER') ) {
         $username = YOURLS_USER;
     }
-    $signature = $username ? substr(yourls_salt($username ), 0, yourls_auth_signature_length() ) : 'Cannot generate auth signature: no username';
+    $signature = $username ? substr(yourls_salt('api:' . $username), 0, yourls_auth_signature_length()) : 'Cannot generate auth signature: no username';
 
     return yourls_apply_filter( 'auth_signature', $signature, $username );
 }
@@ -625,7 +625,7 @@ function yourls_cookie_name() {
  * @return string          cookie value
  */
 function yourls_cookie_value( $user ) {
-    return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ?? '' ), $user );
+    return yourls_apply_filter( 'set_cookie_value', yourls_salt( 'cookie:' . ($user ?? '') ), $user );
 }
 
 /**
