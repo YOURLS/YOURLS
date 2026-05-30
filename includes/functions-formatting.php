@@ -523,6 +523,79 @@ function yourls_esc_html( $text ) {
 }
 
 /**
+ * Escape HTML text, but allow some tags and attributes.
+ *
+ * Useful when you want to allow only some HTML tags in a string (<a href='..'>, <b>...)
+ * Escape everything first with yourls_esc_html(), then selectively un-escape only whitelisted
+ * tags and attributes. Attributes not listed are stripped, href/src values are sanitized.
+ *
+ * @since 1.10.5
+ * @param string $string  String to escape
+ * @param array  $allowed Tag => [attr => true, ...] map, or null for KSES defaults
+ * @return string
+ */
+function yourls_esc_html_with_whitelist(string $string, array $allowed = []): string {
+    $string = yourls_esc_html($string);
+
+    if (empty($allowed)) {
+        return $string;
+    }
+
+    $allowed = yourls_kses_array_lc($allowed);
+
+    return preg_replace_callback(
+        '/&lt;(\/?)([\w]+)(.*?)&gt;/',
+        function ($m) use ($allowed) {
+            $closing = $m[1];
+            $tag     = strtolower($m[2]);
+            $raw     = $m[3];
+
+            if (!isset($allowed[$tag])) {
+                return $m[0];
+            }
+
+            if ($closing === '/') {
+                return "</$tag>";
+            }
+
+            $attrs = '';
+            $allowed_attrs = $allowed[$tag];
+
+            if (!empty($allowed_attrs) && $raw !== '') {
+                preg_match_all(
+                    '/\s+([\w-]+)=(?:&quot;(.*?)&quot;|&#039;(.*?)&#039;)/',
+                    $raw,
+                    $matches,
+                    PREG_SET_ORDER
+                );
+
+                foreach ($matches as $match) {
+                    $name  = strtolower($match[1]);
+                    $value = ($match[2] ?? '') !== '' ? $match[2] : ($match[3] ?? '');
+
+                    if (empty($allowed_attrs[$name])) {
+                        continue;
+                    }
+
+                    $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+                    $value = yourls_kses_no_null($value);
+
+                    if ($name === 'href' || $name === 'src') {
+                        $value = yourls_sanitize_url($value);
+                    }
+
+                    $value = yourls_esc_attr($value);
+                    $attrs .= " $name=\"$value\"";
+                }
+            }
+
+            return "<$tag$attrs>";
+        },
+        $string
+    );
+}
+
+/**
  * Escaping for HTML attributes.  Stolen from WP
  *
  * @since 1.6
