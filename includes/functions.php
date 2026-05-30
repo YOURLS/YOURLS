@@ -17,27 +17,90 @@ function yourls_make_regexp_pattern( $string ) {
 }
 
 /**
- * Get client IP Address. Returns a DB safe string.
+ * Get client IP Address. Returns a DB safe string. May not be a valid IP per se.
+ *
+ * By default, it trusts only REMOTE_ADDR. If the request comes from a proxy
+ * listed in the 'get_ip_trusted_proxies' filter, it looks for the real client
+ * IP in the headers, with precedence HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA.
  *
  * @return string
  */
-function yourls_get_IP() {
-    $ip = '';
+function yourls_get_IP(): string {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
-    // Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
-    $headers = [ 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' ];
-    foreach( $headers as $header ) {
-        if ( !empty( $_SERVER[ $header ] ) ) {
-            $ip = $_SERVER[ $header ];
-            break;
+    // Allow plugins to define a trusted proxy list, and if the request comes from a trusted proxy, look for the real IP in the headers
+    // Precedence: if set, HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
+    $trusted_proxies = yourls_apply_filter('get_ip_trusted_proxies', []);
+
+    if ( !empty( $trusted_proxies ) && yourls_ip_is_in_ip_list( $ip, $trusted_proxies ) ) {
+        $headers = ['HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA'];
+        foreach ($headers as $header) {
+            if (!empty($_SERVER[$header])) {
+                $ip = $_SERVER[$header];
+                break;
+            }
         }
     }
 
-    // headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
-    if ( strpos( $ip, ',' ) !== false )
-        $ip = substr( $ip, 0, strpos( $ip, ',' ) );
+    // If there are multiple IPs (e.g. in HTTP_X_FORWARDED_FOR), take the first one
+    if (str_contains($ip, ',')) {
+        $ip = substr($ip, 0, strpos($ip, ','));
+    }
 
     return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
+}
+
+/**
+ * Check if an IP address matches a given IP or CIDR range (IPv4 and IPv6).
+ *
+ * @since 1.10.5
+ * @param string $ip    IP address to check
+ * @param string $range Single IP or CIDR notation (e.g. '10.0.0.0/24' or '2400:cb00::/32')
+ * @return bool
+ */
+function yourls_ip_matches_range(string $ip, string $range ): bool {
+    if (!str_contains($range, '/')) {
+        return inet_pton( $ip ) === inet_pton( $range );
+    }
+
+    list( $subnet, $bits ) = explode( '/', $range );
+    $bits = (int) $bits;
+
+    $ip_bin     = inet_pton( $ip );
+    $subnet_bin = inet_pton( $subnet );
+
+    if ( $ip_bin === false || $subnet_bin === false ) {
+        return false;
+    }
+
+    // Both must be same protocol (4 bytes for IPv4, 16 bytes for IPv6)
+    if ( strlen( $ip_bin ) !== strlen( $subnet_bin ) ) {
+        return false;
+    }
+
+    $mask = str_repeat( "\xff", (int) ( $bits / 8 ) );
+    if ( $bits % 8 ) {
+        $mask .= chr( 0xff << ( 8 - $bits % 8 ) & 0xff );
+    }
+    $mask = str_pad( $mask, strlen( $ip_bin ), "\x00" );
+
+    return ( $ip_bin & $mask ) === ( $subnet_bin & $mask );
+}
+
+/**
+ * Check if an IP address is in a list of IP (IPs or CIDR ranges), typically a list of trusted proxies.
+ *
+ * @param string $ip      IP address to check
+ * @param array  $proxies List of IPs or CIDR ranges
+ * @return bool
+ */
+function yourls_ip_is_in_ip_list(string $ip, array $proxies ): bool {
+    foreach ( $proxies as $range ) {
+        if ( yourls_ip_matches_range( $ip, $range ) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
