@@ -49,7 +49,7 @@ function yourls_is_valid_user() {
     // Determine auth method and check credentials
     if
         // API only: Secure (no login or pwd) and time limited token
-        // ?timestamp=12345678&signature=md5(totoblah12345678)
+        // ?timestamp=12345678&signature=some-long-sha256-hash
         ( yourls_is_API() &&
           isset( $_REQUEST['timestamp'] ) && !empty($_REQUEST['timestamp'] ) &&
           isset( $_REQUEST['signature'] ) && !empty($_REQUEST['signature'] )
@@ -61,7 +61,7 @@ function yourls_is_valid_user() {
 
     elseif
         // API only: Secure (no login or pwd)
-        // ?signature=md5(totoblah)
+        // ?signature=some-long-sha256-hash
         ( yourls_is_API() &&
           !isset( $_REQUEST['timestamp'] ) &&
           isset( $_REQUEST['signature'] ) && !empty( $_REQUEST['signature'] )
@@ -649,7 +649,7 @@ function yourls_tick() {
  * @return string          hashed string
  */
 function yourls_salt( $string ) {
-    $salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+    $salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : hash('sha256', __FILE__) ;
     return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
 }
 
