@@ -3,7 +3,7 @@ name: DB matrix
 on:
   workflow_dispatch:
   push:
-    branches: [db-matrix]
+    branches: [db-matrix-test]
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
