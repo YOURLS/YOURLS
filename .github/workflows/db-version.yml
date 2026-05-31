@@ -1,9 +1,10 @@
 name: DB matrix
 
-# Manual trigger only
 on:
   workflow_dispatch:
-
+  push:
+    branches: [db-matrix]
+    
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
