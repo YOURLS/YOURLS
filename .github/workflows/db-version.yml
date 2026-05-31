@@ -1,0 +1,75 @@
+name: DB matrix
+
+# Manual trigger only
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.image }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    # Old/innovation images may no longer be pullable: let each row fail on its own.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- MySQL (official `mysql` image) ---
+          # 5.5 removed from docker-library (EOL), old manifest may still pull
+          - { image: 'mysql:5.5',     php: '8.5', health: 'mysqladmin ping' }
+          - { image: 'mysql:5.7',     php: '8.5', health: 'mysqladmin ping' }
+          - { image: 'mysql:8.0',     php: '8.5', health: 'mysqladmin ping' }
+          - { image: 'mysql:8.4',     php: '8.5', health: 'mysqladmin ping' }
+          # 9.0 is an innovation release, may have been superseded by 9.7
+          - { image: 'mysql:9.0',     php: '8.5', health: 'mysqladmin ping' }
+          - { image: 'mysql:9.7',     php: '8.5', health: 'mysqladmin ping' }
+          # --- MariaDB (official `mariadb` image) ---
+          # 5.5 is very old, old manifest may still pull
+          - { image: 'mariadb:5.5',   php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:10.11', php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:11.4',  php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:11.8',  php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:12.2',  php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
+
+    services:
+      db:
+        image: ${{ matrix.image }}
+        ports:
+          - 3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: yourls_tests
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MARIADB_MYSQL_LOCALHOST_USER: 1
+          MARIADB_MYSQL_LOCALHOST_GRANTS: USAGE
+        options: >-
+          --health-cmd="${{ matrix.health }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
+          tools: phpunit
+
+      - name: Prepare the application
+        run: |
+          git clone https://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
+          cp user/languages/fr/fr_FR.* user/languages
+          cp tests/data/config/yourls-tests-config-ci.php user/config.php
+
+      - name: Test
+        run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
+        env:
+          DB_PORT: ${{ job.services.db.ports['3306'] }}
+        
