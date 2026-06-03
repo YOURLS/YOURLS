@@ -526,7 +526,7 @@ function yourls_log_redirect( $keyword ) {
 
     $table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
-    $binds = [
+     = [
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_keyword($keyword),
         'referrer' => substr( yourls_get_referrer(), 0, 200 ),
@@ -536,7 +536,7 @@ function yourls_log_redirect( $keyword ) {
     ];
 
     // Action to allow plugins to log the redirect in their own way. See #3990
-    yourls_do_action( 'log_redirect', $binds, yourls_get_yourls_site() );
+    yourls_do_action( 'log_redirect', $binds );
 
     // Try and log. An error probably means a concurrency problem : just skip the logging
     try {
