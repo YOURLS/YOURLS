@@ -526,7 +526,7 @@ function yourls_log_redirect( $keyword ) {
 
     $table = YOURLS_DB_TABLE_LOG;
     $ip = yourls_get_IP();
-     = [
+    $binds = [
         'now' => date( 'Y-m-d H:i:s' ),
         'keyword'  => yourls_sanitize_keyword($keyword),
         'referrer' => substr( yourls_get_referrer(), 0, 200 ),
