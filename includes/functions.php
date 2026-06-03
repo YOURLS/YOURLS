@@ -535,6 +535,9 @@ function yourls_log_redirect( $keyword ) {
         'location' => yourls_geo_ip_to_countrycode($ip),
     ];
 
+    // Action to allow plugins to log the redirect in their own way. See #3990
+    yourls_do_action( 'log_redirect', $binds );
+
     // Try and log. An error probably means a concurrency problem : just skip the logging
     try {
         $result = yourls_get_db('write-log_redirect')->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
