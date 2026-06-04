@@ -1,9 +1,7 @@
-name: DB matrix
+name: DB matrix compat check
 
 on:
   workflow_dispatch:
-  push:
-    branches: [db-matrix-test]
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,12 +23,9 @@ jobs:
           - { image: 'mysql:5.7',     php: '8.5', health: 'mysqladmin ping' }
           - { image: 'mysql:8.0',     php: '8.5', health: 'mysqladmin ping' }
           - { image: 'mysql:8.4',     php: '8.5', health: 'mysqladmin ping' }
-          # 9.0 is an innovation release, may have been superseded by 9.7
           - { image: 'mysql:9.0',     php: '8.5', health: 'mysqladmin ping' }
           - { image: 'mysql:9.7',     php: '8.5', health: 'mysqladmin ping' }
           # --- MariaDB (official `mariadb` image) ---
-          # 5.5 is very old, old manifest may still pull
-          - { image: 'mariadb:5.5',   php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
           - { image: 'mariadb:10.11', php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
           - { image: 'mariadb:11.4',  php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
           - { image: 'mariadb:11.8',  php: '8.5', health: 'healthcheck.sh --connect --innodb_initialized' }
