@@ -21,7 +21,7 @@ define( 'YOURLS_PHP_BIN', 'php' );
 /*** Most likely, don't edit anything else. Pretty much standard YOURLS config. */
 
 define('YOURLS_HOURS_OFFSET', 5);
-define('YOURLS_UNIQUE_URLS',  true);
+// YOURLS_UNIQUE_URLS intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 define('YOURLS_PRIVATE',  true);
 define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
 define('YOURLS_URL_CONVERT',  62);
