@@ -21,7 +21,7 @@
             <directory suffix=".php">./includes</directory>
         </include>
         <exclude>
-            <directory suffix=".php">./includes/vendors</directory>
+            <directory suffix=".php">./includes/vendor</directory>
         </exclude>
     </source>
     <testsuites>
