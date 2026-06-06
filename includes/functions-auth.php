@@ -323,11 +323,11 @@ function yourls_has_md5_passwords(): bool {
  * @param string $user user login
  * @return bool true if password hashed, false otherwise
  */
-function yourls_has_md5_password( $user ) {
+function yourls_has_md5_password(string $user ): bool {
     global $yourls_user_passwords;
     return(    isset( $yourls_user_passwords[ $user ] )
-            && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
-            && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+            && str_starts_with($yourls_user_passwords[$user], 'md5:')
+            && strlen( $yourls_user_passwords[ $user ] ) == 42 // https://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
            );
 }
 

@@ -43,9 +43,7 @@ function yourls_get_IP(): string {
     }
 
     // If there are multiple IPs (e.g. in HTTP_X_FORWARDED_FOR), take the first one
-    if (str_contains($ip, ',')) {
-        $ip = substr($ip, 0, strpos($ip, ','));
-    }
+    $ip = explode(',', $ip)[0];
 
     return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
 }
