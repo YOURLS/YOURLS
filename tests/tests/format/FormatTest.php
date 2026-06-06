@@ -2,8 +2,6 @@
 
 /**
  * General formatting functions.
- *
- * @since 0.1
  */
 #[\PHPUnit\Framework\Attributes\Group('formatting')]
 class FormatTest extends PHPUnit\Framework\TestCase {
@@ -39,8 +37,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that yourls_is_serialized detects serialized data
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('serialize_data')]
     public function test_is_serialized( $data ) {
@@ -49,8 +45,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Check that yourls_is_serialized doesn't assume garbage is serialized
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('not_serialized_data')]
     public function test_is_not_serialized( $data ) {
@@ -58,41 +52,54 @@ class FormatTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Integer (1337) to string (3jk) to integer
+     * Short URL charsets for the int<->string
      *
-     * @since 0.1
+     *  - null    : the charset currently in effect (driven by YOURLS_URL_CONVERT)
+     *  - base 36 : '0-9a-z'    (YOURLS_URL_CONVERT = 36, or anything but 62/64)
+     *  - base 62 : '0-9a-zA-Z' (YOURLS_URL_CONVERT = 62 or 64)
      */
-    public function test_int_to_string_to_int() {
+    static function conversion_charsets(): \Iterator {
+        yield 'default (YOURLS_URL_CONVERT)' => array( null );
+        yield 'base 36' => array( '0123456789abcdefghijklmnopqrstuvwxyz' );
+        yield 'base 62' => array( '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' );
+    }
+
+    /**
+     * Random string using only characters from $chars
+     */
+    private function rand_str_from( string $chars, int $len ): string {
+        $max = strlen( $chars ) - 1;
+        $string = '';
+        for( $i = 0; $i < $len; $i++ ) {
+            $string .= $chars[ mt_rand( 0, $max ) ];
+        }
+        // Drop leading zeros (int2string never emits them); never return empty
+        return ltrim( $string, '0' ) ?: $chars[1];
+    }
+
+    /**
+     * Integer (1337) to string (3jk) to integer
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('conversion_charsets')]
+    public function test_int_to_string_to_int( $chars ) {
         // 10 random integers
-        $rnd = array();
         for( $i=0; $i<10; $i++ ) {
-            $rnd[]= mt_rand( 1, 1000000 );
+            $integer = mt_rand( 1, 1000000 );
+            $this->assertEquals( $integer, yourls_string2int( yourls_int2string( $integer, $chars ), $chars ) );
         }
-
-        foreach( $rnd as $integer ) {
-            $this->assertEquals( $integer, yourls_string2int( yourls_int2string( $integer ) ) );
-        }
-
     }
 
     /**
      * String (3jk) to integer (1337) to string
-     *
-     * @since 0.1
      */
-    public function test_string_to_int_to_string() {
-        // 10 random strings that do not start with a zero
-        $rnd = array();
-        $i = 0;
-        while( $i < 10 ) {
-            if( $notempty = ltrim( rand_str( mt_rand( 2, 10 ) ), '0' ) ) {
-                $rnd[]= $notempty;
-                $i++;
-            }
-        }
+    #[\PHPUnit\Framework\Attributes\DataProvider('conversion_charsets')]
+    public function test_string_to_int_to_string( $chars ) {
+        // Generate random strings from the charset actually in use
+        $charset = $chars ?? yourls_get_shorturl_charset();
 
-        foreach( $rnd as $string ) {
-            $this->assertEquals( $string, yourls_int2string( yourls_string2int( $string ) ) );
+        for( $i=0; $i<10; $i++ ) {
+            $string = $this->rand_str_from( $charset, mt_rand( 2, 10 ) );
+            $this->assertEquals( $string, yourls_int2string( yourls_string2int( $string, $chars ), $chars ) );
         }
     }
 
@@ -114,8 +121,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Generating valid regexp from the allowed charset
-     *
-     * @since 0.1
      */
     function test_valid_regexp() {
         $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
@@ -134,19 +139,16 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Trim long strings
-     *
-     * @since 0.1
      */
     function test_trim_long_strings() {
         $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
+
         $trim = "The Plague That Makes Your Booty Move... It's The Infec[...]";
         $this->assertSame( $trim, yourls_trim_long_string( $long ) );
 
-        $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
         $trim = "The Plague That Makes Your Booty[...]";
         $this->assertSame( $trim, yourls_trim_long_string( $long, 37 ) );
 
-        $long = "The Plague That Makes Your Booty Move... It's The Infectious Grooves";
         $trim = "The Plague That Makes Your Booty Mo..";
         $this->assertSame( $trim, yourls_trim_long_string( $long, 37, '..' ) );
     }
@@ -155,8 +157,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
      * Return true for UTF8 strings
      *
      * Note: As of 1.7.1, function yourls_seem_utf8() is still unused. In 2.0 consider simply deleting it if still not needed
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('valid_utf8')]
     function test_is_utf8( $string ) {
@@ -167,8 +167,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
      * Return false for non UTF8 strings
      *
      * Note: As of 1.7.1, function yourls_seem_utf8() is still unused. In 2.0 consider simply deleting it if still not needed
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('invalid_utf8')]
     function test_is_not_utf8( $string ) {
@@ -197,8 +195,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Test yourls_backslashit
-     *
-     * @since 0.1
      */
     function test_backslashit() {
         $this->assertSame( '\h\e\l\l\o \w\o\r\l\d 123 !', yourls_backslashit( 'hello world 123 !' ) );
@@ -211,8 +207,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
      * Note: we're not testing that the bookmarklet generator produces valid JS code: the
      * bookmarklet class has tests for this, see https://github.com/ozh/bookmarkletgen
      * We're just testing that content is returned
-     *
-     * @since 0.1
      */
     function test_bookmarklet() {
         $code = yourls_make_bookmarklet( 'hello' );
@@ -221,8 +215,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Test yourls_specialchars basics
-     *
-     * @since 0.1
      */
     function test_specialchars_decode_basics() {
         $html =  "&amp;&lt;hello world&gt;";
@@ -234,8 +226,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Test yourls_specialchars escape quotes
-     *
-     * @since 0.1
      */
     function test_specialchars_escapes_quotes() {
         $source = "\"'hello!'\"";
@@ -248,8 +238,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Test yourls_specialchars doesn't change allowed entities
-     *
-     * @since 0.1
      */
     function test_specialchars_allowed_entities() {
         foreach ( yourls_kses_allowed_entities() as $ent ) {
@@ -260,8 +248,6 @@ class FormatTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Test yourls_specialchars with unallowed entities
-     *
-     * @since 0.1
      */
     function test_specialchars_unallowed_entities() {
         $ents = array( 'iacut', 'aposs', 'pos', 'apo', 'apo?', 'apo.*', '.*apo.*', 'apos ', ' apos', ' apos ' );

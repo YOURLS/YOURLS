@@ -2,16 +2,21 @@
 
 /**
  * Sanitizing functions
- *
- * @since 0.1
  */
 #[\PHPUnit\Framework\Attributes\Group('formatting')]
 class SanitizeTest extends PHPUnit\Framework\TestCase {
 
+    // Short URL charset when YOURLS_URL_CONVERT is 36 (or anything but 62/64)
+    const BASE36 = '0123456789abcdefghijklmnopqrstuvwxyz';
+    // Short URL charset when YOURLS_URL_CONVERT is 62 or 64
+    const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    protected function tearDown(): void {
+        yourls_remove_all_filters( 'get_shorturl_charset' );
+    }
+
     /**
      * Sanitize titles
-     *
-     * @since 0.1
      */
     function test_sanitize_title() {
         $expected = "How Will I Laugh Tomorrow When I Can't Even Smile Today";
@@ -25,8 +30,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize titles with fallback
-     *
-     * @since 0.1
      */
     function test_sanitize_title_with_fallback() {
         $fallback = rand_str();
@@ -39,8 +42,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize integers
-     *
-     * @since 0.1
      */
     function test_sanitize_int() {
         for ( $i = 1; $i <= 10; $i++ ) {
@@ -66,8 +67,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize IPs
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('random_ips')]
     function test_sanitize_ip( $ip, $is_ip ) {
@@ -88,8 +87,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize dates
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('random_dates')]
     function test_sanitize_date( $date, $is_date ) {
@@ -102,8 +99,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize dates for SQL search
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('random_dates')]
     function test_sanitize_date_sql( $date, $is_date ) {
@@ -127,8 +122,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize filenames
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('random_filenames')]
     function test_sanitize_filename( $filename, $expected ) {
@@ -163,8 +156,6 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Sanitize versions
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('random_versions')]
     function test_sanitize_version( $version, $expected ) {
@@ -174,26 +165,30 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
     /**
      * Some random keywords to sanitize
      */
-    public static function keywords_to_sanitize(): \Iterator
-    {
-        yield array( 'hello-world', 'helloworld' );
-        yield array( '1337ozhOZH', '1337ozhOZH' );
-        yield array( 'yeah@#!?*', 'yeah' );
-        yield array( 'Motörhead', 'Motrhead' );
+    public static function keywords_to_sanitize(): \Iterator {
+        //          keyword         base 36 (0-9a-z)   base 62 (0-9a-zA-Z)
+        yield array( 'hello-world',  'helloworld',      'helloworld'  );
+        yield array( '1337ozhOZH',   '1337ozh',         '1337ozhOZH'  );
+        yield array( 'yeah@#!?*',    'yeah',            'yeah'        );
+        yield array( 'Motörhead',    'otrhead',         'Motrhead'    );
     }
 
     /**
      * Checking that keyword are correctly sanitized
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('keywords_to_sanitize')]
-    public function test_sanitize_keywords( $keyword, $expected ) {
+    public function test_sanitize_keywords( $keyword, $expected_base36, $expected_base62 ) {
         // the "soft" way: assume keyword can be anything we have in a URL (here, should remain unchanged)
         $this->assertSame( $keyword, yourls_sanitize_keyword( $keyword ) );
 
-        // the "hard" way: keyword must comply to acceptable short URL charset
-        $this->assertSame( $expected, yourls_sanitize_keyword( $keyword, true ) );
+        // the "hard" way: keyword must comply to the acceptable short URL charset
+        yourls_add_filter( 'get_shorturl_charset', fn() => self::BASE36 );
+        $this->assertSame( $expected_base36, yourls_sanitize_keyword( $keyword, true ) );
+
+        yourls_remove_all_filters( 'get_shorturl_charset' );
+
+        yourls_add_filter( 'get_shorturl_charset', fn() => self::BASE62 );
+        $this->assertSame( $expected_base62, yourls_sanitize_keyword( $keyword, true ) );
     }
 
 }

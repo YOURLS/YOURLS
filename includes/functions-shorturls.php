@@ -165,12 +165,26 @@ function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
     return yourls_apply_filter( 'add_new_link', $return, $url, $keyword, $title );
 }
 /**
+ * Get the keyword conversion base, as defined in config, filtered
+ *
+ * Expected values are 36 (lowercase + digits) or 62/64 (mixed case + digits).
+ * Defaults to 36 when undefined or wrongly defined.
+ *
+ * @since 1.10.5
+ * @return int Conversion base
+ */
+function yourls_get_url_convert(): int {
+    $convert = defined( 'YOURLS_URL_CONVERT' ) ? (int) YOURLS_URL_CONVERT : 36;
+    return yourls_apply_filter( 'get_url_convert', $convert );
+}
+
+/**
  * Determine the allowed character set in short URLs
  *
  * @return string    Acceptable charset for short URLS keywords
  */
 function yourls_get_shorturl_charset() {
-    if ( defined( 'YOURLS_URL_CONVERT' ) && in_array( YOURLS_URL_CONVERT, [ 62, 64 ] ) ) {
+    if ( in_array( yourls_get_url_convert(), [ 62, 64 ] ) ) {
         $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
     else {
