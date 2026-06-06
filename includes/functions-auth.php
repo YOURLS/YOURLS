@@ -49,7 +49,7 @@ function yourls_is_valid_user() {
     // Determine auth method and check credentials
     if
         // API only: Secure (no login or pwd) and time limited token
-        // ?timestamp=12345678&signature=md5(totoblah12345678)
+        // ?timestamp=12345678&signature=some-long-sha256-hash
         ( yourls_is_API() &&
           isset( $_REQUEST['timestamp'] ) && !empty($_REQUEST['timestamp'] ) &&
           isset( $_REQUEST['signature'] ) && !empty($_REQUEST['signature'] )
@@ -61,7 +61,7 @@ function yourls_is_valid_user() {
 
     elseif
         // API only: Secure (no login or pwd)
-        // ?signature=md5(totoblah)
+        // ?signature=some-long-sha256-hash
         ( yourls_is_API() &&
           !isset( $_REQUEST['timestamp'] ) &&
           isset( $_REQUEST['signature'] ) && !empty( $_REQUEST['signature'] )
@@ -163,10 +163,10 @@ function yourls_check_password_hash($user, $submitted_password ) {
     } else if( yourls_has_md5_password( $user ) ) {
         // Stored password is a salted md5 hash: "md5:<$r = rand(10000,99999)>:<md5($r.'thepassword')>"
         list( , $salt, ) = explode( ':', $yourls_user_passwords[ $user ] );
-        return( $yourls_user_passwords[ $user ] == 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
+        return hash_equals( $yourls_user_passwords[ $user ], 'md5:'.$salt.':'.md5( $salt . $submitted_password ) );
     } else {
         // Password stored in clear text
-        return( $yourls_user_passwords[ $user ] === $submitted_password );
+        return hash_equals( (string) $yourls_user_passwords[ $user ], (string) $submitted_password );
     }
 }
 
@@ -247,13 +247,13 @@ function yourls_hash_passwords_now( $config_file ) {
  * @param string $password password to hash
  * @return string hashed password
  */
-function yourls_phpass_hash( $password ) {
+function yourls_phpass_hash(string $password ): string {
     /**
      * Filter for hashing algorithm. See https://www.php.net/manual/en/function.password-hash.php
-     * Hashing algos are available if PHP was compiled with it.
-     * PASSWORD_BCRYPT is always available.
+     * We're using the default password hashing. This allows us to use better algos as they become
+     * available in future PHP versions, without having to update YOURLS.
      */
-    $algo    = yourls_apply_filter('hash_algo', PASSWORD_BCRYPT);
+    $algo = yourls_apply_filter('hash_algo', PASSWORD_DEFAULT);
 
     /**
      * Filter for hashing options. See https://www.php.net/manual/en/function.password-hash.php
@@ -298,6 +298,22 @@ function yourls_has_cleartext_passwords() {
 }
 
 /**
+ * Check to see if any password is stored as md5.
+ *
+ * @since 1.10.5
+ * @return bool true if any passwords are md5
+ */
+function yourls_has_md5_passwords(): bool {
+    global $yourls_user_passwords;
+    foreach ( $yourls_user_passwords as $user => $pwdata ) {
+        if ( yourls_has_md5_password($user) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Check if a user has a md5 hashed password
  *
  * Check if a user password is 'md5:[38 chars]'.
@@ -307,11 +323,11 @@ function yourls_has_cleartext_passwords() {
  * @param string $user user login
  * @return bool true if password hashed, false otherwise
  */
-function yourls_has_md5_password( $user ) {
+function yourls_has_md5_password(string $user ): bool {
     global $yourls_user_passwords;
     return(    isset( $yourls_user_passwords[ $user ] )
-            && substr( $yourls_user_passwords[ $user ], 0, 4 ) == 'md5:'
-            && strlen( $yourls_user_passwords[ $user ] ) == 42 // http://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
+            && str_starts_with($yourls_user_passwords[$user], 'md5:')
+            && strlen( $yourls_user_passwords[ $user ] ) == 42 // https://www.google.com/search?q=the+answer+to+life+the+universe+and+everything
            );
 }
 
@@ -321,6 +337,7 @@ function yourls_has_md5_password( $user ) {
  * Check if a user password is 'phpass:[lots of chars]'.
  * (For historical reason we're using 'phpass' as an identifier.)
  * TODO: deprecate this when/if we have proper user management with password hashes stored in the DB
+ *       In such case, check password_needs_rehash()
  *
  * @since 1.7
  * @param string $user user login
@@ -341,7 +358,7 @@ function yourls_has_phpass_password( $user ) {
 function yourls_check_auth_cookie() {
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-        if ( yourls_cookie_value( $valid_user ) === $_COOKIE[ yourls_cookie_name() ] ) {
+        if ( hash_equals( yourls_cookie_value( $valid_user ), (string) $_COOKIE[ yourls_cookie_name() ] ) ) {
             yourls_set_user( $valid_user );
             return true;
         }
@@ -357,12 +374,15 @@ function yourls_check_auth_cookie() {
  * Since 1.7.7 we allow a `hash` parameter and an arbitrary hashed signature, hashed
  * with the `hash` function. Examples :
  *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<sha512 hash>&hash=sha512&action=...
- *   http://sho.rt/yourls-api.php?timestamp=<timestamp>&signature=<crc32 hash>&hash=crc32&action=...
+ * Since 1.10.5, the hash must be one of: sha256, sha384, or sha512, unless explicitly allowed by a plugin via the
+ * `allowed_hash_algos` filter.
+ *
+ * @see https://yourls.org/docs/guide/advanced/passwordless-api
  *
  * @since 1.4.1
  * @return bool False if signature or timestamp missing or invalid, true if valid
  */
-function yourls_check_signature_timestamp() {
+function yourls_check_signature_timestamp(): bool {
     if(   !isset( $_REQUEST['signature'] ) OR empty( $_REQUEST['signature'] )
        OR !isset( $_REQUEST['timestamp'] ) OR empty( $_REQUEST['timestamp'] )
     ) {
@@ -374,9 +394,9 @@ function yourls_check_signature_timestamp() {
         return false;
     }
 
-    // if there is a hash argument, make sure it's part of the availables algos
-    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : 'md5';
-    if( !in_array($hash_function, hash_algos()) ) {
+    // if there is a hash argument, make sure it's part of the available and allowed hash algorithms
+    $hash_function = isset($_REQUEST['hash']) ? (string)$_REQUEST['hash'] : yourls_default_hash_algo();
+    if( !in_array($hash_function, hash_algos()) OR !in_array( $hash_function, yourls_allowed_hash_algos() ) ) {
         return false;
     }
 
@@ -384,9 +404,9 @@ function yourls_check_signature_timestamp() {
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
         if (
-            hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ) === $_REQUEST['signature']
+            hash_equals( hash( $hash_function, $_REQUEST['timestamp'].yourls_auth_signature( $valid_user ) ), (string) $_REQUEST['signature'] )
             or
-            hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ) === $_REQUEST['signature']
+            hash_equals( hash( $hash_function, yourls_auth_signature( $valid_user ).$_REQUEST['timestamp'] ), (string) $_REQUEST['signature'] )
             ) {
             yourls_set_user( $valid_user );
             return true;
@@ -395,6 +415,26 @@ function yourls_check_signature_timestamp() {
 
     // Signature doesn't match known user
     return false;
+}
+
+/**
+ * Helper function: return default hash algorithm for signature hashing, which is sha256 unless filtered
+ *
+ * @since 1.10.5
+ * @return string default hash algorithm for signature hashing
+ */
+function yourls_default_hash_algo(): string {
+    return yourls_apply_filter('default_hash_algo', 'sha256');
+}
+
+/**
+ * Helper function: return list of allowed hash algorithms for signature hashing, which by default are sha256, sha384, and sha512 unless filtered
+ *
+ * @since 1.10.5
+ * @return array list of allowed hash algorithms for signature hashing
+ */
+function yourls_allowed_hash_algos(): array {
+    return yourls_apply_filter( 'allowed_hash_algos', ['sha256', 'sha384', 'sha512'] );
 }
 
 /**
@@ -410,7 +450,7 @@ function yourls_check_signature() {
     // Check signature against all possible users
     global $yourls_user_passwords;
     foreach( $yourls_user_passwords as $valid_user => $valid_password ) {
-        if ( yourls_auth_signature( $valid_user ) === $_REQUEST['signature'] ) {
+        if ( hash_equals( yourls_auth_signature( $valid_user ), (string) $_REQUEST['signature'] ) ) {
             yourls_set_user( $valid_user );
             return true;
         }
@@ -423,15 +463,28 @@ function yourls_check_signature() {
 /**
  * Generate secret signature hash
  *
- * @param false|string $username  Username to generate signature for, or false to use current user
+ * @param false|string $username Username to generate signature for, or false to use current user
  * @return string                 Signature
  */
-function yourls_auth_signature( $username = false ) {
+function yourls_auth_signature(false|string $username = false ): string {
     if( !$username && defined('YOURLS_USER') ) {
         $username = YOURLS_USER;
     }
-    return ( $username ? substr( yourls_salt( $username ), 0, 10 ) : 'Cannot generate auth signature: no username' );
+    $signature = $username ? substr(yourls_salt('api:' . $username), 0, yourls_auth_signature_length()) : 'Cannot generate auth signature: no username';
+
+    return yourls_apply_filter( 'auth_signature', $signature, $username );
 }
+
+
+/**
+ * Return length of auth signature, which is 32 chars by default unless filtered
+ *
+ * @return int
+ */
+function yourls_auth_signature_length(): int {
+    return (int)yourls_apply_filter( 'auth_signature_length', 32 );
+}
+
 
 /**
  * Check if timestamp is not too old
@@ -635,7 +688,7 @@ function yourls_cookie_name(): string {
  * @return string          cookie value
  */
 function yourls_cookie_value( $user ) {
-    return yourls_apply_filter( 'set_cookie_value', yourls_salt( $user ?? '' ), $user );
+    return yourls_apply_filter( 'set_cookie_value', yourls_salt( 'cookie:' . ($user ?? '') ), $user );
 }
 
 /**
@@ -659,7 +712,7 @@ function yourls_tick() {
  * @return string          hashed string
  */
 function yourls_salt( $string ) {
-    $salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : md5(__FILE__) ;
+    $salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : hash('sha256', __FILE__) ;
     return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
 }
 
@@ -755,7 +808,7 @@ function yourls_verify_nonce($action, $nonce = false, $user = false, $return = '
     // What nonce should be
     $valid = yourls_create_nonce( $action, $user );
 
-    if( $nonce === $valid ) {
+    if( hash_equals( $valid, (string) $nonce ) ) {
         return true;
     } else {
         if( $return )
@@ -779,7 +832,7 @@ function yourls_is_user_from_env() {
  *
  * By default, passwords are hashed. They are not if
  *    - there is no password in clear text in the config file (ie everything is already hashed)
- *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://docs.yourls.org/guide/essentials/credentials.html#i-don-t-want-to-encrypt-my-password
+ *    - the user defined constant YOURLS_NO_HASH_PASSWORD is true, see https://yourls.org/docs/guide/essentials/credentials#i-don-t-want-to-encrypt-my-password
  *    - YOURLS_USER and YOURLS_PASSWORD are provided by the environment, not the config file
  *
  * @since 1.8.2

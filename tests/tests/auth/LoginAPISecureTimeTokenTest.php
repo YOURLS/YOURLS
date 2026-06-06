@@ -14,7 +14,7 @@ class LoginAPISecureTimeTokenTest extends AbstractLoginTestCase {
     public static function setUpBeforeClass(): void {
         yourls_add_filter( 'is_API', 'yourls_return_true' );
         $_REQUEST['timestamp'] = time();
-        $_REQUEST['signature'] = md5( yourls_auth_signature( 'yourls' ) . time() );
+        $_REQUEST['signature'] = hash( 'sha256', yourls_auth_signature( 'yourls' ) . time() );
         /* Attempt login with valid signature & timestamp. Tests with invalid signatures are made directly
          *  against the check function, not in a full login procedure. See auth.php
          */
