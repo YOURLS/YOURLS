@@ -504,7 +504,7 @@ function yourls_check_timestamp( $time ) {
  * @param string $user  User login, or empty string to delete cookie
  * @return void
  */
-function yourls_store_cookie( $user = '' ) {
+function yourls_store_cookie(string $user = '' ): void {
 
     // No user will delete the cookie with a cookie time from the past
     if( !$user ) {
@@ -513,14 +513,11 @@ function yourls_store_cookie( $user = '' ) {
         $time = time() + yourls_get_cookie_life();
     }
 
-    $path     = yourls_apply_filter( 'setcookie_path',     '/' );
-    $domain   = yourls_apply_filter( 'setcookie_domain',   parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) );
-    $secure   = yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() );
-    $httponly = yourls_apply_filter( 'setcookie_httponly', true );
-
-    // Some browsers refuse to store localhost cookie
-    if ( $domain == 'localhost' )
-        $domain = '';
+    $attr     = yourls_cookie_attributes();
+    $path     = $attr['path'];
+    $domain   = $attr['domain'];
+    $secure   = $attr['secure'];
+    $httponly = $attr['httponly'];
 
     yourls_do_action( 'pre_setcookie', $user, $time, $path, $domain, $secure, $httponly );
 
@@ -561,6 +558,66 @@ function yourls_setcookie($name, $value, $expire, $path, $domain, $secure, $http
         'secure'   => $secure,
         'httponly' => $httponly,
     )));
+}
+
+/**
+ * Get auth cookie attributes after filters
+ *
+ * Single source of truth used both when storing the cookie and when deriving the
+ * cookie name prefix in yourls_cookie_name_prefix(). This guarantees the prefix
+ * matches the attributes actually sent: otherwise the browser silently rejects
+ * the Set-Cookie and breaks login.
+ *
+ * @since 1.10.5
+ * @return array  Associative array with keys 'path', 'domain', 'secure', 'httponly'
+ */
+function yourls_cookie_attributes(): array {
+    // Cast to string so a null/false return from parse_url normalises to '' and the
+    // __Host- check below stays deterministic
+    $domain = (string) yourls_apply_filter( 'setcookie_domain', parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) );
+
+    // Some browsers refuse to store localhost cookie
+    if ( $domain === 'localhost' ) {
+        $domain = '';
+    }
+
+    return array(
+        'path'     => yourls_apply_filter( 'setcookie_path',     '/' ),
+        'domain'   => $domain,
+        'secure'   => yourls_apply_filter( 'setcookie_secure',   yourls_is_ssl() ),
+        'httponly' => yourls_apply_filter( 'setcookie_httponly', true ),
+    );
+}
+
+/**
+ * Get the cookie name prefix matching the current cookie attributes
+ *
+ * Picks the strongest RFC 6265bis prefix the attributes allow, since both prefixes
+ * are mutually exclusive (a cookie has one name):
+ *   __Host-   : requires Secure + Path=/ + no Domain attribute (host-only cookie).
+ *               On HTTPS, retires the #1673 cross-subdomain concern at the browser
+ *               level: the cookie cannot leak to nor be set by sibling subdomains.
+ *   __Secure- : requires Secure only. Used when a Domain attribute is set, or when
+ *               the cookie path is not '/'. Blocks Set-Cookie from insecure channels.
+ *   ''        : on HTTP installs, no prefix is possible: the browser would reject
+ *               any prefixed cookie that lacks the Secure attribute.
+ *
+ * @since 1.10.5
+ * @return string  '__Host-', '__Secure-' or '' depending on cookie attributes
+ */
+function yourls_cookie_name_prefix(): string {
+    $attr = yourls_cookie_attributes();
+
+    // HTTP: browser would reject any prefixed cookie
+    if ( !$attr['secure'] ) {
+        return '';
+    }
+    // Strongest: host-only at root path
+    if ( $attr['domain'] === '' && $attr['path'] === '/' ) {
+        return '__Host-';
+    }
+    // Fallback: a Domain is set or path is not '/'
+    return '__Secure-';
 }
 
 /**
@@ -606,15 +663,21 @@ function yourls_get_nonce_life() {
 /**
  * Get YOURLS cookie name
  *
- * The name is unique for each install, to prevent mismatch between sho.rt and very.sho.rt -- see #1673
+ * The base name is unique per install (salt of the site URL) to prevent collision between eg sho.rt
+ * and very.sho.rt - see #1673.
+ * On HTTPS, the name is additionally prefixed with __Host- or __Secure- to enable browser-side
+ * hardening against cookie injection over insecure channels and, for __Host-, cross-subdomain reads or writes.
+ * See #2785
  *
  * TODO: when multi user is implemented, the whole cookie stuff should be reworked to allow storing multiple users
  *
  * @since 1.7.1
  * @return string  unique cookie name for a given YOURLS site
  */
-function yourls_cookie_name() {
-    return yourls_apply_filter( 'cookie_name', 'yourls_' . yourls_salt( yourls_get_yourls_site() ) );
+function yourls_cookie_name(): string {
+    $name = yourls_cookie_name_prefix() . 'yourls_' . yourls_salt( yourls_get_yourls_site() );
+
+    return yourls_apply_filter( 'cookie_name', $name );
 }
 
 /**
