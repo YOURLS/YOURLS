@@ -699,12 +699,43 @@ function yourls_allow_duplicate_longurls() {
 }
 
 /**
+ * Get the flood delay in seconds, as maybe defined in config, filtered
+ *
+ * This is the minimum delay between two link creations from the same IP.
+ * Defaults to 15 when undefined.
+ *
+ * @since 1.10.5
+ * @return int Flood delay in seconds
+ */
+function yourls_get_flood_delay(): int {
+    $delay = defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) ? (int) YOURLS_FLOOD_DELAY_SECONDS : 15;
+    return yourls_apply_filter( 'get_flood_delay', $delay );
+}
+
+/**
+ * Get the list of IPs exempt from flood checking, as maybe defined in config, filtered
+ *
+ * @since 1.10.5
+ * @return array List of whitelisted IPs (empty array if none)
+ */
+function yourls_get_flood_ip_whitelist(): array {
+    $whitelist = defined( 'YOURLS_FLOOD_IP_WHITELIST' ) ? (string) YOURLS_FLOOD_IP_WHITELIST : '';
+    $ips = array_filter( array_map( 'trim', explode( ',', $whitelist ) ) );
+
+    $ips = yourls_apply_filter( 'get_flood_ip_whitelist', $ips );
+
+    // Sanitize each IP, including any value added through the filter, drop empties and reindex
+    $ips = array_map( fn( $ip ) => yourls_sanitize_ip( trim( (string) $ip ) ), (array) $ips );
+    return array_values( array_filter( $ips ) );
+}
+
+/**
  * Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
  *
  * @param string $ip
  * @return bool|mixed|string
  */
-function yourls_check_IP_flood( $ip = '' ) {
+function yourls_check_IP_flood(string $ip = '' ): mixed {
 
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_check_IP_flood', yourls_shunt_default(), $ip );
@@ -715,11 +746,8 @@ function yourls_check_IP_flood( $ip = '' ) {
     yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
     // Raise white flag if installing or if no flood delay defined
-    if(
-        ( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
-        !defined('YOURLS_FLOOD_DELAY_SECONDS') ||
-        yourls_is_installing()
-    )
+    $flood_delay = yourls_get_flood_delay();
+    if( $flood_delay <= 0 || yourls_is_installing() )
         return true;
 
     // Don't throttle logged in users
@@ -729,13 +757,8 @@ function yourls_check_IP_flood( $ip = '' ) {
     }
 
     // Don't throttle whitelist IPs
-    if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
-        $whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
-        foreach( (array)$whitelist_ips as $whitelist_ip ) {
-            $whitelist_ip = trim( $whitelist_ip );
-            if ( $whitelist_ip == $ip )
-                return true;
-        }
+    if( in_array( $ip, yourls_get_flood_ip_whitelist() ) ) {
+        return true;
     }
 
     $ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
@@ -747,7 +770,7 @@ function yourls_check_IP_flood( $ip = '' ) {
     if( $lasttime ) {
         $now = date( 'U' );
         $then = date( 'U', strtotime( $lasttime ) );
-        if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
+        if( ( $now - $then ) <= $flood_delay ) {
             // Flood!
             yourls_do_action( 'ip_flood', $ip, $now - $then );
             yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );

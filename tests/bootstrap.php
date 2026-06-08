@@ -40,8 +40,14 @@ $init->get_all_options               = false;
 $init->check_new_version             = false;
 new \YOURLS\Config\Init($init);
 
+// Mark as 'installing' to avoid flood checks
+yourls_add_filter( 'is_installing', 'yourls_return_true' );
+
 // All set -- install
 yut_install_yourls();
+
+// Unmark as 'installing' to allow normal execution of code
+yourls_remove_filter( 'is_installing', 'yourls_return_true' );
 
 // All set -- instantiate the rest
 yourls_get_all_options();

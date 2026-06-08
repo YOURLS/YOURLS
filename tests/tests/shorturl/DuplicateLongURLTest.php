@@ -16,11 +16,14 @@ class DuplicateLongURLTest extends PHPUnit\Framework\TestCase {
      */
     protected function setUp(): void {
         yourls_add_filter( 'allow_duplicate_longurls', 'yourls_return_false' );
+        // Bypass flood checks
+        yourls_add_filter('shunt_check_IP_flood', 'yourls_return_true');
     }
 
     protected function tearDown(): void {
         // Removes both the baseline filter and any added during the test
         yourls_remove_all_filters( 'allow_duplicate_longurls' );
+        yourls_remove_filter('shunt_check_IP_flood', 'yourls_return_true');
     }
 
     public function test_yourls_allow_duplicate_longurls_is_bool() {

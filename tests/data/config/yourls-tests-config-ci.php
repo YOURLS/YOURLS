@@ -22,10 +22,9 @@ define('YOURLS_HOURS_OFFSET', 5);
 // YOURLS_UNIQUE_URLS intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 // YOURLS_PRIVATE intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 // YOURLS_URL_CONVERT is intentionally left undefined: relevant tests run twice, first with it set to 36, then with it set to 62
+// YOURLS_FLOOD_DELAY_SECONDS and YOURLS_FLOOD_IP_WHITELIST intentionally left undefined: tests compute their own values
 define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
 define('YOURLS_DB_PREFIX',  'yourls_');
-define('YOURLS_FLOOD_DELAY_SECONDS',  0);
-define('YOURLS_FLOOD_IP_WHITELIST',  '');
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);
 

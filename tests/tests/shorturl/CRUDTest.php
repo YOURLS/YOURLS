@@ -31,8 +31,14 @@ class CRUDTest extends PHPUnit\Framework\TestCase {
         yourls_add_filter( 'allow_duplicate_longurls', $allow ? 'yourls_return_true' : 'yourls_return_false' );
     }
 
+    protected function setUp(): void {
+        // Bypass flood checks
+        yourls_add_filter('shunt_check_IP_flood', 'yourls_return_true');
+    }
+
     protected function tearDown(): void {
         yourls_remove_all_filters( 'allow_duplicate_longurls' );
+        yourls_remove_filter('shunt_check_IP_flood', 'yourls_return_true');
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('modeProvider')]
