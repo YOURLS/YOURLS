@@ -18,7 +18,7 @@ define( 'YOURLS_PHP_BIN', 'php' );
 
 /*** Standard YOURLS config. */
 
-define('YOURLS_HOURS_OFFSET', 5);
+// YOURLS_HOURS_OFFSET intentionally left undefined: tests compute their own values
 // YOURLS_UNIQUE_URLS intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 // YOURLS_PRIVATE intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 // YOURLS_URL_CONVERT is intentionally left undefined: relevant tests run twice, first with it set to 36, then with it set to 62
