@@ -610,12 +610,15 @@ function yourls_log_redirect( $keyword ) {
 }
 
 /**
- * Check if we want to not log redirects (for stats)
+ * Check if we want to log redirects (for stats)
+ *
+ * Logs redirects unless YOURLS_NOSTATS is defined and true. Filterable.
  *
  * @return bool
  */
 function yourls_do_log_redirect() {
-    return ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
+    $do_log = ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
+    return (bool)yourls_apply_filter( 'do_log_redirect', $do_log );
 }
 
 /**

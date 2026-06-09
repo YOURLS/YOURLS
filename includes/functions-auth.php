@@ -635,29 +635,29 @@ function yourls_set_user( $user ) {
  * Get YOURLS_COOKIE_LIFE value (ie the life span of an auth cookie in seconds)
  *
  * Use this function instead of directly using the constant. This way, its value can be modified by plugins
- * on a per case basis
+ * on a per case basis. Defaults to 7 days when YOURLS_COOKIE_LIFE is not defined.
  *
  * @since 1.7.7
- * @see includes/Config/Config.php
  * @return integer     cookie life span, in seconds
  */
-function yourls_get_cookie_life() {
-    return yourls_apply_filter( 'get_cookie_life', YOURLS_COOKIE_LIFE );
+function yourls_get_cookie_life(): int {
+    $life = defined( 'YOURLS_COOKIE_LIFE' ) ? YOURLS_COOKIE_LIFE : 60 * 60 * 24 * 7; // 7 days
+    return yourls_apply_filter( 'get_cookie_life', $life );
 }
 
 /**
  * Get YOURLS_NONCE_LIFE value (ie life span of a nonce in seconds)
  *
  * Use this function instead of directly using the constant. This way, its value can be modified by plugins
- * on a per case basis
+ * on a per case basis. Defaults to 12 hours when YOURLS_NONCE_LIFE is not defined.
  *
  * @since 1.7.7
- * @see includes/Config/Config.php
  * @see https://en.wikipedia.org/wiki/Cryptographic_nonce
  * @return integer     nonce life span, in seconds
  */
-function yourls_get_nonce_life() {
-    return yourls_apply_filter( 'get_nonce_life', YOURLS_NONCE_LIFE );
+function yourls_get_nonce_life(): int {
+    $life = defined( 'YOURLS_NONCE_LIFE' ) ? YOURLS_NONCE_LIFE : 60 * 60 * 12; // 12 hours
+    return yourls_apply_filter( 'get_nonce_life', $life );
 }
 
 /**

@@ -8,10 +8,23 @@ class StatsTest extends PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         yourls_remove_all_filters( 'get_stats' );
+        yourls_remove_all_filters( 'do_log_redirect' );
     }
 
     public function test_do_log_redirect() {
         $this->assertIsBool(yourls_do_log_redirect());
+    }
+
+    /**
+     * yourls_do_log_redirect() is filterable
+     */
+    public function test_do_log_redirect_is_filterable() {
+        yourls_add_filter( 'do_log_redirect', 'yourls_return_false' );
+        $this->assertFalse( yourls_do_log_redirect() );
+
+        yourls_remove_all_filters( 'do_log_redirect' );
+        yourls_add_filter( 'do_log_redirect', 'yourls_return_true' );
+        $this->assertTrue( yourls_do_log_redirect() );
     }
 
     /**

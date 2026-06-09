@@ -177,30 +177,6 @@ class Config {
         if (!defined( 'YOURLS_DB_TABLE_LOG' ))
             define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
-        // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
-        if (!defined( 'YOURLS_FLOOD_DELAY_SECONDS' ))
-            define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
-
-        // comma separated list of IPs that can bypass flood check.
-        if (!defined( 'YOURLS_FLOOD_IP_WHITELIST' ))
-            define( 'YOURLS_FLOOD_IP_WHITELIST', '' );
-
-        // life span of an auth cookie in seconds (60*60*24*7 = 7 days)
-        if (!defined( 'YOURLS_COOKIE_LIFE' ))
-            define( 'YOURLS_COOKIE_LIFE', 60*60*24*7 );
-
-        // life span of a nonce in seconds
-        if (!defined( 'YOURLS_NONCE_LIFE' ))
-            define( 'YOURLS_NONCE_LIFE', 43200 ); // 3600 * 12
-
-        // if set to true, disable stat logging (no use for it, too busy servers, ...)
-        if (!defined( 'YOURLS_NOSTATS' ))
-            define( 'YOURLS_NOSTATS', false );
-
-        // if set to true, force https:// in the admin area
-        if (!defined( 'YOURLS_ADMIN_SSL' ))
-            define( 'YOURLS_ADMIN_SSL', false );
-
         // if set to true, verbose debug infos
         if (!defined( 'YOURLS_DEBUG' )) {
             define('YOURLS_DEBUG', false);
