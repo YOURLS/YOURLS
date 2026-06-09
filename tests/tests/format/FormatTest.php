@@ -30,6 +30,7 @@ class FormatTest extends PHPUnit\Framework\TestCase {
     static function not_serialized_data(): \Iterator
     {
         yield array( 'a string' );
+        yield array( ['array', 'yarra'] );
         yield array( 'garbage:a:0:garbage;' );
         // array( 'b:4;' ), // this test fails in WP test suite, not sure if intentional or what...
         yield array( 's:4:test;' );
@@ -49,6 +50,59 @@ class FormatTest extends PHPUnit\Framework\TestCase {
     #[\PHPUnit\Framework\Attributes\DataProvider('not_serialized_data')]
     public function test_is_not_serialized( $data ) {
         $this->assertFalse( yourls_is_serialized( $data ) );
+    }
+
+    /**
+     * yourls_maybe_unserialize() unserializes serialized data, and leaves the rest untouched
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('serialize_data')]
+    public function test_maybe_unserialize_serialized( $data ) {
+        $this->assertEquals( $data, yourls_maybe_unserialize( serialize( $data ) ) );
+    }
+
+    /**
+     * yourls_maybe_unserialize() returns non-serialized input as-is
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('not_serialized_data')]
+    public function test_maybe_unserialize_passthrough($data) {
+        $this->assertSame( $data, yourls_maybe_unserialize( $data ) );
+    }
+
+    /**
+     * Charsets used by yourls_rnd_string(). Structure: [type, expected character pool]
+     */
+    static function rnd_string_types(): \Iterator {
+        yield 'type 1' => [ '1', '23456789bcdfghjkmnpqrstvwxyz' ];
+        yield 'type 2' => [ '2', '23456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ' ];
+        yield 'type 3' => [ '3', 'abcdefghijklmnopqrstuvwxyz' ];
+        yield 'type 4' => [ '4', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' ];
+        yield 'type 5' => [ '5', '0123456789abcdefghijklmnopqrstuvwxyz' ];
+        yield 'type 6' => [ '6', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' ];
+    }
+
+    /**
+     * yourls_rnd_string() honors the requested length and only uses characters from
+     * the pool matching the requested type
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('rnd_string_types')]
+    public function test_rnd_string_types( $type, $pool ) {
+        $str = yourls_rnd_string( 8, $type );
+
+        $this->assertSame( 8, strlen( $str ) );
+        // Every character belongs to the expected pool
+        $this->assertSame( '', preg_replace( '/[' . preg_quote( $pool, '/' ) . ']/', '', $str ) );
+    }
+
+    /**
+     * type 0 with a custom char list uses only that list
+     *
+     * Note: the result is str_shuffle()+substr(), so its length is capped at the
+     * size of the pool ; we use a pool larger than the requested length.
+     */
+    public function test_rnd_string_custom_charlist() {
+        $str = yourls_rnd_string( 6, '0', 'ABCDEFGHIJ' );
+        $this->assertSame( 6, strlen( $str ) );
+        $this->assertSame( '', preg_replace( '/[ABCDEFGHIJ]/', '', $str ) );
     }
 
     /**
