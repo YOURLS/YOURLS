@@ -25,7 +25,7 @@ define( 'YOURLS_PHP_BIN', 'php' );
 // YOURLS_PRIVATE intentionally left undefined: relevant tests run twice, first with it set to true, then with it set to false
 // YOURLS_URL_CONVERT is intentionally left undefined: relevant tests run twice, first with it set to 36, then with it set to 62
 // YOURLS_FLOOD_DELAY_SECONDS and YOURLS_FLOOD_IP_WHITELIST intentionally left undefined: tests compute their own values
-define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
+// YOURLS_COOKIEKEY intentionally left undefined: tests compute their own values
 define('YOURLS_DB_PREFIX',  'yourls_');
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);

@@ -703,6 +703,19 @@ function yourls_tick() {
 }
 
 /**
+ * Get the cookie key (secret used for hashing), as maybe defined in config, filtered
+ *
+ * This is the secret key used by yourls_salt() to hash cookies and nonces.
+ *
+ * @since 1.10.5
+ * @return string Cookie key
+ */
+function yourls_get_cookie_key(): string {
+    $key = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : hash('sha256', __FILE__);
+    return yourls_apply_filter( 'get_cookie_key', $key );
+}
+
+/**
  * Return hashed string
  *
  * This function is badly named, it's not a salt or a salted string : it's a cryptographic hash.
@@ -711,8 +724,8 @@ function yourls_tick() {
  * @param string $string   string to salt
  * @return string          hashed string
  */
-function yourls_salt( $string ) {
-    $salt = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : hash('sha256', __FILE__) ;
+function yourls_salt(string $string ): string {
+    $salt = yourls_get_cookie_key();
     return yourls_apply_filter( 'yourls_salt', hash_hmac( yourls_hmac_algo(), $string,  $salt), $string );
 }
 
