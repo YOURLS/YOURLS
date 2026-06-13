@@ -14,8 +14,6 @@ concurrency:
 jobs:
   test:
     name: PHP ${{ matrix.php }}
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
@@ -24,61 +22,9 @@ jobs:
           - php: '8.1'
             coverage: xdebug
             flags: '--coverage-clover clover.xml'
-
-    continue-on-error: ${{ matrix.php == '8.6' }}
-
-    services:
-      mysql:
-        image: mariadb
-        ports:
-          - 3306/tcp
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: secret
-          MYSQL_DATABASE: yourls_tests
-          MARIADB_MYSQL_LOCALHOST_USER: 1
-          MARIADB_MYSQL_LOCALHOST_GRANTS: USAGE
-        options: --health-cmd="healthcheck.sh --su-mysql --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    steps:
-    - uses: actions/checkout@v6
-
-    - name: Use PHP ${{ matrix.php }}
-      uses: shivammathur/setup-php@2.37.1
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
-        tools: phpunit
-        coverage: ${{ matrix.coverage }}
-
-    # - name: Validate composer.json and composer.lock
-    #   run: composer validate
-
-    # - name: Cache Composer packages
-    #   id: composer-cache
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: vendor
-    #     key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-php-
-
-    # - name: Install dependencies
-    #   if: steps.composer-cache.outputs.cache-hit != 'true'
-    #   run: composer install --prefer-dist --no-progress --no-suggest
-    #   env:
-    #     APP_ENV: testing
-
-    # - name: Lint
-    #   run: composer run-script lint
-
-    - name: Prepare the application
-      run: |
-        git clone https://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
-        cp user/languages/fr/fr_FR.* user/languages
-        cp tests/data/config/yourls-tests-config-ci.php user/config.php
-
-    - name: Test
-      run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ matrix.flags }}
-      env:
-        DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+    uses: ./.github/workflows/test-run.yml
+    with:
+      php: ${{ matrix.php }}
+      coverage: ${{ matrix.coverage || 'none' }}
+      flags: ${{ matrix.flags || '' }}
+      continue-on-error: ${{ matrix.php == '8.6' }}

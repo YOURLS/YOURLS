@@ -1,0 +1,80 @@
+name: Reusable test run
+
+# Reusable workflow shared by ci.yml (PHP matrix) and db-version.yml (DB matrix).
+# It owns the DB service container + the test steps; callers only provide a matrix.
+on:
+  workflow_call:
+    inputs:
+      php:
+        description: 'PHP version'
+        required: true
+        type: string
+      db-image:
+        description: 'Database service image'
+        required: false
+        type: string
+        default: 'mariadb'
+      health-cmd:
+        description: 'Service health check command'
+        required: false
+        type: string
+        default: 'healthcheck.sh --connect --innodb_initialized'
+      coverage:
+        description: 'setup-php coverage driver (xdebug, pcov, none)'
+        required: false
+        type: string
+        default: 'none'
+      flags:
+        description: 'Extra flags passed to phpunit'
+        required: false
+        type: string
+        default: ''
+      continue-on-error:
+        description: 'Let the job fail without failing the whole run'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ inputs.continue-on-error }}
+
+    services:
+      db:
+        image: ${{ inputs.db-image }}
+        ports:
+          - 3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: yourls_tests
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MARIADB_MYSQL_LOCALHOST_USER: 1
+          MARIADB_MYSQL_LOCALHOST_GRANTS: USAGE
+        options: >-
+          --health-cmd="${{ inputs.health-cmd }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use PHP ${{ inputs.php }}
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: ${{ inputs.php }}
+          extensions: mbstring, curl, zip, dom, simplexml, intl, pdo_mysql
+          tools: phpunit
+          coverage: ${{ inputs.coverage }}
+
+      - name: Prepare the application
+        run: |
+          git clone https://github.com/ozh/YOURLS-fr_FR.git user/languages/fr
+          cp user/languages/fr/fr_FR.* user/languages
+          cp tests/data/config/yourls-tests-config-ci.php user/config.php
+
+      - name: Test
+        run: phpunit --configuration phpunit.xml.dist --display-skipped --display-incomplete --display-deprecations --display-notices --display-warnings --display-errors ${{ inputs.flags }}
+        env:
+          DB_PORT: ${{ job.services.db.ports['3306'] }}
