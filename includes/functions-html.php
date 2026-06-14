@@ -529,7 +529,10 @@ function yourls_die( string $message = '', string $title = '', int $header_code 
     $message = yourls_apply_filter( 'die_message', "<p>$message</p>" );
     $allowed = [
         'strong' => [],
-        'h2'   => [],
+        'em'     => [],
+        'tt'     => [],
+        'code'   => [],
+        'h2'     => [],
         'br'     => [],
         'p'      => ['class' => true],
     ];
