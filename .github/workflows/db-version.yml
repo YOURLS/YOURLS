@@ -1,0 +1,36 @@
+name: DB matrix compat check
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.image }}
+    # Old/innovation images may no longer be pullable: let each row fail on its own.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- MySQL (official `mysql` image) ---
+          # 5.5 removed from docker-library (EOL), old manifest may still pull
+          - { image: 'mysql:5.5',     health: 'mysqladmin ping' }
+          - { image: 'mysql:5.7',     health: 'mysqladmin ping' }
+          - { image: 'mysql:8.0',     health: 'mysqladmin ping' }
+          - { image: 'mysql:8.4',     health: 'mysqladmin ping' }
+          - { image: 'mysql:9.0',     health: 'mysqladmin ping' }
+          - { image: 'mysql:9.7',     health: 'mysqladmin ping' }
+          # --- MariaDB (official `mariadb` image) ---
+          - { image: 'mariadb:10.11', health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:11.4',  health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:11.8',  health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { image: 'mariadb:12.2',  health: 'healthcheck.sh --connect --innodb_initialized' }
+    uses: ./.github/workflows/test-run.yml
+    with:
+      php: 'latest'
+      db-image: ${{ matrix.image }}
+      health-cmd: ${{ matrix.health }}
+      continue-on-error: true
