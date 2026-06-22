@@ -533,7 +533,7 @@ function yourls_is_active_plugin( $plugin ) {
  * @param string $file Physical path to plugin file
  * @return array Array of 'Field'=>'Value' from plugin comment header lines of the form "Field: Value"
  */
-function yourls_get_plugin_data( $file ) {
+function yourls_get_plugin_data(string $file ): array {
     $fp = fopen( $file, 'r' ); // assuming $file is readable, since yourls_load_plugins() filters this
     $data = fread( $fp, 8192 ); // get first 8kb
     fclose( $fp );
@@ -554,7 +554,26 @@ function yourls_get_plugin_data( $file ) {
             continue;
         }
 
-        $plugin_data[ trim($matches[3]) ] = yourls_esc_html(trim($matches[4]));
+        // Allow some HTML in the Description field
+        if ( trim($matches[3]) === 'Description' ) {
+            $allowed = [
+                'strong' => [],
+                'b' => [],
+                'em' => [],
+                'tt' => [],
+                'code' => [],
+                'br' => [],
+                'a' => [
+                    'href'  => [],
+                    'title' => [],
+                ],
+            ];
+            $data = yourls_esc_html_with_whitelist(trim($matches[4]), $allowed);
+        } else {
+            $data = yourls_esc_html(trim($matches[4]));
+        }
+
+        $plugin_data[ trim($matches[3]) ] = $data;
     }
 
     return $plugin_data;
