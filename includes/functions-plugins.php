@@ -564,8 +564,8 @@ function yourls_get_plugin_data(string $file ): array {
                 'code' => [],
                 'br' => [],
                 'a' => [
-                    'href'  => [],
-                    'title' => [],
+                    'href'  => true,
+                    'title' => true,
                 ],
             ];
             $data = yourls_esc_html_with_whitelist(trim($matches[4]), $allowed);
