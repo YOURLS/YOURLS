@@ -113,11 +113,12 @@ class SigTest extends PHPUnit\Framework\TestCase {
      * Provide valid and invalid timestamps as compared to current time and nonce life
      */
     public static function timestamps(): \Iterator {
-        $now = time();
-        $little_in_the_future = $now + ( YOURLS_NONCE_LIFE / 2 );
-        $little_in_the_past   = $now - ( YOURLS_NONCE_LIFE / 2 );
-        $far_in_the_future    = $now + ( YOURLS_NONCE_LIFE * 2 );
-        $far_in_the_past      = $now - ( YOURLS_NONCE_LIFE * 2 );
+        $now  = time();
+        $life = yourls_get_nonce_life();
+        $little_in_the_future = $now + ( $life / 2 );
+        $little_in_the_past   = $now - ( $life / 2 );
+        $far_in_the_future    = $now + ( $life * 2 );
+        $far_in_the_past      = $now - ( $life * 2 );
         yield array( 0, false );
         yield array( $now, true );
         yield array( $little_in_the_future, true );

@@ -6,6 +6,9 @@
 #[\PHPUnit\Framework\Attributes\Group('install')]
 class InstallTest extends PHPUnit\Framework\TestCase {
 
+    protected function tearDown(): void {
+        yourls_remove_all_filters( 'is_installing' );
+    }
     /**
      * Check if YOURLS is declared installed
      */
@@ -17,6 +20,9 @@ class InstallTest extends PHPUnit\Framework\TestCase {
      * Check that tables were correctly populated during install
      */
     public function test_init_tables() {
+        // Mark as installing, to bypass flood checks
+        yourls_add_filter( 'is_installing', 'yourls_return_true' );
+
         // This should fail because these inserts have been taken care of during install
         $this->assertFalse( yourls_initialize_options() );
         $this->assertFalse( yourls_insert_sample_links() );
@@ -26,6 +32,8 @@ class InstallTest extends PHPUnit\Framework\TestCase {
      * Test (sort of) table creation
      */
     public function test_create_tables() {
+        // Mark as installing, to bypass flood checks
+        yourls_add_filter( 'is_installing', 'yourls_return_true' );
 
         /* The expected result has:
          *   - success messages: the table are created with a "CREATE IF NOT EXISTS",

@@ -18,14 +18,7 @@ define( 'YOURLS_PHP_BIN', 'php' );
 
 /*** Standard YOURLS config. */
 
-define('YOURLS_HOURS_OFFSET', 5);
-define('YOURLS_UNIQUE_URLS',  true);
-define('YOURLS_PRIVATE',  true);
-define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
-define('YOURLS_URL_CONVERT',  62);
 define('YOURLS_DB_PREFIX',  'yourls_');
-define('YOURLS_FLOOD_DELAY_SECONDS',  0);
-define('YOURLS_FLOOD_IP_WHITELIST',  '');
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);
 

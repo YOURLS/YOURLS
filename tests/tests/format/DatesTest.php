@@ -21,6 +21,24 @@ class DatesTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * yourls_get_time_offset returns the value of the constant YOURLS_HOURS_OFFSET, or 0 if not defined
+     */
+    function test_get_time_offset_matches_constant() {
+        $expected = defined( 'YOURLS_HOURS_OFFSET' ) ? (int) YOURLS_HOURS_OFFSET : 0;
+
+        $this->assertSame( $expected, yourls_get_time_offset() );
+    }
+
+    /**
+     * yourls_get_time_offset is filterable
+     */
+    function test_get_time_offset_filter_can_override() {
+        yourls_add_filter( 'get_time_offset', fn() => 42 );
+
+        $this->assertSame( 42, yourls_get_time_offset() );
+    }
+
+    /**
      * Test yourls_get_datetime_format returns a string
      */
     function test_get_datetime_format() {
