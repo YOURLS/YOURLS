@@ -14,6 +14,7 @@ return array(
     'Spatie\\ArrayToXml\\' => array($vendorDir . '/spatie/array-to-xml/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'POMO\\' => array($vendorDir . '/pomo/pomo/src'),
+    'Ozh\\Bookmarkletgen\\' => array($vendorDir . '/ozh/bookmarkletgen/src'),
     'MaxMind\\WebService\\' => array($vendorDir . '/maxmind/web-service-common/src/WebService'),
     'MaxMind\\Exception\\' => array($vendorDir . '/maxmind/web-service-common/src/Exception'),
     'MaxMind\\Db\\' => array($vendorDir . '/maxmind-db/reader/src/MaxMind/Db'),

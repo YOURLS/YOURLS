@@ -9,5 +9,6 @@ namespace MaxMind\Exception;
  * web service. For example, if the array cannot be encoded as JSON or if there
  * is a missing or invalid field.
  */
-// phpcs:disable
-class InvalidInputException extends WebServiceException {}
+class InvalidInputException extends WebServiceException
+{
+}
