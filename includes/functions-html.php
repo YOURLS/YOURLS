@@ -524,8 +524,19 @@ function yourls_die( string $message = '', string $title = '', int $header_code 
         yourls_html_head();
         yourls_html_logo();
     }
-    echo yourls_esc_html( yourls_apply_filter( 'die_title', "<h2>$title</h2>" ) );
-    echo yourls_esc_html( yourls_apply_filter( 'die_message', "<p>$message</p>" ) );
+
+    $title = yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
+    $message = yourls_apply_filter( 'die_message', "<p>$message</p>" );
+    $allowed = [
+        'strong' => [],
+        'em'     => [],
+        'tt'     => [],
+        'code'   => [],
+        'h2'     => [],
+        'br'     => [],
+        'p'      => ['class' => true],
+    ];
+    echo yourls_esc_html_with_whitelist( $title . $message, $allowed );
     // Hook into 'yourls_die' to add more elements or messages to that page
     yourls_do_action( 'yourls_die' );
     if( !yourls_did_action( 'html_footer' ) ) {

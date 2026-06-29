@@ -1260,13 +1260,19 @@ function yourls_check_maintenance_mode() {
  * @since 1.6
  * @see yourls_get_protocol()
  *
- * @param string $url URL to be check
+ * @param string $url URL to be checked
  * @param array $protocols Optional. Array of protocols, defaults to global $yourls_allowedprotocols
  * @return bool true if protocol allowed, false otherwise
  */
-function yourls_is_allowed_protocol( $url, $protocols = [] ) {
+function yourls_is_allowed_protocol(string $url, array $protocols = [] ): bool {
     if ( empty( $protocols ) ) {
         global $yourls_allowedprotocols;
+        // KSES globals are normally populated on the 'plugins_loaded' action. This can run
+        // earlier though (eg yourls_die() on a DB connection error, before plugins load), so
+        // make sure the allowed protocols are available.
+        if ( ! is_array( $yourls_allowedprotocols ) ) {
+            yourls_kses_init();
+        }
         $protocols = $yourls_allowedprotocols;
     }
 
