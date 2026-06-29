@@ -106,10 +106,10 @@ class Metadata
             );
         }
 
-        $this->binaryFormatMajorVersion =
-            $metadata['binary_format_major_version'];
-        $this->binaryFormatMinorVersion =
-            $metadata['binary_format_minor_version'];
+        $this->binaryFormatMajorVersion
+            = $metadata['binary_format_major_version'];
+        $this->binaryFormatMinorVersion
+            = $metadata['binary_format_minor_version'];
         $this->buildEpoch = $metadata['build_epoch'];
         $this->databaseType = $metadata['database_type'];
         $this->languages = $metadata['languages'];

@@ -104,7 +104,7 @@ class Bookmarkletgen {
     /**
      * Combine any consecutive strings
      *
-     * In the case we have two consecutive quoted strings (eg: "hello" + "world"), save a couple more
+     * In the case we have two consecutive quoted strings (e.g.: "hello" + "world"), save a couple more
      * length and combine them
      *
      * @param  string $code  Javascript code
@@ -119,13 +119,13 @@ class Bookmarkletgen {
 
     
     /**
-     * Replace all literal strings (eg: "hello world") with a placeholder and collect them in an array
+     * Replace all literal strings (e.g.: "hello world") with a placeholder and collect them in an array
      *
      * The idea is that strings cannot be trimmed or white-space optimized: take them out first before uglifying
      * the code, then we'll reinject them back in later
      *
      * @param  string $code  Javascript code
-     * @return string        Javascript code with placeholders (eg "__1__") instead of literal strings
+     * @return string        Javascript code with placeholders (e.g. "__1__") instead of literal strings
      */
     private function replace_strings( $code ) {
         $return    = "";
