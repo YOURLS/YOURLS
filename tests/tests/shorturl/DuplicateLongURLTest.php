@@ -46,4 +46,30 @@ class DuplicateLongURLTest extends PHPUnit\Framework\TestCase {
         $this->assertEquals( 'success', $newurl['status'] );
     }
 
+    /**
+     * When a duplicate long URL is rejected (unique URLs mode), the API must
+     * return HTTP 409 Conflict -- not 400 Bad Request. The request was well
+     * formed and a usable short URL is returned in the response body, so 400
+     * is misleading and trips HTTP clients that discard the body on 4xx.
+     *
+     * @see https://github.com/YOURLS/YOURLS/issues/3547
+     */
+    public function test_duplicate_long_url_returns_409_conflict() {
+        $url = 'http://' . rand_str(5);
+
+        // First insertion succeeds (baseline "unique URLs" set in setUp)
+        $first = yourls_add_new_link( $url, rand_str(), rand_str() );
+        $this->assertEquals( 'success', $first['status'] );
+
+        // Second insertion of the same long URL is rejected as a conflict
+        $dup = yourls_add_new_link( $url, rand_str(), rand_str() );
+        $this->assertEquals( 'fail', $dup['status'] );
+        $this->assertEquals( 'error:url', $dup['code'] );
+        $this->assertEquals( '409', $dup['statusCode'] );
+        $this->assertEquals( '409', $dup['errorCode'] );
+
+        // The existing short URL is still handed back so callers can use it
+        $this->assertEquals( yourls_link( $first['url']['keyword'] ), $dup['shorturl'] );
+    }
+
 }
