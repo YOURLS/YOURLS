@@ -39,11 +39,24 @@ function modern_auth_maybe_create_table() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
     );
 
-    // Migration for tables created before password reset existed (MySQL 8.0.29+ / MariaDB 10.0.2+)
-    $pdo->exec( "ALTER TABLE `$table` ADD COLUMN IF NOT EXISTS `reset_token_hash` VARCHAR(64) NULL" );
-    $pdo->exec( "ALTER TABLE `$table` ADD COLUMN IF NOT EXISTS `reset_token_expires` DATETIME NULL" );
+    // Migration for tables created before password reset existed. Plain "IF NOT EXISTS" on
+    // ADD COLUMN is a MariaDB-only extension and errors out (1064) on real MySQL, so check
+    // information_schema first instead.
+    modern_auth_add_column_if_missing( $pdo, $table, 'reset_token_hash', 'VARCHAR(64) NULL' );
+    modern_auth_add_column_if_missing( $pdo, $table, 'reset_token_expires', 'DATETIME NULL' );
 
     yourls_update_option( 'modern_auth_db_ready', true );
+}
+
+function modern_auth_add_column_if_missing( PDO $pdo, string $table, string $column, string $definition ) {
+    $stmt = $pdo->prepare(
+        'SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table AND COLUMN_NAME = :column'
+    );
+    $stmt->execute( [ 'table' => $table, 'column' => $column ] );
+    if ( (int) $stmt->fetchColumn() > 0 ) {
+        return;
+    }
+    $pdo->exec( "ALTER TABLE `$table` ADD COLUMN `$column` $definition" );
 }
 
 /**
