@@ -291,20 +291,24 @@ body.modern-landing {
 /* ---------- Admin dashboard (link list + sidebar) ---------- */
 
 /* Core's #wrap is a fixed max-width:950px + white card, sized for the original light theme.
-   Restyle it as a dark glass panel and widen it so a table + 300px sidebar fit side by side
-   on the pages that use the 2-column dashboard (body gets a context class of "index"/"bookmark"). */
-body.index, body.bookmark, body.login, body.register, body.forgot-password, body.reset-password {
+   Restyle it as a dark glass panel for EVERY admin page (not just index/bookmark -- this used
+   to be scoped to a hardcoded list of contexts and silently stayed white on any admin page not
+   in that list, eg plugin admin pages like "Manage Users"). .modern-space-bg is added via the
+   'bodyclass' filter to every page this plugin's yourls_html_head() runs on, so it covers all
+   of them, present and future, without having to keep this list in sync. */
+body.modern-space-bg {
     color: var(--ma-text);
 }
 
-body.index #wrap, body.bookmark #wrap,
-body.login #wrap, body.register #wrap, body.forgot-password #wrap, body.reset-password #wrap {
+body.modern-space-bg #wrap {
     max-width: 1400px;
     background: var(--ma-surface);
     border: 1px solid var(--ma-border);
     box-shadow: var(--ma-glow), 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
+/* Login/register/forgot/reset: #login (not #wrap) is the visible card, so keep #wrap itself
+   invisible and narrower there. */
 body.login #wrap, body.register #wrap, body.forgot-password #wrap, body.reset-password #wrap {
     max-width: 950px;
     background: transparent;
@@ -312,7 +316,7 @@ body.login #wrap, body.register #wrap, body.forgot-password #wrap, body.reset-pa
     box-shadow: none;
 }
 
-body.index a, body.bookmark a {
+body.modern-space-bg a {
     color: var(--ma-accent);
 }
 

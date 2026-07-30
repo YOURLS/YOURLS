@@ -655,3 +655,68 @@ function modern_auth_unique_visitors( string $keyword ): int {
         [ 'keyword' => $keyword ]
     );
 }
+
+/**
+ * ---------------------------------------------------------------------------
+ * "Manage Users" admin page: view/delete self-registered (DB) users. Shows up
+ * as a sublink under "Manage Plugins" in the admin menu (core's own mechanism
+ * for plugin admin pages -- see yourls_list_plugin_admin_pages()).
+ * ---------------------------------------------------------------------------
+ */
+yourls_add_action( 'plugins_loaded', 'modern_auth_register_users_page' );
+function modern_auth_register_users_page() {
+    yourls_register_plugin_page( 'modern_auth_users', yourls__( 'Manage Users' ), 'modern_auth_users_page' );
+}
+
+function modern_auth_users_page() {
+    $notice = '';
+
+    if ( isset( $_GET['delete'], $_GET['id'] ) ) {
+        $id = (int) $_GET['id'];
+        yourls_verify_nonce( 'modern_auth_delete_user_' . $id );
+
+        $table = MODERN_AUTH_TABLE;
+        $ydb = yourls_get_db('write-modern_auth_delete_user');
+        $deleted = $ydb->fetchAffected( "DELETE FROM `$table` WHERE `id` = :id", [ 'id' => $id ] );
+
+        $notice = $deleted
+            ? '<p class="modern-auth-success">' . yourls_esc_html__( 'User deleted.' ) . '</p>'
+            : '<p class="error">' . yourls_esc_html__( 'Could not delete user (already removed?).' ) . '</p>';
+    }
+
+    $table = MODERN_AUTH_TABLE;
+    $ydb = yourls_get_db('read-modern_auth_list_users');
+    $users = $ydb->fetchAll( "SELECT `id`, `username`, `email`, `created_at` FROM `$table` ORDER BY `created_at` DESC" );
+
+    echo '<h2>' . yourls_esc_html__( 'Self-registered users' ) . '</h2>';
+    echo $notice;
+    echo '<p>' . yourls_esc_html__( 'Accounts created via the public registration page (/register.php). This does not include the admin account(s) defined in your config.php.' ) . '</p>';
+
+    if ( !$users ) {
+        echo '<p>' . yourls_esc_html__( 'No self-registered users yet.' ) . '</p>';
+        return;
+    }
+
+    echo '<div class="modern-card" style="max-width:800px;"><table class="tblSorter" style="width:100%;"><thead><tr>';
+    echo '<th>' . yourls_esc_html__( 'Username' ) . '</th>';
+    echo '<th>' . yourls_esc_html__( 'Email' ) . '</th>';
+    echo '<th>' . yourls_esc_html__( 'Registered' ) . '</th>';
+    echo '<th>' . yourls_esc_html__( 'Actions' ) . '</th>';
+    echo '</tr></thead><tbody>';
+
+    foreach ( $users as $user ) {
+        $delete_url = yourls_nonce_url(
+            'modern_auth_delete_user_' . $user['id'],
+            yourls_add_query_arg( [ 'page' => 'modern_auth_users', 'delete' => 1, 'id' => $user['id'] ], yourls_admin_url( 'plugins.php' ) )
+        );
+
+        echo '<tr>';
+        echo '<td>' . yourls_esc_html( $user['username'] ) . '</td>';
+        echo '<td>' . yourls_esc_html( $user['email'] ) . '</td>';
+        echo '<td>' . yourls_esc_html( yourls_date_i18n( yourls_get_datetime_format( yourls__( 'M d, Y H:i' ) ), yourls_get_timestamp( strtotime( $user['created_at'] ) ) ) ) . '</td>';
+        echo '<td><a href="' . yourls_esc_attr( $delete_url ) . '" class="button" onclick="return confirm(' . "'" . yourls_esc_js( yourls_s( 'Delete user %s? This cannot be undone.', $user['username'] ) ) . "'" . ')">' . yourls_esc_html__( 'Delete' ) . '</a></td>';
+        echo '</tr>';
+    }
+
+    echo '</tbody></table></div>';
+}
