@@ -22,18 +22,7 @@ $nonce          = yourls_create_nonce( 'landing_shorten' );
     <div class="landing-wrap">
         <header class="landing-header">
             <a href="<?php echo yourls_esc_attr( yourls_site_url( false ) . '/' ); ?>" class="landing-brand">
-                <svg class="landing-logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="landingLogoGradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#8b5cf6" />
-                            <stop offset="55%" stop-color="#ec4899" />
-                            <stop offset="100%" stop-color="#22d3ee" />
-                        </linearGradient>
-                    </defs>
-                    <rect x="2" y="10" width="16" height="12" rx="6" transform="rotate(-20 10 16)" stroke="url(#landingLogoGradient)" stroke-width="3" />
-                    <rect x="14" y="10" width="16" height="12" rx="6" transform="rotate(-20 22 16)" stroke="url(#landingLogoGradient)" stroke-width="3" />
-                </svg>
-                <span class="modern-gradient-text"><?php echo yourls_esc_html( $site_name ); ?></span>
+                <img src="<?php echo yourls_esc_attr( yourls_site_url( false ) . '/images/yourls-logo.svg' ); ?>" alt="YOURLS" class="modern-brand-logo-mark landing-logo-mark" />
             </a>
             <nav>
                 <a href="<?php echo yourls_esc_attr( $login_url ); ?>" class="landing-nav-link">Log in</a>

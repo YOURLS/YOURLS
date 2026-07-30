@@ -174,10 +174,11 @@ body.modern-landing {
     text-decoration: none;
 }
 
-.landing-logo-icon {
-    width: 28px;
-    height: 28px;
+.landing-logo-mark {
+    width: 130px !important;
+    height: auto;
     flex-shrink: 0;
+    filter: hue-rotate(60deg) saturate(2.2) brightness(1.15) drop-shadow(0 0 10px rgba(139, 92, 246, 0.6));
 }
 
 .landing-nav-link {
@@ -654,50 +655,32 @@ body.modern-space-bg #footer p a {
 
 /* ---------- Branding header/logo ---------- */
 
-/* Core defaults this to a 300px-wide logo + 20px title text, floated hard right with a big
-   empty gap above the nav -- shrink it down to a compact, well-aligned lockup instead. */
-body.modern-space-bg #yourls-logo {
-    width: 130px;
-    filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.45));
+/* Core's default header (300px logo image + "YOURLS: Your Own URL Shortener" text) is fully
+   replaced by .modern-brand-logo (injected via the 'html_logo' action, see plugin.php) --
+   hide the original outright instead of fighting its layout. */
+body.modern-space-bg header[role="banner"] {
+    display: none;
 }
 
-body.modern-space-bg header[role="banner"] h1 {
-    max-width: 220px;
+.modern-brand-logo {
+    display: block;
+    width: fit-content;
+    float: right;
 }
 
-body.modern-space-bg header[role="banner"] h1 a {
-    font-size: 0.75rem;
-    letter-spacing: 0.02em;
+.modern-brand-logo-mark {
+    display: block;
+    width: 150px;
+    height: auto;
+    filter: hue-rotate(60deg) saturate(2.2) brightness(1.15) drop-shadow(0 0 14px rgba(139, 92, 246, 0.6));
 }
 
-body.modern-space-bg header[role="banner"] h1 a span:first-child {
-    font-size: 0.95rem;
-    font-weight: 700;
-}
-
-/* Login/register/forgot/reset: the logo sits before #login as a separate floated block by
-   default, disconnected from the card below it -- center it as a proper lockup above the card. */
-body.login header[role="banner"],
-body.register header[role="banner"],
-body.forgot-password header[role="banner"],
-body.reset-password header[role="banner"] {
-    text-align: center;
-    margin-top: 6vh;
-}
-
-body.login header[role="banner"] h1,
-body.register header[role="banner"] h1,
-body.forgot-password header[role="banner"] h1,
-body.reset-password header[role="banner"] h1 {
+/* Login/register/forgot/reset: center the logo as a lockup above the card instead of
+   floating it in a disconnected top-right corner. */
+body.login .modern-brand-logo,
+body.register .modern-brand-logo,
+body.forgot-password .modern-brand-logo,
+body.reset-password .modern-brand-logo {
     float: none;
-    max-width: none;
-    display: inline-block;
-}
-
-body.login header[role="banner"] h1 a,
-body.register header[role="banner"] h1 a,
-body.forgot-password header[role="banner"] h1 a,
-body.reset-password header[role="banner"] h1 a {
-    float: none;
-    text-align: center;
+    margin: 6vh auto 0;
 }

@@ -499,6 +499,25 @@ function modern_auth_admin_assets( $context ) {
 }
 
 /**
+ * Replace the default "YOURLS: Your Own URL Shortener" header (wordmark image + text) with
+ * just a recolored version of the same logo artwork, no text.
+ *
+ * Reuses core's own logo image (images/yourls-logo.svg) rather than shipping a new one, tinted
+ * violet/glowing via a CSS filter (hue-rotate + saturate + drop-shadow) to fit the space theme.
+ * A flat-color mask was tried first but flattened the letterforms into an unreadable blob;
+ * hue-rotate keeps the original's light/dark contrast, so "YOURLS" stays legible.
+ * The original <header> (image + "YOURLS: Your Own URL Shortener" text) is hidden by CSS;
+ * this hooks the 'html_logo' action, which core fires right after that original header.
+ */
+yourls_add_action( 'html_logo', 'modern_auth_replace_logo' );
+function modern_auth_replace_logo() {
+    $logo_url = yourls_esc_attr( yourls_site_url( false ) . '/images/yourls-logo.svg' );
+    echo '<a href="' . yourls_esc_attr( yourls_admin_url( 'index.php' ) ) . '" class="modern-brand-logo" title="YOURLS">'
+       . '<img src="' . $logo_url . '" alt="YOURLS" class="modern-brand-logo-mark" />'
+       . '</a>';
+}
+
+/**
  * Add a "Create an account" link under the login form.
  */
 yourls_add_action( 'login_form_bottom', 'modern_auth_add_register_link' );
