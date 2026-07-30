@@ -18,6 +18,7 @@ user/*
 !user/plugins/sample-page/
 !user/plugins/sample-plugin/
 !user/plugins/sample-toolbar/
+!user/plugins/modern-auth/
 # ... example pages
 !user/pages/examplepage.php
 # ... and index.html files

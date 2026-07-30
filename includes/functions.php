@@ -49,6 +49,36 @@ function yourls_get_IP(): string {
 }
 
 /**
+ * Check if a URL's host resolves to a public (non-private, non-reserved) IP address
+ *
+ * Used before server-side fetches of user-supplied URLs (eg "fetch remote title") to prevent
+ * SSRF against internal services, loopback, link-local addresses or cloud metadata endpoints
+ * (eg 169.254.169.254).
+ *
+ * @since 1.10.5
+ * @param string $url URL to check
+ * @return bool true if the URL's host resolves to a public IP address
+ */
+function yourls_is_public_remote_url( $url ) {
+    $host = parse_url( $url, PHP_URL_HOST );
+    if ( !$host ) {
+        return false;
+    }
+
+    // Strip surrounding brackets from an IPv6 literal host
+    $host = trim( $host, '[]' );
+
+    $ip = filter_var( $host, FILTER_VALIDATE_IP ) ? $host : gethostbyname( $host );
+
+    // gethostbyname() returns its input unchanged when resolution fails
+    if ( !filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+        return false;
+    }
+
+    return (bool) filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE );
+}
+
+/**
  * Check if an IP address matches a given IP or CIDR range (IPv4 and IPv6).
  *
  * @since 1.10.5
@@ -992,6 +1022,11 @@ function yourls_get_remote_title( $url ) {
 
     // Only deal with http(s)://
     if ( !in_array( yourls_get_protocol( $url ), [ 'http://', 'https://' ] ) ) {
+        return $url;
+    }
+
+    // Refuse to fetch URLs pointing to internal/private hosts (SSRF protection, see issue: fetch-title SSRF)
+    if ( !yourls_apply_filter( 'is_public_remote_url', yourls_is_public_remote_url( $url ), $url ) ) {
         return $url;
     }
 

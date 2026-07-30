@@ -27,6 +27,15 @@ if( $auth !== true ) {
 
 yourls_do_action( 'auth_successful' );
 
+// Warn if the cookie/nonce secret is still the placeholder value from config-sample.php:
+// anyone can forge valid auth cookies and nonces knowing this value, ie full auth bypass.
+if ( defined('YOURLS_COOKIEKEY') && YOURLS_COOKIEKEY === 'modify this text with something random' ) {
+    $message  = yourls_s( 'Your %s is still set to its default sample value. Anyone can forge valid login cookies with this value: change it now.', 'YOURLS_COOKIEKEY' );
+    $message .= ' ';
+    $message .= yourls_s( '<a href="%s">Get help</a>.', 'https://yourls.org/cookie' );
+    yourls_add_notice( $message );
+}
+
 /*
  * The following code is a shim that helps users store passwords securely in config.php
  * by storing a password hash and removing the plaintext or md5

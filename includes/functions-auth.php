@@ -135,11 +135,90 @@ function yourls_check_username_password() {
         yourls_verify_nonce('admin_login');
     }
 
+    yourls_check_login_flood();
+
     if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
         yourls_set_user( $_REQUEST['username'] );
+        yourls_clear_login_flood();
         return true;
     }
+
+    yourls_register_login_failure();
     return false;
+}
+
+/**
+ * Die with a 429 if this IP has too many recent failed login attempts
+ *
+ * Simple sliding-window throttle backed by the options table, to mitigate online
+ * brute-forcing of the admin password. Not throttled by user/API keys, only by client IP.
+ *
+ * @since 1.10.5
+ * @return void
+ */
+function yourls_check_login_flood() {
+    $data = yourls_get_login_flood_data();
+
+    $max_attempts = (int) yourls_apply_filter( 'login_flood_max_attempts', 10 );
+    if ( $data['count'] >= $max_attempts ) {
+        yourls_die( yourls__( 'Too many failed login attempts. Please try again later.' ), yourls__( 'Too Many Requests' ), 429 );
+    }
+}
+
+/**
+ * Register a failed login attempt from the current IP
+ *
+ * @since 1.10.5
+ * @return void
+ */
+function yourls_register_login_failure() {
+    $data = yourls_get_login_flood_data();
+    $data['count']++;
+
+    $key = yourls_login_flood_option_key();
+    if ( false === yourls_get_option( $key, false ) ) {
+        yourls_add_option( $key, $data );
+    } else {
+        yourls_update_option( $key, $data );
+    }
+}
+
+/**
+ * Clear the failed-login counter for the current IP, called on successful login
+ *
+ * @since 1.10.5
+ * @return void
+ */
+function yourls_clear_login_flood() {
+    yourls_delete_option( yourls_login_flood_option_key() );
+}
+
+/**
+ * Get current failed-login throttle data for this IP, resetting it if the window has elapsed
+ *
+ * @since 1.10.5
+ * @return array{count: int, first: int}
+ */
+function yourls_get_login_flood_data(): array {
+    $window = (int) yourls_apply_filter( 'login_flood_window', 300 ); // 5 minutes
+    $data = yourls_get_option( yourls_login_flood_option_key(), [ 'count' => 0, 'first' => time() ] );
+
+    if ( ( time() - $data['first'] ) > $window ) {
+        $data = [ 'count' => 0, 'first' => time() ];
+    }
+
+    return $data;
+}
+
+/**
+ * Get the options table key used to store the login throttle counter for the current IP
+ *
+ * @since 1.10.5
+ * @return string
+ */
+function yourls_login_flood_option_key(): string {
+    // option_name is varchar(64): keep the key well under that limit
+    return 'lf_' . substr( hash( 'sha256', yourls_get_IP() ), 0, 40 );
 }
 
 /**

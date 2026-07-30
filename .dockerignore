@@ -1,0 +1,12 @@
+.git
+.github
+tests
+includes/vendor
+user/config.php
+node_modules
+*.md
+readme.html
+phpunit.xml.dist
+.editorconfig
+.gitattributes
+.git-blame-ignore-revs

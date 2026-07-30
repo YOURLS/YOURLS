@@ -1,0 +1,237 @@
+/* Modern Auth & Landing Page -- shared styling for landing.php, login screen, register.php */
+
+:root {
+    --ma-bg: #f7f8fc;
+    --ma-surface: #ffffff;
+    --ma-text: #1a1d29;
+    --ma-muted: #6b7280;
+    --ma-primary: #4f46e5;
+    --ma-primary-dark: #4338ca;
+    --ma-border: #e5e7eb;
+    --ma-radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ma-bg: #0f1117;
+        --ma-surface: #171a23;
+        --ma-text: #f3f4f6;
+        --ma-muted: #9ca3af;
+        --ma-border: #2a2e3a;
+    }
+}
+
+/* ---------- Login / register screen (adds onto includes/../css/style.css #login) ---------- */
+
+body.login, body.register {
+    background: var(--ma-bg);
+}
+
+#login {
+    max-width: 380px;
+    margin: 8vh auto 0;
+    padding: 2.5rem;
+    background: var(--ma-surface);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+#login h1 {
+    font-size: 1.4rem;
+    margin: 0 0 1.25rem;
+    color: var(--ma-text);
+}
+
+#login label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--ma-muted);
+}
+
+#login input.text,
+#login input[type="email"],
+#login input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    margin-top: 0.35rem;
+    border: 1px solid var(--ma-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--ma-bg);
+    color: var(--ma-text);
+}
+
+#login input.button,
+#login input[type="submit"] {
+    background: var(--ma-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#login input.button:hover,
+#login input[type="submit"]:hover {
+    background: var(--ma-primary-dark);
+}
+
+.modern-auth-register-link {
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.modern-auth-register-link a {
+    color: var(--ma-primary);
+    text-decoration: none;
+}
+
+.modern-auth-success {
+    color: #15803d;
+    background: #dcfce7;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+}
+
+/* ---------- Public landing page ---------- */
+
+body.modern-landing {
+    margin: 0;
+    background: var(--ma-bg);
+    color: var(--ma-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.landing-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.landing-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 0;
+}
+
+.landing-brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.landing-nav-link {
+    color: var(--ma-text);
+    text-decoration: none;
+    margin-right: 1rem;
+    font-weight: 500;
+}
+
+.landing-btn {
+    display: inline-block;
+    padding: 0.65rem 1.4rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.landing-btn-primary {
+    background: var(--ma-primary);
+    color: #fff;
+}
+
+.landing-btn-primary:hover {
+    background: var(--ma-primary-dark);
+}
+
+.landing-btn-secondary {
+    background: var(--ma-surface);
+    color: var(--ma-text);
+    border: 1px solid var(--ma-border);
+}
+
+.landing-btn-ghost {
+    background: transparent;
+    color: var(--ma-primary);
+    border: 1px solid var(--ma-primary);
+}
+
+.landing-hero {
+    text-align: center;
+    padding: 6rem 0 4rem;
+}
+
+.landing-hero h1 {
+    font-size: 3rem;
+    line-height: 1.15;
+    margin: 0 0 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.landing-tagline {
+    color: var(--ma-muted);
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto 2.25rem;
+}
+
+.landing-cta {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.landing-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 2rem 0 5rem;
+}
+
+.landing-feature {
+    background: var(--ma-surface);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    padding: 1.75rem;
+}
+
+.landing-feature h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+}
+
+.landing-feature p {
+    margin: 0;
+    color: var(--ma-muted);
+    font-size: 0.9rem;
+}
+
+.landing-footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--ma-muted);
+    font-size: 0.85rem;
+}
+
+.landing-footer a {
+    color: var(--ma-muted);
+}
+
+@media (max-width: 640px) {
+    .landing-hero h1 {
+        font-size: 2rem;
+    }
+    .landing-features {
+        grid-template-columns: 1fr;
+    }
+    .landing-cta {
+        flex-direction: column;
+        align-items: center;
+    }
+}
