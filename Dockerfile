@@ -3,7 +3,7 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-interaction --optimize-autoloader
+RUN composer install --no-dev --no-scripts --no-interaction --optimize-autoloader --ignore-platform-reqs
 
 # ---- Stage 2: runtime image ----
 FROM php:8.3-apache
