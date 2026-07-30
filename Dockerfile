@@ -18,9 +18,17 @@ RUN docker-php-ext-install pdo_mysql opcache \
 # pretty short URLs work even without a generated .htaccess.
 COPY <<'EOF' /etc/apache2/conf-available/yourls-hardening.conf
 <Directory /var/www/html>
-    Options -Indexes -MultiViews -FollowSymLinks
+    # mod_rewrite requires FollowSymLinks (or SymLinksIfOwnerMatch) to be allowed to run at
+    # all -- without it Apache returns 403 on every request that needs the rewrite below,
+    # which is every short URL redirect and the site root, not just symlinked files.
+    Options -Indexes -MultiViews +FollowSymLinks
     AllowOverride All
     Require all granted
+
+    # DocumentRoot has no index.php of its own (YOURLS relies on the rewrite below), so
+    # without this the bare site root 404s into a directory listing attempt -> 403 Forbidden
+    # since Indexes is off. admin/ and other real subdirectories still use their own index.php.
+    DirectoryIndex index.php yourls-loader.php
 
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
