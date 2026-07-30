@@ -94,6 +94,12 @@ PHP
     chmod 640 "$CONFIG_FILE"
 fi
 
+# Some platforms (Sevalla included) route traffic to a container-assigned port
+# passed in as $PORT rather than a fixed one -- make Apache listen there.
+PORT="${PORT:-80}"
+sed -i "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
+sed -i "s/<VirtualHost \*:[0-9]*>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-enabled/000-default.conf
+
 exec "$@"
 EOF
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
