@@ -235,3 +235,147 @@ body.modern-landing {
         align-items: center;
     }
 }
+
+/* ---------- Admin dashboard (link list + sidebar) ---------- */
+
+/* Core's #wrap is a fixed max-width:950px, sized for the original single-column table.
+   That's too narrow for a table + 300px sidebar side by side, so widen it on the pages
+   that use the 2-column dashboard (body gets a context class of "index" or "bookmark"). */
+body.index #wrap,
+body.bookmark #wrap {
+    max-width: 1400px;
+}
+
+.modern-dash {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.modern-dash-main {
+    min-width: 0; /* let the table scroll instead of overflowing the grid column */
+    overflow-x: auto;
+}
+
+.modern-dash-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 1rem;
+}
+
+.modern-card {
+    background: var(--ma-surface);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    padding: 1.25rem;
+}
+
+.modern-card h3 {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: var(--ma-text);
+}
+
+.modern-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+}
+
+.modern-stat-row .modern-stat-label {
+    color: var(--ma-muted);
+    font-size: 0.85rem;
+}
+
+.modern-stat-row .modern-stat-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ma-text);
+}
+
+.modern-tip {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.6rem 0;
+    font-size: 0.85rem;
+    color: var(--ma-muted);
+    border-top: 1px solid var(--ma-border);
+}
+
+.modern-tip:first-of-type {
+    border-top: none;
+}
+
+.modern-tip strong {
+    color: var(--ma-text);
+    display: block;
+}
+
+/* Click/badge cells in the main links table */
+
+#main_table .clicks,
+#main_table .unique {
+    text-align: center;
+}
+
+.modern-badge {
+    display: inline-block;
+    min-width: 2.2em;
+    padding: 0.15em 0.5em;
+    border-radius: 999px;
+    background: var(--ma-bg);
+    border: 1px solid var(--ma-border);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--ma-text);
+}
+
+/* QR code thumbnail cell */
+
+.modern-qr-code {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.modern-qr-code svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.modern-qr-popup {
+    position: fixed;
+    z-index: 9999;
+    background: var(--ma-surface);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    text-align: center;
+}
+
+.modern-qr-popup svg {
+    width: 200px;
+    height: 200px;
+}
+
+.modern-qr-popup a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--ma-primary);
+}
+
+@media (max-width: 1300px) {
+    .modern-dash {
+        grid-template-columns: 1fr;
+    }
+    .modern-dash-sidebar {
+        position: static;
+    }
+}

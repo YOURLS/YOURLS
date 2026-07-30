@@ -470,19 +470,25 @@ function modern_auth_forgot_flood_key(): string {
 }
 
 /**
- * Modern styling: inject the plugin's stylesheet on the login screen only.
+ * Modern styling: inject the plugin's stylesheet on every admin page, plus the QR code
+ * library and its render script on the pages that show the links table (index/bookmark).
  *
  * Note: yourls_do_action('html_head', $context) delivers $context wrapped in a
  * single-element array to action callbacks (accepted_args=1 default in yourls_add_action()
  * combined with how yourls_do_action()/yourls_apply_filter() pass args through) -- unwrap it.
  */
-yourls_add_action( 'html_head', 'modern_auth_login_css' );
-function modern_auth_login_css( $context ) {
+yourls_add_action( 'html_head', 'modern_auth_admin_assets' );
+function modern_auth_admin_assets( $context ) {
     $context = is_array( $context ) ? ( $context[0] ?? null ) : $context;
-    if ( $context !== 'login' ) {
-        return;
+    $base = yourls_plugin_url( __DIR__ );
+
+    echo '<link rel="stylesheet" href="' . yourls_esc_attr( $base . '/assets/modern.css' ) . '" type="text/css" media="screen" />' . "\n";
+
+    if ( in_array( $context, [ 'index', 'bookmark' ], true ) ) {
+        echo '<script src="' . yourls_esc_attr( $base . '/assets/vendor/qrcode.js' ) . '"></script>' . "\n";
+        echo '<script src="' . yourls_esc_attr( $base . '/assets/vendor/qrcode_UTF8.js' ) . '"></script>' . "\n";
+        echo '<script src="' . yourls_esc_attr( $base . '/assets/qr-render.js' ) . '"></script>' . "\n";
     }
-    echo '<link rel="stylesheet" href="' . yourls_esc_attr( yourls_plugin_url( __DIR__ ) . '/assets/modern.css' ) . '" type="text/css" media="screen" />' . "\n";
 }
 
 /**
@@ -507,7 +513,7 @@ function modern_auth_add_register_link() {
  * "keyword not found, redirect to site root" behaviour, which for an EMPTY keyword
  * would otherwise just bounce back to itself.
  *
- * Note: see comment on modern_auth_login_css() above -- $keyword arrives array-wrapped.
+ * Note: see comment on modern_auth_admin_assets() above -- $keyword arrives array-wrapped.
  */
 yourls_add_action( 'redirect_keyword_not_found', 'modern_auth_landing_page' );
 function modern_auth_landing_page( $keyword ) {
@@ -518,4 +524,127 @@ function modern_auth_landing_page( $keyword ) {
 
     require __DIR__ . '/landing.php';
     exit;
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * Modern dashboard: 2-column layout (links table + sidebar), QR code and
+ * "unique visitors" columns in the table, matching the t.ly-inspired redesign.
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * Open the 2-column dashboard wrapper right after the page header/menu.
+ */
+yourls_add_action( 'admin_page_before_content', 'modern_auth_dashboard_open' );
+function modern_auth_dashboard_open() {
+    if ( !yourls_is_admin() ) {
+        return;
+    }
+    echo '<div class="modern-dash"><div class="modern-dash-main">';
+}
+
+/**
+ * Buffer the table markup so its "no results" placeholder row -- core hardcodes
+ * <td colspan="6"> -- can be corrected to match the real column count now that this
+ * plugin adds 2 extra columns (qr, unique). Without this, the tablesorter jQuery
+ * plugin complains (and, worse, mis-renders) about a THEAD/row column mismatch.
+ */
+yourls_add_action( 'admin_page_before_table', 'modern_auth_table_buffer_start' );
+function modern_auth_table_buffer_start() {
+    if ( yourls_is_admin() ) {
+        ob_start();
+    }
+}
+
+yourls_add_action( 'admin_page_after_table', 'modern_auth_table_buffer_end', 5 );
+function modern_auth_table_buffer_end() {
+    if ( !yourls_is_admin() ) {
+        return;
+    }
+    $html = ob_get_clean();
+    $count = substr_count( $html, "<th id='main_table_head_" );
+    if ( $count > 0 ) {
+        // Two places hardcode colspan="6" for the original 6-column table: the "no results"
+        // row (<td>) and the pagination row in the <tfoot> (<th>).
+        $html = str_replace(
+            [ '<td colspan="6">', '<th colspan="6">' ],
+            [ '<td colspan="' . $count . '">', '<th colspan="' . $count . '">' ],
+            $html
+        );
+    }
+    echo $html;
+}
+
+/**
+ * Close the main column and render the sidebar after the links table.
+ */
+yourls_add_action( 'admin_page_after_table', 'modern_auth_dashboard_sidebar' );
+function modern_auth_dashboard_sidebar() {
+    if ( !yourls_is_admin() ) {
+        return;
+    }
+
+    $stats = yourls_get_db_stats();
+
+    echo '</div><aside class="modern-dash-sidebar">';
+
+    echo '<div class="modern-card"><h3>' . yourls_esc_html__( 'Overview' ) . '</h3>';
+    echo '<div class="modern-stat-row"><span class="modern-stat-label">' . yourls_esc_html__( 'Total links' ) . '</span><span class="modern-stat-value">' . yourls_number_format_i18n( $stats['total_links'] ) . '</span></div>';
+    echo '<div class="modern-stat-row"><span class="modern-stat-label">' . yourls_esc_html__( 'Total clicks' ) . '</span><span class="modern-stat-value">' . yourls_number_format_i18n( $stats['total_clicks'] ) . '</span></div>';
+    echo '</div>';
+
+    echo '<div class="modern-card"><h3>' . yourls_esc_html__( 'Tips' ) . '</h3>';
+    echo '<div class="modern-tip"><span>&#128279;</span><span><strong>' . yourls_esc_html__( 'Custom keywords' ) . '</strong>' . yourls_esc_html__( 'Type your own keyword when shortening a link to get a memorable slug.' ) . '</span></div>';
+    echo '<div class="modern-tip"><span>&#128202;</span><span><strong>' . yourls_esc_html__( 'Stats page' ) . '</strong>' . yourls_esc_html__( 'Add a + at the end of any short link to see clicks, referrers and countries.' ) . '</span></div>';
+    echo '<div class="modern-tip"><span>&#9635;</span><span><strong>' . yourls_esc_html__( 'QR codes' ) . '</strong>' . yourls_esc_html__( 'Click the QR thumbnail next to a link to view or download it.' ) . '</span></div>';
+    echo '</div>';
+
+    echo '</aside></div>';
+}
+
+/**
+ * Add "QR" and "Unique" column headers, appended at the very end (after "Actions").
+ *
+ * They can't be inserted in the middle of the existing columns: js/tablesorte.js hardcodes
+ * column indexes (keyword=0, url=1, timestamp=2, ip=3, clicks=4, actions=5, with sorting
+ * explicitly disabled on index 5). Appending after "actions" keeps those indexes intact so
+ * sorting keeps working correctly; the 2 new columns just sort as plain text, which is fine.
+ */
+yourls_add_filter( 'table_head_cells', 'modern_auth_add_table_headers' );
+function modern_auth_add_table_headers( $cells ) {
+    $cells['qr']     = yourls__( 'QR Code' );
+    $cells['unique'] = yourls__( 'Unique' );
+    return $cells;
+}
+
+/**
+ * Add the matching "QR" and "Unique" cells to every table row, in the same trailing order.
+ */
+yourls_add_filter( 'table_add_row_cell_array', 'modern_auth_add_table_cells' );
+function modern_auth_add_table_cells( $cells, $keyword, $url, $title, $ip, $clicks, $timestamp ) {
+    $cells['qr'] = [
+        'template' => '<div class="modern-qr-code" data-url="%url%"></div>',
+        'url'      => yourls_esc_attr( yourls_link( $keyword ) ),
+    ];
+    $cells['unique'] = [
+        'template' => '<span class="modern-badge">%unique%</span>',
+        'unique'   => yourls_number_format_i18n( modern_auth_unique_visitors( $keyword ), 0 ),
+    ];
+    return $cells;
+}
+
+/**
+ * Count distinct IPs that clicked a given short URL.
+ *
+ * @param string $keyword
+ * @return int
+ */
+function modern_auth_unique_visitors( string $keyword ): int {
+    $table = YOURLS_DB_TABLE_LOG;
+    $ydb = yourls_get_db('read-modern_auth_unique_visitors');
+    return (int) $ydb->fetchValue(
+        "SELECT COUNT(DISTINCT `ip_address`) FROM `$table` WHERE `shorturl` = :keyword",
+        [ 'keyword' => $keyword ]
+    );
 }
