@@ -54,7 +54,7 @@ body.login, body.register, body.forgot-password, body.reset-password {
 
 #login {
     max-width: 380px;
-    margin: 8vh auto 0;
+    margin: 3rem auto 0;
     padding: 2.5rem;
     background: var(--ma-surface);
     border: 1px solid var(--ma-border);
@@ -465,10 +465,20 @@ table.tblSorter tfoot tr {
     border: 1px solid var(--ma-border);
 }
 
-.button, input.button {
+/* Excludes the per-row action icons (button_stats/share/edit/delete): those use
+   background-image sprites in core's style.css designed for a light backing, not a solid
+   fill -- the "background" shorthand here would reset background-image to none and erase
+   the icon, so they're styled separately below instead of just being excluded from this. */
+.button:not(.button_stats):not(.button_share):not(.button_edit):not(.button_delete),
+input.button {
     background: var(--ma-gradient) !important;
     color: #fff !important;
     border: none !important;
+}
+
+td.actions .button {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid var(--ma-border) !important;
 }
 
 /* Click/badge cells in the main links table */
@@ -542,14 +552,70 @@ table.tblSorter tfoot tr {
     }
 }
 
-/* Footer "Powered by YOURLS" bar: core hardcodes a white background + light-blue border */
+/* Footer "Powered by YOURLS": core wraps it in a big white pill with a border -- drop that
+   and just leave a small, quiet line of text. */
 body.modern-space-bg #footer p {
-    background: var(--ma-surface);
-    border-color: var(--ma-border);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    max-width: none;
     color: var(--ma-muted);
+    font-size: 0.8rem;
+    padding: 0.5rem;
 }
 
 body.modern-space-bg #footer p a {
-    background-color: transparent;
+    background: none;
+    padding-left: 0;
     color: var(--ma-accent);
+}
+
+/* ---------- Branding header/logo ---------- */
+
+/* Core defaults this to a 300px-wide logo + 20px title text, floated hard right with a big
+   empty gap above the nav -- shrink it down to a compact, well-aligned lockup instead. */
+body.modern-space-bg #yourls-logo {
+    width: 130px;
+    filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.45));
+}
+
+body.modern-space-bg header[role="banner"] h1 {
+    max-width: 220px;
+}
+
+body.modern-space-bg header[role="banner"] h1 a {
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+}
+
+body.modern-space-bg header[role="banner"] h1 a span:first-child {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Login/register/forgot/reset: the logo sits before #login as a separate floated block by
+   default, disconnected from the card below it -- center it as a proper lockup above the card. */
+body.login header[role="banner"],
+body.register header[role="banner"],
+body.forgot-password header[role="banner"],
+body.reset-password header[role="banner"] {
+    text-align: center;
+    margin-top: 6vh;
+}
+
+body.login header[role="banner"] h1,
+body.register header[role="banner"] h1,
+body.forgot-password header[role="banner"] h1,
+body.reset-password header[role="banner"] h1 {
+    float: none;
+    max-width: none;
+    display: inline-block;
+}
+
+body.login header[role="banner"] h1 a,
+body.register header[role="banner"] h1 a,
+body.forgot-password header[role="banner"] h1 a,
+body.reset-password header[role="banner"] h1 a {
+    float: none;
+    text-align: center;
 }
