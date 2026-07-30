@@ -20,7 +20,7 @@ yourls_html_logo();
 <link rel="stylesheet" href="<?php echo yourls_esc_attr( yourls_site_url( false ) . '/user/plugins/modern-auth/assets/modern.css' ); ?>" type="text/css" media="screen" />
 <main role="main">
     <div id="login">
-        <h1><?php yourls_e( 'Create an account' ); ?></h1>
+        <h2 class="modern-auth-title"><?php yourls_e( 'Create an account' ); ?></h2>
         <form method="post" action="">
             <?php if ( $error ) : ?>
                 <p id="error-message" class="error"><?php echo yourls_esc_html( $error ); ?></p>

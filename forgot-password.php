@@ -19,7 +19,7 @@ yourls_html_logo();
 <link rel="stylesheet" href="<?php echo yourls_esc_attr( yourls_site_url( false ) . '/user/plugins/modern-auth/assets/modern.css' ); ?>" type="text/css" media="screen" />
 <main role="main">
     <div id="login">
-        <h1><?php yourls_e( 'Reset your password' ); ?></h1>
+        <h2 class="modern-auth-title"><?php yourls_e( 'Reset your password' ); ?></h2>
         <?php if ( $sent ) : ?>
             <p class="modern-auth-success"><?php yourls_e( 'If that email is registered, a reset link has been sent. Check your inbox.' ); ?></p>
         <?php else : ?>

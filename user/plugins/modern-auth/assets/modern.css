@@ -1,30 +1,55 @@
-/* Modern Auth & Landing Page -- shared styling for landing.php, login screen, register.php */
+/* Modern Auth & Landing Page -- "deep space" theme shared by landing.php, login/register/
+   forgot-password/reset-password screens, and the admin dashboard. Pure CSS, no build step. */
 
 :root {
-    --ma-bg: #f7f8fc;
-    --ma-surface: #ffffff;
-    --ma-text: #1a1d29;
-    --ma-muted: #6b7280;
-    --ma-primary: #4f46e5;
-    --ma-primary-dark: #4338ca;
-    --ma-border: #e5e7eb;
-    --ma-radius: 12px;
+    --ma-bg: #05060f;
+    --ma-surface: #12142b;
+    --ma-surface-alt: #191c3a;
+    --ma-text: #eef0ff;
+    --ma-muted: #9aa3c7;
+    --ma-primary: #8b5cf6;
+    --ma-primary-dark: #7c3aed;
+    --ma-accent: #22d3ee;
+    --ma-pink: #f472b6;
+    --ma-border: rgba(255, 255, 255, 0.1);
+    --ma-radius: 14px;
+    --ma-gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 55%, #22d3ee 100%);
+    --ma-glow: 0 0 24px rgba(139, 92, 246, 0.35);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --ma-bg: #0f1117;
-        --ma-surface: #171a23;
-        --ma-text: #f3f4f6;
-        --ma-muted: #9ca3af;
-        --ma-border: #2a2e3a;
-    }
+/* Starfield + nebula backdrop, tileable, no images/JS */
+.modern-space-bg {
+    background-color: var(--ma-bg);
+    background-image:
+        radial-gradient(ellipse 120% 60% at 20% -10%, rgba(139, 92, 246, 0.35), transparent 60%),
+        radial-gradient(ellipse 90% 55% at 90% 0%, rgba(34, 211, 238, 0.22), transparent 60%),
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(244, 114, 182, 0.15), transparent 60%),
+        radial-gradient(1.5px 1.5px at 10% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 30% 70%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 50% 40%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 70% 80%, #fff, transparent),
+        radial-gradient(1px 1px at 85% 25%, #fff, transparent),
+        radial-gradient(1px 1px at 15% 85%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 60% 15%, #fff, transparent),
+        radial-gradient(1px 1px at 95% 60%, #fff, transparent),
+        radial-gradient(1px 1px at 40% 92%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 5% 55%, #fff, transparent);
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 220px 220px, 260px 260px, 190px 190px, 300px 300px, 240px 240px, 210px 210px, 280px 280px, 230px 230px, 250px 250px, 200px 200px;
+    background-attachment: fixed;
 }
 
-/* ---------- Login / register screen (adds onto includes/../css/style.css #login) ---------- */
+.modern-gradient-text {
+    background: var(--ma-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
-body.login, body.register {
-    background: var(--ma-bg);
+/* ---------- Login / register / forgot / reset screens ---------- */
+
+body.login, body.register, body.forgot-password, body.reset-password {
+    color: var(--ma-text);
 }
 
 #login {
@@ -34,13 +59,16 @@ body.login, body.register {
     background: var(--ma-surface);
     border: 1px solid var(--ma-border);
     border-radius: var(--ma-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--ma-glow), 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-#login h1 {
+/* Note: intentionally NOT "#login h1" -- core's global CSS has h1{float:right;margin:0} for
+   the YOURLS logo heading, which any other h1 on the page inherits too. Use h2 instead. */
+.modern-auth-title {
     font-size: 1.4rem;
     margin: 0 0 1.25rem;
     color: var(--ma-text);
+    float: none;
 }
 
 #login label {
@@ -59,24 +87,33 @@ body.login, body.register {
     border: 1px solid var(--ma-border);
     border-radius: 8px;
     font-size: 0.95rem;
-    background: var(--ma-bg);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--ma-text);
+}
+
+#login input.text:focus,
+#login input[type="email"]:focus,
+#login input[type="password"]:focus {
+    outline: none;
+    border-color: var(--ma-primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
 }
 
 #login input.button,
 #login input[type="submit"] {
-    background: var(--ma-primary);
+    background: var(--ma-gradient);
     color: #fff;
     border: none;
     border-radius: 8px;
     padding: 0.6rem 1.3rem;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
 }
 
 #login input.button:hover,
 #login input[type="submit"]:hover {
-    background: var(--ma-primary-dark);
+    box-shadow: 0 6px 22px rgba(139, 92, 246, 0.6);
 }
 
 .modern-auth-register-link {
@@ -86,23 +123,31 @@ body.login, body.register {
 }
 
 .modern-auth-register-link a {
-    color: var(--ma-primary);
+    color: var(--ma-accent);
     text-decoration: none;
 }
 
 .modern-auth-success {
-    color: #15803d;
-    background: #dcfce7;
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
     border-radius: 8px;
     padding: 0.6rem 0.9rem;
     font-size: 0.9rem;
+}
+
+#error-message.error {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
 }
 
 /* ---------- Public landing page ---------- */
 
 body.modern-landing {
     margin: 0;
-    background: var(--ma-bg);
     color: var(--ma-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -142,12 +187,13 @@ body.modern-landing {
 }
 
 .landing-btn-primary {
-    background: var(--ma-primary);
+    background: var(--ma-gradient);
     color: #fff;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.45);
 }
 
 .landing-btn-primary:hover {
-    background: var(--ma-primary-dark);
+    box-shadow: 0 6px 28px rgba(139, 92, 246, 0.65);
 }
 
 .landing-btn-secondary {
@@ -158,8 +204,8 @@ body.modern-landing {
 
 .landing-btn-ghost {
     background: transparent;
-    color: var(--ma-primary);
-    border: 1px solid var(--ma-primary);
+    color: var(--ma-accent);
+    border: 1px solid var(--ma-accent);
 }
 
 .landing-hero {
@@ -199,6 +245,12 @@ body.modern-landing {
     border: 1px solid var(--ma-border);
     border-radius: var(--ma-radius);
     padding: 1.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.landing-feature:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: var(--ma-glow);
 }
 
 .landing-feature h3 {
@@ -238,12 +290,34 @@ body.modern-landing {
 
 /* ---------- Admin dashboard (link list + sidebar) ---------- */
 
-/* Core's #wrap is a fixed max-width:950px, sized for the original single-column table.
-   That's too narrow for a table + 300px sidebar side by side, so widen it on the pages
-   that use the 2-column dashboard (body gets a context class of "index" or "bookmark"). */
-body.index #wrap,
-body.bookmark #wrap {
+/* Core's #wrap is a fixed max-width:950px + white card, sized for the original light theme.
+   Restyle it as a dark glass panel and widen it so a table + 300px sidebar fit side by side
+   on the pages that use the 2-column dashboard (body gets a context class of "index"/"bookmark"). */
+body.index, body.bookmark, body.login, body.register, body.forgot-password, body.reset-password {
+    color: var(--ma-text);
+}
+
+body.index #wrap, body.bookmark #wrap,
+body.login #wrap, body.register #wrap, body.forgot-password #wrap, body.reset-password #wrap {
     max-width: 1400px;
+    background: var(--ma-surface);
+    border: 1px solid var(--ma-border);
+    box-shadow: var(--ma-glow), 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+body.login #wrap, body.register #wrap, body.forgot-password #wrap, body.reset-password #wrap {
+    max-width: 950px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+body.index a, body.bookmark a {
+    color: var(--ma-accent);
+}
+
+#overall_tracking, #wrap p {
+    color: var(--ma-muted);
 }
 
 .modern-dash {
@@ -267,7 +341,7 @@ body.bookmark #wrap {
 }
 
 .modern-card {
-    background: var(--ma-surface);
+    background: var(--ma-surface-alt);
     border: 1px solid var(--ma-border);
     border-radius: var(--ma-radius);
     padding: 1.25rem;
@@ -294,7 +368,10 @@ body.bookmark #wrap {
 .modern-stat-row .modern-stat-value {
     font-weight: 700;
     font-size: 1.1rem;
-    color: var(--ma-text);
+    background: var(--ma-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .modern-tip {
@@ -315,6 +392,85 @@ body.bookmark #wrap {
     display: block;
 }
 
+/* Override core's tablesorter.css (light theme, hardcoded colors) to fit the dark theme.
+   Selector specificity matches or exceeds the originals; this stylesheet loads after
+   tablesorter.css so it wins on ties too. */
+
+table.tblSorter {
+    background-color: transparent;
+}
+
+table.tblSorter thead tr th, table.tblSorter tfoot tr th, table.tblSorter th.header {
+    background-color: var(--ma-surface-alt);
+    color: var(--ma-text);
+    border: 1px solid var(--ma-border);
+}
+
+table.tblSorter tfoot tr th {
+    background-color: var(--ma-surface-alt);
+}
+
+table.tblSorter tbody td {
+    color: var(--ma-text);
+    background-color: var(--ma-surface);
+    border-bottom: 1px solid var(--ma-border);
+}
+
+table.tblSorter tbody tr.normal-row td {
+    background: var(--ma-surface);
+}
+
+table.tblSorter tbody tr.alt-row td {
+    background: var(--ma-surface-alt);
+}
+
+table.tblSorter tbody tr.normal-row:hover td,
+table.tblSorter tbody tr.alt-row:hover td {
+    background-color: rgba(139, 92, 246, 0.12);
+}
+
+table.tblSorter thead tr .tablesorter-headerAsc,
+table.tblSorter thead tr .tablesorter-headerDesc {
+    background-color: rgba(139, 92, 246, 0.25);
+}
+
+table.tblSorter tfoot tr {
+    background-color: var(--ma-surface-alt);
+}
+
+.navigation .nav_link a, .navigation .nav_current {
+    border: 1px solid var(--ma-border);
+    background: var(--ma-surface-alt);
+    color: var(--ma-text);
+}
+
+.navigation .nav_link a:hover {
+    border-color: var(--ma-primary);
+    background: rgba(139, 92, 246, 0.25);
+}
+
+#new_url {
+    background: var(--ma-surface) !important;
+    border-color: var(--ma-border) !important;
+}
+
+#new_url div, #sharebox, #new_url_form {
+    background: var(--ma-surface-alt) !important;
+    color: var(--ma-text);
+}
+
+#add-url, #add-keyword {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--ma-text);
+    border: 1px solid var(--ma-border);
+}
+
+.button, input.button {
+    background: var(--ma-gradient) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
 /* Click/badge cells in the main links table */
 
 #main_table .clicks,
@@ -327,8 +483,8 @@ body.bookmark #wrap {
     min-width: 2.2em;
     padding: 0.15em 0.5em;
     border-radius: 999px;
-    background: var(--ma-bg);
-    border: 1px solid var(--ma-border);
+    background: rgba(139, 92, 246, 0.18);
+    border: 1px solid rgba(139, 92, 246, 0.4);
     font-weight: 600;
     font-size: 0.85rem;
     color: var(--ma-text);
@@ -340,6 +496,9 @@ body.bookmark #wrap {
     width: 40px;
     height: 40px;
     cursor: pointer;
+    background: #fff;
+    border-radius: 4px;
+    padding: 2px;
 }
 
 .modern-qr-code svg {
@@ -354,7 +513,7 @@ body.bookmark #wrap {
     background: var(--ma-surface);
     border: 1px solid var(--ma-border);
     border-radius: var(--ma-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--ma-glow), 0 20px 50px rgba(0, 0, 0, 0.5);
     padding: 1rem;
     text-align: center;
 }
@@ -362,13 +521,16 @@ body.bookmark #wrap {
 .modern-qr-popup svg {
     width: 200px;
     height: 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px;
 }
 
 .modern-qr-popup a {
     display: inline-block;
     margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: var(--ma-primary);
+    color: var(--ma-accent);
 }
 
 @media (max-width: 1300px) {
@@ -378,4 +540,16 @@ body.bookmark #wrap {
     .modern-dash-sidebar {
         position: static;
     }
+}
+
+/* Footer "Powered by YOURLS" bar: core hardcodes a white background + light-blue border */
+body.modern-space-bg #footer p {
+    background: var(--ma-surface);
+    border-color: var(--ma-border);
+    color: var(--ma-muted);
+}
+
+body.modern-space-bg #footer p a {
+    background-color: transparent;
+    color: var(--ma-accent);
 }

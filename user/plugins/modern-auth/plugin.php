@@ -477,6 +477,13 @@ function modern_auth_forgot_flood_key(): string {
  * single-element array to action callbacks (accepted_args=1 default in yourls_add_action()
  * combined with how yourls_do_action()/yourls_apply_filter() pass args through) -- unwrap it.
  */
+yourls_add_filter( 'bodyclass', 'modern_auth_add_bodyclass' );
+function modern_auth_add_bodyclass( $bodyclass ) {
+    // Note: core does $bodyclass .= 'mobile'/'desktop' right after this filter runs, with
+    // no separator -- keep a trailing space so the two class names don't get glued together.
+    return $bodyclass . 'modern-space-bg ';
+}
+
 yourls_add_action( 'html_head', 'modern_auth_admin_assets' );
 function modern_auth_admin_assets( $context ) {
     $context = is_array( $context ) ? ( $context[0] ?? null ) : $context;

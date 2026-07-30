@@ -13,10 +13,10 @@ $site_name    = parse_url( yourls_get_yourls_site(), PHP_URL_HOST );
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="<?php echo yourls_esc_attr( yourls_plugin_url( __DIR__ ) . '/assets/modern.css' ); ?>" type="text/css" media="screen" />
 </head>
-<body class="modern-landing">
+<body class="modern-landing modern-space-bg">
     <div class="landing-wrap">
         <header class="landing-header">
-            <div class="landing-brand"><?php echo yourls_esc_html( $site_name ); ?></div>
+            <div class="landing-brand modern-gradient-text"><?php echo yourls_esc_html( $site_name ); ?></div>
             <nav>
                 <a href="<?php echo yourls_esc_attr( $login_url ); ?>" class="landing-nav-link">Log in</a>
                 <a href="<?php echo yourls_esc_attr( $register_url ); ?>" class="landing-btn landing-btn-ghost">Sign up</a>
@@ -24,7 +24,7 @@ $site_name    = parse_url( yourls_get_yourls_site(), PHP_URL_HOST );
         </header>
 
         <main class="landing-hero">
-            <h1>Shorten links.<br />Track everything.<br />Own your data.</h1>
+            <h1 class="modern-gradient-text">Shorten links.<br />Track everything.<br />Own your data.</h1>
             <p class="landing-tagline">A fast, private URL shortener that runs on your own server &mdash; no third party ever sees your links or your stats.</p>
             <div class="landing-cta">
                 <a href="<?php echo yourls_esc_attr( $register_url ); ?>" class="landing-btn landing-btn-primary">Create free account</a>
