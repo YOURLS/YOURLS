@@ -166,8 +166,18 @@ body.modern-landing {
 }
 
 .landing-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-weight: 700;
     font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.landing-logo-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
 }
 
 .landing-nav-link {
@@ -231,6 +241,74 @@ body.modern-landing {
     display: flex;
     gap: 0.75rem;
     justify-content: center;
+}
+
+.landing-shorten-form {
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+}
+
+.landing-shorten-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.landing-shorten-row input[type="url"],
+.landing-shorten-row input[type="text"] {
+    flex: 1 1 200px;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--ma-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--ma-text);
+    font-size: 0.95rem;
+}
+
+.landing-shorten-row input[type="url"]:focus,
+.landing-shorten-row input[type="text"]:focus {
+    outline: none;
+    border-color: var(--ma-primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+
+.landing-shorten-row input[type="text"] {
+    flex: 0 1 200px;
+}
+
+.landing-shorten-row .landing-btn {
+    border: none;
+    cursor: pointer;
+    font: inherit;
+}
+
+.landing-shorten-message {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+}
+
+.landing-shorten-error {
+    color: #fca5a5;
+}
+
+.landing-shorten-success {
+    color: #6ee7b7;
+}
+
+.landing-shorten-success a {
+    color: #6ee7b7;
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .landing-shorten-row {
+        flex-direction: column;
+    }
+    .landing-shorten-row input[type="text"] {
+        flex: 1 1 auto;
+    }
 }
 
 .landing-features {

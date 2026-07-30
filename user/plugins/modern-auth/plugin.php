@@ -534,6 +534,44 @@ function modern_auth_landing_page( $keyword ) {
 }
 
 /**
+ * Handle the "shorten a link" form on the public landing page. Only actually creates the
+ * link if the visitor already has a valid session (admin from config.php, or a logged-in
+ * DB user) -- yourls_is_valid_user() checks the existing auth cookie here since there's no
+ * username/password in this form, it does NOT attempt or require a fresh login. Anonymous
+ * visitors just get a prompt to log in first, with their input kept so the form isn't wiped.
+ *
+ * Hooked on 'plugins_loaded' (fires during bootstrap, before the router decides to show
+ * landing.php) so the $GLOBALS below are already set by the time landing.php reads them.
+ */
+yourls_add_action( 'plugins_loaded', 'modern_auth_handle_landing_shorten' );
+function modern_auth_handle_landing_shorten() {
+    if ( yourls_is_API() || empty( $_POST['modern_auth_landing_shorten'] ) ) {
+        return;
+    }
+
+    yourls_verify_nonce( 'landing_shorten' );
+
+    $url     = isset( $_POST['url'] )     ? trim( (string) $_POST['url'] )     : '';
+    $keyword = isset( $_POST['keyword'] ) ? trim( (string) $_POST['keyword'] ) : '';
+
+    $GLOBALS['modern_auth_landing_shorten_values'] = [ 'url' => $url, 'keyword' => $keyword ];
+
+    if ( yourls_is_valid_user() !== true ) {
+        $GLOBALS['modern_auth_landing_shorten_error'] = yourls__( 'Please log in or create a free account first to shorten a link.' );
+        return;
+    }
+
+    $return = yourls_add_new_link( $url, $keyword );
+
+    if ( isset( $return['status'] ) && $return['status'] === 'success' && !empty( $return['shorturl'] ) ) {
+        $GLOBALS['modern_auth_landing_shorten_result'] = $return['shorturl'];
+        $GLOBALS['modern_auth_landing_shorten_values'] = [ 'url' => '', 'keyword' => '' ];
+    } else {
+        $GLOBALS['modern_auth_landing_shorten_error'] = $return['message'] ?? yourls__( 'Could not shorten that link.' );
+    }
+}
+
+/**
  * ---------------------------------------------------------------------------
  * Modern dashboard: 2-column layout (links table + sidebar), QR code and
  * "unique visitors" columns in the table, matching the t.ly-inspired redesign.
