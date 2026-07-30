@@ -2,8 +2,8 @@
 /*
 Plugin Name: Modern Auth & Landing Page
 Plugin URI: https://yourls.org/
-Description: Adds self-service registration (multi-user login on top of the config.php admin), a t.ly-style public landing page at the site root, and a restyled login/register screen. Activate this plugin from the Plugins page after install.
-Version: 1.0
+Description: Adds self-service registration and password reset (multi-user login on top of the config.php admin), a t.ly-style public landing page at the site root, and a restyled login/register screen. Activate this plugin from the Plugins page after install.
+Version: 1.1
 Author: -
 Author URI: -
 */
@@ -23,19 +23,25 @@ function modern_auth_maybe_create_table() {
     }
 
     $table = MODERN_AUTH_TABLE;
-    $ydb = yourls_get_db('write-modern_auth_create_table');
-    $ydb->getPdo()->exec(
+    $pdo = yourls_get_db('write-modern_auth_create_table')->getPdo();
+    $pdo->exec(
         "CREATE TABLE IF NOT EXISTS `$table` (
             `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `username` VARCHAR(50) NOT NULL,
             `email` VARCHAR(191) NOT NULL,
             `password_hash` VARCHAR(255) NOT NULL,
             `created_at` DATETIME NOT NULL,
+            `reset_token_hash` VARCHAR(64) NULL,
+            `reset_token_expires` DATETIME NULL,
             PRIMARY KEY (`id`),
             UNIQUE KEY `username` (`username`),
             UNIQUE KEY `email` (`email`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
     );
+
+    // Migration for tables created before password reset existed (MySQL 8.0.29+ / MariaDB 10.0.2+)
+    $pdo->exec( "ALTER TABLE `$table` ADD COLUMN IF NOT EXISTS `reset_token_hash` VARCHAR(64) NULL" );
+    $pdo->exec( "ALTER TABLE `$table` ADD COLUMN IF NOT EXISTS `reset_token_expires` DATETIME NULL" );
 
     yourls_update_option( 'modern_auth_db_ready', true );
 }
@@ -207,6 +213,250 @@ function modern_auth_register_flood_key(): string {
 }
 
 /**
+ * @param string $email
+ * @return array|null
+ */
+function modern_auth_get_user_by_email( string $email ) {
+    $ydb = yourls_get_db('read-modern_auth_get_user_by_email');
+    $table = MODERN_AUTH_TABLE;
+    $row = $ydb->fetchOne( "SELECT * FROM `$table` WHERE `email` = :email LIMIT 1", [ 'email' => $email ] );
+    return $row ?: null;
+}
+
+/**
+ * @param string $token raw (unhashed) token as received from the reset link
+ * @return array|null the matching user row, if the token is valid and not expired
+ */
+function modern_auth_get_user_by_reset_token( string $token ) {
+    if ( $token === '' ) {
+        return null;
+    }
+    $ydb = yourls_get_db('read-modern_auth_get_user_by_reset_token');
+    $table = MODERN_AUTH_TABLE;
+    $row = $ydb->fetchOne(
+        "SELECT * FROM `$table` WHERE `reset_token_hash` = :hash AND `reset_token_expires` > :now LIMIT 1",
+        [ 'hash' => hash( 'sha256', $token ), 'now' => date( 'Y-m-d H:i:s' ) ]
+    );
+    return $row ?: null;
+}
+
+/**
+ * Handle "forgot password" form submission: generate a one-hour token and email a reset link.
+ * Always redirects to the same "check your email" message whether or not the address is
+ * registered, so this can't be used to enumerate accounts.
+ */
+yourls_add_action( 'plugins_loaded', 'modern_auth_handle_forgot_password' );
+function modern_auth_handle_forgot_password() {
+    if ( yourls_is_API() || empty( $_POST['modern_auth_forgot_password'] ) ) {
+        return;
+    }
+
+    yourls_verify_nonce( 'modern_auth_forgot_password' );
+    modern_auth_check_forgot_flood();
+
+    $email = isset( $_POST['email'] ) ? trim( (string) $_POST['email'] ) : '';
+
+    if ( filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+        $user = modern_auth_get_user_by_email( $email );
+        if ( $user ) {
+            $token   = bin2hex( random_bytes( 32 ) );
+            $expires = date( 'Y-m-d H:i:s', time() + 3600 );
+
+            $ydb = yourls_get_db('write-modern_auth_set_reset_token');
+            $table = MODERN_AUTH_TABLE;
+            $ydb->fetchAffected(
+                "UPDATE `$table` SET `reset_token_hash` = :hash, `reset_token_expires` = :expires WHERE `id` = :id",
+                [ 'hash' => hash( 'sha256', $token ), 'expires' => $expires, 'id' => $user['id'] ]
+            );
+
+            $reset_url = yourls_add_query_arg( 'token', $token, yourls_site_url( false ) . '/reset-password.php' );
+            modern_auth_send_mail(
+                $email,
+                'Reset your password',
+                "Someone requested a password reset for your account.\n\nReset it here (valid 1 hour):\n$reset_url\n\nIf you didn't request this, you can ignore this email."
+            );
+        }
+        modern_auth_forgot_flood_hit(); // count real attempts (valid email format) toward the throttle
+    }
+
+    yourls_redirect( yourls_add_query_arg( 'sent', '1', yourls_site_url( false ) . '/forgot-password.php' ), 302 );
+    exit;
+}
+
+/**
+ * Handle the "set a new password" form submission from reset-password.php
+ */
+yourls_add_action( 'plugins_loaded', 'modern_auth_handle_reset_password' );
+function modern_auth_handle_reset_password() {
+    if ( yourls_is_API() || empty( $_POST['modern_auth_reset_password'] ) ) {
+        return;
+    }
+
+    yourls_verify_nonce( 'modern_auth_reset_password' );
+
+    $token    = isset( $_POST['token'] )    ? (string) $_POST['token']    : '';
+    $password = isset( $_POST['password'] ) ? (string) $_POST['password'] : '';
+
+    $user = modern_auth_get_user_by_reset_token( $token );
+    if ( !$user ) {
+        $GLOBALS['modern_auth_reset_error'] = yourls__( 'This reset link is invalid or has expired.' );
+        return;
+    }
+    if ( strlen( $password ) < 10 ) {
+        $GLOBALS['modern_auth_reset_error'] = yourls__( 'Password must be at least 10 characters long.' );
+        $GLOBALS['modern_auth_reset_token'] = $token;
+        return;
+    }
+
+    $ydb = yourls_get_db('write-modern_auth_reset_password');
+    $table = MODERN_AUTH_TABLE;
+    $ydb->fetchAffected(
+        "UPDATE `$table` SET `password_hash` = :hash, `reset_token_hash` = NULL, `reset_token_expires` = NULL WHERE `id` = :id",
+        [ 'hash' => password_hash( $password, PASSWORD_DEFAULT ), 'id' => $user['id'] ]
+    );
+
+    yourls_redirect( yourls_add_query_arg( 'reset', '1', yourls_site_url( false ) . '/admin/' ), 302 );
+    exit;
+}
+
+/**
+ * Send an email: uses a minimal built-in SMTP client (STARTTLS + AUTH LOGIN) when SMTP_HOST
+ * is configured, otherwise falls back to PHP's mail(), which needs a working local MTA and
+ * often does NOT work out of the box in a container -- set SMTP_* env vars for reliable delivery.
+ */
+function modern_auth_send_mail( string $to, string $subject, string $body ): bool {
+    $host = getenv('SMTP_HOST');
+    if ( $host ) {
+        return modern_auth_send_mail_smtp( $host, $to, $subject, $body );
+    }
+
+    $from = getenv('MAIL_FROM') ?: ( 'no-reply@' . parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) );
+    $headers = "From: $from\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+    $sent = @mail( $to, $subject, $body, $headers );
+    if ( !$sent ) {
+        yourls_debug_log( "modern-auth: mail() failed sending to $to -- configure SMTP_HOST for reliable delivery" );
+    }
+    return $sent;
+}
+
+function modern_auth_send_mail_smtp( string $host, string $to, string $subject, string $body ): bool {
+    $port = (int) ( getenv('SMTP_PORT') ?: 587 );
+    $user = getenv('SMTP_USER');
+    $pass = getenv('SMTP_PASS');
+    $from = getenv('MAIL_FROM') ?: ( $user ?: ( 'no-reply@' . parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) ) );
+    $helo = parse_url( yourls_get_yourls_site(), PHP_URL_HOST ) ?: 'localhost';
+
+    $errno = 0;
+    $errstr = '';
+    $sock = @stream_socket_client( "tcp://$host:$port", $errno, $errstr, 10 );
+    if ( !$sock ) {
+        yourls_debug_log( "modern-auth: SMTP connect to $host:$port failed: $errstr" );
+        return false;
+    }
+
+    $read = static function () use ( $sock ) {
+        $data = '';
+        while ( ( $line = fgets( $sock, 515 ) ) !== false ) {
+            $data .= $line;
+            if ( isset( $line[3] ) && $line[3] === ' ' ) {
+                break;
+            }
+        }
+        return $data;
+    };
+    $write = static function ( $cmd ) use ( $sock ) {
+        fwrite( $sock, $cmd . "\r\n" );
+    };
+    $ok = static function ( $resp, $code ) {
+        return str_starts_with( $resp, (string) $code );
+    };
+
+    $read(); // server greeting
+    $write( "EHLO $helo" );
+    $ehlo = $read();
+
+    if ( str_contains( $ehlo, 'STARTTLS' ) ) {
+        $write( 'STARTTLS' );
+        $read();
+        if ( !stream_socket_enable_crypto( $sock, true, STREAM_CRYPTO_METHOD_TLS_CLIENT ) ) {
+            fclose( $sock );
+            yourls_debug_log( 'modern-auth: SMTP STARTTLS negotiation failed' );
+            return false;
+        }
+        $write( "EHLO $helo" );
+        $read();
+    }
+
+    if ( $user && $pass ) {
+        $write( 'AUTH LOGIN' );
+        $read();
+        $write( base64_encode( $user ) );
+        $read();
+        $write( base64_encode( $pass ) );
+        if ( !$ok( $read(), 235 ) ) {
+            fclose( $sock );
+            yourls_debug_log( 'modern-auth: SMTP authentication failed' );
+            return false;
+        }
+    }
+
+    $write( "MAIL FROM:<$from>" );
+    $read();
+    $write( "RCPT TO:<$to>" );
+    $read();
+    $write( 'DATA' );
+    $read();
+
+    $message = "From: $from\r\nTo: $to\r\nSubject: $subject\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n$body\r\n.";
+    $write( $message );
+    $result = $ok( $read(), 250 );
+
+    $write( 'QUIT' );
+    fclose( $sock );
+
+    if ( !$result ) {
+        yourls_debug_log( "modern-auth: SMTP send to $to was rejected" );
+    }
+    return $result;
+}
+
+/**
+ * Rate limit for "forgot password" requests -- separate bucket from registration/login,
+ * same self-pruning options-table pattern.
+ */
+function modern_auth_check_forgot_flood() {
+    $data = modern_auth_forgot_flood_data();
+    $max_attempts = (int) yourls_apply_filter( 'forgot_password_flood_max_attempts', 5 );
+    if ( $data['count'] >= $max_attempts ) {
+        yourls_die( yourls__( 'Too many requests. Please try again later.' ), yourls__( 'Too Many Requests' ), 429 );
+    }
+}
+
+function modern_auth_forgot_flood_hit() {
+    $data = modern_auth_forgot_flood_data();
+    $data['count']++;
+    $key = modern_auth_forgot_flood_key();
+    if ( false === yourls_get_option( $key, false ) ) {
+        yourls_add_option( $key, $data );
+    } else {
+        yourls_update_option( $key, $data );
+    }
+}
+
+function modern_auth_forgot_flood_data(): array {
+    $window = (int) yourls_apply_filter( 'forgot_password_flood_window', 3600 ); // 1 hour
+    $data = yourls_get_option( modern_auth_forgot_flood_key(), [ 'count' => 0, 'first' => time() ] );
+    if ( ( time() - $data['first'] ) > $window ) {
+        $data = [ 'count' => 0, 'first' => time() ];
+    }
+    return $data;
+}
+
+function modern_auth_forgot_flood_key(): string {
+    return 'ff_' . substr( hash( 'sha256', yourls_get_IP() ), 0, 40 );
+}
+
+/**
  * Modern styling: inject the plugin's stylesheet on the login screen only.
  *
  * Note: yourls_do_action('html_head', $context) delivers $context wrapped in a
@@ -230,7 +480,12 @@ function modern_auth_add_register_link() {
     if ( isset( $_GET['registered'] ) ) {
         echo '<p class="modern-auth-success">' . yourls_esc_html__( 'Account created! You can now log in.' ) . '</p>';
     }
+    if ( isset( $_GET['reset'] ) ) {
+        echo '<p class="modern-auth-success">' . yourls_esc_html__( 'Password updated! You can now log in.' ) . '</p>';
+    }
     $register_url = yourls_site_url( false ) . '/register.php';
+    $forgot_url   = yourls_site_url( false ) . '/forgot-password.php';
+    echo '<p class="modern-auth-register-link"><a href="' . yourls_esc_attr( $forgot_url ) . '">' . yourls_esc_html__( 'Forgot your password?' ) . '</a></p>';
     echo '<p class="modern-auth-register-link"><a href="' . yourls_esc_attr( $register_url ) . '">' . yourls_esc_html__( 'Create an account' ) . '</a></p>';
 }
 
