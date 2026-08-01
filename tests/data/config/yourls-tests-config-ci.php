@@ -12,15 +12,16 @@ define( 'YOURLS_DB_USER', 'root' );
 define( 'YOURLS_DB_PASS', 'secret' );
 define( 'YOURLS_DB_NAME', 'yourls_tests' );
 define( 'YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT') );
+define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
 /*** Site options */
 define( 'YOURLS_PHP_BIN', 'php' );
 
 /*** Standard YOURLS config. */
 
-define('YOURLS_DB_PREFIX',  'yourls_');
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);
+define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
 
 $yourls_reserved_URL = array(
     'porn', 'sex', 'nigger', 'fuck', 'cunt', 'dick',

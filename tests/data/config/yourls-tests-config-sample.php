@@ -14,15 +14,16 @@ define( 'YOURLS_DB_USER', 'your DB username' );
 define( 'YOURLS_DB_PASS', 'your DB password' );
 define( 'YOURLS_DB_NAME', 'DB name for tests -- an empty one' ); // Must be an EMPTY DATABASE: everything will be erased
 define( 'YOURLS_DB_HOST', 'localhost' );
+define('YOURLS_DB_PREFIX',  'yourls_');
 
 /*** PHP binary - edit if the executable binary is not in system path and put full path ie 'c:/php/php.exe' */
 define( 'YOURLS_PHP_BIN', 'php' );
 
 /*** Most likely, don't edit anything else. Pretty much standard YOURLS config. */
 
-define('YOURLS_DB_PREFIX',  'yourls_');
 define('YOURLS_LANG',  'fr_FR'); // locale of a sample translation file in the data dir
 define('YOURLS_DEBUG', true);
+define('YOURLS_COOKIEKEY',  'I &hearts; unit tests');
 
 $yourls_reserved_URL = array(
     'porn', 'sex', 'nigger', 'fuck', 'cunt', 'dick',
