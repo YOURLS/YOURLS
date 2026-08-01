@@ -56,7 +56,7 @@ class ConfigTest extends PHPUnit\Framework\TestCase {
     public function test_missing_mandatory_constant() {
         $this->expectException(YOURLS\Exceptions\ConfigException::class);
         $this->expectExceptionMessageMatches('/YOURLS_NOT_DEFINED_1337/');
-        new \YOURLS\Config\Config()->check_mandatory_constants(['YOURLS_DB_USER', 'YOURLS_NOT_DEFINED_1337']);
+        (new \YOURLS\Config\Config())->check_mandatory_constants(['YOURLS_DB_USER', 'YOURLS_NOT_DEFINED_1337']);
     }
 
     /**
@@ -64,7 +64,7 @@ class ConfigTest extends PHPUnit\Framework\TestCase {
      */
     public function test_defined_mandatory_constants() {
         $this->expectNotToPerformAssertions();
-        new \YOURLS\Config\Config()->check_mandatory_constants(['YOURLS_DB_USER', 'YOURLS_SITE']);
+        (new \YOURLS\Config\Config())->check_mandatory_constants(['YOURLS_DB_USER', 'YOURLS_SITE']);
     }
 
     /**
@@ -89,7 +89,7 @@ class ConfigTest extends PHPUnit\Framework\TestCase {
     #[\PHPUnit\Framework\Attributes\DataProvider('bad_cookie_keys')]
     public function test_bad_cookie_key(mixed $key): void {
         $this->expectException(YOURLS\Exceptions\ConfigException::class);
-        new \YOURLS\Config\Config()->check_cookie_key($key);
+        (new \YOURLS\Config\Config())->check_cookie_key($key);
     }
 
     /**
@@ -97,7 +97,7 @@ class ConfigTest extends PHPUnit\Framework\TestCase {
      */
     public function test_good_cookie_key() {
         $this->expectNotToPerformAssertions();
-        new \YOURLS\Config\Config()->check_cookie_key(bin2hex(random_bytes(16)));
+        (new \YOURLS\Config\Config())->check_cookie_key(bin2hex(random_bytes(16)));
     }
 
     /**

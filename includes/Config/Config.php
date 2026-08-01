@@ -23,7 +23,7 @@ class Config {
     /**
      * Constants that must be defined in config.php
      */
-    protected const array MANDATORY_CONSTANTS = [
+    protected const MANDATORY_CONSTANTS = [
         'YOURLS_DB_USER',
         'YOURLS_DB_PASS',
         'YOURLS_DB_NAME',
@@ -35,7 +35,7 @@ class Config {
     /**
      * Publicly known values that are not acceptable for YOURLS_COOKIEKEY
      */
-    protected const array INVALID_COOKIEKEYS = [
+    protected const INVALID_COOKIEKEYS = [
         '',
         'modify this text with something random', // default value in config-sample.php
         'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm',            // suggested value in the documentation
@@ -119,12 +119,12 @@ class Config {
      * Check that all mandatory constants are defined
      *
      * @since  1.10.5
-     * @param string[]|null $must_haves Constant names to check, defaults to self::MANDATORY_CONSTANTS
+     * @param string[] $must_haves Constant names to check, defaults to self::MANDATORY_CONSTANTS
      * @return void
      * @throws ConfigException
      */
     public function check_mandatory_constants(array $must_haves = self::MANDATORY_CONSTANTS): void {
-        foreach (($must_haves ?? self::MANDATORY_CONSTANTS) as $must_have) {
+        foreach ($must_haves as $must_have) {
             if (!defined($must_have)) {
                 throw new ConfigException('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
             }
