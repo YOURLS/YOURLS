@@ -703,7 +703,7 @@ function yourls_tick() {
 }
 
 /**
- * Get the cookie key (secret used for hashing), as maybe defined in config, filtered
+ * Get the cookie key (secret used for hashing), as defined in config, filtered
  *
  * This is the secret key used by yourls_salt() to hash cookies and nonces.
  *
@@ -711,8 +711,7 @@ function yourls_tick() {
  * @return string Cookie key
  */
 function yourls_get_cookie_key(): string {
-    $key = defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : hash('sha256', __FILE__);
-    return yourls_apply_filter( 'get_cookie_key', $key );
+    return yourls_apply_filter( 'get_cookie_key', YOURLS_COOKIEKEY );
 }
 
 /**
