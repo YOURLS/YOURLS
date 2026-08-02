@@ -13,32 +13,12 @@ global $yourls_user_passwords, $yourls_reserved_URL,          // main object & c
 
 require_once __DIR__ . '/includes/utils.php';
 require_once __DIR__ . '/includes/install.php';
+require_once __DIR__ . '/includes/boot.php';
+require_once __DIR__ . '/includes/new-process.php';
 
-// Include relevant config file
-define('YOURLS_CONFIGFILE', yut_find_config());
-echo "Using config file: " . YOURLS_CONFIGFILE . "\n";
-require_once YOURLS_CONFIGFILE;
-
-// Bootstrap YOURLS
-require_once YOURLS_ABSPATH . '/includes/vendor/autoload.php';
-define('YOURLS_TESTDATA_DIR', __DIR__ . '/data');
-define('YOURLS_LANG_DIR', YOURLS_TESTDATA_DIR.'/pomo');
-define('YOURLS_PLUGINDIR', YOURLS_TESTDATA_DIR.'/plugins');
-define('YOURLS_PAGEDIR', YOURLS_TESTDATA_DIR.'/pages');
-$config = new \YOURLS\Config\Config(YOURLS_CONFIGFILE);
-$config->define_core_constants();
-
-// Define YOURLS actions upon new instance
-$init = new \YOURLS\Config\InitDefaults;
-$init->check_maintenance_mode        = false;
-$init->fix_request_uri               = false;
-$init->redirect_ssl                  = false;
-$init->redirect_to_install           = false;
-$init->check_if_upgrade_needed       = false;
-$init->load_plugins                  = false; // do not attempt to load (no DB yet to store data), but do send the 'plugins_loaded' action (some code depend on it)
-$init->get_all_options               = false;
-$init->check_new_version             = false;
-new \YOURLS\Config\Init($init);
+// Load config & bootstrap YOURLS. There's no database yet, so don't read from it: options and
+// plugins are loaded further below, once installed.
+echo "Using config file: " . yut_boot_yourls( array( 'get_all_options' => false ) ) . "\n";
 
 // Mark as 'installing' to avoid flood checks
 yourls_add_filter( 'is_installing', 'yourls_return_true' );

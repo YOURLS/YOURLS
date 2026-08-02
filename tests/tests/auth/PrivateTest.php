@@ -14,6 +14,8 @@
 #[\PHPUnit\Framework\Attributes\Group('private')]
 class PrivateTest extends PHPUnit\Framework\TestCase {
 
+    use NewProcessTrait;
+
     protected function tearDown(): void {
         // Drop anything a test forced, so we don't leak state between tests
         yourls_remove_all_filters( 'is_private' );
@@ -84,6 +86,33 @@ class PrivateTest extends PHPUnit\Framework\TestCase {
         $this->expectExceptionMessage( 'require_auth fired' );
 
         yourls_maybe_require_auth();
+    }
+
+    /**
+     * Make sure that when NOT private, yourls_maybe_require_auth() does not load includes/auth.php,
+     * hence YOURLS_USER is not defined.
+     *
+     * This cannot be checked in the test suite process: constants cannot be undefined,
+     * auth.php is loaded with require_once, and any test that logs in defines YOURLS_USER
+     * for the rest of the run. So we run it in a fresh PHP process instead.
+     */
+    public function test_no_user_constant_when_not_private() {
+        $report = $this->run_in_new_process( 'maybe-require-auth', array( 'YOURLS_PRIVATE' => false ) );
+
+        $this->assertFalse( $report['constants']['YOURLS_PRIVATE'] );
+        $this->assertNotContains( 'includes/auth.php', $report['included'] );
+        $this->assertArrayNotHasKey( 'YOURLS_USER', $report['constants'] );
+    }
+
+    /**
+     * Conversely, when private, includes/auth.php is loaded and defines YOURLS_USER
+     */
+    public function test_user_constant_when_private() {
+        $report = $this->run_in_new_process( 'maybe-require-auth', array( 'YOURLS_PRIVATE' => true ) );
+
+        $this->assertTrue( $report['constants']['YOURLS_PRIVATE'] );
+        $this->assertContains( 'includes/auth.php', $report['included'] );
+        $this->assertSame( 'yourls', $report['constants']['YOURLS_USER'] );
     }
 
 }
