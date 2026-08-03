@@ -978,10 +978,11 @@ function yourls_is_ssl() {
  * The function tries to convert funky characters found in titles to UTF8, from the detected charset.
  * Charset in use is guessed from HTML meta tag, or if not found, from server's 'content-type' response.
  *
+ * @since 1.5
  * @param string $url URL
  * @return string Title (sanitized) or the URL if no title found
  */
-function yourls_get_remote_title( $url ) {
+function yourls_get_remote_title(string $url ): string {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_get_remote_title', yourls_shunt_default(), $url );
     if ( yourls_shunt_default() !== $pre ) {
@@ -995,11 +996,24 @@ function yourls_get_remote_title( $url ) {
         return $url;
     }
 
+    // When an unauthenticated visitor triggers the fetch, don't let them use the server to reach
+    // hosts they cannot reach themselves.
+    $ssrf_options = [];
+    if ( yourls_restrict_remote_title_fetch() ) {
+        $host = parse_url( $url, PHP_URL_HOST );
+        if ( !is_string( $host ) || yourls_host_is_local( $host ) ) {
+            yourls_debug_log( 'Remote title fetch denied on non public host: ' . $url );
+            return $url;
+        }
+        // The initial host is public, now make sure every redirect hop is too
+        $ssrf_options = yourls_http_options_no_local_redirect();
+    }
+
     $title = $charset = false;
 
     $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
 
-    $response = yourls_http_get( $url, [], [], [ 'max_bytes' => $max_bytes ] ); // can be a Request object or an error string
+    $response = yourls_http_get( $url, [], [], array_merge( [ 'max_bytes' => $max_bytes ], $ssrf_options ) ); // can be a Request object or an error string
     if ( is_string( $response ) ) {
         return $url;
     }
