@@ -252,6 +252,40 @@ function yourls_resolve_host(string $host): array {
 }
 
 /**
+ * Check if an IP address is not a public one (loopback, private, reserved or link-local)
+ *
+ * Anything that is not a valid IP is considered non-public.
+ *
+ * @since 1.10.5
+ * @param string $ip IP address, v4 or v6
+ * @return bool      true if the address is not public, or not an IP at all
+ */
+function yourls_ip_is_local(string $ip): bool {
+    // Not an IP at all: fail closed
+    if( filter_var( $ip, FILTER_VALIDATE_IP ) === false ) {
+        return true;
+    }
+
+    /* An IPv4-mapped IPv6 address ('::ffff:127.0.0.1', ie 10 null bytes, 2 xFF bytes, then the
+     * IPv4) is an IPv4 in disguise and is routed as such, so check the IPv4 it wraps instead.
+     * PHP only started rejecting these with FILTER_FLAG_NO_RES_RANGE in 8.3: on 8.1 and 8.2,
+     * '[::ffff:127.0.0.1]' would otherwise pass for a public address, and so would every other
+     * local IPv4 written that way.
+     * Same treatment for the deprecated IPv4-compatible form ('::127.0.0.1', 12 null bytes then
+     * the IPv4), hence testing the 10 first bytes only. '::' and '::1' match too and unwrap to
+     * 0.0.0.0 and 0.0.0.1, both reserved: still non-public, as they should be.
+     */
+    $packed = inet_pton( $ip );
+    if( strlen( $packed ) === 16 && substr( $packed, 0, 10 ) === str_repeat( "\0", 10 ) ) {
+        $ip = inet_ntop( substr( $packed, 12 ) );
+    }
+
+    // FILTER_FLAG_NO_PRIV_RANGE covers 10/8, 172.16/12, 192.168/16 and fc00::/7
+    // FILTER_FLAG_NO_RES_RANGE covers 0/8, 127/8, 169.254/16 (cloud metadata), 240/4, ::, ::1 and fe80::/10
+    return filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false;
+}
+
+/**
  * Check if a host points to a non-public address (loopback, private, reserved or link-local)
  *
  * Accepts either a host name or an IP literal. A host name is resolved first, and considered
@@ -281,17 +315,13 @@ function yourls_host_is_local(string $host): bool {
         $host = substr( $host, 1, -1 );
     }
 
-    // FILTER_FLAG_NO_PRIV_RANGE covers 10/8, 172.16/12, 192.168/16 and fc00::/7
-    // FILTER_FLAG_NO_RES_RANGE covers 0/8, 127/8, 169.254/16 (cloud metadata), 240/4, ::, ::1 and fe80::/10
-    $public = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
-
     if( $host === '' ) {
         $is_local = true;
     }
 
     // IP literal: no DNS involved, check it as is
     elseif( filter_var( $host, FILTER_VALIDATE_IP ) !== false ) {
-        $is_local = ( filter_var( $host, FILTER_VALIDATE_IP, $public ) === false );
+        $is_local = yourls_ip_is_local( $host );
     }
 
     else {
@@ -301,7 +331,7 @@ function yourls_host_is_local(string $host): bool {
         $is_local = empty( $ips );
 
         foreach( $ips as $ip ) {
-            if( filter_var( $ip, FILTER_VALIDATE_IP, $public ) === false ) {
+            if( yourls_ip_is_local( $ip ) ) {
                 $is_local = true;
                 break;
             }

@@ -63,9 +63,13 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
         yield array( '::' );
         yield array( '240.0.0.1' );
         yield array( '255.255.255.255' );
-        // IPv4 mapped IPv6, a classic way around a naive loopback check
+        // IPv4 mapped IPv6, a classic way around a naive loopback check. PHP < 8.3 does not
+        // reject these on its own, see yourls_ip_is_local()
         yield array( '::ffff:127.0.0.1' );
         yield array( '[0:0:0:0:0:ffff:7f00:1]' );
+        yield array( '[::ffff:169.254.169.254]' );
+        yield array( '::ffff:10.0.0.1' );
+        yield array( '::127.0.0.1' );            // deprecated IPv4 compatible form
         // No host at all
         yield array( '' );
         yield array( '   ' );
@@ -81,6 +85,7 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
         yield array( '128.0.0.1' );
         yield array( '2606:4700::1' );
         yield array( '[2001:4860:4860::8888]' );
+        yield array( '::ffff:8.8.8.8' ); // a public IPv4 stays public once unwrapped
     }
 
     /**
@@ -112,6 +117,24 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
     #[\PHPUnit\Framework\Attributes\DataProvider('obfuscated_local_hosts')]
     public function test_obfuscated_local_host_is_local( $host ) {
         $this->assertTrue( yourls_host_is_local( $host ) );
+    }
+
+    /**
+     * Anything that is not an IP is not public: yourls_ip_is_local() fails closed
+     */
+    public function test_ip_is_local_on_garbage() {
+        $this->assertTrue( yourls_ip_is_local( '' ) );
+        $this->assertTrue( yourls_ip_is_local( 'example.com' ) );
+        $this->assertTrue( yourls_ip_is_local( '999.999.999.999' ) );
+    }
+
+    /**
+     * A host name resolving to an IPv4 mapped IPv6 address is local too: the check applies to
+     * resolved addresses, not only to literals
+     */
+    public function test_resolved_ipv4_mapped_address_is_local() {
+        yourls_add_filter( 'resolve_host_ips', function() { return array( '::ffff:127.0.0.1' ); } );
+        $this->assertTrue( yourls_host_is_local( 'example.com' ) );
     }
 
     /**
