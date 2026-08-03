@@ -13,13 +13,17 @@ class RemoteTitleTest extends PHPUnit\Framework\TestCase {
     public function setUp(): void {
         parent::setUp();
         // Initialize any necessary setup here
+        // Mockup HTTP requests to avoid real network calls to example.com during tests
         yourls_add_filter( 'shunt_yourls_http_request', array( $this, 'override_http_request' ), 10, 6 );
+        // Also prevent a real DNS lookup of example.com by disabling the remote title fetch restriction
+        yourls_add_filter( 'restrict_remote_title_fetch', 'yourls_return_false' );
     }
 
     public function tearDown(): void {
         parent::tearDown();
         // Clean up any resources or reset any state after each test
         yourls_remove_filter( 'shunt_yourls_http_request', array( $this, 'override_http_request' ), 10, 6 );
+        yourls_remove_filter( 'restrict_remote_title_fetch', 'yourls_return_false' );
     }
 
     public function override_http_request($return, $type, $url, $headers, $data, $options) {
