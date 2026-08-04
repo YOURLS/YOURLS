@@ -374,7 +374,7 @@ function yourls_restrict_remote_title_fetch(): bool {
  * triggered by an untrusted party.
  *
  * @since 1.10.5
- * @return array  Options to pass to yourls_http_get() & al
+ * @return array  Options to pass to yourls_http_get()
  */
 function yourls_http_options_no_local_redirect(): array {
     $hooks = new \WpOrg\Requests\Hooks();
