@@ -2,17 +2,24 @@
 
 /**
  * Formatting functions for URLs
- *
- * @since 0.1
  */
 #[\PHPUnit\Framework\Attributes\Group('formatting')]
 #[\PHPUnit\Framework\Attributes\Group('url')]
 #[\PHPUnit\Framework\Attributes\Group('idn')]
 class URLTest extends PHPUnit\Framework\TestCase {
 
+    protected $backup_server;
+
+    protected function setUp(): void {
+        $this->backup_server = $_SERVER;
+    }
+
     protected function tearDown(): void {
         yourls_remove_filter( 'is_ssl', 'yourls_return_true' );
         yourls_remove_filter( 'is_ssl', 'yourls_return_false' );
+        yourls_remove_all_filters( 'is_ssl' );
+        yourls_remove_all_filters( 'is_allowed_protocol' );
+        $_SERVER = $this->backup_server;
     }
 
     /**
@@ -378,6 +385,129 @@ class URLTest extends PHPUnit\Framework\TestCase {
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_get_domain')]
     function test_get_domain( $url, $include_scheme, $expected ) {
         $this->assertSame( $expected, yourls_get_domain( $url, $include_scheme ) );
+    }
+
+    /**
+     * URLs split into protocol / slashes / rest. Structure: [url, protocol, slashes, rest]
+     */
+    static function list_of_protocol_slashes_rest(): \Iterator {
+        yield [ 'mailto:yourls@yourls.org?subject=hey', 'mailto:', '',   'yourls@yourls.org?subject=hey' ];
+        yield [ 'http://example.com/blah.html',         'http:',   '//', 'example.com/blah.html' ];
+        yield [ 'https://example.com/',                 'https:',  '//', 'example.com/' ];
+        yield [ 'scheme:/example.com',                  'scheme:', '',   '/example.com' ];
+    }
+
+    /**
+     * Test yourls_get_protocol_slashes_and_rest() splits a URL as documented
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_protocol_slashes_rest')]
+    function test_get_protocol_slashes_and_rest( $url, $protocol, $slashes, $rest ) {
+        $this->assertSame(
+            [ 'protocol' => $protocol, 'slashes' => $slashes, 'rest' => $rest ],
+            yourls_get_protocol_slashes_and_rest( $url )
+        );
+    }
+
+    /**
+     * Custom key names are honored in the returned array
+     */
+    function test_get_protocol_slashes_and_rest_custom_keys() {
+        $this->assertSame(
+            [ 'p' => 'http:', 's' => '//', 'r' => 'example.com/' ],
+            yourls_get_protocol_slashes_and_rest( 'http://example.com/', [ 'p', 's', 'r' ] )
+        );
+    }
+
+    /**
+     * Returns false when there is no protocol, or when the key names array isn't exactly 3 items
+     */
+    function test_get_protocol_slashes_and_rest_returns_false() {
+        $this->assertFalse( yourls_get_protocol_slashes_and_rest( 'example.com/no/protocol' ) );
+        $this->assertFalse( yourls_get_protocol_slashes_and_rest( 'http://example.com/', [ 'only', 'two' ] ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() with an explicit list of protocols
+     */
+    function test_is_allowed_protocol_explicit_list() {
+        $allowed = [ 'http://', 'https://' ];
+        $this->assertTrue(  yourls_is_allowed_protocol( 'http://example.com', $allowed ) );
+        $this->assertTrue(  yourls_is_allowed_protocol( 'https://example.com', $allowed ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'javascript:alert(1)', $allowed ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'ftp://example.com', $allowed ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() falls back to the default allowed protocols
+     */
+    function test_is_allowed_protocol_default_protocols() {
+        // http:// and https:// are part of the default allowed protocols
+        $this->assertTrue(  yourls_is_allowed_protocol( 'http://example.com' ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'javascript:alert(1)' ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() is filterable
+     */
+    function test_is_allowed_protocol_is_filterable() {
+        yourls_add_filter( 'is_allowed_protocol', 'yourls_return_true' );
+        $this->assertTrue( yourls_is_allowed_protocol( 'javascript:alert(1)', [ 'http://' ] ) );
+    }
+
+    /**
+     * $_SERVER signals and whether yourls_is_ssl() should detect HTTPS.
+     * Structure: [ $_SERVER array, expected bool ]
+     */
+    static function list_of_ssl_signals(): \Iterator {
+        yield 'nothing set'              => [ [], false ];
+        yield 'HTTPS on'                 => [ [ 'HTTPS' => 'on' ], true ];
+        yield 'HTTPS ON (uppercase)'     => [ [ 'HTTPS' => 'ON' ], true ];
+        yield 'HTTPS 1'                  => [ [ 'HTTPS' => '1' ], true ];
+        yield 'HTTPS off'                => [ [ 'HTTPS' => 'off' ], false ];
+        yield 'HTTPS empty'              => [ [ 'HTTPS' => '' ], false ];
+        yield 'X-Forwarded-Proto https'  => [ [ 'HTTP_X_FORWARDED_PROTO' => 'https' ], true ];
+        yield 'X-Forwarded-Proto HTTPS'  => [ [ 'HTTP_X_FORWARDED_PROTO' => 'HTTPS' ], true ];
+        yield 'X-Forwarded-Proto http'   => [ [ 'HTTP_X_FORWARDED_PROTO' => 'http' ], false ];
+        yield 'port 443'                 => [ [ 'SERVER_PORT' => '443' ], true ];
+        yield 'port 80'                  => [ [ 'SERVER_PORT' => '80' ], false ];
+    }
+
+    /**
+     * yourls_is_ssl() detects HTTPS from the various $_SERVER signals
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_ssl_signals')]
+    function test_is_ssl( $server, $expected ) {
+        $_SERVER = $server;
+        $this->assertSame( $expected, yourls_is_ssl() );
+    }
+
+    /**
+     * yourls_is_ssl() is filterable
+     */
+    function test_is_ssl_is_filterable() {
+        $_SERVER = [];
+        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
+        $this->assertTrue( yourls_is_ssl() );
+    }
+
+    /**
+     * yourls_is_rawurlencoded() detects encoded strings
+     */
+    function test_is_rawurlencoded() {
+        $this->assertTrue(  yourls_is_rawurlencoded( 'hello%20world' ) );
+        $this->assertTrue(  yourls_is_rawurlencoded( '%21' ) );
+        $this->assertFalse( yourls_is_rawurlencoded( 'hello world' ) );
+        $this->assertFalse( yourls_is_rawurlencoded( 'plain' ) );
+    }
+
+    /**
+     * yourls_rawurldecode_while_encoded() decodes until nothing is left encoded
+     */
+    function test_rawurldecode_while_encoded() {
+        // multiple encoding: %2521 -> %21 -> !
+        $this->assertSame( '!', yourls_rawurldecode_while_encoded( '%2521' ) );
+        $this->assertSame( 'hello world', yourls_rawurldecode_while_encoded( 'hello%20world' ) );
+        $this->assertSame( 'plain', yourls_rawurldecode_while_encoded( 'plain' ) );
     }
 
 }

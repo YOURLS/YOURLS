@@ -7,5 +7,6 @@ namespace MaxMind\Exception;
 /**
  * This exception is thrown when the service requires permission to access.
  */
-// phpcs:disable
-class PermissionRequiredException extends InvalidRequestException {}
+class PermissionRequiredException extends InvalidRequestException
+{
+}

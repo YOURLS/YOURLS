@@ -40,7 +40,8 @@
         "vendor-dir": "includes/vendor",
         "platform": {
             "php": "8.1.0"
-        }
+        },
+        "platform-check": false
     },
     "autoload": {
         "psr-4": {

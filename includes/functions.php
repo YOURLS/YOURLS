@@ -17,27 +17,88 @@ function yourls_make_regexp_pattern( $string ) {
 }
 
 /**
- * Get client IP Address. Returns a DB safe string.
+ * Get client IP Address. Returns a DB safe string. May not be a valid IP per se.
+ *
+ * By default, it trusts only REMOTE_ADDR. If the request comes from a proxy
+ * listed in the 'get_ip_trusted_proxies' filter, it looks for the real client
+ * IP in the headers, with precedence HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA.
  *
  * @return string
  */
-function yourls_get_IP() {
-    $ip = '';
+function yourls_get_IP(): string {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
-    // Precedence: if set, X-Forwarded-For > HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
-    $headers = [ 'X-Forwarded-For', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA', 'REMOTE_ADDR' ];
-    foreach( $headers as $header ) {
-        if ( !empty( $_SERVER[ $header ] ) ) {
-            $ip = $_SERVER[ $header ];
-            break;
+    // Allow plugins to define a trusted proxy list, and if the request comes from a trusted proxy, look for the real IP in the headers
+    // Precedence: if set, HTTP_X_FORWARDED_FOR > HTTP_CLIENT_IP > HTTP_VIA > REMOTE_ADDR
+    $trusted_proxies = yourls_apply_filter('get_ip_trusted_proxies', []);
+
+    if ( !empty( $trusted_proxies ) && yourls_ip_is_in_ip_list( $ip, $trusted_proxies ) ) {
+        $headers = ['HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_VIA'];
+        foreach ($headers as $header) {
+            if (!empty($_SERVER[$header])) {
+                $ip = $_SERVER[$header];
+                break;
+            }
         }
     }
 
-    // headers can contain multiple IPs (X-Forwarded-For = client, proxy1, proxy2). Take first one.
-    if ( strpos( $ip, ',' ) !== false )
-        $ip = substr( $ip, 0, strpos( $ip, ',' ) );
+    // If there are multiple IPs (e.g. in HTTP_X_FORWARDED_FOR), take the first one
+    $ip = explode(',', $ip)[0];
 
     return (string)yourls_apply_filter( 'get_IP', yourls_sanitize_ip( $ip ) );
+}
+
+/**
+ * Check if an IP address matches a given IP or CIDR range (IPv4 and IPv6).
+ *
+ * @since 1.10.5
+ * @param string $ip    IP address to check
+ * @param string $range Single IP or CIDR notation (e.g. '10.0.0.0/24' or '2400:cb00::/32')
+ * @return bool
+ */
+function yourls_ip_matches_range(string $ip, string $range ): bool {
+    if (!str_contains($range, '/')) {
+        return inet_pton( $ip ) === inet_pton( $range );
+    }
+
+    list( $subnet, $bits ) = explode( '/', $range );
+    $bits = (int) $bits;
+
+    $ip_bin     = inet_pton( $ip );
+    $subnet_bin = inet_pton( $subnet );
+
+    if ( $ip_bin === false || $subnet_bin === false ) {
+        return false;
+    }
+
+    // Both must be same protocol (4 bytes for IPv4, 16 bytes for IPv6)
+    if ( strlen( $ip_bin ) !== strlen( $subnet_bin ) ) {
+        return false;
+    }
+
+    $mask = str_repeat( "\xff", (int) ( $bits / 8 ) );
+    if ( $bits % 8 ) {
+        $mask .= chr( 0xff << ( 8 - $bits % 8 ) & 0xff );
+    }
+    $mask = str_pad( $mask, strlen( $ip_bin ), "\x00" );
+
+    return ( $ip_bin & $mask ) === ( $subnet_bin & $mask );
+}
+
+/**
+ * Check if an IP address is in a list of IP (IPs or CIDR ranges), typically a list of trusted proxies.
+ *
+ * @param string $ip      IP address to check
+ * @param array  $proxies List of IPs or CIDR ranges
+ * @return bool
+ */
+function yourls_ip_is_in_ip_list(string $ip, array $proxies ): bool {
+    foreach ( $proxies as $range ) {
+        if ( yourls_ip_matches_range( $ip, $range ) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -535,6 +596,9 @@ function yourls_log_redirect( $keyword ) {
         'location' => yourls_geo_ip_to_countrycode($ip),
     ];
 
+    // Action to allow plugins to log the redirect in their own way. See #3990
+    yourls_do_action( 'log_redirect', $binds );
+
     // Try and log. An error probably means a concurrency problem : just skip the logging
     try {
         $result = yourls_get_db('write-log_redirect')->fetchAffected("INSERT INTO `$table` (click_time, shorturl, referrer, user_agent, ip_address, country_code) VALUES (:now, :keyword, :referrer, :ua, :ip, :location)", $binds );
@@ -546,12 +610,15 @@ function yourls_log_redirect( $keyword ) {
 }
 
 /**
- * Check if we want to not log redirects (for stats)
+ * Check if we want to log redirects (for stats)
+ *
+ * Logs redirects unless YOURLS_NOSTATS is defined and true. Filterable.
  *
  * @return bool
  */
 function yourls_do_log_redirect() {
-    return ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
+    $do_log = ( !defined( 'YOURLS_NOSTATS' ) || YOURLS_NOSTATS != true );
+    return (bool)yourls_apply_filter( 'do_log_redirect', $do_log );
 }
 
 /**
@@ -635,12 +702,43 @@ function yourls_allow_duplicate_longurls() {
 }
 
 /**
+ * Get the flood delay in seconds, as maybe defined in config, filtered
+ *
+ * This is the minimum delay between two link creations from the same IP.
+ * Defaults to 15 when undefined.
+ *
+ * @since 1.10.5
+ * @return int Flood delay in seconds
+ */
+function yourls_get_flood_delay(): int {
+    $delay = defined( 'YOURLS_FLOOD_DELAY_SECONDS' ) ? (int) YOURLS_FLOOD_DELAY_SECONDS : 15;
+    return yourls_apply_filter( 'get_flood_delay', $delay );
+}
+
+/**
+ * Get the list of IPs exempt from flood checking, as maybe defined in config, filtered
+ *
+ * @since 1.10.5
+ * @return array List of whitelisted IPs (empty array if none)
+ */
+function yourls_get_flood_ip_whitelist(): array {
+    $whitelist = defined( 'YOURLS_FLOOD_IP_WHITELIST' ) ? (string) YOURLS_FLOOD_IP_WHITELIST : '';
+    $ips = array_filter( array_map( 'trim', explode( ',', $whitelist ) ) );
+
+    $ips = yourls_apply_filter( 'get_flood_ip_whitelist', $ips );
+
+    // Sanitize each IP, including any value added through the filter, drop empties and reindex
+    $ips = array_map( fn( $ip ) => yourls_sanitize_ip( trim( (string) $ip ) ), (array) $ips );
+    return array_values( array_filter( $ips ) );
+}
+
+/**
  * Check if an IP shortens URL too fast to prevent DB flood. Return true, or die.
  *
  * @param string $ip
  * @return bool|mixed|string
  */
-function yourls_check_IP_flood( $ip = '' ) {
+function yourls_check_IP_flood(string $ip = '' ): mixed {
 
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_check_IP_flood', yourls_shunt_default(), $ip );
@@ -651,11 +749,8 @@ function yourls_check_IP_flood( $ip = '' ) {
     yourls_do_action( 'pre_check_ip_flood', $ip ); // at this point $ip can be '', check it if your plugin hooks in here
 
     // Raise white flag if installing or if no flood delay defined
-    if(
-        ( defined('YOURLS_FLOOD_DELAY_SECONDS') && YOURLS_FLOOD_DELAY_SECONDS === 0 ) ||
-        !defined('YOURLS_FLOOD_DELAY_SECONDS') ||
-        yourls_is_installing()
-    )
+    $flood_delay = yourls_get_flood_delay();
+    if( $flood_delay <= 0 || yourls_is_installing() )
         return true;
 
     // Don't throttle logged in users
@@ -665,13 +760,8 @@ function yourls_check_IP_flood( $ip = '' ) {
     }
 
     // Don't throttle whitelist IPs
-    if( defined( 'YOURLS_FLOOD_IP_WHITELIST' ) && YOURLS_FLOOD_IP_WHITELIST ) {
-        $whitelist_ips = explode( ',', YOURLS_FLOOD_IP_WHITELIST );
-        foreach( (array)$whitelist_ips as $whitelist_ip ) {
-            $whitelist_ip = trim( $whitelist_ip );
-            if ( $whitelist_ip == $ip )
-                return true;
-        }
+    if( in_array( $ip, yourls_get_flood_ip_whitelist() ) ) {
+        return true;
     }
 
     $ip = ( $ip ? yourls_sanitize_ip( $ip ) : yourls_get_IP() );
@@ -683,7 +773,7 @@ function yourls_check_IP_flood( $ip = '' ) {
     if( $lasttime ) {
         $now = date( 'U' );
         $then = date( 'U', strtotime( $lasttime ) );
-        if( ( $now - $then ) <= YOURLS_FLOOD_DELAY_SECONDS ) {
+        if( ( $now - $then ) <= $flood_delay ) {
             // Flood!
             yourls_do_action( 'ip_flood', $ip, $now - $then );
             yourls_die( yourls__( 'Too many URLs added too fast. Slow down please.' ), yourls__( 'Too Many Requests' ), 429 );
@@ -888,10 +978,11 @@ function yourls_is_ssl() {
  * The function tries to convert funky characters found in titles to UTF8, from the detected charset.
  * Charset in use is guessed from HTML meta tag, or if not found, from server's 'content-type' response.
  *
+ * @since 1.5
  * @param string $url URL
  * @return string Title (sanitized) or the URL if no title found
  */
-function yourls_get_remote_title( $url ) {
+function yourls_get_remote_title(string $url ): string {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_get_remote_title', yourls_shunt_default(), $url );
     if ( yourls_shunt_default() !== $pre ) {
@@ -905,11 +996,24 @@ function yourls_get_remote_title( $url ) {
         return $url;
     }
 
+    // When an unauthenticated visitor triggers the fetch, don't let them use the server to reach
+    // hosts they cannot reach themselves.
+    $ssrf_options = [];
+    if ( yourls_restrict_remote_title_fetch() ) {
+        $host = parse_url( $url, PHP_URL_HOST );
+        if ( !is_string( $host ) || yourls_host_is_local( $host ) ) {
+            yourls_debug_log( 'Remote title fetch denied on non public host: ' . $url );
+            return $url;
+        }
+        // The initial host is public, now make sure every redirect hop is too
+        $ssrf_options = yourls_http_options_no_local_redirect();
+    }
+
     $title = $charset = false;
 
     $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
 
-    $response = yourls_http_get( $url, [], [], [ 'max_bytes' => $max_bytes ] ); // can be a Request object or an error string
+    $response = yourls_http_get( $url, [], [], array_merge( [ 'max_bytes' => $max_bytes ], $ssrf_options ) ); // can be a Request object or an error string
     if ( is_string( $response ) ) {
         return $url;
     }
@@ -1177,13 +1281,19 @@ function yourls_check_maintenance_mode() {
  * @since 1.6
  * @see yourls_get_protocol()
  *
- * @param string $url URL to be check
+ * @param string $url URL to be checked
  * @param array $protocols Optional. Array of protocols, defaults to global $yourls_allowedprotocols
  * @return bool true if protocol allowed, false otherwise
  */
-function yourls_is_allowed_protocol( $url, $protocols = [] ) {
+function yourls_is_allowed_protocol(string $url, array $protocols = [] ): bool {
     if ( empty( $protocols ) ) {
         global $yourls_allowedprotocols;
+        // KSES globals are normally populated on the 'plugins_loaded' action. This can run
+        // earlier though (eg yourls_die() on a DB connection error, before plugins load), so
+        // make sure the allowed protocols are available.
+        if ( ! is_array( $yourls_allowedprotocols ) ) {
+            yourls_kses_init();
+        }
         $protocols = $yourls_allowedprotocols;
     }
 

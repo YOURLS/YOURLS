@@ -2,9 +2,7 @@
 
 /**
  * Escaping formatting functions.
- * Note: tests about escaping and sanitizing URLs are in urls.php
- *
- * @since 0.1
+ * Note: tests about escaping and sanitizing URLs are in URLTest.php
  */
 #[\PHPUnit\Framework\Attributes\Group('formatting')]
 class EscTest extends PHPUnit\Framework\TestCase {
@@ -35,8 +33,6 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Attribute escaping
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_attributes')]
     function test_esc_attr( $attr, $escaped ) {
@@ -45,8 +41,6 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Attribute escaping -- escaping twice shouldn't change
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_attributes')]
     function test_esc_attr_twice( $attr, $escaped ) {
@@ -102,24 +96,12 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * HTML escaping
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('html_strings')]
     function test_esc_html( $html, $escaped ) {
         $this->assertSame( $escaped, yourls_esc_html( $html ) );
-    }
-
-    /**
-     * String to escape and what they should look like once escaped
-     */
-    public function strings_to_escape() {
-        return array(
-           array( "I'm rock n' rollin'", "I\'m rock n\' rollin\'" ),
-           array( 'I am "nice"', 'I am \"nice\"' ),
-           array( 'Back\Slash', 'Back\\\Slash' ),
-           array( "NULL\0NULL", 'NULL\0NULL' ), // notice the quote change
-        );
+        // Double escaping shouldn't change
+        $this->assertSame( $escaped, yourls_esc_html( yourls_esc_html( $html ) ) );
     }
 
     /**
@@ -147,8 +129,6 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Escape URLs for display
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_URLs')]
     #[\PHPUnit\Framework\Attributes\Group('url')]
@@ -177,8 +157,6 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Escape JS
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_JS')]
     function test_esc_js( $js, $escaped ) {
@@ -206,12 +184,95 @@ class EscTest extends PHPUnit\Framework\TestCase {
 
     /**
      * Escape JS
-     *
-     * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_textarea')]
     function test_esc_textarea( $text, $escaped ) {
         $this->assertEquals( $escaped, yourls_esc_textarea( $text ) );
+    }
+
+    /**
+     * Strings, whitelist of allowed tags/attributes, and expected escaped output
+     */
+    static function list_of_whitelisted_html(): \Iterator
+    {
+        // yield array( 'string to escape', 'allowed tags/attributes', 'expected escaped output' );
+
+        yield 'empty whitelist escapes everything' => array(
+            '<b>only</b>',
+            array(),
+            '&lt;b&gt;only&lt;/b&gt;',
+        );
+        // Allowed tag is un-escaped, the rest stays escaped
+        yield 'allowed tag, disallowed tag' => array(
+            '<b>bold</b> <i>x</i>',
+            array( 'b' => array() ),
+            '<b>bold</b> &lt;i&gt;x&lt;/i&gt;',
+        );
+        // Text content of an allowed tag is still escaped
+        yield 'text content stays escaped' => array(
+            '<b>x & y < z</b>',
+            array( 'b' => array() ),
+            '<b>x &amp; y &lt; z</b>',
+        );
+        // Tag matching is case-insensitive and output is lowercased
+        yield 'tag name is case-insensitive' => array(
+            '<B>x</B>',
+            array( 'b' => array() ),
+            '<b>x</b>',
+        );
+        // An allowed tag with an empty attribute list keeps the tag but strips attributes
+        yield 'attributes stripped when none allowed' => array(
+            '<b class="foo">x</b>',
+            array( 'b' => array() ),
+            '<b>x</b>',
+        );
+        // An allowed attribute is kept...
+        yield 'allowed attribute kept' => array(
+            '<a href="http://example.com">link</a>',
+            array( 'a' => array( 'href' => true ) ),
+            '<a href="http://example.com">link</a>',
+        );
+        // ...while non-whitelisted attributes on the same tag are dropped
+        yield 'disallowed attribute dropped' => array(
+            '<a href="http://example.com" onclick="evil()">x</a>',
+            array( 'a' => array( 'href' => true ) ),
+            '<a href="http://example.com">x</a>',
+        );
+        // Single-quoted attribute values are normalized to double quotes
+        yield 'single quotes normalized to double quotes' => array(
+            "<a href='http://example.com'>x</a>",
+            array( 'a' => array( 'href' => true ) ),
+            '<a href="http://example.com">x</a>',
+        );
+        // The allowed tag/attribute map itself is case-insensitive
+        yield 'whitelist keys are case-insensitive' => array(
+            '<A HREF="http://example.com">x</A>',
+            array( 'A' => array( 'HREF' => true ) ),
+            '<a href="http://example.com">x</a>',
+        );
+        // href values are sanitized: a javascript: scheme is neutralized to an empty URL
+        yield 'javascript scheme in href is neutralized' => array(
+            '<a href="javascript:alert(1)">x</a>',
+            array( 'a' => array( 'href' => true ) ),
+            '<a href="">x</a>',
+        );
+    }
+
+    /**
+     * Escape HTML but allow a whitelist of tags and attributes
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_whitelisted_html')]
+    function test_esc_html_with_whitelist( $string, $allowed, $escaped ) {
+        $this->assertSame( $escaped, yourls_esc_html_with_whitelist( $string, $allowed ) );
+    }
+
+    /**
+     * With no whitelist argument, yourls_esc_html_with_whitelist() is equivalent to yourls_esc_html()
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('html_strings')]
+    function test_esc_html_with_whitelist_defaults_to_esc_html( $html, $escaped ) {
+        $this->assertSame( yourls_esc_html( $html ), yourls_esc_html_with_whitelist( $html ) );
+        $this->assertSame( $escaped, yourls_esc_html_with_whitelist( $html ) );
     }
 
 }

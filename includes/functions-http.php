@@ -205,6 +205,207 @@ function yourls_send_through_proxy( $url ) {
 }
 
 /**
+ * Resolve a host name to a list of IP addresses
+ *
+ * Returns every A and AAAA record found for $host, or an empty array if the host cannot be
+ * resolved. Does not check the addresses in any way, see yourls_host_is_local() for this.
+ *
+ * @since 1.10.5
+ * @param string $host Host name to resolve (no brackets around IPv6 literals)
+ * @return array       Array of IP addresses as strings, empty array if resolution failed
+ */
+function yourls_resolve_host(string $host): array {
+    $ips = array();
+
+    /* Both dns_get_record() and gethostbynamel() emit an E_WARNING when a lookup fails, which is
+     * an expected outcome here (host longer than 255 chars, or resolver returning SERVFAIL). We silence them with a
+     * scoped error handler rather than with '@' that may hide other errors (the try/catch isn't enough
+     * because the E_WARNING is not an exception).
+     * Note that this does not check the validity of the host name itself, it just tries to resolve it. Invalid hosts
+     * like omgilove.slayer will return whatever the resolver returns (SERVFAIL, NXDOMAIN, etc...) and will be
+     * considered local by yourls_host_is_local().
+     */
+    set_error_handler( function() { return true; }, E_WARNING );
+
+    try {
+        // dns_get_record() gets us IPv6 too, but it's disabled on some shared hosts
+        if( function_exists( 'dns_get_record' ) ) {
+            $records = dns_get_record( $host, DNS_A | DNS_AAAA );
+            foreach( is_array( $records ) ? $records : array() as $record ) {
+                if( isset( $record['ip'] ) ) {
+                    $ips[] = $record['ip'];     // A record
+                } elseif( isset( $record['ipv6'] ) ) {
+                    $ips[] = $record['ipv6'];   // AAAA record
+                }
+            }
+        }
+
+        // Fallback when dns_get_record() is unavailable or came back empty handed. IPv4 only.
+        if( !$ips && function_exists( 'gethostbynamel' ) ) {
+            $ips = gethostbynamel( $host ) ?: array();  // returns false when host is unknown
+        }
+    } finally {
+        restore_error_handler();
+    }
+
+    return yourls_apply_filter( 'resolve_host_ips', $ips, $host );
+}
+
+/**
+ * Check if an IP address is not a public one (loopback, private, reserved or link-local)
+ *
+ * Anything that is not a valid IP is considered non-public.
+ *
+ * @since 1.10.5
+ * @param string $ip IP address, v4 or v6
+ * @return bool      true if the address is not public, or not an IP at all
+ */
+function yourls_ip_is_local(string $ip): bool {
+    // Not an IP at all: fail closed
+    if( filter_var( $ip, FILTER_VALIDATE_IP ) === false ) {
+        return true;
+    }
+
+    /* An IPv4-mapped IPv6 address ('::ffff:127.0.0.1', ie 10 null bytes, 2 xFF bytes, then the
+     * IPv4) is an IPv4 in disguise and is routed as such, so check the IPv4 it wraps instead.
+     * PHP only started rejecting these with FILTER_FLAG_NO_RES_RANGE in 8.3: on 8.1 and 8.2,
+     * '[::ffff:127.0.0.1]' would otherwise pass for a public address, and so would every other
+     * local IPv4 written that way.
+     * Same treatment for the deprecated IPv4-compatible form ('::127.0.0.1', 12 null bytes then
+     * the IPv4), hence testing the 10 first bytes only. '::' and '::1' match too and unwrap to
+     * 0.0.0.0 and 0.0.0.1, both reserved: still non-public, as they should be.
+     */
+    $packed = inet_pton( $ip );
+    if( strlen( $packed ) === 16 && substr( $packed, 0, 10 ) === str_repeat( "\0", 10 ) ) {
+        $ip = inet_ntop( substr( $packed, 12 ) );
+    }
+
+    // FILTER_FLAG_NO_PRIV_RANGE covers 10/8, 172.16/12, 192.168/16 and fc00::/7
+    // FILTER_FLAG_NO_RES_RANGE covers 0/8, 127/8, 169.254/16 (cloud metadata), 240/4, ::, ::1 and fe80::/10
+    return filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false;
+}
+
+/**
+ * Check if a host points to a non-public address (loopback, private, reserved or link-local)
+ *
+ * Accepts either a host name or an IP literal. A host name is resolved first, and considered
+ * local as soon as one of its addresses is not public. A host that cannot be resolved is
+ * considered local too.
+ *
+ * Known limitation: this does not protect against DNS rebinding (attacker controlling a DNS server
+ * with 0s TTL refresh, where evil-url.com could point to 1.2.3.4 (public) and then the next second point
+ * to 10.0.0.1 (private). Let's consider this a low risk, and not worth the complexity of a DNS cache with TTL awareness.
+ *
+ * @since 1.10.5
+ * @param string $host Host name or IP address. IPv6 literals can be bracketed or not.
+ * @return bool        true if the host is not a public address or cannot be resolved
+ */
+function yourls_host_is_local(string $host): bool {
+    // Allow plugins to short-circuit the whole function
+    $pre = yourls_apply_filter( 'shunt_host_is_local', yourls_shunt_default(), $host );
+    if ( yourls_shunt_default() !== $pre ) {
+        return $pre;
+    }
+
+    $host = trim( (string)$host );
+
+    // parse_url() keeps IPv6 hosts bracketed ('[::1]'). Unbracket, otherwise the literal is not
+    // recognized as an IP and we needlessly hand it over to the resolver.
+    if( strlen( $host ) > 2 && $host[0] === '[' && substr( $host, -1 ) === ']' ) {
+        $host = substr( $host, 1, -1 );
+    }
+
+    if( $host === '' ) {
+        $is_local = true;
+    }
+
+    // IP literal: no DNS involved, check it as is
+    elseif( filter_var( $host, FILTER_VALIDATE_IP ) !== false ) {
+        $is_local = yourls_ip_is_local( $host );
+    }
+
+    else {
+        $ips = yourls_resolve_host( $host );
+
+        // Unresolvable host: fail closed
+        $is_local = empty( $ips );
+
+        foreach( $ips as $ip ) {
+            if( yourls_ip_is_local( $ip ) ) {
+                $is_local = true;
+                break;
+            }
+        }
+    }
+
+    return (bool)yourls_apply_filter( 'host_is_local', $is_local, $host );
+}
+
+/**
+ * Check if the destination of a remote title fetch must be restricted to public addresses
+ *
+ * We want to avoid the situation where a public install of YOURLS is used to fetch titles from internal hosts,
+ * and potentially leak information about them (SSRF and port scan / service discovery)
+ * On a private install, the user is authenticated and (hopefully) trusted.
+ *
+ * Public install can be: YOURLS_PRIVATE set to false, or having a public interface on top of a regular private
+ * install. Checking constant YOURLS_USER covers both cases at once.
+ *
+ * A one-liner plugin disables the filtering entirely (say, public install on a private network):
+ *     // Disable the restriction on remote title fetches (allow internal hosts)
+ *     yourls_add_filter( 'restrict_remote_title_fetch', 'yourls_return_false' );
+ *
+ * @since 1.10.5
+ * @return bool  true if the fetch destination must be restricted to public addresses
+ */
+function yourls_restrict_remote_title_fetch(): bool {
+    return (bool)yourls_apply_filter( 'restrict_remote_title_fetch', !defined( 'YOURLS_USER' ) );
+}
+
+/**
+ * HTTP request options that make a request fail when it is redirected to a non-public host
+ *
+ * Redirects are still followed: dropping them would break 'http -> https', 'example.com ->
+ * www.example.com', URL shorteners, or any legit 30x redirect. Instead, every hop
+ * is checked before it is requested.
+ *
+ * Meant to be merged into the $options of a single yourls_http_*() call, not to be added to
+ * yourls_http_default_options() -- other requests (core version check, plugins) are not
+ * triggered by an untrusted party.
+ *
+ * @since 1.10.5
+ * @return array  Options to pass to yourls_http_get()
+ */
+function yourls_http_options_no_local_redirect(): array {
+    $hooks = new \WpOrg\Requests\Hooks();
+    $hooks->register( 'requests.before_redirect', 'yourls_http_abort_local_redirect' );
+
+    return array(
+        'hooks'     => $hooks,
+        'redirects' => 3,
+    );
+}
+
+/**
+ * Callback on the 'requests.before_redirect' hook: abort if the redirect target is not public
+ *
+ * The exception thrown is a \WpOrg\Requests\Exception and not a plain \Exception, because this
+ * is what yourls_http_request() catches -- anything else would escape and fatal.
+ *
+ * @since 1.10.5
+ * @param string $location URL the request is about to be redirected to
+ * @return void
+ * @throws \WpOrg\Requests\Exception  When the redirect target is a non public host
+ */
+function yourls_http_abort_local_redirect(string $location): void {
+    $host = parse_url( $location, PHP_URL_HOST );
+
+    if( !is_string( $host ) || yourls_host_is_local( $host ) ) {
+        throw new \WpOrg\Requests\Exception( 'Redirect to a non public host: ' . $location, 'yourls.local_redirect', $location );
+    }
+}
+
+/**
  * Perform a HTTP request, return response object
  *
  * @since 1.7

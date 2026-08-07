@@ -43,7 +43,7 @@ class VersionTest extends PHPUnit\Framework\TestCase {
         yourls_set_db( new Mock_Version( $version ) );
 
         $this->assertSame( $sanitized, yourls_get_database_version() );
-        // As of writing YOURLS needs MySQL 5.0+, so the following test should pass
+        // As of writing YOURLS needs MySQL 5.5+, so the following test should pass
         $this->assertTrue( yourls_check_database_version() );
     }
 

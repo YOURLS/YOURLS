@@ -54,3 +54,35 @@ $ phpunit --group formatting
 
 PHPUnit supports both `phpunit.xml` and `phpunit.xml.dist`, where `phpunit.xml` has higher priority:
 if you want to specify your own settings, copy `phpunit.xml.dist` to `phpunit.xml` and edit that file.
+
+## Testing in a new process
+
+Some things can only happen once per PHP process: a constant being defined, a file
+being loaded with `require_once`. Asserting on them from within the test suite only
+tells you what an earlier test happened to trigger first. For those, run a *scenario*
+in a fresh process:
+
+```php
+class SomeTest extends PHPUnit\Framework\TestCase {
+    use NewProcessTrait;
+
+    public function test_something() {
+        $report = $this->run_in_new_process( 'some-scenario', array( 'YOURLS_SOMETHING' => false ) );
+
+        $this->assertArrayNotHasKey( 'YOURLS_USER', $report['constants'] );
+        $this->assertNotContains( 'includes/auth.php', $report['included'] );
+    }
+}
+
+The trait (tests/includes/new-process.php) runs tests/data/scripts/run-scenario.php
+in a new process, which:
+
+1. defines the constants asked for, before anything else, so config and core see them
+2. boots the same YOURLS as the test suite, via yut_boot_yourls() (tests/includes/boot.php)
+3. runs tests/data/scripts/scenarios/some-scenario.php
+4. reports back, as JSON, every defined YOURLS_* constant and every file loaded below
+YOURLS_ABSPATH
+
+Testing something else is a matter of dropping a new file in scenarios/: plain PHP,
+run once YOURLS is booted, no assertions in it -- it only acts, the test asserts on the
+report. Note that the database is expected to be already installed by the test suite.

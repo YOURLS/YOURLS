@@ -7,5 +7,6 @@ namespace MaxMind\Exception;
 /**
  * This class represents an error authenticating.
  */
-// phpcs:disable
-class AuthenticationException extends InvalidRequestException {}
+class AuthenticationException extends InvalidRequestException
+{
+}

@@ -318,8 +318,8 @@ TUMBLR;
 <pre><code>&lt;?php
 $timestamp = time();
 <tt>// <?php yourls_e( 'actual value:' ); ?> $time = <?php $time = time(); echo $time; ?></tt>
-$signature = md5( $timestamp . '<?php echo yourls_auth_signature(); ?>' );
-<tt>// <?php yourls_e( 'actual value:' ); ?> $signature = "<?php $sign = md5( $time. yourls_auth_signature() ); echo $sign; ?>"</tt>
+$signature = hash('sha256', $timestamp . '<?php echo yourls_auth_signature(); ?>' );
+<tt>// <?php yourls_e( 'actual value:' ); ?> $signature = "<?php $sign = hash( 'sha256',$time. yourls_auth_signature() ); echo $sign; ?>"</tt>
 ?>
 </code></pre>
         <p><?php yourls_e( 'Now use parameters <tt>signature</tt> and <tt>timestamp</tt> in your API requests. Example:' ); ?></p>

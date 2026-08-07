@@ -11,12 +11,15 @@ function yourls_check_PDO() {
 }
 
 /**
- * Check if server has MySQL 5.0+
+ * Check if server has MySQL 5.5+
+ *
+ * In the unlikely event that someone is running MariaDB older than 10, install will probably fail,
+ * but there is no reliable way to check for MariaDB version
  *
  * @return bool
  */
-function yourls_check_database_version() {
-    return ( version_compare( '5.0', yourls_get_database_version() ) <= 0 );
+function yourls_check_database_version(): bool {
+    return ( version_compare( '5.5', yourls_get_database_version() ) <= 0 );
 }
 
 /**
@@ -36,15 +39,12 @@ function yourls_get_database_version() {
 }
 
 /**
- * Check if PHP > 7.2
- *
- * As of 1.8 we advertise YOURLS as being 7.4+ but it should work on 7.2 (although untested)
- * so we don't want to strictly enforce a limitation that may not be necessary.
+ * Check if PHP > 8.1
  *
  * @return bool
  */
-function yourls_check_php_version() {
-    return version_compare( PHP_VERSION, '7.2.0', '>=' );
+function yourls_check_php_version(): bool {
+    return version_compare( PHP_VERSION, '8.1.0', '>=' );
 }
 
 /**

@@ -603,6 +603,13 @@ function yourls_kses_named_entities($matches) {
     if ( empty($matches[1]) )
         return '';
 
+    // KSES globals are normally populated on the 'plugins_loaded' action. This can run
+    // earlier though (eg yourls_die() on a DB connection error, before plugins load), so
+    // make sure the allowed entity names are available.
+    if ( ! is_array($yourls_allowedentitynames) ) {
+        yourls_kses_init();
+    }
+
     $i = $matches[1];
     return ( ( ! in_array($i, $yourls_allowedentitynames) ) ? "&amp;$i;" : "&$i;" );
 }
