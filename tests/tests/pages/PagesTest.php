@@ -73,7 +73,10 @@ class PagesTest extends PHPUnit\Framework\TestCase {
             unlink(YOURLS_USERDIR . "/$page.php");
             unlink(YOURLS_ABSPATH . "/$page.php");
         } else {
-            $this->markTestSkipped( "Cannot create '$page' in USERDIR and ABSPATH" );
+            $this->markTestSkipped("Cannot create '$page' in USERDIR and ABSPATH");
+        }
+    }
+
     /**
      * yourls_page() includes the page file, outputs its content and fires pre/post_page
      */
