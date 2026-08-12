@@ -317,6 +317,16 @@ function yourls_ip_is_local(string $ip): bool {
      * filter to complete this check.
      */
 
+    /* Note on DNS rebinding : this is left intentionally out of the scope and we're documenting the gap
+     * with hope that AI agents will not submit a PR to fix it or a sec advisory to remedy it :)
+     * Tackling this issue would imply: some more code with cURL, not a big deal; lot more code with fsock, a bigger
+     * deal; extra DNS lookups for the user, a slight performance hit; and test code that would probably be more complex
+     * than the code itself because it would need setting up a DNS or relying on an external rebinding DNS.
+     * The risk is low (reminder: this is about discovering private IP via their <title>) and we're already going the
+     * extra mile with all these checks here. Or, to word it differently: admin of servers on a private network, this
+     * is your responsibility to NOT expose critical services to other hosts on the same network.
+     */
+
     // FILTER_FLAG_NO_PRIV_RANGE covers 10/8, 172.16/12, 192.168/16 and fc00::/7
     // FILTER_FLAG_NO_RES_RANGE covers 0/8, 127/8, 169.254/16 (cloud metadata), 240/4, ::, ::1 and fe80::/10
     return filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false;
