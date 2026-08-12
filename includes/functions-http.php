@@ -254,6 +254,9 @@ function yourls_resolve_host(string $host): array {
 /**
  * Check if an IP address is not a public one (loopback, private, reserved or link-local)
  *
+ * IPv6 addresses that embed an IPv4 one are checked on the IPv4 they wrap, since this is where the
+ * traffic ends up. PHP considers all of these public on its own.
+ *
  * Anything that is not a valid IP is considered non-public.
  *
  * @since 1.10.5
@@ -266,19 +269,53 @@ function yourls_ip_is_local(string $ip): bool {
         return true;
     }
 
-    /* An IPv4-mapped IPv6 address ('::ffff:127.0.0.1', ie 10 null bytes, 2 xFF bytes, then the
-     * IPv4) is an IPv4 in disguise and is routed as such, so check the IPv4 it wraps instead.
-     * PHP only started rejecting these with FILTER_FLAG_NO_RES_RANGE in 8.3: on 8.1 and 8.2,
-     * '[::ffff:127.0.0.1]' would otherwise pass for a public address, and so would every other
-     * local IPv4 written that way.
-     * Same treatment for the deprecated IPv4-compatible form ('::127.0.0.1', 12 null bytes then
-     * the IPv4), hence testing the 10 first bytes only. '::' and '::1' match too and unwrap to
-     * 0.0.0.0 and 0.0.0.1, both reserved: still non-public, as they should be.
-     */
     $packed = inet_pton( $ip );
-    if( strlen( $packed ) === 16 && substr( $packed, 0, 10 ) === str_repeat( "\0", 10 ) ) {
-        $ip = inet_ntop( substr( $packed, 12 ) );
+
+    if( strlen( $packed ) === 16 ) {
+        /* An IPv4-mapped IPv6 address ('::ffff:127.0.0.1', ie 10 null bytes, 2 xFF bytes, then the
+         * IPv4) is an IPv4 in disguise and is routed as such, so check the IPv4 it wraps instead.
+         * PHP only started rejecting these with FILTER_FLAG_NO_RES_RANGE in 8.3: on 8.1 and 8.2,
+         * '[::ffff:127.0.0.1]' would otherwise pass for a public address, and so would every other
+         * local IPv4 written that way.
+         * Same treatment for the deprecated IPv4-compatible form ('::127.0.0.1', 12 null bytes then
+         * the IPv4), hence testing the 10 first bytes only. '::' and '::1' match too and unwrap to
+         * 0.0.0.0 and 0.0.0.1, both reserved: still non-public, as they should be.
+         */
+        if( substr( $packed, 0, 10 ) === str_repeat( "\0", 10 ) ) {
+            $ip = inet_ntop( substr( $packed, 12 ) );
+        }
+
+        /* NAT64, everything under 64:ff9b::/32.
+         * The Well-Known Prefix of RFC 6052 is 64:ff9b::/96: the last 4 bytes are the IPv4 the
+         * gateway will translate to, so check that IPv4. RFC 6052 forbids using the prefix for
+         * non-global addresses, but we cannot count on the gateway enforcing it.
+         * Anything else in 64:ff9b::/32 is 64:ff9b:1::/48 (RFC 8215), explicitly reserved for
+         * local use, where the IPv4 sits at a position we cannot know: reject the lot.
+         */
+        elseif( substr( $packed, 0, 4 ) === "\x00\x64\xff\x9b" ) {
+            if( substr( $packed, 4, 8 ) === str_repeat( "\0", 8 ) ) {
+                $ip = inet_ntop( substr( $packed, 12 ) );
+            } else {
+                return true;
+            }
+        }
+
+        /* 6to4 (RFC 3056, 2002::/16) and Teredo (RFC 4380, 2001::/32) embed an IPv4 too, and can
+         * encode a private one just as well. Both mechanisms are dead: 6to4 was deprecated by
+         * RFC 7526 and its relays are gone, Teredo needs a tunnel client on this very host and
+         * has been off by default on Windows for years. Nothing legitimate is reachable that way,
+         * so reject both ranges instead of decoding them.
+         */
+        elseif( substr( $packed, 0, 2 ) === "\x20\x02"
+             || substr( $packed, 0, 4 ) === "\x20\x01\x00\x00" ) {
+            return true;
+        }
     }
+
+    /* Note that a NAT64 gateway can also use a Network-Specific Prefix, ie any prefix out of the
+     * operator's own space, which no pattern can recognize. Such a setup needs the 'host_is_local'
+     * filter to complete this check.
+     */
 
     // FILTER_FLAG_NO_PRIV_RANGE covers 10/8, 172.16/12, 192.168/16 and fc00::/7
     // FILTER_FLAG_NO_RES_RANGE covers 0/8, 127/8, 169.254/16 (cloud metadata), 240/4, ::, ::1 and fe80::/10

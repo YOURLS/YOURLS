@@ -70,6 +70,17 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
         yield array( '[::ffff:169.254.169.254]' );
         yield array( '::ffff:10.0.0.1' );
         yield array( '::127.0.0.1' );            // deprecated IPv4 compatible form
+        // IPv6 transition addresses embedding a non public IPv4, see yourls_ip_is_local()
+        yield array( '64:ff9b::7f00:1' );        // NAT64 well known prefix, 127.0.0.1
+        yield array( '[64:ff9b::a9fe:a9fe]' );   // NAT64, cloud metadata endpoint
+        yield array( '64:ff9b::c0a8:101' );      // NAT64, 192.168.1.1
+        yield array( '64:ff9b:1::8.8.8.8' );     // RFC 8215 local use NAT64, public IPv4 or not
+        yield array( '64:ff9b:1::' );
+        yield array( '2002:7f00:1::' );          // 6to4, whole range is rejected
+        yield array( '[2002:c0a8:101::1]' );
+        yield array( '2002:808:808::' );         // 6to4 wrapping a public IPv4, still rejected
+        yield array( '2001:0:4136:e378:8000:63bf:3fff:fdd2' );   // Teredo, whole range is rejected
+        yield array( '[2001::1]' );
         // No host at all
         yield array( '' );
         yield array( '   ' );
@@ -86,6 +97,10 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
         yield array( '2606:4700::1' );
         yield array( '[2001:4860:4860::8888]' );
         yield array( '::ffff:8.8.8.8' ); // a public IPv4 stays public once unwrapped
+        yield array( '64:ff9b::808:808' );      // NAT64 wrapping a public IPv4: this is what the prefix is for
+        yield array( '[64:ff9b::1.1.1.1]' );
+        yield array( '2001:db8::1' );           // documentation range, right next to Teredo but not in it
+        yield array( '2003::1' );               // right next to 6to4
     }
 
     /**
@@ -135,6 +150,37 @@ class SSRFTest extends PHPUnit\Framework\TestCase {
     public function test_resolved_ipv4_mapped_address_is_local() {
         yourls_add_filter( 'resolve_host_ips', function() { return array( '::ffff:127.0.0.1' ); } );
         $this->assertTrue( yourls_host_is_local( 'example.com' ) );
+    }
+
+    /**
+     * The attack this guards against: a host name whose AAAA record is a NAT64 address encoding
+     * an internal IPv4. Nothing in the name or the record looks local to PHP.
+     */
+    public function test_resolved_nat64_address_is_local() {
+        yourls_add_filter( 'resolve_host_ips', function() { return array( '64:ff9b::a9fe:a9fe' ); } );
+        $this->assertTrue( yourls_host_is_local( 'example.com' ) );
+    }
+
+    /**
+     * The local_hosts provider must exercise the code we think it does: every entry there is a
+     * valid IP, not a string that is local merely because it fails to parse
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('transition_addresses')]
+    public function test_transition_addresses_are_valid_ips( $ip ) {
+        $this->assertNotFalse( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) );
+    }
+
+    public static function transition_addresses(): \Iterator {
+        yield array( '64:ff9b::7f00:1' );
+        yield array( '64:ff9b::a9fe:a9fe' );
+        yield array( '64:ff9b::808:808' );
+        yield array( '64:ff9b:1::8.8.8.8' );
+        yield array( '64:ff9b:1::' );
+        yield array( '2002:7f00:1::' );
+        yield array( '2002:c0a8:101::1' );
+        yield array( '2002:808:808::' );
+        yield array( '2001:0:4136:e378:8000:63bf:3fff:fdd2' );
+        yield array( '2001::1' );
     }
 
     /**
