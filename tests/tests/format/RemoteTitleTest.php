@@ -77,4 +77,46 @@ class RemoteTitleTest extends PHPUnit\Framework\TestCase {
         $this->assertSame( $expected, yourls_get_remote_title( 'https://example.com/mbconvert1.html?charset=invalid' ) );
     }
 
+    /**
+     * The <title> tag can have attributes
+     *
+     * <title class="foo" id="bar">Attributes In The Title Tag</title>
+     */
+    function test_title_tag_with_attributes() {
+        $expected = 'Attributes In The Title Tag';
+        $this->assertSame( $expected, yourls_get_remote_title( 'https://example.com/title-with-attributes.html' ) );
+    }
+
+    /**
+     * Charset in the Content-Type response header can be quoted
+     *
+     * Both charset=ISO-8859-1 and 'charset="ISO-8859-1"' are valid.
+     * The page has no <meta charset> : the query string passed to the mockup HTTP request handler simulates the header.
+     */
+    function test_quoted_charset_in_content_type_header() {
+        $expected = 'Café Central';
+        // Same charset, quoted and unquoted
+        $this->assertSame( $expected, yourls_get_remote_title( 'https://example.com/charset-header-only.html?charset=ISO-8859-1' ) );
+        $this->assertSame( $expected, yourls_get_remote_title( 'https://example.com/charset-header-only.html?charset=%22ISO-8859-1%22' ) );
+    }
+
+    /**
+     * A 'charset=' string in another meta tag is not a charset declaration
+     *
+     * The page declares utf-8, but an earlier <meta name="description"> mentions 'charset=iso-8859-1'
+     * in its content attribute.
+     */
+    function test_meta_charset_decoy() {
+        $expected = 'Café Central';
+        $this->assertSame( $expected, yourls_get_remote_title( 'https://example.com/meta-charset-decoy.html' ) );
+    }
+
+    /**
+     * Fetched titles must be valid UTF-8, even when the page lies about its charset. H�h� !
+     */
+    function test_title_is_valid_utf8_when_page_lies_about_its_charset() {
+        $title = yourls_get_remote_title( 'https://example.com/lying-charset.html' );
+        $this->assertTrue( mb_check_encoding( $title, 'UTF-8' ), 'Title is not valid UTF-8: ' . bin2hex( $title ) );
+    }
+
 }
