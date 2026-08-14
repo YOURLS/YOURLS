@@ -1076,12 +1076,11 @@ function yourls_get_remote_title(string $url ): string {
     // Conversion to utf-8 if what we have is not utf8 already. A page can also declare utf-8 and
     // still serve invalid utf-8, so in that case convert too, to replace the invalid characters.
     if ( function_exists( 'mb_convert_encoding' ) ) {
-        // We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
         if ( $charset && strtolower( $charset ) != 'utf-8' ) {
-            $title = @mb_convert_encoding( $title, 'UTF-8', $charset );
+            $title = mb_convert_encoding( $title, 'UTF-8', $charset );
         }
         elseif ( !mb_check_encoding( $title, 'UTF-8' ) ) {
-            $title = @mb_convert_encoding( $title, 'UTF-8' );
+            $title = mb_convert_encoding( $title, 'UTF-8' );
         }
     }
 
