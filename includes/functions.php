@@ -1024,8 +1024,8 @@ function yourls_get_remote_title(string $url ): string {
         return $url;
     }
 
-    // look for <title>. No title found? Return the URL
-    if ( preg_match( '/<title>(.*?)<\/title>/is', $content, $found ) ) {
+    // look for <title>, which can have attributes. No title found? Return the URL
+    if ( preg_match( '/<title(?:\s[^>]*)?>(.*?)<\/title>/is', $content, $found ) ) {
         $title = $found[ 1 ];
         unset( $found );
     }
@@ -1038,17 +1038,34 @@ function yourls_get_remote_title(string $url ): string {
     // Get charset as (and if) defined by the HTML meta tag. We should match
     // <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     // or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
-    if ( preg_match( '/<meta[^>]*charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $content, $found ) ) {
-        if ( yourls_is_valid_charset( $found[ 1 ] ) ) {
-            $charset = $found[ 1 ];
+    // A 'charset=' string can also appear where it does not declare anything, for instance in the
+    // description of the page, so check each <meta> tag and to find if a charset is declared.
+    if ( preg_match_all( '/<meta\s[^>]*>/is', $content, $metas ) ) {
+        foreach ( $metas[ 0 ] as $meta ) {
+            if ( preg_match( '/\bcontent\s*=\s*["\']?[^"\']*?charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $meta, $found ) ) {
+                // A charset in the 'content' attribute only counts in a Content-Type declaration
+                if ( !preg_match( '/\bhttp-equiv\s*=\s*["\']?content-type/is', $meta ) ) {
+                    unset( $found );
+                    continue;
+                }
+            }
+            elseif ( !preg_match( '/\bcharset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $meta, $found ) ) {
+                continue;
+            }
+            // First declaration wins, whether it is valid or not
+            if ( yourls_is_valid_charset( $found[ 1 ] ) ) {
+                $charset = $found[ 1 ];
+            }
+            unset( $found );
+            break;
         }
-        unset( $found );
     }
     if ( empty( $charset ) ) {
         // No charset found in HTML. Get charset as (and if) defined by the server response
-        $_charset = current( $response->headers->getValues( 'content-type' ) );
+        $_charset = current( (array)$response->headers->getValues( 'content-type' ) );
+        // The charset value can be a quoted string: 'text/html; charset="utf-8"'
         if ( preg_match( '/charset=(\S+)/', $_charset, $found ) ) {
-            $_charset = trim( $found[ 1 ], ';' );
+            $_charset = trim( $found[ 1 ], ';"\'' );
             if ( yourls_is_valid_charset( $_charset ) ) {
                 $charset = $_charset;
             }
@@ -1056,14 +1073,14 @@ function yourls_get_remote_title(string $url ): string {
         }
     }
 
-    // Conversion to utf-8 if what we have is not utf8 already
-    if ( strtolower( $charset ) != 'utf-8' && function_exists( 'mb_convert_encoding' ) ) {
-        // We use @ to remove warnings because mb_ functions are easily bitching about illegal chars
-        if ( $charset ) {
-            $title = @mb_convert_encoding( $title, 'UTF-8', $charset );
+    // Conversion to utf-8 if what we have is not utf8 already. A page can also declare utf-8 and
+    // still serve invalid utf-8, so in that case convert too, to replace the invalid characters.
+    if ( function_exists( 'mb_convert_encoding' ) ) {
+        if ( $charset && strtolower( $charset ) != 'utf-8' ) {
+            $title = mb_convert_encoding( $title, 'UTF-8', $charset );
         }
-        else {
-            $title = @mb_convert_encoding( $title, 'UTF-8' );
+        elseif ( !mb_check_encoding( $title, 'UTF-8' ) ) {
+            $title = mb_convert_encoding( $title, 'UTF-8' );
         }
     }
 
