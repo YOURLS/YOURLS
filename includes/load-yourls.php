@@ -15,10 +15,19 @@ $config = new \YOURLS\Config\Config;
  * instance isn't registered.
  */
 if (!defined('YOURLS_CONFIGFILE')) {
-    define('YOURLS_CONFIGFILE', $config->find_config());
+    try {
+        define('YOURLS_CONFIGFILE', $config->find_config());
+    } catch (\YOURLS\Exceptions\ConfigException $e) {
+        die($e->getMessage());
+    }
 }
+
 require_once YOURLS_CONFIGFILE;
-$config->define_core_constants();
+try {
+    $config->define_core_constants();
+} catch (\YOURLS\Exceptions\ConfigException $e) {
+    die($e->getMessage());
+}
 
 // Initialize YOURLS with default behaviors
 

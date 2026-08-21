@@ -55,7 +55,7 @@ function logout() {
 
 // Begin the spinning animation & disable a button
 function add_loading(el) {
-	$(el).attr("disabled", "disabled").addClass('disabled').addClass('loading');
+	$(el).attr("disabled", "disabled").addClass('disabled').addClass('loading').attr("aria-disabled", "true");
 }
 
 // End spinning animation
@@ -65,7 +65,7 @@ function end_loading(el) {
 
 // Un-disable an element
 function end_disable(el) {
-	$(el).removeAttr("disabled").removeClass('disabled');
+	$(el).removeAttr("disabled").removeClass('disabled').removeAttr("aria-disabled");
 }
 
 // Trim long string

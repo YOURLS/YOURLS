@@ -13,48 +13,71 @@ class Config {
     /**
      * @var string
      */
-    protected $root;
+    protected string $root;
 
     /**
      * @var string
      */
-    protected $config;
+    protected string $config;
+
+    /**
+     * Constants that must be defined in config.php
+     */
+    protected const MANDATORY_CONSTANTS = [
+        'YOURLS_DB_USER',
+        'YOURLS_DB_PASS',
+        'YOURLS_DB_NAME',
+        'YOURLS_DB_HOST',
+        'YOURLS_DB_PREFIX',
+        'YOURLS_SITE',
+    ];
+
+    /**
+     * Publicly known values that are not acceptable for YOURLS_COOKIEKEY
+     */
+    protected const INVALID_COOKIEKEYS = [
+        '',
+        'modify this text with something random', // default value in config-sample.php
+        'qQ4KhL_pu|s@Zm7n#%:b^{A[vhm',            // suggested value in the documentation
+    ];
+
+
 
     /**
      * @since  1.7.3
-     * @param  string $config   Optional user defined config path
+     * @param string $config Optional user defined config path
      */
-    public function __construct($config = '') {
-        $this->set_root( $this->fix_win32_path( dirname( dirname( __DIR__ ) ) ) );
+    public function __construct(string $config = '') {
+        $this->set_root( $this->fix_win32_path(dirname(__DIR__, 2)) );
         $this->set_config($config);
     }
 
     /**
-     * Convert antislashes to slashes
+     * Convert backslashes to slashes
      *
      * @since  1.7.3
-     * @param  string  $path
+     * @param string $path
      * @return string  path with \ converted to /
      */
-    public function fix_win32_path($path) {
+    public function fix_win32_path(string $path): string {
         return str_replace('\\', '/', $path);
     }
 
     /**
      * @since  1.7.3
-     * @param  string $config   path to config file
+     * @param string $config path to config file
      * @return void
      */
-    public function set_config($config) {
+    public function set_config(string $config): void {
         $this->config = $config;
     }
 
     /**
      * @since  1.7.3
-     * @param  string $root   path to YOURLS root directory
+     * @param string $root path to YOURLS root directory
      * @return void
      */
-    public function set_root($root) {
+    public function set_root(string $root): void {
         $this->root = $root;
     }
 
@@ -65,7 +88,7 @@ class Config {
      * @return string         path to found config file
      * @throws ConfigException
      */
-    public function find_config() {
+    public function find_config(): string {
 
         $config = $this->fix_win32_path($this->config);
 
@@ -93,26 +116,52 @@ class Config {
     }
 
     /**
+     * Check that all mandatory constants are defined
+     *
+     * @since  1.10.5
+     * @param string[] $must_haves Constant names to check, defaults to self::MANDATORY_CONSTANTS
+     * @return void
+     * @throws ConfigException
+     */
+    public function check_mandatory_constants(array $must_haves = self::MANDATORY_CONSTANTS): void {
+        foreach ($must_haves as $must_have) {
+            if (!defined($must_have)) {
+                throw new ConfigException('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
+            }
+        }
+    }
+
+    /**
+     * Check that the cookie key is defined and is not a publicly known value
+     *
+     * @since  1.10.5
+     * @param mixed $key Cookie key value, or null if the constant is undefined
+     * @return void
+     * @throws ConfigException
+     */
+    public function check_cookie_key(mixed $key): void {
+        if (!is_string($key) || in_array($key, self::INVALID_COOKIEKEYS, true)) {
+            throw new ConfigException('YOURLS_COOKIEKEY is undefined or still set to the sample value. Set it to a long random string, see https://yourls.org/cookiedoc');
+        }
+    }
+
+    /**
      * Define core constants that have not been user defined in config.php
      *
      * @since  1.7.3
      * @return void
      * @throws ConfigException
      */
-    public function define_core_constants() {
+    public function define_core_constants(): void {
         // Check minimal config job has been properly done
-        $must_haves = array('YOURLS_DB_USER', 'YOURLS_DB_PASS', 'YOURLS_DB_NAME', 'YOURLS_DB_HOST', 'YOURLS_DB_PREFIX', 'YOURLS_SITE');
-        foreach($must_haves as $must_have) {
-            if (!defined($must_have)) {
-                throw new ConfigException('Config is incomplete (missing at least '.$must_have.') Check config-sample.php and edit your config accordingly');
-            }
-        }
+        $this->check_mandatory_constants();
+        $this->check_cookie_key(defined('YOURLS_COOKIEKEY') ? YOURLS_COOKIEKEY : null);
 
         /**
          * The following has an awful CRAP index and it would be much shorter reduced to something like
          * defining an array of ('YOURLS_SOMETHING' => 'default value') and then a simple loop over the
          * array, checking if $current is defined as a constant and otherwise define said constant with
-         * its default value. I did not wrote it that way because that would make it difficult for code
+         * its default value. I did not write it that way because that would make it difficult for code
          * parsers to identify which constants are defined and where. So, here it is, that long list of
          * if (!defined) define(). Ho and by the way, such beautiful comment, much right aligned, wow !
          */
@@ -177,40 +226,11 @@ class Config {
         if (!defined( 'YOURLS_DB_TABLE_LOG' ))
             define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
-        // minimum delay in sec before a same IP can add another URL. Note: logged in users are not throttled down.
-        if (!defined( 'YOURLS_FLOOD_DELAY_SECONDS' ))
-            define( 'YOURLS_FLOOD_DELAY_SECONDS', 15 );
-
-        // comma separated list of IPs that can bypass flood check.
-        if (!defined( 'YOURLS_FLOOD_IP_WHITELIST' ))
-            define( 'YOURLS_FLOOD_IP_WHITELIST', '' );
-
-        // life span of an auth cookie in seconds (60*60*24*7 = 7 days)
-        if (!defined( 'YOURLS_COOKIE_LIFE' ))
-            define( 'YOURLS_COOKIE_LIFE', 60*60*24*7 );
-
-        // life span of a nonce in seconds
-        if (!defined( 'YOURLS_NONCE_LIFE' ))
-            define( 'YOURLS_NONCE_LIFE', 43200 ); // 3600 * 12
-
-        // if set to true, disable stat logging (no use for it, too busy servers, ...)
-        if (!defined( 'YOURLS_NOSTATS' ))
-            define( 'YOURLS_NOSTATS', false );
-
-        // if set to true, force https:// in the admin area
-        if (!defined( 'YOURLS_ADMIN_SSL' ))
-            define( 'YOURLS_ADMIN_SSL', false );
-
-        // if set to true, verbose debug infos. Will break things. Don't enable.
-        if (!defined( 'YOURLS_DEBUG' ))
-            define( 'YOURLS_DEBUG', false );
-
-        // Error reporting
-        if (defined( 'YOURLS_DEBUG' ) && YOURLS_DEBUG == true ) {
-            error_reporting( -1 );
-        } else {
-            error_reporting( E_ERROR | E_PARSE );
+        // if set to true, verbose debug infos
+        if (!defined( 'YOURLS_DEBUG' )) {
+            define('YOURLS_DEBUG', false);
         }
+
     }
 
 }

@@ -81,7 +81,8 @@ class CaBundle
         $caBundlePaths[] = ini_get('openssl.capath');
 
         $otherLocations = array(
-            '/etc/pki/tls/certs/ca-bundle.crt', // Fedora, RHEL, CentOS (ca-certificates package)
+            '/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem', // Fedora, RHEL, CentOS (ca-certificates package) - NEW
+            '/etc/pki/tls/certs/ca-bundle.crt', // Fedora, RHEL, CentOS (ca-certificates package) - Deprecated
             '/etc/ssl/certs/ca-certificates.crt', // Debian, Ubuntu, Gentoo, Arch Linux (ca-certificates package)
             '/etc/ssl/ca-bundle.pem', // SUSE, openSUSE (ca-certificates package)
             '/usr/ssl/certs/ca-bundle.crt', // Cygwin

@@ -2,17 +2,24 @@
 
 /**
  * Formatting functions for URLs
- *
- * @since 0.1
  */
 #[\PHPUnit\Framework\Attributes\Group('formatting')]
 #[\PHPUnit\Framework\Attributes\Group('url')]
 #[\PHPUnit\Framework\Attributes\Group('idn')]
 class URLTest extends PHPUnit\Framework\TestCase {
 
+    protected $backup_server;
+
+    protected function setUp(): void {
+        $this->backup_server = $_SERVER;
+    }
+
     protected function tearDown(): void {
         yourls_remove_filter( 'is_ssl', 'yourls_return_true' );
         yourls_remove_filter( 'is_ssl', 'yourls_return_false' );
+        yourls_remove_all_filters( 'is_ssl' );
+        yourls_remove_all_filters( 'is_allowed_protocol' );
+        $_SERVER = $this->backup_server;
     }
 
     /**
@@ -85,6 +92,14 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr' );
         yield array( 'http://www.طارق.net/طارق?hello=%2B' );
         yield array( 'http://%d8%b7%d8%a7%d8%b1%d9%82.net/' );
+        // Backslashes should be preserved in URL fragments and queries
+        yield array( 'https://example.com/path?q=a\\b\\c#x\\y\\z' );
+        yield array( 'https://example.com/path?q=a\\b\\c' );
+        yield array( 'https://example.com/path#x\\y\\z' );
+        yield array( 'https://example.com/path#x\\y\\z?a\\b\\c' );
+        yield array( 'mailto:ozh@ozh.ozh?subject=hello\\world&body=this%20is%20%a%20#fragment' );
+        // Preserve backslashes in JSON-like fragment (regression for issue #3802)
+        yield array( 'https://terminal.jcubic.pl/404#[[0,1,%22jargon%20\\%22Don%27t%20do%20that%20then!\\%22%22]]' );
     }
 
     /**
@@ -97,62 +112,69 @@ class URLTest extends PHPUnit\Framework\TestCase {
         $this->assertEquals( $url, yourls_sanitize_url( $url ) );
     }
 
-	/**
-	 * URL with spaces
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_spaces() {
-		$this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
-		$this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/ ' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/ ' ) );
-	}
+    /**
+     * URL with spaces
+     *
+     * @since 0.1
+     */
+    function test_url_with_spaces() {
+        $this->assertEquals( 'http://example.com/HelloWorld', yourls_sanitize_url( 'http://example.com/Hello World' ) );
+        $this->assertEquals( 'http://example.com/Hello%20World', yourls_sanitize_url( 'http://example.com/Hello%20World' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( 'http://example.com/ ' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url( ' http://example.com/ ' ) );
+    }
 
-	/**
-	 * URL with bad chars
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_bad_characters() {
+    /**
+     * URL with bad chars
+     *
+     * @since 0.1
+     */
+    function test_url_with_bad_characters() {
         // regular sanitize leaves %0A & %0D alone
         $this->assertEquals( 'http://example.com/keep%0Dlinefeed%0A', yourls_sanitize_url( 'http://example.com/keep%0Dlinefeed%0A' ) );
         $this->assertEquals( 'http://example.com/%0%0%0DAD', yourls_sanitize_url( 'http://example.com/%0%0%0DAD' ) );
 
         // sanitize with anti CRLF
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
-		$this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0dgo' ) );
+        $this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0Ago' ) );
+        $this->assertEquals( 'http://example.com/watchthelinefeedgo', yourls_sanitize_url_safe( 'http://example.com/watchthelinefeed%0ago' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0Dgo' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0dgo' ) );
 
-		//Nesting Checks
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
-		$this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAD' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
-		$this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
-	}
+        //Nesting Checks
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0ddgo' ) );
+        $this->assertEquals( 'http://example.com/watchthecarriagereturngo', yourls_sanitize_url_safe( 'http://example.com/watchthecarriagereturn%0%0DDgo' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAD' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADA' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0DAd' ) );
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://example.com/%0%0%0ADa' ) );
 
-	/**
-	 * Test valid, missing and fake protocols
-	 *
-	 * @since 0.1
-	 */
-	function test_url_with_protocols() {
-		$this->assertEquals( 'http://example.com', yourls_sanitize_url( 'http://example.com' ) );
-		$this->assertEquals( 'example.php', yourls_sanitize_url( 'example.php' ) );
-		$this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
-		$this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
+        // Backslash tests
+        $this->assertEquals( 'http://example.com/', yourls_sanitize_url_safe( 'http://exa\\mple.com/' ) );
+        $this->assertEquals( 'http://example.com/testingtesting', yourls_sanitize_url_safe( 'http://example.com/testing\\testing' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test' ) );
+        $this->assertEquals( 'http://example.com/testingtesting?query=param\\test#hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing?query=param\\test#hash' ) );
+        $this->assertEquals( 'http://example.com/testingtesting#hash\\hash', yourls_sanitize_url_safe( 'http://example.com/testing\\testing#hash\\hash' ) );
+    }
+
+    /**
+     * Test valid, missing and fake protocols
+     *
+     * @since 0.1
+     */
+    function test_url_with_protocols() {
+        $this->assertEquals( 'http://example.com', yourls_sanitize_url( 'http://example.com' ) );
+        $this->assertEquals( 'example.php', yourls_sanitize_url( 'example.php' ) );
+        $this->assertEquals( '', yourls_sanitize_url( 'htttp://example.com' ) );
+        $this->assertEquals( 'mailto:ozh@ozh.org', yourls_sanitize_url( 'mailto:ozh@ozh.org' ) );
         // play with allowed protocols
-		$this->assertEquals( '', yourls_sanitize_url( 'nasty://example.com/' ) );
-		$this->assertEquals( 'nasty://example.com/', yourls_sanitize_url( 'nasty://example.com/', array('nasty://') ) );
+        $this->assertEquals( '', yourls_sanitize_url( 'nasty://example.com/' ) );
+        $this->assertEquals( 'nasty://example.com/', yourls_sanitize_url( 'nasty://example.com/', array('nasty://') ) );
         global $yourls_allowedprotocols;
         $yourls_allowedprotocols[] = 'evil://';
         $this->assertEquals( 'evil://example.com', yourls_sanitize_url( 'evil://example.com' ) );
         $yourls_allowedprotocols = yourls_kses_allowed_protocols();
-	}
+    }
 
     /**
      * List of URLs with MiXeD CaSe to test. Structure: array( sanitized url, unsanitized url with mixed case )
@@ -181,15 +203,15 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://académie-française.fr'                     , 'http://Académie-française.FR' );
     }
 
-	/**
+    /**
      * Protocol and domain with mixed case
      *
      * @since 0.1
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_mixed_case')]
     function test_url_with_protocol_case( $sanitized, $unsanitized ) {
-		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
-	}
+        $this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
+    }
 
     /**
      * List of URLs with IDN domain, and how YOURLS should sanitize them
@@ -206,13 +228,13 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield array( 'http://xn--p1ai.xn--p1ai'                     , 'http://рф.рф' );
     }
 
-	/**
+    /**
      * Protocol and domain with mixed case
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_IDN')]
     function test_url_with_IDN( $unsanitized, $sanitized ) {
-		$this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
-	}
+        $this->assertEquals( $sanitized, yourls_sanitize_url( $unsanitized ) );
+    }
 
     /**
      * List of URLS and expected matches whether we're on SSL or not.
@@ -300,6 +322,192 @@ class URLTest extends PHPUnit\Framework\TestCase {
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_idn_punycode_utf8_rtl')]
     function test_various_idn_cases($url, $expected) {
         $this->assertEquals( yourls_sanitize_url($url), $expected );
+    }
+
+    /**
+     * List of URLs to test yourls_get_domain(). Structure: [URL, include_scheme, expected_result]
+     */
+    static function list_of_get_domain(): \Iterator {
+        // Standard well-formed URLs: only host returned
+        yield [ 'http://example.com',                     false, 'example.com'      ];
+        yield [ 'http://example.com/',                    false, 'example.com'      ];
+        yield [ 'http://example.com/path?q=1#frag',       false, 'example.com'      ];
+        yield [ 'https://sub.example.com/path',           false, 'sub.example.com'  ];
+
+        // include_scheme=true: scheme:// is prepended
+        yield [ 'http://example.com',                     true,  'http://example.com'  ];
+        yield [ 'https://example.com/',                   true,  'https://example.com' ];
+
+        // Credentials and port are excluded from the returned domain
+        yield [ 'http://user:pass@example.com/',          false, 'example.com'      ];
+        yield [ 'http://example.com:8080/path',           false, 'example.com'      ];
+
+        // IPv4 address
+        yield [ 'http://192.168.1.1/',                    false, '192.168.1.1'      ];
+
+        // No scheme: parse_url returns it as path, function falls back to using path as host
+        yield [ 'example.com',                            false, 'example.com'      ];
+        // No scheme + include_scheme=true: scheme is empty so nothing is prepended
+        yield [ 'example.com',                            true,  'example.com'      ];
+
+        // Protocol-relative URL: host is parsed but scheme is absent
+        yield [ '//example.com/path',                     false, 'example.com'      ];
+        yield [ '//example.com/path',                     true,  'example.com'      ];
+
+        // IDN domain: returns ASCII punycode if idn_to_ascii() is available, unicode otherwise
+        yield [ 'http://münchen.de/',                     false, function_exists('idn_to_ascii') ? 'xn--mnchen-3ya.de' : 'münchen.de' ];
+        yield [ 'http://münchen.de/',                     true,  function_exists('idn_to_ascii') ? 'http://xn--mnchen-3ya.de' : 'http://münchen.de' ];
+        yield [ 'http://www.طارق.net/',                  false, function_exists('idn_to_ascii') ? 'www.xn--mgbuq0c.net' : 'www.طارق.net' ];
+
+        // Empty string and no host: return empty
+        yield [ '',                                       false, '' ];
+        yield [ 'http://',                                false, '' ];
+
+        // Bogus inputs: host position contains chars that fail the hostname regex
+        yield [ 'not a valid url',                        false, '' ]; // spaces in host fallback
+        yield [ 'javascript:alert(1)',                    false, '' ]; // parentheses from path-as-host
+        yield [ 'http://<script>alert(1)</script>/',      false, '' ]; // angle brackets in host
+        yield [ 'http://<script>alert(1)</script>/',      true,  '' ]; // same with include_scheme=true
+
+        // data: URI: path used as host, slash and comma fail regex
+        yield [ 'data:text/html,<h1>xss</h1>',           false, '' ];
+
+        // Null byte in host (percent-encoded): % is not in [a-zA-Z0-9._-]
+        yield [ 'http://evil.com%00.example.com/',        false, '' ];
+
+        // Host that is only invalid characters
+        yield [ 'http://!@#$%^&*()/path',                 false, '' ];
+    }
+
+    /**
+     * Test yourls_get_domain() against well-formed, IDN, bogus and exploit-attempt URLs
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_get_domain')]
+    function test_get_domain( $url, $include_scheme, $expected ) {
+        $this->assertSame( $expected, yourls_get_domain( $url, $include_scheme ) );
+    }
+
+    /**
+     * URLs split into protocol / slashes / rest. Structure: [url, protocol, slashes, rest]
+     */
+    static function list_of_protocol_slashes_rest(): \Iterator {
+        yield [ 'mailto:yourls@yourls.org?subject=hey', 'mailto:', '',   'yourls@yourls.org?subject=hey' ];
+        yield [ 'http://example.com/blah.html',         'http:',   '//', 'example.com/blah.html' ];
+        yield [ 'https://example.com/',                 'https:',  '//', 'example.com/' ];
+        yield [ 'scheme:/example.com',                  'scheme:', '',   '/example.com' ];
+    }
+
+    /**
+     * Test yourls_get_protocol_slashes_and_rest() splits a URL as documented
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_protocol_slashes_rest')]
+    function test_get_protocol_slashes_and_rest( $url, $protocol, $slashes, $rest ) {
+        $this->assertSame(
+            [ 'protocol' => $protocol, 'slashes' => $slashes, 'rest' => $rest ],
+            yourls_get_protocol_slashes_and_rest( $url )
+        );
+    }
+
+    /**
+     * Custom key names are honored in the returned array
+     */
+    function test_get_protocol_slashes_and_rest_custom_keys() {
+        $this->assertSame(
+            [ 'p' => 'http:', 's' => '//', 'r' => 'example.com/' ],
+            yourls_get_protocol_slashes_and_rest( 'http://example.com/', [ 'p', 's', 'r' ] )
+        );
+    }
+
+    /**
+     * Returns false when there is no protocol, or when the key names array isn't exactly 3 items
+     */
+    function test_get_protocol_slashes_and_rest_returns_false() {
+        $this->assertFalse( yourls_get_protocol_slashes_and_rest( 'example.com/no/protocol' ) );
+        $this->assertFalse( yourls_get_protocol_slashes_and_rest( 'http://example.com/', [ 'only', 'two' ] ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() with an explicit list of protocols
+     */
+    function test_is_allowed_protocol_explicit_list() {
+        $allowed = [ 'http://', 'https://' ];
+        $this->assertTrue(  yourls_is_allowed_protocol( 'http://example.com', $allowed ) );
+        $this->assertTrue(  yourls_is_allowed_protocol( 'https://example.com', $allowed ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'javascript:alert(1)', $allowed ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'ftp://example.com', $allowed ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() falls back to the default allowed protocols
+     */
+    function test_is_allowed_protocol_default_protocols() {
+        // http:// and https:// are part of the default allowed protocols
+        $this->assertTrue(  yourls_is_allowed_protocol( 'http://example.com' ) );
+        $this->assertFalse( yourls_is_allowed_protocol( 'javascript:alert(1)' ) );
+    }
+
+    /**
+     * yourls_is_allowed_protocol() is filterable
+     */
+    function test_is_allowed_protocol_is_filterable() {
+        yourls_add_filter( 'is_allowed_protocol', 'yourls_return_true' );
+        $this->assertTrue( yourls_is_allowed_protocol( 'javascript:alert(1)', [ 'http://' ] ) );
+    }
+
+    /**
+     * $_SERVER signals and whether yourls_is_ssl() should detect HTTPS.
+     * Structure: [ $_SERVER array, expected bool ]
+     */
+    static function list_of_ssl_signals(): \Iterator {
+        yield 'nothing set'              => [ [], false ];
+        yield 'HTTPS on'                 => [ [ 'HTTPS' => 'on' ], true ];
+        yield 'HTTPS ON (uppercase)'     => [ [ 'HTTPS' => 'ON' ], true ];
+        yield 'HTTPS 1'                  => [ [ 'HTTPS' => '1' ], true ];
+        yield 'HTTPS off'                => [ [ 'HTTPS' => 'off' ], false ];
+        yield 'HTTPS empty'              => [ [ 'HTTPS' => '' ], false ];
+        yield 'X-Forwarded-Proto https'  => [ [ 'HTTP_X_FORWARDED_PROTO' => 'https' ], true ];
+        yield 'X-Forwarded-Proto HTTPS'  => [ [ 'HTTP_X_FORWARDED_PROTO' => 'HTTPS' ], true ];
+        yield 'X-Forwarded-Proto http'   => [ [ 'HTTP_X_FORWARDED_PROTO' => 'http' ], false ];
+        yield 'port 443'                 => [ [ 'SERVER_PORT' => '443' ], true ];
+        yield 'port 80'                  => [ [ 'SERVER_PORT' => '80' ], false ];
+    }
+
+    /**
+     * yourls_is_ssl() detects HTTPS from the various $_SERVER signals
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_ssl_signals')]
+    function test_is_ssl( $server, $expected ) {
+        $_SERVER = $server;
+        $this->assertSame( $expected, yourls_is_ssl() );
+    }
+
+    /**
+     * yourls_is_ssl() is filterable
+     */
+    function test_is_ssl_is_filterable() {
+        $_SERVER = [];
+        yourls_add_filter( 'is_ssl', 'yourls_return_true' );
+        $this->assertTrue( yourls_is_ssl() );
+    }
+
+    /**
+     * yourls_is_rawurlencoded() detects encoded strings
+     */
+    function test_is_rawurlencoded() {
+        $this->assertTrue(  yourls_is_rawurlencoded( 'hello%20world' ) );
+        $this->assertTrue(  yourls_is_rawurlencoded( '%21' ) );
+        $this->assertFalse( yourls_is_rawurlencoded( 'hello world' ) );
+        $this->assertFalse( yourls_is_rawurlencoded( 'plain' ) );
+    }
+
+    /**
+     * yourls_rawurldecode_while_encoded() decodes until nothing is left encoded
+     */
+    function test_rawurldecode_while_encoded() {
+        // multiple encoding: %2521 -> %21 -> !
+        $this->assertSame( '!', yourls_rawurldecode_while_encoded( '%2521' ) );
+        $this->assertSame( 'hello world', yourls_rawurldecode_while_encoded( 'hello%20world' ) );
+        $this->assertSame( 'plain', yourls_rawurldecode_while_encoded( 'plain' ) );
     }
 
 }

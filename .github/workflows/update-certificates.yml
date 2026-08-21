@@ -1,0 +1,91 @@
+name: Update certificates
+
+on:
+  # Run every Monday at 13:37
+  schedule:
+    - cron: '37 13 * * 1'
+  # And manually
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  certificate-check:
+    name: "Check for updated certificate bundle"
+    # Don't run the cron job on forks.
+    if: ${{ github.event_name != 'schedule' || github.repository == 'YOURLS/YOURLS' }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Generate token
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Get current certificate bundle
+        working-directory: ./includes/vendor/rmccue/requests/certificates
+        run: |
+          curl --remote-name https://curl.se/ca/cacert.pem
+          curl --remote-name https://curl.se/ca/cacert.pem.sha256
+
+      - name: Verify the checksum of the downloaded bundle
+        working-directory: ./includes/vendor/rmccue/requests/certificates
+        run: sha256sum --check cacert.pem.sha256
+
+      - name: "Debug info: Show git status"
+        run: git status -vv --untracked=all
+
+      - name: "Get date"
+        id: get-date
+        run: echo "DATE=$(/bin/date -u "+%F")" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        id: pull-request
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          author: "${{ steps.app-token.outputs.app-slug }}[bot] <${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>"
+          base: master
+          branch: auto-update-cacert
+          delete-branch: true
+          commit-message: "Update certificates"
+          title: "Update certificates"
+          body: |
+            Updated certificates, last verified on ${{ steps.get-date.outputs.DATE }}.
+
+            Source: https://curl.se/docs/caextract.html
+          labels: |
+            dependencies
+
+      - name: Approve a PR
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Enable Pull Request Automerge
+        if: ${{ steps.pull-request.outputs.pull-request-url && steps.pull-request.outputs.pull-request-operation != 'none' }}
+        run: gh pr merge --auto --rebase "$PR_URL"
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+          GITHUB_TOKEN: ${{ github.token }}

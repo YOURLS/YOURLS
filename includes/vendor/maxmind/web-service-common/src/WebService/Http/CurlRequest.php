@@ -13,23 +13,32 @@ use MaxMind\Exception\HttpException;
  */
 class CurlRequest implements Request
 {
-    /**
-     * @var \CurlHandle
-     */
-    private $ch;
+    private readonly \CurlHandle $ch;
+    private readonly string $url;
 
     /**
-     * @var string
+     * @var array{
+     *     caBundle?: string,
+     *     connectTimeout: float|int,
+     *     curlHandle: \CurlHandle,
+     *     headers: array<int, string>,
+     *     proxy: string|null,
+     *     timeout: float|int,
+     *     userAgent: string
+     * }
      */
-    private $url;
+    private readonly array $options;
 
     /**
-     * @var array<string, mixed>
-     */
-    private $options;
-
-    /**
-     * @param array<string, mixed> $options
+     * @param array{
+     *     caBundle?: string,
+     *     connectTimeout: float|int,
+     *     curlHandle: \CurlHandle,
+     *     headers: array<int, string>,
+     *     proxy: string|null,
+     *     timeout: float|int,
+     *     userAgent: string
+     * } $options
      */
     public function __construct(string $url, array $options)
     {
@@ -65,10 +74,7 @@ class CurlRequest implements Request
         return $this->execute($curl);
     }
 
-    /**
-     * @return \CurlHandle
-     */
-    private function createCurl()
+    private function createCurl(): \CurlHandle
     {
         curl_reset($this->ch);
 
@@ -87,37 +93,28 @@ class CurlRequest implements Request
 
         $opts[\CURLOPT_HTTPHEADER] = $this->options['headers'];
         $opts[\CURLOPT_USERAGENT] = $this->options['userAgent'];
-        $opts[\CURLOPT_PROXY] = $this->options['proxy'];
-
-        // The defined()s are here as the *_MS opts are not available on older
-        // cURL versions
-        $connectTimeout = $this->options['connectTimeout'];
-        if (\defined('CURLOPT_CONNECTTIMEOUT_MS')) {
-            $opts[\CURLOPT_CONNECTTIMEOUT_MS] = ceil($connectTimeout * 1000);
-        } else {
-            $opts[\CURLOPT_CONNECTTIMEOUT] = ceil($connectTimeout);
+        if ($this->options['proxy'] !== null) {
+            $opts[\CURLOPT_PROXY] = $this->options['proxy'];
         }
+
+        $connectTimeout = $this->options['connectTimeout'];
+        $opts[\CURLOPT_CONNECTTIMEOUT_MS] = (int) ceil($connectTimeout * 1000);
 
         $timeout = $this->options['timeout'];
-        if (\defined('CURLOPT_TIMEOUT_MS')) {
-            $opts[\CURLOPT_TIMEOUT_MS] = ceil($timeout * 1000);
-        } else {
-            $opts[\CURLOPT_TIMEOUT] = ceil($timeout);
-        }
+        $opts[\CURLOPT_TIMEOUT_MS] = (int) ceil($timeout * 1000);
 
+        // @phpstan-ignore argument.type (PHPStan's curl stubs require non-empty-string for URL/userAgent)
         curl_setopt_array($this->ch, $opts);
 
         return $this->ch;
     }
 
     /**
-     * @param \CurlHandle $curl
-     *
      * @throws HttpException
      *
      * @return array{0:int, 1:string|null, 2:string|null}
      */
-    private function execute($curl): array
+    private function execute(\CurlHandle $curl): array
     {
         $body = curl_exec($curl);
         if ($errno = curl_errno($curl)) {
@@ -140,7 +137,10 @@ class CurlRequest implements Request
             // CURLINFO_CONTENT_TYPE. However, it will return FALSE if no header
             // is set. To keep our types simple, we return null in this case.
             $contentType === false ? null : $contentType,
-            $body,
+            // curl_exec returns false on failure, but we've already checked
+            // for errors above and thrown an exception. Cast to string to
+            // satisfy PHPStan since curl_exec technically returns string|bool.
+            $body === false ? null : (string) $body,
         ];
     }
 }

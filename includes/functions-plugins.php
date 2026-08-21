@@ -87,7 +87,6 @@ if ( !isset( $yourls_actions ) ) {
  * @param int      $accepted_args  optional. The number of arguments the function accept (default is the number
  *                                 provided).
  * @param string   $type
- * @global array   $yourls_filters Storage for all of the filters
  * @return void
  */
 function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_args = NULL, $type = 'filter' ) {
@@ -123,7 +122,7 @@ function yourls_add_filter( $hook, $function_name, $priority = 10, $accepted_arg
  * @return void
  */
 function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_args = 1 ) {
-	yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
+    yourls_add_filter( $hook, $function_name, $priority, $accepted_args, 'action' );
 }
 
 /**
@@ -175,17 +174,16 @@ function yourls_filter_unique_id($function) {
  *
  * Typical use:
  *
- * 		1) Modify a variable if a function is attached to hook 'yourls_hook'
- *		$yourls_var = "default value";
- *		$yourls_var = yourls_apply_filter( 'yourls_hook', $yourls_var );
+ *         1) Modify a variable if a function is attached to hook 'yourls_hook'
+ *        $yourls_var = "default value";
+ *        $yourls_var = yourls_apply_filter( 'yourls_hook', $yourls_var );
  *
- *		2) Trigger functions is attached to event 'yourls_event'
- *		yourls_apply_filter( 'yourls_event' );
+ *        2) Trigger functions is attached to event 'yourls_event'
+ *        yourls_apply_filter( 'yourls_event' );
  *      (see yourls_do_action() )
  *
  * Returns a value which may have been modified by a filter.
  *
- * @global array $yourls_filters storage for all of the filters
  * @param string $hook the name of the YOURLS element or action
  * @param mixed $value the value of the element before filtering
  * @param true|mixed $is_action true if the function is called by yourls_do_action() - otherwise may be the second parameter of an arbitrary number of parameters
@@ -332,7 +330,6 @@ function yourls_call_all_hooks($type, $hook, ...$args) {
  * To remove a hook, the $function_to_remove and $priority arguments must match
  * when the hook was added.
  *
- * @global array $yourls_filters storage for all of the filters
  * @param string $hook The filter hook to which the function to be removed is hooked.
  * @param callable $function_to_remove The name of the function which should be removed.
  * @param int $priority optional. The priority of the function (default: 10).
@@ -433,7 +430,6 @@ function yourls_get_actions($hook) {
  * Check if any filter has been registered for a hook.
  *
  * @since 1.5
- * @global array         $yourls_filters    storage for all of the filters
  * @param string         $hook              The name of the filter hook.
  * @param callable|false $function_to_check optional. If specified, return the priority of that function on this hook or false if not attached.
  * @return int|bool Optionally returns the priority on that hook for the specified function.
@@ -477,7 +473,7 @@ function yourls_has_action( $hook, $function_to_check = false ) {
  * @return int Number of activated plugins
  */
 function yourls_has_active_plugins() {
-    return count( yourls_get_db()->get_plugins() );
+    return count( yourls_get_db('read-has_active_plugins')->get_plugins() );
 }
 
 /**
@@ -506,7 +502,7 @@ function yourls_get_plugins() {
  */
 function yourls_is_active_plugin( $plugin ) {
     return yourls_has_active_plugins() > 0 ?
-        in_array( yourls_plugin_basename( $plugin ), yourls_get_db()->get_plugins() )
+        in_array( yourls_plugin_basename( $plugin ), yourls_get_db('read-is_active_plugin')->get_plugins() )
         : false;
 }
 
@@ -537,7 +533,7 @@ function yourls_is_active_plugin( $plugin ) {
  * @param string $file Physical path to plugin file
  * @return array Array of 'Field'=>'Value' from plugin comment header lines of the form "Field: Value"
  */
-function yourls_get_plugin_data( $file ) {
+function yourls_get_plugin_data(string $file ): array {
     $fp = fopen( $file, 'r' ); // assuming $file is readable, since yourls_load_plugins() filters this
     $data = fread( $fp, 8192 ); // get first 8kb
     fclose( $fp );
@@ -558,7 +554,29 @@ function yourls_get_plugin_data( $file ) {
             continue;
         }
 
-        $plugin_data[ trim($matches[3]) ] = yourls_esc_html(trim($matches[4]));
+        // Allow some HTML in the Description field
+        if ( trim($matches[3]) === 'Description' ) {
+            $allowed = [
+                'strong' => [],
+                'b' => [],
+                'em' => [],
+                'i' => [],
+                'sup' => [],
+                'sub' => [],
+                'tt' => [],
+                'code' => [],
+                'br' => [],
+                'a' => [
+                    'href'  => true,
+                    'title' => true,
+                ],
+            ];
+            $data = yourls_esc_html_with_whitelist(trim($matches[4]), $allowed);
+        } else {
+            $data = yourls_esc_html(trim($matches[4]));
+        }
+
+        $plugin_data[ trim($matches[3]) ] = $data;
     }
 
     return $plugin_data;
@@ -602,7 +620,7 @@ function yourls_load_plugins() {
     }
 
     // Replace active plugin list with list of plugins we just activated
-    yourls_get_db()->set_plugins( $plugins );
+    yourls_get_db('read-load_plugins')->set_plugins( $plugins );
     $info = count( $plugins ).' activated';
 
     // $active_plugins should be empty now, if not, a plugin could not be found, or is erroneous : remove it
@@ -653,7 +671,7 @@ function yourls_activate_plugin( $plugin ) {
     }
 
     // check not activated already
-    $ydb = yourls_get_db();
+    $ydb = yourls_get_db('read-activate_plugin');
     if ( yourls_is_active_plugin( $plugin ) ) {
         return yourls__( 'Plugin already activated' );
     }
@@ -703,7 +721,7 @@ function yourls_deactivate_plugin( $plugin ) {
     }
 
     // Deactivate the plugin
-    $ydb = yourls_get_db();
+    $ydb = yourls_get_db('read-deactivate_plugin');
     $plugins = $ydb->get_plugins();
     $key = array_search( $plugin, $plugins );
     if ( $key !== false ) {
@@ -726,7 +744,7 @@ function yourls_deactivate_plugin( $plugin ) {
  * @return string
  */
 function yourls_plugin_basename( $file ) {
-	return trim( str_replace( yourls_sanitize_filename( YOURLS_PLUGINDIR ), '', yourls_sanitize_filename( $file ) ), '/' );
+    return trim( str_replace( yourls_sanitize_filename( YOURLS_PLUGINDIR ), '', yourls_sanitize_filename( $file ) ), '/' );
 }
 
 /**
@@ -752,7 +770,7 @@ function yourls_plugin_url( $file ) {
  */
 function yourls_list_plugin_admin_pages() {
     $plugin_links = [];
-    foreach ( yourls_get_db()->get_plugin_pages() as $plugin => $page ) {
+    foreach ( yourls_get_db('read-list_plugin_admin_pages')->get_plugin_pages() as $plugin => $page ) {
         $plugin_links[ $plugin ] = [
             'url'    => yourls_admin_url( 'plugins.php?page='.$page[ 'slug' ] ),
             'anchor' => $page[ 'title' ],
@@ -771,7 +789,7 @@ function yourls_list_plugin_admin_pages() {
  * @return void
  */
 function yourls_register_plugin_page( $slug, $title, $function ) {
-    yourls_get_db()->add_plugin_page( $slug, $title, $function );
+    yourls_get_db('read-register_plugin_page')->add_plugin_page( $slug, $title, $function );
 }
 
 /**
@@ -783,7 +801,7 @@ function yourls_register_plugin_page( $slug, $title, $function ) {
  */
 function yourls_plugin_admin_page( $plugin_page ) {
     // Check the plugin page is actually registered
-    $pages = yourls_get_db()->get_plugin_pages();
+    $pages = yourls_get_db('read-plugin_admin_page')->get_plugin_pages();
     if ( !isset( $pages[ $plugin_page ] ) ) {
         yourls_die( yourls__( 'This page does not exist. Maybe a plugin you thought was activated is inactive?' ), yourls__( 'Invalid link' ) );
     }
@@ -926,4 +944,15 @@ function yourls_return_null() {
  */
 function yourls_return_empty_string() {
     return '';
+}
+
+/**
+ * Default value used to check for 'shunt_*' filters. Before 1.10.4 we were checking for false, but that's not
+ * efficient as filtered functions can legitimately return false.
+ *
+ * @since 1.10.4
+ * @return string
+ */
+function yourls_shunt_default() {
+    return '__yourls_shunt__';
 }

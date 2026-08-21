@@ -35,6 +35,7 @@ build/
 coverage/
 phpunit.xml
 .phpunit.result.cache
+.phpunit.cache
 tests/yourls-tests-config.php
 tests/vendor/
 tests/data/auth/config-test-auth-hashed.php
@@ -49,6 +50,8 @@ Thumbs.db
 Desktop.ini
 # Mac crap
 .DS_Store
-# NetBeans files
+# IDE files
 /nbproject/
 .idea
+.vs
+.vscode

@@ -4,8 +4,8 @@ require_once( dirname( __FILE__ ) . '/includes/load-yourls.php' );
 
 // Variables should be defined in yourls-loader.php
 if( !isset( $keyword ) ) {
-	yourls_do_action( 'redirect_no_keyword' );
-	yourls_redirect( YOURLS_SITE, 301 );
+    yourls_do_action( 'redirect_no_keyword' );
+    yourls_redirect( YOURLS_SITE, 301 );
 }
 
 $keyword = yourls_sanitize_keyword($keyword);

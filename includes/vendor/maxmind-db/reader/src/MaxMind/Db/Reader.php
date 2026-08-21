@@ -94,13 +94,13 @@ class Reader
         }
         $this->fileHandle = $fileHandle;
 
-        $fileSize = @filesize($database);
-        if ($fileSize === false) {
+        $fstat = fstat($fileHandle);
+        if ($fstat === false) {
             throw new \UnexpectedValueException(
                 "Error determining the size of \"$database\"."
             );
         }
-        $this->fileSize = $fileSize;
+        $this->fileSize = $fstat['size'];
 
         $start = $this->findMetadataStart($database);
         $metadataDecoder = new Decoder($this->fileHandle, $start);
@@ -332,13 +332,7 @@ class Reader
     private function findMetadataStart(string $filename): int
     {
         $handle = $this->fileHandle;
-        $fstat = fstat($handle);
-        if ($fstat === false) {
-            throw new InvalidDatabaseException(
-                "Error getting file information ($filename)."
-            );
-        }
-        $fileSize = $fstat['size'];
+        $fileSize = $this->fileSize;
         $marker = self::$METADATA_START_MARKER;
         $markerLength = self::$METADATA_START_MARKER_LENGTH;
 
@@ -356,8 +350,8 @@ class Reader
         }
 
         throw new InvalidDatabaseException(
-            "Error opening database file ($filename). " .
-            'Is this a valid MaxMind DB file?'
+            "Error opening database file ($filename). "
+            . 'Is this a valid MaxMind DB file?'
         );
     }
 

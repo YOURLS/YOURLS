@@ -90,34 +90,65 @@ function edit_link_display(id) {
 
 // Delete a link
 function remove_link(id) {
-	if( $('#delete-button-'+id).hasClass('disabled') ) {
-		return false;
-	}
-	if (!confirm('Really delete?')) {
-		return;
-	}
-	var keyword = $('#keyword_'+id).val();
-	var nonce = get_var_from_query( $('#delete-button-'+id).attr('href'), 'nonce' );
-	$.getJSON(
-		ajaxurl,
-		{ action: "delete", keyword: keyword, nonce: nonce, id: id },
-		function(data){
-			if (data.success == 1) {
-				$("#id-" + id).fadeOut(function(){
-					$(this).remove();
-					if( $('#main_table tbody tr').length  == 1 ) {
-						$('#nourl_found').css('display', '');
-					}
+    if( $('#delete-button-'+id).hasClass('disabled') ) {
+        return false;
+    }
+    var dialog = $('#delete-confirm-dialog')[0];
+    dialog.showModal();
 
-					zebra_table();
-				});
-				decrement_counter();
-				decrease_total_clicks( id );
-			} else {
-				alert('something wrong happened while deleting :/');
-			}
-		}
-	);
+    $('#delete-confirm-dialog input[name="keyword_id"]').val(id);
+    var keyword = trim_long_string( $('#keyword-'+id+' > a').text() );
+    $('#delete-confirm-dialog span[name="short_url"]').text(keyword);
+    var title = trim_long_string( $('#url-'+id+' > a').attr('title') );
+    $('#delete-confirm-dialog span[name="title"]').text(title);
+    var url = trim_long_string( $('#url-'+id+' > a').attr('href') );
+    $('#delete-confirm-dialog span[name="url"]').text(url);
+
+    // Listen for dialog close event (handles Escape key)
+    $(dialog).one('close', function() {
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+    });
+
+    // Show dialog, don't follow link
+    return false;
+}
+
+function remove_link_confirmed(id) {
+    var id = $('#delete-confirm-dialog input[name="keyword_id"]').val();
+    var keyword = $('#keyword_'+id).val();
+    var nonce = get_var_from_query( $('#delete-button-'+id).attr('href'), 'nonce' );
+    $.getJSON(
+        ajaxurl,
+        { action: "delete", keyword: keyword, nonce: nonce, id: id },
+        function(data){
+            if (data.success == 1) {
+                $("#id-" + id).fadeOut(function(){
+                    $(this).remove();
+                    if( $('#main_table tbody tr').length  == 1 ) {
+                        $('#nourl_found').css('display', '');
+                    }
+
+                    zebra_table();
+                });
+                decrement_counter();
+                decrease_total_clicks( id );
+            } else {
+                feedback('something wrong happened while deleting!' , 'fail');
+            }
+            $('#delete-confirm-dialog')[0].close();
+        }
+    );
+}
+
+function remove_link_canceled() {
+    $('#delete-confirm-dialog')[0].close();
+
+    // Force blur on all interactive elements to restore action buttons opacity
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
 }
 
 // Redirect to stat page
@@ -230,4 +261,3 @@ function split_search_text_before_search() {
 	$('#filter_form input[name=search_protocol]').val( search.protocol );
 	$('#filter_form input[name=search_slashes]').val( search.slashes );
 }
-

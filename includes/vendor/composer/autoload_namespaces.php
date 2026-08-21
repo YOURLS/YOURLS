@@ -6,5 +6,4 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
-    'Ozh\\Bookmarkletgen\\' => array($vendorDir . '/ozh/bookmarkletgen/src'),
 );

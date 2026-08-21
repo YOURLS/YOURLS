@@ -89,7 +89,17 @@ Does your company use YOURLS? Ask your manager or marketing team if your company
 [![](https://opencollective.com/yourls/sponsor/17/avatar.svg)](https://opencollective.com/yourls/sponsor/17/website)
 [![](https://opencollective.com/yourls/sponsor/18/avatar.svg)](https://opencollective.com/yourls/sponsor/18/website)
 [![](https://opencollective.com/yourls/sponsor/19/avatar.svg)](https://opencollective.com/yourls/sponsor/19/website)
+[![](https://opencollective.com/yourls/sponsor/20/avatar.svg)](https://opencollective.com/yourls/sponsor/20/website)
+[![](https://opencollective.com/yourls/sponsor/21/avatar.svg)](https://opencollective.com/yourls/sponsor/21/website)
+[![](https://opencollective.com/yourls/sponsor/22/avatar.svg)](https://opencollective.com/yourls/sponsor/22/website)
 
+
+<!--
+#### Angel Sponsors
+
+For their outstanding support to the project, we are very thankful to:
+<a href="URL"><img width="350px" src="github url of dragged and dropped image" /></a>
+-->
 
 ## License
 

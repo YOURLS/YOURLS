@@ -3,7 +3,7 @@
 Plugin Name: Random ShortURLs
 Plugin URI: https://yourls.org/
 Description: Assign random keywords to shorturls, like bitly (sho.rt/hJudjK)
-Version: 1.2
+Version: 1.2.1
 Author: Ozh
 Author URI: https://ozh.org/
 */
@@ -15,6 +15,7 @@ Author URI: https://ozh.org/
 * Fixed: plugin now complies to character set defined in config.php
 * 1.2 Adopted as YOURLS core plugin under a new name
 * Now configured via YOURLS options instead of editing plugin file
+* 1.2.1 Update HTML tag in notice
 */
 
 // No direct call
@@ -22,7 +23,7 @@ if( !defined( 'YOURLS_ABSPATH' ) ) die();
 
 // Only register things if the old third-party plugin is not present
 if( function_exists('ozh_random_keyword') ) {
-    yourls_add_notice( "<b>Random ShortURLs</b> plugin cannot function unless <b>Random Keywords</b> is removed first." );
+    yourls_add_notice( "<strong>Random ShortURLs</strong> plugin cannot function unless <strong>Random Keywords</strong> is removed first." );
 } else {
     // filter registration happens conditionally, to avoid conflicts
     // settings action is left out here, as it allows checking settings before deleting the old plugin
