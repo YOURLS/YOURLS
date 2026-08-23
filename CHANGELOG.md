@@ -4,6 +4,21 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.5
+---
+
+- fixed and improved: numerous misc security hardenings (#4111, #4122, #4119, #4139, #4141, #4145, #4147, #4142)
+  - `md5` now phased out
+  - extensive use of `hash_equals()` to beat time based attacks
+  - implementation of cookie prefixes
+  - `YOURLS_COOKIEKEY` now unpredictable when not user defined
+  - remote title fetching restricted on a public install when shortening private IP
+  - prevent unauthenticated file inclusion in Pages under very unlikely conditions ;
+  - better support for proxies  
+- improved: unit tests, to handle more scenarios and make tests independent of constants, to eventually deprecate some constants (#4124)
+- changed: Return `HTTP 409 Conflict` (not `400`) when a duplicate long URL is rejected (#4133)
+
+
 1.10.4
 ---
 - fixed: Prevent [XSS](https://github.com/YOURLS/YOURLS/security/advisories/GHSA-5h77-88j3-r659) in stat pages through referrers (#4107)
