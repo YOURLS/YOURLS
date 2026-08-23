@@ -13,10 +13,10 @@ For a much more detailed list, simply refer to [commit messages](https://github.
   - implementation of cookie prefixes
   - `YOURLS_COOKIEKEY` now unpredictable when not user defined
   - remote title fetching restricted on a public install when shortening private IP
-  - prevent unauthenticated file inclusion in Pages under very unlikely conditions ;
+  - prevent unauthenticated file inclusion in Pages under very unlikely conditions
   - better support for proxies  
 - improved: unit tests, to handle more scenarios and make tests independent of constants, to eventually deprecate some constants (#4124)
-- changed: Return `HTTP 409 Conflict` (not `400`) when a duplicate long URL is rejected (#4133)
+- changed: Return `HTTP 409 Conflict` instead of `400` when a duplicate long URL is rejected (#4133)
 
 
 1.10.4
