@@ -4,6 +4,11 @@ YOURLS Changelog
 _This file lists the main changes through all versions of YOURLS.  
 For a much more detailed list, simply refer to [commit messages](https://github.com/YOURLS/YOURLS/commits/master)._
 
+1.10.6
+---
+- fixed: the version number. It's just `1.10.5`, without the `-dev`, as `1.10.5` should have been. Sorry :)
+
+
 1.10.5
 ---
 
