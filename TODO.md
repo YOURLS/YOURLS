@@ -22,7 +22,14 @@ one — `css/style.css` opens with `background:#e3f3ff` on `body` and
 `admin/index.php`, `admin/plugins.php` and `admin/tools.php` all load
 `css/style.css`, so that file is where a theme has to start.
 
-**Approach to decide before writing any CSS:**
+**Approach taken:** option 1, a plugin — `user/plugins/dark-mode/`
+(`plugin.php` hooks `html_head` to load `dark.css`, and filters the Google
+chart options so the chart background is transparent). No core file is
+touched, so it survives an upgrade and a container image replacement. It
+follows the OS via `prefers-color-scheme`; an explicit toggle is not wired up
+yet — `dark.css` documents where to add one.
+
+**Approach options that were on the table:**
 
 1. **A plugin under `user/plugins/`** — hooks a stylesheet in via
    `yourls_add_action( 'html_head', ... )`. Survives a YOURLS upgrade, and is

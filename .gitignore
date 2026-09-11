@@ -18,6 +18,8 @@ user/*
 !user/plugins/sample-page/
 !user/plugins/sample-plugin/
 !user/plugins/sample-toolbar/
+# ... and this fork's dark theme
+!user/plugins/dark-mode/
 # ... example pages
 !user/pages/examplepage.php
 # ... and index.html files
