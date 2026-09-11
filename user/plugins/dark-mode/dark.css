@@ -1,0 +1,293 @@
+/* Dark theme for the YOURLS admin interface.
+ *
+ * One palette, declared once as custom properties; every rule below reads from
+ * it. Wrapped in prefers-color-scheme so it follows the OS setting. To add an
+ * explicit toggle later, repeat the selectors as html[data-theme="dark"] and
+ * move the rules out of the media query.
+ */
+@media (prefers-color-scheme: dark) {
+
+:root {
+    --dm-bg:          #12161b;
+    --dm-surface:     #1b2027;
+    --dm-surface-2:   #232a33;
+    --dm-surface-3:   #2c343f;
+    --dm-text:        #c9d1d9;
+    --dm-text-dim:    #8b949e;
+    --dm-accent:      #58a6d8;
+    --dm-accent-dim:  #2a6f96;
+    --dm-border:      #30363d;
+    --dm-error-bg:    #3a1d1d;
+    --dm-error-fg:    #ff7b72;
+    --dm-warning-bg:  #3a2f14;
+    --dm-warning-fg:  #e3b341;
+    --dm-success-bg:  #14301c;
+    --dm-success-fg:  #7ee787;
+    --dm-mark-bg:     #443a12;
+    --dm-mark-fg:     #f0e6a8;
+    color-scheme: dark;
+}
+
+/* --- Page frame ------------------------------------------------------- */
+body {
+    background: var(--dm-bg);
+    color: var(--dm-text);
+}
+#wrap {
+    background: var(--dm-surface);
+    border-color: var(--dm-accent-dim);
+}
+a, a:link, a:active, a:visited,
+h1 a, h1 a:link, h1 a:active, h1 a:visited {
+    color: var(--dm-accent);
+}
+h1 a:hover span {
+    color: #8ecbef;
+}
+ul#admin_menu li {
+    color: var(--dm-text-dim);
+}
+ul#admin_menu li:hover {
+    color: var(--dm-text);
+}
+#footer p {
+    background: var(--dm-surface);
+    border-color: var(--dm-accent-dim);
+}
+#footer p a {
+    background-color: transparent;
+}
+.notice {
+    background: var(--dm-surface-2);
+    border-color: var(--dm-accent-dim);
+}
+
+/* --- Type accents ----------------------------------------------------- */
+code {
+    background: var(--dm-surface-2);
+}
+tt, .sub_wrap span {
+    background: var(--dm-mark-bg);
+    color: var(--dm-mark-fg);
+}
+td.url small a {
+    color: var(--dm-text-dim);
+}
+
+/* --- Forms and buttons ------------------------------------------------ */
+input.text, select, textarea,
+input.button, td.actions .button {
+    color: var(--dm-text);
+    background-color: var(--dm-surface-2);
+    border-color: var(--dm-accent-dim);
+}
+input.primary {
+    background: var(--dm-surface-3);
+    border-color: var(--dm-accent);
+}
+input.text:focus, textarea:focus {
+    border-color: var(--dm-accent);
+}
+td.actions .button:active {
+    border-color: var(--dm-accent);
+}
+td.actions .button.disabled, #add-button.disabled {
+    background: var(--dm-surface-3);
+    border-color: var(--dm-border);
+}
+td.actions .button.loading, #add-button.loading {
+    background-color: var(--dm-surface-3);
+    color: var(--dm-surface-3);
+}
+a.bookmarklet {
+    background-color: var(--dm-surface-2);
+    border-color: var(--dm-accent-dim);
+}
+
+/* --- Add-a-link box --------------------------------------------------- */
+#new_url {
+    background: var(--dm-surface);
+    border-color: var(--dm-border);
+}
+#new_url div {
+    background: var(--dm-surface-3);
+}
+#new_url #feedback {
+    background: var(--dm-mark-bg);
+    color: var(--dm-mark-fg);
+    border-color: var(--dm-mark-bg);
+}
+#new_url #feedback .fail {
+    color: var(--dm-error-fg);
+}
+tr.edit-row td {
+    /* core sets this one with !important */
+    background: var(--dm-surface-3) !important;
+}
+
+/* --- Status colours: these carry meaning, so keep them distinguishable - */
+.error {
+    color: var(--dm-error-fg);
+    background: var(--dm-error-bg);
+}
+.warning {
+    color: var(--dm-warning-fg);
+    background: var(--dm-warning-bg);
+}
+.success {
+    color: var(--dm-success-fg);
+    background: var(--dm-success-bg);
+}
+.jquery-notify-bar {
+    background-color: var(--dm-surface-2);
+    color: var(--dm-text);
+    border-bottom-color: var(--dm-border);
+}
+.jquery-notify-bar.error, .jquery-notify-bar.fail {
+    color: var(--dm-error-fg);
+    background-color: var(--dm-error-bg);
+}
+.jquery-notify-bar.success {
+    color: var(--dm-success-fg);
+    background-color: var(--dm-success-bg);
+}
+
+/* --- Delete confirmation dialog --------------------------------------- */
+#delete-confirm-dialog {
+    background-color: var(--dm-surface);
+    color: var(--dm-text);
+    border-color: var(--dm-accent-dim);
+}
+#delete-confirm-dialog > div[name="dialog_title"] {
+    background-color: var(--dm-surface-3);
+    color: var(--dm-accent);
+}
+#delete-confirm-dialog div.confirm-message {
+    background-color: var(--dm-surface);
+}
+#delete-confirm-dialog div.confirm-message ul {
+    border-left-color: var(--dm-accent);
+}
+#delete-confirm-dialog div.confirm-message ul li span {
+    border-color: var(--dm-accent-dim);
+    color: var(--dm-text);
+}
+#delete-confirm-dialog div.button-group {
+    background-color: var(--dm-surface-2);
+}
+#delete-confirm-dialog::backdrop {
+    background-color: #000;
+}
+
+/* --- Sortable tables -------------------------------------------------- */
+table.tblSorter {
+    background-color: var(--dm-border);
+}
+table.tblSorter thead tr th,
+table.tblSorter tfoot tr th,
+table.tblSorter th.header {
+    background-color: var(--dm-surface-3);
+    color: var(--dm-text);
+    border-color: var(--dm-surface);
+}
+table.tblSorter tfoot tr,
+table.tblSorter tfoot tr th {
+    background-color: var(--dm-surface-2);
+}
+table.tblSorter thead tr .tablesorter-headerAsc,
+table.tblSorter thead tr .tablesorter-headerDesc {
+    background-color: var(--dm-accent-dim);
+}
+table.tblSorter tbody td {
+    background-color: var(--dm-surface);
+    color: var(--dm-text);
+}
+table.tblSorter tbody tr.normal-row td {
+    background: var(--dm-surface-2);
+}
+table.tblSorter tbody tr.normal-row:hover td,
+table.tblSorter tbody tr.alt-row:hover td {
+    background-color: var(--dm-surface-3);
+}
+.navigation .nav_link a, .navigation .nav_current {
+    background: var(--dm-surface-2);
+    border-color: var(--dm-border);
+}
+.navigation .nav_current {
+    background: none;
+}
+.navigation .nav_link a:hover {
+    background: var(--dm-accent-dim);
+    border-color: var(--dm-accent-dim);
+}
+
+/* --- Stats pages ------------------------------------------------------ */
+ul.toggle_display,
+#tabs ul#headers {
+    border-bottom-color: var(--dm-border);
+}
+#tabs ul#headers li a,
+#stats_lines li a {
+    color: var(--dm-text);
+    background: var(--dm-surface-2);
+    border-color: var(--dm-border);
+}
+#tabs ul#headers li a:hover,
+#stats_lines li a:hover {
+    background: var(--dm-surface-3);
+}
+#tabs ul#headers li a.selected,
+#tabs ul#headers li a.selected:hover,
+#stats_lines li a.selected,
+#stats_lines li a.selected:hover {
+    background: var(--dm-surface);
+    border-color: var(--dm-border);
+    border-bottom-color: var(--dm-surface);
+}
+/* js/infos.js stripes these rows with an inline background */
+#historical_clicks li:nth-child(odd) {
+    background: var(--dm-surface-2) !important;
+}
+#historical_clicks li:hover {
+    background: var(--dm-surface-3) !important;
+}
+/* Google charts draw inline SVG: the plugin makes the chart background
+ * transparent server-side, the labels are recoloured here. */
+div[id^="visualization_"] svg text {
+    fill: var(--dm-text);
+}
+
+/* --- Date picker ------------------------------------------------------ */
+.datepicker {
+    border-color: var(--dm-border);
+}
+.datepicker th, .datepicker tfoot td {
+    background: var(--dm-surface-3);
+    color: var(--dm-text);
+}
+.datepicker tbody td {
+    background: var(--dm-surface);
+    border-color: var(--dm-border);
+    color: var(--dm-text);
+}
+.datepicker tbody td.date.over {
+    background-color: var(--dm-accent-dim);
+}
+.datepicker tbody td.date.chosen {
+    background-color: var(--dm-success-bg);
+    color: var(--dm-success-fg);
+}
+
+/* --- Share box -------------------------------------------------------- */
+div.share {
+    background: var(--dm-surface-2);
+    border-color: var(--dm-accent-dim);
+}
+#charcount {
+    color: var(--dm-text-dim);
+}
+#charcount.negative {
+    color: var(--dm-error-fg);
+}
+
+}
