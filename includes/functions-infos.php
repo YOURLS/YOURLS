@@ -415,3 +415,15 @@ function yourls_google_viz_code($graph_type, $data, $options, $id ) {
 
     return $code;
 }
+
+
+/**
+ * Return if the referrers should be shown or not
+ *
+ * Referrers are hidden if : public site, or private site + public stats + not logged in
+ *
+ * @return bool
+ */
+function yourls_show_referrers(): bool {
+    return yourls_apply_filter( 'statistics_show_referrers', yourls_is_private() || yourls_is_valid_user() === true );
+}
