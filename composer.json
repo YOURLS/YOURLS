@@ -28,10 +28,10 @@
         "pomo/pomo" : "^1.4",
         "geoip2/geoip2" : "^2.10",
         "aura/sql": "^6.0",
-        "jakeasmith/http_build_url": "^1.0",
         "symfony/polyfill-mbstring": "^1.15",
         "symfony/polyfill-intl-idn": "^1.17",
-        "spatie/array-to-xml": "^3.4"
+        "spatie/array-to-xml": "^3.4",
+        "ozh/http_build_url": "^1.0"
     },
     "require-dev": {
         "ext-ctype": "*"
