@@ -210,8 +210,8 @@ if( yourls_do_log_redirect() ) {
 }
 
 // Whether to show referrers on the statistics page
-// Default: show only on private installs; hide on public installs to prevent referrer spam (filterable)
-$show_referrers = yourls_apply_filter( 'statistics_show_referrers', yourls_is_private() );
+// Default: show only on private installs; hide on public installs unless user is logged in, to prevent referrer spam (filterable)
+$show_referrers = yourls_show_referrers();
 
 yourls_html_head( 'infos', yourls_s( 'Statistics for %s', YOURLS_SITE.'/'.$keyword ) );
 yourls_html_logo();
