@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9aaa57cfc41c85172bc72eb82b7ae94e",
+    "content-hash": "6e1e10bec6b91ed80219aa94da7f71b9",
     "packages": [
         {
             "name": "aura/sql",
@@ -195,43 +195,6 @@
             "time": "2022-08-05T20:32:58+00:00"
         },
         {
-            "name": "jakeasmith/http_build_url",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jakeasmith/http_build_url.git",
-                "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jakeasmith/http_build_url/zipball/93c273e77cb1edead0cf8bcf8cd2003428e74e37",
-                "reference": "93c273e77cb1edead0cf8bcf8cd2003428e74e37",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/http_build_url.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jake A. Smith",
-                    "email": "theman@jakeasmith.com"
-                }
-            ],
-            "description": "Provides functionality for http_build_url() to environments without pecl_http.",
-            "support": {
-                "issues": "https://github.com/jakeasmith/http_build_url/issues",
-                "source": "https://github.com/jakeasmith/http_build_url"
-            },
-            "time": "2017-05-01T15:36:40+00:00"
-        },
-        {
             "name": "maxmind-db/reader",
             "version": "v1.13.1",
             "source": {
@@ -390,6 +353,62 @@
                 "source": "https://github.com/ozh/bookmarkletgen/tree/1.3"
             },
             "time": "2025-11-07T17:20:10+00:00"
+        },
+        {
+            "name": "ozh/http_build_url",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ozh/http_build_url.git",
+                "reference": "79dfe6ef4dda11447e4c09d3a19a8c7f5352e19e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ozh/http_build_url/zipball/79dfe6ef4dda11447e4c09d3a19a8c7f5352e19e",
+                "reference": "79dfe6ef4dda11447e4c09d3a19a8c7f5352e19e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/http_build_url.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ozh",
+                    "homepage": "https://github.com/ozh"
+                },
+                {
+                    "name": "Jake A. Smith",
+                    "email": "theman@jakeasmith.com",
+                    "homepage": "https://jakeasmith.com",
+                    "role": "Original author"
+                }
+            ],
+            "description": "Provides http_build_url() for environments without the pecl_http extension. Maintained fork of jakeasmith/http_build_url.",
+            "keywords": [
+                "http_build_url",
+                "parse_url",
+                "pecl_http",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/ozh/http_build_url/issues",
+                "source": "https://github.com/ozh/http_build_url"
+            },
+            "time": "2026-09-23T17:28:39+00:00"
         },
         {
             "name": "pomo/pomo",
