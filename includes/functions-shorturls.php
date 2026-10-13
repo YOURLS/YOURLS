@@ -29,7 +29,7 @@
  * @param  int    $row_id   used to form unique IDs in the generated HTML
  * @return array            array with error/success state and short URL information
  */
-function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
+function yourls_add_new_link( $url, $keyword = '', $title = '', int $row_id = 1 ) {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_add_new_link', yourls_shunt_default(), $url, $keyword, $title );
     if ( yourls_shunt_default() !== $pre ) {
