@@ -135,7 +135,7 @@ function yourls_add_new_link( $url, $keyword = '', $title = '', $row_id = 1 ) {
     $timestamp = date( 'Y-m-d H:i:s' );
 
     try {
-        if (yourls_insert_link_in_db( $url, $keyword, $title )){
+        if (yourls_insert_link_in_db( $url, $keyword, $title, true )){
             // everything ok, populate needed vars
             $return['url']      = array('keyword' => $keyword, 'url' => $url, 'title' => $title, 'date' => $timestamp, 'ip' => $ip );
             $return['status']   = 'success';
@@ -284,9 +284,9 @@ function yourls_delete_link_by_keyword( $keyword ) {
  * @param string $title
  * @return bool true if insert succeeded, false if failed
  */
-function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
+function yourls_insert_link_in_db($url, $keyword, $title = '', bool $restrict_to_shorturl_charset = false ) {
     $url       = yourls_sanitize_url($url);
-    $keyword   = yourls_sanitize_keyword($keyword);
+    $keyword   = yourls_sanitize_keyword($keyword, $restrict_to_shorturl_charset);
     $title     = yourls_sanitize_title($title);
     $timestamp = date('Y-m-d H:i:s');
     $ip        = yourls_get_IP();
