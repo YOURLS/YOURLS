@@ -16,6 +16,7 @@ $(document).ready(function(){
 		}
 		
 		$("#main_table").tablesorter({
+			usNumberFormat: false,  // clicks are formatted with the user's locale (e.g. "1.258"), so US-only comma stripping is wrong (#4171)
 			textExtraction: {
 				1: function(node, table, cellIndex){return $(node).find("small a").text();} // Sort column "URL" by URL, not by whole cell content
 			},
