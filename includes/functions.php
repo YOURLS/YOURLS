@@ -278,6 +278,91 @@ function yourls_get_db_stats( $where = [ 'sql' => '', 'binds' => [] ] ) {
 }
 
 /**
+ * Get total number of URLs and sum of clicks, from a short-lived cache when possible
+ *
+ * The admin page displays these global totals on every load, and computing them means a
+ * full scan of the URL table (COUNT + SUM). Cache the result for a short while instead.
+ * The cache is invalidated when links are added or deleted (see yourls_add_new_link() and
+ * yourls_delete_link_by_keyword()), and the TTL covers click count changes.
+ *
+ * @since 1.10.7
+ * @return array Same shape as yourls_get_db_stats()
+ */
+function yourls_get_db_stats_cached() {
+    // @hook How long (in seconds) to cache the global link/click totals. 0 disables caching.
+    $ttl = (int) yourls_apply_filter( 'db_stats_cache_ttl', 60 );
+
+    if ( $ttl > 0 ) {
+        $cache = yourls_get_option( 'db_stats_cache' );
+        if ( is_array( $cache )
+            && isset( $cache['total_links'], $cache['total_clicks'], $cache['time'] )
+            && ( time() - (int) $cache['time'] ) < $ttl ) {
+            return [
+                'total_links'  => (int) $cache['total_links'],
+                'total_clicks' => (int) $cache['total_clicks'],
+            ];
+        }
+    }
+
+    $stats = yourls_get_db_stats();
+
+    if ( $ttl > 0 ) {
+        $cache         = $stats;
+        $cache['time'] = time();
+        yourls_update_option( 'db_stats_cache', $cache );
+    }
+
+    return $stats;
+}
+
+/**
+ * Invalidate the cached global stats
+ *
+ * @since 1.10.7
+ */
+function yourls_delete_db_stats_cache() {
+    yourls_delete_option( 'db_stats_cache' );
+}
+
+/**
+ * Build a FULLTEXT BOOLEAN MODE query from a user search string
+ *
+ * The search is split into word-ish tokens (everything that isn't a letter, digit or
+ * underscore), which conveniently strips BOOLEAN MODE operators ( + - > < ( ) ~ * " @ )
+ * and the word separators found in URLs. Each token becomes a prefix match and all
+ * tokens must be present.
+ *
+ * Returns an empty string when the search cannot be handled by FULLTEXT -- no usable
+ * token, or a token shorter than the FULLTEXT minimum token size -- in which case
+ * callers should fall back to a LIKE search.
+ *
+ * @since 1.10.7
+ * @param string $search User search string
+ * @return string Boolean-mode query, or '' to fall back to LIKE
+ */
+function yourls_get_fulltext_search( $search ) {
+    $tokens = preg_split( '/[^\p{L}\p{N}_]+/u', (string) $search, -1, PREG_SPLIT_NO_EMPTY );
+
+    if ( empty( $tokens ) ) {
+        return '';
+    }
+
+    // InnoDB's FULLTEXT default minimum token size is 3. Tokens shorter than that are not
+    // indexed, so requiring them would make the whole (AND) query return nothing.
+    $min   = (int) yourls_apply_filter( 'fulltext_min_token_size', 3 );
+    $parts = [];
+
+    foreach ( $tokens as $token ) {
+        if ( mb_strlen( $token ) < $min ) {
+            return '';
+        }
+        $parts[] = '+' . $token . '*';
+    }
+
+    return implode( ' ', $parts );
+}
+
+/**
  * Returns a sanitized a user agent string. Given what I found on http://www.user-agents.org/ it should be OK.
  *
  * @return string

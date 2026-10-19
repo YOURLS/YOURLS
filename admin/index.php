@@ -38,14 +38,23 @@ if( $search && $search_in && $search_in_text ) {
                         OR `url` LIKE (:search)
                         OR `title` COLLATE utf8mb4_unicode_ci LIKE (:search) COLLATE utf8mb4_unicode_ci
                         OR `ip` LIKE (:search) ";
-    } else {
-        $collate = '';
-        if( $search_in == 'title' ) {
-            $collate = ' COLLATE utf8mb4_unicode_ci';
+        $where['binds']['search'] = $search;
+    } elseif( $search_in == 'url' || $search_in == 'title' ) {
+        // Use the FULLTEXT index for faster searches on url and title, and fall back to a
+        // LIKE search when the term can't be handled by FULLTEXT (eg very short terms)
+        $fulltext = yourls_get_fulltext_search( $search_text );
+        if( $fulltext !== '' ) {
+            $where['sql'] .= " AND MATCH(`$search_in`) AGAINST (:search_ft IN BOOLEAN MODE)";
+            $where['binds']['search_ft'] = $fulltext;
+        } else {
+            $collate = ( $search_in == 'title' ) ? ' COLLATE utf8mb4_unicode_ci' : '';
+            $where['sql'] .= " AND `$search_in` $collate LIKE (:search) $collate";
+            $where['binds']['search'] = $search;
         }
-        $where['sql'] .= " AND `$search_in` $collate LIKE (:search) $collate";
+    } else {
+        $where['sql'] .= " AND `$search_in` LIKE (:search)";
+        $where['binds']['search'] = $search;
     }
-    $where['binds']['search'] = $search;
 }
 
 // Time span
@@ -97,7 +106,8 @@ if ( $click_limit !== '' ) {
 
 
 // Get URLs Count for current filter, total links in DB & total clicks
-list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats() );
+// Global totals are cached (they require a full table scan) -- see yourls_get_db_stats_cached()
+list( $total_urls, $total_clicks ) = array_values( yourls_get_db_stats_cached() );
 if ( !empty($where['sql']) ) {
     list( $total_items, $total_items_clicks ) = array_values( yourls_get_db_stats( $where ) );
 } else {
