@@ -665,15 +665,20 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
         $url = str_replace( "'", '&#039;', $url );
     }
 
-    // If there's a protocol, make sure it's OK
-    if( yourls_get_protocol($url) !== '' ) {
+    // If there's a protocol, make sure it's OK.
+    // The scheme may be hidden behind HTML character references (eg "javascript&#58;") that a
+    // browser decodes once the value is used in an href. Decode entities and drop the characters
+    // a URL parser ignores before extracting the scheme, so an encoded scheme cannot bypass the
+    // allow-list. See yourls_get_protocol().
+    $protocol_url = preg_replace( '/[\x00-\x20\x7F]/', '', html_entity_decode( $url, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+    if( yourls_get_protocol($protocol_url) !== '' ) {
         if ( ! is_array( $protocols ) or ! $protocols ) {
             global $yourls_allowedprotocols;
             $protocols = yourls_apply_filter( 'esc_url_protocols', $yourls_allowedprotocols );
             // Note: $yourls_allowedprotocols is also globally filterable in functions-kses.php/yourls_kses_init()
         }
 
-        if ( !yourls_is_allowed_protocol( $url, $protocols ) )
+        if ( !yourls_is_allowed_protocol( $protocol_url, $protocols ) )
             return '';
 
         // I didn't use KSES function kses_bad_protocol() because it doesn't work the way I liked (returns //blah from illegal://blah)
