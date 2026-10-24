@@ -972,6 +972,35 @@ function yourls_is_ssl() {
 }
 
 /**
+ * Build the HTTPS URL to redirect an admin request to, when SSL is required
+ *
+ * Scheme and host come from the configured YOURLS_SITE. Path and query string come from the request.
+ *
+ * @since 1.10.7
+ * @param string $request_uri Requested URI, typically $_SERVER['REQUEST_URI']
+ * @return string HTTPS URL on the YOURLS host
+ */
+function yourls_get_ssl_redirect_url(string $request_uri): string {
+    $site = parse_url(yourls_get_yourls_site());
+    $host = $site['host'] ?? '';
+    if (isset($site['port'])) {
+        $host .= ':' . $site['port'];
+    }
+
+    // Keep only path and query, dropping any scheme or host found in the requested URI
+    $request = parse_url($request_uri);
+    $path    = is_array($request) ? ($request['path'] ?? '') : '';
+    if (!str_starts_with($path, '/')) {
+        $path = '/' . $path;
+    }
+    if (is_array($request) && isset($request['query'])) {
+        $path .= '?' . $request['query'];
+    }
+
+    return yourls_apply_filter( 'get_ssl_redirect_url', 'https://' . $host . $path);
+}
+
+/**
  * Get a remote page title
  *
  * This function returns a string: either the page title as defined in HTML, or the URL if not found
