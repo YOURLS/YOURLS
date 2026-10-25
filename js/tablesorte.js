@@ -17,8 +17,8 @@ $(document).ready(function(){
 		
 		$("#main_table").tablesorter({
 			textExtraction: {
-                1: function(node, table, cellIndex){return $(node).find("small a").text();},   // Sort column "URL" by URL, not by whole cell content
-                4: function(node, table, cellIndex){return $(node).text().replace(/\D/g, '');} // Compute digits in the clicks column without any separator (1,200 -> 1200)
+				1: function(node, table, cellIndex){return $(node).find("small a").text();},   // Sort column "URL" by URL, not by whole cell content
+				4: function(node, table, cellIndex){return $(node).text().replace(/\D/g, '');} // Compute digits in the clicks column without any separator (1,200 -> 1200)
 			},
 			sortList:[[ sort_by, sort_order ]], 
 			headers: { 5: {sorter: false} }, // no sorter on column "Actions"
