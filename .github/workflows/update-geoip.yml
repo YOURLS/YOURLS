@@ -1,9 +1,9 @@
 name: Update GeoIP DB
 
 on:
-  # Run every Monday at 13:37
+  # Run every other Monday at 13:37
   schedule:
-    - cron: '37 13 * * 1'
+    - cron: '37 13 */14 * 1'
   # Run manually
   workflow_dispatch:
 
