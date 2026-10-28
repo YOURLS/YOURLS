@@ -42,11 +42,6 @@ class Init {
             yourls_fix_request_uri();
         }
 
-        // If request for an admin page is http:// and SSL is required, redirect
-        if ($actions->redirect_ssl === true) {
-            $this->redirect_ssl_if_needed();
-        }
-
         // Create the YOURLS object $ydb that will contain everything we globally need
         if ($actions->include_db === true) {
             $this->include_db_files();
@@ -110,6 +105,11 @@ class Init {
             yourls_load_default_textdomain();
         }
 
+        // If request for an admin page is http:// and SSL is required, redirect
+        if ($actions->redirect_ssl === true) {
+            $this->redirect_ssl_if_needed();
+        }
+
         // Is there a new version of YOURLS ?
         if ($actions->check_new_version === true) {
             if (yourls_is_installed() && !yourls_is_upgrading()) {
@@ -126,16 +126,14 @@ class Init {
     }
 
     /**
+     * Redirect to the SSL version of the website if needed
+     *
      * @since  1.7.3
      * @return void
      */
-    public function redirect_ssl_if_needed() {
+    public function redirect_ssl_if_needed(): void {
         if (yourls_is_admin() && yourls_needs_ssl() && !yourls_is_ssl()) {
-            if ( 0 === strpos( $_SERVER['REQUEST_URI'], 'http' ) ) {
-                yourls_redirect( preg_replace( '|^http://|', 'https://', $_SERVER['REQUEST_URI'] ) );
-            } else {
-                yourls_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-            }
+            yourls_redirect(yourls_get_ssl_redirect_url($_SERVER['REQUEST_URI'] ?? '/'));
             exit();
         }
     }
