@@ -692,7 +692,7 @@ function yourls_table_add_row( string $keyword, string $url, string $title, stri
             'template' => '%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/>',
             'actions'  => $action_links,
             'id'       => $id,
-            'keyword'  => $keyword,
+            'keyword'  => yourls_esc_attr( $keyword ),
         ),
     );
     $cells = yourls_apply_filter( 'table_add_row_cell_array', $cells, $keyword, $url, $title, $ip, $clicks, $timestamp );
