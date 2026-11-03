@@ -1054,7 +1054,9 @@ function yourls_get_remote_title(string $url ): string {
     }
 
     // look for <title>, which can have attributes. No title found? Return the URL
-    if ( preg_match( '/<title(?:\s[^>]*)?>(.*?)<\/title>/is', $content, $found ) ) {
+    // The match is anchored on the first '<title' to keep the search time linear -- see issue #4206
+    $title_pos = stripos( $content, '<title' );
+    if ( $title_pos !== false && preg_match( '/\G<title(?:\s[^>]*)?>(.*?)<\/title>/is', $content, $found, 0, $title_pos ) ) {
         $title = $found[ 1 ];
         unset( $found );
     }
