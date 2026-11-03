@@ -177,6 +177,44 @@ class URLTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
+     * Schemes written with HTML character references must not bypass the protocol allow-list.
+     *
+     * A browser decodes character references when the URL is used in an href, so an encoded
+     * scheme such as "javascript&#58;" is executable just like "javascript:". The decoded value
+     * must be checked against the allow-list for both storage and display.
+     *
+     * @since 1.10.7
+     */
+    static function list_of_entity_encoded_schemes(): \Iterator
+    {
+        yield 'numeric entity'           => array( 'javascript&#58;alert(1)' );
+        yield 'padded numeric entity'    => array( 'javascript&#058;alert(1)' );
+        yield 'hex entity'               => array( 'javascript&#x3a;alert(1)' );
+        yield 'uppercase hex entity'     => array( 'javascript&#X3A;alert(1)' );
+        yield 'entities in scheme name'  => array( '&#x6a;avascript&#x3a;alert(1)' );
+        yield 'numeric entity in scheme' => array( '&#106;avascript&#58;alert(1)' );
+        yield 'tab entity in scheme'     => array( 'java&#x09;script:alert(1)' );
+        yield 'named colon entity'       => array( 'javascript&colon;alert(1)' );
+        yield 'leading space entity'     => array( '&#32;javascript:alert(1)' );
+        yield 'data scheme'              => array( 'data&#58;text/html,alert(1)' );
+    }
+
+    /**
+     * Entity-encoded schemes are rejected for storage and cannot reach an href
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('list_of_entity_encoded_schemes')]
+    function test_entity_encoded_scheme_is_rejected( $url ) {
+        // Storage / redirection: the value must be discarded, exactly like a literal "javascript:"
+        $this->assertEquals( '', yourls_sanitize_url( $url ) );
+
+        // Display: whatever is returned must not be decoded by a browser into an executable scheme.
+        // Drop the characters a URL parser ignores before matching, as the browser would.
+        $escaped = yourls_esc_url( $url );
+        $decoded = preg_replace( '/[\x00-\x20\x7F]/', '', html_entity_decode( $escaped, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+        $this->assertDoesNotMatchRegularExpression( '/^(javascript|data|vbscript):/i', $decoded );
+    }
+
+    /**
      * List of URLs with MiXeD CaSe to test. Structure: array( sanitized url, unsanitized url with mixed case )
      */
     static function list_of_mixed_case(): \Iterator
