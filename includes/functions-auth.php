@@ -104,7 +104,31 @@ function yourls_is_valid_user() {
             if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
                 // The return makes sure we exit this function before waiting for redirection.
                 // See #3189 and note in yourls_redirect()
-                return yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
+                // Respect the configured YOURLS base URL when a reverse proxy exposes a
+                // site path that is different from YOURLS_SITE (see issue #3781).
+                $request_uri = yourls_sanitize_url_safe($_SERVER['REQUEST_URI']);
+                $site_path = '/' . trim((string) parse_url(yourls_get_yourls_site(), PHP_URL_PATH), '/');
+
+                $request_path = (string) parse_url($request_uri, PHP_URL_PATH);
+                $request_query = (string) parse_url($request_uri, PHP_URL_QUERY);
+
+                $already_under_site = ($site_path === '/')
+                    || $request_path === $site_path
+                    || strpos($request_path, $site_path . '/') === 0;
+
+                if ( ! $already_under_site ) {
+                    if ( strpos($request_path, '/') !== 0 ) {
+                        $request_path = '/' . $request_path;
+                    }
+                    $redirect_uri = $site_path . $request_path;
+                    if ( $request_query !== '' ) {
+                        $redirect_uri .= '?' . $request_query;
+                    }
+                } else {
+                    $redirect_uri = $request_uri;
+                }
+
+                return yourls_redirect( yourls_sanitize_url_safe($redirect_uri) );
             }
         }
 
