@@ -154,26 +154,36 @@ if( yourls_do_log_redirect() ) {
     $offset = yourls_get_time_offset();
 
     // *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
+    // Bucket clicks by their elapsed time since the rolling start time. Grouping
+    // by the wall-clock hour only could merge two distinct same-hour slices
+    // around the 24-hour boundary (see #3845).
     $sql = "SELECT
-        DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR), '%H %p') AS `time`,
+        FLOOR(TIMESTAMPDIFF(SECOND,
+            DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR),
+            DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR)
+        ) / 3600) AS `slot`,
         COUNT(*) AS `count`
     FROM `$table`
     WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
-    GROUP BY `time`;";
+    GROUP BY `slot`;";
     $sql = yourls_apply_filter('stat_query_last24h', $sql);
     $rows = $ydb->fetchObjects($sql, $keyword_binds);
 
     $_last_24h = array();
     foreach( (array)$rows as $row ) {
-        if ( isset( $row->time ) )
-            $_last_24h[ "$row->time" ] = $row->count;
+        if ( isset( $row->slot ) ) {
+            $slot = (int)$row->slot;
+            if ( $slot >= 0 && $slot <= 23 ) {
+                $_last_24h[ $slot ] = (int)$row->count;
+            }
+        }
     }
 
     $now = intval( date('U') );
     for ($i = 23; $i >= 0; $i--) {
         $h = date('H A', ($now - ($i * 60 * 60) + ($offset * 60 * 60)) );
-        // If the $last_24h doesn't have all the hours, insert missing hours with value 0
-        $last_24h[ $h ] = array_key_exists( $h, $_last_24h ) ? $_last_24h[ $h ] : 0 ;
+        // If the $_last_24h doesn't have all the hours, insert missing hours with value 0
+        $last_24h[ $h ] = array_key_exists( $i, $_last_24h ) ? $_last_24h[ $i ] : 0 ;
     }
     unset( $_last_24h );
 
