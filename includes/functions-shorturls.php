@@ -272,6 +272,9 @@ function yourls_delete_link_by_keyword( $keyword ) {
     $ydb = yourls_get_db('write-delete_link_by_keyword');
     $delete = $ydb->fetchAffected("DELETE FROM `$table` WHERE `keyword` = :keyword", array('keyword' => $keyword));
     $ydb->delete_infos($keyword); // Clear the cache.
+    if ( $delete ) {
+        yourls_delete_db_stats_cache();
+    }
     yourls_do_action( 'delete_link', $keyword, $delete );
     return $delete;
 }
@@ -306,6 +309,7 @@ function yourls_insert_link_in_db($url, $keyword, $title = '' ) {
         $infos = $binds;
         $infos['clicks'] = 0;
         $ydb->set_infos($keyword, $infos);
+        yourls_delete_db_stats_cache();
     }
 
     yourls_do_action( 'insert_link', (bool)$insert, $url, $keyword, $title, $timestamp, $ip );

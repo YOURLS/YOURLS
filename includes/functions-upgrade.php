@@ -72,6 +72,10 @@ function yourls_upgrade($step, $oldver, $newver, $oldsql, $newsql ) {
             yourls_upgrade_to_507();
         }
 
+        if( $oldsql < 508 ) {
+            yourls_upgrade_to_508();
+        }
+
         yourls_redirect_javascript( yourls_admin_url( "upgrade.php?step=3" ) );
 
         break;
@@ -107,6 +111,42 @@ function yourls_upgrade_to_507() {
         echo $e->getMessage();
         echo "\n</pre>";
         die();
+    }
+
+    echo "<p class='success'>OK!</p>";
+}
+
+/**
+ * Add FULLTEXT indexes on url and title, used by the admin search.
+ * DB version 508.
+ */
+function yourls_upgrade_to_508() {
+    echo "<p>Adding FULLTEXT indexes for faster searches. Please wait...</p>";
+
+    $table = YOURLS_DB_TABLE_URL;
+    $ydb   = yourls_get_db('write-upgrade_to_508');
+
+    $indexes = array(
+        'url_ft'   => sprintf('ALTER TABLE `%s` ADD FULLTEXT KEY `url_ft` (`url`);', $table),
+        'title_ft' => sprintf('ALTER TABLE `%s` ADD FULLTEXT KEY `title_ft` (`title`);', $table),
+    );
+
+    foreach ($indexes as $name => $query) {
+        // Skip indexes that already exist, so a partially failed upgrade can be re-run
+        if ( $ydb->fetchAffected(sprintf("SHOW INDEX FROM `%s` WHERE Key_name = '%s'", $table, $name)) ) {
+            continue;
+        }
+
+        try {
+            $ydb->perform($query);
+        } catch (\Exception $e) {
+            echo "<p class='error'>Unable to update the DB.</p>";
+            echo "<p>Could not add the <tt>$name</tt> index. You will have to fix things manually :(. The error was
+            <pre>";
+            echo $e->getMessage();
+            echo "\n</pre>";
+            die();
+        }
     }
 
     echo "<p class='success'>OK!</p>";
