@@ -119,4 +119,40 @@ class RemoteTitleTest extends PHPUnit\Framework\TestCase {
         $this->assertTrue( mb_check_encoding( $title, 'UTF-8' ), 'Title is not valid UTF-8: ' . bin2hex( $title ) );
     }
 
+    /**
+     * Mockup HTTP response: thousands of '<title>' tags and no '</title>'
+     */
+    public function override_http_request_unclosed_titles($return, $type, $url, $headers, $data, $options) {
+        if ( $url !== 'https://example.com/unclosed-titles.html' ) {
+            return $return;
+        }
+        $response = new Response();
+        $response->raw = 'HTTP/1.1 200 OK';
+        $response->url = $url;
+        $response->body = str_repeat( '<title>', 20000 );
+        $response->headers = new \WpOrg\Requests\Response\Headers([
+            'Content-Type' => 'text/html; charset=utf-8',
+        ]);
+        return $response;
+    }
+
+    /**
+     * A page with many unclosed <title> tags must not cause the regex backtracking to take exponential time
+     */
+    function test_unclosed_title_tags_are_parsed_in_linear_time() {
+        yourls_add_filter( 'shunt_yourls_http_request', array( $this, 'override_http_request_unclosed_titles' ), 20, 6 );
+
+        $url = 'https://example.com/unclosed-titles.html';
+
+        $start = microtime( true );
+        $title = yourls_get_remote_title( $url );
+        $duration = microtime( true ) - $start;
+
+        yourls_remove_filter( 'shunt_yourls_http_request', array( $this, 'override_http_request_unclosed_titles' ), 20, 6 );
+
+        $this->assertSame( $url, $title );
+        // Assert that the parsing took less than 200 milliseconds - we're being conservative here in case the CI runs on a slow machine
+        $this->assertLessThan( 0.2, $duration, 'Title parsing took ' . round( $duration * 1000 ) . ' ms' );
+    }
+
 }
