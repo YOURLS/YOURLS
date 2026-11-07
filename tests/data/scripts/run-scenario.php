@@ -8,15 +8,17 @@
  * complete YOURLS in a new process, with arbitrary constants defined *before* bootstrap, runs a
  * scenario file, and reports what ended up defined and loaded.
  *
- * Scenarios are plain PHP files in scripts/scenarios/, executed once YOURLS is fully booted.
+ * Scenarios are plain PHP files in scripts/scenarios/, executed once YOURLS is fully booted. A
+ * scenario may exit (eg when it runs a script that ends with exit): the report is sent on shutdown.
  *
  * Usage:   php run-scenario.php <scenario> [<constants as a JSON object>]
  * Example: php run-scenario.php maybe-require-auth '{"YOURLS_PRIVATE":false}'
  *
  * Outputs one line of JSON:
- *   {"scenario":"...", "constants":{"YOURLS_PRIVATE":false,...}, "included":["includes/....php",...]}
- * where "constants" holds every defined YOURLS_* constant and "included" every loaded file below
- * YOURLS_ABSPATH, as a path relative to it, in loading order.
+ *   {"scenario":"...", "constants":{"YOURLS_PRIVATE":false,...}, "included":["includes/....php",...], "output":"..."}
+ * where "constants" holds every defined YOURLS_* constant, "included" every loaded file below
+ * YOURLS_ABSPATH, as a path relative to it, in loading order, and "output" whatever the scenario
+ * printed.
  *
  * The test suite side of this is tests/includes/new-process.php (NewProcessTrait).
  */
@@ -47,27 +49,38 @@ yut_boot_yourls();
 // Safety net: whatever a scenario does, it must never rewrite the config file of the test suite
 yourls_add_filter( 'skip_password_hashing', 'yourls_return_true' );
 
-require $scenario_file;
-
-// Report every YOURLS_* constant...
-$constants = array_filter(
-    get_defined_constants( true )['user'],
-    function( $name ) { return str_starts_with( $name, 'YOURLS_' ); },
-    ARRAY_FILTER_USE_KEY
-);
-
-// ...and every included file below YOURLS_ABSPATH, relative to it
-$root     = rtrim( str_replace( '\\', '/', YOURLS_ABSPATH ), '/' ) . '/';
-$included = array();
-foreach( get_included_files() as $file ) {
-    $file = str_replace( '\\', '/', $file );
-    if( str_starts_with( $file, $root ) ) {
-        $included[] = substr( $file, strlen( $root ) );
+// Send the report on shutdown, so that it's sent even if the scenario exits
+register_shutdown_function( function() use ( $scenario ) {
+    // Whatever the scenario printed (including PHP errors) goes in the report, even from nested buffers
+    $output = '';
+    while( ob_get_level() > 0 ) {
+        $output = ob_get_clean() . $output;
     }
-}
 
-echo json_encode( array(
-    'scenario'  => $scenario,
-    'constants' => $constants,
-    'included'  => $included,
-), JSON_UNESCAPED_SLASHES );
+    // Report every YOURLS_* constant...
+    $constants = array_filter(
+        get_defined_constants( true )['user'],
+        function( $name ) { return str_starts_with( $name, 'YOURLS_' ); },
+        ARRAY_FILTER_USE_KEY
+    );
+
+    // ...and every included file below YOURLS_ABSPATH, relative to it
+    $root     = rtrim( str_replace( '\\', '/', YOURLS_ABSPATH ), '/' ) . '/';
+    $included = array();
+    foreach( get_included_files() as $file ) {
+        $file = str_replace( '\\', '/', $file );
+        if( str_starts_with( $file, $root ) ) {
+            $included[] = substr( $file, strlen( $root ) );
+        }
+    }
+
+    echo json_encode( array(
+        'scenario'  => $scenario,
+        'constants' => $constants,
+        'included'  => $included,
+        'output'    => $output,
+    ), JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE );
+} );
+
+ob_start();
+require $scenario_file;
