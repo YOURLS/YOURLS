@@ -1003,15 +1003,15 @@ function yourls_get_ssl_redirect_url(string $request_uri): string {
 /**
  * Get a remote page title
  *
- * This function returns a string: either the page title as defined in HTML, or the URL if not found
- * The function tries to convert funky characters found in titles to UTF8, from the detected charset.
- * Charset in use is guessed from HTML meta tag, or if not found, from server's 'content-type' response.
+ * This function returns a string: either the page title as defined in HTML, or the URL if not found.
+ * The title is extracted with the native HTML5 parser on PHP 8.4+, or with regular expressions
+ * on older versions. In both cases it is returned as UTF-8 text.
  *
  * @since 1.5
  * @param string $url URL
  * @return string Title (sanitized) or the URL if no title found
  */
-function yourls_get_remote_title(string $url ): string {
+function yourls_get_remote_title( string $url ): string {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_get_remote_title', yourls_shunt_default(), $url );
     if ( yourls_shunt_default() !== $pre ) {
@@ -1038,8 +1038,6 @@ function yourls_get_remote_title(string $url ): string {
         $ssrf_options = yourls_http_options_no_local_redirect();
     }
 
-    $title = $charset = false;
-
     $max_bytes = yourls_apply_filter( 'get_remote_title_max_byte', 32768 ); // limit data fetching to 32K in order to find a <title> tag
 
     $response = yourls_http_get( $url, [], [], array_merge( [ 'max_bytes' => $max_bytes ], $ssrf_options ) ); // can be a Request object or an error string
@@ -1053,15 +1051,90 @@ function yourls_get_remote_title(string $url ): string {
         return $url;
     }
 
-    // look for <title>, which can have attributes. No title found? Return the URL
-    // The match is anchored on the first '<title' to keep the search time linear -- see issue #4206
-    $title_pos = stripos( $content, '<title' );
-    if ( $title_pos !== false && preg_match( '/\G<title(?:\s[^>]*)?>(.*?)<\/title>/is', $content, $found, 0, $title_pos ) ) {
-        $title = $found[ 1 ];
+    // Charset as (and if) defined by the server response
+    // The charset value can be a quoted string: 'text/html; charset="utf-8"'
+    $header_charset = null;
+    $content_type   = current( (array)$response->headers->getValues( 'content-type' ) );
+    if ( is_string( $content_type ) && preg_match( '/charset=(\S+)/', $content_type, $found ) ) {
+        $_charset = trim( $found[ 1 ], ';"\'' );
+        if ( yourls_is_valid_charset( $_charset ) ) {
+            $header_charset = $_charset;
+        }
         unset( $found );
     }
-    if ( !$title ) {
+
+    // Use the native HTML5 parser when available, fall back on regular expressions otherwise
+    if ( class_exists( '\Dom\HTMLDocument' ) ) {
+        $title = yourls_get_html_title_DOM( $content, $header_charset );
+    } else {
+        $title = yourls_get_html_title_regex( $content, $header_charset );
+    }
+    if ( $title === null ) {
         return $url;
+    }
+
+    // Strip out evil things
+    $title = yourls_sanitize_title( $title, $url );
+
+    return yourls_apply_filter( 'get_remote_title', $title, $url );
+}
+
+/**
+ * Extract the title of an HTML document with the native HTML5 parser (PHP 8.4+)
+ *
+ * This is a helper function, not to be called directly. Use yourls_get_remote_title() instead.
+ *
+ * Encoding: the charset from the HTTP header if provided, otherwise the parser sniffs it
+ * from the content (BOM, <meta> declaration), defaulting to UTF-8 (as suggested by the
+ * HTML spec, ie what a browser would display)
+ *
+ * @since 1.10.7
+ * @param string      $html            HTML content
+ * @param string|null $header_charset  Charset declared in the Content-Type response header, if any
+ * @return string|null                 Title as UTF-8 text, or null if none found
+ */
+function yourls_get_html_title_DOM(string $html, ?string $header_charset = null ): ?string {
+    try {
+        // LIBXML_NOERROR silences tree construction warnings on crappy markup
+        $dom = \Dom\HTMLDocument::createFromString( $html, LIBXML_NOERROR, $header_charset );
+    } catch ( \ValueError $e ) {
+        // Charset unknown to the parser: let it sniff the encoding from the content
+        $dom = \Dom\HTMLDocument::createFromString( $html, LIBXML_NOERROR );
+    }
+
+    // Find first <title> in the HTML namespace (an SVG <title> is ignored),
+    // entities decoded, whitespace stripped and collapsed
+    $title = $dom->title;
+
+    return $title !== '' ? $title : null;
+}
+
+/**
+ * Extract the title of an HTML document with regular expressions (fallback for PHP < 8.4)
+ *
+ * This is a helper function, not to be called directly. Use yourls_get_remote_title() instead.
+ *
+ * Encoding: the charset from the HTML <meta> tag if any, otherwise the one from the HTTP
+ * header, and the title is converted from it to UTF-8.
+ *
+ * TODO: Deprecate this function when PHP 8.4+ is required
+ *
+ * @since 1.10.7
+ * @param string      $html            HTML content
+ * @param string|null $header_charset  Charset declared in the Content-Type response header, if any
+ * @return string|null                 Title as UTF-8 text, or null if none found
+ */
+function yourls_get_html_title_regex( string $html, ?string $header_charset = null ): ?string {
+    // Look for <title>, which can have attributes. No title found? Return null
+    // The match is anchored on the first '<title' to keep the search time linear -- see issue #4206
+    $title_pos = stripos( $html, '<title' );
+    if ( $title_pos === false || !preg_match( '/\G<title(?:\s[^>]*)?>(.*?)<\/title>/is', $html, $found, 0, $title_pos ) ) {
+        return null;
+    }
+    $title = $found[ 1 ];
+    unset( $found );
+    if ( $title === '' ) {
+        return null;
     }
 
     // Now we have a title. We'll try to get proper utf8 from it.
@@ -1071,7 +1144,8 @@ function yourls_get_remote_title(string $url ): string {
     // or <meta charset='utf-8'> and all possible variations: see https://gist.github.com/ozh/7951236
     // A 'charset=' string can also appear where it does not declare anything, for instance in the
     // description of the page, so check each <meta> tag and to find if a charset is declared.
-    if ( preg_match_all( '/<meta\s[^>]*>/is', $content, $metas ) ) {
+    $charset = null;
+    if ( preg_match_all( '/<meta\s[^>]*>/is', $html, $metas ) ) {
         foreach ( $metas[ 0 ] as $meta ) {
             if ( preg_match( '/\bcontent\s*=\s*["\']?[^"\']*?charset\s*=["\' ]*([a-zA-Z0-9\-_]+)/is', $meta, $found ) ) {
                 // A charset in the 'content' attribute only counts in a Content-Type declaration
@@ -1091,38 +1165,23 @@ function yourls_get_remote_title(string $url ): string {
             break;
         }
     }
-    if ( empty( $charset ) ) {
-        // No charset found in HTML. Get charset as (and if) defined by the server response
-        $_charset = current( (array)$response->headers->getValues( 'content-type' ) );
-        // The charset value can be a quoted string: 'text/html; charset="utf-8"'
-        if ( preg_match( '/charset=(\S+)/', $_charset, $found ) ) {
-            $_charset = trim( $found[ 1 ], ';"\'' );
-            if ( yourls_is_valid_charset( $_charset ) ) {
-                $charset = $_charset;
-            }
-            unset( $found );
-        }
-    }
 
-    // Conversion to utf-8 if what we have is not utf8 already. A page can also declare utf-8 and
+    // No charset found in HTML: use the one from the server response, if any
+    $charset ??= $header_charset;
+
+    // Convert title to UTF-8 if we have a charset. A page can also declare utf-8 and
     // still serve invalid utf-8, so in that case convert too, to replace the invalid characters.
-    if ( function_exists( 'mb_convert_encoding' ) ) {
-        if ( $charset && strtolower( $charset ) != 'utf-8' ) {
-            $title = mb_convert_encoding( $title, 'UTF-8', $charset );
-        }
-        elseif ( !mb_check_encoding( $title, 'UTF-8' ) ) {
-            $title = mb_convert_encoding( $title, 'UTF-8' );
-        }
+    if ( $charset !== null && strtolower( $charset ) !== 'utf-8' ) {
+        $title = mb_convert_encoding( $title, 'UTF-8', $charset );
+    } elseif ( !mb_check_encoding( $title, 'UTF-8' ) ) {
+        $title = mb_convert_encoding( $title, 'UTF-8' );
     }
 
     // Remove HTML entities
-    $title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
-
-    // Strip out evil things
-    $title = yourls_sanitize_title( $title, $url );
-
-    return (string)yourls_apply_filter( 'get_remote_title', $title, $url );
+    return html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
 }
+
+
 
 /**
  * Is supported charset encoding for conversion.
