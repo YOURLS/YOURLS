@@ -108,6 +108,7 @@ if ( !empty($where['sql']) ) {
 // This is a bookmarklet
 if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
     $is_bookmark = true;
+    $json_flags  = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     yourls_do_action( 'bookmarklet' );
 
     // No sanitization needed here: everything happens in yourls_add_new_link()
@@ -133,7 +134,7 @@ if ( isset( $_GET['u'] ) or isset( $_GET['up'] ) ) {
     if( isset( $_GET['jsonp'] ) && $_GET['jsonp'] == 'yourls' ) {
         $short   = $return['shorturl'] ? $return['shorturl'] : '';
         $message = $return['message'];
-        $json    = json_encode( array( 'short_url' => $short, 'message' => $message ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+        $json    = json_encode( array( 'short_url' => $short, 'message' => $message ), $json_flags );
         yourls_content_type_header( 'application/javascript' );
         echo yourls_apply_filter( 'bookmarklet_jsonp', "yourls_callback($json);" );
 
@@ -269,7 +270,6 @@ yourls_html_addnew();
 if ( !$is_bookmark ) {
     yourls_share_box( '', '', '', '', '', '', true );
 } else {
-    $json_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     echo '<script type="text/javascript">$(document).ready(function(){
         feedback( ' . json_encode( $return['message'], $json_flags ) . ', ' . json_encode( $return['status'], $json_flags ) . ' );
         init_clipboard();
