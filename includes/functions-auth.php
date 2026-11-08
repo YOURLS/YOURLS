@@ -104,7 +104,7 @@ function yourls_is_valid_user() {
             if( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
                 // The return makes sure we exit this function before waiting for redirection.
                 // See #3189 and note in yourls_redirect()
-                return yourls_redirect( yourls_sanitize_url_safe($_SERVER['REQUEST_URI']) );
+                return yourls_redirect( yourls_get_login_redirect_url($_SERVER['REQUEST_URI']) );
             }
         }
 
@@ -120,6 +120,28 @@ function yourls_is_valid_user() {
     } else {
         return yourls__( 'Please log in' );
     }
+}
+
+/**
+ * Get the URL to redirect to after a successful login form submission
+ *
+ * The login form posts to the current page, so the browser is already on the right URL. We return a
+ * URL relative to it (eg '/admin/upgrade.php' -> './upgrade.php'), so this works even behind a reverse proxy
+ * that rewrites the path. See #3781
+ *
+ * @since 1.10.7
+ * @param string $request_uri Requested URI, typically $_SERVER['REQUEST_URI']
+ * @return string Relative URL, sanitized
+ */
+function yourls_get_login_redirect_url(string $request_uri): string {
+    $parts = explode('?', $request_uri, 2);
+    $path  = $parts[0];
+    $query = isset($parts[1]) ? '?' . $parts[1] : '';
+
+    $slash   = strrpos($path, '/');
+    $segment = $slash === false ? $path : substr($path, $slash + 1);
+
+    return yourls_sanitize_url_safe('./' . $segment . $query);
 }
 
 /**
