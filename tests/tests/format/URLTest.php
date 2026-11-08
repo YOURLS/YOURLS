@@ -177,13 +177,7 @@ class URLTest extends PHPUnit\Framework\TestCase {
     }
 
     /**
-     * Schemes written with HTML character references must not bypass the protocol allow-list.
-     *
-     * A browser decodes character references when the URL is used in an href, so an encoded
-     * scheme such as "javascript&#58;" is executable just like "javascript:". The decoded value
-     * must be checked against the allow-list for both storage and display.
-     *
-     * @since 1.10.7
+     * Schemes hidden behind HTML character references or ignored characters
      */
     static function list_of_entity_encoded_schemes(): \Iterator
     {
@@ -193,25 +187,43 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield 'uppercase hex entity'     => array( 'javascript&#X3A;alert(1)' );
         yield 'entities in scheme name'  => array( '&#x6a;avascript&#x3a;alert(1)' );
         yield 'numeric entity in scheme' => array( '&#106;avascript&#58;alert(1)' );
+        yield 'numeric, no semicolon'    => array( 'javascript&#58alert(1)' );
+        yield 'hex, no semicolon'        => array( '&#x6a&#x61vascript:alert(1)' );
         yield 'tab entity in scheme'     => array( 'java&#x09;script:alert(1)' );
+        yield 'newline entity in scheme' => array( 'java&NewLine;script:alert(1)' );
         yield 'named colon entity'       => array( 'javascript&colon;alert(1)' );
         yield 'leading space entity'     => array( '&#32;javascript:alert(1)' );
         yield 'data scheme'              => array( 'data&#58;text/html,alert(1)' );
     }
 
     /**
-     * Entity-encoded schemes are rejected for storage and cannot reach an href
+     * Entity-encoded schemes are rejected, for storage and for display
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('list_of_entity_encoded_schemes')]
     function test_entity_encoded_scheme_is_rejected( $url ) {
-        // Storage / redirection: the value must be discarded, exactly like a literal "javascript:"
-        $this->assertEquals( '', yourls_sanitize_url( $url ) );
+        $this->assertSame( '', yourls_sanitize_url( $url ) );
+        $this->assertSame( '', yourls_esc_url( $url ) );
+    }
 
-        // Display: whatever is returned must not be decoded by a browser into an executable scheme.
-        // Drop the characters a URL parser ignores before matching, as the browser would.
-        $escaped = yourls_esc_url( $url );
-        $decoded = preg_replace( '/[\x00-\x20\x7F]/', '', html_entity_decode( $escaped, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
-        $this->assertDoesNotMatchRegularExpression( '/^(javascript|data|vbscript):/i', $decoded );
+    /**
+     * Character references outside the scheme don't make a valid URL rejected
+     */
+    function test_entity_outside_scheme_is_kept() {
+        $this->assertSame( 'http://example.com/a&#58;b', yourls_sanitize_url( 'http://example.com/a&#58;b' ) );
+        $this->assertSame( 'http://example.com/?a=1&#38;b=2', yourls_sanitize_url( 'http://example.com/?a=1&#38;b=2' ) );
+        $this->assertSame( 'http://example.com/?a=1&#038;b=2', yourls_esc_url( 'http://example.com/?a=1&b=2' ) );
+        $this->assertSame( 'example.com/page&#58;1', yourls_sanitize_url( 'example.com/page&#58;1' ) );
+    }
+
+    /**
+     * Decoding is done once, like a browser does
+     */
+    function test_decode_url_for_protocol_check() {
+        $this->assertSame( 'javascript:alert(1)', yourls_decode_url_for_protocol_check( 'javascript&#58;alert(1)' ) );
+        $this->assertSame( 'javascript:alert(1)', yourls_decode_url_for_protocol_check( 'javascript&#58alert(1)' ) );
+        $this->assertSame( 'javascript:alert(1)', yourls_decode_url_for_protocol_check( ' &#9;java&#x0A;script&colon;alert(1)' ) );
+        $this->assertSame( 'javascript&#58;alert(1)', yourls_decode_url_for_protocol_check( 'javascript&#38;#58;alert(1)' ) );
+        $this->assertSame( 'http://example.com/', yourls_decode_url_for_protocol_check( 'http://example.com/' ) );
     }
 
     /**
