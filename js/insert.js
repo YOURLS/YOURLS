@@ -61,8 +61,8 @@ function add_link() {
 function toggle_share_fill_boxes( url, shorturl, title ) {
 	$('#copylink').val( shorturl );
 	$('#titlelink').val( title );
-	$('#origlink').attr( 'href', url ).html( url );
-	$('#statlink').attr( 'href', shorturl+'+' ).html( shorturl+'+' );
+	$('#origlink').attr( 'href', url ).text( url );
+	$('#statlink').attr( 'href', shorturl+'+' ).text( shorturl+'+' );
 	var tweet = ( title ? title + ' ' + shorturl : shorturl );
 	$('#tweet_body').val( tweet ).keypress();
 	$('#shareboxes').slideDown( '300', function(){ init_clipboard(); } ); // clipboard re-initialized after slidedown to make sure the invisible Flash element is correctly positionned
