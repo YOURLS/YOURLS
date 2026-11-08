@@ -18,7 +18,7 @@ switch( $action ) {
 
     case 'add':
         yourls_verify_nonce( 'add_url', $_REQUEST['nonce'], false, 'omg error' );
-        $row_id = $_REQUEST['rowid'] ?? 1;  // row_id starts from 1 unless passed in.
+        $row_id = (int) ( $_REQUEST['rowid'] ?? 1 ); // row_id starts from 1 unless passed in.
         $return = yourls_add_new_link( $_REQUEST['url'], $_REQUEST['keyword'], '', $row_id );
         echo json_encode($return);
         break;
