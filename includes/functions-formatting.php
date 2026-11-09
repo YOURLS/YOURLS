@@ -658,6 +658,10 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
         $url = yourls_deep_replace( $strip, $url );
     }
 
+    // Decode the URL as a browser would, to check its scheme below. Do it before the display
+    // escaping, which can only disarm references: this way display and storage reject the same URLs.
+    $protocol_url = yourls_decode_url_for_protocol_check( $url );
+
     // Replace ampersands and single quotes only when displaying.
     if ( 'display' == $context ) {
         $url = yourls_kses_normalize_entities( $url );
@@ -665,21 +669,47 @@ function yourls_esc_url( $url, $context = 'display', $protocols = array() ) {
         $url = str_replace( "'", '&#039;', $url );
     }
 
-    // If there's a protocol, make sure it's OK
-    if( yourls_get_protocol($url) !== '' ) {
+    // If there's a protocol, make sure it's OK. Check the decoded URL, so an encoded scheme
+    // (eg "javascript&#58;") cannot bypass the allowed list
+    if( yourls_get_protocol($protocol_url) !== '' ) {
         if ( ! is_array( $protocols ) or ! $protocols ) {
             global $yourls_allowedprotocols;
             $protocols = yourls_apply_filter( 'esc_url_protocols', $yourls_allowedprotocols );
             // Note: $yourls_allowedprotocols is also globally filterable in functions-kses.php/yourls_kses_init()
         }
 
-        if ( !yourls_is_allowed_protocol( $url, $protocols ) )
+        if ( !yourls_is_allowed_protocol( $protocol_url, $protocols ) )
             return '';
 
         // I didn't use KSES function kses_bad_protocol() because it doesn't work the way I liked (returns //blah from illegal://blah)
     }
 
     return yourls_apply_filter( 'esc_url', $url, $original_url, $context );
+}
+
+/**
+ * Decode a URL before we read the scheme
+ *
+ * This returns the URL as the browser sees it, to be used only to check the scheme with yourls_get_protocol(),
+ * never as the URL itself.
+ * Control characters and spaces are removed everywhere, which is stricter than a browser.
+ *
+ * @since 1.10.7
+ * @param string $url URL
+ * @return string Decoded URL
+ */
+function yourls_decode_url_for_protocol_check(string $url): string {
+    // Single pass: a browser decodes references once, so "&#38;#58;" must give "&#58;", not ":"
+    $url = preg_replace_callback(
+        '/&(#[xX][0-9a-fA-F]+|#[0-9]+|[a-zA-Z][a-zA-Z0-9]*);?/',
+        function (array $matches): string {
+            return html_entity_decode('&' . $matches[1] . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        },
+        $url
+    );
+
+    // Remove control characters (\x00 NUL, \x09 tab, \x0A line feed, ...) and \x7F delete
+    return preg_replace('/[\x00-\x20\x7F]/', '', $url);
 }
 
 /**

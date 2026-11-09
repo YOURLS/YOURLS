@@ -78,7 +78,7 @@ class NonceTest extends PHPUnit\Framework\TestCase {
         yourls_add_action( 'pre_yourls_die', function() { throw new Exception( 'I have died' ); } );
 
         // This should trigger yourls_die()
-        $this->assertTrue(yourls_verify_nonce(rand_str(), rand_str(), rand_str()));
+        yourls_verify_nonce(rand_str(), rand_str(), rand_str());
     }
 
     /**
