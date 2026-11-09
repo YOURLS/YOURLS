@@ -24,6 +24,24 @@ class CaBundle
     private static $caPath;
     /** @var array<string, bool> */
     private static $caFileValidity = array();
+    /**
+     * SHA-256 of the DER encoded SubjectPublicKeyInfo of distrusted (e.g. compromised) intermediates
+     *
+     * Matching on the key also catches cross-signed copies of the same intermediate.
+     *
+     * @var array<string, string>
+     */
+    private static $distrustedSpkiSha256 = array(
+        // eMudhra intermediates with compromised keys, revoked 2026-10-18 (cross-signed by Sectigo's AAA Certificate Services)
+        'e0254c7fcdc265e2f0f8a428dabb75ab4ae039b4872d62f5ee57f0877d5a8a41' => 'EM EV TLS CA - G3B',
+        '43bffa19d6ef651451f6841e019931e96f6f2eaeff28ab4b6f1ce4576de2717b' => 'EM OV TLS CA - G3B',
+        'ebed6475c2c2d80fcb199f3fe8dd6e6b3ce60b77eb15d4e42c3dec0c6f5b5105' => 'EM DV TLS CA - G3B',
+        '5c0660a2b164910d8ff589c18e14552e9e0ec237dcefe2cb736d41a4811f81a0' => 'EM EV TLS CA - G3C',
+        '63ecefee431d49523bc1136c4e72d0206a477086caf606cd5cf025686c109cf8' => 'EM OV TLS CA - G3C',
+        '49dd353dc2b919a3770645117d0e60c16115e7d1bc259eefe734b00ea434fe5f' => 'EM DV TLS CA - G3C',
+        'ec4ffa1ad0ac88081314b7aaffef6a91f97cd57291bb5ba686c5415f5eb4f6b6' => 'EM OV CS CA - G3B',
+        '92c063d67e8f14db71d288e11266ffdaf69cbf115f7bab14f3bc2f68d25e0e30' => 'EM OV CS CA - G3C',
+    );
 
     /**
      * Returns the system CA bundle path, or a path to the bundled one
@@ -195,6 +213,154 @@ class CaBundle
     public static function isOpensslParseSafe()
     {
         return true;
+    }
+
+    /**
+     * Looks for distrusted intermediates in a certificate chain presented by a server
+     *
+     * The system CA store may still trust the roots above them, so they need to be rejected by the client.
+     *
+     * @param  array<mixed> $chain PEM strings, or X.509 certificates as captured by the peer_certificate_chain stream context option
+     * @return string|null  name of the first distrusted certificate found in the chain
+     */
+    public static function findDistrustedCertificate(array $chain)
+    {
+        foreach ($chain as $cert) {
+            if (self::isX509Certificate($cert)) {
+                if (!function_exists('openssl_x509_export') || !openssl_x509_export($cert, $pem)) {
+                    continue;
+                }
+                $cert = $pem;
+            } elseif (!is_string($cert)) {
+                continue;
+            }
+
+            foreach (self::pemToDer($cert) as $der) {
+                $spki = self::extractSpki($der);
+                if (null !== $spki && isset(self::$distrustedSpkiSha256[$hash = hash('sha256', $spki)])) {
+                    return self::$distrustedSpkiSha256[$hash];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks for an OpenSSLCertificate (PHP 8+) or OpenSSL X.509 resource (PHP < 8)
+     *
+     * @param  mixed $cert
+     * @return bool
+     */
+    private static function isX509Certificate($cert)
+    {
+        return $cert instanceof \OpenSSLCertificate || (is_resource($cert) && get_resource_type($cert) === 'OpenSSL X.509');
+    }
+
+    /**
+     * @param  string       $pem one or more PEM encoded certificates
+     * @return list<string>
+     */
+    private static function pemToDer($pem)
+    {
+        $ders = array();
+        $offset = 0;
+        while (false !== ($start = strpos($pem, '-----BEGIN CERTIFICATE-----', $offset))) {
+            $start += strlen('-----BEGIN CERTIFICATE-----');
+            $end = strpos($pem, '-----END CERTIFICATE-----', $start);
+            if (false === $end) {
+                break;
+            }
+            $offset = $end + strlen('-----END CERTIFICATE-----');
+
+            $der = base64_decode(substr($pem, $start, $end - $start), true);
+            if (false !== $der) {
+                $ders[] = $der;
+            }
+        }
+
+        return $ders;
+    }
+
+    /**
+     * Walks the DER structure by hand as parsing the key with ext-openssl costs ~0.3ms per certificate
+     *
+     * Certificate ::= SEQUENCE { tbsCertificate SEQUENCE { [0] version OPTIONAL, serialNumber, signature, issuer, validity, subject, subjectPublicKeyInfo, ... }, ... }
+     *
+     * @param  string $der
+     * @return string|null
+     */
+    private static function extractSpki($der)
+    {
+        $offset = 0;
+        // enter Certificate and tbsCertificate
+        for ($i = 0; $i < 2; $i++) {
+            if (!self::isSequenceAt($der, $offset) || null === self::readDerHeader($der, $offset)) {
+                return null;
+            }
+        }
+
+        $fieldsToSkip = isset($der[$offset]) && ord($der[$offset]) === 0xA0 ? 6 : 5;
+        for ($i = 0; $i < $fieldsToSkip; $i++) {
+            $length = self::readDerHeader($der, $offset);
+            if (null === $length) {
+                return null;
+            }
+            $offset += $length;
+        }
+
+        $start = $offset;
+        if (!self::isSequenceAt($der, $offset)) {
+            return null;
+        }
+        $length = self::readDerHeader($der, $offset);
+        if (null === $length) {
+            return null;
+        }
+
+        return substr($der, $start, $offset - $start + $length);
+    }
+
+    /**
+     * @param  string $der
+     * @param  int    $offset
+     * @return bool
+     */
+    private static function isSequenceAt($der, $offset)
+    {
+        return isset($der[$offset]) && ord($der[$offset]) === 0x30;
+    }
+
+    /**
+     * Reads the tag and length at $offset, moving $offset to the start of the contents
+     *
+     * @param  string   $der
+     * @param  int      $offset
+     * @return int|null length of the contents
+     * @phpstan-impure
+     */
+    private static function readDerHeader($der, &$offset)
+    {
+        // high tag numbers (multi-byte tags) do not occur in the fields we walk
+        if (!isset($der[$offset + 1]) || (ord($der[$offset]) & 0x1F) === 0x1F) {
+            return null;
+        }
+
+        $length = ord($der[$offset + 1]);
+        $offset += 2;
+        if (($length & 0x80) !== 0) {
+            // max 3 length bytes (16MB) so the length cannot overflow on 32-bit PHP
+            $bytes = $length & 0x7F;
+            if ($bytes === 0 || $bytes > 3 || !isset($der[$offset + $bytes - 1])) {
+                return null;
+            }
+            $length = 0;
+            for ($i = 0; $i < $bytes; $i++) {
+                $length = ($length << 8) | ord($der[$offset++]);
+            }
+        }
+
+        return $offset + $length <= strlen($der) ? $length : null;
     }
 
     /**
