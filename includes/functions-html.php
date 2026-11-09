@@ -554,17 +554,20 @@ function yourls_die( string $message = '', string $title = '', int $header_code 
  * @param string $id
  * @return string HTML of the edit row
  */
-function yourls_table_edit_row( $keyword, $id ) {
+function yourls_table_edit_row(string $keyword, string $id): string {
     $keyword = yourls_sanitize_keyword($keyword);
     $url = yourls_get_keyword_longurl( $keyword );
     $title = htmlspecialchars( yourls_get_keyword_title( $keyword ) );
     $safe_url = yourls_esc_attr( $url );
     $safe_title = yourls_esc_attr( $title );
-    $safe_keyword = yourls_esc_attr( $keyword );
+    // Always encode '&' so that entity-like keywords (eg 'some&amp;') are read back by the browser as the original
+    // keyword, not the entity. See #3697
+    $safe_keyword = htmlspecialchars($keyword, ENT_QUOTES);
 
     // Make strings sprintf() safe: '%' -> '%%'
     $safe_url = str_replace( '%', '%%', $safe_url );
     $safe_title = str_replace( '%', '%%', $safe_title );
+    $safe_keyword = str_replace('%', '%%', $safe_keyword);
 
     $www = yourls_link();
 
@@ -692,7 +695,7 @@ function yourls_table_add_row( string $keyword, string $url, string $title, stri
             'template' => '%actions% <input type="hidden" id="keyword_%id%" value="%keyword%"/>',
             'actions'  => $action_links,
             'id'       => $id,
-            'keyword'  => yourls_esc_attr( $keyword ),
+            'keyword'  => htmlspecialchars($keyword, ENT_QUOTES), // always encode '&', see yourls_table_edit_row()
         ),
     );
     $cells = yourls_apply_filter( 'table_add_row_cell_array', $cells, $keyword, $url, $title, $ip, $clicks, $timestamp );
