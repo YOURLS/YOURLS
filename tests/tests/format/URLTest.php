@@ -187,6 +187,9 @@ class URLTest extends PHPUnit\Framework\TestCase {
         yield 'uppercase hex entity'     => array( 'javascript&#X3A;alert(1)' );
         yield 'entities in scheme name'  => array( '&#x6a;avascript&#x3a;alert(1)' );
         yield 'numeric entity in scheme' => array( '&#106;avascript&#58;alert(1)' );
+        yield 'entity in scheme only'    => array( '&#106;avascript:alert(1)' );
+        yield 'padded entity in scheme'  => array( '&#0000106;avascript:alert(1)' );
+        yield 'entity in data scheme'    => array( '&#100;ata:text/html,alert(1)' );
         yield 'numeric, no semicolon'    => array( 'javascript&#58alert(1)' );
         yield 'hex, no semicolon'        => array( '&#x6a&#x61vascript:alert(1)' );
         yield 'tab entity in scheme'     => array( 'java&#x09;script:alert(1)' );
