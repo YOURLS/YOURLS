@@ -745,16 +745,16 @@ function yourls_hmac_algo() {
 /**
  * Create a time limited, action limited and user limited token
  *
- * @param string $action      Action to create nonce for
- * @param false|string $user  Optional user string, false for current user
+ * @param string      $action Action to create nonce for
+ * @param bool|string $user   Optional user string, false for current user
  * @return string             Nonce token
  */
-function yourls_create_nonce($action, $user = false ) {
+function yourls_create_nonce(string $action, bool|string $user = false ): string {
     if( false === $user ) {
         $user = defined('YOURLS_USER') ? YOURLS_USER : '-1';
     }
     $tick = yourls_tick();
-    $nonce = substr( yourls_salt($tick . $action . $user), 0, 10 );
+    $nonce = substr( yourls_salt($tick . '|' . $action . '|' . $user), 0, 10 );
     // Allow plugins to alter the nonce
     return yourls_apply_filter( 'create_nonce', $nonce, $action, $user );
 }
@@ -764,7 +764,7 @@ function yourls_create_nonce($action, $user = false ) {
  *
  * @param string $action      Action to create nonce for
  * @param string $name        Optional name of nonce field -- defaults to 'nonce'
- * @param false|string $user  Optional user string, false if unspecified
+ * @param bool|string $user  Optional user string, false if unspecified
  * @param bool $echo          True to echo, false to return nonce field
  * @return string             Nonce field
  */
