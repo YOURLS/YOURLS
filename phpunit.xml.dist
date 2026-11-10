@@ -5,7 +5,6 @@
     backupGlobals="false"
     stopOnFailure="true"
     cacheDirectory=".phpunit.cache"
-    cacheResult="true"
     bootstrap="tests/bootstrap.php"
     colors="true"
     displayDetailsOnTestsThatTriggerDeprecations="true"

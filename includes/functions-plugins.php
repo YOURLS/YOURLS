@@ -146,7 +146,7 @@ function yourls_add_action( $hook, $function_name, $priority = 10, $accepted_arg
  * @param  string|array|object $function  The callable used in a filter or action.
  * @return string  unique ID for usage as array key
  */
-function yourls_filter_unique_id($function) {
+function yourls_filter_unique_id(string|array|object $function): string {
     // If given a string (function name)
     if ( is_string( $function ) ) {
         return $function;
@@ -160,9 +160,9 @@ function yourls_filter_unique_id($function) {
         $function = (array)$function;
     }
 
-    // Object Class Calling
+    // Object Class Calling. The '#' keeps the ID non-numeric (closures have an empty method name)
     if ( is_object( $function[0] ) ) {
-        return spl_object_hash( $function[0] ).$function[1];
+        return spl_object_id( $function[0] ).'#'.$function[1];
     }
 
     // Last case, static Calling : $function[0] is a string (Class Name) and $function[1] is a string (Method Name)
