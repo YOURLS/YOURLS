@@ -127,12 +127,13 @@ function yourls_is_valid_user() {
  *
  * @return bool  true if login/pwd pair is valid (and sets user if applicable), false otherwise
  */
-function yourls_check_username_password() {
+function yourls_check_username_password(): bool {
     global $yourls_user_passwords;
 
-    // If login form (not API), check for nonce
+    // If login form (not API), check for nonce. The login form is shown to anonymous users, so its nonce is
+    // always for user '-1', even if YOURLS_USER is already defined by an earlier check, triggered by a plugin. See #4170
     if(!yourls_is_API()) {
-        yourls_verify_nonce('admin_login');
+        yourls_verify_nonce('admin_login', false, '-1');
     }
 
     if( isset( $yourls_user_passwords[ $_REQUEST['username'] ] ) && yourls_check_password_hash( $_REQUEST['username'], $_REQUEST['password'] ) ) {
