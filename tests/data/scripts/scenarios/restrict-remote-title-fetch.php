@@ -14,7 +14,7 @@ if( !defined( 'YOURLS_ABSPATH' ) ) die();
 
 $_REQUEST['username'] = 'yourls';
 $_REQUEST['password'] = 'secret-ci-test';
-$_REQUEST['nonce']    = yourls_create_nonce( 'admin_login' );
+$_REQUEST['nonce']    = yourls_create_nonce( 'admin_login', '-1' );
 
 yourls_maybe_require_auth();
 

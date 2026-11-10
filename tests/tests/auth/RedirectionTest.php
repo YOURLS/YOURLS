@@ -25,7 +25,7 @@ class RedirectionTest extends PHPUnit\Framework\TestCase {
      * Check that authentication on a webpage triggers a redirection
      */
     public function test_login() {
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login', '-1');
         $_SERVER['REQUEST_URI'] = '/';
         $this->assertSame( 3, yourls_is_valid_user(), sprintf('Could not auth with %s/%s', $_REQUEST['username'], $_REQUEST['password'] ) );
     }
