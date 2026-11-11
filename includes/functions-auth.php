@@ -21,9 +21,10 @@ function yourls_maybe_require_auth() {
 /**
  * Check for valid user via login form or stored cookie. Returns true or an error message
  *
- * @return bool|string|mixed true if valid user, error message otherwise. Can also call yourls_die() or redirect to login page. Oh my.
+ * @since 1.0
+ * @return mixed true if valid user, string of error message otherwise. Can also call yourls_die() or redirect to login page. Oh my.
  */
-function yourls_is_valid_user() {
+function yourls_is_valid_user(): mixed {
     // Allow plugins to short-circuit the whole function
     $pre = yourls_apply_filter( 'shunt_is_valid_user', yourls_shunt_default() );
     if ( yourls_shunt_default() !== $pre ) {
@@ -32,6 +33,9 @@ function yourls_is_valid_user() {
 
     // $unfiltered_valid : are credentials valid? Boolean value. It's "unfiltered" to allow plugins to eventually filter it.
     $unfiltered_valid = false;
+
+    // $auth_method : which auth method was attempted, if any
+    $auth_method = null;
 
     // Logout request
     if( isset( $_GET['action'] ) && $_GET['action'] == 'logout' && isset( $_REQUEST['nonce'] ) ) {
@@ -55,6 +59,7 @@ function yourls_is_valid_user() {
           isset( $_REQUEST['signature'] ) && !empty($_REQUEST['signature'] )
         )
         {
+            $auth_method = 'signature_timestamp';
             yourls_do_action( 'pre_login_signature_timestamp' );
             $unfiltered_valid = yourls_check_signature_timestamp();
         }
@@ -67,6 +72,7 @@ function yourls_is_valid_user() {
           isset( $_REQUEST['signature'] ) && !empty( $_REQUEST['signature'] )
         )
         {
+            $auth_method = 'signature';
             yourls_do_action( 'pre_login_signature' );
             $unfiltered_valid = yourls_check_signature();
         }
@@ -76,6 +82,7 @@ function yourls_is_valid_user() {
         ( isset( $_REQUEST['username'] ) && isset( $_REQUEST['password'] )
           && !empty( $_REQUEST['username'] ) && !empty( $_REQUEST['password']  ) )
         {
+            $auth_method = 'username_password';
             yourls_do_action( 'pre_login_username_password' );
             $unfiltered_valid = yourls_check_username_password();
         }
@@ -85,6 +92,7 @@ function yourls_is_valid_user() {
         ( !yourls_is_API() &&
           isset( $_COOKIE[ yourls_cookie_name() ] ) )
         {
+            $auth_method = 'cookie';
             yourls_do_action( 'pre_login_cookie' );
             $unfiltered_valid = yourls_check_auth_cookie();
         }
@@ -113,7 +121,15 @@ function yourls_is_valid_user() {
     }
 
     // Login failed
+    // This hook isn't named very well: it's called when credentials were sent and failed, but also when no credentials
+    // were sent at all (eg first visit to a private YOURLS site)
     yourls_do_action( 'login_failed' );
+
+    // Credentials were sent and failed: this was an actual login attempt that failed
+    if ( $auth_method !== null ) {
+        yourls_do_action( 'invalid_login', $auth_method );
+        yourls_do_action( 'invalid_login_' . $auth_method );
+    }
 
     if ( isset( $_REQUEST['username'] ) || isset( $_REQUEST['password'] ) ) {
         return yourls__( 'Invalid username or password' );
