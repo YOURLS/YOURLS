@@ -18,7 +18,8 @@ trait NewProcessTrait {
      * @param string $scenario   Scenario name, ie file scenarios/<name>.php
      * @param array  $constants  Constants to define before YOURLS boots, as $name => $value
      * @return array             Report with keys 'scenario', 'constants' (defined YOURLS_* constants,
-     *                           as $name => $value) and 'included' (files loaded, relative to YOURLS_ABSPATH)
+     *                           as $name => $value), 'included' (files loaded, relative to YOURLS_ABSPATH)
+     *                           and 'output' (what the scenario printed)
      */
     protected function run_in_new_process( $scenario, $constants = array() ) {
         if( !defined( 'YOURLS_PHP_BIN' ) ) {
@@ -37,7 +38,8 @@ trait NewProcessTrait {
 
         $this->assertSame( 0, $return, sprintf( "Scenario '%s' failed: %s\n%s", $scenario, $cmd, $output ) );
 
-        // The report is the last line: anything a scenario echoes before it is left alone
+        // The report is the last line. Scenario output is in the report, but a PHP error from the
+        // runner itself would still come before it
         $report = json_decode( substr( strrchr( "\n" . $output, "\n" ), 1 ), true );
 
         $this->assertIsArray( $report, sprintf( "Unexpected output for scenario '%s':\n%s", $scenario, $output ) );
