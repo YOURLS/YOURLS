@@ -16,6 +16,8 @@
 Check out the complete documentation on [docs.yourls.org](https://docs.yourls.org).  
 It contains everything from beginners to experts.
 
+Prefer a fully managed instance? [![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.svg)](https://dash.elest.io/deploy?soft=YOURLS&id=416)
+
 ## Community news, tips and tricks
 
 * Read and subscribe to the [The Official YOURLS Blog](http://blog.yourls.org)
