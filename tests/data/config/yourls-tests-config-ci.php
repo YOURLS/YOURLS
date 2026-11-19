@@ -12,7 +12,7 @@ define( 'YOURLS_DB_USER', 'root' );
 define( 'YOURLS_DB_PASS', 'secret' );
 define( 'YOURLS_DB_NAME', 'yourls_tests' );
 define( 'YOURLS_DB_HOST', '127.0.0.1:' . getenv('DB_PORT') );
-define( 'YOURLS_DB_PREFIX', 'yourls_' );
+define( 'YOURLS_DB_PREFIX', 'yourls-test_' );
 
 /*** Site options */
 define( 'YOURLS_PHP_BIN', 'php' );

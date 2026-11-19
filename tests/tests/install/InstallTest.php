@@ -49,9 +49,9 @@ class InstallTest extends PHPUnit\Framework\TestCase {
 
         $expected = array(
             'success' => array (
-                "Table 'yourls_url' created.",
-                "Table 'yourls_options' created.",
-                "Table 'yourls_log' created.",
+                "Table '" . YOURLS_DB_TABLE_URL . "' created.",
+                "Table '" . YOURLS_DB_TABLE_OPTIONS . "' created.",
+                "Table '" . YOURLS_DB_TABLE_LOG . "' created.",
                 "YOURLS tables successfully created.",
             ),
             'error' => array (

@@ -43,7 +43,7 @@ class Options {
     public function get_all_options() {
         // Get option values from DB
         $table = YOURLS_DB_TABLE_OPTIONS;
-        $sql = "SELECT option_name, option_value FROM $table WHERE 1=1";
+        $sql = "SELECT option_name, option_value FROM `$table` WHERE 1=1";
 
         try {
             $options = (array) $this->ydb->fetchPairs($sql);
@@ -102,7 +102,7 @@ class Options {
 
         // Get option value from DB
         $table = YOURLS_DB_TABLE_OPTIONS;
-        $sql = "SELECT option_value FROM $table WHERE option_name = :option_name LIMIT 1";
+        $sql = "SELECT option_value FROM `$table` WHERE option_name = :option_name LIMIT 1";
         $bind = array('option_name' => $name);
 
         // Use fechOne() to get array('option_value'=>$value), or false if not found.
@@ -161,7 +161,7 @@ class Options {
 
         $_newvalue = yourls_maybe_serialize($newvalue);
         $table = YOURLS_DB_TABLE_OPTIONS;
-        $sql  = "UPDATE $table SET option_value = :value WHERE option_name = :name";
+        $sql  = "UPDATE `$table` SET option_value = :value WHERE option_name = :name";
         $bind = array('name' => $name, 'value' => $_newvalue);
         $do   = $this->ydb->fetchAffected($sql, $bind);
 
@@ -206,7 +206,7 @@ class Options {
 
         $table = YOURLS_DB_TABLE_OPTIONS;
         $_value = yourls_maybe_serialize($value);
-        $sql  = "INSERT INTO $table (option_name, option_value) VALUES (:name, :value)";
+        $sql  = "INSERT INTO `$table` (option_name, option_value) VALUES (:name, :value)";
         $bind = array('name' => $name, 'value' => $_value);
         $do   = $this->ydb->fetchAffected($sql, $bind);
 
@@ -237,7 +237,7 @@ class Options {
         }
 
         $table = YOURLS_DB_TABLE_OPTIONS;
-        $sql = "DELETE FROM $table WHERE option_name = :name";
+        $sql = "DELETE FROM `$table` WHERE option_name = :name";
         $bind = array('name' => $name);
         $do   = $this->ydb->fetchAffected($sql, $bind);
 
