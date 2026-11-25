@@ -19,15 +19,18 @@ function yourls_meta_ensure_table() {
         return;
     }
     $done = true;
-    $ydb = yourls_get_db( 'write-meta_ensure_table' );
-    $ydb->perform(
-        'CREATE TABLE IF NOT EXISTS `' . YOURLS_DB_TABLE_META . '` ('.
-        '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT \'\','.
-        '`description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
-        '`image` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
-        'PRIMARY KEY (`keyword`)'.
-        ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;'
-    );
+    try {
+        yourls_get_db( 'write-meta_ensure_table' )->perform(
+            'CREATE TABLE IF NOT EXISTS `' . YOURLS_DB_TABLE_META . '` ('.
+            '`keyword` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT \'\','.
+            '`description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
+            '`image` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,'.
+            'PRIMARY KEY (`keyword`)'.
+            ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;'
+        );
+    } catch( \Throwable $e ) {
+        // Metadata is optional: never break link operations (eg DB user without CREATE privilege)
+    }
 }
 
 /**
@@ -73,10 +76,14 @@ function yourls_sanitize_link_image( $image ):string {
 function yourls_get_link_meta( $keyword ):array {
     yourls_meta_ensure_table();
     $keyword = yourls_sanitize_keyword( $keyword );
-    $row = yourls_get_db( 'read-get_link_meta' )->fetchObject(
-        'SELECT `description`, `image` FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword',
-        [ 'keyword' => $keyword ]
-    );
+    try {
+        $row = yourls_get_db( 'read-get_link_meta' )->fetchObject(
+            'SELECT `description`, `image` FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword',
+            [ 'keyword' => $keyword ]
+        );
+    } catch( \Throwable $e ) {
+        $row = false;
+    }
     return [
         'description' => $row ? (string) $row->description : '',
         'image'       => $row ? (string) $row->image : '',
@@ -96,16 +103,20 @@ function yourls_set_link_meta( $keyword, $description = '', $image = '' ) {
     $keyword     = yourls_sanitize_keyword( $keyword );
     $description = yourls_sanitize_link_description( $description );
     $image       = yourls_sanitize_link_image( $image );
-    $ydb         = yourls_get_db( 'write-set_link_meta' );
-    if( $description === '' && $image === '' ) {
-        $ydb->perform( 'DELETE FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword', [ 'keyword' => $keyword ] );
-        return;
+    try {
+        $ydb = yourls_get_db( 'write-set_link_meta' );
+        if( $description === '' && $image === '' ) {
+            $ydb->perform( 'DELETE FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword', [ 'keyword' => $keyword ] );
+            return;
+        }
+        $ydb->perform(
+            'INSERT INTO `' . YOURLS_DB_TABLE_META . '` (`keyword`, `description`, `image`) VALUES (:keyword, :description, :image) ' .
+            'ON DUPLICATE KEY UPDATE `description` = VALUES(`description`), `image` = VALUES(`image`)',
+            [ 'keyword' => $keyword, 'description' => $description, 'image' => $image ]
+        );
+    } catch( \Throwable $e ) {
+        // optional data: ignore
     }
-    $ydb->perform(
-        'INSERT INTO `' . YOURLS_DB_TABLE_META . '` (`keyword`, `description`, `image`) VALUES (:keyword, :description, :image) ' .
-        'ON DUPLICATE KEY UPDATE `description` = VALUES(`description`), `image` = VALUES(`image`)',
-        [ 'keyword' => $keyword, 'description' => $description, 'image' => $image ]
-    );
 }
 
 /**
@@ -115,11 +126,14 @@ function yourls_set_link_meta( $keyword, $description = '', $image = '' ) {
  * @return void
  */
 function yourls_delete_link_meta( $keyword ) {
-    yourls_meta_ensure_table();
-    yourls_get_db( 'write-delete_link_meta' )->perform(
-        'DELETE FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword',
-        [ 'keyword' => yourls_sanitize_keyword( $keyword ) ]
-    );
+    try {
+        yourls_get_db( 'write-delete_link_meta' )->perform(
+            'DELETE FROM `' . YOURLS_DB_TABLE_META . '` WHERE `keyword` = :keyword',
+            [ 'keyword' => yourls_sanitize_keyword( $keyword ) ]
+        );
+    } catch( \Throwable $e ) {
+        // table not created yet, or no privilege: nothing to clean, and deleting a link must never fail because of it
+    }
 }
 
 // Clean up metadata when a link is deleted
