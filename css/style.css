@@ -49,6 +49,7 @@ a:hover { color: var(--brand); text-decoration: underline; }
 	border-right: 1px solid var(--border); box-shadow: 2px 0 12px rgba(0,0,0,.04);
 	flex-shrink: 0; position: relative; z-index: 1030; transition: transform .3s ease;
 }
+#main-content > * { flex-shrink: 0; }
 #main-content { flex-grow: 1; min-width: 0; overflow-y: auto; padding: 24px 28px; background: var(--bg); position: relative; display: flex; flex-direction: column; }
 #wrap { width: 100%; max-width: 1400px; margin: 0 auto; min-height: 150px; padding: 0; background: transparent; border: 0; }
 #app-container > #wrap { margin: 20px auto; padding: 0 20px; overflow-y: auto; }
@@ -151,11 +152,11 @@ dialog[open] { animation: dlg-in .18s ease-out; }
 td.url small a { color: var(--faint); }
 
 /* ── Mã QR nhỏ trong bảng ── */
-.qr-thumb { width: 40px; height: 40px; flex-shrink: 0; background: #fff; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: zoom-in; image-rendering: pixelated; vertical-align: middle; }
+.qr-thumb { width: 44px; height: 44px; flex-shrink: 0; background: #fff; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: zoom-in; image-rendering: pixelated; vertical-align: middle; }
 .qr-thumb:not([src]) { background: var(--surface-3); }
 .qr-thumb.qr-result { width: 96px; height: 96px; }
-td.keyword { white-space: nowrap; }
-td.keyword .qr-thumb { margin-left: 10px; }
+td.qr { width: 1%; white-space: nowrap; }
+td.keyword { white-space: nowrap; font-weight: 600; }
 
 /* ── Thanh lọc / tìm kiếm / sắp xếp (trên bảng) ── */
 #filter_form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin: 0 0 12px; box-shadow: var(--shadow); }
@@ -190,26 +191,34 @@ td.keyword .qr-thumb { margin-left: 10px; }
 html[data-theme="dark"] .navigation .nav_current { color: #0f172a; }
 html[data-theme="dark"] .qr-thumb { background: #fff; }
 
-/* ── Nút thao tác từng dòng ── */
-body.desktop td.actions input, body.desktop td.actions a { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+/* ── Nút thao tác từng dòng: nút biểu tượng bo tròn, mỗi nút một màu khi rê chuột ── */
 td.timestamp span.timestamp { display: none; }
-td.actions input.disabled, td.actions input.loading { visibility: visible; }
-tr:hover td.actions input, tr:hover td.actions a { opacity: 1; pointer-events: auto; }
-td.actions:focus-within input, td.actions:focus-within a { opacity: 1; pointer-events: auto; }
-tr:focus-within td.actions input, tr:focus-within td.actions a { opacity: 1; pointer-events: auto; }
+td.actions { white-space: nowrap; }
 td.actions .button {
-	font-size: 10px; background-color: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-	cursor: pointer; height: 26px; width: 26px; margin: 0 5px 0 0; padding: 0; display: block; float: left;
-	text-indent: -9999px; outline: 0;
+	--ic: var(--muted); --ic-bg: var(--brand-soft); --ic-line: var(--brand-line);
+	position: relative; display: inline-block; float: none; vertical-align: middle;
+	width: 32px; height: 32px; margin: 0 6px 0 0; padding: 0; font-size: 0; text-indent: -9999px; overflow: hidden;
+	background: var(--surface); border: 1px solid var(--border); border-radius: 9px; box-shadow: var(--shadow);
+	cursor: pointer; outline: 0; opacity: .75; transition: opacity .15s, background .15s, border-color .15s, transform .1s, box-shadow .15s;
 }
-td.actions .button:hover { text-decoration: none; background-color: var(--brand-soft); border-color: var(--brand-line); }
-td.actions .button:active { border-color: var(--brand); }
-td.actions .button.disabled, #add-button.disabled { border: 1px solid var(--border); background: var(--border); }
-td.actions .button.loading, #add-button.loading { background: #fde68a url(../images/loading.gif) center center no-repeat; color: #fde68a; }
-td.actions .button_share { background: transparent url(../images/share.svg) center no-repeat; }
-td.actions .button_edit { background: transparent url(../images/pencil.svg) center no-repeat; }
-td.actions .button_delete { background: transparent url(../images/delete.svg) center no-repeat; }
-td.actions .button_stats { background: transparent url(../images/chart_bar.svg) center no-repeat; }
+td.actions .button::before {
+	content: ""; position: absolute; inset: 0; background-color: var(--ic);
+	-webkit-mask: var(--icon) center / 16px 16px no-repeat; mask: var(--icon) center / 16px 16px no-repeat; transition: background-color .15s;
+}
+td.actions .button_stats  { --icon: url(../images/chart_bar.svg); --ic-hover: #6366f1; --ic-bg: rgba(99,102,241,.12); --ic-line: rgba(99,102,241,.45); }
+td.actions .button_share  { --icon: url(../images/share.svg);     --ic-hover: #0ea5e9; --ic-bg: rgba(14,165,233,.12); --ic-line: rgba(14,165,233,.45); }
+td.actions .button_edit   { --icon: url(../images/pencil.svg);    --ic-hover: #f59e0b; --ic-bg: rgba(245,158,11,.14); --ic-line: rgba(245,158,11,.5); }
+td.actions .button_delete { --icon: url(../images/delete.svg);    --ic-hover: #ef4444; --ic-bg: rgba(239,68,68,.12); --ic-line: rgba(239,68,68,.45); }
+tr:hover td.actions .button, td.actions .button:focus-visible { opacity: 1; }
+td.actions .button:hover { text-decoration: none; background: var(--ic-bg); border-color: var(--ic-line); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(15,23,42,.12); }
+td.actions .button:hover::before, td.actions .button:focus-visible::before { background-color: var(--ic-hover); }
+td.actions .button:focus-visible { box-shadow: 0 0 0 3px rgba(99,102,241,.3); }
+td.actions .button:active { transform: none; }
+td.actions .button.disabled, #add-button.disabled { opacity: .45; cursor: wait; transform: none; box-shadow: none; }
+td.actions .button.loading, #add-button.loading { background: var(--brand-soft) url(../images/loading.gif) center center no-repeat; }
+td.actions .button.loading::before { display: none; }
+#add-button.disabled, #add-button.loading { color: transparent; }
+
 #main_table tfoot th, #main_table tfoot th div { font-size: 11px; }
 
 /* ── Thông báo ── */
@@ -255,14 +264,46 @@ body.desktop tr.plugin td.plugin_desc small { visibility: hidden; }
 tr:hover.plugin td.plugin_desc small { visibility: visible; }
 
 /* ── Hộp thoại xóa ── */
-#delete-confirm-dialog { background-color: var(--surface); color: var(--text); width: 50em; max-width: 94vw; height: 19em; padding: 0; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); }
-#delete-confirm-dialog > div[name="dialog_title"] { background-color: var(--brand-soft); font-size: 18px; font-weight: 700; color: var(--brand-dark); text-align: center; padding: .6em 0; border-start-start-radius: 15px; border-start-end-radius: 15px; }
-#delete-confirm-dialog div.confirm-message { background-color: var(--surface); width: calc(50em - 4em); max-width: calc(94vw - 4em); height: calc(20em - 50px - 5em - 2em + 6px); float: none; text-align: left; padding: 1em 2em; overflow: hidden; }
-#delete-confirm-dialog div.confirm-message ul { border-left: 4px solid var(--brand); list-style-type: none; padding: 0 1em; }
-#delete-confirm-dialog div.confirm-message ul li { margin-bottom: .5em; }
-#delete-confirm-dialog div.confirm-message ul li span { border: 1px solid var(--brand-line); border-radius: 6px; padding: 1px 6px; color: var(--text); }
-#delete-confirm-dialog div.button-group { background-color: var(--surface-2); width: calc(50em - 4em); max-width: calc(94vw - 4em); height: 2em; float: none; text-align: right; padding: 1em 2em; border-end-start-radius: 15px; border-end-end-radius: 15px; }
-#delete-confirm-dialog::backdrop { background-color: #0f172a; opacity: .5; }
+#delete-confirm-dialog { background-color: var(--surface); color: var(--text); width: 460px; max-width: calc(100vw - 24px); height: fit-content; padding: 0; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden; }
+#delete-confirm-dialog::backdrop { background: rgba(15,23,42,.55); backdrop-filter: blur(3px); }
+#delete-confirm-dialog > div[name="dialog_title"] { display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, rgba(239,68,68,.14), var(--surface)); font-size: 1.05rem; font-weight: 800; color: var(--text); text-align: left; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+#delete-confirm-dialog > div[name="dialog_title"]::before { content: "!"; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: #ef4444; color: #fff; font-weight: 800; font-size: 18px; }
+#delete-confirm-dialog div.confirm-message { background: transparent; width: auto; height: auto; float: none; text-align: left; padding: 16px 20px 4px; overflow: hidden; }
+#delete-confirm-dialog p.confirm-question { margin: 0 0 12px; font-size: 14px; }
+#delete-confirm-dialog div.confirm-message ul { margin: 0; padding: 12px 14px; list-style: none; background: var(--surface-2); border: 1px solid var(--border); border-left: 4px solid #ef4444; border-radius: 10px; }
+#delete-confirm-dialog div.confirm-message ul li { margin-bottom: 6px; color: var(--muted); word-break: break-all; }
+#delete-confirm-dialog div.confirm-message ul li:last-child { margin-bottom: 0; }
+#delete-confirm-dialog div.confirm-message ul li span { border: 0; border-radius: 0; padding: 0; color: var(--text); font-weight: 600; }
+#delete-confirm-dialog div.button-group { background: transparent; width: auto; height: auto; float: none; display: flex; flex-direction: row-reverse; justify-content: flex-start; gap: 8px; padding: 16px 20px 18px; }
+#delete-confirm-dialog div.button-group input.primary { background: #ef4444; border-color: #ef4444; color: #fff; }
+#delete-confirm-dialog div.button-group input.primary:hover { background: #dc2626; border-color: #dc2626; }
+
+/* ── Khung sửa link (hàng sửa trong bảng) ── */
+tr.edit-row td { background: var(--brand-soft) !important; padding: 14px 12px !important; border-top: 2px solid var(--brand); }
+.edit-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.edit-field { min-width: 0; }
+.edit-field-wide { grid-column: 1 / -1; }
+.edit-field label { display: block; margin: 0 0 5px; font-size: .74rem; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; color: var(--muted); }
+.edit-field input.text { width: 100%; margin: 0; padding: 8px 10px; font-size: 13px; }
+.edit-field .input-prefix { margin: 0; }
+.edit-field .input-prefix .prefix { max-width: 60%; font-size: 12px; }
+.edit-field .input-prefix input.text { border-radius: 0 8px 8px 0; }
+td.edit-actions { vertical-align: top; width: 1%; white-space: nowrap; }
+td.edit-actions .button { display: block; width: 100%; margin: 0 0 8px; }
+
+/* ── Khung chia sẻ (Quick Share / short link) ── */
+#shareboxes { margin: 0 0 14px; display: flex; flex-wrap: wrap; gap: 14px; overflow: visible; }
+div.share { float: none; height: auto; flex: 1 1 320px; margin: 0; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--brand); border-radius: 12px; box-shadow: var(--shadow); }
+div.share h2 { margin: 0 0 10px; font-size: .95rem; font-weight: 800; }
+#copybox, #sharebox { width: auto; }
+#copylink { width: 100%; font-weight: 600; background: var(--brand-soft) url(../images/copy.svg) calc(100% - 10px) center / 16px no-repeat; cursor: pointer; padding-right: 34px; }
+#origlink { display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+#tweet { overflow: visible; position: relative; }
+#tweet_body { float: none; width: 100%; height: 5em; font-size: 13px; resize: vertical; }
+#charcount { position: absolute; right: 8px; bottom: 6px; font-size: 11px; font-weight: 700; color: var(--faint); }
+#share_links { margin: 10px 0 0; }
+#share_links a { display: inline-block; margin-right: 8px; padding: 5px 12px 5px 28px; border: 1px solid var(--border); border-radius: 8px; background-position: 8px center !important; background-size: 14px !important; font-weight: 600; }
+#share_links a:hover { background-color: var(--hover); text-decoration: none; }
 
 @media (max-width: 991px) {
 	#sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 300px !important; max-width: 85vw; z-index: 1050; transform: translateX(-100%); }
@@ -273,6 +314,7 @@ tr:hover.plugin td.plugin_desc small { visibility: visible; }
 }
 @media (max-width: 767px) {
 	#add-url { width: 100%; }
+	.edit-panel { grid-template-columns: 1fr; }
 }
 
 /* ══ GIAO DIỆN TỐI (bảng màu theo theme-dark.css của qlvanban) ══ */
@@ -293,7 +335,7 @@ html[data-theme="dark"] .sub_wrap span, html[data-theme="dark"] #new_url #feedba
 html[data-theme="dark"] .error, html[data-theme="dark"] .jquery-notify-bar.error, html[data-theme="dark"] .jquery-notify-bar.fail { background: rgba(248,113,113,.18); color: #fca5a5; }
 html[data-theme="dark"] .warning { background: rgba(251,191,36,.18); color: #fcd34d; }
 html[data-theme="dark"] .success, html[data-theme="dark"] .jquery-notify-bar.success { background: rgba(52,211,153,.18); color: #6ee7b7; }
-html[data-theme="dark"] td.actions .button { filter: invert(.85); }
+html[data-theme="dark"] td.actions .button { --ic: #a3b2cf; }
 html[data-theme="dark"] #login { box-shadow: 0 8px 30px rgba(0,0,0,.4); }
 
 /* Liên kết dạng nút (hộp thoại QR) và chân bảng chứa phân trang */
@@ -304,3 +346,4 @@ html[data-theme="dark"] #login { box-shadow: 0 8px 30px rgba(0,0,0,.4); }
 html[data-theme="dark"] .modal-foot a.button.primary { color: #0f172a; }
 #main_table tfoot th { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); padding: 10px 12px; }
 table.tblSorter tfoot tr th, table.tblSorter tfoot tr { background-color: var(--surface-2); }
+#main_table tfoot tr th { background-color: var(--surface-2); }

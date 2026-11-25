@@ -218,6 +218,7 @@ function edit_link_save(id) {
 
 				$("#url-" + id).html(display_link);
 				$("#keyword-" + id).html('<a href="' + data.url.shorturl + '" title="' + data.url.shorturl + '">' + data.url.keyword + '</a>');
+				$("#qr-" + id).html('<img class="qr-thumb" data-qr="' + data.url.shorturl + '" alt="" width="44" height="44" title="QR" />');
 				$("#edit-" + id).fadeOut(200, function(){
                     $("#edit-" + id).remove();
 					$('#main_table tbody').trigger("update");
