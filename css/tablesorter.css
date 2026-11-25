@@ -1,20 +1,21 @@
 /* jQuery Table Sorter */
 table.tblSorter {
-	font-family:Verdana, Arial;
-	background-color: #CDCDCD;
+	border-collapse: separate; border-spacing: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+	font-family: var(--font);
+	background-color: var(--surface);
 	margin:10px 0px 0px;
-	font-size: 8pt;
+	font-size: 12px;
 	width: 100%;
 	text-align: left;
 }
 table.tblSorter thead tr th, table.tblSorter tfoot tr th, table.tblSorter th.header {
-	background-color: #C7E7FF;
-	border: 1px solid #FFF;
-	font-size: 8pt;
-	padding: 4px;
+	background-color: var(--brand-soft-2);
+	border: 0; border-bottom: 1px solid var(--border);
+	font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted);
+	padding: 8px 6px;
 }
 table.tblSorter tfoot tr th {
-	background-color: #E3F3FF;
+	background-color: var(--brand-soft);
 }
 table.tblSorter thead tr .tablesorter-header {
 	background-image: url('../images/bg.svg');
@@ -28,9 +29,10 @@ table.tblSorter thead tr .sorter-false {
 	cursor:default;
 }
 table.tblSorter tbody td {
-	color: #3D3D3D;
-	padding: 4px;
-	background-color: #FFF;
+	color: var(--text);
+	padding: 8px 6px;
+	border-bottom: 1px solid var(--border);
+	background-color: var(--surface);
 	vertical-align: top;
 }
 table.tblSorter tbody td.ip {
@@ -40,16 +42,16 @@ table.tblSorter tbody td.ip {
     text-overflow: ellipsis;
 }
 table.tblSorter tbody tr.normal-row td {
-	background: #F1F9FF;
+	background: var(--surface-2);
 }
 table.tblSorter tbody tr.alt-row td {
 
 }
 table.tblSorter tbody tr.normal-row:hover td  {
-	background-color:#F1FFF6;
+	background-color:var(--hover);
 }
 table.tblSorter tbody tr.alt-row:hover td  {
-	background-color:#F1FFF6;
+	background-color:var(--hover);
 }
 table.tblSorter thead tr .tablesorter-headerDesc {
 	background-image: url('../images/desc.svg');
@@ -62,13 +64,13 @@ table.tblSorter thead tr .tablesorter-headerAsc {
 	background-position: center right;
 }
 table.tblSorter thead tr .tablesorter-headerAsc, table.tblSorter thead tr .tablesorter-headerDesc {
-	background-color: #91C7F2;
+	background-color: var(--brand-line);
 }
 table.tblSorter thead  tr th span {
     margin-right:10px;
 }
 table.tblSorter tfoot tr {
-	background-color: #BCD9E8;
+	background-color: var(--brand-soft-2);
 }
 #filter_form{
 	float:left;
@@ -88,13 +90,14 @@ table.tblSorter tfoot tr {
 	margin-bottom:10px;
 }
 .navigation .nav_link a, .navigation .nav_current {
-	border:1px solid #CDCDCD;
+	border:1px solid var(--border);
 	margin:0px 2px;
 	padding:2px 1px;
-	background:#fff;
+	background:var(--surface);
 	text-align:center;
 	min-width:15px;
 	display:inline-block;
+	border-radius:8px;
 }
 .navigation .nav_current {
 	border:0px;
@@ -107,7 +110,8 @@ table.tblSorter tfoot tr {
 	content:"...";
 }
 .navigation .nav_link a:hover {
-	border:1px solid #BCD9E8;
-	background:#BCD9E8;
+	border:1px solid var(--brand-soft-2);
+	background:var(--brand-soft-2);
 	text-decoration:none;
 }
+html[data-theme="dark"] table.tblSorter thead tr .tablesorter-header { background-color: var(--surface-3); }

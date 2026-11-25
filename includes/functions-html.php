@@ -91,7 +91,9 @@ function yourls_html_head( $context = 'index', $title = '' ) {
     <meta name="generator" content="YOURLS <?php echo YOURLS_VERSION ?>" />
     <meta name="description" content="YOURLS &raquo; Your Own URL Shortener' | <?php yourls_site_url(); ?>" />
     <?php yourls_do_action('html_head_meta', $context); ?>
+    <meta name="theme-color" content="#4f46e5" />
     <?php yourls_html_favicon(); ?>
+    <script src="<?php yourls_site_url(); ?>/js/theme.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
     <script src="<?php yourls_site_url(); ?>/js/jquery-3.5.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
     <script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
     <script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
@@ -902,6 +904,7 @@ function yourls_html_menu() {
         echo '<li id="admin_menu_help_link">' . $help_link .'</li>';
 
     yourls_do_action( 'admin_menu' );
+    echo '<li id="admin_menu_theme_toggle"><button type="button" class="theme-toggle" data-theme-toggle>&#9790; Dark</button></li>';
     echo "</ul></nav>\n";
     yourls_do_action( 'admin_notices' );
     yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
