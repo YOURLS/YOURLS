@@ -1,17 +1,99 @@
 <?php
 
 /**
+ * URL of a static asset (css/js) with a cache-busting query string: the file modification time, so that any change
+ * to the file is picked up at once by browsers, falling back to YOURLS version if the file cannot be read.
+ *
+ * @param  string $path  Path relative to YOURLS root, eg 'css/style.css'
+ * @return string        Full URL, eg 'http://sho.rt/css/style.css?v=1767225600'
+ */
+function yourls_asset_url( string $path ): string {
+    $path  = ltrim( $path, '/' );
+    $mtime = defined( 'YOURLS_ABSPATH' ) ? @filemtime( YOURLS_ABSPATH . '/' . $path ) : false;
+    $ver   = $mtime ? $mtime : ( defined( 'YOURLS_VERSION' ) ? YOURLS_VERSION : '' );
+    return yourls_site_url( false ) . '/' . $path . '?v=' . $ver;
+}
+
+/**
+ * Page layout state: 0 = nothing opened yet, 1 = sidebar opened, 2 = main content opened.
+ * The layout is a left sidebar (logo + admin menu) and a main content area, opened by yourls_html_logo() /
+ * yourls_html_menu() and closed by yourls_html_footer().
+ *
+ * @param  int|null $set  New state, or null to just read it
+ * @return int
+ */
+function yourls_html_layout_phase( $set = null ): int {
+    static $phase = 0;
+    if( $set !== null ) {
+        $phase = (int) $set;
+    }
+    return $phase;
+}
+
+/**
+ * Does this page context come with the sidebar menu ?
+ *
+ * @param  string $context
+ * @return bool
+ */
+function yourls_html_context_has_sidebar( string $context ): bool {
+    $with = [ 'index', 'bookmark', 'infos', 'plugins', 'tools', 'upgrade' ];
+    return in_array( $context, $with, true ) || str_starts_with( $context, 'plugin_page_' );
+}
+
+/**
+ * Open the sidebar (<aside>), if not done yet
+ *
+ * @return void
+ */
+function yourls_html_layout_open_sidebar() {
+    if( yourls_html_layout_phase() === 0 ) {
+        echo '<aside id="sidebar">';
+        yourls_html_layout_phase( 1 );
+    }
+}
+
+/**
+ * Close the sidebar if open, and open the main content area, if not done yet
+ *
+ * @return void
+ */
+function yourls_html_layout_open_main() {
+    $phase = yourls_html_layout_phase();
+    if( $phase >= 2 ) {
+        return;
+    }
+    if( $phase === 1 ) {
+        echo "</aside>\n";
+    }
+    ?>
+    <div id="main-content">
+    <div id="app-bar"><button type="button" id="sidebar-toggle" class="theme-toggle" aria-label="Menu" aria-controls="sidebar">&#9776;</button> <span class="app-bar-title">YOURLS</span></div>
+    <div id="wrap">
+    <?php
+    yourls_html_layout_phase( 2 );
+}
+
+/**
  * Display <h1> header and logo
  *
  * @return void
  */
-function yourls_html_logo() {
+function yourls_html_logo( $sidebar = null ) {
     yourls_do_action( 'pre_html_logo' );
+    if( $sidebar === null ) {
+        $sidebar = yourls_html_context_has_sidebar( (string) yourls_get_html_context() );
+    }
+    if( $sidebar ) {
+        yourls_html_layout_open_sidebar();
+    } else {
+        yourls_html_layout_open_main();
+    }
     ?>
-    <header role="banner">
+    <header role="banner" class="<?php echo $sidebar ? 'sidebar-header' : 'center-header'; ?>">
     <h1>
-        <a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><span>YOURLS</span>: <span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener<br/>
-        <img src="<?php yourls_site_url(); ?>/images/yourls-logo.svg?v=<?php echo YOURLS_VERSION; ?>" id="yourls-logo" alt="YOURLS" title="YOURLS" /></a>
+        <a href="<?php echo yourls_admin_url( 'index.php' ) ?>" title="YOURLS"><img src="<?php yourls_site_url(); ?>/images/yourls-logo.svg?v=<?php echo YOURLS_VERSION; ?>" id="yourls-logo" alt="YOURLS" title="YOURLS" />
+        <span class="tagline"><span>Y</span>our <span>O</span>wn <span>URL</span> <span>S</span>hortener</span></a>
     </h1>
     </header>
     <?php
@@ -93,32 +175,33 @@ function yourls_html_head( $context = 'index', $title = '' ) {
     <?php yourls_do_action('html_head_meta', $context); ?>
     <meta name="theme-color" content="#4f46e5" />
     <?php yourls_html_favicon(); ?>
-    <script src="<?php yourls_site_url(); ?>/js/theme.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-    <script src="<?php yourls_site_url(); ?>/js/jquery-3.5.1.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-    <script src="<?php yourls_site_url(); ?>/js/common.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-    <script src="<?php yourls_site_url(); ?>/js/jquery.notifybar.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-    <link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/style.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+    <script src="<?php echo yourls_asset_url('js/theme.js'); ?>" type="text/javascript"></script>
+    <script src="<?php echo yourls_asset_url('js/layout.js'); ?>" type="text/javascript" defer></script>
+    <script src="<?php echo yourls_asset_url('js/jquery-3.5.1.min.js'); ?>" type="text/javascript"></script>
+    <script src="<?php echo yourls_asset_url('js/common.js'); ?>" type="text/javascript"></script>
+    <script src="<?php echo yourls_asset_url('js/jquery.notifybar.js'); ?>" type="text/javascript"></script>
+    <link rel="stylesheet" href="<?php echo yourls_asset_url('css/style.css'); ?>" type="text/css" media="screen" />
     <?php if ( $tabs ) { ?>
-        <link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/infos.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-        <script src="<?php yourls_site_url(); ?>/js/infos.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+        <link rel="stylesheet" href="<?php echo yourls_asset_url('css/infos.css'); ?>" type="text/css" media="screen" />
+        <script src="<?php echo yourls_asset_url('js/infos.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $tablesorter ) { ?>
-        <link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/tablesorter.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-        <script src="<?php yourls_site_url(); ?>/js/jquery-3.tablesorter.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-        <script src="<?php yourls_site_url(); ?>/js/tablesorte.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+        <link rel="stylesheet" href="<?php echo yourls_asset_url('css/tablesorter.css'); ?>" type="text/css" media="screen" />
+        <script src="<?php echo yourls_asset_url('js/jquery-3.tablesorter.min.js'); ?>" type="text/javascript"></script>
+        <script src="<?php echo yourls_asset_url('js/tablesorte.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $insert ) { ?>
-        <script src="<?php yourls_site_url(); ?>/js/insert.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+        <script src="<?php echo yourls_asset_url('js/insert.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $share ) { ?>
-        <link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/share.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
-        <script src="<?php yourls_site_url(); ?>/js/share.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
-        <script src="<?php yourls_site_url(); ?>/js/clipboard.min.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+        <link rel="stylesheet" href="<?php echo yourls_asset_url('css/share.css'); ?>" type="text/css" media="screen" />
+        <script src="<?php echo yourls_asset_url('js/share.js'); ?>" type="text/javascript"></script>
+        <script src="<?php echo yourls_asset_url('js/clipboard.min.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $cal ) { ?>
-        <link rel="stylesheet" href="<?php yourls_site_url(); ?>/css/cal.css?v=<?php echo YOURLS_VERSION; ?>" type="text/css" media="screen" />
+        <link rel="stylesheet" href="<?php echo yourls_asset_url('css/cal.css'); ?>" type="text/css" media="screen" />
         <?php yourls_l10n_calendar_strings(); ?>
-        <script src="<?php yourls_site_url(); ?>/js/jquery.cal.js?v=<?php echo YOURLS_VERSION; ?>" type="text/javascript"></script>
+        <script src="<?php echo yourls_asset_url('js/jquery.cal.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $charts ) { ?>
             <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -134,8 +217,13 @@ function yourls_html_head( $context = 'index', $title = '' ) {
     <?php yourls_do_action( 'html_head', $context ); ?>
 </head>
 <body class="<?php echo yourls_esc_attr($context); ?> <?php echo yourls_esc_attr($bodyclass); ?>">
-<div id="wrap">
+<div id="app-container">
+<div id="mobile-backdrop"></div>
     <?php
+    yourls_html_layout_phase( 0 );
+    if( !yourls_html_context_has_sidebar( $context ) ) {
+        yourls_html_layout_open_main();
+    }
 }
 
 /**
@@ -156,7 +244,12 @@ function yourls_html_footer($can_query = true) {
     }
 
     ?>
-    </div><?php // wrap ?>
+    <?php
+    $phase = yourls_html_layout_phase();
+    if( $phase === 2 ) {
+        echo "</div>\n"; // wrap
+    }
+    ?>
     <footer id="footer" role="contentinfo"><p>
         <?php
         $footer  = yourls_s( 'Powered by %s', '<a href="http://yourls.org/" title="YOURLS">YOURLS</a> v ' . YOURLS_VERSION );
@@ -164,6 +257,16 @@ function yourls_html_footer($can_query = true) {
         echo yourls_apply_filter( 'html_footer_text', $footer );
         ?>
     </p></footer>
+    <?php
+    // close whatever the layout has opened: main content (phase 2), or sidebar (phase 1)
+    if( $phase === 2 ) {
+        echo "</div>\n"; // main-content
+    } elseif( $phase === 1 ) {
+        echo "</aside>\n";
+    }
+    echo "</div>\n"; // app-container
+    yourls_html_layout_phase( 0 );
+    ?>
     <?php if( yourls_get_debug_mode() ) {
         echo '<div style="text-align:left"><pre>';
         echo join( "\n", yourls_get_debug_log() );
@@ -524,7 +627,7 @@ function yourls_die( string $message = '', string $title = '', int $header_code 
 
     if( !yourls_did_action( 'html_head' ) ) {
         yourls_html_head();
-        yourls_html_logo();
+        yourls_html_logo( false );
     }
 
     $title = yourls_apply_filter( 'die_title', "<h2>$title</h2>" );
@@ -876,6 +979,7 @@ function yourls_html_menu() {
     $admin_sublinks = yourls_apply_filter( 'admin_sublinks', $admin_sublinks );
 
     // Now output menu
+    yourls_html_layout_open_sidebar();
     echo '<nav role="navigation"><ul id="admin_menu">'."\n";
     if ( yourls_is_private() && !empty( $logout_link ) )
         echo '<li id="admin_menu_logout_link">' . $logout_link .'</li>';
@@ -906,6 +1010,7 @@ function yourls_html_menu() {
     yourls_do_action( 'admin_menu' );
     echo '<li id="admin_menu_theme_toggle"><button type="button" class="theme-toggle" data-theme-toggle>&#9790; Dark</button></li>';
     echo "</ul></nav>\n";
+    yourls_html_layout_open_main();
     yourls_do_action( 'admin_notices' );
     yourls_do_action( 'admin_notice' ); // because I never remember if it's 'notices' or 'notice'
     /*
