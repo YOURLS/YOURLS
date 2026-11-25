@@ -9,7 +9,7 @@ ul.toggle_display {
 	margin-left:0;
 	margin-right:23px;
 	padding:12px 5px 3px;
-	border-bottom:1px solid #C7E7FF;
+	border-bottom:1px solid var(--brand-soft-2);
 }
 ul.toggle_display li {
 	padding:0;
@@ -19,7 +19,7 @@ ul.toggle_display li {
 	margin-right: 10px;
 }
 #tabs ul#headers {
-	border-bottom:1px solid #E3F3FF;
+	border-bottom:1px solid var(--brand-soft);
 	padding:12px 5px 3px 5px;
 	float:left;
 }
@@ -28,27 +28,27 @@ ul.toggle_display li {
 }
 
 #tabs ul#headers li a {
-	color:#595441;
-	border:1px solid #C7E7FF;
+	color:var(--text);
+	border:1px solid var(--brand-soft-2);
 	-moz-border-radius:10px 10px 0 0;
 	-webkit-border-radius:10px 10px 0 0;
 	border-radius:10px 10px 0 0;
 	padding:10px 5px 5px 15px;
-	background:#E3F3FF;
+	background:var(--brand-soft);
 }
 
 #tabs ul#headers li a:hover {
 	text-decoration:none;
-	background:#88C0EB;
+	background:var(--brand-line);
 }
 
 #tabs ul#headers li a.selected {
-	border-bottom:2px solid #fff;
-	background:#fff;
+	border-bottom:2px solid var(--surface);
+	background:var(--surface);
 }
 
 #tabs ul#headers li a.selected:hover {
-	background:#fff;
+	background:var(--surface);
 }
 
 #stats_lines li a {
@@ -56,20 +56,20 @@ ul.toggle_display li {
 	-webkit-border-radius:10px 10px 0 0;
 	border-radius:10px 10px 0 0;
 	padding:3px 10px;
-	background:#E3F3FF;
-	border:1px solid #C7E7FF;
+	background:var(--brand-soft);
+	border:1px solid var(--brand-soft-2);
 }
 #stats_lines li a:hover {
 	text-decoration:none;
-	background:#C7E7FF;
+	background:var(--brand-soft-2);
 }
 #stats_lines li a.selected {
-	background:#fff;
-	border:1px solid #C7E7FF;
+	background:var(--surface);
+	border:1px solid var(--brand-soft-2);
 	border-bottom:1px solid white;
 }
 #stats_lines li a.selected:hover {
-	background:#fff;
+	background:var(--surface);
 }
 .tab {
 	padding:10px;
@@ -101,7 +101,7 @@ ul.no_bullet li {
 	margin:0;
 }
 #historical_clicks li:hover {
-	background:#C7E7FF !important;
+	background:var(--brand-soft-2) !important;
 }
 #historical_clicks span.historical_link {
 	min-width:130px;

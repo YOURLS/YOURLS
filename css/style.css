@@ -1,388 +1,207 @@
+/* Giao diện theo ứng dụng qlvanban: nền #f1f5f9, màu chủ đạo indigo #6366f1, thẻ bo góc 12px, chữ system-ui.
+   Mọi màu là biến CSS; giao diện tối (nút trăng/mặt trời, js/theme.js) chỉ đổi giá trị biến ở cuối file. */
+:root {
+	--bg: #f1f5f9;
+	--surface: #ffffff;
+	--surface-2: #f8fafc;
+	--surface-3: #eef2ff;
+	--border: #e2e8f0;
+	--text: #1e293b;
+	--muted: #64748b;
+	--faint: #94a3b8;
+	--brand: #6366f1;
+	--brand-dark: #4f46e5;
+	--brand-soft: #eef2ff;
+	--brand-soft-2: #e0e7ff;
+	--brand-line: #c7d2fe;
+	--hover: #eff6ff;
+	--danger: #dc2626;
+	--shadow: 0 1px 4px rgba(0,0,0,.03);
+	--shadow-lg: 0 8px 30px rgba(15,23,42,.18);
+	--font: system-ui, -apple-system, "Segoe UI", sans-serif;
+	color-scheme: light;
+}
+* { box-sizing: border-box; }
 body {
-	font-family: Verdana, Arial;
-	font-size: 12px;
-	color: #595441;
-	background:#e3f3ff;
-	text-align:center;
-	margin-top:0px;
-	padding-top:10px;
+	font-family: var(--font);
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--text);
+	background: var(--bg);
+	text-align: left;
+	margin: 0;
+	padding: 0 0 24px;
 }
 #wrap {
-	max-width:950px;
-	min-height:150px;
-	margin:0 auto;
-	background:white;
-	text-align:left;
-	padding:5px 20px 10px 20px;
-	border-left:3px solid #2a85b3;
-	border-right:3px solid #2a85b3;
-	border-bottom:3px solid #2a85b3;
-	border-top:3px solid #2a85b3;
-	border-radius:20px;
+	max-width: 1100px;
+	min-height: 150px;
+	margin: 20px auto 0;
+	background: var(--surface);
+	padding: 8px 24px 20px;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	box-shadow: var(--shadow);
 }
-.hide-if-no-js {display: none;}
-div, p, td {
-	font-family: Verdana, Arial;
-	font-size: 12px;
-}
-a, a:link, a:active, a:visited {
-	color: #2a85b3;
-	text-decoration: none;
-}
-a:hover {
-	text-decoration: underline;
-}
-h1 {margin:0;float:right;max-width:500px;}
-h1 a {text-align:right;font-size:20px;float:right;}
-h1 a, h1 a:link, h1 a:active, h1 a:visited {color:#2a85b3}
-h1 a:hover{text-decoration:none;}
-h1 a:hover span{text-decoration:underline;color:#88c0eb}
-#yourls-logo {
-    border:0px;
-    width:300px;
-}
-ul#admin_menu {
-	min-height:100px;
-	list-style-type:none;
-	padding:0;
-	font-size:105%;
-}
-ul#admin_menu li {
-	color:#aaa;
-	padding:1px 0;
-}
-ul#admin_menu li:hover {
-	list-style-type:square;
-	color:#000;
-}
+.hide-if-no-js { display: none; }
+div, p, td, th { font-family: var(--font); font-size: 13px; }
+a, a:link, a:active, a:visited { color: var(--brand-dark); text-decoration: none; }
+a:hover { color: var(--brand); text-decoration: underline; }
+::selection { background: rgba(99,102,241,.25); }
 
-code {
-	background:#eaeaef;
-	padding:0 2px;
-}
-tt {
-	background:#ffc;
-	padding:0 2px;
-}
+/* ── Đầu trang: logo ── */
+header[role="banner"] { border-bottom: 1px solid var(--border); margin: 0 -24px 12px; padding: 12px 24px; background: var(--surface-2); border-radius: 12px 12px 0 0; }
+h1 { margin: 0; max-width: none; float: none; font-size: .9rem; font-weight: 800; letter-spacing: .2px; }
+h1 a { float: none; text-align: right; display: block; font-size: .9rem; }
+h1 a, h1 a:link, h1 a:active, h1 a:visited { color: var(--text); }
+h1 a:hover { text-decoration: none; }
+h1 a:hover span { text-decoration: none; color: var(--brand); }
+h1 a span:first-child { color: var(--brand); }
+#yourls-logo { border: 0; width: 170px; max-width: 70%; margin-top: 4px; }
 
-input, textarea {
-	border-radius:3px;
+/* ── Menu quản trị: thanh viên thuốc ── */
+nav[role="navigation"] { margin: 0 0 12px; }
+ul#admin_menu { min-height: 0; list-style: none; padding: 0; margin: 0; font-size: 1em; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+ul#admin_menu li { color: var(--faint); padding: 0; position: relative; }
+ul#admin_menu li:hover { list-style: none; color: var(--text); }
+ul#admin_menu li > a { display: inline-block; padding: 6px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: #475569; font-weight: 600; box-shadow: var(--shadow); transition: background .15s, color .15s; }
+ul#admin_menu li > a:hover { background: var(--hover); color: #2563eb; text-decoration: none; }
+ul#admin_menu li#admin_menu_logout_link { margin-right: auto; padding: 6px 10px; background: var(--brand-soft); color: var(--brand-dark); border-radius: 8px; font-weight: 600; }
+ul#admin_menu li#admin_menu_logout_link a { padding: 0; border: 0; background: none; box-shadow: none; color: var(--brand-dark); }
+ul#admin_menu li#admin_menu_logout_link a:hover { color: var(--danger); background: none; }
+ul#admin_menu ul { list-style: none; margin: 4px 0 0; padding: 4px; display: none; position: absolute; z-index: 50; min-width: 180px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-lg); }
+ul#admin_menu li:hover > ul, ul#admin_menu li:focus-within > ul { display: block; }
+ul#admin_menu ul li > a { display: block; border: 0; box-shadow: none; background: none; padding: 6px 10px; }
+.theme-toggle { cursor: pointer; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--brand-dark); padding: 5px 10px; font-weight: 600; font-family: var(--font); font-size: 13px; box-shadow: var(--shadow); }
+.theme-toggle:hover { background: var(--hover); color: #2563eb; }
+
+code { background: var(--brand-soft); color: var(--brand-dark); padding: 1px 5px; border-radius: 4px; }
+tt { background: #fef9c3; color: #713f12; padding: 0 4px; border-radius: 4px; }
+
+/* ── Form ── */
+input, textarea, select { border-radius: 8px; }
+input.text, input[type="text"], input[type="password"], input[type="url"], input[type="number"], input[type="email"], select, textarea {
+	font-family: var(--font); font-size: 13px; color: var(--text); background-color: var(--surface);
+	border: 1px solid var(--border); margin: 1px; padding: 6px 9px; outline: 0;
 }
-Input.text, select, textarea {
-	font-family: Verdana, Arial;
-	font-size: 10px;
-	color: #595441;
-	background-color: #FFFFFF;
-	border: 1px solid #88c0eb;
-	margin:1px;
+input.text:focus, input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+	border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99,102,241,.18); margin: 1px;
 }
-input.button {
-	font-family: Verdana, Arial;
-	font-size: 10px;
-	color: #595441;
-	font-weight: bold;
-	background-color: #FFFFFF;
-	border: 1px solid #88c0eb;
-	cursor:pointer;
+input.button, input[type="submit"], input[type="button"], button.button {
+	font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--brand-dark);
+	background-color: var(--surface); border: 1px solid var(--brand-line); border-radius: 8px;
+	padding: 6px 14px; cursor: pointer; transition: background .15s, color .15s;
 }
-input.primary {
-	border:2px solid #2A85B3;
-	background:#fafafe;
-}
-input.text:focus, textarea:focus {
-	border:2px solid #2A85B3;
-	margin:0px;
-}
-tr.edit-row  td {
-	background:#e3f3ff !important;
-}
-#new_url {
-	text-align:center;
-	padding:1px;
-	border:1px solid #CDCDCD;
-	background:#fff;
-	clear:both;
-}
-#new_url div {
-	background:#C7E7FF;
-	padding:4px;
-}
-#new_url_form {
-	padding:4px;
-}
-#new_url #feedback {
-	background:#ff8;
-	color:#88c0eb;
-	width:50%;
-	margin:0px 25%;
-	padding:2px;
-	border:1px solid #ff8;
-}
-#new_url #feedback .fail {
-	color:#f55;
-}
-#add-url {width:400px}
-td.url small a{
-	color:#bbc;
-}
-/* Hide buttons visually but keep them accessible to screen readers */
-body.desktop td.actions input, body.desktop td.actions a {
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity 0.2s ease;
-}
-td.timestamp span.timestamp {
-    display:none;
-}
-td.actions input.disabled, td.actions input.loading {
-	visibility:visible;
-}
-/* Show buttons on row hover */
-tr:hover td.actions input, tr:hover td.actions a {
-	opacity: 1;
-	pointer-events: auto;
-}
-/* Show buttons when any button in the actions cell receives focus */
-td.actions:focus-within input, td.actions:focus-within a {
-	opacity: 1;
-	pointer-events: auto;
-}
-/* Show all buttons when any element in the row receives focus (for keyboard nav through the entire row) */
-tr:focus-within td.actions input, tr:focus-within td.actions a {
-	opacity: 1;
-	pointer-events: auto;
-}
+input.button:hover, input[type="submit"]:hover { background: var(--brand-soft); }
+input.primary, #add-button, #login input.button { color: #fff; background: var(--brand); border: 1px solid var(--brand); }
+input.primary:hover, #add-button:hover, #login input.button:hover { background: var(--brand-dark); color: #fff; }
+tr.edit-row td { background: var(--brand-soft) !important; }
+
+/* ── Thêm URL mới ── */
+#new_url { text-align: center; padding: 0; border: 1px solid var(--border); background: var(--surface-2); clear: both; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+#new_url div { background: var(--brand-soft); padding: 8px; }
+#new_url_form { padding: 8px; }
+#new_url #feedback { background: #fef9c3; color: #713f12; width: 50%; margin: 6px 25%; padding: 4px; border: 1px solid #fde68a; border-radius: 8px; }
+#new_url #feedback .fail { color: var(--danger); }
+#add-url { width: 400px; max-width: 90%; }
+td.url small a { color: var(--faint); }
+
+/* ── Nút thao tác từng dòng ── */
+body.desktop td.actions input, body.desktop td.actions a { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+td.timestamp span.timestamp { display: none; }
+td.actions input.disabled, td.actions input.loading { visibility: visible; }
+tr:hover td.actions input, tr:hover td.actions a { opacity: 1; pointer-events: auto; }
+td.actions:focus-within input, td.actions:focus-within a { opacity: 1; pointer-events: auto; }
+tr:focus-within td.actions input, tr:focus-within td.actions a { opacity: 1; pointer-events: auto; }
 td.actions .button {
-	font-family: Verdana, Arial;
-	font-size: 10px;
-	color: #595441;
-	font-weight: bold;
-	background-color: #FFFFFF;
-	border: 1px solid #88c0eb;
-	border-radius:3px;
-	cursor:pointer;
-	height:22px;
-	width:22px;
-	margin-top:0px;
-	margin-right:5px;
-	display:block;
-	float:left;
-	text-indent:-9999px;
-	outline:0px;
+	font-size: 10px; background-color: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+	cursor: pointer; height: 26px; width: 26px; margin: 0 5px 0 0; padding: 0; display: block; float: left;
+	text-indent: -9999px; outline: 0;
 }
-td.actions .button:active {
-	border:1px solid #000;
-}
-td.actions .button:hover {
-	text-decoration:none;
-}
-td.actions .button.disabled, #add-button.disabled {
-	border:1px solid #333;
-	background:#ccc;
-}
-td.actions .button.loading, #add-button.loading {
-	background:#cc7 url(../images/loading.gif) center center no-repeat;
-	color:#cc7;
-}
-td.actions .button_share {
-	background:transparent url(../images/share.svg) center no-repeat;
-}
-td.actions .button_edit {
-	background:transparent url(../images/pencil.svg) center no-repeat;
-}
-td.actions .button_delete {
-	background:transparent url(../images/delete.svg) center no-repeat;
-}
-td.actions .button_stats {
-	background:transparent url(../images/chart_bar.svg) center no-repeat;
-}
-#main_table tfoot th, #main_table tfoot th div {
-	font-size:10px;
-}
-.error {
-	color: red;
-	background:#fee;
-}
-.warning {
-	color: orange;
-	background:#ffe9bf;
-}
-.success {
-	color: green;
-	background:#efe;
-}
-#login {
-	max-width: 300px;
-	margin: 200px auto 0px auto;
-}
-#login p{
-	font-weight: bold;
-}
-#login .text {
-	width: 100%;
-}
-#login ul {
-	padding-left:0px;
-	list-style-type:none;
-	text-indent:0;
-}
-#login ul li {
-	padding:0 0 5px 20px;
-}
-#login ul.error li {
-	background:transparent url(../images/cancel.svg) top left no-repeat;
-}
-#login ul.warning li {
-	background:transparent url(../images/error.svg) top left no-repeat;
-}
-#login ul.success li {
-	background:transparent url(../images/accept.svg) top left no-repeat;
-}
-.sub_wrap {
-	max-width:580px;
-	padding-bottom:30px;
-	text-align:justify;
-}
-.sub_wrap span {
-	background:#ffa;
-	padding:0 2px;
-}
+td.actions .button:hover { text-decoration: none; background-color: var(--brand-soft); border-color: var(--brand-line); }
+td.actions .button:active { border-color: var(--brand); }
+td.actions .button.disabled, #add-button.disabled { border: 1px solid var(--border); background: var(--border); }
+td.actions .button.loading, #add-button.loading { background: #fde68a url(../images/loading.gif) center center no-repeat; color: #fde68a; }
+td.actions .button_share { background: transparent url(../images/share.svg) center no-repeat; }
+td.actions .button_edit { background: transparent url(../images/pencil.svg) center no-repeat; }
+td.actions .button_delete { background: transparent url(../images/delete.svg) center no-repeat; }
+td.actions .button_stats { background: transparent url(../images/chart_bar.svg) center no-repeat; }
+#main_table tfoot th, #main_table tfoot th div { font-size: 11px; }
+
+/* ── Thông báo ── */
+.error, .warning, .success { padding: 6px 10px; border-radius: 8px; }
+.error { color: #991b1b; background: #fee2e2; }
+.warning { color: #92400e; background: #fef3c7; }
+.success { color: #065f46; background: #d1fae5; }
+.notice { border: 1px solid var(--brand-line); border-left: 4px solid var(--brand); background: var(--brand-soft); border-radius: 12px; width: auto; margin: 0 0 8px; padding: 8px 14px; clear: both; }
+
+/* ── Đăng nhập ── */
+#login { max-width: 380px; margin: 60px auto 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px 14px; box-shadow: 0 8px 30px rgba(15,23,42,.08); }
+#login p { font-weight: 600; }
+#login .text { width: 100%; }
+#login ul { padding-left: 0; list-style-type: none; text-indent: 0; }
+#login ul li { padding: 0 0 5px 20px; }
+#login ul.error li { background: transparent url(../images/cancel.svg) top left no-repeat; }
+#login ul.warning li { background: transparent url(../images/error.svg) top left no-repeat; }
+#login ul.success li { background: transparent url(../images/accept.svg) top left no-repeat; }
+.sub_wrap { max-width: 680px; padding-bottom: 30px; text-align: left; }
+.sub_wrap span { background: #fef9c3; color: #713f12; padding: 0 3px; border-radius: 4px; }
+
 a.bookmarklet {
-	border:2px solid #2a85b3;
-	border-radius:3px;
-	padding:5px 5px 5px 20px;
-	background:#eef url(../images/favicon.svg) 2px center no-repeat;
-	padding-left:30px;
-	margin:3px;
-	display:inline-block;
+	border: 1px solid var(--brand-line); border-radius: 10px; padding: 6px 10px 6px 32px;
+	background: var(--brand-soft) url(../images/favicon.svg) 8px center no-repeat; margin: 3px; display: inline-block; font-weight: 600;
 }
-a.bookmarklet:hover {
-	text-decoration:none;
-	background-position:3px center;
-}
-#footer {
-	text-align:center;
-	margin-top:20px;
-}
-#footer p {
-	padding:10px;
-	background:white;
-	margin:0 auto;
-	max-width:950px;
-	border-radius:10px;
-	border:2px solid #2a85b3;
-	border-bottom-left-radius:25px;
-	border-bottom-right-radius:25px;
-}
-#footer p a {
-	background:#fff url(../images/favicon.svg) 2px center no-repeat;
-	padding-left:30px;
+a.bookmarklet:hover { text-decoration: none; background-color: var(--brand-soft-2); }
+
+/* ── Chân trang ── */
+#footer { text-align: center; margin-top: 16px; }
+#footer p { padding: 10px; background: transparent; margin: 0 auto; max-width: 1100px; border: 0; color: var(--muted); font-size: 12px; }
+#footer p a { background: url(../images/favicon.svg) 2px center no-repeat; padding-left: 26px; font-weight: 600; }
+
+/* ── Thanh báo (notify bar) ── */
+.jquery-notify-bar { width: 100%; position: fixed; top: 0; left: 0; z-index: 32768; background-color: var(--surface); color: var(--text); font-size: 15px; font-weight: 600; text-align: center; font-family: var(--font); padding: 14px 0; border-bottom: 1px solid var(--border); box-shadow: 0 4px 20px rgba(99,102,241,.12); opacity: .98; }
+.jquery-notify-bar.error, .jquery-notify-bar.fail { color: #991b1b; background-color: #fee2e2; }
+.jquery-notify-bar.error span, .jquery-notify-bar.fail span { background: transparent url("../images/error.svg") no-repeat left center; padding-left: 20px; }
+.jquery-notify-bar.success span { background: transparent url("../images/accept.svg") no-repeat left center; padding-left: 20px; }
+.jquery-notify-bar.success { color: #065f46; background-color: #d1fae5; }
+.notify-bar-close { position: absolute; left: 95%; font-size: 11px; }
+
+tr.plugin.active a { font-weight: 800; }
+body.desktop tr.plugin td.plugin_desc small { visibility: hidden; }
+tr:hover.plugin td.plugin_desc small { visibility: visible; }
+
+/* ── Hộp thoại xóa ── */
+#delete-confirm-dialog { background-color: var(--surface); color: var(--text); width: 50em; max-width: 94vw; height: 19em; padding: 0; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); }
+#delete-confirm-dialog > div[name="dialog_title"] { background-color: var(--brand-soft); font-size: 18px; font-weight: 700; color: var(--brand-dark); text-align: center; padding: .6em 0; border-start-start-radius: 15px; border-start-end-radius: 15px; }
+#delete-confirm-dialog div.confirm-message { background-color: var(--surface); width: calc(50em - 4em); max-width: calc(94vw - 4em); height: calc(20em - 50px - 5em - 2em + 6px); float: none; text-align: left; padding: 1em 2em; overflow: hidden; }
+#delete-confirm-dialog div.confirm-message ul { border-left: 4px solid var(--brand); list-style-type: none; padding: 0 1em; }
+#delete-confirm-dialog div.confirm-message ul li { margin-bottom: .5em; }
+#delete-confirm-dialog div.confirm-message ul li span { border: 1px solid var(--brand-line); border-radius: 6px; padding: 1px 6px; color: var(--text); }
+#delete-confirm-dialog div.button-group { background-color: var(--surface-2); width: calc(50em - 4em); max-width: calc(94vw - 4em); height: 2em; float: none; text-align: right; padding: 1em 2em; border-end-start-radius: 15px; border-end-end-radius: 15px; }
+#delete-confirm-dialog::backdrop { background-color: #0f172a; opacity: .5; }
+
+@media (max-width: 767px) {
+	#wrap { margin: 0; border-radius: 0; border-width: 0; padding: 8px 14px 16px; }
+	header[role="banner"] { margin: 0 -14px 10px; padding: 10px 14px; border-radius: 0; }
+	#add-url { width: 100%; }
 }
 
-.notice {
-	border:1px solid #2a85b3;
-	background: #F3FAFD;
-	border-radius:6px;
-	width:70%;
-	margin-left:15%;
-	padding-left:10px;
-	margin-bottom:5px;
-	clear: both;
+/* ══ GIAO DIỆN TỐI (bảng màu theo theme-dark.css của qlvanban) ══ */
+html[data-theme="dark"] {
+	--bg: #121d36; --surface: #182642; --surface-2: #1f2f52; --surface-3: #283d68;
+	--border: #34497a; --text: #e6ecf8; --muted: #a3b2cf; --faint: #7f90b3;
+	--brand: #818cf8; --brand-dark: #a5b4fc; --brand-soft: rgba(129,140,248,.16); --brand-soft-2: rgba(129,140,248,.28);
+	--brand-line: #4a5fa0; --hover: rgba(129,140,248,.14); --danger: #f87171;
+	--shadow: 0 1px 4px rgba(0,0,0,.25); --shadow-lg: 0 8px 30px rgba(0,0,0,.5);
+	color-scheme: dark;
 }
-
-.jquery-notify-bar {
-  width:100%;
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:32768;
-  background-color:#efefef;
-  font-size:18px;
-  color:#000;
-  text-align:center;
-  font-family: Arial, Verdana, sans-serif;
-  padding:20px 0px;
-  border-bottom:1px solid #bbb;
-  filter:alpha(opacity=95);
-  opacity:0.95;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-}
-.jquery-notify-bar.error ,.jquery-notify-bar.fail {
-  color:#f00;
-  background-color:#fdd;
-}
-.jquery-notify-bar.error span,.jquery-notify-bar.fail span{
-	background:transparent url("../images/error.svg") no-repeat left center;
-	padding-left:20px;
-}.jquery-notify-bar.success span{
-	background:transparent url("../images/accept.svg") no-repeat left center;
-	padding-left:20px;
-}
-.jquery-notify-bar.success {
-  color:#060;
-  background-color:#aea;
-}
-.notify-bar-close {
-  position:absolute;
-  left:95%;
-  font-size:11px;
-}
-tr.plugin.active a{ font-weight:bolder;}
-body.desktop tr.plugin td.plugin_desc small{ visibility:hidden;}
-tr:hover.plugin td.plugin_desc small{ visibility:visible;}
-
-#delete-confirm-dialog {
-    background-color: #ffffff;
-    width: 50em;
-    height: 19em;
-    padding: 0px;
-    border: 3px solid #2a85b3;
-    border-radius: 20px;
-}
-#delete-confirm-dialog > div[name="dialog_title"] {
-    background-color: #c7e7ff;
-    font-size: 20px;
-    color: #026090;
-    text-align: center;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    border-start-start-radius: 17px 17px;
-    border-start-end-radius: 17px 17px;
-}
-#delete-confirm-dialog div.confirm-message {
-    background-color: #ffffff;
-    width: calc(50em - 4em);
-    height: calc(20em - 50px - 5em - 2em + 6px);
-    float: none;
-    text-align: left;
-    padding: 1em 2em;
-    overflow: hidden;
-}
-#delete-confirm-dialog div.confirm-message ul {
-    border-left: 5px solid #026090;
-    list-style-type: none;
-    padding: 0 1em;
-}
-#delete-confirm-dialog div.confirm-message ul li {
-    margin-bottom: 0.5em;
-}
-#delete-confirm-dialog div.confirm-message ul li span {
-    border: 1px solid #c7e7ff;
-    border-radius: 3px;
-    padding: 1px 5px;
-    color:#333;
-}
-#delete-confirm-dialog div.button-group {
-    background-color: #e3f3ff;
-    width: calc(50em - 4em);
-    height: 2em;
-    float: none;
-    text-align: right;
-    padding: 1em 2em;
-    border-end-start-radius: 17px 17px;
-    border-end-end-radius: 17px 17px;
-}
-#delete-confirm-dialog::backdrop {
-    background-color: #666;
-    opacity: 80%;
-}
+html[data-theme="dark"] ul#admin_menu li > a { color: #cbd5e1; }
+html[data-theme="dark"] ul#admin_menu li > a:hover, html[data-theme="dark"] .theme-toggle:hover { color: #c7d2fe; }
+html[data-theme="dark"] input.primary, html[data-theme="dark"] #add-button, html[data-theme="dark"] #login input.button { color: #0f172a; }
+html[data-theme="dark"] input.primary:hover, html[data-theme="dark"] #add-button:hover, html[data-theme="dark"] #login input.button:hover { color: #0f172a; background: #a5b4fc; }
+html[data-theme="dark"] tt { background: rgba(251,191,36,.18); color: #fde68a; }
+html[data-theme="dark"] .sub_wrap span, html[data-theme="dark"] #new_url #feedback { background: rgba(251,191,36,.18); color: #fde68a; border-color: transparent; }
+html[data-theme="dark"] .error, html[data-theme="dark"] .jquery-notify-bar.error, html[data-theme="dark"] .jquery-notify-bar.fail { background: rgba(248,113,113,.18); color: #fca5a5; }
+html[data-theme="dark"] .warning { background: rgba(251,191,36,.18); color: #fcd34d; }
+html[data-theme="dark"] .success, html[data-theme="dark"] .jquery-notify-bar.success { background: rgba(52,211,153,.18); color: #6ee7b7; }
+html[data-theme="dark"] td.actions .button { filter: invert(.85); }
+html[data-theme="dark"] #login { box-shadow: 0 8px 30px rgba(0,0,0,.4); }
