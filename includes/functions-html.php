@@ -511,7 +511,7 @@ function yourls_html_pagination( array $params = [] ):string {
     if( isset( $params['search_text'] ) ) {
         $params['search'] = $params['search_text'];
     }
-    unset( $params['search_text'], $params['total_pages'] );
+    unset( $params['search_text'], $params['total_pages'], $params['summary_html'] );
 
     $base_page = yourls_admin_url( 'index.php' );
     $link_to   = function( $n ) use ( $params, $base_page ) {
@@ -579,6 +579,9 @@ function yourls_html_tfooter( array $params = [] ):void {
             <div id="pagination">
                 <?php echo yourls_html_pagination( $params ); ?>
             </div>
+            <?php if( !empty( $params['summary_html'] ) ) { ?>
+            <div class="table-summary"><?php echo $params['summary_html']; ?></div>
+            <?php } ?>
             </th>
         </tr>
         <?php yourls_do_action( 'html_tfooter' ); ?>

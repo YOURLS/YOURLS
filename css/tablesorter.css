@@ -11,7 +11,7 @@ table.tblSorter {
 table.tblSorter thead tr th, table.tblSorter tfoot tr th, table.tblSorter th.header {
 	background-color: var(--brand-soft-2);
 	border: 0; border-bottom: 1px solid var(--border);
-	font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted);
+	font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--text); font-weight: 800;
 	padding: 8px 6px;
 }
 table.tblSorter tfoot tr th {

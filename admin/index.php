@@ -245,9 +245,10 @@ yourls_html_menu() ;
 
 yourls_do_action( 'admin_page_before_content' );
 
+// Summary lines ("Display 1 to 15 of 73 URLs", "Overall, tracking ..."): displayed below the table, under the pagination
+ob_start();
 if ( !$is_bookmark ) { ?>
-    <p><?php echo $search_sentence; ?></p>
-    <p><?php
+    <p class="summary-display"><?php
         if ( $total_items === 0 ) {
             printf( yourls__( 'No URLs.' ) );
             if ( ! empty( $search ) )
@@ -261,6 +262,13 @@ if ( !$is_bookmark ) { ?>
 <?php } ?>
 <p id="overall_tracking"><?php printf( yourls__( 'Overall, tracking <strong class="increment">%1$s</strong> links, <strong>%2$s</strong> clicks, and counting!' ), yourls_number_format_i18n( $total_urls ), yourls_number_format_i18n( $total_clicks ) ); ?></p>
 <?php
+$summary_html = ob_get_clean();
+
+if ( !$is_bookmark ) {
+    echo '<p>' . $search_sentence . '</p>';
+} else {
+    echo $summary_html; // bookmarklet page has no table footer
+}
 
 yourls_do_action( 'admin_page_before_form' );
 
@@ -301,6 +309,7 @@ if ( !$is_bookmark ) {
 yourls_table_head();
 
 if ( !$is_bookmark ) {
+    $params['summary_html'] = $summary_html;
     yourls_html_tfooter( $params );
 }
 
