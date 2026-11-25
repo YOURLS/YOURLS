@@ -360,7 +360,7 @@ function yourls_delete_link_modal() {
     <dialog id="delete-confirm-dialog">
         <div name="dialog_title"><?php yourls_e( 'Delete confirmation' ) ?></div>
         <div class="confirm-message">
-            <p><strong><?php yourls_e( 'Really delete?' ) ?></strong></p>
+            <p class="confirm-question"><strong><?php yourls_e( 'Really delete?' ) ?></strong></p>
             <ul>
             <li><?php yourls_e( 'Short URL' ) ?>: <span name="short_url"></span></li>
             <li><?php yourls_e( 'Title' ) ?>: <span name="title"></span></li>
@@ -564,7 +564,7 @@ function yourls_html_tfooter( array $params = [] ):void {
     ?>
     <tfoot>
         <tr>
-            <th colspan="6">
+            <th colspan="7">
             <div id="pagination">
                 <?php echo yourls_html_pagination( $params ); ?>
             </div>
@@ -756,11 +756,15 @@ function yourls_table_edit_row( $keyword, $id ) {
 
     if( $url ) {
         $return = <<<RETURN
-<tr id="edit-$id" class="edit-row"><td colspan="5" class="edit-row"><strong>%s</strong>:<input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" size="70" /><br/><strong>%s</strong>: $www<input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" size="10" /><br/><strong>%s</strong>: <input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" size="60" /></td><td colspan="1"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button" onclick="edit_link_save('$id');" />&nbsp;<input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
+<tr id="edit-$id" class="edit-row"><td colspan="6" class="edit-row"><div class="edit-panel">
+<div class="edit-field edit-field-wide"><label for="edit-url-$id">%s</label><input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" /></div>
+<div class="edit-field"><label for="edit-keyword-$id">%s</label><div class="input-prefix"><span class="prefix" title="$www">$www</span><input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" /></div></div>
+<div class="edit-field"><label for="edit-title-$id">%s</label><input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" /></div>
+</div></td><td colspan="1" class="edit-actions"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button primary" onclick="edit_link_save('$id');" /><input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
         $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
     } else {
-        $return = '<tr class="edit-row notfound"><td colspan="6" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
+        $return = '<tr class="edit-row notfound"><td colspan="7" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
     }
 
     $return = yourls_apply_filter( 'table_edit_row', $return, $keyword, $url, $title );
@@ -847,9 +851,14 @@ function yourls_table_add_row( string $keyword, string $url, string $title, stri
     // Row cells: the array
     $cells = array(
         'keyword' => array(
-            'template'      => '<a href="%shorturl%">%keyword_html%</a><img class="qr-thumb" data-qr="%shorturl%" alt="" width="40" height="40" title="' . yourls_esc_attr__( 'QR code' ) . '" />',
+            'template'      => '<a href="%shorturl%">%keyword_html%</a>',
             'shorturl'      => yourls_esc_url( $shorturl ),
             'keyword_html'  => yourls_esc_html( $keyword ),
+        ),
+        'qr' => array(
+            'template'      => '<img class="qr-thumb" data-qr="%shorturl%" alt="" width="44" height="44" title="%title%" />',
+            'shorturl'      => yourls_esc_url( $shorturl ),
+            'title'         => yourls_esc_attr__( 'QR code' ),
         ),
         'url' => array(
             'template'      => '<a href="%long_url%" title="%title_attr%">%title_html%</a><br/><small>%warning%<a href="%long_url%">%long_url_html%</a></small>',
@@ -905,6 +914,7 @@ function yourls_table_head() {
 
     $cells = yourls_apply_filter( 'table_head_cells', array(
         'shorturl' => yourls__( 'Short URL' ),
+        'qr'       => yourls__( 'QR code' ),
         'longurl'  => yourls__( 'Original URL' ),
         'date'     => yourls__( 'Date' ),
         'ip'       => yourls__( 'IP' ),
