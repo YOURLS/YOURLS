@@ -112,20 +112,20 @@ function yourls_html_head( $context = 'index', $title = '' ) {
     yourls_do_action( 'pre_html_head', $context, $title );
 
     // All components to false, except when specified true
-    $share = $insert = $tablesorter = $tabs = $cal = $charts = false;
+    $share = $insert = $tablesorter = $tabs = $cal = $charts = $qr = false;
 
     // Load components as needed
     switch ( $context ) {
         case 'infos':
-            $share = $tabs = $charts = true;
+            $share = $tabs = $charts = $qr = true;
             break;
 
         case 'bookmark':
-            $share = $insert = $tablesorter = true;
+            $share = $insert = $tablesorter = $qr = true;
             break;
 
         case 'index':
-            $insert = $tablesorter = $cal = $share = true;
+            $insert = $tablesorter = $cal = $share = $qr = true;
             break;
 
         case 'plugins':
@@ -189,6 +189,18 @@ function yourls_html_head( $context = 'index', $title = '' ) {
         <link rel="stylesheet" href="<?php echo yourls_asset_url('css/tablesorter.css'); ?>" type="text/css" media="screen" />
         <script src="<?php echo yourls_asset_url('js/jquery-3.tablesorter.min.js'); ?>" type="text/javascript"></script>
         <script src="<?php echo yourls_asset_url('js/tablesorte.js'); ?>" type="text/javascript"></script>
+    <?php } ?>
+    <?php if ( $qr ) { ?>
+        <script src="<?php echo yourls_asset_url('js/qrcode.min.js'); ?>" type="text/javascript"></script>
+        <script type="text/javascript">var yourls_qr_l10n = <?php echo json_encode( array(
+            'title'    => yourls__( 'QR code' ),
+            'copy'     => yourls__( 'Copy' ),
+            'copied'   => yourls__( 'Copied' ),
+            'open'     => yourls__( 'Open link' ),
+            'download' => yourls__( 'Download QR code' ),
+            'close'    => yourls__( 'Close' ),
+        ) ); ?>;</script>
+        <script src="<?php echo yourls_asset_url('js/qr.js'); ?>" type="text/javascript"></script>
     <?php } ?>
     <?php if ( $insert ) { ?>
         <script src="<?php echo yourls_asset_url('js/insert.js'); ?>" type="text/javascript"></script>
@@ -293,20 +305,45 @@ function yourls_html_addnew( string $url = '', string $keyword = '' ) {
     ?>
     <main role="main">
     <div id="new_url">
-        <div>
+        <div id="new_url_bar">
+            <button type="button" id="open-add-modal" class="button primary add-open" onclick="open_add_modal();"><span aria-hidden="true">+</span> <?php yourls_e( 'Shorten a URL' ); ?></button>
+        </div>
+        <dialog id="add-modal" aria-labelledby="add-modal-title">
             <form id="new_url_form" action="" method="get">
-                <div>
-                    <label for="add-url"><strong><?php yourls_e( 'Enter the URL' ); ?></strong></label>:
-                    <input type="text" id="add-url" name="url" value="<?php echo yourls_esc_attr($url); ?>" class="text" size="80" placeholder="https://" />
-                    <label for="add-keyword"><?php yourls_e( 'Optional '); ?> : <strong><?php yourls_e('Custom short URL'); ?></strong></label>:
-                    <input type="text" id="add-keyword" name="keyword" value="<?php echo yourls_esc_attr($keyword); ?>" class="text" size="8" />
+                <div class="modal-head">
+                    <h2 id="add-modal-title"><?php yourls_e( 'Shorten a URL' ); ?></h2>
+                    <button type="button" class="modal-close" onclick="close_add_modal();" aria-label="<?php yourls_e( 'Close' ); ?>">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <label for="add-url" class="field-label"><?php yourls_e( 'Enter the URL' ); ?></label>
+                    <input type="text" id="add-url" name="url" value="<?php echo yourls_esc_attr($url); ?>" class="text field-url" placeholder="https://" autocomplete="off" />
+
+                    <label for="add-keyword" class="field-label"><?php yourls_e( 'Custom short URL' ); ?> <span class="field-hint">(<?php yourls_e( 'optional' ); ?>)</span></label>
+                    <div class="input-prefix">
+                        <span class="prefix" title="<?php echo yourls_esc_attr( yourls_site_url( false ) ); ?>/"><?php echo yourls_esc_html( preg_replace( '!^https?://!', '', yourls_site_url( false ) ) ); ?>/</span>
+                        <input type="text" id="add-keyword" name="keyword" value="<?php echo yourls_esc_attr($keyword); ?>" class="text" placeholder="<?php yourls_e( 'random' ); ?>" autocomplete="off" />
+                    </div>
                     <?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
-                    <input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button" onclick="add_link();" />
+
+                    <div id="feedback" style="display:none"></div>
+                    <div id="add-result" hidden>
+                        <img class="qr-thumb qr-result" data-qr="" alt="" width="96" height="96" title="<?php yourls_e( 'QR code' ); ?>" />
+                        <div class="add-result-main">
+                            <span class="field-label"><?php yourls_e( 'Your short URL' ); ?></span>
+                            <div class="add-result-row">
+                                <input type="text" id="add-result-link" class="text" readonly />
+                                <button type="button" class="button" id="add-result-copy"><?php yourls_e( 'Copy' ); ?></button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php yourls_do_action( 'html_addnew' ); ?>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="button" onclick="close_add_modal();"><?php yourls_e( 'Close' ); ?></button>
+                    <input type="button" id="add-button" name="add-button" value="<?php yourls_e( 'Shorten The URL' ); ?>" class="button primary" onclick="add_link();" />
                 </div>
             </form>
-            <div id="feedback" style="display:none"></div>
-        </div>
-        <?php yourls_do_action( 'html_addnew' ); ?>
+        </dialog>
     </div>
     <?php
 }
@@ -340,154 +377,196 @@ function yourls_delete_link_modal() {
 }
 
 /**
- * Display main table's footer
+ * Display the filter / search / sort bar, above the links table
  *
- * The $param array is defined in /admin/index.php, check the yourls_html_tfooter() call
- *
- * @param array $params Array of all required parameters
+ * @param  array $params  Same parameters as yourls_html_tfooter()
  * @return void
  */
-function yourls_html_tfooter( array $params = [] ):void {
-    // Manually extract all parameters from the array. We prefer doing it this way, over using extract(),
-    // to make things clearer and more explicit about what var is used.
-    $search       = $params['search'];
+function yourls_html_filterbar( array $params = [] ):void {
     $search_text  = $params['search_text'];
     $search_in    = $params['search_in'];
     $sort_by      = $params['sort_by'];
     $sort_order   = $params['sort_order'];
-    $page         = $params['page'];
     $perpage      = $params['perpage'];
+    $search       = $params['search'];
     $click_filter = $params['click_filter'];
     $click_limit  = $params['click_limit'];
-    $total_pages  = $params['total_pages'];
     $date_filter  = $params['date_filter'];
     $date_first   = $params['date_first'];
     $date_second  = $params['date_second'];
+    ?>
+    <div id="filter_form">
+        <form action="" method="get">
+            <div id="filter_options">
+                <?php
 
+                // First search control: text to search
+                echo '<div class="filter-group filter-search">';
+                $_input = '<input aria-label="' .yourls__( 'Search for' ). '" type="text" name="search" class="text" size="14" value="' . yourls_esc_attr( $search_text ) . '" />';
+                $_options = array(
+                    'all'     => yourls__( 'All fields' ),
+                    'keyword' => yourls__( 'Short URL' ),
+                    'url'     => yourls__( 'URL' ),
+                    'title'   => yourls__( 'Title' ),
+                    'ip'      => yourls__( 'IP' ),
+                );
+                $_select = yourls_html_select( 'search_in', $_options, $search_in, false, yourls__( 'Search in' ) );
+                /* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
+                yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
+                echo "</div>\n";
+
+                // Second search control: order by
+                echo '<div class="filter-group filter-sort">';
+                $_options = array(
+                    'keyword'      => yourls__( 'Short URL' ),
+                    'url'          => yourls__( 'URL' ),
+                    'title'        => yourls__( 'Title' ),
+                    'timestamp'    => yourls__( 'Date' ),
+                    'ip'           => yourls__( 'IP' ),
+                    'clicks'       => yourls__( 'Clicks' ),
+                );
+                $_select = yourls_html_select( 'sort_by', $_options, $sort_by, false,  yourls__( 'Sort by' ) );
+                $sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
+                $_options = array(
+                    'asc'  => yourls__( 'Ascending' ),
+                    'desc' => yourls__( 'Descending' ),
+                );
+                $_select2 = yourls_html_select( 'sort_order', $_options, $sort_order, false,  yourls__( 'Sort order' ) );
+                /* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
+                yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
+                echo "</div>\n";
+
+                // Third search control: Show XX rows
+                echo '<div class="filter-group filter-rows">';
+                /* //translators: "Show <text field> rows" */
+                $_input = '<input aria-label="' .yourls__( 'Number of rows to show' ). '" type="text" name="perpage" class="text" size="2" value="' . yourls_esc_attr($perpage) . '" />';
+                yourls_se( 'Show %s rows',  $_input );
+                echo "</div>\n";
+
+                // Fourth search control: Show links with more than XX clicks
+                echo '<div class="filter-group filter-clicks">';
+                $_options = array(
+                    'more' => yourls__( 'more' ),
+                    'less' => yourls__( 'less' ),
+                );
+                $_select = yourls_html_select( 'click_filter', $_options, $click_filter, false, yourls__( 'Show links with' ) );
+                $_input  = '<input aria-label="' .yourls__( 'Number of clicks' ). '" type="text" name="click_limit" class="text" size="4" value="' . yourls_esc_attr($click_limit) . '" /> ';
+                /* //translators: "Show links with <more/less> than <text field> clicks" */
+                yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
+                echo "</div>\n";
+
+                // Fifth search control: Show links created before/after/between ...
+                echo '<div class="filter-group filter-date">';
+                $_options = array(
+                    'before'  => yourls__('before'),
+                    'after'   => yourls__('after'),
+                    'between' => yourls__('between'),
+                );
+                $_select = yourls_html_select( 'date_filter', $_options, $date_filter, false, yourls__('Show links created') );
+                $_input  = '<input aria-label="' .yourls__('Select a date') . '" type="text" name="date_first" id="date_first" class="text" size="12" value="' . yourls_esc_attr($date_first) . '" />';
+                $_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
+                $_input2 = '<input aria-label="' .yourls__('Select an end date') . '" type="text" name="date_second" id="date_second" class="text" size="12" value="' . yourls_esc_attr($date_second) . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
+                /* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
+                yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
+                echo "</div>\n";
+                ?>
+
+                <div id="filter_buttons">
+                    <input type="submit" id="submit-sort" value="<?php yourls_e('Search'); ?>" class="button primary" />
+                    <input type="button" id="submit-clear-filter" value="<?php yourls_e('Clear'); ?>" class="button" onclick="window.parent.location.href = 'index.php'" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <?php
+}
+
+/**
+ * Return the pagination bar: First / Prev / page numbers / Next / Last, and a "go to page" box
+ *
+ * @param  array $params  Same parameters as yourls_html_tfooter()
+ * @return string         HTML, empty if there is only one page
+ */
+function yourls_html_pagination( array $params = [] ):string {
+    $page        = (int) $params['page'];
+    $total_pages = (int) $params['total_pages'];
+    if( $total_pages <= 1 ) {
+        return '';
+    }
+    $page = max( 1, min( $page, $total_pages ) );
+
+    // Remove empty keys from the $params array so it doesn't clutter the pagination links
+    $params = array_filter( $params, function($val){ return $val !== '';} );
+    if( isset( $params['search_text'] ) ) {
+        $params['search'] = $params['search_text'];
+    }
+    unset( $params['search_text'], $params['total_pages'] );
+
+    $base_page = yourls_admin_url( 'index.php' );
+    $link_to   = function( $n ) use ( $params, $base_page ) {
+        return yourls_add_query_arg( array_merge( $params, array( 'page' => $n ) ), $base_page );
+    };
+
+    // Window of page numbers around the current one
+    $p_start = max( 1, min( $total_pages - 4, $page - 2 ) );
+    $p_end   = min( $total_pages, max( 5, $page + 2 ) );
+
+    $btn = function( $n, $label, $title, $class, $disabled = false ) use ( $link_to ) {
+        if( $disabled ) {
+            return '<span class="nav_link ' . $class . ' disabled" aria-disabled="true">' . $label . '</span>';
+        }
+        return '<span class="nav_link ' . $class . '"><a href="' . yourls_esc_url( $link_to( $n ) ) . '" title="' . yourls_esc_attr( $title ) . '">' . $label . '</a></span>';
+    };
+
+    $html  = '<div class="pagination-bar">';
+    $html .= '<span class="nav_total">' . sprintf( yourls__( 'Page %1$s of %2$s' ), '<strong>' . $page . '</strong>', '<strong>' . $total_pages . '</strong>' ) . '</span>';
+    $html .= '<span class="navigation">';
+    $html .= $btn( 1, '&laquo;', yourls__( 'Go to First Page' ), 'nav_first', $page <= 1 );
+    $html .= $btn( $page - 1, '&lsaquo; ' . yourls__( 'Prev' ), yourls__( 'Previous page' ), 'nav_prev', $page <= 1 );
+    if( $p_start > 1 ) {
+        $html .= $btn( 1, '1', sprintf( yourls__( 'Page %s' ), 1 ), 'nav_goto' );
+        if( $p_start > 2 ) {
+            $html .= '<span class="nav_gap">&hellip;</span>';
+        }
+    }
+    for( $i = $p_start; $i <= $p_end; $i++ ) {
+        if( $i == $page ) {
+            $html .= '<span class="nav_link nav_current" aria-current="page">' . $i . '</span>';
+        } else {
+            $html .= $btn( $i, (string) $i, sprintf( yourls__( 'Page %s' ), $i ), 'nav_goto' );
+        }
+    }
+    if( $p_end < $total_pages ) {
+        if( $p_end < $total_pages - 1 ) {
+            $html .= '<span class="nav_gap">&hellip;</span>';
+        }
+        $html .= $btn( $total_pages, (string) $total_pages, sprintf( yourls__( 'Page %s' ), $total_pages ), 'nav_goto' );
+    }
+    $html .= $btn( $page + 1, yourls__( 'Next' ) . ' &rsaquo;', yourls__( 'Next page' ), 'nav_next', $page >= $total_pages );
+    $html .= $btn( $total_pages, '&raquo;', yourls__( 'Go to Last Page' ), 'nav_last', $page >= $total_pages );
+    $html .= '</span>';
+    $html .= '<form class="page-jump" action="" method="get" data-url="' . yourls_esc_attr( $link_to( '__PAGE__' ) ) . '" data-max="' . $total_pages . '">';
+    $html .= '<label>' . yourls__( 'Go to page' ) . ' <input type="number" class="text" min="1" max="' . $total_pages . '" value="' . $page . '" aria-label="' . yourls_esc_attr__( 'Page number' ) . '" /></label>';
+    $html .= '<button type="submit" class="button">' . yourls__( 'Go' ) . '</button>';
+    $html .= '</form>';
+    $html .= '</div>';
+
+    return $html;
+}
+
+/**
+ * Display the table footer: pagination (the filter form is displayed above the table, see yourls_html_filterbar())
+ *
+ * @param  array $params
+ * @return void
+ */
+function yourls_html_tfooter( array $params = [] ):void {
     ?>
     <tfoot>
         <tr>
             <th colspan="6">
-            <div id="filter_form">
-                <form action="" method="get">
-                    <div id="filter_options">
-                        <?php
-
-                        // First search control: text to search
-                        $_input = '<input aria-label="' .yourls__( 'Search for' ). '" type="text" name="search" class="text" size="12" value="' . yourls_esc_attr( $search_text ) . '" />';
-                        $_options = array(
-                            'all'     => yourls__( 'All fields' ),
-                            'keyword' => yourls__( 'Short URL' ),
-                            'url'     => yourls__( 'URL' ),
-                            'title'   => yourls__( 'Title' ),
-                            'ip'      => yourls__( 'IP' ),
-                        );
-                        $_select = yourls_html_select( 'search_in', $_options, $search_in, false, yourls__( 'Search in' ) );
-                        /* //translators: "Search for <input field with text to search> in <select dropdown with URL, title...>" */
-                        yourls_se( 'Search for %1$s in %2$s', $_input , $_select );
-                        echo "&ndash;\n";
-
-                        // Second search control: order by
-                        $_options = array(
-                            'keyword'      => yourls__( 'Short URL' ),
-                            'url'          => yourls__( 'URL' ),
-                            'title'        => yourls__( 'Title' ),
-                            'timestamp'    => yourls__( 'Date' ),
-                            'ip'           => yourls__( 'IP' ),
-                            'clicks'       => yourls__( 'Clicks' ),
-                        );
-                        $_select = yourls_html_select( 'sort_by', $_options, $sort_by, false,  yourls__( 'Sort by' ) );
-                        $sort_order = isset( $sort_order ) ? $sort_order : 'desc' ;
-                        $_options = array(
-                            'asc'  => yourls__( 'Ascending' ),
-                            'desc' => yourls__( 'Descending' ),
-                        );
-                        $_select2 = yourls_html_select( 'sort_order', $_options, $sort_order, false,  yourls__( 'Sort order' ) );
-                        /* //translators: "Order by <criteria dropdown (date, clicks...)> in <order dropdown (Descending or Ascending)>" */
-                        yourls_se( 'Order by %1$s %2$s', $_select , $_select2 );
-                        echo "&ndash;\n";
-
-                        // Third search control: Show XX rows
-                        /* //translators: "Show <text field> rows" */
-                        $_input = '<input aria-label="' .yourls__( 'Number of rows to show' ). '" type="text" name="perpage" class="text" size="2" value="' . yourls_esc_attr($perpage) . '" />';
-                        yourls_se( 'Show %s rows',  $_input );
-                        echo "<br/>\n";
-
-                        // Fourth search control: Show links with more than XX clicks
-                        $_options = array(
-                            'more' => yourls__( 'more' ),
-                            'less' => yourls__( 'less' ),
-                        );
-                        $_select = yourls_html_select( 'click_filter', $_options, $click_filter, false, yourls__( 'Show links with' ) );
-                        $_input  = '<input aria-label="' .yourls__( 'Number of clicks' ). '" type="text" name="click_limit" class="text" size="4" value="' . yourls_esc_attr($click_limit) . '" /> ';
-                        /* //translators: "Show links with <more/less> than <text field> clicks" */
-                        yourls_se( 'Show links with %1$s than %2$s clicks', $_select, $_input );
-                        echo "<br/>\n";
-
-                        // Fifth search control: Show links created before/after/between ...
-                        $_options = array(
-                            'before'  => yourls__('before'),
-                            'after'   => yourls__('after'),
-                            'between' => yourls__('between'),
-                        );
-                        $_select = yourls_html_select( 'date_filter', $_options, $date_filter, false, yourls__('Show links created') );
-                        $_input  = '<input aria-label="' .yourls__('Select a date') . '" type="text" name="date_first" id="date_first" class="text" size="12" value="' . yourls_esc_attr($date_first) . '" />';
-                        $_and    = '<span id="date_and"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '> &amp; </span>';
-                        $_input2 = '<input aria-label="' .yourls__('Select an end date') . '" type="text" name="date_second" id="date_second" class="text" size="12" value="' . yourls_esc_attr($date_second) . '"' . ( $date_filter === 'between' ? ' style="display:inline"' : '' ) . '/>';
-                        /* //translators: "Show links created <before/after/between> <date input> <"and" if applicable> <date input if applicable>" */
-                        yourls_se( 'Show links created %1$s %2$s %3$s %4$s', $_select, $_input, $_and, $_input2 );
-                        ?>
-
-                        <div id="filter_buttons">
-                            <input type="submit" id="submit-sort" value="<?php yourls_e('Search'); ?>" class="button primary" />
-                            &nbsp;
-                            <input type="button" id="submit-clear-filter" value="<?php yourls_e('Clear'); ?>" class="button" onclick="window.parent.location.href = 'index.php'" />
-                        </div>
-
-                    </div>
-                </form>
-            </div>
-
-            <?php
-            // Remove empty keys from the $params array so it doesn't clutter the pagination links
-            $params = array_filter( $params, function($val){ return $val !== '';} ); // remove keys with empty values
-
-            if( isset( $search_text ) ) {
-                $params['search'] = $search_text;
-                unset( $params['search_text'] );
-            }
-            ?>
-
             <div id="pagination">
-                <span class="navigation">
-                <?php if( $total_pages > 1 ) { ?>
-                    <span class="nav_total"><?php echo sprintf( yourls_n( '1 page', '%s pages', $total_pages ), $total_pages ); ?></span>
-                    <?php
-                    $base_page = yourls_admin_url( 'index.php' );
-                    // Pagination offsets: min( max ( zomg! ) );
-                    $p_start = max(  min( $total_pages - 4, $page - 2 ), 1 );
-                    $p_end = min( max( 5, $page + 2 ), $total_pages );
-                    if( $p_start >= 2 ) {
-                        $link = yourls_add_query_arg( array_merge( $params, array( 'page' => 1 ) ), $base_page );
-                        echo '<span class="nav_link nav_first"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to First Page') . '">' . yourls__( '&laquo; First' ) . '</a></span>';
-                        echo '<span class="nav_link nav_prev"></span>';
-                    }
-                    for( $i = $p_start ; $i <= $p_end; $i++ ) {
-                        if( $i == $page ) {
-                            echo "<span class='nav_link nav_current'>$i</span>";
-                        } else {
-                            $link = yourls_add_query_arg( array_merge( $params, array( 'page' => $i ) ), $base_page );
-                            echo '<span class="nav_link nav_goto"><a href="' . $link . '" title="' . sprintf( yourls_esc_attr( 'Page %s' ), $i ) .'">'.$i.'</a></span>';
-                        }
-                    }
-                    if( ( $p_end ) < $total_pages ) {
-                        $link = yourls_add_query_arg( array_merge( $params, array( 'page' => $total_pages ) ), $base_page );
-                        echo '<span class="nav_link nav_next"></span>';
-                        echo '<span class="nav_link nav_last"><a href="' . $link . '" title="' . yourls_esc_attr__('Go to Last Page') . '">' . yourls__( 'Last &raquo;' ) . '</a></span>';
-                    }
-                    ?>
-                <?php } ?>
-                </span>
+                <?php echo yourls_html_pagination( $params ); ?>
             </div>
             </th>
         </tr>
@@ -768,7 +847,7 @@ function yourls_table_add_row( string $keyword, string $url, string $title, stri
     // Row cells: the array
     $cells = array(
         'keyword' => array(
-            'template'      => '<a href="%shorturl%">%keyword_html%</a>',
+            'template'      => '<a href="%shorturl%">%keyword_html%</a><img class="qr-thumb" data-qr="%shorturl%" alt="" width="40" height="40" title="' . yourls_esc_attr__( 'QR code' ) . '" />',
             'shorturl'      => yourls_esc_url( $shorturl ),
             'keyword_html'  => yourls_esc_html( $keyword ),
         ),

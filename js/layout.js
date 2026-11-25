@@ -17,4 +17,16 @@
         if (t.closest('#mobile-backdrop') || t.closest('#sidebar a')) setOpen(false);
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+
+    // Phân trang: ô nhập số trang -> chuyển tới trang đó
+    document.addEventListener('submit', function (e) {
+        var f = e.target;
+        if (!f || !f.classList || !f.classList.contains('page-jump')) return;
+        e.preventDefault();
+        var max = parseInt(f.getAttribute('data-max'), 10) || 1;
+        var n = parseInt(f.querySelector('input').value, 10);
+        if (isNaN(n)) return;
+        n = Math.max(1, Math.min(max, n));
+        window.location.href = f.getAttribute('data-url').replace('__PAGE__', n);
+    });
 })();

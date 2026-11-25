@@ -278,8 +278,6 @@ if ( !$is_bookmark ) {
 
 yourls_do_action( 'admin_page_before_table' );
 
-yourls_table_head();
-
 if ( !$is_bookmark ) {
     $params = array(
         'search'       => $search,
@@ -296,6 +294,13 @@ if ( !$is_bookmark ) {
         'date_first'   => $date_first,
         'date_second'  => $date_second,
     );
+    yourls_html_filterbar( $params );
+    echo '<div class="pagination-top">' . yourls_html_pagination( $params ) . '</div>';
+}
+
+yourls_table_head();
+
+if ( !$is_bookmark ) {
     yourls_html_tfooter( $params );
 }
 
