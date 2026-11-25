@@ -19,7 +19,10 @@ switch( $action ) {
     case 'add':
         yourls_verify_nonce( 'add_url', $_REQUEST['nonce'], false, 'omg error' );
         $row_id = (int) ( $_REQUEST['rowid'] ?? 1 ); // row_id starts from 1 unless passed in.
-        $return = yourls_add_new_link( $_REQUEST['url'], $_REQUEST['keyword'], '', $row_id );
+        $return = yourls_add_new_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['title'] ?? '', $row_id );
+        if( ( $return['status'] ?? '' ) === 'success' && ( !empty( $_REQUEST['description'] ) || !empty( $_REQUEST['image'] ) ) ) {
+            yourls_set_link_meta( $return['url']['keyword'], $_REQUEST['description'] ?? '', $_REQUEST['image'] ?? '' );
+        }
         echo json_encode($return);
         break;
 
@@ -32,6 +35,13 @@ switch( $action ) {
     case 'edit_save':
         yourls_verify_nonce( 'edit-save_'.$_REQUEST['id'], $_REQUEST['nonce'], false, 'omg error' );
         $return = yourls_edit_link( $_REQUEST['url'], $_REQUEST['keyword'], $_REQUEST['newkeyword'], $_REQUEST['title'] );
+        if( ( $return['status'] ?? '' ) === 'success' ) {
+            $kw = $return['url']['keyword'];
+            if( $kw !== yourls_sanitize_keyword( $_REQUEST['keyword'] ) ) {
+                yourls_delete_link_meta( $_REQUEST['keyword'] ); // keyword changed: drop the old row
+            }
+            yourls_set_link_meta( $kw, $_REQUEST['description'] ?? '', $_REQUEST['image'] ?? '' );
+        }
         echo json_encode($return);
         break;
 

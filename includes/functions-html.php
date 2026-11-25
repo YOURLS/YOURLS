@@ -325,6 +325,17 @@ function yourls_html_addnew( string $url = '', string $keyword = '' ) {
                     </div>
                     <?php yourls_nonce_field( 'add_url', 'nonce-add' ); ?>
 
+                    <details class="preview-fields" id="add-preview-fields">
+                        <summary><?php yourls_e( 'Title &amp; link preview (Zalo, Messenger, ...)' ); ?></summary>
+                        <p class="field-help"><?php yourls_e( 'Shown instead of the long link when the short URL is shared in chat apps and social networks.' ); ?></p>
+                        <label for="add-title" class="field-label"><?php yourls_e( 'Title' ); ?> <span class="field-hint">(<?php yourls_e( 'optional' ); ?>)</span></label>
+                        <input type="text" id="add-title" name="title" class="text" autocomplete="off" />
+                        <label for="add-description" class="field-label"><?php yourls_e( 'Description' ); ?> <span class="field-hint">(<?php yourls_e( 'optional' ); ?>)</span></label>
+                        <input type="text" id="add-description" name="description" class="text" maxlength="300" autocomplete="off" />
+                        <label for="add-image" class="field-label"><?php yourls_e( 'Image URL' ); ?> <span class="field-hint">(<?php yourls_e( 'optional' ); ?>)</span></label>
+                        <input type="text" id="add-image" name="image" class="text" placeholder="https://" autocomplete="off" />
+                    </details>
+
                     <div id="feedback" style="display:none"></div>
                     <div id="add-result" hidden>
                         <img class="qr-thumb qr-result" data-qr="" alt="" width="96" height="96" title="<?php yourls_e( 'QR code' ); ?>" />
@@ -750,6 +761,10 @@ function yourls_table_edit_row( $keyword, $id ) {
     $safe_url = str_replace( '%', '%%', $safe_url );
     $safe_title = str_replace( '%', '%%', $safe_title );
 
+    $meta = yourls_get_link_meta( $keyword );
+    $safe_desc  = str_replace( '%', '%%', yourls_esc_attr( $meta['description'] ) );
+    $safe_image = str_replace( '%', '%%', yourls_esc_attr( $meta['image'] ) );
+
     $www = yourls_link();
 
     $nonce = yourls_create_nonce( 'edit-save_'.$id );
@@ -760,9 +775,11 @@ function yourls_table_edit_row( $keyword, $id ) {
 <div class="edit-field edit-field-wide"><label for="edit-url-$id">%s</label><input type="text" id="edit-url-$id" name="edit-url-$id" value="$safe_url" class="text" /></div>
 <div class="edit-field"><label for="edit-keyword-$id">%s</label><div class="input-prefix"><span class="prefix" title="$www">$www</span><input type="text" id="edit-keyword-$id" name="edit-keyword-$id" value="$safe_keyword" class="text" /></div></div>
 <div class="edit-field"><label for="edit-title-$id">%s</label><input type="text" id="edit-title-$id" name="edit-title-$id" value="$safe_title" class="text" /></div>
+<div class="edit-field edit-field-wide"><label for="edit-description-$id">%s</label><input type="text" id="edit-description-$id" name="edit-description-$id" value="$safe_desc" class="text" maxlength="300" /></div>
+<div class="edit-field edit-field-wide"><label for="edit-image-$id">%s</label><input type="text" id="edit-image-$id" name="edit-image-$id" value="$safe_image" class="text" placeholder="https://" /></div>
 </div></td><td colspan="1" class="edit-actions"><input type="button" id="edit-submit-$id" name="edit-submit-$id" value="%s" title="%s" class="button primary" onclick="edit_link_save('$id');" /><input type="button" id="edit-close-$id" name="edit-close-$id" value="%s" title="%s" class="button" onclick="edit_link_hide('$id');" /><input type="hidden" id="old_keyword_$id" value="$safe_keyword"/><input type="hidden" id="nonce_$id" value="$nonce"/></td></tr>
 RETURN;
-        $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
+        $return = sprintf( $return, yourls__( 'Long URL' ), yourls__( 'Short URL' ), yourls__( 'Title' ), yourls__( 'Description (link preview)' ), yourls__( 'Image URL (link preview)' ), yourls__( 'Save' ), yourls__( 'Save new values' ), yourls__( 'Cancel' ), yourls__( 'Cancel editing' ) );
     } else {
         $return = '<tr class="edit-row notfound"><td colspan="7" class="edit-row notfound">' . yourls__( 'Error, URL not found' ) . '</td></tr>';
     }

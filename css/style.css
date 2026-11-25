@@ -347,3 +347,9 @@ html[data-theme="dark"] .modal-foot a.button.primary { color: #0f172a; }
 #main_table tfoot th { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); padding: 10px 12px; }
 table.tblSorter tfoot tr th, table.tblSorter tfoot tr { background-color: var(--surface-2); }
 #main_table tfoot tr th { background-color: var(--surface-2); }
+
+/* ── Hộp nhập tiêu đề & xem trước liên kết (Zalo, Messenger, ...) ── */
+details.preview-fields { margin: 0 0 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); padding: 0 14px 4px; }
+details.preview-fields summary { cursor: pointer; padding: 11px 0; font-weight: 700; font-size: 13px; color: var(--brand-dark); }
+details.preview-fields[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+details.preview-fields .field-help { margin: 0 0 12px; color: var(--muted); font-size: 12px; }

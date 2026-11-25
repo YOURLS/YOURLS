@@ -62,11 +62,14 @@ function add_link() {
 		return;
 	}
 	var keyword = $("#add-keyword").val();
+	var title = $("#add-title").val();
+	var description = $("#add-description").val();
+	var image = $("#add-image").val();
 	var nextid = parseInt($('#main_table tbody tr[id^="id-"]').length) + 1;
 	add_loading("#add-button");
 	$.getJSON(
 		ajaxurl,
-		{action:'add', url: newurl, keyword: keyword, nonce: nonce, rowid: nextid},
+		{action:'add', url: newurl, keyword: keyword, title: title, description: description, image: image, nonce: nonce, rowid: nextid},
 		function(data){
 			if(data.status == 'success') {
 				$('#main_table tbody').prepend( data.html ).trigger("update");
@@ -201,12 +204,14 @@ function edit_link_save(id) {
 	var newurl = $("#edit-url-" + id).val();
 	var newkeyword = $("#edit-keyword-" + id).val();
 	var title = $("#edit-title-" + id).val();
+	var description = $("#edit-description-" + id).val();
+	var image = $("#edit-image-" + id).val();
 	var keyword = $('#old_keyword_'+id).val();
 	var nonce = $('#nonce_'+id).val();
 	var www = $('#yourls-site').val();
 	$.getJSON(
 		ajaxurl,
-		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, nonce: nonce },
+		{action:'edit_save', url: newurl, id: id, keyword: keyword, newkeyword: newkeyword, title: title, description: description, image: image, nonce: nonce },
 		function(data){
 			if(data.status == 'success') {
 
@@ -246,7 +251,7 @@ function zebra_table() {
 // Ready to add another URL
 function add_link_reset() {
 	$('#add-url').val('').focus();
-	$('#add-keyword').val('');
+	$('#add-keyword, #add-title, #add-description, #add-image').val('');
 }
 
 // Increment URL counters

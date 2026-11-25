@@ -218,6 +218,8 @@ yourls_html_logo();
 yourls_html_menu();
 ?>
 
+<div class="stats-hero">
+<div class="stats-hero-main">
 <h2 id="informations"><?php echo yourls_esc_html( $title ); ?></h2>
 
 <h3><span class="label"><?php yourls_e( 'Short URL'); ?>:</span> <img src="<?php yourls_get_yourls_favicon_url() ?>"/>
@@ -239,6 +241,19 @@ yourls_html_menu();
         echo ' <a href="'. yourls_link($keyword).'+all" title="' . yourls_esc_attr__( 'Aggregate stats for duplicate short URLs' ) . '"><img src="' . yourls_match_current_protocol( YOURLS_SITE ) . '/images/chart_bar_add.svg" border="0" /></a>';
 } ?></h3>
 <h3 id="longurl"><span class="label"><?php yourls_e( 'Long URL'); ?>:</span> <img class="fix_images" src="<?php echo yourls_get_favicon_url( $longurl );?>" /> <?php yourls_html_link( $longurl, yourls_trim_long_string( $longurl ), 'longurl' ); ?></h3>
+<?php
+$created_ts = strtotime( $timestamp );
+$age_days   = max( 0, (int) floor( ( time() - $created_ts ) / 86400 ) );
+?>
+<div class="stats-tiles">
+    <div class="stat-tile"><span class="stat-value"><?php echo yourls_number_format_i18n( $clicks ); ?></span><span class="stat-label"><?php yourls_e( 'Clicks' ); ?></span></div>
+    <div class="stat-tile"><span class="stat-value"><?php echo yourls_esc_html( yourls_date_i18n( yourls__( 'M d, Y' ), yourls_get_timestamp( $created_ts ) ) ); ?></span><span class="stat-label"><?php yourls_e( 'Created' ); ?></span></div>
+    <div class="stat-tile"><span class="stat-value"><?php echo yourls_number_format_i18n( $age_days ); ?></span><span class="stat-label"><?php echo yourls_esc_html( yourls_n( 'day old', 'days old', $age_days ) ); ?></span></div>
+    <div class="stat-tile"><span class="stat-value"><?php echo $age_days > 0 ? yourls_number_format_i18n( $clicks / $age_days, 1 ) : yourls_number_format_i18n( $clicks ); ?></span><span class="stat-label"><?php yourls_e( 'Clicks per day' ); ?></span></div>
+</div>
+</div>
+<div class="stats-hero-qr"><img class="qr-thumb qr-large" data-qr="<?php echo yourls_esc_attr( yourls_link( $keyword ) ); ?>" alt="" width="132" height="132" title="<?php yourls_e( 'QR code' ); ?>" /><span><?php yourls_e( 'QR code' ); ?></span></div>
+</div>
 
 <div id="tabs">
     <div class="wrap_unfloat">

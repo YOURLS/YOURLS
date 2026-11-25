@@ -18,6 +18,11 @@ if( yourls_is_page($keyword) ) {
 
 // if we can get a long URL from the DB, redirect
 if( $url = yourls_get_keyword_longurl( $keyword ) ) {
+    // Chat apps / social networks crawlers: serve Open Graph tags (title, description, image) instead of redirecting
+    if( yourls_is_link_preview_request() ) {
+        yourls_link_preview_page( $keyword, $url );
+        return;
+    }
     yourls_redirect_shorturl($url, $keyword);
     return;
 }

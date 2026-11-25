@@ -226,6 +226,10 @@ class Config {
         if (!defined( 'YOURLS_DB_TABLE_LOG' ))
             define( 'YOURLS_DB_TABLE_LOG', YOURLS_DB_PREFIX.'log' );
 
+        // table to store link preview metadata (description, image), created on first use
+        if (!defined( 'YOURLS_DB_TABLE_META' ))
+            define( 'YOURLS_DB_TABLE_META', YOURLS_DB_PREFIX.'url_meta' );
+
         // if set to true, verbose debug infos
         if (!defined( 'YOURLS_DEBUG' )) {
             define('YOURLS_DEBUG', false);
