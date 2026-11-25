@@ -1,0 +1,26 @@
+/* Trang Help: tài liệu readme.html trong vùng nội dung (dùng biến màu của style.css) */
+.help-page .page-title { margin: 0 0 14px; font-size: 1.25rem; font-weight: 800; }
+.help-page .page-title small { font-weight: 600; color: var(--muted); font-size: .8em; }
+#help-doc { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 22px 24px; max-width: 980px; }
+#help-doc ul#Tabs { list-style: none; margin: 0 0 18px; padding: 0 0 14px; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px; }
+#help-doc #Tabs li { margin: 0; }
+#help-doc #Tabs li a { display: block; padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2); color: var(--muted); font-weight: 700; }
+#help-doc #Tabs li a:hover { text-decoration: none; background: var(--hover); color: var(--brand-dark); border-color: var(--brand-line); }
+#help-doc #Tabs li.SelectedTab a { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,.35); }
+html[data-theme="dark"] #help-doc #Tabs li.SelectedTab a { color: #0f172a; }
+#help-doc h2 { margin: 34px 0 10px; font-size: 1.2rem; font-weight: 800; color: var(--text); }
+#help-doc h2.first { margin-top: 4px; }
+#help-doc h3 { margin: 24px 0 8px; font-size: 1rem; font-weight: 800; color: var(--brand-dark); }
+#help-doc a.anch { color: inherit; display: block; }
+#help-doc a.anch span { display: none; }
+#help-doc a.anch:hover { text-decoration: none; }
+#help-doc p { margin: 8px 0; padding: 0; line-height: 1.65; }
+#help-doc li { margin: 8px 0; line-height: 1.6; }
+#help-doc ul li ul li { margin-top: 6px; }
+#help-doc blockquote { margin: 12px 0; padding: 10px 16px; background: var(--surface-2); border: 1px solid var(--border); border-left: 4px solid var(--brand); border-radius: 10px; }
+#help-doc pre, #help-doc code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+#help-doc pre { overflow-x: auto; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+#help-doc div.sshot img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1em; }
+#help-doc table { border-collapse: collapse; max-width: 100%; }
+#help-doc td, #help-doc th { border: 1px solid var(--border); padding: 5px 9px; }
+#help-doc .highlight { background: var(--brand-soft-2); border-radius: 6px; box-shadow: 0 0 0 4px var(--brand-soft-2); }

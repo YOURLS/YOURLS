@@ -331,7 +331,7 @@ $signature = hash('sha256', $timestamp . '<?php echo yourls_auth_signature(); ?>
     </ul>
 
     <p><?php yourls_se( 'See the <a href="%s">Passwordless API</a> page on the wiki.', 'https://yourls.org/passwordlessapi' ); ?>
-    <?php yourls_se( 'See the <a href="%s">API documentation</a> for more', yourls_get_yourls_site() . '/readme.html#API' ); ?></p>
+    <?php yourls_se( 'See the <a href="%s">API documentation</a> for more', yourls_admin_url( 'help.php' ) . '#API' ); ?></p>
 
     </main>
 

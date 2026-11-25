@@ -37,7 +37,7 @@ function yourls_html_layout_phase( $set = null ): int {
  * @return bool
  */
 function yourls_html_context_has_sidebar( string $context ): bool {
-    $with = [ 'index', 'bookmark', 'infos', 'plugins', 'tools', 'upgrade' ];
+    $with = [ 'index', 'bookmark', 'infos', 'plugins', 'tools', 'upgrade', 'help' ];
     return in_array( $context, $with, true ) || str_starts_with( $context, 'plugin_page_' );
 }
 
@@ -1061,7 +1061,7 @@ function yourls_html_menu() {
     } else {
         $logout_link = yourls_apply_filter( 'logout_link', '' );
     }
-    $help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_site_url( false ) .'/readme.html">' . yourls__( 'Help' ) . '</a>' );
+    $help_link   = yourls_apply_filter( 'help_link',   '<a href="' . yourls_admin_url( 'help.php' ) . '">' . yourls__( 'Help' ) . '</a>' );
 
     $admin_links    = array();
     $admin_sublinks = array();
