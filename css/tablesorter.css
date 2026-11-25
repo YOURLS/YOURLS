@@ -72,46 +72,4 @@ table.tblSorter thead  tr th span {
 table.tblSorter tfoot tr {
 	background-color: var(--brand-soft-2);
 }
-#filter_form{
-	float:left;
-	text-align:left;
-	max-width:69%;
-}
-#filter_buttons{
-	float:right;
-}
-#pagination{
-	text-align:right;
-	float:right;
-	width:30%;
-}
-.navigation .nav_total{
-	display:block;
-	margin-bottom:10px;
-}
-.navigation .nav_link a, .navigation .nav_current {
-	border:1px solid var(--border);
-	margin:0px 2px;
-	padding:2px 1px;
-	background:var(--surface);
-	text-align:center;
-	min-width:15px;
-	display:inline-block;
-	border-radius:8px;
-}
-.navigation .nav_current {
-	border:0px;
-	background:none;
-}
-.navigation .nav_first a, .navigation .nav_last a {
-	padding:2px 2px;
-}
-.navigation .nav_prev:before, .navigation .nav_next:after {
-	content:"...";
-}
-.navigation .nav_link a:hover {
-	border:1px solid var(--brand-soft-2);
-	background:var(--brand-soft-2);
-	text-decoration:none;
-}
 html[data-theme="dark"] table.tblSorter thead tr .tablesorter-header { background-color: var(--surface-3); }

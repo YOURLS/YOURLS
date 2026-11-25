@@ -6,6 +6,10 @@ $(document).ready(function(){
 	add_link_reset();
 	$('#new_url_form').attr('action', 'javascript:add_link();');
 
+	// Modal: click on backdrop closes it, copy button
+	$('#add-modal').on('click', function(e){ if( e.target === this ) { close_add_modal(); } });
+	$('#add-result-copy').on('click', function(){ if( window.YourlsQR ) { YourlsQR.copy( $('#add-result-link').val(), this ); } });
+
 	$('input.text').focus(function(){
 		$(this).select();
 	});
@@ -23,6 +27,29 @@ $(document).ready(function(){
 		return true;
 	});
 });
+
+// "Shorten a URL" modal
+function open_add_modal() {
+	var d = document.getElementById('add-modal');
+	if( d && !d.open ) {
+		$('#add-result').attr('hidden', true);
+		d.showModal();
+		$('#add-url').focus();
+	}
+}
+function close_add_modal() {
+	var d = document.getElementById('add-modal');
+	if( d && d.open ) {
+		d.close();
+	}
+}
+// After a successful shortening: show the new short URL with its QR code inside the modal
+function show_add_result( shorturl ) {
+	$('#add-result-link').val( shorturl );
+	$('#add-result .qr-thumb').attr('data-qr', shorturl).removeAttr('data-qr-done').removeAttr('src');
+	$('#add-result').removeAttr('hidden');
+	if( window.YourlsQR ) { YourlsQR.hydrate( document.getElementById('add-result') ); }
+}
 
 // Create new link and add to table
 function add_link() {
@@ -47,12 +74,16 @@ function add_link() {
 				zebra_table();
 				increment_counter();
 				toggle_share_fill_boxes( data.url.url, data.shorturl, data.url.title );
+				show_add_result( data.shorturl );
 			}
 
 			add_link_reset();
 			end_loading("#add-button");
 			end_disable("#add-button");
 
+			// A modal dialog sits above the toast bar: also show the message inside the modal
+			$('#feedback').attr('class', data.status).html( data.message ).show();
+			setTimeout( function(){ $('#feedback').fadeOut(); }, 6000 );
 			feedback(data.message, data.status);
 		}
 	);

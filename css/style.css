@@ -114,14 +114,81 @@ input.primary, #add-button, #login input.button { color: #fff; background: var(-
 input.primary:hover, #add-button:hover, #login input.button:hover { background: var(--brand-dark); color: #fff; }
 tr.edit-row td { background: var(--brand-soft) !important; }
 
-/* ── Thêm URL mới ── */
-#new_url { text-align: center; padding: 0; border: 1px solid var(--border); background: var(--surface-2); clear: both; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-#new_url div { background: var(--brand-soft); padding: 8px; }
-#new_url_form { padding: 8px; }
-#new_url #feedback { background: #fef9c3; color: #713f12; width: 50%; margin: 6px 25%; padding: 4px; border: 1px solid #fde68a; border-radius: 8px; }
-#new_url #feedback .fail { color: var(--danger); }
-#add-url { width: 400px; max-width: 90%; }
+/* ── Nút + modal "Shorten a URL" ── */
+#new_url { border: 0; background: transparent; box-shadow: none; overflow: visible; text-align: left; margin: 0 0 12px; }
+#new_url_bar { display: flex; justify-content: flex-end; }
+.add-open { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px !important; font-size: 14px !important; border-radius: 10px !important; box-shadow: 0 4px 14px rgba(99,102,241,.35); }
+.add-open span { font-size: 18px; line-height: 1; }
+dialog#add-modal, dialog#qr-dialog {
+	padding: 0; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text);
+	width: 560px; max-width: calc(100vw - 24px); box-shadow: var(--shadow-lg); overflow: hidden;
+}
+dialog#qr-dialog { width: 360px; }
+dialog#add-modal::backdrop, dialog#qr-dialog::backdrop { background: rgba(15,23,42,.55); backdrop-filter: blur(3px); }
+dialog[open] { animation: dlg-in .18s ease-out; }
+@keyframes dlg-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; background: linear-gradient(135deg, var(--brand-soft), var(--surface)); border-bottom: 1px solid var(--border); }
+.modal-head h2 { margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.modal-close { border: 0; background: transparent; color: var(--muted); font-size: 26px; line-height: 1; cursor: pointer; border-radius: 8px; width: 34px; height: 34px; }
+.modal-close:hover { background: var(--brand-soft-2); color: var(--text); }
+.modal-body { padding: 18px 20px 6px; }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px 18px; }
+.modal-foot a.button { display: inline-block; text-decoration: none; }
+.field-label { display: block; margin: 0 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; color: var(--muted); }
+.field-hint { text-transform: none; font-weight: 500; color: var(--faint); letter-spacing: 0; }
+#add-modal input.text, #qr-dialog input.text { width: 100%; font-size: 14px; padding: 10px 12px; border-radius: 10px; margin: 0 0 14px; }
+.input-prefix { display: flex; align-items: stretch; margin-bottom: 14px; }
+.input-prefix .prefix { display: flex; align-items: center; padding: 0 12px; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: var(--surface-3); color: var(--muted); border: 1px solid var(--border); border-right: 0; border-radius: 10px 0 0 10px; font-size: 13px; }
+.input-prefix input.text { margin: 0 !important; border-radius: 0 10px 10px 0 !important; flex: 1; min-width: 0; }
+#feedback { margin: 0 0 14px; padding: 9px 12px; border-radius: 10px; }
+#add-result { display: flex; gap: 14px; align-items: center; margin: 4px 0 14px; padding: 12px; background: var(--brand-soft); border: 1px solid var(--brand-line); border-radius: 12px; }
+#add-result[hidden] { display: none; }
+.add-result-main { flex: 1; min-width: 0; }
+.add-result-row { display: flex; gap: 8px; }
+.add-result-row input.text { margin: 0 !important; flex: 1; min-width: 0; }
+.qr-body { text-align: center; }
+.qr-body #qr-big { width: 260px; max-width: 100%; height: auto; image-rendering: pixelated; background: #fff; padding: 8px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; }
 td.url small a { color: var(--faint); }
+
+/* ── Mã QR nhỏ trong bảng ── */
+.qr-thumb { width: 40px; height: 40px; flex-shrink: 0; background: #fff; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: zoom-in; image-rendering: pixelated; vertical-align: middle; }
+.qr-thumb:not([src]) { background: var(--surface-3); }
+.qr-thumb.qr-result { width: 96px; height: 96px; }
+td.keyword { white-space: nowrap; }
+td.keyword .qr-thumb { margin-left: 10px; }
+
+/* ── Thanh lọc / tìm kiếm / sắp xếp (trên bảng) ── */
+#filter_form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin: 0 0 12px; box-shadow: var(--shadow); }
+#filter_options { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; }
+.filter-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); }
+.filter-group input.text, .filter-group select { margin: 0; }
+.filter-group strong { color: var(--text); }
+#filter_buttons { display: flex; gap: 8px; margin-left: auto; }
+.pagination-top { margin: 0 0 10px; }
+.pagination-top:empty { display: none; }
+
+/* ── Phân trang ── */
+#pagination { float: none; width: 100%; text-align: center; }
+.pagination-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; padding: 4px 0; }
+.nav_total { color: var(--muted); font-size: 13px; }
+.nav_total strong { color: var(--text); }
+.navigation { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.navigation .nav_link a, .navigation .nav_current, .navigation .nav_link.disabled {
+	display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 38px; padding: 0 12px; margin: 0;
+	border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text);
+	font-size: 14px; font-weight: 600; box-shadow: var(--shadow); transition: background .15s, color .15s, border-color .15s, transform .1s;
+}
+.navigation .nav_link a:hover { background: var(--hover); border-color: var(--brand-line); color: var(--brand-dark); text-decoration: none; transform: translateY(-1px); }
+.navigation .nav_current { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,.4); }
+.navigation .nav_link.disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.navigation .nav_gap { color: var(--faint); padding: 0 2px; font-weight: 700; }
+.navigation .nav_prev:before, .navigation .nav_next:after { content: none; }
+.page-jump { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); }
+.page-jump label { display: inline-flex; align-items: center; gap: 8px; }
+.page-jump input.text { width: 72px; height: 38px; text-align: center; font-size: 14px; font-weight: 600; margin: 0; }
+.page-jump .button { height: 38px; }
+html[data-theme="dark"] .navigation .nav_current { color: #0f172a; }
+html[data-theme="dark"] .qr-thumb { background: #fff; }
 
 /* ── Nút thao tác từng dòng ── */
 body.desktop td.actions input, body.desktop td.actions a { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
@@ -228,3 +295,12 @@ html[data-theme="dark"] .warning { background: rgba(251,191,36,.18); color: #fcd
 html[data-theme="dark"] .success, html[data-theme="dark"] .jquery-notify-bar.success { background: rgba(52,211,153,.18); color: #6ee7b7; }
 html[data-theme="dark"] td.actions .button { filter: invert(.85); }
 html[data-theme="dark"] #login { box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+
+/* Liên kết dạng nút (hộp thoại QR) và chân bảng chứa phân trang */
+.modal-foot a.button { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--brand-dark); background: var(--surface); border: 1px solid var(--brand-line); border-radius: 8px; padding: 6px 14px; }
+.modal-foot a.button:hover { background: var(--brand-soft); text-decoration: none; }
+.modal-foot a.button.primary { color: #fff; background: var(--brand); border-color: var(--brand); }
+.modal-foot a.button.primary:hover { background: var(--brand-dark); }
+html[data-theme="dark"] .modal-foot a.button.primary { color: #0f172a; }
+#main_table tfoot th { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); padding: 10px 12px; }
+table.tblSorter tfoot tr th, table.tblSorter tfoot tr { background-color: var(--surface-2); }
