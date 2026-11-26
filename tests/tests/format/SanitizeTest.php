@@ -23,8 +23,8 @@ class SanitizeTest extends PHPUnit\Framework\TestCase {
         $unsane   = "How <strong>Will</strong> I Laugh Tomorrow <em>When I Can't Even Smile Today</em>";
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
 
-        $expected = 'Twilight of the Thunder God';
-        $unsane   = 'Twilight <bleh omg="wtf" >of</bleh> the <blah something>Thunder God';
+        $expected = 'Princess of the Dawn';
+        $unsane   = 'Princess <bleh omg="wtf" >of</bleh> the <blah something>Dawn';
         $this->assertSame( $expected, yourls_sanitize_title( $unsane ) );
     }
 
