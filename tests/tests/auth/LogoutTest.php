@@ -35,7 +35,7 @@ class LogoutTest extends PHPUnit\Framework\TestCase {
      * Check logout procedure - phase 1 - we're logging in
      */
     public function test_logout_user_is_logged_in() {
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login', '-1');
         $this->assertTrue(yourls_is_valid_user(), sprintf('Could not auth with %s/%s', $_REQUEST['username'], $_REQUEST['password'] ));
         $this->assertSame('yourls', self::$user);
     }
@@ -57,7 +57,7 @@ class LogoutTest extends PHPUnit\Framework\TestCase {
      */
     #[\PHPUnit\Framework\Attributes\Depends('test_logout_user_logs_out')]
     public function test_logout_user_is_logged_in_back() {
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login', '-1');
         $valid = yourls_is_valid_user();
         $this->assertTrue( $valid );
         $this->assertSame('yourls', self::$user);

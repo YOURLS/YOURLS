@@ -10,7 +10,7 @@ abstract class AbstractLoginTestCase extends PHPUnit\Framework\TestCase {
 
     protected function setUp(): void {
         $this->backup_request = $_REQUEST;
-        $_REQUEST['nonce'] = yourls_create_nonce('admin_login');
+        $_REQUEST['nonce'] = yourls_create_nonce('admin_login', '-1');
     }
 
     protected function tearDown(): void {
