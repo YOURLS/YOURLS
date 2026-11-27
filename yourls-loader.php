@@ -31,29 +31,33 @@ $stats     = isset($matches[2]) ? $matches[2] : null; // null, or '+' if request
 $stats_all = isset($matches[3]) ? $matches[3] : null; // null, or 'all' if request is 'anything+all'
 
 // if request has a scheme (eg scheme://uri) : "Prefix-n-Shorten" sends to bookmarklet (doesn't work on Windows)
-if ( yourls_get_protocol($keyword) ) {
+if ( null !== $keyword && yourls_get_protocol($keyword) ) {
     $url = yourls_sanitize_url_safe($keyword);
     $parse = yourls_get_protocol_slashes_and_rest( $url, [ 'up', 'us', 'ur' ] );
-    yourls_do_action( 'load_template_redirect_admin', $url );
-    yourls_do_action( 'pre_redirect_bookmarklet', $url );
 
-    // Redirect to /admin/index.php?up=<url protocol>&us=<url slashes>&ur=<url rest>
-    yourls_redirect( yourls_add_query_arg( $parse , yourls_admin_url( 'index.php' ) ), 302 );
-    exit;
+    // Sanitizing may leave nothing to shorten (eg 'javascript:...'): then this is not a bookmarklet request
+    if ( $parse ) {
+        yourls_do_action( 'load_template_redirect_admin', $url );
+        yourls_do_action( 'pre_redirect_bookmarklet', $url );
+
+        // Redirect to /admin/index.php?up=<url protocol>&us=<url slashes>&ur=<url rest>
+        yourls_redirect( yourls_add_query_arg( $parse , yourls_admin_url( 'index.php' ) ), 302 );
+        exit;
+    }
 }
 
 // if request is an existing short URL keyword ('abc') or stat page ('abc+') or an existing page :
-if ( yourls_keyword_is_taken($keyword) or yourls_is_page($keyword) ) {
+if ( null !== $keyword && ( yourls_keyword_is_taken($keyword) or yourls_is_page($keyword) ) ) {
 
     // we have a short URL or a page
-    if( $keyword && !$stats ) {
+    if( !$stats ) {
         yourls_do_action( 'load_template_go', $keyword );
         require_once( YOURLS_ABSPATH.'/yourls-go.php' );
         exit;
     }
 
     // we have a stat page
-    if( $keyword && $stats ) {
+    if( $stats ) {
         $aggregate = $stats_all && yourls_allow_duplicate_longurls();
         yourls_do_action( 'load_template_infos', $keyword );
         require_once( YOURLS_ABSPATH.'/yourls-infos.php' );
