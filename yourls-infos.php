@@ -11,6 +11,9 @@ if ( !isset( $keyword ) ) {
     exit;
 }
 
+// $aggregate is set in yourls-loader.php - redefining here to avoid notice and IDE complaints
+$aggregate = $aggregate ?? false;
+
 // Get basic infos for this shortened URL
 $keyword = yourls_sanitize_keyword( $keyword );
 $longurl = yourls_get_keyword_longurl( $keyword );
@@ -154,14 +157,17 @@ if( yourls_do_log_redirect() ) {
     $offset = yourls_get_time_offset();
 
     // *** Last 24 hours : array of $last_24h[ $hour ] = number of click ***
+    // The window starts at the top of the hour, 23 hours ago, so each wall-clock hour shows up only once (see #3845).
+    $now = intval( date('U') );
+    $last_24h_binds = array_merge( $keyword_binds, array( 'last_24h_start' => date( 'Y-m-d H:00:00', $now - 23 * 60 * 60 ) ) );
     $sql = "SELECT
         DATE_FORMAT(DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR), '%H %p') AS `time`,
         COUNT(*) AS `count`
     FROM `$table`
-    WHERE `shorturl` $keyword_range AND DATE_ADD(`click_time`, INTERVAL " . $offset . " HOUR) > (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL " . $offset . " HOUR) - INTERVAL 1 DAY)
+    WHERE `shorturl` $keyword_range AND `click_time` >= :last_24h_start
     GROUP BY `time`;";
     $sql = yourls_apply_filter('stat_query_last24h', $sql);
-    $rows = $ydb->fetchObjects($sql, $keyword_binds);
+    $rows = $ydb->fetchObjects($sql, $last_24h_binds);
 
     $_last_24h = array();
     foreach( (array)$rows as $row ) {
@@ -169,7 +175,6 @@ if( yourls_do_log_redirect() ) {
             $_last_24h[ "$row->time" ] = $row->count;
     }
 
-    $now = intval( date('U') );
     for ($i = 23; $i >= 0; $i--) {
         $h = date('H A', ($now - ($i * 60 * 60) + ($offset * 60 * 60)) );
         // If the $last_24h doesn't have all the hours, insert missing hours with value 0
